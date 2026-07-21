@@ -14,6 +14,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnIconComponent, TnTreeVirtualScrollViewComponent, TnTreeNodeComponent, TnEmptyComponent, type IconLibraryType,
+  TnTreeFlatDataSource, TnTreeFlattener, type TnTreeExpansion, createFlatTreeControl,
 } from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
 import {
@@ -34,10 +35,6 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { createFlatTreeControl } from 'app/modules/ix-tree/tree-control.factory';
-import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
-import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
-import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -177,20 +174,20 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   // Flat API
   getLevel = (dataset: DatasetDetails): number => (dataset?.name?.split('/')?.length || 0) - 1;
   isExpandable = (dataset: DatasetDetails): boolean => Number(dataset?.children?.length) > 0;
-  treeControl: TreeExpansion<DatasetDetails, string> = createFlatTreeControl<DatasetDetails, string>(
+  treeControl: TnTreeExpansion<DatasetDetails, string> = createFlatTreeControl<DatasetDetails, string>(
     this.getLevel,
     this.isExpandable,
     { trackBy: (dataset: DatasetDetails) => dataset.id },
   );
 
-  treeFlattener = new TreeFlattener<DatasetDetails, DatasetDetails, string>(
+  treeFlattener = new TnTreeFlattener<DatasetDetails, DatasetDetails>(
     (dataset) => dataset,
     this.getLevel,
     this.isExpandable,
     () => [],
   );
 
-  dataSource = new TreeDataSource(this.treeControl, this.treeFlattener);
+  dataSource = new TnTreeFlatDataSource(this.treeControl, this.treeFlattener);
   trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset?.id;
 
   constructor() {

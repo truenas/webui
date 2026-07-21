@@ -77,6 +77,22 @@ a:focus-visible {
   box-shadow: 0 0 0 1.5px var(--alt-bg2) inset;
 }
 
+// Focus indicator for tn-tree rows focused at the treeitem host level — routerLink
+// hosts (tabindex 0) and the CDK tree key manager both focus the wrapper element,
+// where the library's .tn-*-node__content:focus-within rules can never match (the
+// content div is a descendant of the focused host, not an ancestor). Replaces the
+// .ix-tree-node:focus rules removed from _material-reduction.scss; mirrors the
+// library's own content focus treatment.
+// TEMP: until @truenas/ui-components styles host-level treeitem focus.
+.tn-tree-node-wrapper:focus > .tn-tree-node,
+.tn-tree-node-wrapper:focus-visible > .tn-tree-node,
+.tn-nested-tree-node-wrapper:focus > .tn-nested-tree-node__content,
+.tn-nested-tree-node-wrapper:focus-visible > .tn-nested-tree-node__content {
+  background-color: var(--tn-alt-bg2, var(--hover-bg));
+  outline: 2px solid var(--tn-primary, var(--primary));
+  outline-offset: -2px;
+}
+
 a {
   color: inherit;
 }

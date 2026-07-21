@@ -1,5 +1,5 @@
 @if (!isLoading() || results().length) {
-  <mat-card class="search-results-card">
+  <div class="search-results-card">
     @for (section of availableSections; track trackBySection($index, section)) {
       <h2 class="section">
         {{ section.label | translate }}
@@ -11,9 +11,10 @@
               <div
                 class="search-result"
                 role="link"
+                tnTestIdType="text"
                 [attr.tabindex]="result.section === GlobalSearchSection.RecentSearches ? i + 1 : 0"
                 [class.highlighted-result]="isSearchInputFocused() && isSameHierarchyResult(firstAvailableSearchResult, result)"
-                [ixTest]="['search-result', result.hierarchy?.join('-')]"
+                [tnTestId]="['search-result', result.hierarchy?.join('-')]"
                 [attr.aria-label]="'UI Search Result: {result}' | translate: { result: result.hierarchy?.join(' ') }"
                 (click)="selectElement(result)"
                 (keydown.enter)="selectElement(result)"
@@ -38,9 +39,10 @@
 
             @if (getElementsBySection(section.value).length > initialResultsLimit) {
               <button
+                type="button"
                 class="toggle-show-more"
-                mat-button
-                ixTest="toggle-show-all-results"
+                tnTestId="toggle-show-all-results"
+                tnTestIdType="button"
                 [attr.tabindex]="sectionResults[0].section === GlobalSearchSection.RecentSearches ? sectionResults.length * 2 + 1 : 0"
                 (click)="toggleShowAll(section.value)"
                 (keydown.enter)="toggleShowAll(section.value)"
@@ -55,5 +57,5 @@
         <h4 class="no-results">{{ 'No results found in {section}' | translate:{ section: section.label } }}</h4>
       }
     }
-  </mat-card>
+  </div>
 }

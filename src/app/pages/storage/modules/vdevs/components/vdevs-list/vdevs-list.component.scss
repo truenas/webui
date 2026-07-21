@@ -3,11 +3,89 @@
 
 @include tree-node-with-details-container;
 
-
 .disk-tree {
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  border-top: 2px solid var(--lines);
+  // The tree sits flush under the search/header block — square off the top
+  // corners so the two read as one surface. Bottom corners follow the wrapping
+  // tn-card's 8px (the library default of 6px reads as a mismatch).
+  // TEMP: drop the bottom radii once the library aligns .tn-tree to 8px.
+  border-radius: 0 0 8px 8px;
+
+  // TEMP: the library's .tn-tree sets width: 100% + border without border-box,
+  // so the right border clips inside a fitted container. Remove once the library
+  // adds box-sizing to .tn-tree.
+  box-sizing: border-box;
+
+  // Bridge the library's --tn-* design tokens onto webui's theme variables so the
+  // tree's borders/hover/focus render correctly in both themes (the global token
+  // bridge is not wired yet; mirrors dataset-management). Rows sit transparent on
+  // the page background.
+  --tn-lines: var(--lines);
+  --tn-alt-bg1: var(--hover-bg);
+  --tn-alt-bg2: var(--hover-bg);
+  --tn-bg3: var(--hover-bg);
+  --tn-fg1: var(--fg1);
+  --tn-fg2: var(--fg2);
+  --tn-primary: var(--primary);
+  --tn-bg1: transparent;
+}
+
+// The vdev tree is a table-like grid: every row's columns must align with
+// the .tree-header regardless of depth (depth is conveyed by the toggle/spacer,
+// matching the previous ix-tree rendering, which had no per-level indent).
+// TEMP: until @truenas/ui-components exposes a children-indent input on
+// tn-nested-tree-node, zero the library's built-in 40px per-level indent.
+// The .disk-tree ancestor out-specifies the library's own rule (a bare
+// div.tn-nested-tree-node-container selector only ties with it, and loses or
+// wins on style-tag order).
+:host ::ng-deep .disk-tree div.tn-nested-tree-node-container {
+  padding-left: 0;
+}
+
+:host ::ng-deep tn-nested-tree-node {
+  // Rows navigate (or toggle, for group rows) on click.
+  > .tn-nested-tree-node__content {
+    cursor: pointer;
+    // Anchor for the selected-state indicator bar.
+    position: relative;
+  }
+
+  // Selected-row treatment, matching the legacy .nested-tree-root-node.selected
+  // styling from the tree-node-with-details-container mixin.
+  &.selected > .tn-nested-tree-node__content {
+    background-color: var(--hover-bg);
+    color: var(--fg2);
+
+    &::before {
+      background-color: var(--primary);
+      content: '';
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 6px;
+    }
+  }
+
+  // Mobile navigation chevron (the mixin's rules target the legacy ix-* row
+  // elements, which no longer exist on this page).
+  tn-icon.mobile-actions {
+    display: none;
+
+    @media (max-width: $breakpoint-hidden) {
+      display: flex;
+      margin: 4px 12px;
+      position: relative;
+      right: 8px;
+    }
+  }
+}
+
+// Group section headers stay compact (legacy rows were ~26px, not the library's
+// 48px default) and don't need the leading content padding — the group node
+// provides its own.
+:host ::ng-deep tn-nested-tree-node.vdev-group-row > .tn-nested-tree-node__content {
+  min-height: 34px;
+  padding: 0;
 }
 
 .vdev-group-toggle {
@@ -17,12 +95,17 @@
   width: 25px;
 }
 
-.spacer-root {
-  width: 30px;
-}
-
 .container {
   height: 100%;
+}
+
+// The mixin's .tree-wrapper (flex: 1 + overflow: auto + min-height: 100%, which
+// resolves to 0 against this page's content-driven height chain) collapses and
+// clips the tree to a sliver. Let the wrapper grow to its content; the page
+// itself scrolls. Extra ancestor class out-specifies the parent component's
+// host-scoped copy of the same mixin rule.
+.table-container .tree-wrapper {
+  min-height: fit-content;
 }
 
 .table-container {
@@ -32,4 +115,31 @@
 .item-search {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+}
+
+// Match the row grid's horizontal geometry so the fixed-width columns line up:
+// - insets: left = tree border (1) + row padding (8) + toggle/spacer (24) + gap (8);
+//   right = tree border (1) + row padding (8);
+// - tracks: the rows' exact template. The mixin's base template carries a
+//   phantom trailing 40px actions column (dropped only above the singlecolumn
+//   breakpoint) that the rows don't have, which drifts the auto column.
+// The .sticky-header ancestor out-specifies the parent component's host-scoped
+// copies of the mixin rules.
+.sticky-header .tree-header {
+  grid-template-columns: auto 125px 125px 125px;
+  padding-left: 41px;
+  padding-right: 9px;
+
+  // Below the details-panel breakpoint the rows show a trailing mobile-nav
+  // chevron (20px icon + 12px margins + 8px flex gap = 52px) — mirror it so
+  // the fixed columns stay aligned.
+  @media (max-width: $breakpoint-hidden) {
+    padding-right: 61px;
+  }
+
+  // Below tablet only the name column renders; no fixed columns to align.
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: auto 0 0 0;
+    padding-right: 9px;
+  }
 }

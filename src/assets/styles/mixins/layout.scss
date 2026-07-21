@@ -239,52 +239,6 @@ $scrollbar-offset: 20px;
     }
   }
 
-  ix-tree-node {
-    color: var(--fg1);
-  }
-
-  .nested-tree-root-node {
-    align-items: center;
-    border-bottom: 1px solid var(--lines);
-    cursor: pointer;
-    display: flex;
-    min-width: fit-content;
-    position: relative;
-
-    &:hover {
-      background-color: var(--hover-bg);
-    }
-
-    &.selected {
-      background-color: var(--hover-bg);
-      color: var(--fg2);
-
-      &::before {
-        background-color: var(--primary);
-        content: '';
-        height: 100%;
-        left: 0;
-        opacity: 1;
-        position: absolute;
-        top: 0;
-        width: 6px;
-      }
-    }
-  }
-
-  .nested-tree-root-node tn-icon.mobile-actions,
-  .ix-tree-node tn-icon.mobile-actions,
-  .ix-nested-tree-node tn-icon.mobile-actions {
-    display: none;
-
-    @media (max-width: $breakpoint-hidden) {
-      display: flex;
-      margin: 4px 12px;
-      position: relative;
-      right: 8px;
-    }
-  }
-
   .table-container {
     box-sizing: border-box;
     display: flex;

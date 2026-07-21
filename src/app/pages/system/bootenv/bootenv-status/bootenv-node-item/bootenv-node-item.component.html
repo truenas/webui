@@ -38,8 +38,8 @@
     <tn-menu #actionsMenu>
       <tn-menu-item
         *ixRequiresRoles="requiredRoles"
-        icon="file-replace"
         iconLibrary="mdi"
+        [icon]="replaceIcon"
         [testId]="'replace'"
         [label]="'Replace' | translate"
         (itemClick)="replace()"
@@ -47,8 +47,8 @@
       <ng-container *ixRequiresRoles="requiredRoles">
         @if (isDisk() && oneDisk()) {
           <tn-menu-item
-            icon="attachment-plus"
             iconLibrary="mdi"
+            [icon]="attachIcon"
             [testId]="'attach'"
             [label]="'Attach' | translate"
             (itemClick)="attach()"
@@ -58,8 +58,8 @@
       <ng-container *ixRequiresRoles="requiredRoles">
         @if (isMirror()) {
           <tn-menu-item
-            icon="attachment-minus"
             iconLibrary="mdi"
+            [icon]="detachIcon"
             [testId]="'detach'"
             [label]="'Detach' | translate"
             (itemClick)="detach()"

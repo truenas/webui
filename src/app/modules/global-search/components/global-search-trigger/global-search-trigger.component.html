@@ -1,10 +1,12 @@
 <div class="search-box" [class.hidden]="overlayRef?.hasAttached()">
   <tn-icon name="magnify" library="mdi" class="search-icon" (click)="showOverlay()"></tn-icon>
 
+  <!-- Deliberately not tnInput: this is a bespoke compact topbar input; the
+       library's stock input chrome (min-height, focus border) doesn't fit. -->
   <input
     #searchInput
-    matInput
-    ixTest="global-search"
+    tnTestId="global-search"
+    tnTestIdType="input"
     class="search-input"
     [placeholder]="'Search UI' | translate"
     (click)="showOverlay()"

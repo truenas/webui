@@ -666,19 +666,10 @@ ix-root {
     background-color: var(--focus-bg) !important;
   }
 
-  .ix-tree-node:focus-visible,
-  .ix-tree-node:focus,
   ix-app-row:focus-visible,
-  ix-app-row:focus,
-  .ix-nested-tree-node > div:focus-visible {
+  ix-app-row:focus {
     @extend %focused-shared;
   }
-}
-
-// needed to correctly put box shadow on :focus-visible
-ix-tree-node,
-ix-nested-tree-node > div {
-  padding: 1px;
 }
 
 .mdc-text-field--outlined .mdc-notched-outline {

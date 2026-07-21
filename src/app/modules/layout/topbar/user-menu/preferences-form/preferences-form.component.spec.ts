@@ -110,7 +110,9 @@ describe('PreferencesFormComponent', () => {
   it('shows current preferences values', async () => {
     const syncCheckbox = await loader.getHarness(TnCheckboxHarness);
     const themeSelect = await getSelect('theme');
-    const timeoutInput = await loader.getHarness(TnInputHarness);
+    const timeoutInput = await loader.getHarness(
+      TnInputHarness.with({ selector: '[formControlName="token_lifetime"]' }),
+    );
     const languageAutocomplete = await loader.getHarness(TnAutocompleteHarness);
     const dateFormatSelect = await getSelect('date_format');
     const timeFormatSelect = await getSelect('time_format');
@@ -138,7 +140,9 @@ describe('PreferencesFormComponent', () => {
     jest.spyOn(store$, 'dispatch');
 
     await (await getSelect('theme')).selectOption('Blue');
-    await (await loader.getHarness(TnInputHarness)).setValue('120');
+    await (
+      await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="token_lifetime"]' }))
+    ).setValue('120');
     const languageAutocomplete = await loader.getHarness(TnAutocompleteHarness);
     await languageAutocomplete.setInputValue('French');
     await languageAutocomplete.selectOption('French (fr)');
