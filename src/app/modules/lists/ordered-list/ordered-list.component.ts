@@ -4,16 +4,15 @@ import {
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ControlValueAccessor } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnIconComponent, TnListComponent, TnListItemComponent, TnListItemTrailingDirective, TnSlideToggleComponent,
+} from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
@@ -24,11 +23,11 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   imports: [
     IxLabelComponent,
     CdkDropList,
-    MatList,
-    MatListItem,
+    TnListComponent,
+    TnListItemComponent,
+    TnListItemTrailingDirective,
     CdkDrag,
-    MatSlideToggle,
-    TestDirective,
+    TnSlideToggleComponent,
     TnIconComponent,
     IxErrorsComponent,
     TranslateModule,

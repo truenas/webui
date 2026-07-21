@@ -13,26 +13,26 @@
   [style.maxHeight]="maxHeight()"
   (cdkDropListDropped)="drop($event)"
   >
-  <mat-list [attr.aria-label]="label()">
+  <tn-list [attr.aria-label]="label()">
     @for (item of items; track item) {
-      <mat-list-item cdkDrag>
-        <mat-slide-toggle
+      <tn-list-item cdkDrag>
+        <div class="toggle-label">
+          <tn-icon name="drag-vertical" library="mdi"></tn-icon>
+          {{ item.label | translate }}
+        </div>
+        <tn-slide-toggle
+          tnListItemTrailing
           color="primary"
           [checked]="isChecked(item.value)"
           [disabled]="isDisabled"
-          [ixTest]="[controlDirective.name, item.label]"
-          [attr.aria-label]="item.label"
+          [testId]="[controlDirective.name, item.label]"
+          [ariaLabel]="item.label"
           (change)="onCheckboxChanged(item.value)"
-          (blur)="onTouch()"
-        >
-          <div class="toggle-label">
-            <tn-icon name="drag-vertical" library="mdi"></tn-icon>
-            {{ item.label | translate }}
-          </div>
-        </mat-slide-toggle>
-      </mat-list-item>
+          (focusout)="onTouch()"
+        ></tn-slide-toggle>
+      </tn-list-item>
     }
-  </mat-list>
+  </tn-list>
 </div>
 
 <ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>

@@ -3,36 +3,25 @@
   padding: 8px 0;
 }
 
-mat-slide-toggle {
-  width: 100%;
-
-  ::ng-deep .mdc-form-field {
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    width: 100%;
-  }
-}
-
 .container-items {
   border: 1px solid var(--lines);
   box-sizing: border-box;
   overflow-y: auto;
 
-  .mat-mdc-list {
+  tn-list {
     width: 100%;
   }
 }
 
-.mat-mdc-list-item {
+tn-list-item {
   cursor: move;
-  padding-left: 0;
+}
 
-  .toggle-label {
-    align-items: center;
-    cursor: move;
-    display: flex;
-    gap: 2px;
-  }
+.toggle-label {
+  align-items: center;
+  cursor: move;
+  display: flex;
+  gap: 2px;
 }
 
 .cdk-drag-preview {
