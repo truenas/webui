@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnIconButtonComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-copy-button',
@@ -14,10 +14,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TnIconButtonComponent,
     TnTooltipDirective,
     TranslateModule,
-    MatMenuTrigger,
-    MatMenu,
-    MatMenuItem,
-    TestDirective,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
   ],
 })
 export class CopyButtonComponent {

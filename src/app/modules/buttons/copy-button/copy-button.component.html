@@ -15,14 +15,18 @@
     name="content-copy"
     library="mdi"
     [tnTooltip]="'Copy to Clipboard' | translate"
-    [matMenuTriggerFor]="menu"
+    [tnMenuTriggerFor]="menu"
   ></tn-icon-button>
 }
-<mat-menu #menu="matMenu">
-  <button mat-menu-item ixTest="copy-text" (click)="copyToClipboard()">
-    <span>{{ 'Copy Text' | translate }}</span>
-  </button>
-  <button mat-menu-item ixTest="copy-json-text" (click)="copyJsonToClipboard()">
-    <span>{{ 'Copy Json' | translate }}</span>
-  </button>
-</mat-menu>
+<tn-menu #menu>
+  <tn-menu-item
+    testId="copy-text"
+    [label]="'Copy Text' | translate"
+    (itemClick)="copyToClipboard()"
+  ></tn-menu-item>
+  <tn-menu-item
+    testId="copy-json-text"
+    [label]="'Copy Json' | translate"
+    (itemClick)="copyJsonToClipboard()"
+  ></tn-menu-item>
+</tn-menu>
