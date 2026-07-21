@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnDialog, TnSpinnerComponent,
+  TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnDialog,
+  TnFormFieldComponent, TnSpinnerComponent,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -13,7 +14,6 @@ import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl, NfsAclItem, PosixAclItem } from 'app/interfaces/acl.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -49,10 +49,12 @@ import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-e
     ReactiveFormsModule,
     IxUserComboboxComponent,
     IxGroupComboboxComponent,
-    IxCheckboxComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
     AclEditorListComponent,
     TnButtonComponent,
     AclEditorSaveControlsComponent,
+    RouterLink,
     RequiresRolesDirective,
     EditNfsAceComponent,
     EditPosixAceComponent,

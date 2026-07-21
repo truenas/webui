@@ -1,6 +1,27 @@
+.header {
+  align-items: baseline;
+  border-bottom: 1px solid var(--lines);
+  column-gap: 8px;
+  display: flex;
+  // Match the horizontal padding of the sections below so the title lines up with the content.
+  padding: 12px 24px;
+
+  .header-title {
+    font-size: 1.4rem;
+    margin: 0;
+  }
+}
+
 .card {
+  height: auto;
   margin: 0 auto;
   max-width: 850px;
+
+  // TEMP: tn-card's inner element is height:100% and stretches to fill the routed
+  // page height, leaving empty space below short content. Size it to content.
+  ::ng-deep .tn-card {
+    height: auto;
+  }
 }
 
 .dataset-path {
@@ -21,24 +42,63 @@
 }
 
 .form {
+  // Let each section own its horizontal padding so the title, section content and footer
+  // buttons all share one left edge.
   display: block;
-  padding: 5px 10px;
 }
 
 .owner-and-access {
   border-bottom: 1px solid var(--lines);
+  column-gap: 64px;
   display: flex;
+  padding: 16px 24px 24px;
 
   .owner-fields,
   .access-fields {
     flex: 1;
-    margin: 4px 0 0 15px;
   }
 }
 
 .advanced-fields {
   border-bottom: 1px solid var(--lines);
-  padding-left: 15px;
+  padding: 16px 24px 20px;
+}
+
+.access-mode {
+  border-collapse: collapse;
+
+  &__header {
+    font-size: x-small;
+    font-weight: 500;
+    padding: 5px 10px;
+  }
+
+  &__cell {
+    padding: 5px 10px;
+    text-align: center;
+  }
+
+  &__checkbox {
+    // The checkbox host is inline and wraps a block-level control, so `text-align: center`
+    // on the cell can't centre it. Centre it here so it lines up under its column header.
+    display: flex;
+    justify-content: center;
+
+    // TEMP: pierce tn-checkbox's private __text to visually hide the per-cell label
+    // (kept in the DOM as the checkbox's accessible name). Remove once
+    // @truenas/ui-components ships a label-hidden / aria-label-only checkbox mode.
+    ::ng-deep .tn-checkbox__text {
+      border: 0;
+      clip: rect(0 0 0 0);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
+    }
+  }
 }
 
 .set-acl-button {
@@ -47,7 +107,7 @@
 
 .form-actions {
   display: flex;
-  padding: 25px;
+  padding: 24px;
 
   tn-button {
     margin-right: 10px;

@@ -1,5 +1,13 @@
 .checkboxes {
+  margin-bottom: 16px;
   padding: 0 5px;
+
+  // Space the recursive checkbox from the traverse checkbox that appears below it. (The
+  // parent's `.recursive-checkbox` rule can't reach here — it's a separate component.)
+  .recursive-checkbox {
+    display: block;
+    margin-bottom: 8px;
+  }
 }
 
 .save-button {
@@ -7,7 +15,9 @@
   margin-bottom: 10px;
   width: 100%;
 
-  // TEMP: until @truenas/ui-components ships a full-width input on tn-button.
+  // TEMP: tn-button's inner button is fit-content; force full width so the save
+  // action matches the sibling control buttons. Remove once tn-button ships a
+  // full-width input.
   ::ng-deep button {
     width: 100%;
   }
