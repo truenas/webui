@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, effect, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MarketingMessage, getMarketingMessages } from 'app/constants/marketing-messages.constant';
 import { hashMessage } from 'app/helpers/hash-message';
@@ -21,9 +21,22 @@ const lastMessageHashKey = 'marketingMessageLastHash';
 export class UseEnterpriseMarketingLinkComponent {
   private tnConnect = inject(TruenasConnectService);
 
+  // Snapshot the rotation state once at construction so message selection stays a
+  // pure computed. The pool can still change when TrueNAS Connect config resolves
+  // asynchronously, but the "which slot to show today" decision is made against a
+  // stable pointer rather than being re-read (and advanced) on every recompute.
+  private readonly today = new Date().toDateString();
+  private readonly isNewDay = localStorage.getItem(lastShownDateKey) !== this.today;
+  private readonly storedMessageHash = localStorage.getItem(lastMessageHashKey);
+
   private messages = computed<MarketingMessage[]>(() => getMarketingMessages(this.tnConnect.config()));
 
-  protected currentMessage = computed<MarketingMessage>(() => this.getTodaysMessage(this.messages()));
+  protected currentMessage = computed<MarketingMessage>(() => {
+    const messages = this.messages();
+    return this.isNewDay
+      ? this.getNextMessage(messages, this.storedMessageHash)
+      : this.getCurrentMessage(messages, this.storedMessageHash);
+  });
 
   protected currentMessageHref = computed<string | null>(() => {
     const message = this.currentMessage();
@@ -33,21 +46,16 @@ export class UseEnterpriseMarketingLinkComponent {
     return `${message.href}?m=${hashMessage(message.text)}`;
   });
 
-  private getTodaysMessage(messages: MarketingMessage[]): MarketingMessage {
-    const today = new Date().toDateString();
-    const lastShownDate = localStorage.getItem(lastShownDateKey);
-    const lastMessageHash = localStorage.getItem(lastMessageHashKey);
-
-    if (lastShownDate !== today) {
-      const nextMessage = this.getNextMessage(messages, lastMessageHash);
-
-      localStorage.setItem(lastShownDateKey, today);
-      localStorage.setItem(lastMessageHashKey, hashMessage(nextMessage.text));
-
-      return nextMessage;
+  constructor() {
+    // Persist the day's selection as an explicit side-effect, keeping the computed
+    // pure. Re-runs if the resolved config swaps the pool after first render.
+    if (this.isNewDay) {
+      effect(() => {
+        const message = this.currentMessage();
+        localStorage.setItem(lastShownDateKey, this.today);
+        localStorage.setItem(lastMessageHashKey, hashMessage(message.text));
+      });
     }
-
-    return this.getCurrentMessage(messages, lastMessageHash);
   }
 
   private getNextMessage(messages: MarketingMessage[], lastMessageHash: string | null): MarketingMessage {
