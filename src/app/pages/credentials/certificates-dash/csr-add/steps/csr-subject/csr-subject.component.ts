@@ -4,7 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
   TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { pickBy } from 'lodash-es';
@@ -26,6 +26,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     ReactiveFormsModule,
     TnSelectComponent,
     TnFormFieldComponent,
+    TnFormSectionComponent,
     TnInputComponent,
     IxChipsComponent,
     FormActionsComponent,

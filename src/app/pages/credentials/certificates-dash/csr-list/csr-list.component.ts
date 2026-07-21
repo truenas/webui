@@ -31,7 +31,6 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   TableActionsCellComponent,
@@ -72,7 +71,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class CertificateSigningRequestsListComponent {
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
@@ -157,8 +155,11 @@ export class CertificateSigningRequestsListComponent {
   }
 
   protected doAdd(): void {
-    this.slideIn.open(CsrAddComponent)
-      .onSuccess(() => this.csrsUpdated.emit(), this.destroyRef);
+    // Footerless: the CSR wizard owns its own Next/Back/Save inside the stepper steps.
+    this.formPanel.open(CsrAddComponent, {
+      title: this.translate.instant('Add CSR'),
+      footerless: true,
+    }).onSuccess(() => this.csrsUpdated.emit(), this.destroyRef);
   }
 
   private doEdit(certificate: Certificate): void {

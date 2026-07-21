@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnFormFieldComponent, TnInputComponent,
+  InputType, TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
   TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { map, startWith } from 'rxjs/operators';
@@ -21,6 +21,7 @@ import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates
   imports: [
     ReactiveFormsModule,
     TnFormFieldComponent,
+    TnFormSectionComponent,
     TnInputComponent,
     FormActionsComponent,
     TnButtonComponent,

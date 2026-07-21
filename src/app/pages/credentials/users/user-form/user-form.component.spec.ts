@@ -23,7 +23,6 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
@@ -185,7 +184,7 @@ describe('UserFormComponent', () => {
     });
 
     it('does not render an in-form header (the panel host renders its own)', () => {
-      expect(spectator.query(ModalHeaderComponent)).toBeNull();
+      expect(spectator.query('ix-modal-header')).toBeNull();
     });
 
     it('does not render an in-form Save action (the panel footer owns it)', () => {
