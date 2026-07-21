@@ -10,7 +10,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
-  DatasetCaseSensitivity, DatasetRecordSize,
+  DatasetCaseSensitivity, DatasetPreset, DatasetRecordSize,
   DatasetSnapdev,
   DatasetSnapdir,
   DatasetSync,
@@ -428,6 +428,30 @@ describe('OtherOptionsSectionComponent', () => {
         Snapdev: 'Inherit (Hidden)',
         'Snapshot Directory': 'Inherit (Hidden)',
       });
+    });
+
+    it('preserves an explicit Case Sensitivity choice when the dataset preset is changed', async () => {
+      spectator.setInput({ parent: parentDataset });
+      spectator.setInput({ datasetPreset: DatasetPreset.Apps });
+
+      await (await getSelect('casesensitivity')).selectOption('Insensitive');
+
+      // Changing the preset must not silently discard the user's explicit choice.
+      spectator.setInput({ datasetPreset: DatasetPreset.Multiprotocol });
+
+      expect(await getSelectValue('casesensitivity')).toBe('Insensitive');
+      expect(spectator.component.getPayload().casesensitivity).toBe(DatasetCaseSensitivity.Insensitive);
+    });
+
+    it('applies the preset Case Sensitivity default when the user has not changed it', async () => {
+      spectator.setInput({ parent: parentDataset });
+
+      // SMB forces case-insensitive; switching to a non-SMB preset restores the Sensitive default.
+      spectator.setInput({ datasetPreset: DatasetPreset.Smb });
+      expect(await getSelectValue('casesensitivity')).toBe('Insensitive');
+
+      spectator.setInput({ datasetPreset: DatasetPreset.Apps });
+      expect(await getSelectValue('casesensitivity')).toBe('Sensitive');
     });
 
     it('shows warning if user selects "Sync" as Disabled', async () => {
