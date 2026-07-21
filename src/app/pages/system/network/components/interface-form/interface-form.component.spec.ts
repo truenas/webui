@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { Store, StoreModule } from '@ngrx/store';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  TnCheckboxHarness, TnDialog, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -29,8 +29,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -99,12 +97,6 @@ describe('InterfaceFormComponent', () => {
     ipv6_auto: false,
     mtu: 1500,
   } as NetworkInterface;
-
-  const slideInRef: SlideInRef<NetworkInterface | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const createComponent = createComponentFactory({
     component: InterfaceFormComponent,
@@ -185,9 +177,7 @@ describe('InterfaceFormComponent', () => {
         getIsHaEnabled: jest.fn(() => of(false)),
       }),
       mockProvider(DialogService),
-      mockProvider(SlideIn),
       mockProvider(SystemGeneralService),
-      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
       mockProvider(LoaderService, {
         withLoader: () => (source$: unknown) => source$,
@@ -200,21 +190,20 @@ describe('InterfaceFormComponent', () => {
   });
 
   describe('creation', () => {
+    let closedSpy: jest.Mock;
+
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              interfaces: [{
-                ...existingInterface,
-                name: 'vlan1',
-                type: NetworkInterfaceType.Vlan,
-              } as NetworkInterface],
-            }),
-          }),
-        ],
+        props: {
+          interfacesList: [{
+            ...existingInterface,
+            name: 'vlan1',
+            type: NetworkInterfaceType.Vlan,
+          } as NetworkInterface],
+        },
       });
+      closedSpy = jest.fn();
+      spectator.component.closed.subscribe(closedSpy);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
@@ -247,8 +236,7 @@ describe('InterfaceFormComponent', () => {
       await ipAddress.setValue('10.0.1.2/24');
       await setCheckbox('Enable Learning', true);
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [{
         type: NetworkInterfaceType.Bridge,
@@ -265,7 +253,7 @@ describe('InterfaceFormComponent', () => {
         }],
         mtu: 1500,
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
 
       expect(dispatchSpy).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
@@ -295,8 +283,7 @@ describe('InterfaceFormComponent', () => {
       await setSelectValue('lacpdu_rate', 'SLOW');
       await setSelectValue('lag_ports', 'enp0s3');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [{
         type: NetworkInterfaceType.LinkAggregation,
@@ -314,7 +301,7 @@ describe('InterfaceFormComponent', () => {
 
       expect(dispatchSpy).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
       expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
@@ -333,11 +320,12 @@ describe('InterfaceFormComponent', () => {
       await setSelectValue('xmit_hash_policy', 'LAYER2+3');
       await setSelectValue('lacpdu_rate', 'SLOW');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      await spectator.fixture.whenStable();
+      expect(spectator.component.canSubmit()).toBe(false);
 
       await setSelectValue('lag_ports', 'enp0s3');
-      expect(await saveButton.isDisabled()).toBe(false);
+      await spectator.fixture.whenStable();
+      expect(spectator.component.canSubmit()).toBe(true);
     });
 
     it('saves a new VLAN interface when form is submitted for a VLAN', async () => {
@@ -351,8 +339,7 @@ describe('InterfaceFormComponent', () => {
       await setInputValue('vlan_tag', 2);
       await setSelectValue('vlan_pcp', 'Excellent effort');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [{
         type: NetworkInterfaceType.Vlan,
@@ -404,25 +391,26 @@ describe('InterfaceFormComponent', () => {
 
       spectator.component.ngOnInit();
       spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
 
       // Reset to HA disabled
       jest.spyOn(networkService, 'getIsHaEnabled').mockReturnValue(of(false));
       spectator.component.ngOnInit();
       spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
     });
   });
 
   describe('edit network interface', () => {
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ interface: existingInterface }) }),
-        ],
+        props: {
+          editInterface: existingInterface,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
@@ -448,18 +436,13 @@ describe('InterfaceFormComponent', () => {
   describe('edit vlan', () => {
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              interface: {
-                ...existingInterface,
-                id: 'vlan1',
-                type: NetworkInterfaceType.Vlan,
-              } as NetworkInterface,
-            }),
-          }),
-        ],
+        props: {
+          editInterface: {
+            ...existingInterface,
+            id: 'vlan1',
+            type: NetworkInterfaceType.Vlan,
+          } as NetworkInterface,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
@@ -477,19 +460,14 @@ describe('InterfaceFormComponent', () => {
   describe('edit bridge', () => {
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              interface: {
-                ...existingInterface,
-                id: 'br7',
-                enable_learning: false,
-                type: NetworkInterfaceType.Bridge,
-              },
-            }),
-          }),
-        ],
+        props: {
+          editInterface: {
+            ...existingInterface,
+            id: 'br7',
+            enable_learning: false,
+            type: NetworkInterfaceType.Bridge,
+          },
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
@@ -509,18 +487,13 @@ describe('InterfaceFormComponent', () => {
   describe('edit link aggregation', () => {
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              interface: {
-                ...existingInterface,
-                id: 'bond9',
-                type: NetworkInterfaceType.LinkAggregation,
-              },
-            }),
-          }),
-        ],
+        props: {
+          editInterface: {
+            ...existingInterface,
+            id: 'bond9',
+            type: NetworkInterfaceType.LinkAggregation,
+          },
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
@@ -572,8 +545,7 @@ describe('InterfaceFormComponent', () => {
       await setCheckbox('Critical', true);
       await setSelectValue('failover_group', '1');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [
         expect.objectContaining({
@@ -608,8 +580,7 @@ describe('InterfaceFormComponent', () => {
       await setInputValue('failover_address', '192.168.1.2');
       await setInputValue('failover_virtual_address', '192.168.1.3');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [
         expect.objectContaining({
@@ -638,17 +609,12 @@ describe('InterfaceFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         detectChanges: false,
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              interface: {
-                ...existingInterface,
-                fec_mode: 'auto',
-              } as NetworkInterface,
-            }),
-          }),
-        ],
+        props: {
+          editInterface: {
+            ...existingInterface,
+            fec_mode: 'auto',
+          } as NetworkInterface,
+        },
       });
 
       const store$ = spectator.inject(Store);
@@ -681,10 +647,10 @@ describe('InterfaceFormComponent', () => {
       await setSelectValue('fec_mode', 'rs');
 
       spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(false);
-      await saveButton.click();
+      expect(spectator.component.canSubmit()).toBe(true);
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('interface.update', [
         'enp0s6',
@@ -698,14 +664,9 @@ describe('InterfaceFormComponent', () => {
   describe('fec mode hidden on non-enterprise', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              interface: existingInterface,
-            }),
-          }),
-        ],
+        props: {
+          editInterface: existingInterface,
+        },
       });
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -723,14 +684,9 @@ describe('InterfaceFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         detectChanges: false,
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              interface: existingInterface,
-            }),
-          }),
-        ],
+        props: {
+          editInterface: existingInterface,
+        },
       });
 
       const store$ = spectator.inject(Store);

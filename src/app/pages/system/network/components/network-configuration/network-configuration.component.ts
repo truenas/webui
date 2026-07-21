@@ -5,11 +5,10 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnRadioComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { arrayToOptions } from 'app/helpers/operators/options.operators';
@@ -20,7 +19,6 @@ import {
 } from 'app/interfaces/network-configuration.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4Validator, ipv6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -49,7 +47,6 @@ export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -58,8 +55,6 @@ export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
     TnSelectComponent,
     TnChipInputComponent,
     TnRadioComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -74,7 +69,7 @@ export class NetworkConfigurationComponent extends SidePanelForm implements OnIn
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
 
-  protected readonly requiredRoles = [Role.NetworkGeneralWrite];
+  readonly requiredRoles = [Role.NetworkGeneralWrite];
 
   protected isFormLoading = signal(false);
 
