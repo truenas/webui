@@ -86,6 +86,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
   fileNodeProvider: TreeNodeProvider;
   snapshotNodeProvider: TreeNodeProvider;
+  subFolderNodeProvider: TreeNodeProvider;
 
   readonly includeExcludeOptions$ = of(mapToOptions(snapshotIncludeExcludeOptions, this.translate));
 
@@ -176,7 +177,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
       });
   }
 
-  private getSnapshotNodeProvider(): TreeNodeProvider {
+  private getSnapshotNodeProvider(directoriesOnly = false): TreeNodeProvider {
     return (node: TreeNode<ExplorerNodeData>) => {
       return this.api.call(
         'cloud_backup.list_snapshot_directory',
@@ -191,6 +192,10 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
             }
 
             const isDirectory = file.type === CloudBackupSnapshotDirectoryFileType.Dir;
+
+            if (directoriesOnly && !isDirectory) {
+              return;
+            }
 
             nodes.push({
               path: file.path,
@@ -263,6 +268,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
   private setSnapshotNodeProvider(): void {
     this.snapshotNodeProvider = this.getSnapshotNodeProvider();
+    this.subFolderNodeProvider = this.getSnapshotNodeProvider(true);
   }
 
   private disableHiddenFields(): void {
