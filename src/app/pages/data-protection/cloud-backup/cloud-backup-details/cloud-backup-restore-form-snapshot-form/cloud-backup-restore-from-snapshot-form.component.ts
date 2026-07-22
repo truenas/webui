@@ -186,14 +186,18 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
           const nodes: ExplorerNodeData[] = [];
 
           listing.forEach((file) => {
-            if (file.type === CloudBackupSnapshotDirectoryFileType.Dir && file.path !== node.data.path) {
-              nodes.push({
-                path: file.path,
-                name: file.name,
-                type: ExplorerNodeType.Directory,
-                hasChildren: true,
-              });
+            if (file.path === node.data.path) {
+              return;
             }
+
+            const isDirectory = file.type === CloudBackupSnapshotDirectoryFileType.Dir;
+
+            nodes.push({
+              path: file.path,
+              name: file.name,
+              type: isDirectory ? ExplorerNodeType.Directory : ExplorerNodeType.File,
+              hasChildren: isDirectory,
+            });
           });
 
           return nodes;
