@@ -142,6 +142,31 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       ]);
     });
 
+    it('forwards a selected file path as-is through include params', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Target: '/mnt/bulldozer',
+        'Include/Exclude': 'Include from subfolder',
+        Subfolder: '/mnt/dozer',
+        'Included Paths': '/mnt/dozer/file.txt',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+        1,
+        1,
+        '/mnt/dozer',
+        '/mnt/bulldozer',
+        {
+          include: [
+            '/file.txt',
+          ],
+        },
+      ]);
+    });
+
     it('submits backup restore from snapshot with `Include from subfolder` matches paths', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
@@ -204,6 +229,15 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       expect(nodes).toEqual([
         expect.objectContaining({ path: '/sub', type: ExplorerNodeType.Directory, hasChildren: true }),
         expect.objectContaining({ path: '/file.txt', type: ExplorerNodeType.File, hasChildren: false }),
+      ]);
+    });
+
+    it('lists only directories for the subfolder selector', async () => {
+      const node = { data: { path: '/' } } as TreeNode<ExplorerNodeData>;
+      const nodes = await firstValueFrom(spectator.component.subFolderNodeProvider(node));
+
+      expect(nodes).toEqual([
+        expect.objectContaining({ path: '/sub', type: ExplorerNodeType.Directory, hasChildren: true }),
       ]);
     });
   });

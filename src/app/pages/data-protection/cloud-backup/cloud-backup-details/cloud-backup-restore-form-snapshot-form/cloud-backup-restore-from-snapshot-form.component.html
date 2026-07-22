@@ -45,7 +45,7 @@
             formControlName="subFolder"
             [required]="true"
             [label]="'Subfolder' | translate"
-            [nodeProvider]="snapshotNodeProvider"
+            [nodeProvider]="subFolderNodeProvider"
             [rootNodes]="data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
             [tooltip]="helptext.tooltips.subFolder | translate"
           ></ix-explorer>
