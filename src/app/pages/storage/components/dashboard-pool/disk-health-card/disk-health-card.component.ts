@@ -56,9 +56,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   get isTemperatureDataAvailable(): boolean {
-    return Boolean(
-      this.diskState.highestTemperature && this.diskState.lowestTemperature && this.diskState.averageTemperature,
-    );
+    return this.isHighestTempReady || this.isLowestTempReady || this.isAverageTempReady;
   }
 
   diskState: DiskState = {
@@ -116,22 +114,26 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
         return;
       }
 
-      if (this.diskState.highestTemperature === null) {
-        this.diskState.highestTemperature = disk.tempAggregates.max;
-      } else {
-        this.diskState.highestTemperature = Math.max(this.diskState.highestTemperature, disk.tempAggregates.max);
+      const { min, max, avg } = disk.tempAggregates;
+
+      if (max != null) {
+        this.diskState.highestTemperature = this.diskState.highestTemperature === null
+          ? max
+          : Math.max(this.diskState.highestTemperature, max);
       }
 
-      if (this.diskState.lowestTemperature === null) {
-        this.diskState.lowestTemperature = disk.tempAggregates.min;
-      } else {
-        this.diskState.lowestTemperature = Math.min(this.diskState.lowestTemperature, disk.tempAggregates.min);
+      if (min != null) {
+        this.diskState.lowestTemperature = this.diskState.lowestTemperature === null
+          ? min
+          : Math.min(this.diskState.lowestTemperature, min);
       }
 
-      avgSum += disk.tempAggregates.avg;
-      avgCounter++;
+      if (avg != null) {
+        avgSum += avg;
+        avgCounter++;
+      }
     });
 
-    this.diskState.averageTemperature = avgSum / avgCounter;
+    this.diskState.averageTemperature = avgCounter ? avgSum / avgCounter : null;
   }
 }
