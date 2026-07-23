@@ -1,20 +1,16 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { map, take } from 'rxjs/operators';
-import { ProductType } from 'app/enums/product-type.enum';
-import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
-import { AppState } from 'app/store';
-import { selectProductType } from 'app/store/system-info/system-info.selectors';
+import { LicenseService } from 'app/services/license.service';
 
-// WebShare (a TrueNAS Connect feature) is not offered on Enterprise systems.
+// `shouldShowWebshare$` only emits once the product type is known, so the guard
+// never allows activation on a transient "not Enterprise" while it's still loading.
 export const webShareGuard: CanActivateFn = () => {
-  const store$ = inject<Store<AppState>>(Store);
+  const license = inject(LicenseService);
   const router = inject(Router);
 
-  return store$.pipe(
-    selectNotNull(selectProductType),
+  return license.shouldShowWebshare$.pipe(
     take(1),
-    map((productType) => (productType === ProductType.Enterprise ? router.createUrlTree(['/sharing']) : true)),
+    map((shouldShowWebshare) => shouldShowWebshare || router.createUrlTree(['/sharing'])),
   );
 };

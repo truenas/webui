@@ -2,21 +2,18 @@ import { TestBed } from '@angular/core/testing';
 import {
   ActivatedRouteSnapshot, provideRouter, RouterStateSnapshot, UrlTree,
 } from '@angular/router';
-import { provideMockStore } from '@ngrx/store/testing';
-import { firstValueFrom, Observable } from 'rxjs';
-import { ProductType } from 'app/enums/product-type.enum';
+import { mockProvider } from '@ngneat/spectator/jest';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { webShareGuard } from 'app/pages/sharing/webshare/webshare.guard';
-import { selectProductType } from 'app/store/system-info/system-info.selectors';
+import { LicenseService } from 'app/services/license.service';
 
 describe('webShareGuard', () => {
-  function setup(productType: ProductType): Promise<boolean | UrlTree> {
+  function setup(shouldShowWebshare: boolean): Promise<boolean | UrlTree> {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        provideMockStore({
-          selectors: [
-            { selector: selectProductType, value: productType },
-          ],
+        mockProvider(LicenseService, {
+          shouldShowWebshare$: of(shouldShowWebshare),
         }),
       ],
     });
@@ -27,12 +24,12 @@ describe('webShareGuard', () => {
     return firstValueFrom(result$ as Observable<boolean | UrlTree>);
   }
 
-  it('allows activation on non-enterprise systems', async () => {
-    await expect(setup(ProductType.CommunityEdition)).resolves.toBe(true);
+  it('allows activation when WebShare should be shown', async () => {
+    await expect(setup(true)).resolves.toBe(true);
   });
 
-  it('redirects to the shares dashboard on enterprise systems', async () => {
-    const result = await setup(ProductType.Enterprise);
+  it('redirects to the shares dashboard when WebShare should be hidden', async () => {
+    const result = await setup(false);
 
     expect(result).toBeInstanceOf(UrlTree);
     expect(result.toString()).toBe('/sharing');
