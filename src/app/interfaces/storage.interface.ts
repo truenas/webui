@@ -123,7 +123,7 @@ export interface ZfsProperties {
 }
 
 export interface TemperatureAgg {
-  min: number;
-  max: number;
-  avg: number;
+  min: number | null;
+  max: number | null;
+  avg: number | null;
 }

@@ -95,5 +95,25 @@ describe('DiskHealthCardComponent', () => {
       const detailsItem = spectator.query(byText('Average Disk Temperature:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('30 °C');
     });
+
+    it('ignores devices without SMART temperature values when aggregating', () => {
+      spectator.setInput('disks', [
+        ...disks,
+        {
+          ...disks[0],
+          devname: 'pmem0',
+          name: 'pmem0',
+          tempAggregates: { min: null, max: null, avg: null },
+        } as StorageDashboardDisk,
+      ]);
+
+      expect(spectator.query(byText('Highest Temperature:'))!.parentElement!.querySelector('.value'))
+        .toHaveText('50 °C');
+      expect(spectator.query(byText('Lowest Temperature:'))!.parentElement!.querySelector('.value'))
+        .toHaveText('10 °C');
+      expect(spectator.query(byText('Average Disk Temperature:'))!.parentElement!.querySelector('.value'))
+        .toHaveText('30 °C');
+      expect(spectator.query(byText('No disk temperature is available.'))).toBeNull();
+    });
   });
 });
