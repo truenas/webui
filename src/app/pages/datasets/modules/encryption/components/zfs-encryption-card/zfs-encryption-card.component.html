@@ -37,54 +37,56 @@
   }
 
   <ng-template tnCardFooterActions>
-    @if (canEdit()) {
-      <tn-button
-        variant="outline"
-        [label]="'Edit' | translate"
-        [testId]="'edit'"
-        (onClick)="onEditPressed()"
-      ></tn-button>
-    }
-    @if (canUnlock()) {
-      <tn-button
-        *ixRequiresRoles="[Role.DatasetWrite]"
-        variant="outline"
-        [label]="'Unlock' | translate"
-        [testId]="'unlock'"
-        [routerLink]="['/datasets', dataset().id, 'unlock']"
-      ></tn-button>
-    }
-    @if (dataset().encrypted && isEncryptionRoot() && !dataset().locked) {
-      <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
-        @if (canExportKey() && isRoot()) {
-          <tn-button
-            variant="outline"
-            [label]="'Export All Keys' | translate"
-            [testId]="'export-all-keys'"
-            (onClick)="onExportAllKeys()"
-          ></tn-button>
-        }
-      </ng-container>
-      <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
-        @if (canExportKey()) {
-          <tn-button
-            variant="outline"
-            [label]="'Export Key' | translate"
-            [testId]="'export-key'"
-            (onClick)="onExportKey()"
-          ></tn-button>
-        }
-      </ng-container>
-      <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
+    <div class="footer-actions">
+      @if (canEdit()) {
         <tn-button
           variant="outline"
-          [label]="'Lock' | translate"
-          [testId]="'lock'"
-          [tnTooltip]="!hasPassphrase() ? ('You can only lock a dataset if it was encrypted with a passphrase' | translate) : ''"
-          [disabled]="!hasPassphrase()"
-          (onClick)="onLock()"
+          [label]="'Edit' | translate"
+          [testId]="'edit'"
+          (onClick)="onEditPressed()"
         ></tn-button>
-      </ng-container>
-    }
+      }
+      @if (canUnlock()) {
+        <tn-button
+          *ixRequiresRoles="[Role.DatasetWrite]"
+          variant="outline"
+          [label]="'Unlock' | translate"
+          [testId]="'unlock'"
+          [routerLink]="['/datasets', dataset().id, 'unlock']"
+        ></tn-button>
+      }
+      @if (dataset().encrypted && isEncryptionRoot() && !dataset().locked) {
+        <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
+          @if (canExportKey() && isRoot()) {
+            <tn-button
+              variant="outline"
+              [label]="'Export All Keys' | translate"
+              [testId]="'export-all-keys'"
+              (onClick)="onExportAllKeys()"
+            ></tn-button>
+          }
+        </ng-container>
+        <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
+          @if (canExportKey()) {
+            <tn-button
+              variant="outline"
+              [label]="'Export Key' | translate"
+              [testId]="'export-key'"
+              (onClick)="onExportKey()"
+            ></tn-button>
+          }
+        </ng-container>
+        <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
+          <tn-button
+            variant="outline"
+            [label]="'Lock' | translate"
+            [testId]="'lock'"
+            [tnTooltip]="!hasPassphrase() ? ('You can only lock a dataset if it was encrypted with a passphrase' | translate) : ''"
+            [disabled]="!hasPassphrase()"
+            (onClick)="onLock()"
+          ></tn-button>
+        </ng-container>
+      }
+    </div>
   </ng-template>
 </tn-card>
