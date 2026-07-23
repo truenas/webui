@@ -67,6 +67,7 @@ describe('ReviewWizardStepComponent', () => {
     },
   } as PoolManagerState;
   const state$ = new BehaviorSubject(state);
+  const forceTopology$ = new BehaviorSubject(false);
 
   const createComponent = createComponentFactory({
     component: ReviewWizardStepComponent,
@@ -85,6 +86,7 @@ describe('ReviewWizardStepComponent', () => {
       }),
       mockProvider(PoolManagerStore, {
         state$,
+        forceTopology$,
         totalUsableCapacity$: of(2 * GiB),
       }),
       mockProvider(TnDialog),
@@ -248,6 +250,7 @@ describe('ReviewWizardStepComponent', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             state$,
+            forceTopology$,
             totalUsableCapacity$: of(2 * GiB),
           }),
           mockProvider(PoolManagerValidationService, {
@@ -291,6 +294,10 @@ describe('ReviewWizardStepComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
+    afterEach(() => {
+      forceTopology$.next(false);
+    });
+
     it('shows the Force checkbox on non-Enterprise systems', async () => {
       const checkbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Force' }));
       expect(checkbox).not.toBeNull();
@@ -301,6 +308,17 @@ describe('ReviewWizardStepComponent', () => {
       await checkbox.check();
 
       expect(spectator.inject(PoolManagerStore).setForceTopology).toHaveBeenLastCalledWith(true);
+    });
+
+    it('unchecks the Force checkbox when the store resets forceTopology (e.g. Start Over)', async () => {
+      forceTopology$.next(true);
+      spectator.detectChanges();
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force' }));
+      expect(await checkbox.isChecked()).toBe(true);
+
+      forceTopology$.next(false);
+      spectator.detectChanges();
+      expect(await checkbox.isChecked()).toBe(false);
     });
 
     it('hides the Force checkbox on Enterprise systems', async () => {

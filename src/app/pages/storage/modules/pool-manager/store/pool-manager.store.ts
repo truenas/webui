@@ -76,7 +76,7 @@ export interface PoolManagerState {
   enclosureSettings: PoolManagerEnclosureSettings;
   topology: PoolManagerTopology;
   categorySequence: VDevType[];
-  // Community Edition only: forces the pool through topology policy checks. Never set on Enterprise.
+  // Community Edition only: bypasses topology policy checks. Never set on Enterprise.
   forceTopology: boolean;
 }
 

@@ -125,6 +125,14 @@ export class ReviewWizardStepComponent implements OnInit {
     this.forceTopologyControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((forceTopology) => {
       this.store.setForceTopology(forceTopology);
     });
+
+    // Keep the checkbox in sync with the store so a reset/Start Over (which sets
+    // forceTopology back to false) unchecks it, instead of leaving a checked box
+    // whose value is no longer reflected in the payload. emitEvent: false avoids
+    // looping back through the valueChanges subscription above.
+    this.store.forceTopology$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((forceTopology) => {
+      this.forceTopologyControl.setValue(forceTopology, { emitEvent: false });
+    });
   }
 
   onInspectVdevsPressed(): void {
