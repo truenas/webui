@@ -107,6 +107,8 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   private loadTemperatures(): void {
+    this.diskState.highestTemperature = null;
+    this.diskState.lowestTemperature = null;
     let avgSum = 0;
     let avgCounter = 0;
     this.disks().forEach((disk) => {
