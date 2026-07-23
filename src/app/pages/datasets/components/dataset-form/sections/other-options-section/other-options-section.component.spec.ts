@@ -259,6 +259,14 @@ describe('OtherOptionsSectionComponent', () => {
     form = await loader.getHarness(IxFieldsetHarness);
   });
 
+  function getSelect(formControlName: string): Promise<IxSelectHarness> {
+    return loader.getHarness(IxSelectHarness.with({ selector: `[formControlName="${formControlName}"]` }));
+  }
+
+  async function getSelectValue(formControlName: string): Promise<string> {
+    return (await getSelect(formControlName)).getValue() as Promise<string>;
+  }
+
   describe('basic options', () => {
     it('hides section in Basic mode', async () => {
       spectator.setInput('advancedMode', false);
@@ -434,7 +442,7 @@ describe('OtherOptionsSectionComponent', () => {
       spectator.setInput({ parent: parentDataset });
       spectator.setInput({ datasetPreset: DatasetPreset.Apps });
 
-      await (await getSelect('casesensitivity')).selectOption('Insensitive');
+      await (await getSelect('casesensitivity')).setValue('Insensitive');
 
       // Changing the preset must not silently discard the user's explicit choice.
       spectator.setInput({ datasetPreset: DatasetPreset.Multiprotocol });
@@ -458,7 +466,7 @@ describe('OtherOptionsSectionComponent', () => {
       spectator.setInput({ parent: parentDataset });
       spectator.setInput({ datasetPreset: DatasetPreset.Apps });
 
-      await (await getSelect('aclmode')).selectOption('Restricted');
+      await (await getSelect('aclmode')).setValue('Restricted');
 
       // Changing the preset must not silently discard the user's explicit choice.
       spectator.setInput({ datasetPreset: DatasetPreset.Multiprotocol });
