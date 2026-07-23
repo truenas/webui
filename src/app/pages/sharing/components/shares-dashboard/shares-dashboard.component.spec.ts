@@ -61,7 +61,6 @@ describe('SharesDashboardComponent', () => {
     MockInstance(NfsCardComponent, 'configForm', signal(undefined));
     MockInstance(IscsiCardComponent, 'configForm', signal(undefined));
     MockInstance(NvmeOfCardComponent, 'configForm', signal(undefined));
-    MockInstance(WebShareCardComponent, 'configForm', signal(undefined));
   });
 
   it('shows cards for each share type', () => {
