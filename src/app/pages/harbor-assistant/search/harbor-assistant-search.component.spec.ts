@@ -50,6 +50,13 @@ describe('Harbor Assistant search component', () => {
     localStorage.clear();
     api = {
       search: jest.fn(() => of(searchResponse())),
+      conversations: jest.fn(() => of({
+        conversations: [],
+        settings: { history_limit: 10, context_turn_limit: 3 },
+      })),
+      conversation: jest.fn(),
+      deleteConversation: jest.fn(),
+      saveConversationSettings: jest.fn(),
       previewUrl: jest.fn((path: string) => `/api/beacon/knowledge/preview?path=${encodeURIComponent(path)}`),
     };
   });
@@ -73,7 +80,7 @@ describe('Harbor Assistant search component', () => {
     const sourceOptions = spectator.queryAll<HTMLButtonElement>('.source-option:not(.all-sources)');
 
     expect(spectator.query('details.composer-options')).toExist();
-    expect(spectator.query('.composer-options > summary')).toHaveText('2');
+    expect(spectator.query('.composer-options > summary')).toHaveText('Automatic · Smart count');
     expect(sourceOptions[0]).toHaveText('文档资料');
     expect(sourceOptions[0]).toHaveText('/mnt/documents');
     expect(sourceOptions[1]).toHaveText('摄像头录像');
@@ -114,10 +121,11 @@ describe('Harbor Assistant search component', () => {
 
     expect(api.search).toHaveBeenCalledWith(expect.objectContaining({
       query: '谁在倒啤酒',
+      conversation_id: expect.stringMatching(/^conv-/),
       include_videos: true,
       source_scope: 'all',
       source_root_ids: ['documents', 'camera-recordings'],
-      use_retrieval: true,
+      retrieval_mode: 'auto',
     }));
     expect(scrollToSpy).toHaveBeenCalled();
   }));
@@ -143,7 +151,7 @@ describe('Harbor Assistant search component', () => {
     expect(spectator.query('.embedding-action')).toHaveText('Open model settings');
   }));
 
-  it('uses the @ source selector for multi-scope retrieval and ordinary conversation', fakeAsync(() => {
+  it('keeps automatic routing when the @ source scope is cleared', fakeAsync(() => {
     spectator = createSearchComponent();
     const component = spectator.component as unknown as {
       form: { controls: { query: { setValue: (value: string) => void } } };
@@ -153,7 +161,7 @@ describe('Harbor Assistant search component', () => {
     const selectAll = spectator.query<HTMLButtonElement>('.source-option.all-sources');
 
     expect(sourceTrigger).toHaveClass('selected');
-    expect(sourceTrigger).toHaveText('2');
+    expect(sourceTrigger).toHaveText('Automatic · Smart count');
     expect(selectAll?.getAttribute('aria-checked')).toBe('true');
     spectator.click(selectAll as HTMLButtonElement);
     spectator.detectChanges();
@@ -166,8 +174,57 @@ describe('Harbor Assistant search component', () => {
 
     expect(api.search).toHaveBeenCalledWith(expect.objectContaining({
       query: '我今天不开心，跟我谈谈话',
-      use_retrieval: false,
+      retrieval_mode: 'auto',
     }));
+  }));
+
+  it('lets the user choose automatic, forced retrieval, or ordinary chat', fakeAsync(() => {
+    spectator = createSearchComponent();
+    const component = spectator.component as unknown as {
+      form: { controls: {
+        query: { setValue: (value: string) => void };
+        retrievalMode: { setValue: (value: 'auto' | 'on' | 'off') => void };
+      } };
+      search: () => void;
+    };
+
+    expect(spectator.query('.retrieval-mode-toggle')).toHaveText('Automatic');
+    expect(spectator.query('.retrieval-mode-toggle')).toHaveText('Force retrieval');
+    expect(spectator.query('.retrieval-mode-toggle')).toHaveText('Ordinary chat');
+
+    component.form.controls.retrievalMode.setValue('on');
+    component.form.controls.query.setValue('查找春天资料');
+    component.search();
+    tick();
+    expect(api.search).toHaveBeenLastCalledWith(expect.objectContaining({ retrieval_mode: 'on' }));
+
+    component.form.controls.retrievalMode.setValue('off');
+    component.form.controls.query.setValue('陪我聊天');
+    component.search();
+    tick();
+    expect(api.search).toHaveBeenLastCalledWith(expect.objectContaining({ retrieval_mode: 'off' }));
+  }));
+
+  it('uses smart result count by default and sends a selected fixed count', fakeAsync(() => {
+    spectator = createSearchComponent();
+    const component = spectator.component as unknown as {
+      form: { controls: {
+        query: { setValue: (value: string) => void };
+        resultLimit: { setValue: (value: string) => void };
+      } };
+      search: () => void;
+    };
+
+    component.form.controls.query.setValue('智能数量');
+    component.search();
+    tick();
+    expect(api.search).toHaveBeenLastCalledWith(expect.not.objectContaining({ limit: expect.anything() }));
+
+    component.form.controls.resultLimit.setValue('20');
+    component.form.controls.query.setValue('固定数量');
+    component.search();
+    tick();
+    expect(api.search).toHaveBeenLastCalledWith(expect.objectContaining({ limit: 20 }));
   }));
 
   it('maps one selected source to its scope and multiple sources to all', fakeAsync(() => {
@@ -185,7 +242,7 @@ describe('Harbor Assistant search component', () => {
 
     expect(api.search).toHaveBeenLastCalledWith(expect.objectContaining({
       source_root_ids: ['documents'],
-      use_retrieval: true,
+      retrieval_mode: 'auto',
     }));
 
     spectator.click(sourceOptions[1]);
@@ -197,7 +254,7 @@ describe('Harbor Assistant search component', () => {
     expect(api.search).toHaveBeenLastCalledWith(expect.objectContaining({
       source_scope: 'all',
       source_root_ids: ['documents', 'camera-recordings'],
-      use_retrieval: true,
+      retrieval_mode: 'auto',
     }));
   }));
 
@@ -247,6 +304,57 @@ describe('Harbor Assistant search component', () => {
     expect(spectator.query('.filter-empty-state')).not.toExist();
     expect(spectator.query('.references-panel')).not.toExist();
   }));
+
+  it('loads a persisted conversation and renders its previous turns', fakeAsync(() => {
+    api.conversations = jest.fn(() => of({
+      conversations: [{
+        conversation_id: 'conv-history', title: '春天的文章', turn_count: 1,
+      }],
+      settings: { history_limit: 10, context_turn_limit: 3 },
+    }));
+    api.conversation = jest.fn(() => of({
+      conversation_id: 'conv-history',
+      turns: [{
+        task_id: 'task-1',
+        query: '有哪些春天的文章',
+        answer: '找到《spring.md》。 [1]',
+        response: {
+          status: 'completed',
+          degraded: false,
+          query: '有哪些春天的文章',
+          answer: '找到《spring.md》。 [1]',
+          citations: [],
+          search: searchResponse({ query: '有哪些春天的文章', answer: undefined }),
+          warnings: [],
+          query_understanding: { intent: 'search', needs_retrieval: true },
+        },
+      }],
+    }));
+    spectator = createSearchComponent();
+    spectator.click(spectator.query<HTMLButtonElement>('.conversation-select') as HTMLButtonElement);
+    tick();
+    spectator.detectChanges();
+
+    expect(api.conversation).toHaveBeenCalledWith('conv-history');
+    expect(spectator.query('.user-bubble')).toHaveText('有哪些春天的文章');
+    expect(spectator.query('.answer-markdown')).toHaveText('spring.md');
+  }));
+
+  it('keeps new chat, history, and settings in the left conversation column', () => {
+    spectator = createSearchComponent();
+
+    const sidebar = spectator.query<HTMLElement>('.conversation-sidebar') as HTMLElement;
+    const newConversation = sidebar.querySelector('.new-conversation-button');
+    const history = sidebar.querySelector('.conversation-list');
+    const settings = sidebar.querySelector('.conversation-settings');
+
+    expect(newConversation).toBeTruthy();
+    expect(history).toBeTruthy();
+    expect(settings).toBeTruthy();
+    expect(newConversation?.compareDocumentPosition(history as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(history?.compareDocumentPosition(settings as Node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(settings).toHaveText('10 / 3');
+  });
 
   it('shows a user-facing filter hint instead of debug evidence when the current type has no results', fakeAsync(() => {
     spectator = createSearchComponent();

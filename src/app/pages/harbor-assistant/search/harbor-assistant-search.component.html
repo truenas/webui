@@ -1,20 +1,73 @@
 <section class="harbor-assistant-chat-page">
-  <div class="chat-shell">
-    @if (chatTurns().length > 0) {
-      <header class="chat-actions">
-        <button mat-stroked-button type="button" (click)="clearConversation()">
-          {{ 'New conversation' | translate }}
-        </button>
-      </header>
-    }
+  <aside class="conversation-sidebar" aria-label="Conversation history">
+    <div class="conversation-sidebar-header">
+      <strong>{{ 'Harbor Assistant' | translate }}</strong>
+      <button mat-stroked-button class="new-conversation-button" type="button" (click)="clearConversation()">
+        <span class="new-conversation-icon" aria-hidden="true">＋</span>
+        {{ 'New conversation' | translate }}
+      </button>
+    </div>
 
+    <div class="conversation-list">
+      <div class="conversation-list-heading">{{ 'Recent conversations' | translate }}</div>
+      @if (conversationHistoryLoading()) {
+        <span class="conversation-list-empty">{{ 'Loading' | translate }}…</span>
+      } @else if (conversations().length === 0) {
+        <span class="conversation-list-empty">{{ 'No conversation history yet.' | translate }}</span>
+      }
+      @for (conversation of conversations(); track conversation.conversation_id) {
+        <div
+          class="conversation-item"
+          [class.active]="conversation.conversation_id === activeConversationId()"
+        >
+          <button type="button" class="conversation-select" (click)="loadConversation(conversation.conversation_id)">
+            <strong>{{ conversation.title }}</strong>
+            <small>{{ conversation.turn_count }} {{ 'messages' | translate }}</small>
+          </button>
+          <button
+            type="button"
+            class="delete-conversation"
+            [attr.aria-label]="'Delete conversation' | translate"
+            (click)="deleteConversation($event, conversation.conversation_id)"
+          >×
+          </button>
+        </div>
+      }
+    </div>
+
+    <details class="conversation-settings">
+      <summary>
+        <span>{{ 'History settings' | translate }}</span>
+        <small>
+          {{ conversationSettingsForm.controls.history_limit.value }} /
+          {{ conversationSettingsForm.controls.context_turn_limit.value }}
+        </small>
+      </summary>
+      <form [formGroup]="conversationSettingsForm" (ngSubmit)="saveConversationSettings()">
+        <p>{{ 'Configure how many chats are saved and how many recent turns are sent as context.' | translate }}</p>
+        <label>
+          <span>{{ 'Saved conversations' | translate }}</span>
+          <input type="number" min="1" max="100" formControlName="history_limit" />
+        </label>
+        <label>
+          <span>{{ 'Context turns' | translate }}</span>
+          <input type="number" min="0" max="20" formControlName="context_turn_limit" />
+        </label>
+        <button mat-stroked-button type="submit" [disabled]="conversationSettingsForm.invalid || conversationSettingsSaving()">
+          {{ 'Save' | translate }}
+        </button>
+      </form>
+    </details>
+  </aside>
+
+  <div class="chat-shell">
     <main #chatScroll class="chat-scroll" data-testid="harbor-assistant-chat-stream">
       <div class="chat-thread">
         @if (chatTurns().length === 0 && !pendingQuery()) {
           <section class="chat-welcome">
             <span class="welcome-mark" aria-hidden="true">H</span>
             <h2>{{ 'How can I help you?' | translate }}</h2>
-            <p>{{ 'Search your local knowledge or turn retrieval off for an ordinary conversation.' | translate }}</p>
+            <p>{{ 'Ask naturally. Harbor Assistant decides when local knowledge retrieval is needed.' | translate }}</p>
 
             <div class="suggested-questions" aria-label="Search question examples">
               @for (suggestion of promptSuggestions; track suggestion.query) {
@@ -28,7 +81,7 @@
             @if (searchHistory().length > 0) {
               <div class="search-history-strip" aria-label="Search history">
                 <div class="history-heading">
-                  <span>{{ 'History' | translate }}</span>
+                  <span>{{ 'Recent searches' | translate }}</span>
                   <button type="button" class="text-button" (click)="clearSearchHistory()">
                     {{ 'Clear' | translate }}
                   </button>
@@ -174,20 +227,30 @@
           <div class="composer-controls">
             <details #searchSettings class="composer-options">
               <summary
-                [class.selected]="useRetrieval()"
+                [class.selected]="selectedRetrievalSources().length > 0"
                 [attr.aria-label]="'Search settings' | translate"
               >
                 <span class="at-mark" aria-hidden="true">&#64;</span>
                 <span>{{ 'Search settings' | translate }}</span>
-                @if (selectedRetrievalSources().length > 0) {
-                  <span class="source-count">{{ selectedRetrievalSources().length }}</span>
-                }
+                <span class="settings-summary">{{ retrievalModeLabel() }} · {{ resultLimitLabel() }}</span>
               </summary>
               <div class="options-popover">
+                <label>{{ 'Conversation mode' | translate }}</label>
+                <mat-button-toggle-group
+                  class="mode-toggle retrieval-mode-toggle"
+                  formControlName="retrievalMode"
+                  aria-label="Conversation mode"
+                >
+                  <mat-button-toggle value="auto">{{ 'Automatic' | translate }}</mat-button-toggle>
+                  <mat-button-toggle value="on">{{ 'Force retrieval' | translate }}</mat-button-toggle>
+                  <mat-button-toggle value="off">{{ 'Ordinary chat' | translate }}</mat-button-toggle>
+                </mat-button-toggle-group>
+
+                <div class="options-divider"></div>
                 <div class="source-popover-heading">
                   <div>
                     <strong>{{ 'Knowledge folders' | translate }}</strong>
-                    <span>{{ 'Select folders configured in Settings. Clear all for ordinary conversation.' | translate }}</span>
+                    <span>{{ 'Select which configured folders the assistant may search when retrieval is needed.' | translate }}</span>
                   </div>
                 </div>
 
@@ -245,6 +308,39 @@
                     <button mat-button type="button" (click)="clearTimeRange()">{{ 'Clear' | translate }}</button>
                   }
                 </div>
+
+                <label>{{ 'Return count' | translate }}</label>
+                <div class="result-limit-row">
+                  <select formControlName="resultLimit" [attr.aria-label]="'Return count' | translate">
+                    <option value="auto">{{ 'Smart count (recommended)' | translate }}</option>
+                    <option value="5">5 {{ 'results' | translate }}</option>
+                    <option value="10">10 {{ 'results' | translate }}</option>
+                    <option value="20">20 {{ 'results' | translate }}</option>
+                    <option value="50">50 {{ 'results' | translate }}</option>
+                    <option value="custom">{{ 'Custom' | translate }}</option>
+                  </select>
+                  @if (form.controls.resultLimit.value === 'custom') {
+                    <input
+                      type="number"
+                      min="1"
+                      max="50"
+                      formControlName="customResultLimit"
+                      [attr.aria-label]="'Custom return count' | translate"
+                    />
+                  }
+                </div>
+
+                <div class="options-divider"></div>
+                <button
+                  mat-stroked-button
+                  type="button"
+                  class="advanced-settings-button"
+                  [disabled]="retrievalSettingsBusy()"
+                  (click)="openAdvancedRetrievalSettings()"
+                >
+                  <span>{{ 'Advanced retrieval strategy' | translate }}</span>
+                  <span aria-hidden="true">›</span>
+                </button>
               </div>
             </details>
           </div>
@@ -255,7 +351,7 @@
         </div>
       </form>
       <p class="composer-hint">
-        {{ (useRetrieval() ? 'Answers use the selected local knowledge scope.' : 'Retrieval is off. This message will be handled as an ordinary conversation.') | translate }}
+        {{ retrievalModeHint() | translate }}
       </p>
     </footer>
   </div>

@@ -99,6 +99,37 @@ describe('Harbor Assistant content API service', () => {
     expect(url).not.toContain(':8787');
   });
 
+  it('loads, deletes, and configures persistent conversation history', async () => {
+    const listPromise = firstValueFrom(spectator.service.conversations());
+    httpMock.expectOne('/api/harbor-beacon/knowledge/conversations').flush({
+      conversations: [{ conversation_id: 'conv-1', title: '春天的文章', turn_count: 2 }],
+      settings: { history_limit: 10, context_turn_limit: 3 },
+    });
+    expect((await listPromise).settings?.context_turn_limit).toBe(3);
+
+    const detailPromise = firstValueFrom(spectator.service.conversation('conv-1'));
+    const detailRequest = httpMock.expectOne('/api/harbor-beacon/knowledge/conversations/conv-1');
+    expect(detailRequest.request.method).toBe('GET');
+    detailRequest.flush({ conversation_id: 'conv-1', turns: [] });
+    expect((await detailPromise).conversation_id).toBe('conv-1');
+
+    const savePromise = firstValueFrom(spectator.service.saveConversationSettings({
+      history_limit: 20,
+      context_turn_limit: 5,
+    }));
+    const saveRequest = httpMock.expectOne('/api/harbor-beacon/knowledge/conversation-settings');
+    expect(saveRequest.request.method).toBe('PATCH');
+    expect(saveRequest.request.body).toEqual({ history_limit: 20, context_turn_limit: 5 });
+    saveRequest.flush({ history_limit: 20, context_turn_limit: 5 });
+    expect((await savePromise).history_limit).toBe(20);
+
+    const deletePromise = firstValueFrom(spectator.service.deleteConversation('conv-1'));
+    const deleteRequest = httpMock.expectOne('/api/harbor-beacon/knowledge/conversations/conv-1');
+    expect(deleteRequest.request.method).toBe('DELETE');
+    deleteRequest.flush({ deleted: true, conversation_id: 'conv-1' });
+    expect((await deletePromise).deleted).toBe(true);
+  });
+
   it('reads camera DVR state from same-origin Harbor Assistant endpoints', async () => {
     const statePromise = firstValueFrom(spectator.service.cameraState());
     httpMock.expectOne('/api/harbor-beacon/state').flush({

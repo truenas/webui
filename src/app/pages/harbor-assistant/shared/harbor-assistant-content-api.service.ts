@@ -3,7 +3,11 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import {
   HarborAssistantCameraLiveSessionResponse,
+  HarborAssistantConversationDetail,
+  HarborAssistantConversationListResponse,
+  HarborAssistantConversationSettings,
   HarborAssistantKnowledgeAnswerResponse,
+  HarborAssistantRetrievalSettings,
   HarborAssistantSearchCameraStateResponse,
   HarborAssistantSearchDvrStatusResponse,
   HarborAssistantSearchDvrTimelineResponse,
@@ -26,12 +30,47 @@ export class HarborAssistantContentApiService {
     return this.http.post<HarborAssistantKnowledgeAnswerResponse>(this.apiUrl('/knowledge/answer'), payload).pipe(
       map((response) => ({
         ...response.search,
+        conversation_id: response.conversation_id ?? payload.conversation_id,
         answer: response.answer,
         answer_degraded: response.degraded,
         answer_degraded_reason: response.degraded_reason,
         answer_intent: response.query_understanding?.intent ?? null,
         warnings: [...new Set([...response.search.warnings, ...response.warnings])],
       })),
+    );
+  }
+
+  conversations(): Observable<HarborAssistantConversationListResponse> {
+    return this.http.get<HarborAssistantConversationListResponse>(this.apiUrl('/knowledge/conversations'));
+  }
+
+  conversation(conversationId: string): Observable<HarborAssistantConversationDetail> {
+    return this.http.get<HarborAssistantConversationDetail>(
+      this.apiUrl(`/knowledge/conversations/${encodeURIComponent(conversationId)}`),
+    );
+  }
+
+  deleteConversation(conversationId: string): Observable<{ deleted: boolean; conversation_id: string }> {
+    return this.http.delete<{ deleted: boolean; conversation_id: string }>(
+      this.apiUrl(`/knowledge/conversations/${encodeURIComponent(conversationId)}`),
+    );
+  }
+
+  saveConversationSettings(settings: HarborAssistantConversationSettings): Observable<HarborAssistantConversationSettings> {
+    return this.http.patch<HarborAssistantConversationSettings>(
+      this.apiUrl('/knowledge/conversation-settings'),
+      settings,
+    );
+  }
+
+  retrievalSettings(): Observable<HarborAssistantRetrievalSettings> {
+    return this.http.get<HarborAssistantRetrievalSettings>(this.apiUrl('/knowledge/retrieval-settings'));
+  }
+
+  saveRetrievalSettings(settings: HarborAssistantRetrievalSettings): Observable<HarborAssistantRetrievalSettings> {
+    return this.http.patch<HarborAssistantRetrievalSettings>(
+      this.apiUrl('/knowledge/retrieval-settings'),
+      settings,
     );
   }
 

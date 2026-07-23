@@ -402,6 +402,130 @@ describe('Harbor Assistant component', () => {
     expect(questionRow).not.toHaveText('No model selected yet');
   });
 
+  it('shows the serving model when the requested model does not match runtime truth', () => {
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      modelCapabilitiesResponse: { set: (response: unknown) => void };
+      workflowCurrentModelName: (kind: string) => string;
+      workflowCurrentModelDetail: (kind: string) => string;
+      workflowCapabilityStatusLabel: (kind: string) => string;
+    };
+    component.modelCapabilitiesResponse.set({
+      generated_at: '1',
+      checked_at: '1',
+      status: 'ready',
+      capabilities: [{
+        capability_id: 'vlm',
+        label: 'Image/video understanding',
+        model_kind: 'vlm',
+        status: 'ready',
+        desired_model_id: 'Qwen/Qwen3.5-9B',
+        active_model_id: 'Qwen/Qwen3.5-4B',
+        transition_status: 'mismatch',
+        current_model: {
+          model_endpoint_id: 'vlm-local-openai-compatible',
+          model_name: 'Qwen/Qwen3.5-4B',
+          provider_key: 'openai_compatible',
+          status: 'active',
+        },
+        installed_models: [
+          { model_id: 'Qwen/Qwen3.5-4B', display_name: 'Qwen3.5 4B' },
+          { model_id: 'Qwen/Qwen3.5-9B', display_name: 'Qwen3.5 9B' },
+        ],
+        installable_models: [],
+        download_jobs: [],
+        next_action: 'Available',
+      }],
+      blockers: [],
+      warnings: [],
+    });
+
+    expect(component.workflowCurrentModelName('vlm')).toBe('Qwen3.5 4B');
+    expect(component.workflowCurrentModelDetail('vlm')).toContain('Qwen/Qwen3.5-9B');
+    expect(component.workflowCapabilityStatusLabel('vlm')).toBe('Model mismatch');
+  });
+
+  it('shows a shared runtime model only once across multiple capabilities', () => {
+    const sharedCapability = (capabilityId: string, modelKind: string): Record<string, unknown> => ({
+      capability_id: capabilityId,
+      label: capabilityId,
+      model_kind: modelKind,
+      status: 'ready',
+      desired_model_id: 'Qwen/Qwen3.5-4B',
+      active_model_id: 'Qwen/Qwen3.5-4B',
+      runtime_model_id: 'Qwen/Qwen3.5-4B',
+      transition_status: 'ready',
+      installed_models: [{
+        model_id: 'Qwen/Qwen3.5-4B',
+        display_name: 'Qwen3.5 4B',
+      }],
+      installable_models: [],
+      download_jobs: [],
+      next_action: 'Available',
+      runtime_ready: true,
+    });
+
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      modelCapabilitiesResponse: { set: (response: unknown) => void };
+    };
+    component.modelCapabilitiesResponse.set({
+      generated_at: '1',
+      checked_at: '1',
+      status: 'ready',
+      capabilities: [
+        sharedCapability('semantic_router', 'llm'),
+        sharedCapability('retrieval_answer', 'llm'),
+        sharedCapability('vlm', 'vlm'),
+      ],
+      blockers: [],
+      warnings: [],
+    });
+    spectator.click(spectator.queryAll('.ai-settings-subtab')[1]);
+    spectator.detectChanges();
+
+    const currentModelCells = spectator.queryAll('.model-current-cell');
+    expect(currentModelCells.filter((cell) => cell.textContent?.includes('Qwen3.5 4B'))).toHaveLength(1);
+    expect(currentModelCells.filter((cell) => cell.textContent?.includes('Shared model'))).toHaveLength(2);
+    expect(currentModelCells[2]).toHaveText('Uses the same running model as Question understanding');
+    expect(currentModelCells[3]).toHaveText('Uses the same running model as Question understanding');
+  });
+
+  it('does not present configured model metadata as the running model', () => {
+    spectator = createComponent();
+    const component = spectator.component as unknown as {
+      modelCapabilitiesResponse: { set: (response: unknown) => void };
+      workflowCurrentModelName: (kind: string) => string;
+    };
+    component.modelCapabilitiesResponse.set({
+      generated_at: '1',
+      checked_at: '1',
+      status: 'degraded',
+      capabilities: [{
+        capability_id: 'vlm',
+        label: 'Image/video understanding',
+        model_kind: 'vlm',
+        status: 'degraded',
+        desired_model_id: 'Qwen/Qwen3.5-9B',
+        transition_status: 'unknown',
+        current_model: {
+          model_endpoint_id: 'vlm-local-openai-compatible',
+          model_name: 'Qwen/Qwen3.5-9B',
+          provider_key: 'openai_compatible',
+          status: 'active',
+        },
+        installed_models: [],
+        installable_models: [],
+        download_jobs: [],
+        next_action: 'Check runtime',
+      }],
+      blockers: [],
+      warnings: [],
+    });
+
+    expect(component.workflowCurrentModelName('vlm')).toBe('Unknown');
+  });
+
   it('shows installed models only after opening the vector retrieval model chooser', () => {
     spectator = createComponent();
 
@@ -671,6 +795,71 @@ describe('Harbor Assistant component', () => {
     expect(panel).toHaveText('Qwen3.5 4B');
     expect(panel).toHaveText('/mnt/models/qwen3.5-4b');
     expect(panel).toHaveText('Select');
+  });
+
+  it('deduplicates vector models and marks only runtime truth as selected', () => {
+    const qwen = {
+      model_id: 'Qwen/Qwen3-Embedding-0.6B',
+      display_name: 'Qwen3 Embedding 0.6B',
+      provider_key: 'qwen',
+      model_kind: 'embedder',
+      status: 'ready',
+      installed: true,
+      local_path: '/models/qwen3-embedding',
+      source_kind: 'huggingface',
+      expected_capabilities: ['embedding'],
+    };
+    const jina = {
+      model_id: 'jina-embeddings-v2-base-zh',
+      display_name: 'Jina Embeddings v2 zh',
+      provider_key: 'jina',
+      model_kind: 'embedder',
+      status: 'ready',
+      installed: true,
+      local_path: '/models/jina-v2-zh',
+      source_kind: 'huggingface',
+      expected_capabilities: ['embedding'],
+    };
+    api.getModelCapabilities = jest.fn(() => of(modelCapabilitiesWithEmbedder({
+      desired_model_id: qwen.model_id,
+      active_model_id: jina.model_id,
+      runtime_model_id: jina.local_path,
+      status: 'installed_not_running',
+      installed_models: [qwen, jina],
+    })));
+    api.getLocalModelCatalog = jest.fn(() => of({
+      models: [{
+        ...qwen,
+        model_id: 'qwen3-embedding-local-alias',
+      }, jina],
+      download_jobs: [],
+    }));
+
+    spectator = createComponent();
+    spectator.click(spectator.queryAll('.ai-settings-subtab')[1]);
+    spectator.detectChanges();
+
+    const component = spectator.component as unknown as {
+      workflowModelChoices: (kind: string) => Array<{
+        modelId: string;
+        action: string;
+        actionLabel: string;
+      }>;
+    };
+    const choices = component.workflowModelChoices('embedder');
+
+    expect(choices.map((card) => card.modelId)).toEqual([
+      'Qwen/Qwen3-Embedding-0.6B',
+      'jina-embeddings-v2-base-zh',
+    ]);
+    expect(choices.find((card) => card.modelId === qwen.model_id)).toMatchObject({
+      action: 'set-current',
+      actionLabel: 'Select',
+    });
+    expect(choices.find((card) => card.modelId === jina.model_id)).toMatchObject({
+      action: 'current',
+      actionLabel: 'Selected',
+    });
   });
 
   it('treats choosing an installed model as a runtime start request', () => {

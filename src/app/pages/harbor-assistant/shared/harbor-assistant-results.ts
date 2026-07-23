@@ -1,6 +1,7 @@
 import {
   HarborAssistantSearchResultFilter,
   HarborAssistantSearchHit,
+  HarborAssistantRetrievalMode,
   HarborAssistantSearchRequest,
   HarborAssistantSearchResponse,
   HarborAssistantSearchSourceScope,
@@ -8,33 +9,34 @@ import {
 } from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
 import { harborAssistantBeaconApiUrl } from 'app/pages/harbor-assistant/services/harbor-assistant-api-prefix';
 
-const DEFAULT_LIMIT = 24;
-
 export interface HarborAssistantSearchScope {
   cameraId?: string | null;
   from?: string | null;
   sourceScope?: HarborAssistantSearchSourceScope;
   sourceRootIds?: string[];
   to?: string | null;
+  retrievalMode?: HarborAssistantRetrievalMode;
   useRetrieval?: boolean;
 }
 
 export function buildHarborAssistantSearchPayload(
   query: string,
   filter: HarborAssistantSearchResultFilter,
-  limit = DEFAULT_LIMIT,
+  limit: number | null = null,
   scope: HarborAssistantSearchScope = {},
 ): HarborAssistantSearchRequest {
   const payload: HarborAssistantSearchRequest = {
     query: query.trim(),
-    limit,
     include_documents: filter === 'all' || filter === 'text',
     include_images: filter === 'all' || filter === 'images',
     include_videos: filter === 'all' || filter === 'videos',
-    use_retrieval: scope.useRetrieval ?? true,
+    retrieval_mode: scope.retrievalMode ?? (scope.useRetrieval === false ? 'off' : 'auto'),
     source_scope: scope.sourceScope ?? 'dvr_library',
     source_root_ids: scope.sourceRootIds ?? [],
   };
+  if (limit !== null) {
+    payload.limit = Math.min(50, Math.max(1, Math.round(limit)));
+  }
   if (filter === 'videos' || filter === 'all') {
     payload.camera_id = scope.cameraId || null;
     payload.from = scope.from || null;

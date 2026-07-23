@@ -885,7 +885,13 @@ export interface ModelCapabilityStatus {
   label: string;
   model_kind: string;
   status: ModelCapabilityStatusValue;
+  desired_model_id?: string | null;
+  active_model_id?: string | null;
+  transition_status?: string;
+  last_error?: string | null;
+  /** @deprecated Use desired_model_id. */
   selected_model_id?: string | null;
+  /** @deprecated Use active_model_id. */
   runtime_model_id?: string | null;
   current_model?: ModelCapabilityCurrentModel | null;
   installed_models?: ModelCapabilityInstallableModel[];

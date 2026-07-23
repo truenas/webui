@@ -2256,20 +2256,16 @@ export class HarborAssistantComponent implements OnInit {
 
   protected workflowCurrentModelName(kind: string): string {
     const capability = this.workflowCapabilityForKind(kind);
-    if (capability?.selected_model_id) {
-      const selected = [
+    const activeModelId = capability?.active_model_id?.trim() || capability?.runtime_model_id?.trim();
+    if (activeModelId) {
+      const active = [
         ...(capability.installed_models ?? []),
         ...(capability.installable_models ?? []),
-      ].find((model) => model.model_id === capability.selected_model_id);
-      return selected?.display_name ?? capability.selected_model_id;
+      ].find((model) => model.model_id === activeModelId || model.local_path === activeModelId);
+      return active?.display_name ?? activeModelId;
     }
-    const runtimeModel = capability?.runtime_model_id?.trim();
-    if (runtimeModel) {
-      return runtimeModel;
-    }
-    const currentModelName = capability?.current_model?.model_name?.trim();
-    if (currentModelName) {
-      return currentModelName;
+    if (capability) {
+      return T('Unknown');
     }
     const current = this.currentModelCards().find((card) => card.kind === kind);
     if (!current?.endpoint || current.modelName === T('Not configured')) {
@@ -2278,9 +2274,40 @@ export class HarborAssistantComponent implements OnInit {
     return current.modelName;
   }
 
+  protected workflowSharedModelOwner(kind: string): AiModelCapability | null {
+    const runtimeIdentity = this.workflowRuntimeModelIdentity(kind);
+    if (!runtimeIdentity) {
+      return null;
+    }
+    const rows = this.aiModelCapabilities();
+    const currentIndex = rows.findIndex((row) => row.capabilityId === kind);
+    if (currentIndex <= 0) {
+      return null;
+    }
+    return rows.slice(0, currentIndex).find((row) => {
+      return this.workflowRuntimeModelIdentity(row.capabilityId) === runtimeIdentity;
+    }) ?? null;
+  }
+
+  private workflowRuntimeModelIdentity(kind: string): string | null {
+    const capability = this.workflowCapabilityForKind(kind);
+    const runtimeModel = capability?.active_model_id?.trim() || capability?.runtime_model_id?.trim();
+    return runtimeModel?.toLowerCase() || null;
+  }
+
   protected workflowCurrentModelDetail(kind: string): string {
     const capability = this.workflowCapabilityForKind(kind);
     if (capability) {
+      const desiredModelId = capability.desired_model_id?.trim();
+      if (capability.transition_status === 'loading' && desiredModelId) {
+        return `${T('Switching to')} ${desiredModelId}`;
+      }
+      if (capability.transition_status === 'mismatch' && desiredModelId) {
+        return `${T('Requested model')}: ${desiredModelId}. ${T('The current model is still serving requests.')}`;
+      }
+      if (capability.transition_status === 'failed') {
+        return capability.last_error || T('The requested model could not be activated.');
+      }
       return this.modelCapabilityUserStatus(capability);
     }
     const current = this.currentModelCards().find((card) => card.kind === kind);
@@ -2323,6 +2350,15 @@ export class HarborAssistantComponent implements OnInit {
   protected workflowCapabilityStatusLabel(kind: string): string {
     const capability = this.workflowCapabilityForKind(kind);
     if (capability) {
+      if (capability.transition_status === 'loading') {
+        return T('Switching');
+      }
+      if (capability.transition_status === 'mismatch') {
+        return T('Model mismatch');
+      }
+      if (capability.transition_status === 'failed') {
+        return T('Switch failed');
+      }
       return this.userStatusLabel(capability.status);
     }
     return this.workflowCurrentEndpoint(kind) ? T('Ready') : T('No model selected yet');
@@ -2390,13 +2426,32 @@ export class HarborAssistantComponent implements OnInit {
   private uniqueModelCards(cards: CustomerModelCard[]): CustomerModelCard[] {
     const seen = new Set<string>();
     return cards.filter((card) => {
-      const key = `${card.section}:${card.modelId}:${card.endpoint?.model_endpoint_id ?? ''}`;
-      if (seen.has(key)) {
+      const keys = this.modelCardIdentityKeys(card);
+      if (keys.some((key) => seen.has(key))) {
         return false;
       }
-      seen.add(key);
+      keys.forEach((key) => seen.add(key));
       return true;
     });
+  }
+
+  private modelCardIdentityKeys(card: CustomerModelCard): string[] {
+    const normalize = (value: string | null | undefined): string | null => {
+      const normalized = value?.trim().replace(/\\/g, '/').replace(/\/+$/, '').toLowerCase();
+      return normalized || null;
+    };
+    const modelId = normalize(card.modelId);
+    if (card.endpoint?.endpoint_kind === 'cloud') {
+      return [`cloud:${card.endpoint.model_endpoint_id}:${modelId ?? card.key.toLowerCase()}`];
+    }
+
+    const identities = [
+      modelId && `local:model:${modelId}`,
+      normalize(card.catalogModel?.repo_id) && `local:repo:${normalize(card.catalogModel?.repo_id)}`,
+      normalize(card.localPath) && `local:path:${normalize(card.localPath)}`,
+      normalize(card.catalogModel?.local_path) && `local:path:${normalize(card.catalogModel?.local_path)}`,
+    ].filter((value): value is string => Boolean(value));
+    return identities.length ? [...new Set(identities)] : [`local:key:${card.key.toLowerCase()}`];
   }
 
   private withCapabilityContext(card: CustomerModelCard, capabilityId: string): CustomerModelCard {
@@ -2932,7 +2987,6 @@ export class HarborAssistantComponent implements OnInit {
     const catalogModel = this.catalogModels().find((item) => item.model_id === model.model_id) ?? null;
     const capability = this.workflowCapabilityForKind(capabilityId);
     const runtimeActive = this.capabilityRuntimeMatchesModel(capability, model.model_id, model.local_path ?? catalogModel?.local_path ?? null);
-    const selected = capability?.selected_model_id === model.model_id;
     const isCurrent = runtimeActive;
     const runtimeProfiles = model.runtime_profiles ?? catalogModel?.runtime_profiles ?? [];
     const action: CustomerModelAction = section === 'installed'
@@ -2961,7 +3015,7 @@ export class HarborAssistantComponent implements OnInit {
       actionLabel: action === 'current'
         ? T('Selected')
         : action === 'set-current'
-          ? (selected ? T('Restart') : T('Select'))
+          ? T('Select')
           : action === 'retry'
             ? T('Download again')
             : T('Select'),
@@ -3122,6 +3176,12 @@ export class HarborAssistantComponent implements OnInit {
   private modelCapabilityTone(kind: string): HarborAssistantStatusTone {
     const capability = this.workflowCapabilityForKind(kind);
     if (capability) {
+      if (capability.transition_status === 'failed') {
+        return 'danger';
+      }
+      if (capability.transition_status === 'loading' || capability.transition_status === 'mismatch') {
+        return 'warn';
+      }
       switch (capability.status) {
         case 'ready':
           return 'good';
@@ -3187,7 +3247,7 @@ export class HarborAssistantComponent implements OnInit {
       case 'needs_runtime':
         return capability.runtime_next_action || capability.next_action || T('Harbor-managed runtime is required');
       case 'installed_not_running':
-        return T('Model is installed and the local model service needs to start');
+        return capability.next_action || T('Model is installed and the local model service needs to start');
       case 'unsupported':
         return T('Not supported yet');
       case 'degraded':
@@ -3263,7 +3323,8 @@ export class HarborAssistantComponent implements OnInit {
     if (!capability) {
       return false;
     }
-    const runtimeModel = capability.runtime_model_id?.trim()
+    const runtimeModel = capability.active_model_id?.trim()
+      || capability.runtime_model_id?.trim()
       || (capability.runtime_ready ? capability.current_model?.model_name?.trim() : '');
     if (!runtimeModel) {
       return false;
@@ -3399,8 +3460,9 @@ export class HarborAssistantComponent implements OnInit {
       }
     });
 
-    return Array.from(catalogById.values())
-      .map((model) => this.buildCustomerModelCard(model))
+    return this.uniqueModelCards(
+      Array.from(catalogById.values()).map((model) => this.buildCustomerModelCard(model)),
+    )
       .sort((left, right) => this.compareCustomerModelCards(left, right));
   }
 

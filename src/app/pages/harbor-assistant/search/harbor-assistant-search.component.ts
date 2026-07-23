@@ -13,6 +13,10 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { KnowledgeSourceRoot } from 'app/pages/harbor-assistant/interfaces/harbor-assistant-status.interface';
 import { HarborAssistantContentApiService } from 'app/pages/harbor-assistant/shared/harbor-assistant-content-api.service';
 import {
+  HarborAssistantRetrievalSettingsDialogComponent,
+  HarborAssistantRetrievalSettingsDialogData,
+} from 'app/pages/harbor-assistant/shared/harbor-assistant-retrieval-settings-dialog.component';
+import {
   buildHarborAssistantSearchPayload,
   buildHarborAssistantSearchWaterfallItems,
   harborAssistantSearchErrorMessage,
@@ -27,6 +31,10 @@ import {
   HarborAssistantSearchHit,
   HarborAssistantSearchResponse,
   HarborAssistantSearchWaterfallItem,
+  HarborAssistantConversationSummary,
+  HarborAssistantKnowledgeAnswerResponse,
+  HarborAssistantRetrievalMode,
+  HarborAssistantRetrievalSettings,
 } from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
 
 interface HarborAssistantSearchPromptSuggestion {
@@ -90,6 +98,14 @@ export class HarborAssistantSearchComponent implements OnInit {
     filter: ['all' as HarborAssistantSearchResultFilter, Validators.required],
     from: [''],
     to: [''],
+    retrievalMode: ['auto' as HarborAssistantRetrievalMode, Validators.required],
+    resultLimit: ['auto', Validators.required],
+    customResultLimit: [10, [Validators.required, Validators.min(1), Validators.max(50)]],
+  });
+
+  protected readonly conversationSettingsForm = this.formBuilder.group({
+    history_limit: [10, [Validators.required, Validators.min(1), Validators.max(100)]],
+    context_turn_limit: [3, [Validators.required, Validators.min(0), Validators.max(20)]],
   });
 
   protected readonly promptSuggestions: HarborAssistantSearchPromptSuggestion[] = [
@@ -111,6 +127,11 @@ export class HarborAssistantSearchComponent implements OnInit {
   protected readonly response = signal<HarborAssistantSearchResponse | null>(null);
   protected readonly error = signal<string | null>(null);
   protected readonly searchHistory = signal<string[]>([]);
+  protected readonly conversations = signal<HarborAssistantConversationSummary[]>([]);
+  protected readonly activeConversationId = signal(this.newConversationId());
+  protected readonly conversationHistoryLoading = signal(false);
+  protected readonly conversationSettingsSaving = signal(false);
+  protected readonly retrievalSettingsBusy = signal(false);
   protected readonly retrievalSources = computed<HarborAssistantRetrievalSource[]>(() => this.knowledgeSourceRoots()
     .filter((root) => root.enabled)
     .map((root) => ({ id: root.root_id, label: root.label || root.path, description: root.path })));
@@ -129,12 +150,12 @@ export class HarborAssistantSearchComponent implements OnInit {
     });
   });
 
-  protected readonly useRetrieval = computed(() => this.selectedRetrievalSources().length > 0);
   protected readonly chatTurns = signal<HarborAssistantChatTurn[]>([]);
   protected readonly pendingQuery = signal<string | null>(null);
 
   ngOnInit(): void {
     this.searchHistory.set(this.loadSearchHistory());
+    this.refreshConversations();
   }
 
   search(): void {
@@ -144,20 +165,22 @@ export class HarborAssistantSearchComponent implements OnInit {
 
     const query = this.form.controls.query.value.trim();
     const filter = this.form.controls.filter.value;
-    const useRetrieval = this.useRetrieval();
+    const retrievalMode = this.form.controls.retrievalMode.value;
+    const useRetrieval = retrievalMode !== 'off';
     this.rememberSearchTerm(query);
     const payload = buildHarborAssistantSearchPayload(
       query,
       filter,
-      24,
+      this.resultLimitValue(),
       {
         from: this.localDateTimeToUnixSeconds(this.form.controls.from.value),
         sourceRootIds: this.selectedRetrievalSources(),
         sourceScope: 'all',
         to: this.localDateTimeToUnixSeconds(this.form.controls.to.value),
-        useRetrieval,
+        retrievalMode,
       },
     );
+    payload.conversation_id = this.activeConversationId();
 
     this.loading.set(true);
     this.error.set(null);
@@ -181,6 +204,7 @@ export class HarborAssistantSearchComponent implements OnInit {
           },
         ]);
         this.scrollToLatestTurn();
+        this.refreshConversations();
       },
       error: (error: unknown) => {
         this.response.set(null);
@@ -198,10 +222,71 @@ export class HarborAssistantSearchComponent implements OnInit {
   }
 
   clearConversation(): void {
+    this.activeConversationId.set(this.newConversationId());
     this.chatTurns.set([]);
     this.pendingQuery.set(null);
     this.response.set(null);
     this.error.set(null);
+  }
+
+  loadConversation(conversationId: string): void {
+    if (this.loading() || conversationId === this.activeConversationId()) {
+      return;
+    }
+    this.conversationHistoryLoading.set(true);
+    this.api.conversation(conversationId).pipe(
+      finalize(() => this.conversationHistoryLoading.set(false)),
+    ).subscribe({
+      next: (detail) => {
+        this.activeConversationId.set(detail.conversation_id);
+        this.nextTurnId = 1;
+        this.chatTurns.set(detail.turns.map((turn) => ({
+          id: this.nextTurnId++,
+          query: turn.query,
+          filter: 'all',
+          useRetrieval: turn.response.query_understanding?.needs_retrieval ?? true,
+          response: this.toSearchResponse(turn.response),
+        })));
+        const turns = this.chatTurns();
+        this.response.set(turns[turns.length - 1]?.response ?? null);
+        this.error.set(null);
+        this.scrollToLatestTurn();
+      },
+      error: () => this.error.set('Unable to load this conversation.'),
+    });
+  }
+
+  deleteConversation(event: Event, conversationId: string): void {
+    event.stopPropagation();
+    if (this.loading()) {
+      return;
+    }
+    this.api.deleteConversation(conversationId).subscribe({
+      next: () => {
+        if (conversationId === this.activeConversationId()) {
+          this.clearConversation();
+        }
+        this.refreshConversations();
+      },
+      error: () => this.error.set('Unable to delete this conversation.'),
+    });
+  }
+
+  saveConversationSettings(): void {
+    if (this.conversationSettingsForm.invalid || this.conversationSettingsSaving()) {
+      return;
+    }
+    const settings = this.conversationSettingsForm.getRawValue();
+    this.conversationSettingsSaving.set(true);
+    this.api.saveConversationSettings(settings).pipe(
+      finalize(() => this.conversationSettingsSaving.set(false)),
+    ).subscribe({
+      next: (saved) => {
+        this.conversationSettingsForm.setValue(saved);
+        this.refreshConversations();
+      },
+      error: () => this.error.set('Unable to save conversation settings.'),
+    });
   }
 
   usePromptSuggestion(suggestion: HarborAssistantSearchPromptSuggestion): void {
@@ -267,6 +352,69 @@ export class HarborAssistantSearchComponent implements OnInit {
     }
     return this.retrievalSources().find((source) => this.retrievalSourceSelected(source.id))?.label
       ?? 'Selected folders';
+  }
+
+  retrievalModeHint(): string {
+    switch (this.form.controls.retrievalMode.value) {
+      case 'on':
+        return 'Every message will search the selected local knowledge before answering.';
+      case 'off':
+        return 'Messages will use ordinary conversation without searching local knowledge.';
+      case 'auto':
+      default:
+        return 'The assistant automatically decides between ordinary conversation and local knowledge retrieval.';
+    }
+  }
+
+  retrievalModeLabel(): string {
+    switch (this.form.controls.retrievalMode.value) {
+      case 'on':
+        return this.translate.instant('Force retrieval');
+      case 'off':
+        return this.translate.instant('Ordinary chat');
+      case 'auto':
+      default:
+        return this.translate.instant('Automatic');
+    }
+  }
+
+  resultLimitLabel(): string {
+    const limit = this.resultLimitValue();
+    return limit === null
+      ? this.translate.instant('Smart count')
+      : `${limit} ${this.translate.instant('results')}`;
+  }
+
+  openAdvancedRetrievalSettings(): void {
+    if (this.retrievalSettingsBusy()) {
+      return;
+    }
+    if (this.searchSettings?.nativeElement) {
+      this.searchSettings.nativeElement.open = false;
+    }
+    this.retrievalSettingsBusy.set(true);
+    this.api.retrievalSettings().pipe(
+      finalize(() => this.retrievalSettingsBusy.set(false)),
+    ).subscribe({
+      next: (settings) => {
+        this.dialog.open<
+          HarborAssistantRetrievalSettingsDialogComponent,
+          HarborAssistantRetrievalSettingsDialogData,
+          HarborAssistantRetrievalSettings | undefined
+        >(HarborAssistantRetrievalSettingsDialogComponent, {
+          data: { settings },
+          width: 'min(880px, calc(100vw - 24px))',
+          maxWidth: 'calc(100vw - 24px)',
+          maxHeight: 'calc(100dvh - 24px)',
+          panelClass: 'harbor-assistant-retrieval-dialog-panel',
+        }).afterClosed().subscribe((saved) => {
+          if (saved) {
+            this.saveAdvancedRetrievalSettings(saved);
+          }
+        });
+      },
+      error: () => this.error.set('Unable to load advanced retrieval settings.'),
+    });
   }
 
   protected closeSearchSettingsOnOutsideClick(event: Event): void {
@@ -445,6 +593,27 @@ export class HarborAssistantSearchComponent implements OnInit {
     return Math.floor(timestamp / 1000).toString();
   }
 
+  private resultLimitValue(): number | null {
+    const selected = this.form.controls.resultLimit.value;
+    if (selected === 'auto') {
+      return null;
+    }
+    const value = selected === 'custom'
+      ? this.form.controls.customResultLimit.value
+      : Number(selected);
+    return Math.min(50, Math.max(1, Math.round(value)));
+  }
+
+  private saveAdvancedRetrievalSettings(settings: HarborAssistantRetrievalSettings): void {
+    this.retrievalSettingsBusy.set(true);
+    this.api.saveRetrievalSettings(settings).pipe(
+      finalize(() => this.retrievalSettingsBusy.set(false)),
+    ).subscribe({
+      next: () => this.error.set(null),
+      error: () => this.error.set('Unable to save advanced retrieval settings.'),
+    });
+  }
+
   private formatLocalDateTimeLabel(value: string): string {
     const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
     if (!match) {
@@ -458,6 +627,36 @@ export class HarborAssistantSearchComponent implements OnInit {
       const element = this.chatScroll?.nativeElement;
       element?.scrollTo?.({ top: element.scrollHeight, behavior: 'smooth' });
     });
+  }
+
+  private refreshConversations(): void {
+    this.api.conversations().subscribe({
+      next: (result) => {
+        this.conversations.set(result.conversations);
+        if (result.settings) {
+          this.conversationSettingsForm.setValue(result.settings);
+        }
+      },
+      error: () => {
+        // Conversation history is supplementary; keep the active chat usable.
+      },
+    });
+  }
+
+  private toSearchResponse(response: HarborAssistantKnowledgeAnswerResponse): HarborAssistantSearchResponse {
+    return {
+      ...response.search,
+      conversation_id: response.conversation_id ?? this.activeConversationId(),
+      answer: response.answer,
+      answer_degraded: response.degraded,
+      answer_degraded_reason: response.degraded_reason,
+      answer_intent: response.query_understanding?.intent ?? null,
+      warnings: [...new Set([...response.search.warnings, ...response.warnings])],
+    };
+  }
+
+  private newConversationId(): string {
+    return `conv-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
   }
 
   private rememberSearchTerm(value: string): void {

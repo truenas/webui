@@ -1,0 +1,104 @@
+<section class="retrieval-dialog">
+  <header class="dialog-header">
+    <div>
+      <h2>{{ 'Advanced retrieval strategy' | translate }}</h2>
+      <p>{{ 'Tune candidate recall, filtering, reranking, and deduplication for all Harbor Assistant searches.' | translate }}</p>
+    </div>
+    <button type="button" class="close-button" [attr.aria-label]="'Close' | translate" (click)="cancel()">×</button>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="strategy-list">
+      <section class="strategy-row switch-row">
+        <div>
+          <strong>{{ 'Query expansion' | translate }}</strong>
+          <p>{{ 'Rewrite natural-language questions into a clearer retrieval query to improve recall.' | translate }}</p>
+        </div>
+        <mat-slide-toggle formControlName="queryExpansionEnabled"></mat-slide-toggle>
+      </section>
+
+      <section class="strategy-row number-row">
+        <div>
+          <strong>{{ 'Candidate recall count' | translate }}</strong>
+          <p>{{ 'Maximum number of hybrid-search candidates considered before reranking.' | translate }}</p>
+        </div>
+        <input type="number" min="1" max="500" formControlName="candidateLimit" />
+      </section>
+
+      <section class="strategy-row range-row">
+        <div>
+          <strong>{{ 'Keyword minimum score' | translate }}</strong>
+          <p>{{ 'Higher values remove weak keyword matches earlier.' | translate }}</p>
+        </div>
+        <div class="range-control">
+          <input type="range" min="0" max="1" step="0.01" formControlName="lexicalMinScore" />
+          <input type="number" min="0" max="1" step="0.01" formControlName="lexicalMinScore" />
+        </div>
+      </section>
+
+      <section class="strategy-row range-row">
+        <div>
+          <strong>{{ 'Vector minimum similarity' | translate }}</strong>
+          <p>{{ 'Higher values require stronger semantic similarity before a candidate is retained.' | translate }}</p>
+        </div>
+        <div class="range-control">
+          <input type="range" min="0" max="1" step="0.01" formControlName="vectorMinScore" />
+          <input type="number" min="0" max="1" step="0.01" formControlName="vectorMinScore" />
+        </div>
+      </section>
+
+      <section class="strategy-row switch-row">
+        <div>
+          <strong>{{ 'Enable Reranker' | translate }}</strong>
+          <p>{{ 'Use the local Reranker model to reorder and filter recalled candidates.' | translate }}</p>
+        </div>
+        <mat-slide-toggle formControlName="rerankEnabled"></mat-slide-toggle>
+      </section>
+
+      <section class="strategy-row number-row" [class.disabled]="!form.controls.rerankEnabled.value">
+        <div>
+          <strong>{{ 'Reranker candidate count' | translate }}</strong>
+          <p>{{ 'Number of top candidates sent to the Reranker model.' | translate }}</p>
+        </div>
+        <input type="number" min="1" max="500" formControlName="rerankTopK" />
+      </section>
+
+      <section class="strategy-row range-row" [class.disabled]="!form.controls.rerankEnabled.value">
+        <div>
+          <strong>{{ 'Reranker threshold' | translate }}</strong>
+          <p>{{ 'Higher values improve precision but may return no results; lower values improve recall with more noise.' | translate }}</p>
+        </div>
+        <div class="range-control">
+          <input type="range" min="0" max="1" step="0.01" formControlName="rerankMinScore" />
+          <input type="number" min="0" max="1" step="0.01" formControlName="rerankMinScore" />
+        </div>
+      </section>
+
+      <section class="strategy-row switch-row">
+        <div>
+          <strong>{{ 'Candidate deduplication' | translate }}</strong>
+          <p>{{ 'Reduce repeated passages and near-duplicate results with MMR diversity selection.' | translate }}</p>
+        </div>
+        <mat-slide-toggle formControlName="mmrEnabled"></mat-slide-toggle>
+      </section>
+
+      <section class="strategy-row range-row" [class.disabled]="!form.controls.mmrEnabled.value">
+        <div>
+          <strong>{{ 'Deduplication strength' | translate }}</strong>
+          <p>{{ 'Higher values favor diversity; lower values favor the highest-scoring results.' | translate }}</p>
+        </div>
+        <div class="range-control">
+          <input type="range" min="0" max="1" step="0.01" formControlName="deduplicationStrength" />
+          <input type="number" min="0" max="1" step="0.01" formControlName="deduplicationStrength" />
+        </div>
+      </section>
+    </div>
+
+    <footer class="dialog-actions">
+      <button mat-button type="button" (click)="resetRecommended()">{{ 'Restore recommended values' | translate }}</button>
+      <span class="action-spacer"></span>
+      <button mat-stroked-button type="button" (click)="cancel()">{{ 'Cancel' | translate }}</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">{{ 'Save' | translate }}</button>
+    </footer>
+  </form>
+</section>

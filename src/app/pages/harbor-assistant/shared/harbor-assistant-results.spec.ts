@@ -14,11 +14,10 @@ describe('Harbor Assistant search result helpers', () => {
   it('builds modality-aware search payloads', () => {
     expect(buildHarborAssistantSearchPayload(' 春天照片 ', 'all')).toEqual({
       query: '春天照片',
-      limit: 24,
       include_documents: true,
       include_images: true,
       include_videos: true,
-      use_retrieval: true,
+      retrieval_mode: 'auto',
       source_scope: 'dvr_library',
       source_root_ids: [],
       camera_id: null,
@@ -31,27 +30,25 @@ describe('Harbor Assistant search result helpers', () => {
       include_documents: false,
       include_images: true,
       include_videos: false,
-      use_retrieval: true,
+      retrieval_mode: 'auto',
       source_scope: 'dvr_library',
       source_root_ids: [],
     });
     expect(buildHarborAssistantSearchPayload('report', 'text')).toEqual({
       query: 'report',
-      limit: 24,
       include_documents: true,
       include_images: false,
       include_videos: false,
-      use_retrieval: true,
+      retrieval_mode: 'auto',
       source_scope: 'dvr_library',
       source_root_ids: [],
     });
     expect(buildHarborAssistantSearchPayload('clip', 'videos')).toEqual({
       query: 'clip',
-      limit: 24,
       include_documents: false,
       include_images: false,
       include_videos: true,
-      use_retrieval: true,
+      retrieval_mode: 'auto',
       source_scope: 'dvr_library',
       source_root_ids: [],
       camera_id: null,
@@ -68,7 +65,7 @@ describe('Harbor Assistant search result helpers', () => {
       include_documents: false,
       include_images: false,
       include_videos: true,
-      use_retrieval: true,
+      retrieval_mode: 'auto',
       source_scope: 'dvr_library',
       source_root_ids: [],
       camera_id: 'camera-main',
@@ -81,7 +78,7 @@ describe('Harbor Assistant search result helpers', () => {
       include_documents: true,
       include_images: true,
       include_videos: true,
-      use_retrieval: true,
+      retrieval_mode: 'auto',
       source_scope: 'nas_files',
       source_root_ids: [],
       camera_id: null,
@@ -89,7 +86,12 @@ describe('Harbor Assistant search result helpers', () => {
       to: null,
     });
     expect(buildHarborAssistantSearchPayload('陪我聊聊', 'all', 24, { useRetrieval: false }))
-      .toEqual(expect.objectContaining({ use_retrieval: false }));
+      .toEqual(expect.objectContaining({ retrieval_mode: 'off' }));
+    expect(buildHarborAssistantSearchPayload('必须查资料', 'all', 24, { retrievalMode: 'on' }))
+      .toEqual(expect.objectContaining({ retrieval_mode: 'on' }));
+    expect(buildHarborAssistantSearchPayload('智能返回', 'all')).not.toHaveProperty('limit');
+    expect(buildHarborAssistantSearchPayload('限制返回', 'all', 100))
+      .toEqual(expect.objectContaining({ limit: 50 }));
     expect(buildHarborAssistantSearchPayload('folder search', 'text', 24, {
       sourceRootIds: ['documents'],
     })).toEqual(expect.objectContaining({ source_root_ids: ['documents'] }));

@@ -474,10 +474,17 @@
                       <p class="muted">{{ capability.detail | translate }}</p>
                     </div>
                     <div class="model-current-cell">
-                      <strong>{{ workflowCurrentModelName(capability.capabilityId) }}</strong>
-                      <p class="muted">{{ workflowCurrentModelDetail(capability.capabilityId) }}</p>
-                      @if (workflowRuntimeNotice(capability.capabilityId); as runtimeNotice) {
-                        <p class="muted warn">{{ runtimeNotice | translate }}</p>
+                      @if (workflowSharedModelOwner(capability.capabilityId); as owner) {
+                        <strong>{{ 'Shared model' | translate }}</strong>
+                        <p class="muted">
+                          {{ 'Uses the same running model as' | translate }} {{ owner.label | translate }}
+                        </p>
+                      } @else {
+                        <strong>{{ workflowCurrentModelName(capability.capabilityId) }}</strong>
+                        <p class="muted">{{ workflowCurrentModelDetail(capability.capabilityId) }}</p>
+                        @if (workflowRuntimeNotice(capability.capabilityId); as runtimeNotice) {
+                          <p class="muted warn">{{ runtimeNotice | translate }}</p>
+                        }
                       }
                     </div>
                     <span class="pill" [ngClass]="workflowCapabilityToneClass(capability.capabilityId)">
