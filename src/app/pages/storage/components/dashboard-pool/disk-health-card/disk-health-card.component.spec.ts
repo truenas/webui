@@ -115,5 +115,28 @@ describe('DiskHealthCardComponent', () => {
         .toHaveText('30 °C');
       expect(spectator.query(byText('No disk temperature is available.'))).toBeNull();
     });
+
+    it('recomputes extremes without retaining stale values when disks input changes', () => {
+      spectator.setInput('disks', [
+        {
+          ...disks[0], devname: 'sda', name: 'sda', tempAggregates: { min: 10, max: 50, avg: 30 },
+        },
+        {
+          ...disks[0], devname: 'sdb', name: 'sdb', tempAggregates: { min: 20, max: 40, avg: 30 },
+        },
+      ] as StorageDashboardDisk[]);
+
+      // Remove the disk holding both extremes (10/50) — the panel must reflect the survivor (20/40).
+      spectator.setInput('disks', [
+        {
+          ...disks[0], devname: 'sdb', name: 'sdb', tempAggregates: { min: 20, max: 40, avg: 30 },
+        },
+      ] as StorageDashboardDisk[]);
+
+      expect(spectator.query(byText('Highest Temperature:'))!.parentElement!.querySelector('.value'))
+        .toHaveText('40 °C');
+      expect(spectator.query(byText('Lowest Temperature:'))!.parentElement!.querySelector('.value'))
+        .toHaveText('20 °C');
+    });
   });
 });
