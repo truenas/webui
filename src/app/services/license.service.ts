@@ -115,6 +115,11 @@ export class LicenseService {
     map(([isEnterprise, hasApps]) => !isEnterprise || hasApps),
   );
 
+  // WebShare (a TrueNAS Connect feature) is not offered on Enterprise systems.
+  readonly shouldShowWebshare$ = this.store$.select(selectIsEnterprise).pipe(
+    map((isEnterprise) => !isEnterprise),
+  );
+
   /**
    * Check if the system is configured with TrueNAS Connect.
    * This is used to determine if WebShare and other TrueNAS Connect features are available.

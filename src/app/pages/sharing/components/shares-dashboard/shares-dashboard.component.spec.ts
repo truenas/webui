@@ -12,8 +12,11 @@ import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-da
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { WebShareCardComponent } from 'app/pages/sharing/components/shares-dashboard/webshare-card/webshare-card.component';
 import { poolStore } from 'app/services/global-store/stores.constant';
+import { LicenseService } from 'app/services/license.service';
 
 describe('SharesDashboardComponent', () => {
+  MockInstance.scope();
+
   let spectator: Spectator<SharesDashboardComponent>;
   const createComponent = createComponentFactory({
     component: SharesDashboardComponent,
@@ -41,6 +44,16 @@ describe('SharesDashboardComponent', () => {
     ],
   });
 
+  function setup(shouldShowWebshare = true): void {
+    spectator = createComponent({
+      providers: [
+        mockProvider(LicenseService, {
+          shouldShowWebshare$: of(shouldShowWebshare),
+        }),
+      ],
+    });
+  }
+
   beforeEach(() => {
     // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
     // ng-mocks does not initialize signal-based viewChild queries on mocked components.
@@ -49,15 +62,21 @@ describe('SharesDashboardComponent', () => {
     MockInstance(IscsiCardComponent, 'configForm', signal(undefined));
     MockInstance(NvmeOfCardComponent, 'configForm', signal(undefined));
     MockInstance(WebShareCardComponent, 'configForm', signal(undefined));
-
-    spectator = createComponent();
   });
 
   it('shows cards for each share type', () => {
+    setup();
+
     expect(spectator.query(SmbCardComponent)).toExist();
     expect(spectator.query(NfsCardComponent)).toExist();
     expect(spectator.query(IscsiCardComponent)).toExist();
     expect(spectator.query(NvmeOfCardComponent)).toExist();
     expect(spectator.query(WebShareCardComponent)).toExist();
+  });
+
+  it('hides WebShare card on enterprise systems', () => {
+    setup(false);
+
+    expect(spectator.query(WebShareCardComponent)).not.toExist();
   });
 });

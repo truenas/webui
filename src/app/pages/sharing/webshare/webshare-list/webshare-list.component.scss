@@ -1,6 +1,8 @@
 @import '../../components/tn-table-in-card';
+@import '../../components/experimental-badge';
 
 @include tn-table-in-card;
+@include experimental-badge;
 
 :host {
   display: block;
