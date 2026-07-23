@@ -6,16 +6,20 @@
 @include card-service-toggle;
 @include experimental-badge;
 
+// The badge sits outside the title link so it doesn't bloat the link's accessible name.
+.card-header-title {
+  align-items: center;
+  display: inline-flex;
+
+  .experimental-badge {
+    margin-left: 8px;
+  }
+}
+
 .card-title-link {
   color: inherit;
   display: inline-flex;
   text-decoration: none;
-
-  // The projected h3 isn't a flex-gap container (the library's .tn-card__title
-  // style can't reach projected content), so space the badge off the icon manually.
-  .experimental-badge {
-    margin-left: 8px;
-  }
 }
 
 tn-banner {
