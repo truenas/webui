@@ -258,5 +258,18 @@ describe('PoolManagerWizardComponent', () => {
         data: createdPool,
       });
     });
+
+    it('adds force_topology to the payload when forceTopology is set in the store', async () => {
+      state$.next({ ...state, forceTopology: true });
+
+      await wizard.selectStep((await wizard.getStepLabels()).indexOf('Review'));
+      spectator.query(ReviewWizardStepComponent)!.createPool.emit();
+
+      expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.create', [
+        expect.objectContaining({ force_topology: true }),
+      ]);
+
+      state$.next(state);
+    });
   });
 });
