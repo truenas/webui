@@ -128,7 +128,7 @@ jobs:
           path: coverage
           merge-multiple: true
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v7
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f  # v7
         with:
           name: webui
           token: ${{ env.CODECOV_TOKEN }}
@@ -136,7 +136,7 @@ jobs:
           fail_ci_if_error: true
       - name: Upload extra test data to Codecov
         if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
+        uses: codecov/test-results-action@0fa95f0e1eeaafde2c782583b36b28ad0d8c77d3  # v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: coverage/junit.xml
