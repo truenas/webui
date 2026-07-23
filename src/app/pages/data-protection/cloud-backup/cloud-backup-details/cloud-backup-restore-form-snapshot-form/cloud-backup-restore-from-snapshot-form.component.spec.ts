@@ -4,10 +4,17 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { firstValueFrom, of } from 'rxjs';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
+import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import {
+  CloudBackup,
+  CloudBackupSnapshot,
+  CloudBackupSnapshotDirectoryFileType,
+  CloudBackupSnapshotDirectoryListing,
+} from 'app/interfaces/cloud-backup.interface';
+import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ExplorerCreateDatasetComponent,
@@ -49,6 +56,10 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       }),
       mockApi([
         mockJob('cloud_backup.restore'),
+        mockCall('cloud_backup.list_snapshot_directory', [
+          { name: 'sub', path: '/sub', type: CloudBackupSnapshotDirectoryFileType.Dir },
+          { name: 'file.txt', path: '/file.txt', type: CloudBackupSnapshotDirectoryFileType.File },
+        ] as CloudBackupSnapshotDirectoryListing[]),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -130,6 +141,31 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       ]);
     });
 
+    it('forwards a selected file path as-is through include params', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Target: '/mnt/bulldozer',
+        'Include/Exclude': 'Include from subfolder',
+        Subfolder: '/mnt/dozer',
+        'Included Paths': '/mnt/dozer/file.txt',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+        1,
+        1,
+        '/mnt/dozer',
+        '/mnt/bulldozer',
+        {
+          include: [
+            '/file.txt',
+          ],
+        },
+      ]);
+    });
+
     it('submits backup restore from snapshot with `Include from subfolder` matches paths', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
@@ -176,6 +212,31 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
             'pattern',
           ],
         },
+      ]);
+    });
+  });
+
+  describe('snapshot node provider', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+    });
+
+    it('lists both directories and files from a snapshot directory', async () => {
+      const node = { data: { path: '/' } } as TreeNode<ExplorerNodeData>;
+      const nodes = await firstValueFrom(spectator.component.snapshotNodeProvider(node));
+
+      expect(nodes).toEqual([
+        expect.objectContaining({ path: '/sub', type: ExplorerNodeType.Directory, hasChildren: true }),
+        expect.objectContaining({ path: '/file.txt', type: ExplorerNodeType.File, hasChildren: false }),
+      ]);
+    });
+
+    it('lists only directories for the subfolder selector', async () => {
+      const node = { data: { path: '/' } } as TreeNode<ExplorerNodeData>;
+      const nodes = await firstValueFrom(spectator.component.subFolderNodeProvider(node));
+
+      expect(nodes).toEqual([
+        expect.objectContaining({ path: '/sub', type: ExplorerNodeType.Directory, hasChildren: true }),
       ]);
     });
   });
