@@ -16,6 +16,14 @@
       flex-shrink: 0;
       max-width: 260px;
       min-width: 260px;
+
+      // tn-list renders as a card by default (background, radius, padding);
+      // here it's a plain nav sidebar, so strip that styling.
+      tn-list {
+        background-color: transparent;
+        border-radius: 0;
+        padding: 0;
+      }
     }
 
     .right-pane {
@@ -56,16 +64,30 @@
 
   .vdev-type {
     border-bottom: 1px solid var(--lines);
-    border-left: 3px solid transparent;
     cursor: pointer;
-    padding: 13px 0 11px 21px;
+    position: relative;
+
+    // Text lives in tn-list-item's internal content wrapper, which scoped
+    // styles can't reach without ::ng-deep. Set padding there so it's the
+    // single source of truth (the host is forced to padding: 0 by the lib).
+    ::ng-deep .tn-list-item__content {
+      padding: 11px 21px 13px;
+    }
 
     &:hover {
       background-color: var(--hover-bg);
     }
 
-    &.selected {
-      border-left: 3px solid var(--primary);
+    // Full-height bar aligned to the item, so the selected indicator lines up
+    // with the text regardless of the list-item's internal padding.
+    &.selected::before {
+      background-color: var(--primary);
+      bottom: 0;
+      content: '';
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 3px;
     }
   }
 
