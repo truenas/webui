@@ -31,3 +31,18 @@
     min-width: 420px;
   }
 }
+
+// The dashboard cards render their tn-table flush against the card edges
+// ([padContent]="false") so the table spans the full card width and its header bar
+// reaches edge to edge — the header labels line up with the card title's own left
+// padding. tn-table's internal `.tn-table__table` keeps a `border-radius`, which
+// would poke rounded corners out against the card's square content area, so square
+// them on all sides. Keeps the five data-protection cards in sync with the Shares
+// dashboard cards.
+// TEMP: reaches the private .tn-table__table class until @truenas/ui-components
+// exposes control over the table's corner radius. Tracked under NAS-141021.
+@mixin card-flush-table {
+  :host ::ng-deep tn-table .tn-table__table {
+    border-radius: 0;
+  }
+}

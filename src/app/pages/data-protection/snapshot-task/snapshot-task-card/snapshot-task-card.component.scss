@@ -2,16 +2,19 @@
 
 @include card-title;
 @include card-table-scroll;
+@include card-flush-table;
 
-// Hand-rolled footer mirroring tn-card's small-padding footer. Negative margins
-// break out of the 16px content padding so the border-top spans the card width and
-// the row sits flush at the bottom, matching the tnCardFooterActions footer on sibling cards.
+// Hand-rolled footer mirroring tn-card's small-padding footer. The card renders its
+// table flush ([padContent]="false"), so the content area has no padding to break out
+// of — the footer's own 12px 16px padding gives the row its inset while the border-top
+// and background span the full card width, matching the tnCardFooterActions footer on
+// sibling cards.
 .card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin: 0 -16px -16px;
+  margin: 0;
   padding: 12px 16px;
   border-top: 1px solid var(--tn-lines, #e5e7eb);
 
