@@ -1,7 +1,40 @@
 <tn-card class="card" padding="small" [padContent]="true" [title]="'Metadata' | translate">
-  <p>{{ 'Audit ID' | translate }}: {{ log().audit_id || '-' }}</p>
-  @if (log().service_data?.vers) {
-    <p>{{ 'Version' | translate }}: {{ log().service_data.vers.major ? ('Major' | translate) : ('Minor' | translate) }}</p>
-  }
-  <p>{{ 'Session' | translate }}: {{ log().session || '-' }}</p>
+  <dl class="details">
+    <dt>{{ 'Timestamp' | translate }}:</dt>
+    <dd><ix-date [date]="log().message_timestamp * 1000"></ix-date></dd>
+
+    <dt>{{ 'Service' | translate }}:</dt>
+    <dd>{{ log().service | auditServiceLabel | translate }}</dd>
+
+    <!-- Raw event token (e.g. METHOD_CALL), matching what is recorded and sent to remote syslog. -->
+    <dt>{{ 'Event' | translate }}:</dt>
+    <dd>{{ log().event || '-' }}</dd>
+
+    <dt>{{ 'User' | translate }}:</dt>
+    <dd>{{ log().username || '-' }}</dd>
+
+    <dt>{{ 'Address' | translate }}:</dt>
+    <dd>{{ log().address || '-' }}</dd>
+
+    @if (origin(); as origin) {
+      <dt>{{ 'Origin' | translate }}:</dt>
+      <dd>{{ origin }}</dd>
+    }
+
+    @if (credentialType(); as credentialType) {
+      <dt>{{ 'Authenticated With' | translate }}:</dt>
+      <dd>{{ credentialType | translate }}</dd>
+    }
+
+    <dt>{{ 'Session' | translate }}:</dt>
+    <dd>{{ log().session || '-' }}</dd>
+
+    <dt>{{ 'Audit ID' | translate }}:</dt>
+    <dd>{{ log().audit_id || '-' }}</dd>
+
+    @if (version(); as version) {
+      <dt>{{ 'Version' | translate }}:</dt>
+      <dd>{{ version }}</dd>
+    }
+  </dl>
 </tn-card>
