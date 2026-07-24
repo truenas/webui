@@ -1,20 +1,18 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent,
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnRadioComponent,
+  TnSelectComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -30,9 +28,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnDialogShellComponent,
-    AsyncPipe,
     ReactiveFormsModule,
-    IxRadioGroupComponent,
+    TnRadioComponent,
+    TnTooltipDirective,
     TnFormFieldComponent,
     TnSelectComponent,
     FormActionsComponent,
@@ -58,10 +56,11 @@ export class SelectPresetModalComponent implements OnInit {
     usePreset: new FormControl(true),
   });
 
-  presetOptions$ = of<Option[]>([]);
+  protected readonly presetOptions = signal<Option[]>([]);
   presets: AclTemplateByPath[] = [];
 
-  readonly usePresetOptions$ = of([
+  // Hold raw i18n keys and translate in the template so labels stay reactive to language changes.
+  readonly usePresetOptions: { label: string; value: boolean; tooltip?: string }[] = [
     {
       label: helptextAcl.typeDialog.selectPreset,
       tooltip: helptextAcl.typeDialog.selectPresetTooltip,
@@ -71,7 +70,7 @@ export class SelectPresetModalComponent implements OnInit {
       label: helptextAcl.typeDialog.createCustom,
       value: false,
     },
-  ]);
+  ];
 
   readonly helptext = helptextAcl.typeDialog;
 
@@ -100,7 +99,7 @@ export class SelectPresetModalComponent implements OnInit {
       )
       .subscribe((presets) => {
         this.presets = presets;
-        this.presetOptions$ = of(presets.map((preset) => ({
+        this.presetOptions.set(presets.map((preset) => ({
           label: preset.name,
           value: preset.name,
         })));

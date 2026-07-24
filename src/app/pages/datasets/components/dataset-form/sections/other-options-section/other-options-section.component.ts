@@ -444,12 +444,17 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       this.form.controls.aclmode.disable();
       this.form.controls.casesensitivity.disable();
     } else {
-      this.form.patchValue({
-        aclmode: AclMode.Passthrough,
-        casesensitivity: DatasetCaseSensitivity.Sensitive,
-      });
       this.form.controls.aclmode.enable();
       this.form.controls.casesensitivity.enable();
+
+      // Only apply the preset's defaults when the user hasn't explicitly chosen a value;
+      // otherwise a preset change would silently discard their selection.
+      if (!this.form.controls.aclmode.dirty) {
+        this.form.patchValue({ aclmode: AclMode.Passthrough });
+      }
+      if (!this.form.controls.casesensitivity.dirty) {
+        this.form.patchValue({ casesensitivity: DatasetCaseSensitivity.Sensitive });
+      }
     }
   }
 

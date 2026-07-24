@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, OnChanges, output, TrackByFunction, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { findIndex, isEqual } from 'lodash-es';
 import { stripQueryAndFragment } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -15,7 +13,6 @@ import { processHierarchy } from 'app/modules/global-search/helpers/process-hier
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-global-search-results',
@@ -23,10 +20,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./global-search-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    TestDirective,
+    TnTestIdDirective,
     TnIconComponent,
-    MatButton,
     TranslateModule,
   ],
 })

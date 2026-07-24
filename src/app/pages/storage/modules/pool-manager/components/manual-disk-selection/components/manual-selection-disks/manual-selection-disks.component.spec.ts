@@ -1,17 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTreeHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { DndModule } from 'ngx-drag-drop';
 import { of } from 'rxjs';
+import { settleDeferredTree } from 'app/core/testing/utils/settle-deferred-tree.utils';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
   DiskIconComponent,
 } from 'app/modules/disk-icon/disk-icon.component';
-import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
 import {
   DiskInfoComponent,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';
@@ -84,20 +84,43 @@ describe('ManualSelectionDisksComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
+  /**
+   * Groups expand via a whole-row click (the built-in toggle is hidden).
+   */
+  async function expandGroup(index: number): Promise<void> {
+    spectator.click(spectator.queryAll('.group-row')[index]);
+    await settleDeferredTree(spectator.fixture);
+  }
+
+  /**
+   * Collapsed children stay in the DOM CSS-hidden, and the harness has no
+   * "visible descendants" query yet (requested upstream: a `visible` filter on
+   * TnTreeHarness.getNodes) — fall back to the library's hiding class for the
+   * one assertion where visibility across groups matters.
+   */
+  function visibleDisks(): Element[] {
+    return spectator.queryAll('.unused-disk').filter((el) => !el.closest('.tn-tree-invisible'));
+  }
+
   it('shows a list of disks grouped by enclosure', async () => {
+    await settleDeferredTree(spectator.fixture);
     expect(spectator.queryAll('.group-row-empty')).toHaveLength(0);
 
-    const tree = await loader.getHarness(TreeHarness);
-    const nodes = await tree.getNodes();
+    const tree = await loader.getHarness(TnTreeHarness);
+    const nodes = await tree.getNodes({ level: 0 });
 
     expect(nodes).toHaveLength(2);
     expect(await nodes[0].getText()).toBe('Enclosure 1');
     expect(await nodes[1].getText()).toBe('No enclosure');
 
-    await nodes[0].expand();
+    expect(await nodes[0].isExpanded()).toBe(false);
+    expect(await nodes[1].isExpanded()).toBe(false);
+    await expandGroup(0);
 
-    const disks = spectator.queryAll('.unused-disk');
-    expect(disks).toHaveLength(1);
+    // Only the expanded enclosure's disk is revealed; the collapsed group's
+    // disks remain in the DOM.
+    expect(await nodes[0].isExpanded()).toBe(true);
+    expect(visibleDisks()).toHaveLength(1);
   });
 
   it('updates disks shown when filters are updated', async () => {
@@ -106,17 +129,16 @@ describe('ManualSelectionDisksComponent', () => {
       search: 'sdb',
     } as ManualDiskSelectionFilters);
     spectator.detectChanges();
+    await settleDeferredTree(spectator.fixture);
 
     const emptyCategories = spectator.queryAll('.group-row-empty');
     expect(emptyCategories).toHaveLength(1);
     expect(emptyCategories[0]).toHaveText('Enclosure 1');
 
-    const tree = await loader.getHarness(TreeHarness);
-    const nodes = await tree.getNodes();
-    await nodes[1].expand();
+    await expandGroup(1);
 
-    const disks = spectator.queryAll('.unused-disk');
-    expect(disks).toHaveLength(1);
+    // Data-driven: the filter leaves a single disk in the tree.
+    expect(spectator.queryAll('.unused-disk')).toHaveLength(1);
   });
 
   it('filters disks by SED Capable when sedCapable filter is enabled', async () => {
@@ -125,15 +147,12 @@ describe('ManualSelectionDisksComponent', () => {
       sedCapable: true,
     } as ManualDiskSelectionFilters);
     spectator.detectChanges();
+    await settleDeferredTree(spectator.fixture);
 
-    const tree = await loader.getHarness(TreeHarness);
-    const nodes = await tree.getNodes();
+    await expandGroup(0);
+    await expandGroup(1);
 
-    await nodes[0].expand();
-    await nodes[1].expand();
-
-    const disks = spectator.queryAll('.unused-disk');
-    // Should show only sda and sdc (both SED capable)
-    expect(disks).toHaveLength(2);
+    // Data-driven: only sda and sdc (both SED capable) remain in the tree.
+    expect(spectator.queryAll('.unused-disk')).toHaveLength(2);
   });
 });

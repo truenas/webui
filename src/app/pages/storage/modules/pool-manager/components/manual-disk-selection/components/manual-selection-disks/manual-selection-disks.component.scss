@@ -64,7 +64,53 @@
 
 .tree-container {
   border: 1px solid transparent;
+  // Match the 0 24px inset of the filter fields above (see
+  // manual-selection-disk-filters.component.scss) so the tree and the form
+  // fields share the same width.
+  margin: 0 24px;
   overflow-y: auto;
+}
+
+// This tree is a plain drag-source list inside the manual-selection dialog —
+// neutralize the library's card-like box and row chrome for visual parity with
+// the previous ix-tree rendering (rows own their padding, groups their borders).
+tn-tree {
+  // Bridge the library's --tn-* design tokens onto webui's theme variables
+  // (the global token bridge is not wired yet; mirrors dataset-management).
+  --tn-lines: var(--lines);
+  --tn-alt-bg1: transparent;
+  --tn-alt-bg2: transparent;
+  --tn-bg3: var(--hover-bg);
+  --tn-fg1: var(--fg1);
+  --tn-fg2: var(--fg2);
+  --tn-primary: var(--primary);
+  --tn-bg1: transparent;
+
+  background: none;
+  border: 0;
+  border-radius: 8px;
+}
+
+:host ::ng-deep tn-tree {
+  // Rows own their layout: no library row padding/min-height/separators.
+  .tn-nested-tree-node-wrapper > .tn-nested-tree-node__content {
+    border-top: 0;
+    min-height: 0;
+    padding: 0;
+  }
+
+  // TEMP: until @truenas/ui-components exposes a children-indent input on
+  // tn-nested-tree-node, zero the library's built-in 40px per-level indent
+  // (disks indent via .unused-disk's own padding).
+  div.tn-nested-tree-node-container {
+    padding-left: 0;
+  }
+}
+
+// The projected row content must span the full row width.
+.group-row,
+.unused-disk {
+  flex: 1;
 }
 
 .dnd-wrapper {

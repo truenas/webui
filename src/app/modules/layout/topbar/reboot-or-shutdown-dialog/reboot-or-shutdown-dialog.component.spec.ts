@@ -90,6 +90,9 @@ describe('RebootOrShutdownDialogComponent', () => {
       const select = await loader.getHarness(TnSelectHarness);
       await select.selectOption(/Custom Reason/);
 
+      // Unfiltered lookup is unambiguous: the dialog renders a single tn-input,
+      // and only while Custom Reason is selected. It binds [formControl] (not
+      // formControlName), so no attribute survives in the DOM to filter on.
       const customReasonInput = await loader.getHarness(TnInputHarness);
       await customReasonInput.setValue('House on fire');
 

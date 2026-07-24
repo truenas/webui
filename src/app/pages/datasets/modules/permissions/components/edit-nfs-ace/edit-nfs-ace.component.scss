@@ -6,16 +6,43 @@
 .general-fields {
   border-bottom: 1px solid var(--lines);
   display: block;
-  padding-left: 5px;
-  padding-right: 25px;
+  padding: 24px;
 }
 
 .permissions-and-flags {
+  align-items: flex-start;
   display: flex;
-  padding-left: 5px;
-  padding-right: 25px;
+  gap: 40px;
+  padding: 24px 25px;
 
   > * {
     flex: 1;
+  }
+}
+
+.radio-group {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+
+  // TEMP: tn-radio ships a default margin-bottom; drop it so the flex gap controls
+  // spacing and the options line up evenly. Remove once @truenas/ui-components
+  // exposes spacing control on tn-radio.
+  ::ng-deep tn-radio {
+    margin-bottom: 0;
+  }
+}
+
+.checkbox-list {
+  column-gap: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 8px;
+
+  // Two columns with a gap between them: subtract half the gap from each 50% track so the
+  // pair still fits on one row.
+  > tn-checkbox {
+    flex: 0 0 calc(50% - 12px);
   }
 }

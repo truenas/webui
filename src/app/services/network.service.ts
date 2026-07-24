@@ -1,26 +1,20 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import {
-  filter, map, shareReplay, take,
+  filter, map,
 } from 'rxjs/operators';
-import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Choices } from 'app/interfaces/choices.interface';
-import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectIsHaEnabled } from 'app/store/ha-info/ha-info.selectors';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {
   private api = inject(ApiService);
   private store = inject(Store<AppState>);
-
-  private isHaEnabled$: Observable<boolean> | null = null;
-  private failoverStatus$: Observable<FailoverStatus> | null = null;
-  private failoverConfig$: Observable<FailoverConfig> | null = null;
 
   macRegex = /\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i;
 
@@ -83,31 +77,14 @@ export class NetworkService {
     );
   }
 
-  private getFailoverStatus(): Observable<FailoverStatus> {
-    if (!this.failoverStatus$) {
-      this.failoverStatus$ = this.api.call('failover.status').pipe(shareReplay({ bufferSize: 1, refCount: false }));
-    }
-    return this.failoverStatus$;
-  }
-
-  private getFailoverConfig(): Observable<FailoverConfig> {
-    if (!this.failoverConfig$) {
-      this.failoverConfig$ = this.api.call('failover.config').pipe(shareReplay({ bufferSize: 1, refCount: false }));
-    }
-    return this.failoverConfig$;
-  }
-
+  /**
+   * Live HA-enabled state sourced from the ha-info store, which stays current via the
+   * `failover.disabled.reasons` event subscription. This previously read `failover.config`
+   * directly and cached it for the session; that cache went stale when failover was toggled
+   * mid-session, so the network page kept showing HA-disabled UI (missing "Reset configuration",
+   * disabled "Add") after failover had been administratively disabled.
+   */
   getIsHaEnabled(): Observable<boolean> {
-    if (!this.isHaEnabled$) {
-      this.isHaEnabled$ = combineLatest([
-        this.store.select(selectIsHaLicensed).pipe(take(1)),
-        this.getFailoverStatus(),
-        this.getFailoverConfig(),
-      ]).pipe(
-        map(([licensed, status, config]) => licensed && status !== FailoverStatus.Single && !config.disabled),
-        shareReplay({ bufferSize: 1, refCount: false }),
-      );
-    }
-    return this.isHaEnabled$;
+    return this.store.select(selectIsHaEnabled);
   }
 }

@@ -13,7 +13,6 @@ import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorit
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -39,12 +38,6 @@ describe('CsrAddComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: TnButtonHarness;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const profile = {
     lifetime: 3650,
@@ -83,7 +76,6 @@ describe('CsrAddComponent', () => {
         }),
         mockJob('certificate.create', fakeSuccessfulJob()),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(SystemGeneralService, {
         getCertificateCountryChoices: () => of({
           US: 'United States',
@@ -129,6 +121,9 @@ describe('CsrAddComponent', () => {
   }
 
   it('creates a new certificate when Type = Certificate Signing Request and form is submitted', async () => {
+    const closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
+
     await setInput('name', 'new');
     await selectValue('create_type', 'Certificate Signing Request');
 
@@ -194,7 +189,7 @@ describe('CsrAddComponent', () => {
         },
       },
     ]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(closedSpy).toHaveBeenCalledWith(true);
   });
 
   it('imports a certificate when Type = Import CSR and form is submitted', async () => {

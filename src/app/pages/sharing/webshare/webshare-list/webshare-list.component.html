@@ -28,6 +28,7 @@
 <tn-card [padContent]="false">
   <div tnCardHeader class="header-title">
     <h3 class="tn-card__title">{{ 'WebShare' | translate }}</h3>
+    <span class="experimental-badge">{{ 'Experimental' | translate }}</span>
     <ix-service-state-button
       [service]="service()"
       [count]="currentPageCount() ?? 0"

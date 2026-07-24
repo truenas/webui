@@ -1,4 +1,4 @@
-<tn-card class="card card-square" [padContent]="false">
+<tn-card class="card" [padContent]="false">
   @if (isLoading) {
     <tn-spinner
       class="spinner"
@@ -17,7 +17,7 @@
         </div>
         <tn-button
           class="cancel-button"
-          [testId]="'cancel'"
+          testId="cancel"
           [label]="'Cancel' | translate"
           (onClick)="onCancel()"
         ></tn-button>
@@ -30,11 +30,12 @@
             class="owner-combobox"
             formControlName="owner"
           ></ix-user-combobox>
-          <ix-checkbox
-            formControlName="applyOwner"
-            [label]="'Apply Owner' | translate"
-            [tooltip]="helptext.applyTooltip | translate"
-          ></ix-checkbox>
+          <tn-form-field [tooltip]="helptext.applyTooltip | translate">
+            <tn-checkbox
+              formControlName="applyOwner"
+              [label]="'Apply Owner' | translate"
+            ></tn-checkbox>
+          </tn-form-field>
         </div>
 
         <div class="control">
@@ -43,11 +44,12 @@
             class="owner-combobox"
             formControlName="ownerGroup"
           ></ix-group-combobox>
-          <ix-checkbox
-            formControlName="applyGroup"
-            [label]="'Apply Group' | translate"
-            [tooltip]="helptext.applyGroupTooltip | translate"
-          ></ix-checkbox>
+          <tn-form-field [tooltip]="helptext.applyGroupTooltip | translate">
+            <tn-checkbox
+              formControlName="applyGroup"
+              [label]="'Apply Group' | translate"
+            ></tn-checkbox>
+          </tn-form-field>
         </div>
       </div>
     </div>
@@ -67,7 +69,7 @@
             <tn-button
               class="action"
               icon="mdi-plus"
-              [testId]="'add-acl-item'"
+              testId="add-acl-item"
               [label]="'Add Item' | translate"
               (onClick)="onAddItemPressed()"
             ></tn-button>
@@ -83,16 +85,16 @@
                 @if (acl?.trivial) {
                   <tn-button
                     class="action"
-                    [testId]="'edit-permissions'"
-                    [routerLink]="['/datasets', getDatasetPath(), 'permissions', 'edit']"
+                    testId="edit-permissions"
                     [label]="'Permissions Editor' | translate"
+                    [routerLink]="['/datasets', getDatasetPath(), 'permissions', 'edit']"
                   ></tn-button>
                 } @else {
                   <tn-button
                     *ixRequiresRoles="[Role.FilesystemAttrsWrite, Role.FilesystemFullControl]"
                     color="warn"
                     class="action"
-                    [testId]="'strip-acl'"
+                    testId="strip-acl"
                     [label]="'Strip ACL' | translate"
                     (onClick)="onStripAclPressed()"
                   ></tn-button>
@@ -103,14 +105,14 @@
               <div class="control-buttons">
                 <tn-button
                   class="action"
-                  [testId]="'use-preset'"
+                  testId="use-preset"
                   [label]="'Use Preset' | translate"
                   (onClick)="onUsePresetPressed()"
                 ></tn-button>
                 <tn-button
                   *ixRequiresRoles="[Role.FilesystemAttrsWrite]"
                   class="action"
-                  [testId]="'save-as-preset'"
+                  testId="save-as-preset"
                   [label]="'Save As Preset' | translate"
                   (onClick)="onSavePreset()"
                 ></tn-button>

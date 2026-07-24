@@ -8,6 +8,7 @@ import {
   TnMenuItemComponent,
   TnMenuTriggerDirective,
   TnTooltipDirective,
+  tnIconMarker,
 } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -46,6 +47,12 @@ export class BootenvNodeItemComponent {
   readonly invokeAction = output<BootPoolActionEvent>();
 
   protected readonly requiredRoles = [Role.BootEnvWrite];
+
+  // Marked so the sprite extraction tool bundles them (it does not scan
+  // tn-menu-item icon attributes).
+  protected readonly replaceIcon = tnIconMarker('file-replace', 'mdi');
+  protected readonly attachIcon = tnIconMarker('attachment-plus', 'mdi');
+  protected readonly detachIcon = tnIconMarker('attachment-minus', 'mdi');
 
   protected readonly topologyItem = computed(() => this.node() as VDevItem);
 

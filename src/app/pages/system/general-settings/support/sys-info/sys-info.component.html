@@ -41,6 +41,7 @@
           <tn-button
             *ixRequiresRoles="manageProactiveRoles"
             class="edit-contacts-btn"
+            testId="manage-contacts"
             [label]="'Manage' | translate"
             [disabled]="!isProactiveSupportAvailable()"
             (onClick)="editContacts.emit()"
@@ -57,6 +58,7 @@
             *ixRequiresRoles="productionToggleRoles"
             class="production-toggle"
             color="primary"
+            testId="production"
             [formControl]="productionControl()"
             [label]="'This is a production system' | translate"
           ></tn-slide-toggle>

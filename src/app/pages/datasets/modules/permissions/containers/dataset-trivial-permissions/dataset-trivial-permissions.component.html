@@ -1,98 +1,132 @@
-<tn-card class="card card-square" [title]="'Unix Permissions Editor' | translate">
-  <ng-template tnCardHeaderActions>
+<tn-card class="card" [padContent]="false">
+  <ix-fake-progress-bar [loading]="isLoading()"></ix-fake-progress-bar>
+
+  <div class="header">
+    <h3 class="header-title">{{ 'Unix Permissions Editor' | translate }}</h3>
+
     <div class="dataset-path">
       <div class="dataset-path-label">{{ 'Dataset' | translate }}:</div>
       <div class="dataset-path-value" [tnTooltip]="datasetPath">
         {{ datasetPath }}
       </div>
     </div>
-  </ng-template>
+  </div>
 
-  <ix-fake-progress-bar [loading]="isLoading()"></ix-fake-progress-bar>
+  <form class="form" [formGroup]="form" (submit)="onSubmit()">
+    <div class="owner-and-access">
+      <tn-form-section class="owner-fields" [heading]="'Owner' | translate">
+        <ix-user-combobox
+          formControlName="owner"
+          [label]="'User' | translate"
+          [tooltip]="tooltips.user | translate"
+          [required]="isToApplyUser"
+        ></ix-user-combobox>
 
-  <form [formGroup]="form" (submit)="onSubmit()">
-      <div class="owner-and-access">
-        <ix-fieldset class="owner-fields" [title]="'Owner' | translate">
-          <ix-user-combobox
-            formControlName="owner"
-            [label]="'User' | translate"
-            [tooltip]="tooltips.user | translate"
-            [required]="isToApplyUser"
-          ></ix-user-combobox>
-
-          <ix-checkbox
+        <tn-form-field [tooltip]="tooltips.applyUser | translate">
+          <tn-checkbox
             formControlName="applyUser"
             [label]="'Apply User' | translate"
-            [tooltip]="tooltips.applyUser | translate"
-          ></ix-checkbox>
+          ></tn-checkbox>
+        </tn-form-field>
 
-          <ix-group-combobox
-            formControlName="ownerGroup"
-            [label]="'Group' | translate"
-            [tooltip]="tooltips.group | translate"
-            [required]="isToApplyGroup"
-          ></ix-group-combobox>
+        <ix-group-combobox
+          formControlName="ownerGroup"
+          [label]="'Group' | translate"
+          [tooltip]="tooltips.group | translate"
+          [required]="isToApplyGroup"
+        ></ix-group-combobox>
 
-          <ix-checkbox
+        <tn-form-field [tooltip]="tooltips.applyGroup | translate">
+          <tn-checkbox
             formControlName="applyGroup"
             [label]="'Apply Group' | translate"
-            [tooltip]="tooltips.applyGroup | translate"
-          ></ix-checkbox>
-        </ix-fieldset>
-        <ix-fieldset class="access-fields" [title]="'Access' | translate">
-          <ix-permissions
-            formControlName="mode"
-            [label]="'Access Mode' | translate"
-            [tooltip]="tooltips.mode | translate"
-          ></ix-permissions>
-        </ix-fieldset>
-      </div>
-      <div class="advanced-fields">
-        <ix-fieldset [title]="'Advanced' | translate">
-          <ix-checkbox
+          ></tn-checkbox>
+        </tn-form-field>
+      </tn-form-section>
+      <tn-form-section class="access-fields" [heading]="'Access' | translate">
+        <tn-form-field
+          [label]="'Access Mode' | translate"
+          [tooltip]="tooltips.mode | translate"
+        >
+          <table
+            class="access-mode"
+            formGroupName="accessMode"
+            tnTestIdType="table"
+            [tnTestId]="'permissions-table'"
+          >
+            <tr>
+              <td></td>
+              @for (column of accessModeColumns; track column.suffix) {
+                <th class="access-mode__header" scope="col">{{ column.label | translate }}</th>
+              }
+            </tr>
+            @for (row of accessModeRows; track row.prefix) {
+              <tr>
+                <th class="access-mode__header" scope="row">{{ row.label | translate }}</th>
+                @for (column of accessModeColumns; track column.suffix) {
+                  <td class="access-mode__cell">
+                    <tn-checkbox
+                      class="access-mode__checkbox"
+                      [formControlName]="row.prefix + column.suffix"
+                      [label]="(row.label | translate) + ' ' + (column.label | translate)"
+                      [testId]="[row.testId, column.testId]"
+                    ></tn-checkbox>
+                  </td>
+                }
+              </tr>
+            }
+          </table>
+        </tn-form-field>
+      </tn-form-section>
+    </div>
+    <div class="advanced-fields">
+      <tn-form-section [heading]="'Advanced' | translate">
+        <tn-form-field [tooltip]="tooltips.recursive | translate">
+          <tn-checkbox
             formControlName="recursive"
             [label]="'Apply permissions recursively' | translate"
-            [tooltip]="tooltips.recursive | translate"
-          ></ix-checkbox>
+          ></tn-checkbox>
+        </tn-form-field>
 
-          @if (isRecursive$ | async) {
-            <ix-checkbox
+        @if (isRecursive()) {
+          <tn-form-field [tooltip]="tooltips.traverse | translate">
+            <tn-checkbox
               formControlName="traverse"
               [label]="'Apply permissions to child datasets' | translate"
-              [tooltip]="tooltips.traverse | translate"
-            ></ix-checkbox>
-          }
-        </ix-fieldset>
-      </div>
+            ></tn-checkbox>
+          </tn-form-field>
+        }
+      </tn-form-section>
+    </div>
 
-      <div class="form-actions">
-        <tn-button
-          *ixRequiresRoles="requiredRoles"
-          class="save-button"
-          type="submit"
-          color="primary"
-          [testId]="'save'"
-          [label]="'Save' | translate"
-          [disabled]="form.invalid || isLoading()"
-        ></tn-button>
-        <tn-button
-          type="button"
-          [testId]="'cancel'"
-          [routerLink]="['/datasets', datasetId]"
-          [label]="'Cancel' | translate"
-        ></tn-button>
+    <div class="form-actions">
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        class="save-button"
+        type="submit"
+        color="primary"
+        testId="save"
+        [label]="'Save' | translate"
+        [disabled]="form.invalid || isLoading()"
+      ></tn-button>
+      <tn-button
+        type="button"
+        testId="cancel"
+        [label]="'Cancel' | translate"
+        [routerLink]="['/datasets', datasetId]"
+      ></tn-button>
 
-        <ng-container *ixRequiresRoles="requiredRoles">
-          @if (canSetAcl) {
-            <tn-button
-              class="set-acl-button"
-              type="button"
-              [testId]="'set-acl'"
-              [label]="'Set ACL' | translate"
-              (onClick)="onSetAclPressed()"
-            ></tn-button>
-          }
-        </ng-container>
-      </div>
-    </form>
+      <ng-container *ixRequiresRoles="requiredRoles">
+        @if (canSetAcl) {
+          <tn-button
+            class="set-acl-button"
+            type="button"
+            testId="set-acl"
+            [label]="'Set ACL' | translate"
+            (onClick)="onSetAclPressed()"
+          ></tn-button>
+        }
+      </ng-container>
+    </div>
+  </form>
 </tn-card>

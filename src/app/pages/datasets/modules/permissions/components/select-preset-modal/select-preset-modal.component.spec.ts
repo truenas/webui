@@ -3,13 +3,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnRadioHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectPresetModalConfig,
@@ -95,8 +94,7 @@ describe('SelectPresetModalComponent', () => {
   });
 
   it('hides the preset select when Create a custom ACL is selected', async () => {
-    const actionsRadios = await loader.getHarness(IxRadioGroupHarness);
-    await actionsRadios.setValue('Create a custom ACL');
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Create a custom ACL' }))).check();
 
     const presetSelect = await loader.getHarnessOrNull(TnSelectHarness);
 
@@ -104,8 +102,7 @@ describe('SelectPresetModalComponent', () => {
   });
 
   it('closes dialog with no action if Create a custom ACL is selected and dialog submitted', async () => {
-    const actionsRadios = await loader.getHarness(IxRadioGroupHarness);
-    await actionsRadios.setValue('Create a custom ACL');
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Create a custom ACL' }))).check();
 
     const continueButton = await loader.getHarness(TnButtonHarness.with({ label: 'Continue' }));
     await continueButton.click();
@@ -115,8 +112,7 @@ describe('SelectPresetModalComponent', () => {
   });
 
   it('calls `usePreset` on DatasetAclEditorStore when preset is selected and dialog is submitted', async () => {
-    const actionsRadios = await loader.getHarness(IxRadioGroupHarness);
-    await actionsRadios.setValue('Select a preset ACL');
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Select a preset ACL' }))).check();
 
     const presetSelect = await loader.getHarness(TnSelectHarness);
     await presetSelect.selectOption('POSIX_HOME');

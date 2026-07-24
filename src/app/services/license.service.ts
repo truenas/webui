@@ -5,7 +5,9 @@ import {
 } from 'rxjs';
 import { first, map, switchMap } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
@@ -14,6 +16,7 @@ import {
   selectHasEnclosureSupport,
   selectHasLicenseFeature,
   selectIsEnterprise,
+  selectProductType,
 } from 'app/store/system-info/system-info.selectors';
 
 // Hoist parameterized selector instances so consumers share memoization across
@@ -113,6 +116,17 @@ export class LicenseService {
     this.store$.select(selectHasAppsFeature),
   ]).pipe(
     map(([isEnterprise, hasApps]) => !isEnterprise || hasApps),
+  );
+
+  /**
+   * WebShare (a TrueNAS Connect feature) is not offered on Enterprise systems.
+   * Deliberately waits for the product type to load instead of using `selectIsEnterprise`
+   * (which reads `false` while the product type is still null), so consumers — the shares
+   * dashboard card and the webshare route guard — never act on a transient "not Enterprise".
+   */
+  readonly shouldShowWebshare$ = this.store$.pipe(
+    selectNotNull(selectProductType),
+    map((productType) => productType !== ProductType.Enterprise),
   );
 
   /**

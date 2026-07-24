@@ -1,8 +1,15 @@
 <tn-drawer-container class="app-side-nav-container">
   <!-- Main side navigation -->
+  <!--
+    The drawer panel is a forced landmark (role="navigation" in side mode,
+    "dialog" in over mode). Label it distinctly from the inner
+    <nav aria-label="Main menu"> so the two don't read as duplicate landmarks;
+    "Sidebar" also covers the logo/copyright content the panel wraps. Avoid the
+    word "navigation" in the label — screen readers already announce the role.
+  -->
   <tn-drawer
     class="sidebar-panel not-alerts"
-    [ariaLabel]="'Main navigation' | translate"
+    [ariaLabel]="'Sidebar' | translate"
     [width]="sidenavWidth"
     [opened]="isSidenavOpen"
     [mode]="sidenavMode"

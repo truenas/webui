@@ -1,12 +1,12 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnTooltipDirective,
+  TnButtonComponent, TnCardComponent, TnCheckboxComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
@@ -16,10 +16,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -29,6 +26,18 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 
+interface AccessMode {
+  ownerRead: boolean;
+  ownerWrite: boolean;
+  ownerExec: boolean;
+  groupRead: boolean;
+  groupWrite: boolean;
+  groupExec: boolean;
+  otherRead: boolean;
+  otherWrite: boolean;
+  otherExec: boolean;
+}
+
 @Component({
   selector: 'ix-dataset-trivial-permissions',
   templateUrl: './dataset-trivial-permissions.component.html',
@@ -36,19 +45,18 @@ import { StorageService } from 'app/services/storage.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
-    TnCardHeaderActionsDirective,
     TnTooltipDirective,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnTestIdDirective,
     IxUserComboboxComponent,
     IxGroupComboboxComponent,
-    IxCheckboxComponent,
-    IxPermissionsComponent,
+    TnCheckboxComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     RouterLink,
     TranslateModule,
-    AsyncPipe,
     FakeProgressBarComponent,
   ],
 })
@@ -78,12 +86,35 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       () => this.isToApplyGroup,
       Validators.required,
     )]),
-    mode: ['000'],
+    accessMode: this.formBuilder.group({
+      ownerRead: [false],
+      ownerWrite: [false],
+      ownerExec: [false],
+      groupRead: [false],
+      groupWrite: [false],
+      groupExec: [false],
+      otherRead: [false],
+      otherWrite: [false],
+      otherExec: [false],
+    }),
     applyGroup: [false],
-    permission: [''],
     recursive: [false],
     traverse: [false],
   });
+
+  // `prefix`/`suffix` build the form control name; `testId` keeps the resolved
+  // data-test stable (owner→user, Exec→execute) regardless of the control name.
+  protected readonly accessModeRows = [
+    { label: 'User', prefix: 'owner', testId: 'user' },
+    { label: 'Group', prefix: 'group', testId: 'group' },
+    { label: 'Other', prefix: 'other', testId: 'other' },
+  ];
+
+  protected readonly accessModeColumns = [
+    { label: 'Read', suffix: 'Read', testId: 'read' },
+    { label: 'Write', suffix: 'Write', testId: 'write' },
+    { label: 'Execute', suffix: 'Exec', testId: 'execute' },
+  ];
 
   protected readonly isLoading = signal(false);
 
@@ -101,7 +132,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     traverse: helptextPermissions.traverseTooltip,
   };
 
-  readonly isRecursive$ = this.form.select((values) => values.recursive);
+  protected readonly isRecursive = toSignal(this.form.select((values) => values.recursive));
 
   get canSetAcl(): boolean {
     return this.aclType !== AclType.Off;
@@ -165,7 +196,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
           this.aclType = datasets[0].acltype.value as unknown as AclType;
           const mode = stat.mode.toString(8).substring(2, 5);
           this.form.patchValue({
-            mode,
+            accessMode: this.modeToAccessMode(mode),
             owner: stat.user,
             ownerGroup: stat.group,
           });
@@ -177,12 +208,36 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       });
   }
 
+  private modeToAccessMode(mode: string): AccessMode {
+    const toBits = (digit: string): [boolean, boolean, boolean] => {
+      const value = parseInt(digit, 10) || 0;
+      return [!!(value & 4), !!(value & 2), !!(value & 1)];
+    };
+    const [ownerRead, ownerWrite, ownerExec] = toBits(mode[0]);
+    const [groupRead, groupWrite, groupExec] = toBits(mode[1]);
+    const [otherRead, otherWrite, otherExec] = toBits(mode[2]);
+    return {
+      ownerRead, ownerWrite, ownerExec, groupRead, groupWrite, groupExec, otherRead, otherWrite, otherExec,
+    };
+  }
+
+  private accessModeToMode(access: AccessMode): string {
+    const toDigit = (read: boolean, write: boolean, exec: boolean): number => {
+      return (read ? 4 : 0) + (write ? 2 : 0) + (exec ? 1 : 0);
+    };
+    return [
+      toDigit(access.ownerRead, access.ownerWrite, access.ownerExec),
+      toDigit(access.groupRead, access.groupWrite, access.groupExec),
+      toDigit(access.otherRead, access.otherWrite, access.otherExec),
+    ].join('');
+  }
+
   private preparePayload(): FilesystemSetPermParams {
     const values = this.form.value;
 
     const update = {
       path: this.datasetPath,
-      mode: values.mode,
+      mode: this.accessModeToMode(this.form.controls.accessMode.getRawValue()),
       options: {
         stripacl: values.recursive,
         recursive: values.recursive,

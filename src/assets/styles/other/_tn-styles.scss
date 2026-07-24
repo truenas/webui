@@ -860,13 +860,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
   }
 }
 
-ix-tree-node[aria-level='2'],
-ix-nested-tree-node[aria-level='2'] {
-  ix-bootenv-node-item {
-    padding-left: 33px;
-  }
-}
-
 .tooltip-multiline {
   white-space: pre-line;
 }

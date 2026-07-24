@@ -1,14 +1,17 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
+} from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 
 @Component({
@@ -18,7 +21,8 @@ import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/st
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxCheckboxComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     TranslateModule,
@@ -30,6 +34,7 @@ export class AclEditorSaveControlsComponent implements OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   readonly canBeSaved = input(false);
   readonly ownerValues = input.required<{
@@ -81,6 +86,9 @@ export class AclEditorSaveControlsComponent implements OnInit {
       }
 
       this.saveParameters.patchValue({ recursive: false });
+      // OnPush: the dialog-cancel path patches the form outside a template event, so mark for
+      // check to re-run the `@if (recursive)` that hides the traverse checkbox.
+      this.cdr.markForCheck();
     });
   }
 }

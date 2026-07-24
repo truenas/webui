@@ -16,6 +16,7 @@ import { minimumPbkdf2Iterations } from 'app/constants/dataset.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Role } from 'app/enums/role.enum';
+import { findInTree } from 'app/helpers/find-in-tree.utils';
 import { combineLatestIsAny } from 'app/helpers/operators/combine-latest-is-any.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
@@ -27,7 +28,6 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
-import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';

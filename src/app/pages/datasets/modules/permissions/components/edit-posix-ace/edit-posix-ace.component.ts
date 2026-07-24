@@ -2,18 +2,16 @@ import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, OnIni
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   PosixAclTag, posixAclTagLabels, PosixPermission, posixPermissionLabels,
 } from 'app/enums/posix-acl.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 
@@ -24,12 +22,12 @@ import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/st
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     IxUserComboboxComponent,
     IxGroupComboboxComponent,
-    IxCheckboxListComponent,
-    IxCheckboxComponent,
+    TnCheckboxComponent,
     TranslateModule,
   ],
 })
@@ -41,16 +39,20 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
 
   readonly ace = input.required<PosixAclItem>();
 
-  form = this.formBuilder.nonNullable.group({
-    tag: [null as PosixAclTag | null],
-    user: [null as string | null],
-    group: [null as string | null],
-    permissions: [[] as PosixPermission[]],
-    default: [false],
+  form = this.formBuilder.group({
+    tag: this.formBuilder.control<PosixAclTag | null>(null),
+    user: this.formBuilder.control<string | null>(null),
+    group: this.formBuilder.control<string | null>(null),
+    permissions: this.formBuilder.nonNullable.group({
+      [PosixPermission.Read]: false,
+      [PosixPermission.Write]: false,
+      [PosixPermission.Execute]: false,
+    }),
+    default: this.formBuilder.nonNullable.control(false),
   });
 
-  readonly tags$ = of(mapToOptions(posixAclTagLabels, this.translate));
-  readonly permissions$ = of(mapToOptions(posixPermissionLabels, this.translate));
+  readonly tags = mapToOptions(posixAclTagLabels, this.translate);
+  readonly permissionOptions = mapToOptions(posixPermissionLabels, this.translate);
 
   readonly tooltips = {
     user: helptextAcl.userTooltip,
@@ -104,9 +106,9 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
       tag: formValues.tag,
       default: formValues.default,
       perms: {
-        [PosixPermission.Read]: formValues.permissions.includes(PosixPermission.Read),
-        [PosixPermission.Write]: formValues.permissions.includes(PosixPermission.Write),
-        [PosixPermission.Execute]: formValues.permissions.includes(PosixPermission.Execute),
+        [PosixPermission.Read]: formValues.permissions[PosixPermission.Read],
+        [PosixPermission.Write]: formValues.permissions[PosixPermission.Write],
+        [PosixPermission.Execute]: formValues.permissions[PosixPermission.Execute],
       },
     } as PosixAclItem;
 
@@ -138,14 +140,17 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
       groupField.addValidators(Validators.required);
     }
 
+    const perms = this.ace().perms;
     const formValues = {
       tag: aceTag,
       user: isUserTag ? this.ace().who : null,
       group: isGroupTag ? this.ace().who : null,
       default: this.ace().default,
-      permissions: Object.entries(this.ace().perms)
-        .filter(([, isOn]: [string, boolean]) => isOn)
-        .map(([permission]) => permission as PosixPermission),
+      permissions: {
+        [PosixPermission.Read]: !!perms[PosixPermission.Read],
+        [PosixPermission.Write]: !!perms[PosixPermission.Write],
+        [PosixPermission.Execute]: !!perms[PosixPermission.Execute],
+      },
     };
 
     this.form.patchValue(formValues, { emitEvent: false });

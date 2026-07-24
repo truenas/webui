@@ -29,21 +29,19 @@
 
     <div class="tree-wrapper">
       <div class="tree-inner">
-        <ix-tree-view
+        <tn-tree
           class="disk-tree"
-          [ixDataSource]="dataSource"
-          [ixTreeControl]="treeControl"
+          [dataSource]="dataSource"
+          [treeControl]="treeControl"
         >
-          <ix-tree-node
-            *treeNodeDef="let topologyItem; dataSource: dataSource"
+          <tn-nested-tree-node
+            *cdkTreeNodeDef="let topologyItem"
             routerLinkActive="selected"
-            [treeNodeDefDataSource]="dataSource"
             [class.selected]="topologyItem.guid === selectedNode?.guid"
             [routerLink]="['/storage', poolId(), 'vdevs', topologyItem.guid]"
-            (click)="viewDetails(poolId(), topologyItem.guid)"
-            (keydown.enter)="viewDetails(poolId(), topologyItem.guid)"
+            (click)="viewDetails(poolId(), topologyItem.guid); $event.stopPropagation()"
+            (keydown.enter)="onRowEnter($event, topologyItem.guid)"
           >
-            <span class="spacer" treeNodeToggle [class.spacer-root]="topologyItem.isRoot"></span>
             <ix-topology-item-node
               [topologyItem]="topologyItem | cast"
               [disk]="vDevsStore.getDisk(topologyItem)"
@@ -53,75 +51,52 @@
               library="mdi"
               class="mobile-actions"
             ></tn-icon>
-          </ix-tree-node>
+          </tn-nested-tree-node>
 
-          <ix-nested-tree-node
-            *treeNodeDef="let group; dataSource: dataSource; when: isVdevGroup"
-            [treeNodeDefDataSource]="dataSource"
+          <tn-nested-tree-node
+            *cdkTreeNodeDef="let group; when: isVdevGroup"
+            hideToggle
+            class="vdev-group-row"
+            (click)="onRowGroupSelected(group, $event)"
           >
-            <div
-              class="nested-tree-root-node"
-              (click)="onRowGroupSelected(group, $event)"
-            >
-              <ix-vdev-group-node [vdevGroup]="group | cast">
-                <tn-icon-button
-                  treeNodeToggle
-                  class="vdev-group-toggle"
-                  library="mdi"
-                  [name]="treeControl.isExpanded(group) ? 'chevron-down' : 'chevron-right'"
-                  [testId]="['toggle-vdev-group', group.guid]"
-                  [ariaLabel]="'Toggle {row}' | translate: { row: group.guid }"
-                  (click)="$event.preventDefault()"
-                ></tn-icon-button>
-              </ix-vdev-group-node>
-            </div>
-
-            @if (treeControl.isExpanded(group)) {
-              <ng-container treeNodeOutlet></ng-container>
-            }
-          </ix-nested-tree-node>
-
-          <ix-nested-tree-node
-            *treeNodeDef="let vdev; dataSource: dataSource; when: hasNestedChild"
-            [treeNodeDefDataSource]="dataSource"
-          >
-            <div
-              class="nested-tree-root-node"
-              routerLinkActive="selected"
-              [class.selected]="vdev.guid === selectedNode?.guid"
-              [routerLink]="['/storage', poolId(), 'vdevs', vdev.guid]"
-              (click)="viewDetails(poolId(), vdev.guid)"
-              (keydown.enter)="viewDetails(poolId(), vdev.guid)"
-            >
+            <ix-vdev-group-node [vdevGroup]="group | cast">
               <tn-icon-button
-                treeNodeToggle
+                class="vdev-group-toggle"
                 library="mdi"
-                [name]="treeControl.isExpanded(vdev) ? 'chevron-down' : 'chevron-right'"
-                [testId]="['toggle', vdev.guid]"
-                [ariaLabel]="'Toggle {row}' | translate: { row: vdev.guid }"
+                [name]="treeControl.isExpanded(group) ? 'chevron-down' : 'chevron-right'"
+                [testId]="['toggle-vdev-group', group.guid]"
+                [ariaLabel]="'Toggle {row}' | translate: { row: group.guid }"
                 (click)="$event.preventDefault()"
-                (keydown.enter)="$event.stopPropagation()"
               ></tn-icon-button>
+            </ix-vdev-group-node>
 
-              <ix-topology-item-node
-                [topologyItem]="vdev | cast"
-                [disk]="vDevsStore.getDisk(vdev.children[0])"
-              ></ix-topology-item-node>
+            <ng-container slot="children" tnTreeNodeOutlet></ng-container>
+          </tn-nested-tree-node>
 
-              <tn-icon
-                name="chevron-right"
-                library="mdi"
-                class="mobile-actions"
-              ></tn-icon>
-            </div>
+          <tn-nested-tree-node
+            *cdkTreeNodeDef="let vdev; when: hasNestedChild"
+            routerLinkActive="selected"
+            [toggleAriaLabel]="'Toggle {row}' | translate: { row: vdev.guid }"
+            [toggleTestId]="['toggle', vdev.guid]"
+            [class.selected]="vdev.guid === selectedNode?.guid"
+            [routerLink]="['/storage', poolId(), 'vdevs', vdev.guid]"
+            (click)="viewDetails(poolId(), vdev.guid); $event.stopPropagation()"
+            (keydown.enter)="onRowEnter($event, vdev.guid)"
+          >
+            <ix-topology-item-node
+              [topologyItem]="vdev | cast"
+              [disk]="vDevsStore.getDisk(vdev.children[0])"
+            ></ix-topology-item-node>
 
-            @if (treeControl.isExpanded(vdev)) {
-              <ng-container
-                treeNodeOutlet
-              ></ng-container>
-            }
-          </ix-nested-tree-node>
-        </ix-tree-view>
+            <tn-icon
+              name="chevron-right"
+              library="mdi"
+              class="mobile-actions"
+            ></tn-icon>
+
+            <ng-container slot="children" tnTreeNodeOutlet></ng-container>
+          </tn-nested-tree-node>
+        </tn-tree>
       </div>
     </div>
   </div>

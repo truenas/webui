@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+  TnButtonHarness, TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -12,8 +12,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CertificateAcmeAddComponent } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
@@ -45,7 +43,6 @@ describe('CertificateSigningRequestsListComponent', () => {
   let spectator: Spectator<CertificateSigningRequestsListComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
-  let slideIn: SlideIn;
   let formPanel: FormSidePanelService;
 
   const createComponent = createComponentFactory({
@@ -60,13 +57,9 @@ describe('CertificateSigningRequestsListComponent', () => {
           afterClosed: () => of(fakeSuccessfulJob()),
         })),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(SlideInRef),
       mockProvider(StorageService),
       mockAuth(),
     ],
@@ -87,12 +80,12 @@ describe('CertificateSigningRequestsListComponent', () => {
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
-    slideIn = spectator.inject(SlideIn);
     formPanel = spectator.inject(FormSidePanelService);
   });
 
   it('checks page title', () => {
-    expect(spectator.query('h3')).toHaveText('Certificate Signing Requests');
+    // No TnCardHarness in 0.3.23; read the public signal input rather than the library-owned <h3>.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Certificate Signing Requests');
   });
 
   it('makes the data columns sortable and the actions column not', async () => {
@@ -117,7 +110,10 @@ describe('CertificateSigningRequestsListComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(slideIn.open).toHaveBeenCalledWith(CsrAddComponent);
+    expect(formPanel.open).toHaveBeenCalledWith(CsrAddComponent, {
+      title: 'Add CSR',
+      footerless: true,
+    });
   });
 
   it('opens certificate edit form when "Edit" is pressed', async () => {
@@ -162,7 +158,7 @@ describe('CertificateSigningRequestsListComponent', () => {
     const csrsUpdatedSpy = jest.fn();
     spectator.output('csrsUpdated').subscribe(csrsUpdatedSpy);
 
-    jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.success(true));
+    jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.success(true));
 
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();

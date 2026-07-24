@@ -1,4 +1,4 @@
-import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
+import { findInTree } from 'app/helpers/find-in-tree.utils';
 
 interface TestItem {
   id: number;

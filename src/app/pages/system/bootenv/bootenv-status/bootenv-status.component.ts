@@ -1,3 +1,4 @@
+import { CdkTreeModule } from '@angular/cdk/tree';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
@@ -5,9 +6,14 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnDialog,
   TnExpansionPanelComponent,
-  TnIconButtonComponent,
   TnListComponent,
   TnListItemComponent,
+  TnNestedTreeDataSource,
+  TnNestedTreeNodeComponent,
+  TnTreeComponent,
+  TnTreeExpansion,
+  TnTreeNodeOutletDirective,
+  createNestedTreeControl,
 } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -16,15 +22,6 @@ import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.inter
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
-import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
-import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
-import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-def.directive';
-import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
-import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
-import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
-import { createNestedTreeControl } from 'app/modules/ix-tree/tree-control.factory';
-import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -57,15 +54,12 @@ export interface BootPoolActionEvent {
     TnListComponent,
     TnListItemComponent,
     BootenvNodeItemComponent,
-    TnIconButtonComponent,
     TranslateModule,
     FormatDateTimePipe,
-    TreeViewComponent,
-    TreeNodeComponent,
-    TreeNodeDefDirective,
-    TreeNodeToggleDirective,
-    NestedTreeNodeComponent,
-    TreeNodeOutletDirective,
+    CdkTreeModule,
+    TnTreeComponent,
+    TnNestedTreeNodeComponent,
+    TnTreeNodeOutletDirective,
   ],
 })
 export class BootStatusListComponent implements OnInit {
@@ -81,8 +75,8 @@ export class BootStatusListComponent implements OnInit {
   protected readonly searchableElements = bootEnvStatusElements;
 
   protected isLoading = signal(false);
-  protected dataSource: NestedTreeDataSource<VDevNestedDataNode>;
-  protected treeControl: TreeExpansion<VDevNestedDataNode, string>
+  protected dataSource: TnNestedTreeDataSource<VDevNestedDataNode>;
+  protected treeControl: TnTreeExpansion<VDevNestedDataNode, string>
     = createNestedTreeControl<VDevNestedDataNode, string>(
       (vdev) => vdev.children,
       { trackBy: (vdev) => vdev.guid },
@@ -174,7 +168,7 @@ export class BootStatusListComponent implements OnInit {
       children: poolInstance.topology.data,
     } as VDevNestedDataNode];
 
-    this.dataSource = new NestedTreeDataSource<VDevNestedDataNode>(dataNodes);
+    this.dataSource = new TnNestedTreeDataSource<VDevNestedDataNode>(dataNodes);
     this.treeControl.dataNodes = dataNodes;
   }
 
