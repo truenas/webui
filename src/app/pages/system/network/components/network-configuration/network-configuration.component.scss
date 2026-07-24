@@ -1,14 +1,5 @@
 @import 'scss-imports/variables';
 
-.form-actions {
-  border-top: 1px solid var(--lines);
-  padding: 16px 11px;
-
-  tn-button {
-    margin-right: 5px;
-  }
-}
-
 .two-columns {
   display: flex;
   gap: 24px;

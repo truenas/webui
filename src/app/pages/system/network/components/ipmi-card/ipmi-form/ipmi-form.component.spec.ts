@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { StoreModule } from '@ngrx/store';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnRadioHarness,
+  TnCheckboxHarness, TnInputHarness, TnRadioHarness,
 } from '@truenas/ui-components';
 import { throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -14,8 +14,9 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Ipmi, IpmiChassis } from 'app/interfaces/ipmi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import {
+  SidePanelFooterMenu,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card/ipmi-form/ipmi-form.component';
@@ -31,12 +32,6 @@ describe('IpmiFormComponent', () => {
   let spectator: Spectator<IpmiFormComponent>;
   let loader: HarnessLoader;
   let productType: ProductType;
-
-  const slideInRef: SlideInRef<number | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const createComponent = createComponentFactory({
     component: IpmiFormComponent,
@@ -68,10 +63,8 @@ describe('IpmiFormComponent', () => {
     providers: [
       mockProvider(SystemGeneralService),
       mockProvider(RedirectService),
-      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockProvider(SlideInRef, slideInRef),
       mockApi([
         mockCall('failover.licensed', true),
         mockCall('failover.node', 'A'),
@@ -120,9 +113,7 @@ describe('IpmiFormComponent', () => {
   async function setupTest(newProductType: ProductType): Promise<void> {
     productType = newProductType;
     spectator = createComponent({
-      providers: [
-        mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => 1) }),
-      ],
+      props: { editIpmiId: 1 },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     await spectator.fixture.whenStable();
@@ -181,9 +172,11 @@ describe('IpmiFormComponent', () => {
       expect(await gateway.isDisabled()).toBe(true);
     });
 
-    it('updates controller data and closes modal when save is pressed', async () => {
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+    it('updates controller data and closes modal when save is pressed', () => {
+      const closedSpy = jest.fn();
+      spectator.component.closed.subscribe(closedSpy);
+
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
@@ -192,7 +185,7 @@ describe('IpmiFormComponent', () => {
         netmask: '255.255.240.0',
         vlan: 2,
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
     });
 
@@ -205,8 +198,10 @@ describe('IpmiFormComponent', () => {
       const vlanId = await loader.getHarness(TnInputHarness.with({ name: 'vlan_id' }));
       await vlanId.setValue('2');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      const closedSpy = jest.fn();
+      spectator.component.closed.subscribe(closedSpy);
+
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
@@ -216,7 +211,7 @@ describe('IpmiFormComponent', () => {
         apply_remote: true,
         vlan: 2,
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
     });
 
@@ -229,8 +224,10 @@ describe('IpmiFormComponent', () => {
       const enableVlan = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enable VLAN' }));
       await enableVlan.uncheck();
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      const closedSpy = jest.fn();
+      spectator.component.closed.subscribe(closedSpy);
+
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
@@ -240,7 +237,7 @@ describe('IpmiFormComponent', () => {
         apply_remote: true,
         vlan: null,
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
     });
   });
@@ -268,22 +265,25 @@ describe('IpmiFormComponent', () => {
   });
 
   describe('IPMI lights', () => {
+    const flashItem = (): SidePanelFooterMenu['items'][number] | undefined => {
+      return spectator.component.footerMenu().items.find((item) => item.testId === 'toggle-identify-light');
+    };
+
     beforeEach(async () => {
       await setupTest(ProductType.Enterprise);
     });
 
-    it('flashes IPMI light when Flash Identify Light is pressed', async () => {
-      const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
-      await flashButton.click();
+    it('flashes IPMI light when Flash Identify Light is pressed', () => {
+      flashItem()!.onClick();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.On }]);
     });
 
-    it('stops flashing IPMI light when Flash Identify Light is pressed again', async () => {
-      const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
-      await flashButton.click();
-      const stopFlashing = await loader.getHarness(TnButtonHarness.with({ label: 'Stop Flashing' }));
-      await stopFlashing.click();
+    it('stops flashing IPMI light when Flash Identify Light is pressed again', () => {
+      flashItem()!.onClick();
+      expect(flashItem()!.label).toBe('Stop Flashing');
+
+      flashItem()!.onClick();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.Off }]);
     });
@@ -294,8 +294,7 @@ describe('IpmiFormComponent', () => {
       );
       await standbyController.check();
 
-      const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
-      await flashButton.click();
+      flashItem()!.onClick();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'ipmi.chassis.identify',
@@ -309,10 +308,8 @@ describe('IpmiFormComponent', () => {
       );
       await standbyController.check();
 
-      const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
-      await flashButton.click();
-      const stopFlashing = await loader.getHarness(TnButtonHarness.with({ label: 'Stop Flashing' }));
-      await stopFlashing.click();
+      flashItem()!.onClick();
+      flashItem()!.onClick();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'ipmi.chassis.identify',
@@ -350,14 +347,16 @@ describe('IpmiFormComponent', () => {
   });
 
   describe('Manage button functionality', () => {
+    const manageItem = (): SidePanelFooterMenu['items'][number] | undefined => {
+      return spectator.component.footerMenu().items.find((item) => item.testId === 'manage-ipmi');
+    };
+
     beforeEach(async () => {
       await setupTest(ProductType.Enterprise);
     });
 
-    it('should be enabled by default with valid static IP', async () => {
-      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
-
-      expect(await manageButton.isDisabled()).toBe(false);
+    it('should be enabled by default with valid static IP', () => {
+      expect(manageItem()!.disabled?.()).toBe(false);
       expect(spectator.component.managementIp).toBe('10.220.15.114');
       expect(spectator.component.isManageButtonDisabled).toBe(false);
     });
@@ -373,9 +372,7 @@ describe('IpmiFormComponent', () => {
       const ipaddressInput = await loader.getHarness(TnInputHarness.with({ name: 'ipaddress' }));
       await ipaddressInput.setValue('0.0.0.0');
 
-      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
-
-      expect(await manageButton.isDisabled()).toBe(true);
+      expect(manageItem()!.disabled?.()).toBe(true);
       expect(spectator.component.isManageButtonDisabled).toBe(true);
     });
 
@@ -383,9 +380,7 @@ describe('IpmiFormComponent', () => {
       const ipaddressInput = await loader.getHarness(TnInputHarness.with({ name: 'ipaddress' }));
       await ipaddressInput.setValue('invalid.ip.address');
 
-      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
-
-      expect(await manageButton.isDisabled()).toBe(true);
+      expect(manageItem()!.disabled?.()).toBe(true);
       expect(spectator.component.isManageButtonDisabled).toBe(true);
     });
 
@@ -393,9 +388,7 @@ describe('IpmiFormComponent', () => {
       const ipaddressInput = await loader.getHarness(TnInputHarness.with({ name: 'ipaddress' }));
       await ipaddressInput.setValue('192.168.1.100');
 
-      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
-
-      expect(await manageButton.isDisabled()).toBe(false);
+      expect(manageItem()!.disabled?.()).toBe(false);
       expect(spectator.component.managementIp).toBe('192.168.1.100');
       expect(spectator.component.isManageButtonDisabled).toBe(false);
     });
@@ -409,9 +402,7 @@ describe('IpmiFormComponent', () => {
       spectator.component.form.controls.ipaddress.setValue('192.168.1.50');
       spectator.component.form.controls.ipaddress.updateValueAndValidity();
 
-      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
-
-      expect(await manageButton.isDisabled()).toBe(false);
+      expect(manageItem()!.disabled?.()).toBe(false);
       expect(spectator.component.managementIp).toBe('192.168.1.50');
       expect(spectator.component.isManageButtonDisabled).toBe(false);
     });
@@ -443,12 +434,11 @@ describe('IpmiFormComponent', () => {
       expect(spectator.component.form.controls.dhcp.value).toBe(true);
     });
 
-    it('should call redirect service when manage button is clicked', async () => {
+    it('should call redirect service when manage button is clicked', () => {
       const redirectService = spectator.inject(RedirectService);
       const openWindowSpy = jest.spyOn(redirectService, 'openWindow');
 
-      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
-      await manageButton.click();
+      manageItem()!.onClick();
 
       expect(openWindowSpy).toHaveBeenCalledWith('https://10.220.15.114');
     });
@@ -499,8 +489,8 @@ describe('IpmiFormComponent', () => {
       // Switch back to static
       await dhcpCheckbox.uncheck();
 
-      const manageButton = await loader.getHarness(TnButtonHarness.with({ label: 'Manage' }));
-      expect(await manageButton.isDisabled()).toBe(false);
+      const manageItem = spectator.component.footerMenu().items.find((item) => item.testId === 'manage-ipmi');
+      expect(manageItem!.disabled?.()).toBe(false);
       expect(spectator.component.managementIp).toBe('192.168.1.100');
     });
   });
@@ -518,12 +508,13 @@ describe('IpmiFormComponent', () => {
         throw new Error(`Unexpected method: ${method}`);
       });
 
-      const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
-      await flashButton.click();
+      const flashItem = (): SidePanelFooterMenu['items'][number] | undefined => {
+        return spectator.component.footerMenu().items.find((item) => item.testId === 'toggle-identify-light');
+      };
+      flashItem()!.onClick();
 
-      // Button text should remain "Flash Identify Light" since the request failed
-      const buttonAfterClick = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
-      expect(buttonAfterClick).toBeTruthy();
+      // Label should remain "Flash Identify Light" since the request failed
+      expect(flashItem()!.label).toBe('Flash Identify Light');
     });
 
     it('resets loading state when identify light request fails', async () => {
@@ -538,11 +529,13 @@ describe('IpmiFormComponent', () => {
         throw new Error(`Unexpected method: ${method}`);
       });
 
-      const flashButton = await loader.getHarness(TnButtonHarness.with({ label: 'Flash Identify Light' }));
-      await flashButton.click();
+      const flashItem = (): SidePanelFooterMenu['items'][number] | undefined => {
+        return spectator.component.footerMenu().items.find((item) => item.testId === 'toggle-identify-light');
+      };
+      flashItem()!.onClick();
 
       // Loading state should be reset after error
-      expect(await flashButton.isDisabled()).toBe(false);
+      expect(flashItem()!.disabled?.()).toBe(false);
     });
   });
 
