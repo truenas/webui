@@ -3,13 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SnmpConfig } from 'app/interfaces/snmp-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSnmpComponent } from './service-snmp.component';
 
@@ -17,12 +18,6 @@ describe('ServiceSnmpComponent', () => {
   let spectator: Spectator<ServiceSnmpComponent>;
   let api: ApiService;
   let loader: HarnessLoader;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -62,7 +57,8 @@ describe('ServiceSnmpComponent', () => {
           loglevel: 4,
         } as SnmpConfig),
       ]),
-      mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockAuth(),
     ],
   });
@@ -107,8 +103,7 @@ describe('ServiceSnmpComponent', () => {
     await (await getCheckbox('zilstat')).uncheck();
     await (await getSelect('loglevel')).selectOption('Error');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('snmp.update', [{
       location: 'New location',
@@ -131,8 +126,7 @@ describe('ServiceSnmpComponent', () => {
   it('submits an empty authentication type when the selection is cleared', async () => {
     await (await getSelect('v3_authtype')).selectOption('--');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('snmp.update', [
       expect.objectContaining({ v3_authtype: '' }),
@@ -146,8 +140,7 @@ describe('ServiceSnmpComponent', () => {
     expect(await hasInput('v3_password')).toBe(false);
     expect(await hasInput('v3_privpassphrase')).toBe(false);
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('snmp.update', [
       expect.objectContaining({

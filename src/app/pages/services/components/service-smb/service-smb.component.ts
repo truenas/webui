@@ -2,18 +2,18 @@ import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnAutocompleteComponent, TnButtonComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent,
+  TnAutocompleteComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent,
   TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
   BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, of, shareReplay, switchMap, tap,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
 import { SmbMinProtocol, smbMinProtocolLabels } from 'app/enums/smb-min-protocol.enum';
@@ -23,16 +23,16 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
 import { SmbConfigUpdate, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -51,7 +51,6 @@ interface BindIp {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -62,27 +61,24 @@ interface BindIp {
     TnChipInputComponent,
     IxListComponent,
     IxListItemComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
+    IxFormComponent,
     TranslateModule,
   ],
 })
-export class ServiceSmbComponent extends SidePanelForm implements OnInit {
+export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
-  private snackbar = inject(SnackbarService);
   private truenasConnectService = inject(TruenasConnectService);
   private userService = inject(UserService);
   private existenceValidation = inject(UserGroupExistenceValidationService);
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
 
-  readonly isFormLoading = signal(false);
+  protected readonly dataLoading = signal(false);
+  protected readonly initialFormSnapshot = signal<Partial<SmbConfigUpdate> | null>(null);
   protected hasIncompatibleShares = signal(false);
   protected isSmb1Enabled = signal(false);
   protected readonly minimumProtocolOptions = mapToOptions(smbMinProtocolLabels, this.translate);
@@ -136,7 +132,7 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
     });
   }
 
-  protected isBasicMode = true;
+  protected readonly isBasicMode = signal(true);
 
   protected readonly form = this.fb.group({
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
@@ -170,8 +166,18 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
 
   readonly requiredRoles = [Role.SharingSmbWrite];
 
-  /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+  /**
+   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
+   * change detection, so the label flips with {@link isBasicMode}.
+   */
+  get footerActions(): SidePanelFooterAction[] {
+    // Labels are extraction markers — the panel container pipes them through `translate`.
+    return [{
+      label: this.isBasicMode() ? T('Advanced Settings') : T('Basic Settings'),
+      testId: 'toggle-advanced-settings',
+      onClick: () => this.onAdvancedSettingsToggled(),
+    }];
+  }
 
   readonly helptext = helptextServiceSmb;
   readonly tooltips = {
@@ -260,7 +266,7 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
   );
 
   ngOnInit(): void {
-    this.isFormLoading.set(true);
+    this.dataLoading.set(true);
 
     // Parity with the former ix-user/group-combobox controls: custom-typed values
     // must exist on the system (empty values pass).
@@ -289,10 +295,11 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
           bindip: config.bindip.map((ip) => ({ bindIp: ip })),
         });
         this.isSmb1Enabled.set(config.minimum_protocol === SmbMinProtocol.Smb1);
-        this.isFormLoading.set(false);
+        this.initialFormSnapshot.set(this.form.getRawValue() as unknown as Partial<SmbConfigUpdate>);
+        this.dataLoading.set(false);
       },
       error: (error: unknown) => {
-        this.isFormLoading.set(false);
+        this.dataLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
     });
@@ -309,7 +316,7 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
   }
 
   onAdvancedSettingsToggled(): void {
-    this.isBasicMode = !this.isBasicMode;
+    this.isBasicMode.update((isBasic) => !isBasic);
   }
 
   protected openTruenasConnectModal(): void {
@@ -324,7 +331,7 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
     this.openTruenasConnectModal();
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (): SubmitResult => {
     const { spotlight_search: spotlightSearch, ...formValues } = this.form.getRawValue();
     const values: SmbConfigUpdate = {
       ...formValues,
@@ -332,19 +339,10 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
       bindip: this.form.getRawValue().bindip.map((value) => value.bindIp),
     };
 
-    this.isFormLoading.set(true);
-    this.api.call('smb.update', [values])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isFormLoading.set(false);
-          this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.isFormLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    return {
+      request$: this.api.call('smb.update', [values]),
+      successMessage: this.translate.instant('Service configuration saved'),
+      closeWith: () => true,
+    };
+  };
 }

@@ -1,12 +1,11 @@
-@if (slideInRef) {
-  <ix-modal-header
-    [requiredRoles]="requiredRoles"
-    [title]="'SMB' | translate"
-    [loading]="isFormLoading()"
-  ></ix-modal-header>
-}
-
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [externalLoading]="dataLoading()"
+  [initialFormSnapshot]="initialFormSnapshot()"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section [heading]="'NetBIOS' | translate">
     <tn-form-field
       [label]="'NetBIOS Name' | translate"
@@ -52,7 +51,7 @@
     </tn-form-field>
   </tn-form-section>
 
-  @if (!isBasicMode) {
+  @if (!isBasicMode()) {
     <tn-form-section [heading]="'Other Options' | translate">
       <tn-form-field
         [label]="'UNIX Charset' | translate"
@@ -185,23 +184,4 @@
       </ix-list>
     </tn-form-section>
   }
-
-  <ix-form-actions>
-    @if (slideInRef) {
-      <tn-button
-        *ixRequiresRoles="requiredRoles"
-        color="primary"
-        type="submit"
-        [testId]="'save'"
-        [label]="'Save' | translate"
-        [disabled]="form.invalid || isFormLoading()"
-      ></tn-button>
-    }
-
-    <tn-button
-      [testId]="'toggle-advanced-settings'"
-      [label]="(isBasicMode ? 'Advanced Settings' : 'Basic Settings') | translate"
-      (onClick)="onAdvancedSettingsToggled()"
-    ></tn-button>
-  </ix-form-actions>
-</form>
+</ix-form>

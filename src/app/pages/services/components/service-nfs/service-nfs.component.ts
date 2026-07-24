@@ -23,13 +23,12 @@ import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
@@ -44,35 +43,33 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnSelectComponent,
     TnCheckboxComponent,
     TnInputComponent,
-    FormActionsComponent,
+    IxFormComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     TooltipComponent,
     TranslateModule,
   ],
 })
-export class ServiceNfsComponent extends SidePanelForm implements OnInit {
+export class ServiceNfsComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private fb = inject(NonNullableFormBuilder);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
-  private snackbar = inject(SnackbarService);
   private tnDialog = inject(TnDialog);
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly InputType = InputType;
-  readonly isFormLoading = signal(false);
+  protected readonly dataLoading = signal(false);
+  protected readonly initialFormSnapshot = signal<Partial<NfsConfig> | null>(null);
   protected readonly isAddSpnDisabled = signal(true);
   protected readonly hasNfsStatus = signal(false);
   protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
@@ -128,11 +125,8 @@ export class ServiceNfsComponent extends SidePanelForm implements OnInit {
 
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
-  /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
-
   ngOnInit(): void {
-    this.isFormLoading.set(true);
+    this.dataLoading.set(true);
     forkJoin([
       this.loadConfig(),
       this.checkForRdmaSupport(),
@@ -140,15 +134,16 @@ export class ServiceNfsComponent extends SidePanelForm implements OnInit {
     ])
       .pipe(
         this.errorHandler.withErrorHandler(),
-        finalize(() => this.isFormLoading.set(false)),
+        finalize(() => this.dataLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.setFieldDependencies();
+        this.initialFormSnapshot.set(this.form.getRawValue() as Partial<NfsConfig>);
       });
   }
 
-  onSubmit(): void {
+  protected handleSubmit = (): SubmitResult => {
     const params = this.form.getRawValue();
 
     if (params.servers_auto) {
@@ -157,21 +152,12 @@ export class ServiceNfsComponent extends SidePanelForm implements OnInit {
 
     delete params.servers_auto;
 
-    this.isFormLoading.set(true);
-    this.api.call('nfs.update', [params])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isFormLoading.set(false);
-          this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.isFormLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    return {
+      request$: this.api.call('nfs.update', [params]),
+      successMessage: this.translate.instant('Service configuration saved'),
+      closeWith: () => true,
+    };
+  };
 
   private loadConfig(): Observable<NfsConfig> {
     return this.api.call('nfs.config')

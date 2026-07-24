@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -14,11 +14,12 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -69,12 +70,6 @@ describe('ServiceFtpComponent', () => {
     tls_policy: '!data',
   } as FtpConfig;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
@@ -120,7 +115,8 @@ describe('ServiceFtpComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockAuth(),
     ],
   });
@@ -142,8 +138,8 @@ describe('ServiceFtpComponent', () => {
   });
 
   it('shows advanced options when Advanced Options button is pressed', async () => {
-    const advancedOptionsButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-    await advancedOptionsButton.click();
+    spectator.component.onToggleAdvancedOptions();
+    spectator.detectChanges();
 
     expect(await (await getSelect('ssltls_certificate')).getDisplayText()).toBe('Secure certificate');
 
@@ -182,14 +178,13 @@ describe('ServiceFtpComponent', () => {
   });
 
   it('updates config for FTP service when form is submitted', async () => {
-    const advancedOptionsButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-    await advancedOptionsButton.click();
+    spectator.component.onToggleAdvancedOptions();
+    spectator.detectChanges();
 
     await (await getCheckbox('tls_opt_ip_address_required')).check();
     await (await getInput('anonuserdlbw')).setValue('5');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ftp.update', [{
       ...existingFtpConfig,
@@ -199,8 +194,8 @@ describe('ServiceFtpComponent', () => {
   });
 
   it('does not show TLS fields when TLS is off', async () => {
-    const advancedOptionsButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-    await advancedOptionsButton.click();
+    spectator.component.onToggleAdvancedOptions();
+    spectator.detectChanges();
 
     await (await getCheckbox('tls')).uncheck();
 

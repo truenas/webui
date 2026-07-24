@@ -1,12 +1,11 @@
-@if (slideInRef) {
-  <ix-modal-header
-    [requiredRoles]="requiredRoles"
-    [title]="'UPS' | translate"
-    [loading]="isFormLoading()"
-  ></ix-modal-header>
-}
-
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [externalLoading]="dataLoading()"
+  [initialFormSnapshot]="initialFormSnapshot()"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <div class="two-columns">
     <tn-form-section [heading]="helptext.fieldsetGeneral | translate">
       <tn-form-field
@@ -23,7 +22,7 @@
         <tn-select formControlName="mode" [options]="modeOptions"></tn-select>
       </tn-form-field>
 
-      @if (isMasterMode) {
+      @if (isMasterMode()) {
         <tn-form-field
           [label]="labels.driver | translate"
           [tooltip]="tooltips.driver | translate"
@@ -57,7 +56,7 @@
       <tn-form-field
         [label]="labels.port | translate"
         [tooltip]="tooltips.port | translate"
-        [required]="isMasterMode"
+        [required]="isMasterMode()"
       >
         <tn-autocomplete
           formControlName="port"
@@ -157,19 +156,4 @@
       </tn-form-field>
     </tn-form-section>
   </div>
-
-  <ix-form-actions>
-    @if (slideInRef) {
-      <div>
-        <tn-button
-          *ixRequiresRoles="requiredRoles"
-          color="primary"
-          type="submit"
-          [testId]="'save'"
-          [disabled]="form.invalid || isFormLoading()"
-          [label]="'Save' | translate"
-        ></tn-button>
-      </div>
-    }
-  </ix-form-actions>
-</form>
+</ix-form>
