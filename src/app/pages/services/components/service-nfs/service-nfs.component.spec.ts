@@ -14,9 +14,8 @@ import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddSpnDialog,
@@ -28,12 +27,6 @@ describe('ServiceNfsComponent', () => {
   let spectator: Spectator<ServiceNfsComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -87,8 +80,8 @@ describe('ServiceNfsComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideIn),
-      mockProvider(FormErrorHandlerService),
+      ...ixFormTestingProviders(),
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -97,7 +90,6 @@ describe('ServiceNfsComponent', () => {
           closed: of(),
         })),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -138,8 +130,7 @@ describe('ServiceNfsComponent', () => {
     await (await getInput('rpcstatd_port')).setValue('562');
     await (await getInput('rpclockd_port')).setValue('510');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('nfs.update', [{
       allow_nonroot: true,

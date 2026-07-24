@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -12,9 +12,8 @@ import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ss
 import { Group } from 'app/interfaces/group.interface';
 import { SshConfig } from 'app/interfaces/ssh-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { UserService } from 'app/services/user.service';
@@ -32,12 +31,6 @@ describe('ServiceSshComponent', () => {
   let spectator: Spectator<ServiceSshComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -82,10 +75,9 @@ describe('ServiceSshComponent', () => {
         }),
         mockCall('ssh.update'),
       ]),
-      mockProvider(SlideIn),
-      mockProvider(FormErrorHandlerService),
+      ...ixFormTestingProviders(),
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(DialogService),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of(fakeGroupDataSource)),
         getGroupByName: jest.fn((groupName: string) => {
@@ -124,8 +116,8 @@ describe('ServiceSshComponent', () => {
   });
 
   it('shows advanced settings when Advanced Settings button is pressed', async () => {
-    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-    await advancedButton.click();
+    spectator.component.onAdvancedSettingsToggled();
+    spectator.detectChanges();
 
     expect(await (await getInput('tcpport')).getValue()).toBe('22');
     expect(await (await getCheckbox('passwordauth')).isChecked()).toBe(true);
@@ -146,8 +138,7 @@ describe('ServiceSshComponent', () => {
     await (await getCheckbox('kerberosauth')).check();
     await (await getCheckbox('tcpfwd')).check();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('ssh.update', [{
       // New basic options
@@ -168,8 +159,8 @@ describe('ServiceSshComponent', () => {
   });
 
   it('sends an update payload to websocket when advanced form is filled and saved', async () => {
-    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-    await advancedButton.click();
+    spectator.component.onAdvancedSettingsToggled();
+    spectator.detectChanges();
 
     await (await getSelect('bindiface')).selectOption('macvtap0');
     await (await getCheckbox('compression')).uncheck();
@@ -179,8 +170,7 @@ describe('ServiceSshComponent', () => {
     await (await getSelect('weak_ciphers')).selectOption('AES128-CBC');
     await (await getInput('options')).setValue('new-params');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('ssh.update', [{
       // Old basic options
@@ -201,13 +191,12 @@ describe('ServiceSshComponent', () => {
   });
 
   it('submits an empty SFTP log level when the selection is cleared', async () => {
-    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-    await advancedButton.click();
+    spectator.component.onAdvancedSettingsToggled();
+    spectator.detectChanges();
 
     await (await getSelect('sftp_log_level')).selectOption('--');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('ssh.update', [
       expect.objectContaining({ sftp_log_level: '' }),

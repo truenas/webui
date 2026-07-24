@@ -4,20 +4,18 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnAutocompleteComponent, TnButtonComponent, TnCheckboxComponent,
+  InputType, TnAutocompleteComponent, TnCheckboxComponent,
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { UpsMode } from 'app/enums/ups-mode.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceUps } from 'app/helptext/services/components/service-ups';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -29,7 +27,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    ModalHeaderComponent,
+    IxFormComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -37,26 +35,22 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnSelectComponent,
     TnCheckboxComponent,
     TnAutocompleteComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class ServiceUpsComponent extends SidePanelForm implements OnInit {
+export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
   readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly InputType = InputType;
 
-  protected isFormLoading = signal(false);
-  isMasterMode = true;
+  protected readonly dataLoading = signal(false);
+  protected readonly initialFormSnapshot = signal<Partial<UpsConfigUpdate> | null>(null);
+  protected readonly isMasterMode = signal(true);
 
   form = this.fb.group({
     identifier: [null as string | null, [Validators.required, Validators.pattern(/^[\w|,|.|\-|_]+$/)]],
@@ -140,10 +134,8 @@ export class ServiceUpsComponent extends SidePanelForm implements OnInit {
   readonly modeOptions = translateOptions(this.translate, helptextServiceUps.modeOptions);
   readonly shutdownOptions = translateOptions(this.translate, helptextServiceUps.shutdownOptions);
 
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
-
   ngOnInit(): void {
-    this.isFormLoading.set(true);
+    this.dataLoading.set(true);
     this.loadConfig();
     this.form.controls.remotehost.disable();
     this.form.controls.remoteport.disable();
@@ -154,13 +146,13 @@ export class ServiceUpsComponent extends SidePanelForm implements OnInit {
         this.form.controls.remoteport.disable();
         this.form.controls.port.setValidators(Validators.required);
         this.form.controls.driver.enable();
-        this.isMasterMode = true;
+        this.isMasterMode.set(true);
       } else {
         this.form.controls.remotehost.enable();
         this.form.controls.remoteport.enable();
         this.form.controls.port.clearValidators();
         this.form.controls.driver.disable();
-        this.isMasterMode = false;
+        this.isMasterMode.set(false);
       }
     });
   }
@@ -171,38 +163,30 @@ export class ServiceUpsComponent extends SidePanelForm implements OnInit {
       .subscribe({
         next: (config) => {
           this.form.patchValue(config);
-          this.isFormLoading.set(false);
+          this.initialFormSnapshot.set(this.form.getRawValue() as unknown as Partial<UpsConfigUpdate>);
+          this.dataLoading.set(false);
         },
         error: (error: unknown) => {
-          this.isFormLoading.set(false);
+          this.dataLoading.set(false);
           this.errorHandler.showErrorModal(error);
         },
       });
   }
 
-  onSubmit(): void {
+  protected handleSubmit = (): SubmitResult => {
     const params = this.form.value;
 
-    if (this.isMasterMode) {
+    if (this.isMasterMode()) {
       delete params.remoteport;
       delete params.remotehost;
     } else {
       delete params.driver;
     }
 
-    this.isFormLoading.set(true);
-    this.api.call('ups.update', [params as UpsConfigUpdate])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isFormLoading.set(false);
-          this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.isFormLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    return {
+      request$: this.api.call('ups.update', [params as UpsConfigUpdate]),
+      successMessage: this.translate.instant('Service configuration saved'),
+      closeWith: () => true,
+    };
+  };
 }

@@ -1,12 +1,11 @@
-@if (slideInRef) {
-  <ix-modal-header
-    title="NFS"
-    [requiredRoles]="requiredRoles"
-    [loading]="isFormLoading()"
-  ></ix-modal-header>
-}
-
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [externalLoading]="dataLoading()"
+  [initialFormSnapshot]="initialFormSnapshot()"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section [heading]="'General Options' | translate">
     <tn-form-field
       [label]="'Bind IP Addresses' | translate"
@@ -112,37 +111,23 @@
     </tn-form-field>
   </tn-form-section>
 
-  <ix-form-actions>
-    @if (slideInRef) {
-      <div>
-        <tn-button
-          *ixRequiresRoles="requiredRoles"
-          color="primary"
-          type="submit"
-          [testId]="'save'"
-          [label]="'Save' | translate"
-          [disabled]="form.invalid || isFormLoading()"
-        ></tn-button>
-      </div>
+  <div class="add-spn-container">
+    @if (isAddSpnVisible && isAddSpnDisabled()) {
+      <ix-tooltip
+        [header]="'Add SPN' | translate"
+        [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SMP' | translate"
+      ></ix-tooltip>
     }
-    <div class="add-spn-container">
-      @if (isAddSpnVisible && isAddSpnDisabled()) {
-        <ix-tooltip
-          [header]="'Add SPN' | translate"
-          [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SMP' | translate"
-        ></ix-tooltip>
-      }
-      @if (isAddSpnVisible) {
-        <ng-container *ixRequiresRoles="requiredRoles">
-          <tn-button
-            color="primary"
-            [testId]="'add-spn'"
-            [label]="'Add SPN' | translate"
-            [disabled]="isAddSpnDisabled()"
-            (onClick)="addSpn()"
-          ></tn-button>
-        </ng-container>
-      }
-    </div>
-  </ix-form-actions>
-</form>
+    @if (isAddSpnVisible) {
+      <ng-container *ixRequiresRoles="requiredRoles">
+        <tn-button
+          color="primary"
+          [testId]="'add-spn'"
+          [label]="'Add SPN' | translate"
+          [disabled]="isAddSpnDisabled()"
+          (onClick)="addSpn()"
+        ></tn-button>
+      </ng-container>
+    }
+  </div>
+</ix-form>

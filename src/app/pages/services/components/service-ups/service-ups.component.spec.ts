@@ -3,15 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnAutocompleteHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { UpsMode, UpsShutdownMode } from 'app/enums/ups-mode.enum';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 
@@ -19,12 +19,6 @@ describe('ServiceUpsComponent', () => {
   let spectator: Spectator<ServiceUpsComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -77,9 +71,9 @@ describe('ServiceUpsComponent', () => {
         mockCall('ups.port_choices', ['/dev/uhid', 'auto']),
         mockCall('ups.update'),
       ]),
-      mockProvider(FormErrorHandlerService),
+      ...ixFormTestingProviders(),
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(DialogService),
-      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -137,8 +131,7 @@ describe('ServiceUpsComponent', () => {
     await (await getSelect('shutdown')).selectOption('UPS goes on battery');
     await (await getCheckbox('powerdown')).uncheck();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('ups.update', [{
       driver: 'bcmxcp$R1500 G2',
@@ -168,8 +161,7 @@ describe('ServiceUpsComponent', () => {
 
     const portValue = await port.getInputValue();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(portValue).toBe('/my-custom-port');
     expect(api.call).toHaveBeenCalledWith('ups.update', [

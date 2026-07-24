@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, Subject, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -11,8 +11,9 @@ import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -50,12 +51,8 @@ describe('ServiceWebshareComponent', () => {
         mockCall('webshare.config', mockWebShareConfig),
         mockCall('webshare.update', mockWebShareConfig),
       ]),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      }),
-      mockProvider(SnackbarService),
-      mockProvider(FormErrorHandlerService),
+      ...ixFormTestingProviders(),
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(TruenasConnectService, {
         config: tnConnectConfig,
       }),
@@ -79,22 +76,22 @@ describe('ServiceWebshareComponent', () => {
     await (await getCheckbox('search')).uncheck();
     await (await getSelect('passkey')).selectOption('Required');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Required }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Service configuration saved');
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    expect(closeSpy).toHaveBeenCalledWith(true);
   });
 
-  it('submits updated config and closes slide-in on successful save', async () => {
+  it('submits updated config and closes the panel on successful save', async () => {
     await (await getCheckbox('search')).uncheck();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Enabled }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    expect(closeSpy).toHaveBeenCalledWith(true);
   });
 
   it('handles error when loading config fails', () => {
@@ -107,7 +104,7 @@ describe('ServiceWebshareComponent', () => {
     expect(formErrorHandler.handleValidationErrors).toHaveBeenCalled();
   });
 
-  it('handles error when saving config fails', async () => {
+  it('handles error when saving config fails', () => {
     const api = spectator.inject(ApiService);
     jest.spyOn(api, 'call').mockImplementation((method) => {
       if (method === 'webshare.config') {
@@ -119,18 +116,17 @@ describe('ServiceWebshareComponent', () => {
     spectator.component.ngOnInit();
     spectator.detectChanges();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+    spectator.component.submit();
 
-    expect(spectator.inject(SlideInRef).close).not.toHaveBeenCalled();
+    expect(closeSpy).not.toHaveBeenCalled();
   });
 
   it('saves config with search enabled when keeping it enabled', async () => {
     // Form already has search enabled from mock config
     expect(await (await getCheckbox('search')).isChecked()).toBe(true);
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: true, passkey: WebSharePasskey.Enabled }]);
   });
@@ -161,12 +157,11 @@ describe('ServiceWebshareComponent', () => {
     expect(await searchCheckbox.isChecked()).toBe(false);
   });
 
-  it('does not submit TrueSearch as enabled when TrueNAS Connect is not configured', async () => {
+  it('does not submit TrueSearch as enabled when TrueNAS Connect is not configured', () => {
     tnConnectConfig.set({ status: TruenasConnectStatus.Disabled } as TruenasConnectConfig);
     spectator.detectChanges();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'webshare.update',
@@ -196,8 +191,7 @@ describe('ServiceWebshareComponent', () => {
 
     expect(await (await getCheckbox('search')).isChecked()).toBe(false);
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith(
       'webshare.update',
@@ -213,15 +207,5 @@ describe('ServiceWebshareComponent', () => {
     tnConnectConfig.set({ status: TruenasConnectStatus.Configured } as TruenasConnectConfig);
     spectator.detectChanges();
     expect(await (await getCheckbox('search')).isDisabled()).toBe(false);
-  });
-
-  it('displays the form with correct title', () => {
-    const header = spectator.query('ix-modal-header');
-    expect(header).toBeTruthy();
-  });
-
-  it('has save button accessible', async () => {
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    expect(saveButton).toBeTruthy();
   });
 });
