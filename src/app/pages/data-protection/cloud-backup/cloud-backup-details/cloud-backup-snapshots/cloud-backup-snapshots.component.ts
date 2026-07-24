@@ -26,7 +26,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
@@ -53,7 +53,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class CloudBackupSnapshotsComponent implements OnChanges {
   protected emptyService = inject(EmptyService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
@@ -116,10 +116,13 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
   }
 
   private restore(row: CloudBackupSnapshot): void {
-    this.slideIn.open(CloudBackupRestoreFromSnapshotFormComponent, {
-      data: {
-        snapshot: row,
-        backup: this.backup(),
+    this.formPanel.open(CloudBackupRestoreFromSnapshotFormComponent, {
+      title: this.translate.instant('Restore from Snapshot'),
+      inputs: {
+        restoreData: {
+          snapshot: row,
+          backup: this.backup(),
+        },
       },
     }).onSuccess(() => this.getCloudBackupSnapshots(), this.destroyRef);
   }
