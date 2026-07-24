@@ -92,6 +92,9 @@ export interface CreatePool {
   dedup_table_quota?: NewDeduplicationQuotaSetting;
   deduplication?: DeduplicationSetting;
   allow_duplicate_serials?: boolean;
+  // Community Edition only: bypasses topology policy checks (equal data-vdev width,
+  // RAIDZ/mirror width caps, special/dedup redundancy rule). Rejected on Enterprise.
+  force_topology?: boolean;
 }
 
 export interface UpdatePool {
@@ -101,6 +104,9 @@ export interface UpdatePool {
   all_sed?: boolean;
   dedup_table_quota?: NewDeduplicationQuotaSetting;
   dedup_table_quota_value?: number;
+  // Community Edition only: bypasses topology policy checks (equal data-vdev width,
+  // RAIDZ/mirror width caps, special/dedup redundancy rule). Rejected on Enterprise.
+  force_topology?: boolean;
 }
 
 // TODO: Maybe replace first 5 keys with VDevType enum once old pool manager is removed.

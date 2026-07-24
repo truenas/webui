@@ -76,6 +76,8 @@ export interface PoolManagerState {
   enclosureSettings: PoolManagerEnclosureSettings;
   topology: PoolManagerTopology;
   categorySequence: VDevType[];
+  // Community Edition only: bypasses topology policy checks. Never set on Enterprise.
+  forceTopology: boolean;
 }
 
 type TopologyCategoryUpdate = Partial<Omit<PoolManagerTopologyCategory, 'vdevs' | 'hasCustomDiskSelection'>>;
@@ -129,6 +131,8 @@ export const initialState: PoolManagerState = {
     VDevType.Special,
     VDevType.Dedup,
   ],
+
+  forceTopology: false,
 };
 
 @Injectable()
@@ -153,6 +157,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly topology$ = this.select((state) => state.topology);
   readonly diskSettings$ = this.select((state) => state.diskSettings);
   readonly enclosureSettings$ = this.select((state) => state.enclosureSettings);
+  readonly forceTopology$ = this.select((state) => state.forceTopology);
   readonly totalUsableCapacity$ = this.select(
     this.topology$,
     (topology) => categoryCapacity(topology[VDevType.Data]),
@@ -322,6 +327,10 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     });
 
     this.resetTopologyIfNotEnoughDisks();
+  }
+
+  setForceTopology(forceTopology: boolean): void {
+    this.patchState({ forceTopology });
   }
 
   setEnclosureOptions(enclosureOptions: PoolManagerEnclosureSettings): void {

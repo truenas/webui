@@ -2,9 +2,13 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialog, TnStepperPreviousDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -27,6 +31,8 @@ import {
   PoolManagerStore,
   PoolManagerTopology, PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-review-wizard-step',
@@ -37,6 +43,9 @@ import {
     TnButtonComponent,
     TnStepperPreviousDirective,
     RequiresRolesDirective,
+    ReactiveFormsModule,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
     TranslateModule,
     FileSizePipe,
     MapValuePipe,
@@ -48,6 +57,7 @@ import {
 export class ReviewWizardStepComponent implements OnInit {
   private tnDialog = inject(TnDialog);
   private store = inject(PoolManagerStore);
+  private systemStore$ = inject<Store<AppState>>(Store);
   private cdr = inject(ChangeDetectorRef);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
@@ -58,6 +68,10 @@ export class ReviewWizardStepComponent implements OnInit {
 
   readonly vDevType = VDevType;
   readonly createPool = output();
+
+  // force_topology is a Community Edition escape hatch; middleware rejects it on Enterprise.
+  protected readonly isEnterprise = toSignal(this.systemStore$.select(selectIsEnterprise));
+  protected readonly forceTopologyControl = new FormControl(false, { nonNullable: true });
 
   state: PoolManagerState;
   nonEmptyTopologyCategories: [VDevType, PoolManagerTopologyCategory][] = [];
@@ -106,6 +120,18 @@ export class ReviewWizardStepComponent implements OnInit {
     this.poolManagerValidation.getPoolCreationErrors().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((errors) => {
       this.poolCreationErrors = errors;
       this.isCreateDisabled = !!errors.filter((error) => error.severity === PoolCreationSeverity.Error).length;
+    });
+
+    this.forceTopologyControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((forceTopology) => {
+      this.store.setForceTopology(forceTopology);
+    });
+
+    // Keep the checkbox in sync with the store so a reset/Start Over (which sets
+    // forceTopology back to false) unchecks it, instead of leaving a checked box
+    // whose value is no longer reflected in the payload. emitEvent: false avoids
+    // looping back through the valueChanges subscription above.
+    this.store.forceTopology$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((forceTopology) => {
+      this.forceTopologyControl.setValue(forceTopology, { emitEvent: false });
     });
   }
 
