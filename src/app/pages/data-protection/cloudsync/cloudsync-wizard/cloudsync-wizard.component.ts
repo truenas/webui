@@ -10,10 +10,8 @@ import {
   of,
 } from 'rxjs';
 import { cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
-import { Role } from 'app/enums/role.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -29,7 +27,6 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
   imports: [
     CloudSyncProviderComponent,
     CloudSyncWhatAndWhenComponent,
-    ModalHeaderComponent,
     TnStepperComponent,
     TnStepComponent,
     TranslateModule,
@@ -53,8 +50,6 @@ export class CloudSyncWizardComponent {
 
   readonly cloudSyncProvider: Signal<CloudSyncProviderComponent>
     = viewChild(forwardRef(() => CloudSyncProviderComponent));
-
-  protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   /** Fired on a successful submit when hosted in a `<tn-side-panel>` (true = saved). */
   readonly closed = output<boolean>();
