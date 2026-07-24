@@ -8,7 +8,7 @@ mat-card {
 
 // The badge sits outside the title link so it doesn't bloat the link's accessible name.
 .toolbar-row-title .experimental-badge {
-  margin-left: 8px;
+  margin-left: 5px;
 }
 
 .card-title {
@@ -17,6 +17,12 @@ mat-card {
 
   tn-icon {
     margin-left: 5px;
+  }
+
+  // The alert badge host keeps its 8px side margins even when it renders nothing,
+  // pushing the experimental badge too far from the title. Collapse it when empty.
+  ix-card-alert-badge:empty {
+    margin: 0;
   }
 }
 
