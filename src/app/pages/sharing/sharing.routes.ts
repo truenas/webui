@@ -4,6 +4,7 @@ import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-da
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { NfsSessionListComponent } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.component';
 import { SmbStatusComponent } from 'app/pages/sharing/smb/smb-status/smb-status.component';
+import { webShareGuard } from 'app/pages/sharing/webshare/webshare.guard';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
 
 export const sharingRoutes: Routes = [
@@ -71,6 +72,7 @@ export const sharingRoutes: Routes = [
       {
         path: 'webshare',
         data: { title: T('WebShare'), breadcrumb: null },
+        canActivate: [webShareGuard],
         loadChildren: () => import('app/pages/sharing/webshare/webshare.routes').then((module) => module.webShareRoutes),
       },
     ],

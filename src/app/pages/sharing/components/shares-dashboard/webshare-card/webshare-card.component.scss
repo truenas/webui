@@ -1,5 +1,14 @@
+@import '../../experimental-badge';
+
+@include experimental-badge;
+
 mat-card {
   height: 100%;
+}
+
+// The badge sits outside the title link so it doesn't bloat the link's accessible name.
+.toolbar-row-title .experimental-badge {
+  margin-left: 8px;
 }
 
 .card-title {

@@ -1,3 +1,12 @@
+@import '../../components/experimental-badge';
+
+@include experimental-badge;
+
+h3 .experimental-badge {
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
 .info-message {
   align-items: center;
   background-color: var(--bg1);
