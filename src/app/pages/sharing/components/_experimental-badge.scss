@@ -1,0 +1,12 @@
+@mixin experimental-badge {
+  .experimental-badge {
+    background: var(--red);
+    border-radius: 2px;
+    color: var(--red-txt);
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: initial;
+    padding: 3px 8px;
+  }
+}
