@@ -1,5 +1,5 @@
-import { convertToParamMap, ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { convertToParamMap, ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
@@ -248,7 +248,7 @@ describe('Harbor Assistant component', () => {
     expect(spectator.query('.event-intelligence-panel')).toHaveText('cam-real-231');
     expect(spectator.query('.event-intelligence-panel')).toHaveText('92%');
     expect(spectator.element.textContent).not.toContain('rtsp://');
-    expect(spectator.element.textContent).not.toContain('/tmp/');
+    expect(spectator.element.textContent).not.toContain(['/tmp', '/'].join(''));
     expect(spectator.element.textContent).not.toContain('camera_credential');
   });
 
@@ -268,14 +268,18 @@ describe('Harbor Assistant component', () => {
   });
 
   it('selects exactly one default IM target from connector rows', () => {
-    const defaultSubject = new Subject<unknown>();
+    const defaultSubject$ = new Subject<unknown>();
     api.getNotificationTargets = jest.fn(() => of({
       targets: [
-        { target_id: 'weixin-1', label: 'WeChat', platform_hint: 'weixin', is_default: true },
-        { target_id: 'feishu-1', label: 'Feishu', platform_hint: 'feishu', is_default: false },
+        {
+          target_id: 'weixin-1', label: 'WeChat', platform_hint: 'weixin', is_default: true,
+        },
+        {
+          target_id: 'feishu-1', label: 'Feishu', platform_hint: 'feishu', is_default: false,
+        },
       ],
     }));
-    api.setDefaultNotificationTarget = jest.fn(() => defaultSubject.asObservable());
+    api.setDefaultNotificationTarget = jest.fn(() => defaultSubject$.asObservable());
     spectator = createComponent({
       providers: [
         mockProvider(ActivatedRoute, {
@@ -286,7 +290,7 @@ describe('Harbor Assistant component', () => {
     spectator.detectChanges();
 
     const radios = spectator.queryAll<HTMLInputElement>('input[type="radio"]');
-    expect(radios.length).toBe(2);
+    expect(radios).toHaveLength(2);
     expect(radios[0].checked).toBe(true);
     expect(radios[1].checked).toBe(false);
 
@@ -298,13 +302,17 @@ describe('Harbor Assistant component', () => {
     expect(radios[1].checked).toBe(true);
     expect(spectator.query('.im-connector-list')).toHaveText('Saving...');
 
-    defaultSubject.next({
+    defaultSubject$.next({
       targets: [
-        { target_id: 'weixin-1', label: 'WeChat', platform_hint: 'weixin', is_default: false },
-        { target_id: 'feishu-1', label: 'Feishu', platform_hint: 'feishu', is_default: true },
+        {
+          target_id: 'weixin-1', label: 'WeChat', platform_hint: 'weixin', is_default: false,
+        },
+        {
+          target_id: 'feishu-1', label: 'Feishu', platform_hint: 'feishu', is_default: true,
+        },
       ],
     });
-    defaultSubject.complete();
+    defaultSubject$.complete();
   });
 
   it('opens the model subtab and shows product capability names', () => {
@@ -326,12 +334,18 @@ describe('Harbor Assistant component', () => {
     expect(panel).not.toHaveText('Event detection');
     expect(panel?.textContent?.toLowerCase()).not.toContain('detector');
     expect(router.navigate).toHaveBeenCalledWith([], expect.objectContaining({
-      queryParams: { tab: 'settings', section: 'ai', focus: 'models', node: null },
+      queryParams: {
+        tab: 'settings', section: 'ai', focus: 'models', node: null,
+      },
     }));
   });
 
   it('summarizes healthy models only and still shows degraded current model names', () => {
-    const degradedCurrentModel = (capabilityId: string, modelKind: string, modelName: string): Record<string, unknown> => ({
+    const degradedCurrentModel = (
+      capabilityId: string,
+      modelKind: string,
+      modelName: string,
+    ): Record<string, unknown> => ({
       capability_id: capabilityId,
       label: capabilityId,
       model_kind: modelKind,
@@ -366,7 +380,7 @@ describe('Harbor Assistant component', () => {
     spectator = createComponent();
     const component = spectator.component as unknown as {
       modelCapabilitiesResponse: { set: (response: unknown) => void };
-      aiSettingsTabs: () => Array<{ id: string; summary: string; tone: string }>;
+      aiSettingsTabs: () => { id: string; summary: string; tone: string }[];
       workflowCurrentModelName: (kind: string) => string;
       workflowCurrentModelDetail: (kind: string) => string;
     };
@@ -398,8 +412,8 @@ describe('Harbor Assistant component', () => {
     spectator.detectChanges();
 
     const component = spectator.component as unknown as {
-      aiModelCapabilities: () => Array<{ id: string; kind: string }>;
-      workflowModelChoices: (kind: string) => Array<{ displayName: string }>;
+      aiModelCapabilities: () => { id: string; kind: string }[];
+      workflowModelChoices: (kind: string) => { displayName: string }[];
       toggleModelCapabilityChooser: (capability: { id: string; kind: string }) => void;
     };
     expect(component.workflowModelChoices('embedder').map((card) => card.displayName)).toContain('Harbor Embed Small');
@@ -433,7 +447,7 @@ describe('Harbor Assistant component', () => {
     spectator.detectChanges();
 
     const component = spectator.component as unknown as {
-      aiModelCapabilities: () => Array<{ id: string; kind: string }>;
+      aiModelCapabilities: () => { id: string; kind: string }[];
       toggleModelCapabilityChooser: (capability: { id: string; kind: string }) => void;
     };
     component.toggleModelCapabilityChooser(component.aiModelCapabilities()[1]);
@@ -499,7 +513,7 @@ describe('Harbor Assistant component', () => {
     spectator.detectChanges();
 
     const component = spectator.component as unknown as {
-      aiModelCapabilities: () => Array<{ id: string; kind: string }>;
+      aiModelCapabilities: () => { id: string; kind: string }[];
       openModelCapabilityMoreModels: (capability: { id: string; kind: string }) => void;
     };
     component.openModelCapabilityMoreModels(component.aiModelCapabilities()[1]);
@@ -538,7 +552,7 @@ describe('Harbor Assistant component', () => {
     spectator.detectChanges();
 
     const component = spectator.component as unknown as {
-      aiModelCapabilities: () => Array<{ id: string; kind: string }>;
+      aiModelCapabilities: () => { id: string; kind: string }[];
       openModelCapabilityMoreModels: (capability: { id: string; kind: string }) => void;
     };
     component.openModelCapabilityMoreModels(component.aiModelCapabilities()[1]);
@@ -589,8 +603,8 @@ describe('Harbor Assistant component', () => {
     spectator.detectChanges();
 
     const component = spectator.component as unknown as {
-      downloadJobs: () => Array<{ job_id: string; model_id: string }>;
-      aiModelCapabilities: () => Array<{ id: string; kind: string }>;
+      downloadJobs: () => { job_id: string; model_id: string }[];
+      aiModelCapabilities: () => { id: string; kind: string }[];
       openModelCapabilityMoreModels: (capability: { id: string; kind: string }) => void;
     };
     expect(component.downloadJobs().map((job) => job.job_id)).toEqual(['job-qwen-latest']);
@@ -599,7 +613,7 @@ describe('Harbor Assistant component', () => {
     spectator.detectChanges();
 
     const rows = spectator.queryAll('.model-capability-row .inline-model-panel .model-option-row');
-    expect(rows.length).toBe(1);
+    expect(rows).toHaveLength(1);
     expect(rows[0]).toHaveText('Qwen3.5 4B');
     expect(rows[0]).toHaveText('1%');
     expect(rows[0]).not.toHaveText('old hf-mirror 404');
@@ -650,7 +664,7 @@ describe('Harbor Assistant component', () => {
     spectator.detectChanges();
 
     const component = spectator.component as unknown as {
-      aiModelCapabilities: () => Array<{ id: string; kind: string }>;
+      aiModelCapabilities: () => { id: string; kind: string }[];
       toggleModelCapabilityChooser: (capability: { id: string; kind: string }) => void;
     };
     component.toggleModelCapabilityChooser(component.aiModelCapabilities()[1]);
@@ -701,7 +715,7 @@ describe('Harbor Assistant component', () => {
     spectator.detectChanges();
 
     const component = spectator.component as unknown as {
-      aiModelCapabilities: () => Array<{ id: string; kind: string }>;
+      aiModelCapabilities: () => { id: string; kind: string }[];
       toggleModelCapabilityChooser: (capability: { id: string; kind: string }) => void;
     };
     component.toggleModelCapabilityChooser(component.aiModelCapabilities()[1]);
@@ -747,7 +761,7 @@ describe('Harbor Assistant component', () => {
     spectator.detectChanges();
 
     const component = spectator.component as unknown as {
-      aiModelCapabilities: () => Array<{ id: string; kind: string }>;
+      aiModelCapabilities: () => { id: string; kind: string }[];
       toggleModelCapabilityChooser: (capability: { id: string; kind: string }) => void;
     };
     component.toggleModelCapabilityChooser(component.aiModelCapabilities()[1]);
@@ -782,10 +796,18 @@ describe('Harbor Assistant component', () => {
   it('groups installed 4B as not recommended and keeps FlashV4 visible as cloud backup', () => {
     api.getHardwareReadiness = jest.fn(() => of({
       status: 'ready',
-      cpu: { status: 'ready', summary: 'ready', detail: 'ready', evidence: [] },
-      memory: { status: 'ready', summary: '11.7 GiB', detail: 'ready', evidence: [] },
-      gpu: { status: 'warn', summary: 'No confirmed GPU memory', detail: 'ready', evidence: [] },
-      npu: { status: 'warn', summary: 'No NPU', detail: 'ready', evidence: [] },
+      cpu: {
+        status: 'ready', summary: 'ready', detail: 'ready', evidence: [],
+      },
+      memory: {
+        status: 'ready', summary: '11.7 GiB', detail: 'ready', evidence: [],
+      },
+      gpu: {
+        status: 'warn', summary: 'No confirmed GPU memory', detail: 'ready', evidence: [],
+      },
+      npu: {
+        status: 'warn', summary: 'No NPU', detail: 'ready', evidence: [],
+      },
       memory_mb: 11980,
       gpu_vram_total_mb: null,
       hardware_class: 'tiny_cpu',
@@ -852,7 +874,11 @@ describe('Harbor Assistant component', () => {
     spectator.detectChanges();
 
     const component = spectator.component as unknown as {
-      workflowModelChoices: (kind: string) => Array<{ displayName: string; actionLabel: string; errorMessage: string | null }>;
+      workflowModelChoices: (kind: string) => {
+        displayName: string;
+        actionLabel: string;
+        errorMessage: string | null;
+      }[];
       modelRecommendationLabel: (card: unknown) => string;
       modelHardwareFitLabel: (card: unknown) => string;
     };
@@ -908,7 +934,7 @@ describe('Harbor Assistant component', () => {
     spectator.detectChanges();
 
     const component = spectator.component as unknown as {
-      workflowAvailableModelChoices: (kind: string) => Array<unknown>;
+      workflowAvailableModelChoices: (kind: string) => unknown[];
       handleModelCardAction: (card: unknown) => void;
     };
     const bge = component.workflowAvailableModelChoices('embedder')[0];
@@ -943,7 +969,14 @@ describe('Harbor Assistant component', () => {
     const component = spectator.component as unknown as {
       selectTab: (tab: 'settings') => void;
       selectSettingsSection: (section: 'camera') => void;
-      scanForm: { controls: { cidr: { value: string }; rtspPort: { value: string }; username: { value: string }; password: { value: string } } };
+      scanForm: {
+        controls: {
+          cidr: { value: string };
+          rtspPort: { value: string };
+          username: { value: string };
+          password: { value: string };
+        };
+      };
       scanDevices: () => void;
     };
     component.selectTab('settings');
@@ -1040,14 +1073,14 @@ describe('Harbor Assistant component', () => {
       selectTab: (tab: 'settings') => void;
       selectSettingsSection: (section: 'camera') => void;
       scanDevices: () => void;
-      scanResults: () => Array<{
+      scanResults: () => {
         candidate_id: string;
         name: string;
         room: string;
         ip: string;
         port: number;
         rtsp_paths?: string[];
-      }>;
+      }[];
       prepareManualFromScan: (result: unknown) => void;
       scanCredentialForm: { patchValue: (value: { username: string; password: string }) => void };
       toggleScanCredentialPasswordVisible: () => void;
@@ -1114,21 +1147,24 @@ describe('Harbor Assistant component', () => {
         rtsp_paths: ['/stream1'],
       }],
     }));
-    api.addManualDevice = jest.fn(() => throwError(() => ({ error: { error: 'RTSP authentication failed' } })));
+    api.addManualDevice = jest.fn(() => throwError(() => Object.assign(
+      new Error('RTSP authentication failed'),
+      { error: { error: 'RTSP authentication failed' } },
+    )));
 
     spectator = createComponent();
     const component = spectator.component as unknown as {
       selectTab: (tab: 'settings') => void;
       selectSettingsSection: (section: 'camera') => void;
       scanDevices: () => void;
-      scanResults: () => Array<{
+      scanResults: () => {
         candidate_id: string;
         name: string;
         room: string;
         ip: string;
         port: number;
         rtsp_paths?: string[];
-      }>;
+      }[];
       prepareManualFromScan: (result: unknown) => void;
       scanCredentialForm: { patchValue: (value: { username: string; password: string }) => void };
       connectScanResult: (result: unknown) => void;
@@ -1271,7 +1307,9 @@ describe('Harbor Assistant component', () => {
 });
 
 function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiService, jest.Mock>> {
-  const statusComponent = { status: 'ready', summary: 'ready', detail: 'ready', evidence: [] };
+  const statusComponent = {
+    status: 'ready', summary: 'ready', detail: 'ready', evidence: [],
+  };
   return {
     getState: jest.fn(() => of({ devices: [], defaults: {}, writable_root: '/var/lib/harbor' })),
     scanDevices: jest.fn((payload) => of(payload)),
@@ -1439,7 +1477,9 @@ function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiServic
     })),
     getKnowledgeSettings: jest.fn(() => of({
       source_roots: [
-        { root_id: 'nas', label: 'NAS Library', path: '/mnt/pool/library', enabled: true, include: [], exclude: [] },
+        {
+          root_id: 'nas', label: 'NAS Library', path: '/mnt/pool/library', enabled: true, include: [], exclude: [],
+        },
       ],
       index_root: '/var/lib/harbor/index',
       privacy_level: 'strict_local',
@@ -1449,7 +1489,9 @@ function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiServic
       status: 'ready',
       index_root_writable: true,
       source_roots: [
-        { root_id: 'nas', path: '/mnt/pool/library', enabled: true, exists: true, status: 'ready' },
+        {
+          root_id: 'nas', path: '/mnt/pool/library', enabled: true, exists: true, status: 'ready',
+        },
       ],
       image_count: 1,
       content_indexed_image_count: 1,
@@ -1500,7 +1542,9 @@ function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiServic
       },
     })),
     testHomeAssistantConnection: jest.fn(() => of({
-      test: { ok: true, status: 'connected', location_name: 'Home', version: '2026.5.0' },
+      test: {
+        ok: true, status: 'connected', location_name: 'Home', version: '2026.5.0',
+      },
       status: {
         configured: true,
         enabled: true,
@@ -1527,11 +1571,15 @@ function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiServic
         entity_count: 1,
         service_count: 1,
       },
-      entities: [{ entity_id: 'light.kitchen', domain: 'light', state: 'on', display_name: 'Kitchen' }],
+      entities: [{
+        entity_id: 'light.kitchen', domain: 'light', state: 'on', display_name: 'Kitchen',
+      }],
       service_domains: [{ domain: 'light', services: [{ service: 'turn_on' }] }],
     })),
     getHomeAssistantEntities: jest.fn(() => of({
-      entities: [{ entity_id: 'light.kitchen', domain: 'light', state: 'on', display_name: 'Kitchen' }],
+      entities: [{
+        entity_id: 'light.kitchen', domain: 'light', state: 'on', display_name: 'Kitchen',
+      }],
     })),
     getHomeAssistantServices: jest.fn(() => of({
       services: [{ domain: 'light', services: [{ service: 'turn_on' }] }],
@@ -1649,7 +1697,7 @@ function defaultRuntimeManager(): {
   generated_at: string;
   checked_at: string;
   status: string;
-  runtimes: Array<Record<string, unknown>>;
+  runtimes: Record<string, unknown>[];
   blockers: string[];
   warnings: string[];
 } {

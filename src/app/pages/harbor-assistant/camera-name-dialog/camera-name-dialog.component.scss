@@ -1,0 +1,10 @@
+.camera-name-dialog-content {
+  display: grid;
+  gap: 12px;
+  min-width: min(420px, 80vw);
+  padding-top: 8px;
+}
+
+mat-form-field {
+  width: 100%;
+}

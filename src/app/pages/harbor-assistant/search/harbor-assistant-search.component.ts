@@ -8,13 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize } from 'rxjs/operators';
-import {
-  HarborAssistantSearchResultFilter,
-  HarborAssistantSearchHit,
-  HarborAssistantSearchResponse,
-  HarborAssistantSearchSourceScope,
-  HarborAssistantSearchWaterfallItem,
-} from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
+import { WINDOW } from 'app/helpers/window.helper';
 import { HarborAssistantContentApiService } from 'app/pages/harbor-assistant/shared/harbor-assistant-content-api.service';
 import {
   buildHarborAssistantSearchPayload,
@@ -26,6 +20,13 @@ import {
   HarborTimeRangeDialogComponent,
   HarborTimeRangeValue,
 } from 'app/pages/harbor-assistant/shared/harbor-assistant-time-range-dialog.component';
+import {
+  HarborAssistantSearchResultFilter,
+  HarborAssistantSearchHit,
+  HarborAssistantSearchResponse,
+  HarborAssistantSearchSourceScope,
+  HarborAssistantSearchWaterfallItem,
+} from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
 
 interface HarborAssistantSearchPromptSuggestion {
   label: string;
@@ -57,6 +58,7 @@ export class HarborAssistantSearchComponent implements OnInit {
   private readonly api = inject(HarborAssistantContentApiService);
   private readonly dialog = inject(MatDialog);
   private readonly translate = inject(TranslateService);
+  private readonly window = inject<Window>(WINDOW);
   @ViewChild('searchResults') private searchResults?: ElementRef<HTMLElement>;
 
   protected readonly form = this.formBuilder.group({
@@ -68,10 +70,18 @@ export class HarborAssistantSearchComponent implements OnInit {
   });
 
   protected readonly promptSuggestions: HarborAssistantSearchPromptSuggestion[] = [
-    { label: 'Who is pouring beer?', query: 'who is pouring beer', filter: 'videos', sourceScope: 'all' },
-    { label: 'What recent camera videos are available?', query: 'recent camera videos', filter: 'videos', sourceScope: 'all' },
-    { label: 'What recent recordings are available?', query: 'recent recordings', filter: 'videos', sourceScope: 'all' },
-    { label: 'summarize recent documents', query: 'summarize recent documents', filter: 'text', sourceScope: 'all' },
+    {
+      label: 'Who is pouring beer?', query: 'who is pouring beer', filter: 'videos', sourceScope: 'all',
+    },
+    {
+      label: 'What recent camera videos are available?', query: 'recent camera videos', filter: 'videos', sourceScope: 'all',
+    },
+    {
+      label: 'What recent recordings are available?', query: 'recent recordings', filter: 'videos', sourceScope: 'all',
+    },
+    {
+      label: 'summarize recent documents', query: 'summarize recent documents', filter: 'text', sourceScope: 'all',
+    },
   ];
 
   protected readonly loading = signal(false);
@@ -184,11 +194,11 @@ export class HarborAssistantSearchComponent implements OnInit {
   }
 
   openHarborAssistantModels(): void {
-    window.open('/ui/harbor-assistant?tab=settings&section=ai&focus=semantic-index', '_blank', 'noopener');
+    this.window.open('/ui/harbor-assistant?tab=settings&section=ai&focus=semantic-index', '_blank', 'noopener');
   }
 
   openPreview(item: HarborAssistantSearchWaterfallItem): void {
-    window.open(item.previewUrl, '_blank', 'noopener');
+    this.window.open(item.previewUrl, '_blank', 'noopener');
   }
 
   searchScopeLabel(): string {
@@ -335,7 +345,7 @@ export class HarborAssistantSearchComponent implements OnInit {
   }
 
   private formatLocalDateTimeLabel(value: string): string {
-    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/);
+    const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
     if (!match) {
       return '';
     }
@@ -366,7 +376,7 @@ export class HarborAssistantSearchComponent implements OnInit {
 
   private loadSearchHistory(): string[] {
     try {
-      const raw = window.localStorage.getItem(this.searchHistoryStorageKey);
+      const raw = this.window.localStorage.getItem(this.searchHistoryStorageKey);
       const parsed = raw ? JSON.parse(raw) : [];
       return Array.isArray(parsed)
         ? parsed.filter((item): item is string => typeof item === 'string' && item.trim().length > 0).slice(0, 10)
@@ -378,7 +388,7 @@ export class HarborAssistantSearchComponent implements OnInit {
 
   private saveSearchHistory(history: string[]): void {
     try {
-      window.localStorage.setItem(this.searchHistoryStorageKey, JSON.stringify(history));
+      this.window.localStorage.setItem(this.searchHistoryStorageKey, JSON.stringify(history));
     } catch {
       // Local search history is best-effort only.
     }

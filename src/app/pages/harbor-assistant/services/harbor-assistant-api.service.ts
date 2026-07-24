@@ -256,7 +256,10 @@ export class HarborAssistantApiService {
     return this.http.post<ModelEndpointsResponse>(this.apiUrl('/models/endpoints'), payload);
   }
 
-  updateModelEndpoint(modelEndpointId: string, payload: Partial<ModelEndpointPayload>): Observable<ModelEndpointsResponse> {
+  updateModelEndpoint(
+    modelEndpointId: string,
+    payload: Partial<ModelEndpointPayload>,
+  ): Observable<ModelEndpointsResponse> {
     return this.http.patch<ModelEndpointsResponse>(
       this.apiUrl(`/models/endpoints/${encodeURIComponent(modelEndpointId)}`),
       payload,

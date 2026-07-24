@@ -247,12 +247,12 @@
                 </span>
                 <div class="row-actions">
                   @if (connector.setupUrl) {
-                    <a mat-button color="primary" [href]="connector.setupUrl" target="_blank" rel="noopener">
+                    <a mat-button color="primary" target="_blank" rel="noopener" [href]="connector.setupUrl">
                       {{ 'Bind' | translate }}
                     </a>
                   }
                   @if (connector.manageUrl) {
-                    <a mat-button color="primary" [href]="connector.manageUrl" target="_blank" rel="noopener">
+                    <a mat-button color="primary" target="_blank" rel="noopener" [href]="connector.manageUrl">
                       {{ connector.connected ? ('Reconnect' | translate) : ('Manage' | translate) }}
                     </a>
                   }
@@ -930,7 +930,7 @@
                   (ngSubmit)="saveModelPolicy()"
                 >
                   <mat-form-field>
-                    <input matInput formControlName="routePolicyId" [placeholder]="'Policy id' | translate" readonly />
+                    <input matInput formControlName="routePolicyId" readonly [placeholder]="'Policy id' | translate" />
                   </mat-form-field>
                   <mat-form-field>
                     <mat-select formControlName="localPreferred">
@@ -1163,11 +1163,11 @@
                       <p class="muted">{{ result.ip }}:{{ result.port }} · {{ result.protocol | translate }}</p>
                       <p class="muted">{{ result.note | translate }}</p>
                     </div>
-                    @if (result.requires_auth && !result.registered) {
+                    @if (!result.registered) {
                       <div class="scan-result-actions">
                         @if (!isScanCredentialOpen(result)) {
                           <button mat-button type="button" (click)="prepareManualFromScan(result)">
-                            {{ 'Enter password to connect' | translate }}
+                            {{ (result.requires_auth ? 'Enter password to connect' : 'Connect camera') | translate }}
                           </button>
                         }
                       </div>
@@ -1177,31 +1177,33 @@
                             <mat-label>{{ 'Username' | translate }}</mat-label>
                             <input matInput formControlName="username" autocomplete="username" />
                           </mat-form-field>
-                          <mat-form-field>
-                            <mat-label>{{ 'Password' | translate }}</mat-label>
-                            <input
-                              matInput
-                              [type]="scanCredentialPasswordVisible() ? 'text' : 'password'"
-                              formControlName="password"
-                              autocomplete="new-password"
-                            />
-                            <button
-                              mat-icon-button
-                              matSuffix
-                              class="password-visibility-button"
-                              type="button"
-                              [attr.aria-label]="(scanCredentialPasswordVisible() ? 'Hide password' : 'Show password') | translate"
-                              [attr.title]="(scanCredentialPasswordVisible() ? 'Hide password' : 'Show password') | translate"
-                              (click)="toggleScanCredentialPasswordVisible()"
-                            >
-                              <tn-icon
-                                library="mdi"
-                                [name]="scanCredentialPasswordVisible() ? 'eye-off' : 'eye'"
-                                customSize="18px"
-                              ></tn-icon>
-                            </button>
-                          </mat-form-field>
-                          <button mat-button color="primary" type="submit" [disabled]="actionInProgress() !== null || scanCredentialForm.invalid">
+                          @if (result.requires_auth) {
+                            <mat-form-field>
+                              <mat-label>{{ 'Password' | translate }}</mat-label>
+                              <input
+                                matInput
+                                formControlName="password"
+                                autocomplete="new-password"
+                                [type]="scanCredentialPasswordVisible() ? 'text' : 'password'"
+                              />
+                              <button
+                                mat-icon-button
+                                matSuffix
+                                class="password-visibility-button"
+                                type="button"
+                                [attr.aria-label]="(scanCredentialPasswordVisible() ? 'Hide password' : 'Show password') | translate"
+                                [attr.title]="(scanCredentialPasswordVisible() ? 'Hide password' : 'Show password') | translate"
+                                (click)="toggleScanCredentialPasswordVisible()"
+                              >
+                                <tn-icon
+                                  library="mdi"
+                                  customSize="18px"
+                                  [name]="scanCredentialPasswordVisible() ? 'eye-off' : 'eye'"
+                                ></tn-icon>
+                              </button>
+                            </mat-form-field>
+                          }
+                          <button mat-button color="primary" type="submit" [disabled]="actionInProgress() !== null">
                             @if (actionBusy('scan-connect:' + result.candidate_id)) {
                               {{ 'Connecting' | translate }}
                             } @else {
@@ -1235,7 +1237,7 @@
               <mat-form-field><mat-label>{{ 'Name' | translate }}</mat-label><input matInput formControlName="name" placeholder="TP1" /></mat-form-field>
               <mat-form-field><mat-label>{{ 'IP address' | translate }}</mat-label><input matInput formControlName="ip" placeholder="192.168.3.231" /></mat-form-field>
               <mat-form-field><mat-label>{{ 'Location' | translate }}</mat-label><input matInput formControlName="room" placeholder="Living room" /></mat-form-field>
-              <mat-form-field><mat-label>{{ 'RTSP path' | translate }}</mat-label><input matInput formControlName="path" placeholder="/stream1" /></mat-form-field>
+              <mat-form-field><mat-label>{{ 'RTSP path' | translate }}</mat-label><input matInput formControlName="path" placeholder="/ch01_sub.264" /></mat-form-field>
               <mat-form-field><mat-label>{{ 'Snapshot URL' | translate }}</mat-label><input matInput formControlName="snapshotUrl" /></mat-form-field>
               <mat-form-field><mat-label>{{ 'RTSP port' | translate }}</mat-label><input matInput formControlName="port" placeholder="554" /></mat-form-field>
               <mat-form-field><mat-label>{{ 'Username' | translate }}</mat-label><input matInput formControlName="username" autocomplete="username" /></mat-form-field>

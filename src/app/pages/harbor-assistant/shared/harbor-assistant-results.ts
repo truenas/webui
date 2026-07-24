@@ -1,3 +1,4 @@
+import { harborAssistantBeaconApiUrl } from 'app/pages/harbor-assistant/services/harbor-assistant-api-prefix';
 import {
   HarborAssistantSearchResultFilter,
   HarborAssistantSearchHit,
@@ -6,9 +7,8 @@ import {
   HarborAssistantSearchSourceScope,
   HarborAssistantSearchWaterfallItem,
 } from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
-import { harborAssistantBeaconApiUrl } from 'app/pages/harbor-assistant/services/harbor-assistant-api-prefix';
 
-const DEFAULT_LIMIT = 24;
+const defaultLimit = 24;
 
 export interface HarborAssistantSearchScope {
   cameraId?: string | null;
@@ -20,7 +20,7 @@ export interface HarborAssistantSearchScope {
 export function buildHarborAssistantSearchPayload(
   query: string,
   filter: HarborAssistantSearchResultFilter,
-  limit = DEFAULT_LIMIT,
+  limit = defaultLimit,
   scope: HarborAssistantSearchScope = {},
 ): HarborAssistantSearchRequest {
   const payload: HarborAssistantSearchRequest = {
@@ -50,7 +50,10 @@ export function harborAssistantSearchSameOriginAdminUrl(url: string | null | und
   try {
     const parsed = new URL(url, 'http://harbor.local');
     const path = `${parsed.pathname}${parsed.search}`;
-    if (path.startsWith('/api/beacon/')) {
+    if (
+      path.startsWith('/api/beacon/')
+      || path.startsWith('/api/harbor-link/')
+    ) {
       return path;
     }
     if (path.startsWith('/api/harbor-beacon/')) {
@@ -62,6 +65,46 @@ export function harborAssistantSearchSameOriginAdminUrl(url: string | null | und
     return path.startsWith('/') ? path : null;
   } catch {
     return url.startsWith('/') ? url : null;
+  }
+}
+
+export function harborAssistantHlsLiveUrl(url: string | null | undefined): string | null {
+  const path = sameOriginMediaPath(url);
+  if (!path) {
+    return null;
+  }
+  if (/^\/api\/harbor-link\/hls\/[^/]+\/index\.m3u8$/.test(path)) {
+    return path;
+  }
+  if (/^\/api\/(?:beacon|harbor-beacon)\/cameras\/[^/]+\/live\/[^/]+\/index\.m3u8$/.test(path)) {
+    return path.startsWith('/api/harbor-beacon/')
+      ? harborAssistantBeaconApiUrl(path.slice('/api/harbor-beacon'.length))
+      : path;
+  }
+  if (/^\/api\/cameras\/[^/]+\/live\/[^/]+\/index\.m3u8$/.test(path)) {
+    return harborAssistantBeaconApiUrl(path.slice('/api'.length));
+  }
+  return null;
+}
+
+export function harborAssistantWhepUrl(url: string | null | undefined): string | null {
+  const path = sameOriginMediaPath(url);
+  return path && /^\/api\/harbor-link\/media\/[^/]+\/whep$/.test(path) ? path : null;
+}
+
+function sameOriginMediaPath(url: string | null | undefined): string | null {
+  if (!url?.trim()) {
+    return null;
+  }
+  try {
+    const baseOrigin = globalThis.location?.origin ?? 'http://localhost';
+    const parsed = new URL(url, baseOrigin);
+    if (parsed.origin !== baseOrigin || parsed.hash) {
+      return null;
+    }
+    return `${parsed.pathname}${parsed.search}`;
+  } catch {
+    return null;
   }
 }
 
@@ -90,8 +133,7 @@ export function buildHarborAssistantSearchWaterfallItems(
 
 export function harborAssistantSearchHasNoResults(response: HarborAssistantSearchResponse | null): boolean {
   return Boolean(
-    response
-    && response.images.length === 0
+    response?.images.length === 0
     && response.documents.length === 0
     && response.videos.length === 0,
   );

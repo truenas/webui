@@ -2,8 +2,9 @@
   <mat-tab-group
     class="harbor-assistant-camera-tabs"
     animationDuration="120ms"
+    preserveContent
     [selectedIndex]="selectedTabIndex()"
-    (selectedIndexChange)="selectedTabIndex.set($event)"
+    (selectedIndexChange)="onCameraTabChange($event)"
   >
     <mat-tab [label]="'Live' | translate">
       <section class="live-tab">
@@ -43,10 +44,20 @@
                 </button>
               }
             </div>
+            <mat-button-toggle-group
+              class="stream-profile-toggle"
+              aria-label="Live stream profile"
+              [value]="selectedStreamProfile()"
+              (valueChange)="selectStreamProfile($any($event))"
+            >
+              <mat-button-toggle value="sub">{{ 'Sub stream' | translate }}</mat-button-toggle>
+              <mat-button-toggle value="main">{{ 'Main stream' | translate }}</mat-button-toggle>
+            </mat-button-toggle-group>
 
             <div class="dvr-preview-row">
               <div class="live-stack">
                 <div
+                  #livePanel
                   class="live-panel"
                   [class.recording]="isRecording()"
                   [class.starting]="recordIntent() === 'starting'"
@@ -61,16 +72,46 @@
                   @if (liveFeedback()) {
                     <div class="live-feedback">{{ liveFeedback() | translate }}</div>
                   }
-                  @if (hlsLiveUrl()) {
+                  @if (hlsLiveUrl() || webrtcLiveUrl()) {
                     <video
                       #liveVideo
-                      controls
                       autoplay
                       muted
                       playsinline
                       preload="auto"
                       [attr.aria-label]="selectedCamera()?.name || selectedCameraId() || 'camera'"
+                      (loadeddata)="onLiveVideoLoadedData()"
+                      (canplay)="resumeLivePlayback()"
+                      (playing)="onLiveVideoPlaying()"
+                      (pause)="onLiveVideoPause()"
+                      (play)="onLiveVideoPlay()"
+                      (ratechange)="onLiveVideoRateChange()"
+                      (seeked)="onLiveVideoSeeked()"
+                      (timeupdate)="onLiveVideoTimeUpdate()"
+                      (volumechange)="onLiveVideoVolumeChange()"
                     ></video>
+                    <canvas
+                      #liveTransitionFrame
+                      class="live-transition-frame"
+                      aria-hidden="true"
+                      [class.visible]="liveTransitionFrameVisible()"
+                    ></canvas>
+                    <ix-harbor-assistant-live-controls
+                      [currentTime]="liveControlCurrentTime()"
+                      [endTime]="liveControlEndTime()"
+                      [fullscreenTarget]="livePanel"
+                      [muted]="liveControlMuted()"
+                      [paused]="liveControlPaused()"
+                      [playbackMode]="liveControlPlaybackMode()"
+                      [playbackRate]="liveControlPlaybackRate()"
+                      [startTime]="liveControlStartTime()"
+                      [volume]="liveControlVolume()"
+                      (mutedChange)="setLiveMutedFromControls($event)"
+                      (playbackRateChange)="setLivePlaybackRateFromControls($event)"
+                      (playbackToggle)="toggleLivePlaybackFromControls()"
+                      (seekRequested)="seekLivePlaybackFromControls($event)"
+                      (volumeChange)="setLiveVolumeFromControls($event)"
+                    ></ix-harbor-assistant-live-controls>
                   } @else if (selectedLiveUrl(); as liveUrl) {
                     <img
                       #liveImage
@@ -119,9 +160,9 @@
                         >
                           <span class="media-thumb compact">
                             @if (mediaKind(segment) === 'snapshot') {
-                              <img [src]="mediaPreviewUrl(segment)" [alt]="selectedCameraLabel() + ' snapshot'" loading="lazy" />
+                              <img loading="lazy" [src]="mediaPreviewUrl(segment)" [alt]="selectedCameraLabel() + ' snapshot'" />
                             } @else {
-                              <video [src]="mediaVideoPreviewUrl(segment)" muted playsinline preload="metadata" aria-hidden="true"></video>
+                              <video muted playsinline preload="metadata" aria-hidden="true" [src]="mediaVideoPreviewUrl(segment)"></video>
                             }
                           </span>
                           <span>
@@ -146,8 +187,8 @@
                     mat-flat-button
                     color="primary"
                     type="button"
-                    (click)="captureSnapshot()"
                     [disabled]="actionBusy() === 'record' || actionBusy() === 'snapshot'"
+                    (click)="captureSnapshot()"
                   >
                     {{ actionBusy() === 'snapshot' ? ('Capturing' | translate) : ('Snapshot' | translate) }}
                   </button>
@@ -155,13 +196,13 @@
                     <button
                       mat-stroked-button
                       type="button"
-                      (click)="stopRecording()"
                       [disabled]="actionBusy() === 'record' || recordIntent() === 'finalizing'"
+                      (click)="stopRecording()"
                     >
                       {{ recordIntent() === 'finalizing' ? ('Finalizing' | translate) : ('Stop recording' | translate) }}
                     </button>
                   } @else {
-                    <button mat-stroked-button type="button" (click)="startRecording()" [disabled]="actionBusy() === 'record'">
+                    <button mat-stroked-button type="button" [disabled]="actionBusy() === 'record'" (click)="startRecording()">
                       {{ recordIntent() === 'starting' ? ('Starting' | translate) : ('Record' | translate) }}
                     </button>
                   }
@@ -213,15 +254,42 @@
                 <p>{{ displayMediaTime(mediaItem) }}</p>
               </div>
               <div class="viewer-actions">
-                <button mat-stroked-button type="button" (click)="fullscreenMediaViewer()">{{ 'Fullscreen' | translate }}</button>
-                <button mat-stroked-button type="button" (click)="closeMediaPreview()">{{ 'Close' | translate }}</button>
+                <button
+                  mat-stroked-button
+                  type="button"
+                  [attr.aria-label]="'Fullscreen' | translate"
+                  [title]="'Fullscreen' | translate"
+                  (click)="fullscreenMediaViewer()"
+                >
+                  {{ 'Fullscreen' | translate }}
+                </button>
+                <button
+                  mat-stroked-button
+                  type="button"
+                  [attr.aria-label]="'Close' | translate"
+                  [title]="'Close' | translate"
+                  (click)="closeMediaPreview()"
+                >
+                  {{ 'Close' | translate }}
+                </button>
               </div>
             </header>
 
             @if (mediaKind(mediaItem) === 'snapshot') {
               <img [src]="mediaPlaybackUrl(mediaItem)" [alt]="selectedCameraLabel() + ' snapshot'" />
             } @else {
-              <video [src]="mediaPlaybackUrl(mediaItem)" controls autoplay playsinline preload="auto"></video>
+              <video
+                #playbackVideo
+                controls
+                autoplay
+                playsinline
+                preload="auto"
+                [src]="mediaPlaybackUrl(mediaItem)"
+                (seeking)="onPlaybackVideoSeeking($event)"
+                (seeked)="onPlaybackVideoSeeked($event)"
+                (loadedmetadata)="onPlaybackVideoReady($event)"
+                (canplay)="onPlaybackVideoReady($event)"
+              ></video>
             }
           </section>
         }
@@ -249,14 +317,14 @@
                     [class.pending]="isOptimisticMediaItem(segment)"
                     [class.archive-failed]="isArchiveFailed(segment)"
                     [class.unplayable]="!canOpenMediaItem(segment)"
-                    (click)="openReplay(segment)"
                     [disabled]="!canOpenMediaItem(segment)"
+                    (click)="openReplay(segment)"
                   >
                     <span class="media-thumb">
                       @if (mediaKind(segment) === 'snapshot') {
-                        <img [src]="mediaPreviewUrl(segment)" [alt]="selectedCameraLabel() + ' snapshot'" loading="lazy" />
+                        <img loading="lazy" [src]="mediaPreviewUrl(segment)" [alt]="selectedCameraLabel() + ' snapshot'" />
                       } @else {
-                        <video [src]="mediaVideoPreviewUrl(segment)" muted playsinline preload="metadata" aria-hidden="true"></video>
+                        <video muted playsinline preload="metadata" aria-hidden="true" [src]="mediaVideoPreviewUrl(segment)"></video>
                       }
                     </span>
                     <span class="card-topline">
@@ -327,15 +395,15 @@
                 } @else {
                   <section class="results-waterfall" aria-live="polite">
                     @for (item of waterfallItems(); track resultTrackKey($index, item)) {
-                      <mat-card class="result-card" [ngClass]="item.kind" tabindex="0" (click)="openPreview(item)" (keydown.enter)="openPreview(item)">
+                      <mat-card class="result-card" tabindex="0" [ngClass]="item.kind" (click)="openPreview(item)" (keydown.enter)="openPreview(item)">
                         @if (item.kind === 'image') {
                           <div class="image-frame">
-                            <img [src]="item.previewUrl" [alt]="item.hit.title" loading="lazy" />
+                            <img loading="lazy" [src]="item.previewUrl" [alt]="item.hit.title" />
                           </div>
                         }
                         @if (item.kind === 'video') {
                           <div class="video-frame">
-                            <video [src]="videoPreviewUrl(item)" muted playsinline preload="metadata" aria-hidden="true"></video>
+                            <video muted playsinline preload="metadata" aria-hidden="true" [src]="videoPreviewUrl(item)"></video>
                             <span class="play-chip">{{ 'Play' | translate }}</span>
                           </div>
                         }

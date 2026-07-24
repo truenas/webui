@@ -1,0 +1,73 @@
+.time-range-dialog-content {
+  min-width: min(720px, 88vw);
+}
+
+.time-range-dialog-form {
+  display: grid;
+  gap: 20px;
+  padding-top: 4px;
+}
+
+.preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.time-boundary {
+  display: grid;
+  gap: 10px;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.time-picker-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(96px, 1.2fr) repeat(4, minmax(78px, 1fr));
+}
+
+label {
+  color: var(--fg2);
+  display: grid;
+  font-size: 12px;
+  gap: 4px;
+}
+
+select {
+  appearance: none;
+  background: var(--bg1);
+  border: 1px solid var(--lines);
+  border-radius: 8px;
+  color: var(--fg1);
+  font-size: 16px;
+  min-height: 42px;
+  min-width: 0;
+  padding: 0 12px;
+  width: 100%;
+}
+
+select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 18%, transparent);
+  outline: none;
+}
+
+.time-range-error {
+  color: var(--red);
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .time-range-dialog-content {
+    min-width: 0;
+  }
+
+  .time-picker-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

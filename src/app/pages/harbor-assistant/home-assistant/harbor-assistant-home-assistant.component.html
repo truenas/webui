@@ -16,7 +16,14 @@
         <div>
           <span class="field-label">{{ 'Connection' | translate }}</span>
           <strong>{{ statusLabel() | translate }}</strong>
-          @if (status()?.location_name) {
+          @if (managedByHarborLink()) {
+            <p>
+              @if (status()?.location_name) {
+                <span>{{ status()?.location_name }} / </span>
+              }
+              {{ 'Managed by HarborLink' | translate }}
+            </p>
+          } @else if (status()?.location_name) {
             <p>{{ status()?.location_name }} / {{ status()?.base_url }}</p>
           } @else if (status()?.base_url) {
             <p>{{ status()?.base_url }}</p>
@@ -29,7 +36,7 @@
             {{ 'Refresh' | translate }}
           </button>
           @if (homeAssistantUrl(); as url) {
-            <a mat-button color="primary" [href]="url" target="_blank" rel="noopener">
+            <a mat-button color="primary" target="_blank" rel="noopener" [href]="url">
               {{ 'Open HA' | translate }}
             </a>
           }
@@ -48,6 +55,11 @@
       @if (status()?.last_error) {
         <div class="notice error compact-notice">{{ status()?.last_error }}</div>
       }
+      @if (status()?.harborlink_available === false) {
+        <div class="notice error compact-notice">
+          {{ 'HarborLink is unavailable. Displaying the last cached orchestration state.' | translate }}
+        </div>
+      }
     </mat-card-content>
   </mat-card>
 
@@ -61,7 +73,13 @@
 
         <mat-form-field>
           <mat-label>{{ 'Home Assistant URL' | translate }}</mat-label>
-          <input matInput formControlName="baseUrl" placeholder="http://homeassistant.local:8123" />
+          <input
+            matInput
+            formControlName="baseUrl"
+            [placeholder]="managedByHarborLink()
+              ? ('Managed by HarborLink; enter a URL to replace' | translate)
+              : 'http://homeassistant.local:8123'"
+          />
         </mat-form-field>
 
         <mat-form-field>
@@ -75,11 +93,32 @@
           />
         </mat-form-field>
 
+        <mat-checkbox formControlName="clearAccessToken">
+          {{ 'Remove the saved access token' | translate }}
+        </mat-checkbox>
+
         <details class="advanced-sync-scope full-span">
           <summary>{{ 'Advanced sync scope' | translate }}</summary>
           <mat-form-field class="full-span">
             <mat-label>{{ 'Device types to sync' | translate }}</mat-label>
             <textarea matInput rows="4" formControlName="exposedDomains"></textarea>
+          </mat-form-field>
+          <mat-form-field class="full-span">
+            <mat-label>{{ 'Allowed entity IDs' | translate }}</mat-label>
+            <textarea matInput rows="4" formControlName="allowedEntities" placeholder="light.kitchen"></textarea>
+          </mat-form-field>
+          <mat-form-field class="full-span">
+            <mat-label>{{ 'Allowed camera IDs' | translate }}</mat-label>
+            <textarea matInput rows="4" formControlName="allowedCameras" placeholder="front-door"></textarea>
+          </mat-form-field>
+          <mat-form-field class="full-span">
+            <mat-label>{{ 'Camera to HA entity bindings' | translate }}</mat-label>
+            <textarea
+              matInput
+              rows="4"
+              formControlName="cameraEntityBindings"
+              placeholder="front-door=camera.front_door"
+            ></textarea>
           </mat-form-field>
         </details>
 

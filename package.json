@@ -32,6 +32,7 @@
     "test:watch": "jest --watch",
     "check:harbor-assistant-i18n": "node scripts/check-harbor-assistant-i18n.mjs",
     "check:harbor-assistant-delivery": "node scripts/check-harbor-assistant-delivery.mjs",
+    "check:harbornavi-k3-package": "bash scripts/harbornavi-k3/check-package-contract.sh",
     "translations": "yarn extract && yarn extract-ui-search-elements && yarn check:harbor-assistant-i18n && yarn validate-translations",
     "ui": "cd $(git rev-parse --show-toplevel) && tsx ./scripts/ui/ui.ts",
     "auth-url": "tsx ./scripts/playwright-helpers/generate-token.ts",

@@ -4,8 +4,8 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { HarborAssistantSearchComponent } from 'app/pages/harbor-assistant/search/harbor-assistant-search.component';
-import { HarborAssistantSearchResponse } from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
 import { HarborAssistantContentApiService } from 'app/pages/harbor-assistant/shared/harbor-assistant-content-api.service';
+import { HarborAssistantSearchResponse } from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
 
 describe('Harbor Assistant search component', () => {
   let spectator: Spectator<HarborAssistantSearchComponent>;

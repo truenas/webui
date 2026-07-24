@@ -15,207 +15,14 @@ export interface HarborTimeRangeValue {
   to: string;
 }
 
+type TimeBoundary = 'from' | 'to';
+type TimePart = 'Year' | 'Month' | 'Day' | 'Hour' | 'Minute';
+type TimeControlName = `${TimeBoundary}${TimePart}`;
+
 @Component({
   selector: 'ix-harbor-time-range-dialog',
-  template: `
-    <h2 mat-dialog-title>{{ 'Time range' | translate }}</h2>
-    <mat-dialog-content class="time-range-dialog-content">
-      <form class="time-range-dialog-form" [formGroup]="form">
-        <div class="preset-row">
-          <button mat-button type="button" (click)="setPreset('today')">{{ 'Today' | translate }}</button>
-          <button mat-button type="button" (click)="setPreset('last24')">{{ 'Last 24 hours' | translate }}</button>
-          <button mat-button type="button" (click)="setPreset('last7')">{{ 'Last 7 days' | translate }}</button>
-          <button mat-button type="button" (click)="resetForm()">{{ 'All time' | translate }}</button>
-        </div>
-
-        <section class="time-boundary">
-          <h3>{{ 'Start time' | translate }}</h3>
-          <div class="time-picker-grid">
-            <label>
-              <span>{{ 'Year' | translate }}</span>
-              <select formControlName="fromYear">
-                <option value="">{{ 'Year' | translate }}</option>
-                @for (year of years; track year) {
-                  <option [value]="year">{{ year }}</option>
-                }
-              </select>
-            </label>
-            <label>
-              <span>{{ 'Month' | translate }}</span>
-              <select formControlName="fromMonth">
-                <option value="">{{ 'Month' | translate }}</option>
-                @for (month of months; track month) {
-                  <option [value]="month">{{ month }}</option>
-                }
-              </select>
-            </label>
-            <label>
-              <span>{{ 'Day' | translate }}</span>
-              <select formControlName="fromDay">
-                <option value="">{{ 'Day' | translate }}</option>
-                @for (day of days; track day) {
-                  <option [value]="day">{{ day }}</option>
-                }
-              </select>
-            </label>
-            <label>
-              <span>{{ 'Hour' | translate }}</span>
-              <select formControlName="fromHour">
-                <option value="">{{ 'Hour' | translate }}</option>
-                @for (hour of hours; track hour) {
-                  <option [value]="hour">{{ hour }}</option>
-                }
-              </select>
-            </label>
-            <label>
-              <span>{{ 'Minute' | translate }}</span>
-              <select formControlName="fromMinute">
-                <option value="">{{ 'Minute' | translate }}</option>
-                @for (minute of minutes; track minute) {
-                  <option [value]="minute">{{ minute }}</option>
-                }
-              </select>
-            </label>
-          </div>
-        </section>
-
-        <section class="time-boundary">
-          <h3>{{ 'End time' | translate }}</h3>
-          <div class="time-picker-grid">
-            <label>
-              <span>{{ 'Year' | translate }}</span>
-              <select formControlName="toYear">
-                <option value="">{{ 'Year' | translate }}</option>
-                @for (year of years; track year) {
-                  <option [value]="year">{{ year }}</option>
-                }
-              </select>
-            </label>
-            <label>
-              <span>{{ 'Month' | translate }}</span>
-              <select formControlName="toMonth">
-                <option value="">{{ 'Month' | translate }}</option>
-                @for (month of months; track month) {
-                  <option [value]="month">{{ month }}</option>
-                }
-              </select>
-            </label>
-            <label>
-              <span>{{ 'Day' | translate }}</span>
-              <select formControlName="toDay">
-                <option value="">{{ 'Day' | translate }}</option>
-                @for (day of days; track day) {
-                  <option [value]="day">{{ day }}</option>
-                }
-              </select>
-            </label>
-            <label>
-              <span>{{ 'Hour' | translate }}</span>
-              <select formControlName="toHour">
-                <option value="">{{ 'Hour' | translate }}</option>
-                @for (hour of hours; track hour) {
-                  <option [value]="hour">{{ hour }}</option>
-                }
-              </select>
-            </label>
-            <label>
-              <span>{{ 'Minute' | translate }}</span>
-              <select formControlName="toMinute">
-                <option value="">{{ 'Minute' | translate }}</option>
-                @for (minute of minutes; track minute) {
-                  <option [value]="minute">{{ minute }}</option>
-                }
-              </select>
-            </label>
-          </div>
-        </section>
-
-        @if (error) {
-          <p class="time-range-error">{{ error | translate }}</p>
-        }
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button type="button" (click)="clear()">{{ 'Clear' | translate }}</button>
-      <button mat-button type="button" (click)="close()">{{ 'Cancel' | translate }}</button>
-      <button mat-flat-button color="primary" type="button" (click)="apply()">{{ 'Apply' | translate }}</button>
-    </mat-dialog-actions>
-  `,
-  styles: [`
-    .time-range-dialog-content {
-      min-width: min(720px, 88vw);
-    }
-
-    .time-range-dialog-form {
-      display: grid;
-      gap: 20px;
-      padding-top: 4px;
-    }
-
-    .preset-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .time-boundary {
-      display: grid;
-      gap: 10px;
-    }
-
-    h3 {
-      font-size: 16px;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .time-picker-grid {
-      display: grid;
-      gap: 10px;
-      grid-template-columns: minmax(96px, 1.2fr) repeat(4, minmax(78px, 1fr));
-    }
-
-    label {
-      color: var(--fg2);
-      display: grid;
-      font-size: 12px;
-      gap: 4px;
-    }
-
-    select {
-      appearance: none;
-      background: var(--bg1);
-      border: 1px solid var(--lines);
-      border-radius: 8px;
-      color: var(--fg1);
-      font-size: 16px;
-      min-height: 42px;
-      min-width: 0;
-      padding: 0 12px;
-      width: 100%;
-    }
-
-    select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 18%, transparent);
-      outline: none;
-    }
-
-    .time-range-error {
-      color: var(--red);
-      margin: 0;
-    }
-
-    @media (max-width: 640px) {
-      .time-range-dialog-content {
-        min-width: 0;
-      }
-
-      .time-picker-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-  `],
+  templateUrl: './harbor-assistant-time-range-dialog.component.html',
+  styleUrl: './harbor-assistant-time-range-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
@@ -227,7 +34,11 @@ export interface HarborTimeRangeValue {
   ],
 })
 export class HarborTimeRangeDialogComponent {
-  private readonly dialogRef = inject<MatDialogRef<HarborTimeRangeDialogComponent, HarborTimeRangeValue | null>>(MatDialogRef);
+  private readonly dialogRef = inject<MatDialogRef<
+    HarborTimeRangeDialogComponent,
+    HarborTimeRangeValue | null
+  >>(MatDialogRef);
+
   private readonly data = inject<HarborTimeRangeValue>(MAT_DIALOG_DATA, { optional: true });
   private readonly formBuilder = inject(NonNullableFormBuilder);
 
@@ -304,7 +115,7 @@ export class HarborTimeRangeDialogComponent {
     this.patchBoundary('to', end);
   }
 
-  private composeValue(boundary: 'from' | 'to'): { ok: boolean; value: string } {
+  private composeValue(boundary: TimeBoundary): { ok: boolean; value: string } {
     const year = this.value(`${boundary}Year`);
     const month = this.value(`${boundary}Month`);
     const day = this.value(`${boundary}Day`);
@@ -329,11 +140,12 @@ export class HarborTimeRangeDialogComponent {
     }
     return {
       ok: true,
-      value: `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`,
+      value: `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+        + `T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`,
     };
   }
 
-  private patchBoundary(boundary: 'from' | 'to', value: Date): void {
+  private patchBoundary(boundary: TimeBoundary, value: Date): void {
     this.form.patchValue({
       [`${boundary}Year`]: String(value.getFullYear()),
       [`${boundary}Month`]: String(value.getMonth() + 1),
@@ -343,16 +155,18 @@ export class HarborTimeRangeDialogComponent {
     });
   }
 
-  private value(controlName: string): string {
-    return String(this.form.get(controlName)?.value ?? '').trim();
+  private value(controlName: TimeControlName): string {
+    return String(this.form.controls[controlName].value).trim();
   }
 
-  private part(value: string, part: 'year' | 'month' | 'day' | 'hour' | 'minute'): string {
-    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  private part(value: string, part: Lowercase<TimePart>): string {
+    const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(value);
     if (!match) {
       return '';
     }
-    const index = { year: 1, month: 2, day: 3, hour: 4, minute: 5 }[part];
+    const index = {
+      year: 1, month: 2, day: 3, hour: 4, minute: 5,
+    }[part];
     return String(Number(match[index]));
   }
 

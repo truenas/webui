@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -16,6 +16,7 @@ import { catchError, finalize, map } from 'rxjs/operators';
 import {
   EndpointResult,
   HarborAssistantStatusTone,
+  HomeAssistantConfigPayload,
   HomeAssistantEntity,
   HomeAssistantInstallPlanResponse,
   HomeAssistantInstallStatusResponse,
@@ -44,6 +45,8 @@ const defaultExposedDomains = [
   'scene',
   'script',
 ];
+
+const harborLinkHomeAssistantEndpointMarker = 'harborlink://home-assistant';
 
 @Component({
   selector: 'ix-harbor-assistant-home-assistant',
@@ -85,15 +88,21 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
 
   protected readonly configForm = this.fb.group({
     enabled: [true],
-    baseUrl: ['', Validators.required],
+    baseUrl: [''],
     accessToken: [''],
+    clearAccessToken: [false],
     exposedDomains: [defaultExposedDomains.join('\n')],
+    allowedEntities: [''],
+    allowedCameras: [''],
+    cameraEntityBindings: [''],
   });
+
   protected readonly entityFilterForm = this.fb.group({
     query: [''],
     domain: ['all'],
     readiness: ['all'],
   });
+
   protected readonly entityFilters = signal({ query: '', domain: 'all', readiness: 'all' });
   protected readonly readinessOptions = [
     { label: T('All readiness'), value: 'all' },
@@ -150,8 +159,13 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
     return T('Not configured');
   });
 
+  protected readonly managedByHarborLink = computed(() => {
+    const status = this.status();
+    return status ? this.isHarborLinkManagedStatus(status) : false;
+  });
+
   protected readonly homeAssistantUrl = computed(() => {
-    const statusUrl = this.status()?.base_url?.trim();
+    const statusUrl = this.managedByHarborLink() ? '' : this.status()?.base_url?.trim();
     const installUrl = this.installStatus()?.onboarding_url?.trim();
     return this.browserReachableUrl(statusUrl || installUrl || '');
   });
@@ -192,8 +206,9 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
 
   protected readonly domainOptions = computed(() => {
     const domains = new Set(this.entities().map((entity) => entity.domain).filter(Boolean));
-    return Array.from(domains).sort();
+    return Array.from(domains).sort((left, right) => left.localeCompare(right));
   });
+
   protected readonly visibleEntities = computed(() => {
     const filters = this.entityFilters();
     const query = filters.query.trim().toLowerCase();
@@ -209,6 +224,7 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
       })
       .slice(0, 48);
   });
+
   protected readonly syncScopeDomains = computed(() => this.status()?.exposed_domains ?? []);
   protected readonly visibleServiceDomains = computed(() => this.serviceDomains().slice(0, 12));
 
@@ -252,21 +268,38 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
   }
 
   protected saveConfig(): void {
-    if (this.configForm.invalid) {
-      this.configForm.markAllAsTouched();
+    const form = this.configForm.getRawValue();
+    const baseUrl = form.baseUrl.trim();
+    if (form.enabled && !this.managedByHarborLink() && !baseUrl) {
+      this.error.set(T('Home Assistant URL is required for a new connection.'));
       return;
     }
-    const form = this.configForm.getRawValue();
+    let cameraEntityBindings: Record<string, string>;
+    try {
+      cameraEntityBindings = this.parseCameraEntityBindings(form.cameraEntityBindings);
+    } catch (error: unknown) {
+      this.error.set(error instanceof Error ? error.message : T('Invalid camera entity binding.'));
+      return;
+    }
+    const accessToken = form.accessToken.trim();
+    const payload: HomeAssistantConfigPayload = {
+      enabled: form.enabled,
+      access_token: accessToken || undefined,
+      clear_access_token: !accessToken && form.clearAccessToken,
+      exposed_domains: this.parseList(form.exposedDomains, true),
+      allowed_entities: this.parseList(form.allowedEntities, true),
+      allowed_cameras: this.parseList(form.allowedCameras, true),
+      camera_entity_bindings: cameraEntityBindings,
+    };
+    if (baseUrl) {
+      payload.base_url = baseUrl;
+    }
     this.runAction(
       'home-assistant-config',
-      this.harborAssistantApi.saveHomeAssistantConfig({
-        enabled: form.enabled,
-        base_url: form.baseUrl.trim(),
-        access_token: form.accessToken.trim() || undefined,
-        exposed_domains: this.parseDomains(form.exposedDomains),
-      }),
+      this.harborAssistantApi.saveHomeAssistantConfig(payload),
       (response) => {
         this.status.set(response.status);
+        this.configForm.markAsPristine();
         this.patchConfigForm(response.status);
         this.message.set(T('Home Assistant settings saved.'));
         if (response.status.configured) {
@@ -389,9 +422,11 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
     }
     const trimmed = value.trim();
     const numericTimestamp = /^\d{10,13}$/.test(trimmed) ? Number(trimmed) : NaN;
-    const date = Number.isFinite(numericTimestamp)
-      ? new Date(trimmed.length === 10 ? numericTimestamp * 1000 : numericTimestamp)
-      : new Date(trimmed);
+    let date = new Date(trimmed);
+    if (Number.isFinite(numericTimestamp)) {
+      const timestampMs = trimmed.length === 10 ? numericTimestamp * 1000 : numericTimestamp;
+      date = new Date(timestampMs);
+    }
     if (!Number.isNaN(date.getTime())) {
       return date.toLocaleString();
     }
@@ -415,21 +450,32 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
     }
     this.configForm.patchValue({
       enabled: status.enabled,
-      baseUrl: status.base_url,
+      baseUrl: this.isHarborLinkManagedStatus(status) ? '' : status.base_url,
       accessToken: '',
+      clearAccessToken: false,
       exposedDomains: (status.exposed_domains?.length ? status.exposed_domains : defaultExposedDomains).join('\n'),
+      allowedEntities: (status.allowed_entities ?? []).join('\n'),
+      allowedCameras: (status.allowed_cameras ?? []).join('\n'),
+      cameraEntityBindings: Object.entries(status.camera_entity_bindings ?? {})
+        .map(([cameraId, entityId]) => `${cameraId}=${entityId}`)
+        .join('\n'),
     });
+  }
+
+  private isHarborLinkManagedStatus(status: HomeAssistantStatusResponse): boolean {
+    return status.managed_by_harborlink === true
+      || status.base_url?.trim() === harborLinkHomeAssistantEndpointMarker;
   }
 
   private runAction<T>(
     action: string,
-    request: Observable<T>,
+    request$: Observable<T>,
     onSuccess: (response: T) => void,
   ): void {
     this.actionInProgress.set(action);
     this.error.set(null);
     this.message.set(null);
-    request.pipe(
+    request$.pipe(
       finalize(() => this.actionInProgress.set(null)),
     ).subscribe({
       next: onSuccess,
@@ -437,18 +483,35 @@ export class HarborAssistantHomeAssistantComponent implements OnInit {
     });
   }
 
-  private result<T>(request: Observable<T>): Observable<EndpointResult<T>> {
-    return request.pipe(
+  private result<T>(request$: Observable<T>): Observable<EndpointResult<T>> {
+    return request$.pipe(
       map((data): EndpointResult<T> => ({ data, error: null })),
       catchError((error: unknown) => of({ data: null, error: this.getErrorMessage(error) })),
     );
   }
 
-  private parseDomains(value: string): string[] {
+  private parseList(value: string, lowercase = false): string[] {
     return value
       .split(/\r?\n|,/)
-      .map((item) => item.trim().toLowerCase())
+      .map((item) => (lowercase ? item.trim().toLowerCase() : item.trim()))
       .filter((item, index, values) => item.length > 0 && values.indexOf(item) === index);
+  }
+
+  private parseCameraEntityBindings(value: string): Record<string, string> {
+    return value
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .reduce<Record<string, string>>((bindings, line) => {
+        const separator = line.indexOf('=');
+        const cameraId = separator > 0 ? line.slice(0, separator).trim() : '';
+        const entityId = separator > 0 ? line.slice(separator + 1).trim().toLowerCase() : '';
+        if (!cameraId || !entityId.startsWith('camera.')) {
+          throw new Error(T('Camera bindings must use camera-id=camera.entity format.'));
+        }
+        bindings[cameraId] = entityId;
+        return bindings;
+      }, {});
   }
 
   private browserReachableUrl(value: string): string | null {

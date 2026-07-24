@@ -1,6 +1,6 @@
 import { GatewayPlatformStatus, GatewayStatusResponse } from 'app/pages/harbor-assistant/interfaces/harbor-assistant-status.interface';
 
-const HARBOR_GATE_PUBLIC_PREFIX = '/api/harbor-gate';
+const harborGatePublicPrefix = '/api/harbor-gate';
 
 export function harborGateConnectorSetupUrl(
   connectorId: string,
@@ -8,25 +8,26 @@ export function harborGateConnectorSetupUrl(
   gateway: GatewayStatusResponse | null | undefined,
   baseOrigin = globalThis.location?.origin ?? 'http://localhost',
 ): string | null {
-  const candidates = connectorId === 'weixin'
-    ? [
+  let candidates: (string | null | undefined)[] = [
+    platform?.setup_url,
+    gateway?.setup_url,
+    gateway?.static_setup_url,
+  ];
+  if (connectorId === 'weixin') {
+    candidates = [
       platformSpecificWeixinUrl(platform?.qr_page_url),
       platformSpecificWeixinUrl(gateway?.weixin?.qr_page_url),
       platformSpecificWeixinUrl(platform?.setup_url),
       platformSpecificWeixinUrl(gateway?.weixin?.setup_url),
-    ]
-    : connectorId === 'feishu'
-      ? [
-        platform?.setup_url,
-        gateway?.feishu?.setup_url,
-        gateway?.setup_url,
-        gateway?.static_setup_url,
-      ]
-      : [
-        platform?.setup_url,
-        gateway?.setup_url,
-        gateway?.static_setup_url,
-      ];
+    ];
+  } else if (connectorId === 'feishu') {
+    candidates = [
+      platform?.setup_url,
+      gateway?.feishu?.setup_url,
+      gateway?.setup_url,
+      gateway?.static_setup_url,
+    ];
+  }
 
   return sameOriginHarborGateUrl(firstUrl(candidates), baseOrigin);
 }
@@ -37,21 +38,22 @@ export function harborGateConnectorManageUrl(
   gateway: GatewayStatusResponse | null | undefined,
   baseOrigin = globalThis.location?.origin ?? 'http://localhost',
 ): string | null {
-  const candidates = connectorId === 'weixin'
-    ? [
+  let candidates: (string | null | undefined)[] = [
+    platform?.manage_url,
+    gateway?.manage_url,
+  ];
+  if (connectorId === 'weixin') {
+    candidates = [
       platform?.manage_url,
       gateway?.weixin?.manage_url,
-    ]
-    : connectorId === 'feishu'
-      ? [
-        platform?.manage_url,
-        gateway?.feishu?.manage_url,
-        gateway?.manage_url,
-      ]
-      : [
-        platform?.manage_url,
-        gateway?.manage_url,
-      ];
+    ];
+  } else if (connectorId === 'feishu') {
+    candidates = [
+      platform?.manage_url,
+      gateway?.feishu?.manage_url,
+      gateway?.manage_url,
+    ];
+  }
 
   return sameOriginHarborGateUrl(firstUrl(candidates), baseOrigin);
 }
@@ -76,7 +78,7 @@ export function sameOriginHarborGateUrl(rawUrl: string | null | undefined, baseO
 }
 
 function harborGatePublicPath(pathname: string): string | null {
-  if (pathname === HARBOR_GATE_PUBLIC_PREFIX || pathname.startsWith(`${HARBOR_GATE_PUBLIC_PREFIX}/`)) {
+  if (pathname === harborGatePublicPrefix || pathname.startsWith(`${harborGatePublicPrefix}/`)) {
     return pathname;
   }
   if (
@@ -86,7 +88,7 @@ function harborGatePublicPath(pathname: string): string | null {
     || pathname.startsWith('/admin/im/')
     || pathname.startsWith('/api/setup/')
   ) {
-    return `${HARBOR_GATE_PUBLIC_PREFIX}${pathname}`;
+    return `${harborGatePublicPrefix}${pathname}`;
   }
   return null;
 }

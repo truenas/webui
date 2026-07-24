@@ -1,0 +1,102 @@
+<h2 mat-dialog-title>{{ 'Time range' | translate }}</h2>
+<mat-dialog-content class="time-range-dialog-content">
+  <form class="time-range-dialog-form" [formGroup]="form">
+    <div class="preset-row">
+      <button mat-button type="button" (click)="setPreset('today')">{{ 'Today' | translate }}</button>
+      <button mat-button type="button" (click)="setPreset('last24')">{{ 'Last 24 hours' | translate }}</button>
+      <button mat-button type="button" (click)="setPreset('last7')">{{ 'Last 7 days' | translate }}</button>
+      <button mat-button type="button" (click)="resetForm()">{{ 'All time' | translate }}</button>
+    </div>
+
+    <section class="time-boundary">
+      <h3>{{ 'Start time' | translate }}</h3>
+      <div class="time-picker-grid">
+        <label>
+          <span>{{ 'Year' | translate }}</span>
+          <select formControlName="fromYear">
+            <option value="">{{ 'Year' | translate }}</option>
+            @for (year of years; track year) { <option [value]="year">{{ year }}</option> }
+          </select>
+        </label>
+        <label>
+          <span>{{ 'Month' | translate }}</span>
+          <select formControlName="fromMonth">
+            <option value="">{{ 'Month' | translate }}</option>
+            @for (month of months; track month) { <option [value]="month">{{ month }}</option> }
+          </select>
+        </label>
+        <label>
+          <span>{{ 'Day' | translate }}</span>
+          <select formControlName="fromDay">
+            <option value="">{{ 'Day' | translate }}</option>
+            @for (day of days; track day) { <option [value]="day">{{ day }}</option> }
+          </select>
+        </label>
+        <label>
+          <span>{{ 'Hour' | translate }}</span>
+          <select formControlName="fromHour">
+            <option value="">{{ 'Hour' | translate }}</option>
+            @for (hour of hours; track hour) { <option [value]="hour">{{ hour }}</option> }
+          </select>
+        </label>
+        <label>
+          <span>{{ 'Minute' | translate }}</span>
+          <select formControlName="fromMinute">
+            <option value="">{{ 'Minute' | translate }}</option>
+            @for (minute of minutes; track minute) { <option [value]="minute">{{ minute }}</option> }
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="time-boundary">
+      <h3>{{ 'End time' | translate }}</h3>
+      <div class="time-picker-grid">
+        <label>
+          <span>{{ 'Year' | translate }}</span>
+          <select formControlName="toYear">
+            <option value="">{{ 'Year' | translate }}</option>
+            @for (year of years; track year) { <option [value]="year">{{ year }}</option> }
+          </select>
+        </label>
+        <label>
+          <span>{{ 'Month' | translate }}</span>
+          <select formControlName="toMonth">
+            <option value="">{{ 'Month' | translate }}</option>
+            @for (month of months; track month) { <option [value]="month">{{ month }}</option> }
+          </select>
+        </label>
+        <label>
+          <span>{{ 'Day' | translate }}</span>
+          <select formControlName="toDay">
+            <option value="">{{ 'Day' | translate }}</option>
+            @for (day of days; track day) { <option [value]="day">{{ day }}</option> }
+          </select>
+        </label>
+        <label>
+          <span>{{ 'Hour' | translate }}</span>
+          <select formControlName="toHour">
+            <option value="">{{ 'Hour' | translate }}</option>
+            @for (hour of hours; track hour) { <option [value]="hour">{{ hour }}</option> }
+          </select>
+        </label>
+        <label>
+          <span>{{ 'Minute' | translate }}</span>
+          <select formControlName="toMinute">
+            <option value="">{{ 'Minute' | translate }}</option>
+            @for (minute of minutes; track minute) { <option [value]="minute">{{ minute }}</option> }
+          </select>
+        </label>
+      </div>
+    </section>
+
+    @if (error) {
+      <p class="time-range-error">{{ error | translate }}</p>
+    }
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="clear()">{{ 'Clear' | translate }}</button>
+  <button mat-button type="button" (click)="close()">{{ 'Cancel' | translate }}</button>
+  <button mat-flat-button color="primary" type="button" (click)="apply()">{{ 'Apply' | translate }}</button>
+</mat-dialog-actions>
