@@ -1,3 +1,16 @@
-tn-card p {
-  margin: 0 0 6px;
+.details {
+  display: grid;
+  gap: 2px 12px;
+  grid-template-columns: minmax(auto, 40%) 1fr;
+  margin: 0;
+
+  dt {
+    color: var(--fg2);
+    overflow-wrap: anywhere;
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
 }
