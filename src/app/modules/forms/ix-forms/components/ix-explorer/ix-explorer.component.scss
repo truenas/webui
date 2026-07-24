@@ -1,5 +1,3 @@
-@import 'scss-imports/cssvars';
-
 :host {
   color: var(--fg1);
   display: block;
@@ -21,85 +19,8 @@
   }
 }
 
-.input-container {
-  background: var(--bg1);
-  border: solid 1.5px var(--lines);
-  border-radius: 2px;
-  display: flex;
-  flex-direction: row;
-  font-size: 12px;
-  position: relative;
-
-  @include prevent-ios-autozoom;
-
-  input {
-    min-height: 26px;
-    padding: 3px 8px;
-  }
-
-  &:focus-within {
-    border-color: var(--primary);
-  }
-
-  &.disabled {
-    opacity: var(--disabled-opacity);
-
-    input {
-      cursor: not-allowed;
-      opacity: 1;
-    }
-  }
-}
-
-.tree-container {
-  background: var(--bg1);
-  border-bottom: solid 1px var(--lines);
-  border-left: solid 1px var(--lines);
-  border-right: solid 1px var(--lines);
-  font-size: 12px;
-  padding-top: 2px;
-
-  &.disabled {
-    cursor: not-allowed;
-    pointer-events: none;
-
-    ::ng-deep > * {
-      opacity: 0.6;
-    }
-  }
-
-  ::ng-deep {
-    tree-viewport {
-      max-height: 300px;
-      overflow: auto;
-    }
-
-    .tree-node {
-      word-break: break-all;
-    }
-
-    .toggle-children {
-      filter: invert(50%);
-      left: 4px;
-      top: 5px;
-    }
-  }
-
-  .node-container {
-    display: flex;
-
-    &:focus-visible {
-      outline: 1.5px solid var(--primary);
-    }
-  }
-}
-
 .loading-error {
+  color: var(--error);
   font-size: 12px;
   margin-top: 2px;
 }
-
-.selected {
-  color: var(--primary);
-}
-

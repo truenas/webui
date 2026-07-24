@@ -1,79 +1,44 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
-import { FormControl, NgControl } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import {
-  createComponentFactory, mockProvider, Spectator,
-} from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
-import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import {
-  CreateDatasetDialog,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
+import { Dataset } from 'app/interfaces/dataset.interface';
+import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('ExplorerCreateDatasetComponent', () => {
   let spectator: Spectator<ExplorerCreateDatasetComponent>;
 
-  // Create a minimal mock TreeNode to avoid 'any' usage
-  const createMockTreeNode = (data: Partial<ExplorerNodeData>): Partial<TreeNode<ExplorerNodeData>> => ({
-    data: {
-      isMountpoint: true,
-      path: '/mnt/test',
-      name: 'test',
-      type: ExplorerNodeType.Directory,
-      hasChildren: false,
-      ...data,
-    },
-  });
+  const datasetNode = {
+    path: '/mnt/tank', name: 'tank', type: ExplorerNodeType.Directory, hasChildren: true, isMountpoint: true,
+  } as ExplorerNodeData;
 
-  const fakeExplorer = {
-    isDisabled: signal(false),
+  const nodeAt = jest.fn((): ExplorerNodeData | undefined => datasetNode);
 
-    lastSelectedNode: signal(createMockTreeNode({
-      isMountpoint: true,
-      path: '/mnt/test',
-    }) as TreeNode<ExplorerNodeData>),
-
-    refreshNode: jest.fn(),
-    refreshNodeByPath: jest.fn(),
-  } as unknown as IxExplorerComponent;
-
-  const fakeControl = {
-    valueChanges: of('/mnt/test'),
-    control: new FormControl('/mnt/test'),
-  };
-
-  let loader: HarnessLoader;
+  const parentDataset = {
+    id: 'tank',
+    name: 'tank',
+    casesensitivity: { value: DatasetCaseSensitivity.Sensitive },
+    children: [
+      { name: 'tank/existing' },
+    ],
+  } as Dataset;
 
   const createComponent = createComponentFactory({
     component: ExplorerCreateDatasetComponent,
-    imports: [
-      MockComponent(CreateDatasetDialog),
-    ],
     providers: [
       mockAuth(),
-      mockProvider(TnDialog, {
-        open: jest.fn(() => ({
-          closed: of({ mountpoint: '/mnt/test' }),
-        })),
-      }),
-      {
-        provide: NgControl,
-        useValue: fakeControl,
-      },
-      {
-        provide: IxExplorerComponent,
-        useValue: fakeExplorer,
-      },
+      mockApi([
+        mockCall('pool.dataset.query', [parentDataset]),
+        mockCall('pool.dataset.create', { mountpoint: '/mnt/tank/new' } as Dataset),
+      ]),
+      mockProvider(IxExplorerComponent, { nodeAt }),
     ],
   });
 
@@ -81,135 +46,72 @@ describe('ExplorerCreateDatasetComponent', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-
-    fakeExplorer.lastSelectedNode.set(createMockTreeNode({
-      isMountpoint: true,
-      path: '/mnt/test',
-    }) as TreeNode<ExplorerNodeData>);
-
+    nodeAt.mockReturnValue(datasetNode);
     spectator = createComponent({
       props: {
         datasetProperties: datasetProps,
       },
     });
-
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-
-    // Seed the form to trigger the component's valueChanges subscription.
-    fakeControl.control.setValue('/mnt/test');
-
-    // Spy after the seed so setup mutations don't inflate the call count.
-    jest.spyOn(fakeControl.control, 'setValue');
   });
 
-  it('opens CreateDatasetDialog when Create Dataset button is pressed', async () => {
-    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-    expect(await createButton.isDisabled()).toBe(false);
+  it('allows creation for users with DatasetWrite role', () => {
+    expect(spectator.component.canCreate()).toBe(true);
+  });
 
-    await createButton.click();
+  it('shows the dataset icon in the inline creation row', () => {
+    expect(spectator.component.icon).toBe('tn-dataset');
+  });
 
-    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(CreateDatasetDialog, {
-      data: {
-        parentId: 'test',
-        dataset: datasetProps,
-      },
+  describe('canCreateAt', () => {
+    it('allows creation under a browsed dataset', () => {
+      expect(spectator.component.canCreateAt('/mnt/tank')).toBe(true);
     });
 
-    expect(fakeExplorer.refreshNode).toHaveBeenCalled();
-    expect(fakeControl.control.setValue).toHaveBeenCalledWith('/mnt/test');
-  });
-
-  it('disables Create Dataset button when path does not match selected node', async () => {
-    // Simulate user typing a different path than what's selected
-    fakeControl.control.setValue('/mnt/error');
-    spectator.detectChanges();
-
-    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-    expect(await createButton.isDisabled()).toBe(true);
-  });
-
-  it('disables Create Dataset button when no mountpoint is selected', async () => {
-    // Simulate selection of non-mountpoint
-    fakeExplorer.lastSelectedNode.set(createMockTreeNode({
-      isMountpoint: false,
-      path: '/mnt/test',
-    }) as TreeNode<ExplorerNodeData>);
-    spectator.detectChanges();
-
-    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-    expect(await createButton.isDisabled()).toBe(true);
-  });
-
-  it('disables Create Dataset button when selected path is outside /mnt/ (e.g. zvol device path)', async () => {
-    // Reproduces the rejected "Parent dataset /dev/zvol/<pool> not found" case: the file
-    // node provider can mark zvol device paths as mountpoints, but pool.dataset.create
-    // only accepts real dataset names ("tank", "tank/foo"), not device paths.
-    fakeExplorer.lastSelectedNode.set(createMockTreeNode({
-      isMountpoint: true,
-      path: '/dev/zvol/dozer',
-    }) as TreeNode<ExplorerNodeData>);
-    fakeControl.control.setValue('/dev/zvol/dozer');
-    spectator.detectChanges();
-
-    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-    expect(await createButton.isDisabled()).toBeTruthy();
-  });
-
-  describe('multi-select mode', () => {
-    it('enables Create Dataset button when exactly one item is selected, even after lastSelectedNode is cleared', async () => {
-      // The explorer clears lastSelectedNode when the most recently clicked node is deselected
-      // (e.g. user picked A then B, then unchecks B). The form value still has [A], so the
-      // button must be enabled.
-      fakeExplorer.lastSelectedNode.set(null);
-      fakeControl.control.setValue(['/mnt/test']);
-      spectator.detectChanges();
-
-      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-      expect(await createButton.isDisabled()).toBe(false);
+    it('allows creation for relative dataset paths', () => {
+      expect(spectator.component.canCreateAt('tank/child')).toBe(true);
     });
 
-    it('disables Create Dataset button when multiple items are selected', async () => {
-      fakeControl.control.setValue(['/mnt/test', '/mnt/other']);
-      spectator.detectChanges();
-
-      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-      expect(await createButton.isDisabled()).toBe(true);
+    it('does not allow creation at the /mnt top level', () => {
+      expect(spectator.component.canCreateAt('/mnt')).toBe(false);
     });
 
-    it('disables Create Dataset button when no items are selected', async () => {
-      fakeControl.control.setValue([]);
-      spectator.detectChanges();
-
-      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-      expect(await createButton.isDisabled()).toBe(true);
+    it('does not allow creation outside of /mnt', () => {
+      expect(spectator.component.canCreateAt('/dev/zvol/tank')).toBe(false);
     });
 
-    it('opens dialog with parentId derived from array form value, refreshes the parent node, and replaces it in the array', async () => {
-      // In multi-select mode the explorer clears lastSelectedNode after deselect. Verify the
-      // parentId is still derived from the form value, the parent tree node is refreshed by
-      // path, and setValue replaces the parent path with the new dataset's mountpoint without
-      // clobbering the array.
-      fakeExplorer.lastSelectedNode.set(null);
-      fakeControl.control.setValue(['/mnt/test']);
-      spectator.detectChanges();
+    it('does not allow creation when the browsed directory is not a dataset mountpoint', () => {
+      nodeAt.mockReturnValue({ ...datasetNode, isMountpoint: false });
 
-      spectator.inject<TnDialog>(TnDialog).open = jest.fn(() => ({
-        closed: of({ mountpoint: '/mnt/test/new' }),
-      })) as unknown as TnDialog['open'];
+      expect(spectator.component.canCreateAt('/mnt/tank/dir')).toBe(false);
+    });
+  });
 
-      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-      await createButton.click();
+  describe('createInline', () => {
+    it('creates the dataset under the browsed parent and resolves with its mountpoint', async () => {
+      const created = await spectator.component.createInline('/mnt/tank', 'new');
 
-      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(CreateDatasetDialog, {
-        data: {
-          parentId: 'test',
-          dataset: datasetProps,
-        },
-      });
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'tank']]]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+        comments: 'test',
+        name: 'tank/new',
+      }]);
+      expect(created).toBe('/mnt/tank/new');
+    });
 
-      expect(fakeExplorer.refreshNodeByPath).toHaveBeenCalledWith('/mnt/test');
-      expect(fakeExplorer.refreshNode).not.toHaveBeenCalled();
-      expect(fakeControl.control.setValue).toHaveBeenCalledWith(['/mnt/test/new']);
+    it('rejects invalid dataset names', async () => {
+      await expect(spectator.component.createInline('/mnt/tank', 'bad/name')).rejects.toThrow('Name is invalid.');
+    });
+
+    it('rejects names that are already in use under the parent', async () => {
+      await expect(spectator.component.createInline('/mnt/tank', 'existing'))
+        .rejects.toThrow('The name "existing" is already in use.');
+    });
+
+    it('rejects when the parent dataset does not exist', async () => {
+      spectator.inject(MockApiService).mockCall('pool.dataset.query', []);
+
+      await expect(spectator.component.createInline('/mnt/gone', 'new'))
+        .rejects.toThrow('Parent dataset gone not found.');
     });
   });
 });

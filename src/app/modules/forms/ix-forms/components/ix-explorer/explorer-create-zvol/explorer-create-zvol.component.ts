@@ -1,74 +1,57 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NgControl } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { ChangeDetectionStrategy, Component, forwardRef, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { TranslateService } from '@ngx-translate/core';
+import { map, Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { zvolPath } from 'app/helpers/storage.helper';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { ExplorerCreateAction } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-action';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 
+/**
+ * Renderless component: projected into `ix-explorer`, where it surfaces as a
+ * "Create Zvol" button in the file-picker popup footer.
+ */
 @Component({
   selector: 'ix-explorer-create-zvol',
-  templateUrl: './explorer-create-zvol.component.html',
-  styleUrls: ['./explorer-create-zvol.component.scss'],
+  template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [
-    MatButton,
-    TnIconComponent,
-    TranslateModule,
-    RequiresRolesDirective,
-    TestDirective,
+  providers: [
+    { provide: ExplorerCreateAction, useExisting: forwardRef(() => ExplorerCreateZvolComponent) },
   ],
 })
-export class ExplorerCreateZvolComponent implements AfterViewInit {
-  private explorer = inject(IxExplorerComponent);
+export class ExplorerCreateZvolComponent implements ExplorerCreateAction {
   private slideIn = inject(SlideIn);
-  private ngControl = inject(NgControl);
-  private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
+  private authService = inject(AuthService);
 
-  protected readonly requiredRoles = [Role.DatasetWrite];
+  readonly id = 'create-zvol';
+  readonly label = this.translate.instant('Create Zvol');
 
-  protected isButtonDisabled = computed(() => {
-    const nodeData = this.explorer.lastSelectedNode()?.data;
-    const isZvolParent = nodeData?.path?.startsWith('/dev/zvol') && nodeData?.type === ExplorerNodeType.Directory;
-    return this.explorer.isDisabled() || !isZvolParent || !this.parent();
-  });
+  readonly canCreate = toSignal(this.authService.hasRole([Role.DatasetWrite]), { initialValue: false });
 
-  protected explorerValue = signal<string | string[]>('');
-
-  ngAfterViewInit(): void {
-    // TODO: Unclear why this is needed, but control in `ngControl` is empty for some reason in constructor.
-    this.ngControl.control?.valueChanges?.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    )?.subscribe((value: string | string[]) => {
-      this.explorerValue.set(value);
-    });
+  canCreateAt(parentPath: string): boolean {
+    return !!this.toParentId(parentPath);
   }
 
-  private parent = computed(() => {
-    const value = this.explorerValue();
-    const selected = Array.isArray(value) ? value[0] : value;
-    return selected ? selected.replace(/^(\/dev\/zvol\/?)/, '') : null;
-  });
-
-  protected onCreateZvol(): void {
-    this.slideIn.open(ZvolFormComponent, {
+  create(parentPath: string): Observable<string | null> {
+    return this.slideIn.open(ZvolFormComponent, {
       data: {
         isNew: true,
-        parentOrZvolId: this.parent(),
+        parentOrZvolId: this.toParentId(parentPath),
       },
-    }).onSuccess((zvol) => {
-      const node = this.explorer.lastSelectedNode();
-      if (node) {
-        this.explorer.refreshNode(node);
-      }
-      this.ngControl.control.setValue(`/dev/zvol/${zvol.id}`);
-    }, this.destroyRef);
+    }).pipe(
+      map(({ response }) => (response ? `${zvolPath}/${response.id}` : null)),
+    );
+  }
+
+  /** Zvols can only be created under a dataset inside /dev/zvol, not at its top. */
+  private toParentId(parentPath: string): string | null {
+    if (!parentPath.startsWith(`${zvolPath}/`)) {
+      return null;
+    }
+    return parentPath.slice(zvolPath.length + 1) || null;
   }
 }

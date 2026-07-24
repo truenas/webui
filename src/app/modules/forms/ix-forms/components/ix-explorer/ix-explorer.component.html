@@ -7,68 +7,28 @@
   ></ix-label>
 }
 
-<div class="input-container" [class.disabled]="isDisabled()">
-  <input
-    #input
-    matInput
-    type="text"
-    autocomplete="off"
-    [value]="inputValue"
-    [ixTest]="controlDirective.name"
-    [required]="required()"
-    [disabled]="isDisabled()"
-    [attr.aria-label]="'Enter path for {label}.{multiple}' | translate: { label: label(), multiple: multiple() ? ' Use commas to separate multiple values.' : '' }"
-    (change)="onInputChanged(input.value)"
-    (blur)="onTouch()"
-  />
-</div>
-<div class="tree-container" [class.disabled]="isDisabled()" [attr.aria-label]="label()">
-  <tree-root
-    #tree
-    [nodes]="nodes()"
-    [options]="treeOptions()"
-    (select)="onNodeSelect($event)"
-    (deselect)="onNodeDeselect($event)"
-  >
-    <!-- Do not remove #treeNodeTemplate even though it appears to be unused -->
-    <ng-template #treeNodeTemplate let-node>
-      @if (typeNode(node); as node) {
-        <span
-          tabindex="0"
-          class="node-container"
-          [attr.aria-label]="ariaLabel(node)"
-          [class.selected]="isPathSelected(node.data.path)"
-          (keyup.enter)="node?.toggleSelected()"
-          (keydown.space)="$event.preventDefault(); node?.toggleExpanded()"
-        >
-          @if (node.data.type === ExplorerNodeType.File) {
-            <tn-icon name="file" library="mdi"></tn-icon>
-          } @else if (node.data.type === ExplorerNodeType.Symlink) {
-            <tn-icon name="database" library="mdi"></tn-icon>
-          } @else {
-            @if (node.data.isLock) {
-              <tn-icon name="folder-lock" library="mdi"></tn-icon>
-            } @else {
-              @if (node.data.isMountpoint) {
-                <tn-icon name="tn-dataset"></tn-icon>
-              } @else {
-                <tn-icon name="folder-open" library="mdi"></tn-icon>
-              }
-            }
-          }
-          <span class="node-name" [attr.aria-label]="node.data.name">{{ node.data.name }}</span>
-        </span>
-      }
-    </ng-template>
-  </tree-root>
-</div>
+<tn-file-picker
+  [formControl]="pickerControl"
+  [multiSelect]="multiple()"
+  [openOnClick]="true"
+  [rootPath]="pickerRootPath()"
+  [startPath]="pickerRootPath()"
+  [valueRoot]="pickerValueRoot()"
+  [callbacks]="pickerCallbacks"
+  [createActions]="pickerCreateActions()"
+  [testId]="controlDirective.name || ''"
+  (selectionChange)="onSelectionChange($event)"
+  (pathChange)="onPathChange($event)"
+  (createAction)="onCreateAction($event)"
+  (error)="onPickerError($event)"
+></tn-file-picker>
 
 <ng-content></ng-content>
 
 @if (loadingError(); as loadingError) {
-  <mat-error class="loading-error">
+  <div role="alert" class="loading-error">
     {{ loadingError }}
-  </mat-error>
+  </div>
 }
 
 @let control = controlDirective.control;

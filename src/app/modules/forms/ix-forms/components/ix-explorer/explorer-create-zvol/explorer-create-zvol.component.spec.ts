@@ -1,81 +1,67 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
-import { FormControl, NgControl } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { BehaviorSubject } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import {
+  ExplorerCreateZvolComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
-import { ExplorerCreateZvolComponent } from './explorer-create-zvol.component';
 
 describe('ExplorerCreateZvolComponent', () => {
   let spectator: Spectator<ExplorerCreateZvolComponent>;
-
-  const fakeExplorer = {
-    isDisabled: signal(false),
-
-    lastSelectedNode: signal({
-      data: {
-        path: '/dev/zvol/test-pool',
-        type: ExplorerNodeType.Directory,
-      },
-    }),
-
-    refreshNode: jest.fn(),
-  } as unknown as IxExplorerComponent;
-
-  const fakeControl = {
-    valueChanges: new BehaviorSubject(''),
-    control: new FormControl(''),
-  };
-
-  let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
     component: ExplorerCreateZvolComponent,
     providers: [
       mockAuth(),
       mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.success({ id: 'test-pool/test-zvol' })),
+        open: jest.fn(() => SlideInResult.success({ id: 'tank/new-zvol' })),
       }),
-      {
-        provide: NgControl,
-        useValue: fakeControl,
-      },
-      {
-        provide: IxExplorerComponent,
-        useValue: fakeExplorer,
-      },
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent();
-
-    jest.spyOn(fakeControl.control, 'setValue');
-
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-
-    fakeControl.control.setValue('/dev/zvol/test-pool');
   });
 
-  it('opens ZvolFormComponent when Create Zvol button is pressed', async () => {
-    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Zvol' }));
-    await createButton.click();
+  it('allows creation for users with DatasetWrite role', () => {
+    expect(spectator.component.canCreate()).toBe(true);
+  });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ZvolFormComponent, {
-      data: {
-        isNew: true,
-        parentOrZvolId: 'test-pool',
-      },
+  describe('canCreateAt', () => {
+    it('allows creation under a dataset inside /dev/zvol', () => {
+      expect(spectator.component.canCreateAt('/dev/zvol/tank')).toBe(true);
     });
 
-    expect(fakeExplorer.refreshNode).toHaveBeenCalled();
-    expect(fakeControl.control.setValue).toHaveBeenCalledWith('/dev/zvol/test-pool/test-zvol');
+    it('does not allow creation at the /dev/zvol top level', () => {
+      expect(spectator.component.canCreateAt('/dev/zvol')).toBe(false);
+    });
+
+    it('does not allow creation outside of /dev/zvol', () => {
+      expect(spectator.component.canCreateAt('/mnt/tank')).toBe(false);
+    });
+  });
+
+  describe('create', () => {
+    it('opens ZvolFormComponent slide-in and emits the created zvol path', async () => {
+      const created = await firstValueFrom(spectator.component.create('/dev/zvol/tank'));
+
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ZvolFormComponent, {
+        data: {
+          isNew: true,
+          parentOrZvolId: 'tank',
+        },
+      });
+      expect(created).toBe('/dev/zvol/tank/new-zvol');
+    });
+
+    it('emits null when the slide-in is cancelled', async () => {
+      spectator.inject(SlideIn).open = jest.fn(() => SlideInResult.cancel()) as unknown as SlideIn['open'];
+
+      const created = await firstValueFrom(spectator.component.create('/dev/zvol/tank'));
+
+      expect(created).toBeNull();
+    });
   });
 });
