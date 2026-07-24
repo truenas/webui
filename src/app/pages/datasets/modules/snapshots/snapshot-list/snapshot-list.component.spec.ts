@@ -252,6 +252,49 @@ describe('SnapshotListComponent', () => {
     });
   });
 
+  it('filters only by name when the extra columns are hidden', () => {
+    const component = spectator.component;
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    jest.spyOn(component['route'].snapshot.paramMap, 'get').mockReturnValue(null);
+
+    const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
+
+    spectator.triggerEventHandler('ix-basic-search', 'queryChange', '1.49');
+
+    expect(setFilterSpy).toHaveBeenCalledWith({
+      list: component.snapshots,
+      query: '1.49',
+      columnKeys: ['name'],
+    });
+  });
+
+  it('also filters by the extra columns (used/referenced/created) when they are visible', async () => {
+    const component = spectator.component;
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    jest.spyOn(component['route'].snapshot.paramMap, 'get').mockReturnValue(null);
+
+    const slideToggle = await loader.getHarness(TnSlideToggleHarness.with({ label: 'Show extra columns' }));
+    await slideToggle.toggle();
+    spectator.component.loadingExtraColumns$.next(false);
+    spectator.detectChanges();
+
+    // A size value that only appears in the "Used"/"Referenced" columns keeps the
+    // matching rows and drops nothing, proving the size columns are searched.
+    spectator.triggerEventHandler('ix-basic-search', 'queryChange', '1.49 TiB');
+    spectator.detectChanges();
+    expect(await table.getRowCount()).toBe(2);
+
+    // A size no snapshot uses filters everything out.
+    spectator.triggerEventHandler('ix-basic-search', 'queryChange', '999 GiB');
+    spectator.detectChanges();
+    expect(component.dataProvider.totalRows).toBe(0);
+
+    // The on-screen creation date is searchable too.
+    spectator.triggerEventHandler('ix-basic-search', 'queryChange', '2021-10-18');
+    spectator.detectChanges();
+    expect(await table.getRowCount()).toBe(2);
+  });
+
   it('should not show partial matches when using exact dataset filtering', () => {
     const component = spectator.component;
 
