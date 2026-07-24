@@ -107,7 +107,9 @@ ul {
     .title {
       font-size: 20px;
       margin: 0;
-      white-space: nowrap;
+      // Let long labels (e.g. "TrueCloud Backup") wrap within the 25%-wide
+      // caption column instead of overflowing into the task-counts column.
+      overflow-wrap: break-word;
     }
 
     .backup-actions {
