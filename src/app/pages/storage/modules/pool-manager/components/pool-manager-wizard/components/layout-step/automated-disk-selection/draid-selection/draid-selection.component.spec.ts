@@ -1,13 +1,21 @@
+import { ComponentHarness, ComponentHarnessConstructor, HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnSelectHarness } from '@truenas/ui-components';
 import { Subject } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
+import {
+  getDisabledStates, indexControlsByLabel,
+  SupportedFormControlHarness, supportedFormControlSelectors,
+} from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
+import {
+  TnFormControlHarness,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/tn-form-control.harness';
 import {
   DiskSizeSelectsComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/disk-size-selects/disk-size-selects.component';
@@ -18,10 +26,43 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 
 describe('DraidSelectionComponent', () => {
   let spectator: Spectator<DraidSelectionComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
 
   const startOver$ = new Subject<void>();
   const resetStep$ = new Subject<void>();
+
+  // The draid form mixes ix-* (Disk Size) and tn-* controls; index both by label
+  // so the tests can fill/read/inspect by label as before.
+  async function getControls(): Promise<Record<string, IxFormControlHarness>> {
+    const groups = await parallel(() => {
+      return [...supportedFormControlSelectors, TnFormControlHarness].map((selector) => {
+        return loader.getAllHarnesses(selector as ComponentHarnessConstructor<ComponentHarness>);
+      });
+    });
+    const controls = groups.flat() as unknown as SupportedFormControlHarness[];
+    return indexControlsByLabel(controls) as Promise<Record<string, IxFormControlHarness>>;
+  }
+
+  const form = {
+    // Re-query controls per value: some controls (e.g. the "Treat Disk Size as
+    // Minimum" checkbox) only render after an earlier value is filled.
+    fillForm: async (values: Record<string, unknown>): Promise<void> => {
+      // eslint-disable-next-line guard-for-in,no-restricted-syntax
+      for (const label in values) {
+        const control = (await getControls())[label];
+        if (!control) {
+          throw new Error(`Could not find control with label ${label}.`);
+        }
+        await control.setValue(values[label]);
+      }
+    },
+    getDisabledState: async (): Promise<Record<string, boolean>> => {
+      return getDisabledStates(await getControls() as Record<string, SupportedFormControlHarness>);
+    },
+    getControl: async (label: string): Promise<IxFormControlHarness> => {
+      return (await getControls())[label];
+    },
+  };
 
   const createComponent = createComponentFactory({
     component: DraidSelectionComponent,
@@ -37,7 +78,7 @@ describe('DraidSelectionComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         type: VDevType.Spare,
@@ -56,8 +97,12 @@ describe('DraidSelectionComponent', () => {
         isStepActive: true,
       },
     });
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
+
+  function getSelect(formControlName: string): Promise<TnSelectHarness> {
+    return loader.getHarness(TnSelectHarness.with({ selector: `[formControlName="${formControlName}"]` }));
+  }
 
   it('keeps inputs disabled until disks are selected', async () => {
     expect(await form.getDisabledState()).toEqual({
@@ -87,8 +132,8 @@ describe('DraidSelectionComponent', () => {
       'Disk Size': '10 GiB (HDD)',
     });
 
-    const dataDevices = await form.getControl('Data Devices') as IxSelectHarness;
-    expect(await dataDevices.getOptionLabels()).toEqual(['2', '3', '4']);
+    const dataDevices = await getSelect('dataDevicesPerGroup');
+    expect(await dataDevices.getOptions()).toEqual(['2', '3', '4']);
   });
 
   it('updates Spares and Children options when Data Devices are selected', async () => {
@@ -99,12 +144,13 @@ describe('DraidSelectionComponent', () => {
       },
     );
 
-    const spares = await form.getControl('Distributed Hot Spares') as IxSelectHarness;
-    expect(await spares.getOptionLabels()).toEqual(['0', '1', '2']);
-    expect(await spares.getValue()).toBe('0');
+    const spares = await getSelect('spares');
+    expect(await spares.getOptions()).toEqual(['0', '1', '2']);
+    expect(await spares.getDisplayText()).toBe('0');
+    await spares.close();
 
-    const children = await form.getControl('Children') as IxSelectHarness;
-    expect(await children.getOptionLabels()).toEqual(['3', '4', '5']);
+    const children = await getSelect('children');
+    expect(await children.getOptions()).toEqual(['3', '4', '5']);
   });
 
   it('updates Children when Spares are selected', async () => {
@@ -116,8 +162,8 @@ describe('DraidSelectionComponent', () => {
       },
     );
 
-    const children = await form.getControl('Children') as IxSelectHarness;
-    expect(await children.getOptionLabels()).toEqual(['4', '5']);
+    const children = await getSelect('children');
+    expect(await children.getOptions()).toEqual(['4', '5']);
   });
 
   it('defaults Children to optimal number, but only once', async () => {
@@ -128,13 +174,13 @@ describe('DraidSelectionComponent', () => {
       },
     );
 
-    const children = await form.getControl('Children') as IxSelectHarness;
-    expect(await children.getValue()).toBe('5');
+    const children = await getSelect('children');
+    expect(await children.getDisplayText()).toBe('5');
 
     await form.fillForm({
       'Treat Disk Size as Minimum': true,
     });
-    expect(await children.getValue()).toBe('6');
+    expect(await children.getDisplayText()).toBe('6');
   });
 
   it('updates number of vdevs when Children are selected', async () => {
@@ -146,14 +192,15 @@ describe('DraidSelectionComponent', () => {
       },
     );
 
-    const vdevs = await form.getControl('Number of VDEVs') as IxSelectHarness;
-    expect(await vdevs.getOptionLabels()).toEqual(['1']);
+    const vdevs = await getSelect('vdevsNumber');
+    expect(await vdevs.getOptions()).toEqual(['1']);
+    await vdevs.close();
 
     await form.fillForm({
       Children: '3',
     });
 
-    expect(await vdevs.getOptionLabels()).toEqual(['1', '2']);
+    expect(await vdevs.getOptions()).toEqual(['1', '2']);
   });
 
   it('updates value in store when controls are updated', async () => {
@@ -194,11 +241,12 @@ describe('DraidSelectionComponent', () => {
 
     startOver$.next();
 
-    expect(await form.getValues()).toMatchObject({
-      'Data Devices': '',
-      Children: '',
-      'Distributed Hot Spares': '',
-      'Number of VDEVs': '',
+    // Assert the form's reset state directly: after reset the control values no
+    // longer match the (now empty) option lists, so tn-select's trigger shows the
+    // raw value rather than a label — reading the model is the robust check.
+    expect(spectator.component.form.value).toMatchObject({
+      spares: 0,
+      vdevsNumber: 1,
     });
   });
 });

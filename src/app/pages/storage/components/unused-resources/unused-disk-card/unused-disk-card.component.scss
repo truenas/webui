@@ -1,5 +1,15 @@
 @import 'mixins/cards';
 
-.card {
-  @include resource-card();
+@include tn-detail-card;
+
+.card-body {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.value {
+  font-size: 3.5em;
+  margin: 0;
+  white-space: nowrap;
 }

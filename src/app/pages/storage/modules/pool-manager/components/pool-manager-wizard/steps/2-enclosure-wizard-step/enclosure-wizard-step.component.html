@@ -1,17 +1,23 @@
 <ng-container [formGroup]="form">
-  <ix-radio-group
-    formControlName="dispersalStrategy"
-    [options]="dispersalOptions$"
-  ></ix-radio-group>
+  <tn-form-field>
+    @for (option of (dispersalOptions$ | async) ?? []; track option.value) {
+      <tn-radio
+        name="dispersalStrategy"
+        formControlName="dispersalStrategy"
+        [value]="option.value"
+        [label]="option.label"
+      ></tn-radio>
+    }
+  </tn-form-field>
 
   @if (isLimitingToSingle) {
     <div class="limiting">
-      <ix-select
-        formControlName="limitToEnclosure"
-        [required]="true"
-        [options]="enclosureOptions$"
-        [label]="'Enclosure' | translate"
-      ></ix-select>
+      <tn-form-field [label]="'Enclosure' | translate" [required]="true">
+        <tn-select
+          formControlName="limitToEnclosure"
+          [options]="(enclosureOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
 
       <div class="description">
         {{ helptext.enclosureOptionsDescription | translate }}

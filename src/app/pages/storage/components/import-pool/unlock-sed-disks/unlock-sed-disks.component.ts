@@ -5,11 +5,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
+import {
+  InputType,
+  TnButtonComponent, TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent,
+  TnIconButtonComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import { of } from 'rxjs';
 import { filter, finalize, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
@@ -19,10 +21,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -34,19 +33,21 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxInputComponent,
-    IxSelectComponent,
-    TnIconComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
+    TnCheckboxLabelDirective,
     FormActionsComponent,
-    MatButton,
-    MatIconButton,
-    MatCheckbox,
-    TestDirective,
+    TnButtonComponent,
+    TnIconButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
 })
 export class UnlockSedDisksComponent {
+  protected readonly InputType = InputType;
+
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -95,7 +96,7 @@ export class UnlockSedDisksComponent {
       }));
   });
 
-  protected getOptionsForException(index: number): Observable<Option[]> {
+  protected getOptionsForException(index: number): Option[] {
     const currentDiskName = this.form.controls.exceptions.at(index).controls.diskName.value;
     const usedDiskNames = new Set(
       this.form.controls.exceptions.controls
@@ -103,14 +104,12 @@ export class UnlockSedDisksComponent {
         .map((control) => control.controls.diskName.value),
     );
 
-    const options = this.lockedDisks()
+    return this.lockedDisks()
       .filter((disk) => !usedDiskNames.has(disk.name) || disk.name === currentDiskName)
       .map((disk) => ({
         label: `${disk.name} - ${disk.model} (${disk.serial})`,
         value: disk.name,
       }));
-
-    return of(options);
   }
 
   protected addException(): void {

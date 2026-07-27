@@ -1,18 +1,19 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, input, signal, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import {
+  InputType,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
+import { Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextScrubForm } from 'app/helptext/data-protection/scrub/scrub-form';
 import { CreateScrubTask, ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import {
@@ -20,9 +21,8 @@ import {
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 export interface ScrubFormParams {
@@ -36,34 +36,38 @@ export interface ScrubFormParams {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     SchedulerComponent,
-    IxCheckboxComponent,
+    TnCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class ScrubFormComponent {
+export class ScrubFormComponent extends SidePanelForm implements OnInit {
   private translate = inject(TranslateService);
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(FormErrorHandlerService);
-  slideInRef = inject<SlideInRef<ScrubFormParams, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.PoolScrubWrite];
+  protected readonly InputType = InputType;
 
   protected isLoading = signal(false);
   protected existingTask: ScrubTask | undefined;
   private poolId: number;
+
+  /**
+   * Params when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to carry
+   * data). Unused in the legacy SlideIn host, which supplies them via `getData()`.
+   */
+  readonly scrubParams = input<ScrubFormParams | undefined>(undefined);
 
   get isNew(): boolean {
     return !this.existingTask;
@@ -75,21 +79,22 @@ export class ScrubFormComponent {
       : this.translate.instant('Configure Scheduled Scrub');
   }
 
-  form = this.fb.nonNullable.group({
+  readonly form = this.fb.nonNullable.group({
     threshold: [35, [Validators.min(0), Validators.required]],
     schedule: ['', Validators.required],
     enabled: [true],
   });
 
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
+
   protected readonly helptextScrubForm = helptextScrubForm;
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-
-    this.poolId = this.slideInRef.getData().poolId;
-    this.existingTask = this.slideInRef.getData().existingScrubTask;
+  ngOnInit(): void {
+    const params = this.slideInRef
+      ? this.slideInRef.getData() as ScrubFormParams
+      : this.scrubParams();
+    this.poolId = params.poolId;
+    this.existingTask = params.existingScrubTask ?? undefined;
     if (this.existingTask) {
       this.setTaskForEdit(this.existingTask);
     }
@@ -128,7 +133,7 @@ export class ScrubFormComponent {
           this.snackbar.success(this.translate.instant('Scrub settings updated'));
         }
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

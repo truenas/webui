@@ -1,18 +1,23 @@
 <ng-container [formGroup]="form">
-  <ix-input
-    formControlName="name"
-    [label]="'Name' | translate"
-    [required]="true"
-    [readonly]="isAddingVdevs()"
-  ></ix-input>
+  <tn-form-field [label]="'Name' | translate" [required]="true">
+    <tn-input
+      formControlName="name"
+      [readonly]="isAddingVdevs()"
+    ></tn-input>
+  </tn-form-field>
 
   @if (!isAddingVdevs()) {
     <!-- Encryption type radio group -->
-    <ix-radio-group
-      formControlName="encryptionType"
-      [label]="'Encryption' | translate"
-      [options]="encryptionTypeOptions$"
-    ></ix-radio-group>
+    <tn-form-field [label]="'Encryption' | translate">
+      @for (option of (encryptionTypeOptions$ | async) ?? []; track option.value) {
+        <tn-radio
+          name="encryptionType"
+          formControlName="encryptionType"
+          [value]="option.value"
+          [label]="option.label"
+        ></tn-radio>
+      }
+    </tn-form-field>
 
     <!-- Software Encryption Standard dropdown -->
     @if (form.controls.encryptionType.value === EncryptionType.Software) {
@@ -23,12 +28,12 @@
         }
       }
 
-      <ix-select
-        formControlName="encryptionStandard"
-        [label]="'Encryption Standard' | translate"
-        [options]="encryptionAlgorithmOptions$"
-        [required]="true"
-      ></ix-select>
+      <tn-form-field [label]="'Encryption Standard' | translate" [required]="true">
+        <tn-select
+          formControlName="encryptionStandard"
+          [options]="(encryptionAlgorithmOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     }
 
     <!-- SED Password fields -->
@@ -37,37 +42,42 @@
       @if (isSedPasswordSet$ | async; as isPasswordSet) {
         <ix-warning [message]="helptext.sedGlobalPasswordWarning | translate"></ix-warning>
 
-        <ix-input
-          formControlName="sedPassword"
+        <tn-form-field
           [label]="helptext.sedPasswordLabel | translate"
-          [type]="'password'"
-          [required]="false"
           [tooltip]="'Leave blank to keep the existing password, or enter a new password to update it.' | translate"
-        ></ix-input>
+        >
+          <tn-input
+            formControlName="sedPassword"
+            [inputType]="InputType.Password"
+          ></tn-input>
+        </tn-form-field>
 
-        <ix-input
-          formControlName="sedPasswordConfirm"
-          [label]="helptext.sedPasswordConfirmLabel | translate"
-          [type]="'password'"
-          [required]="false"
-        ></ix-input>
+        <tn-form-field [label]="helptext.sedPasswordConfirmLabel | translate">
+          <tn-input
+            formControlName="sedPasswordConfirm"
+            [inputType]="InputType.Password"
+          ></tn-input>
+        </tn-form-field>
       } @else {
         <ix-warning color="green" [message]="helptext.sedGlobalPasswordInfo | translate"></ix-warning>
 
-        <ix-input
-          formControlName="sedPassword"
+        <tn-form-field
           [label]="helptext.sedPasswordLabel | translate"
-          [type]="'password'"
           [required]="true"
           [tooltip]="helptext.sedPasswordTooltip | translate"
-        ></ix-input>
+        >
+          <tn-input
+            formControlName="sedPassword"
+            [inputType]="InputType.Password"
+          ></tn-input>
+        </tn-form-field>
 
-        <ix-input
-          formControlName="sedPasswordConfirm"
-          [label]="helptext.sedPasswordConfirmLabel | translate"
-          [type]="'password'"
-          [required]="true"
-        ></ix-input>
+        <tn-form-field [label]="helptext.sedPasswordConfirmLabel | translate" [required]="true">
+          <tn-input
+            formControlName="sedPasswordConfirm"
+            [inputType]="InputType.Password"
+          ></tn-input>
+        </tn-form-field>
       }
     }
   } @else {

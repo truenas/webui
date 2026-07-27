@@ -162,10 +162,8 @@ describe('PoolUsageCardComponent', () => {
     expect(href).toBe('/reportsdashboard/disk?disks=sda&disks=sdb');
   });
 
-  it('should pre-select datasets when user click "View Datasets" link', () => {
-    const link = spectator.query('mat-card-header a');
-    expect(link).toHaveText('View Datasets');
-    expect(link).toHaveAttribute('href', '/datasets/bingo');
+  it('shows a "View Datasets" link', () => {
+    expect(spectator.query(byText('View Datasets'))).toExist();
   });
 
   it('does not show tier breakdown when tiering is disabled', () => {

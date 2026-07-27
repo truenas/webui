@@ -1,10 +1,12 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   Observable, forkJoin, last, map, of, switchMap,
 } from 'rxjs';
@@ -17,13 +19,10 @@ import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { LockedSedDisksComponent } from './locked-sed-disks/locked-sed-disks.component';
@@ -38,21 +37,20 @@ type ImportStep = 'loading' | 'locked-sed' | 'unlock-sed' | 'import';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
+    AsyncPipe,
     LockedSedDisksComponent,
     UnlockSedDisksComponent,
   ],
 })
-export class ImportPoolComponent implements OnInit {
+export class ImportPoolComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
@@ -62,7 +60,6 @@ export class ImportPoolComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.PoolWrite];
 
@@ -77,21 +74,17 @@ export class ImportPoolComponent implements OnInit {
     guid: string;
   }[] = [];
 
-  formGroup = this.fb.nonNullable.group({
+  readonly form = this.fb.nonNullable.group({
     guid: ['' as string, Validators.required],
   });
+
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   pool = {
     fcName: 'guid',
     label: helptextImport.poolLabel,
     options: of<Option[]>([]),
   };
-
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.formGroup.dirty);
-    });
-  }
 
   ngOnInit(): void {
     this.checkForLockedDisks();
@@ -178,7 +171,7 @@ export class ImportPoolComponent implements OnInit {
 
   protected onSubmit(): void {
     this.dialogService.jobDialog(
-      this.api.job('pool.import_pool', [{ guid: this.formGroup.getRawValue().guid }]),
+      this.api.job('pool.import_pool', [{ guid: this.form.getRawValue().guid }]),
       { title: this.translate.instant('Importing Pool') },
     )
       .afterClosed()
@@ -189,7 +182,7 @@ export class ImportPoolComponent implements OnInit {
       )
       .subscribe({
         next: ([datasets, shouldTryUnlocking]) => {
-          this.slideInRef.close({ response: true });
+          this.close(true);
           this.snackbar.success(this.translate.instant('Pool imported successfully.'));
           if (shouldTryUnlocking) {
             this.router.navigate(['/datasets', datasets[0].id, 'unlock']);
@@ -202,7 +195,7 @@ export class ImportPoolComponent implements OnInit {
   }
 
   private checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
-    const selectedPool = this.importablePools.find((pool) => pool.guid === this.formGroup.value.guid);
+    const selectedPool = this.importablePools.find((pool) => pool.guid === this.form.value.guid);
     if (!selectedPool) {
       return of([[], false]);
     }

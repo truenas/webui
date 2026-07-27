@@ -1,31 +1,29 @@
-<mat-card class="card" [ixUiSearch]="searchableElements.elements.topology">
-  <mat-card-header>
-    <h3 mat-card-title>
-      <span>
-        {{ 'VDEVs' | translate }}
-      </span>
+<tn-card class="card" [ixUiSearch]="searchableElements.elements.topology">
+  <h3 tnCardHeader class="tn-card__title">
+    <span>
+      {{ 'VDEVs' | translate }}
+    </span>
 
-      <tn-icon
-        name="help-circle-outline"
-        library="mdi"
-        class="pool-icon"
-        [tnTooltip]="vdevsHelpTooltip"
-      ></tn-icon>
+    <tn-icon
+      name="help-circle-outline"
+      library="mdi"
+      class="pool-icon"
+      [tnTooltip]="vdevsHelpTooltip"
+    ></tn-icon>
 
-      <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
-    </h3>
+    <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
+  </h3>
 
-    <button
-      mat-button
-      ixTest="manage-vdevs"
+  <ng-template tnCardFooterActions>
+    <tn-button
+      [testId]="'manage-vdevs'"
       [ixUiSearch]="searchableElements.elements.viewVdevs"
-      (click)="router.navigate(['/storage', this.poolState().id, 'vdevs'])"
-    >
-      {{ 'View VDEVs' | translate }}
-    </button>
-  </mat-card-header>
+      [label]="'View VDEVs' | translate"
+      (onClick)="router.navigate(['/storage', this.poolState().id, 'vdevs'])"
+    ></tn-button>
+  </ng-template>
 
-  <mat-card-content>
+  <div>
     <div class="content-container">
       @if (topologyState.data.assigned) {
         <div class="vdev-line">
@@ -88,5 +86,5 @@
         </div>
       }
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>

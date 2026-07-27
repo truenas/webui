@@ -1,11 +1,10 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, inject } from '@angular/core';
-import { MatAnchor } from '@angular/material/button';
-import {
-  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
-} from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
+} from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
@@ -30,15 +29,14 @@ interface DiskState {
   styleUrls: ['./disk-health-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatCardHeader,
-    MatCardTitle,
     PoolCardIconComponent,
-    MatAnchor,
+    TnButtonComponent,
     TestDirective,
     RouterLink,
-    MatCardContent,
     TranslateModule,
     DecimalPipe,
   ],

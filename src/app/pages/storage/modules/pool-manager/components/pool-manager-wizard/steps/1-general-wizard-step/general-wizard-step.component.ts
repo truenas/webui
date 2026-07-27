@@ -4,7 +4,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnStepperNextDirective } from '@truenas/ui-components';
+import {
+  InputType,
+  TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnRadioComponent,
+  TnSelectComponent, TnStepperNextDirective,
+} from '@truenas/ui-components';
 import {
   combineLatest, map, Observable,
 } from 'rxjs';
@@ -15,9 +19,6 @@ import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
@@ -39,9 +40,10 @@ const defaultEncryptionStandard = 'AES-256-GCM';
   imports: [
     AsyncPipe,
     ReactiveFormsModule,
-    IxInputComponent,
-    IxRadioGroupComponent,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnRadioComponent,
+    TnSelectComponent,
     PoolWarningsComponent,
     FormActionsComponent,
     TnButtonComponent,
@@ -81,6 +83,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   });
 
   protected readonly EncryptionType = EncryptionType;
+  protected readonly InputType = InputType;
   protected readonly helptext = helptextPoolCreation;
 
   isLoading$ = this.store.isLoading$;

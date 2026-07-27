@@ -1,8 +1,7 @@
 import { NgClass, AsyncPipe, KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, inject } from '@angular/core';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconComponent } from '@truenas/ui-components';
 import { keyBy } from 'lodash-es';
 import { DndDropEvent, DndDropzoneDirective, DndDraggableDirective } from 'ngx-drag-drop';
 import { MiB } from 'app/constants/bytes.constant';
@@ -28,8 +27,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   styleUrls: ['./manual-selection-vdev.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
     DndDropzoneDirective,
     NgClass,
     WarningComponent,

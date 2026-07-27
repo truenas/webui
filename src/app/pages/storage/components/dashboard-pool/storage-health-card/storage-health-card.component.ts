@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject, Signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
-} from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnDialog,
+} from '@truenas/ui-components';
 import { filter, map, shareReplay, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -22,7 +20,7 @@ import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -62,15 +60,14 @@ interface StatusIconData {
   styleUrls: ['./storage-health-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatCardHeader,
-    MatCardTitle,
     PoolCardIconComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
     TestDirective,
-    MatCardContent,
     TranslateModule,
     TooltipComponent,
     ActivePoolScanComponent,
@@ -86,7 +83,7 @@ export class StorageHealthCardComponent {
   private errorHandler = inject(ErrorHandlerService);
   private tnDialog = inject(TnDialog);
   private store = inject(PoolsDashboardStore);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
@@ -173,10 +170,16 @@ export class StorageHealthCardComponent {
   }
 
   protected onConfigureScrub(): void {
-    this.slideIn.open(ScrubFormComponent, {
-      data: {
-        poolId: this.pool().id,
-        existingScrubTask: this.scrub(),
+    const existingScrubTask = this.scrub();
+    this.formPanel.open(ScrubFormComponent, {
+      title: existingScrubTask
+        ? this.translate.instant('Configure Scheduled Scrub')
+        : this.translate.instant('Schedule Scrub'),
+      inputs: {
+        scrubParams: {
+          poolId: this.pool().id,
+          existingScrubTask: existingScrubTask ?? null,
+        },
       },
     }).onSuccess(() => this.store.loadDashboard(), this.destroyRef);
   }

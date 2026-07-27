@@ -1,9 +1,11 @@
-import { KeyValuePipe } from '@angular/common';
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent, TnRadioComponent,
+} from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import {
   of, Observable, combineLatest, startWith,
@@ -12,9 +14,7 @@ import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
@@ -28,12 +28,14 @@ import { hasNonUniqueSerial, hasExportedPool, isSedCapable } from 'app/pages/sto
   styleUrls: ['./pool-warnings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
     WarningComponent,
-    IxRadioGroupComponent,
+    TnFormFieldComponent,
+    TnRadioComponent,
     IxLabelComponent,
-    MatCheckbox,
-    TestDirective,
+    TnCheckboxComponent,
+    TnCheckboxLabelDirective,
     TranslateModule,
     KeyValuePipe,
   ],
@@ -70,13 +72,20 @@ export class PoolWarningsComponent implements OnInit {
     this.connectWarningsToStore();
   }
 
-  checkboxChanged(event: MatCheckboxChange): void {
+  checkboxChanged(pool: string, event: boolean | Event): void {
+    // tn-checkbox emits a boolean from its `change` output, but the inner
+    // <input>'s native `change` event also bubbles to the host and re-triggers
+    // this handler with an Event. Only act on the component's boolean emission.
+    if (typeof event !== 'boolean') {
+      return;
+    }
+
     let allowExportedPools = [...this.form.controls.allowExportedPools.value];
 
-    if (event.checked) {
-      allowExportedPools = [...allowExportedPools, event.source.value];
+    if (event) {
+      allowExportedPools = [...allowExportedPools, pool];
     } else {
-      allowExportedPools = allowExportedPools.filter((pool) => pool !== event.source.value);
+      allowExportedPools = allowExportedPools.filter((item) => item !== pool);
     }
     this.form.patchValue({ allowExportedPools });
   }

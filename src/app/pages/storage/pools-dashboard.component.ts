@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton, MatAnchor } from '@angular/material/button';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnEmptyComponent } from '@truenas/ui-components';
 import { storageEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -11,10 +11,9 @@ import { Role } from 'app/enums/role.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { DashboardPoolComponent } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
@@ -33,13 +32,10 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   imports: [
     PageHeaderComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     UiSearchDirective,
-    MatAnchor,
-    RouterLink,
     DashboardPoolComponent,
-    EmptyComponent,
+    TnEmptyComponent,
     UnusedResourcesComponent,
     TranslateModule,
   ],
@@ -49,27 +45,24 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 })
 export class PoolsDashboardComponent implements OnInit {
   protected router = inject(Router);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
   private store = inject(PoolsDashboardStore);
   protected translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
   private tierService = inject(SharingTierService);
+  private authService = inject(AuthService);
 
   protected readonly requiredRoles = [Role.PoolWrite];
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   readonly searchableElements = storageElements;
 
-  rootDatasets: Record<string, Dataset> = {};
+  protected readonly canCreatePool = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
+  protected readonly emptyTitle = storageEmptyConfig.title;
+  protected readonly emptyDescription = this.translate.instant(storageEmptyConfig.message).replace(/<br>/g, ' ');
 
-  protected readonly emptyConfig = {
-    ...storageEmptyConfig,
-    button: {
-      label: this.translate.instant('Create Pool'),
-      action: () => this.router.navigate(['/storage', 'create']),
-    },
-  };
+  rootDatasets: Record<string, Dataset> = {};
 
   readonly pools = this.store.pools;
   readonly arePoolsLoading = this.store.arePoolsLoading;
@@ -92,16 +85,25 @@ export class PoolsDashboardComponent implements OnInit {
     this.store.loadDashboard();
   }
 
+  protected createPool(): void {
+    this.router.navigate(['/storage', 'create']);
+  }
+
   protected getDisksByPool(pool: Pool): StorageDashboardDisk[] {
     return this.store.disksByPool()[pool.name] || [];
   }
 
   protected onImportPool(): void {
-    this.slideIn.open(ImportPoolComponent).onSuccess(() => this.store.loadDashboard(), this.destroyRef);
+    this.formPanel.open(ImportPoolComponent, {
+      title: this.translate.instant('Import Pool'),
+      footerless: true,
+    }).onSuccess(() => this.store.loadDashboard(), this.destroyRef);
   }
 
   protected onTiering(): void {
-    this.slideIn.open(TierConfigFormComponent).onSuccess(() => {
+    this.formPanel.open(TierConfigFormComponent, {
+      title: this.translate.instant('Tiering'),
+    }).onSuccess(() => {
       this.tierService.invalidate();
       // Re-prime so tierService.tierEnabled reflects the new config for child cards.
       this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();

@@ -1,7 +1,9 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { range } from 'lodash-es';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -11,8 +13,6 @@ import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { DiskSizeSelectsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/disk-size-selects/disk-size-selects.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
@@ -35,10 +35,11 @@ const maxDisksInDraidGroup = 255;
   styleUrls: ['./draid-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
     DiskSizeSelectsComponent,
-    IxSelectComponent,
-    TestOverrideDirective,
+    TnFormFieldComponent,
+    TnSelectComponent,
     TranslateModule,
   ],
 })

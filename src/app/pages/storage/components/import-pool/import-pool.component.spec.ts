@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -14,8 +14,6 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ImportPoolComponent } from './import-pool.component';
@@ -104,10 +102,12 @@ describe('ImportPoolComponent', () => {
     api = spectator.inject(ApiService);
   });
 
+  function getPoolSelect(): Promise<TnSelectHarness> {
+    return loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="guid"]' }));
+  }
+
   it('loads and shows the current list of pools to import when form is opened', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const controls = await form.getControlHarnessesDict();
-    const optionLabels = await (controls['Pool'] as IxSelectHarness).getOptionLabels();
+    const optionLabels = await (await getPoolSelect()).getOptions();
 
     expect(api.job).toHaveBeenCalledWith('pool.import_find');
     expect(api.call).toHaveBeenCalledWith('disk.details');
@@ -119,12 +119,9 @@ describe('ImportPoolComponent', () => {
   });
 
   it('imports a pool when form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Pool: 'pool_name_1 | pool_guid_1',
-    });
+    await (await getPoolSelect()).selectOption('pool_name_1 | pool_guid_1');
 
-    const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import' }));
+    const importButton = await loader.getHarness(TnButtonHarness.with({ label: 'Import' }));
     await importButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -132,12 +129,9 @@ describe('ImportPoolComponent', () => {
   });
 
   it('checks if pool needs to be unlocked and prompts user to unlock it', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Pool: 'pool_name_1 | pool_guid_1',
-    });
+    await (await getPoolSelect()).selectOption('pool_name_1 | pool_guid_1');
 
-    const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import' }));
+    const importButton = await loader.getHarness(TnButtonHarness.with({ label: 'Import' }));
     await importButton.click();
 
     expect(api.call).toHaveBeenCalledWith('pool.dataset.query', [[['name', '=', 'pool_name_1']]]);
@@ -187,7 +181,7 @@ describe('ImportPoolComponent', () => {
       const lockedLoader = TestbedHarnessEnvironment.loader(lockedSpectator.fixture);
       const lockedApi = lockedSpectator.inject(ApiService);
 
-      const skipButton = await lockedLoader.getHarness(MatButtonHarness.with({ text: 'Skip' }));
+      const skipButton = await lockedLoader.getHarness(TnButtonHarness.with({ label: 'Skip' }));
       await skipButton.click();
 
       expect(lockedApi.job).toHaveBeenCalledWith('pool.import_find');
@@ -199,7 +193,7 @@ describe('ImportPoolComponent', () => {
       const lockedSpectator = createComponentWithLockedDisks();
       const lockedLoader = TestbedHarnessEnvironment.loader(lockedSpectator.fixture);
 
-      const unlockButton = await lockedLoader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+      const unlockButton = await lockedLoader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
       await unlockButton.click();
 
       expect(lockedSpectator.fixture.nativeElement.textContent).not.toContain('Locked SED Disks Detected');

@@ -1,4 +1,9 @@
 .container {
+  // `tn-card` sets no host display, so it defaults to `inline`. An inline box wrapping
+  // block content is split into fragments that each paint the host background/padding,
+  // which showed up as stray rectangles above and below every vdev card.
+  display: block;
+
   background: var(--alt-bg1);
   padding: 16px 24px;
   padding-bottom: 0;

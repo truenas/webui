@@ -1,25 +1,10 @@
 @import 'mixins/cards';
 
-.optional-text {
-  color: var((--grey));
-  margin-left: 5px;
-}
-
-.root-container {
-  display: flex;
-  gap: 16px;
-
-  .main-container {
-    width: 100%;
-  }
-
-  .details-container {
-    width: 60%;
-  }
-}
+@include tn-detail-card;
 
 .card {
-  @include details-card();
+  display: block;
+  position: relative;
 
   ix-fake-progress-bar {
     position: absolute;
@@ -27,17 +12,29 @@
   }
 }
 
-.step-header {
-  align-items: center;
-  display: flex;
-}
+// TEMP (NAS-141021): the migrated steps render bare `tn-form-field`s and `ix-form-actions`
+// rows that carry no vertical rhythm of their own — the legacy `ix-input`/`ix-select`
+// wrappers used to supply it. The spacing lives here once instead of in nine near-identical
+// step stylesheets. Drop once the library exposes a field-density input on `tn-form-field`.
+//
+// Scoped to `tn-stepper`, NOT `tn-step`: the stepper renders each step's body through an
+// `ngTemplateOutlet` in its own template, so the step content is never a DOM descendant of
+// the `<tn-step>` element that declared it.
+:host ::ng-deep tn-stepper {
+  // No `:last-child` reset here — `ix-disk-size-dropdowns` wraps its own field, so the
+  // Disk Size field is the last child of *that* element and would lose the gap before
+  // the sibling Width field.
+  tn-form-field {
+    display: block;
+    margin-bottom: 20px;
+  }
 
-.step-buttons {
-  display: flex;
-  gap: 12px;
-  padding-top: 12px;
-}
+  ix-form-actions {
+    margin-top: 24px;
+  }
 
-.error-warning-icon {
-  margin-left: 10px;
+  .step-buttons {
+    display: flex;
+    gap: 12px;
+  }
 }

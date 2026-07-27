@@ -1,18 +1,12 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h4 mat-card-title>{{ title() | translate }}</h4>
-  </mat-card-header>
-
-  <mat-card-content>
+<tn-card class="card" [title]="title() | translate">
+  <div class="card-body">
     <h1 class="value">{{ disks().length }}</h1>
-    <button
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="add-to-pool"
+      [testId]="'add-to-pool'"
       [disabled]="!disks().length"
-      (click)="onAddToStorage()"
-    >
-      {{ 'Add To Pool' | translate }}
-    </button>
-  </mat-card-content>
-</mat-card>
+      [label]="'Add To Pool' | translate"
+      (onClick)="onAddToStorage()"
+    ></tn-button>
+  </div>
+</tn-card>

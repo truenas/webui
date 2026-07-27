@@ -1,94 +1,92 @@
-<mat-card class="container">
-  <mat-card-content>
-    <div
-      dndDropzone
-      class="drag-container"
-      [ngClass]="{'drag-active': (dragToggleStore$.dragActive$ | async)}"
-      (dndDrop)="onDrop($event)"
-    >
-      <div class="outer-container">
-        <div class="type-container">
-          <h3>{{ layout() }}</h3>
-          @if (minDisks[layout()] <= vdev()?.disks?.length) {
-            <p>
-              {{ sizeEstimation | ixFileSize }}{{ ' Est. Usable Raw Capacity' | translate }}
-            </p>
-          } @else {
-            <p>{{ 'Add the required no. of disks to get a vdev size estimate' | translate }}</p>
-          }
-          @if (spansEnclosures) {
-            <ix-warning [message]="'VDEVs spans enclosure' | translate"></ix-warning>
-          }
-        </div>
-        <div class="vdev-container">
-          @for (enclosureDisks of enclosuresDisks | keyvalue; track enclosureDisks) {
-            <ix-enclosure-wrapper
-              [enclosure]="enclosureById()[enclosureDisks.key]"
-            >
-              <div class="disk-icons">
-                @for (disk of enclosureDisks.value; track disk) {
-                  <ix-disk-icon
-                    class="disk-icon"
-                    [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async, 'drag-handle': editable() }"
-                    [dndDraggable]="getMovableDisk(disk)"
-                    [dndEffectAllowed]="'move'"
-                    [dndDisableIf]="!editable()"
-                    [name]="disk.name"
-                    [type]="disk.type"
-                    [size]="disk.size"
-                    (dndStart)="onDragStart()"
-                    (dndCanceled)="onDragCanceled()"
-                    (dndEnd)="onDragEnd()"
-                  ></ix-disk-icon>
-                }
-              </div>
-            </ix-enclosure-wrapper>
-          }
-          <div class="disk-icons no-enclosure">
-            @for (disk of nonEnclosureDisks; track disk) {
-              <ix-disk-icon
-                class="disk-icon"
-                [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async, 'drag-handle': editable() }"
-                [dndDraggable]="getMovableDisk(disk)"
-                [dndEffectAllowed]="'move'"
-                [dndDisableIf]="!editable()"
-                [name]="disk.name"
-                [type]="disk.type"
-                [size]="disk.size"
-                (dndStart)="onDragStart()"
-                (dndCanceled)="onDragCanceled()"
-                (dndEnd)="onDragEnd()"
-              ></ix-disk-icon>
-            }
-          </div>
-        </div>
-        @if (editable()) {
-          <div
-            class="delete-container"
-            (click)="deleteVdev()"
-          >
-            <tn-icon name="delete" library="mdi"></tn-icon>
-          </div>
+<tn-card class="container" [padContent]="false">
+  <div
+    dndDropzone
+    class="drag-container"
+    [ngClass]="{'drag-active': (dragToggleStore$.dragActive$ | async)}"
+    (dndDrop)="onDrop($event)"
+  >
+    <div class="outer-container">
+      <div class="type-container">
+        <h3>{{ layout() }}</h3>
+        @if (minDisks[layout()] <= vdev()?.disks?.length) {
+          <p>
+            {{ sizeEstimation | ixFileSize }}{{ ' Est. Usable Raw Capacity' | translate }}
+          </p>
+        } @else {
+          <p>{{ 'Add the required no. of disks to get a vdev size estimate' | translate }}</p>
+        }
+        @if (spansEnclosures) {
+          <ix-warning [message]="'VDEVs spans enclosure' | translate"></ix-warning>
         }
       </div>
-      @if (editable()) {
-        <ix-label
-          class="drag-hint"
-          [label]="'Drag & drop disks to add or remove them' | translate"
-        ></ix-label>
-      }
-
-      @if (vdevErrorMessage) {
-        <div class="error">
-          {{ vdevErrorMessage | translate }}
+      <div class="vdev-container">
+        @for (enclosureDisks of enclosuresDisks | keyvalue; track enclosureDisks) {
+          <ix-enclosure-wrapper
+            [enclosure]="enclosureById()[enclosureDisks.key]"
+          >
+            <div class="disk-icons">
+              @for (disk of enclosureDisks.value; track disk) {
+                <ix-disk-icon
+                  class="disk-icon"
+                  [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async, 'drag-handle': editable() }"
+                  [dndDraggable]="getMovableDisk(disk)"
+                  [dndEffectAllowed]="'move'"
+                  [dndDisableIf]="!editable()"
+                  [name]="disk.name"
+                  [type]="disk.type"
+                  [size]="disk.size"
+                  (dndStart)="onDragStart()"
+                  (dndCanceled)="onDragCanceled()"
+                  (dndEnd)="onDragEnd()"
+                ></ix-disk-icon>
+              }
+            </div>
+          </ix-enclosure-wrapper>
+        }
+        <div class="disk-icons no-enclosure">
+          @for (disk of nonEnclosureDisks; track disk) {
+            <ix-disk-icon
+              class="disk-icon"
+              [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async, 'drag-handle': editable() }"
+              [dndDraggable]="getMovableDisk(disk)"
+              [dndEffectAllowed]="'move'"
+              [dndDisableIf]="!editable()"
+              [name]="disk.name"
+              [type]="disk.type"
+              [size]="disk.size"
+              (dndStart)="onDragStart()"
+              (dndCanceled)="onDragCanceled()"
+              (dndEnd)="onDragEnd()"
+            ></ix-disk-icon>
+          }
         </div>
-      }
-
-      @if (mixesDisksOfDifferentSizes) {
-        <div class="error">
-          {{ 'Mixing disks of different sizes in a vdev is not recommended.' | translate }}
+      </div>
+      @if (editable()) {
+        <div
+          class="delete-container"
+          (click)="deleteVdev()"
+        >
+          <tn-icon name="delete" library="mdi"></tn-icon>
         </div>
       }
     </div>
-  </mat-card-content>
-</mat-card>
+    @if (editable()) {
+      <ix-label
+        class="drag-hint"
+        [label]="'Drag & drop disks to add or remove them' | translate"
+      ></ix-label>
+    }
+
+    @if (vdevErrorMessage) {
+      <div class="error">
+        {{ vdevErrorMessage | translate }}
+      </div>
+    }
+
+    @if (mixesDisksOfDifferentSizes) {
+      <div class="error">
+        {{ 'Mixing disks of different sizes in a vdev is not recommended.' | translate }}
+      </div>
+    }
+  </div>
+</tn-card>

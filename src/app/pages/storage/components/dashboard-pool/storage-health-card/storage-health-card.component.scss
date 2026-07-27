@@ -1,13 +1,14 @@
 @import 'mixins/cards';
 @import 'mixins/animations';
 
+@include tn-detail-card;
+
 :host {
   display: flex;
 }
 
 :host ::ng-deep {
   .card {
-    @include details-card();
     flex: 1;
 
     .content-container {
@@ -36,7 +37,6 @@
   }
 }
 
-
 .card-content {
   display: flex;
   flex-direction: column;
@@ -44,5 +44,11 @@
 
 .controls {
   column-gap: 8px;
+  display: flex;
+}
+
+:host ::ng-deep .tn-card__title {
+  align-items: center;
+  column-gap: 5px;
   display: flex;
 }

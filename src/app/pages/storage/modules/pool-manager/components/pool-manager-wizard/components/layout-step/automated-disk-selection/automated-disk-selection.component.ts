@@ -1,15 +1,14 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, OnChanges, inject } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnFormFieldComponent, TnInputComponent, TnSelectComponent } from '@truenas/ui-components';
 import { filter, take } from 'rxjs/operators';
 import { CreateVdevLayout, vdevLayoutOptions, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasDeepChanges, setValueIfNotSame } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
@@ -23,10 +22,11 @@ import { NormalSelectionComponent } from './normal-selection/normal-selection.co
   styleUrls: ['./automated-disk-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxSelectComponent,
-    TestOverrideDirective,
+    AsyncPipe,
+    TnFormFieldComponent,
+    TnSelectComponent,
     ReactiveFormsModule,
-    IxInputComponent,
+    TnInputComponent,
     DraidSelectionComponent,
     NormalSelectionComponent,
     TranslateModule,

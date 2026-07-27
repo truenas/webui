@@ -1,41 +1,37 @@
 <ix-page-header>
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    ixTest="import-pool"
-    mat-button
+    [testId]="'import-pool'"
     [ixUiSearch]="searchableElements.elements.importPool"
-    (click)="onImportPool()"
-  >
-    {{ 'Import Pool' | translate }}
-  </button>
+    [label]="'Import Pool' | translate"
+    (onClick)="onImportPool()"
+  ></tn-button>
 
-  <a mat-button ixTest="disks" [routerLink]="['/storage', 'disks']">
-    {{ 'Disks' | translate }}
-  </a>
+  <tn-button
+    [testId]="'disks'"
+    [routerLink]="['/storage', 'disks']"
+    [label]="'Disks' | translate"
+  ></tn-button>
 
   @if (isEnterprise()) {
-    <button
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="tiering"
+      [testId]="'tiering'"
       [ixUiSearch]="searchableElements.elements.tiering"
-      (click)="onTiering()"
-    >
-      {{ 'Tiering' | translate }}
-    </button>
+      [label]="'Tiering' | translate"
+      (onClick)="onTiering()"
+    ></tn-button>
   }
 
   @if (!hasNoPools() && !arePoolsLoading()) {
-    <a
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
       color="primary"
-      ixTest="create-pool"
+      [testId]="'create-pool'"
       [ixUiSearch]="searchableElements.elements.createPool"
       [routerLink]="['/storage', 'create']"
-    >
-      {{ 'Create Pool' | translate }}
-    </a>
+      [label]="'Create Pool' | translate"
+    ></tn-button>
   }
 </ix-page-header>
 
@@ -54,10 +50,15 @@
 
   @if (hasNoPools() && !arePoolsLoading()) {
     <div class="entity-empty-wrapper">
-      <ix-empty
-        [conf]="emptyConfig"
-        [requiredRoles]="requiredRoles"
-      ></ix-empty>
+      <tn-empty
+        icon="dns"
+        iconLibrary="material"
+        iconSize="72px"
+        [title]="emptyTitle | translate"
+        [description]="emptyDescription"
+        [actionText]="canCreatePool() ? ('Create Pool' | translate) : undefined"
+        (onAction)="createPool()"
+      ></tn-empty>
     </div>
   }
 

@@ -2,11 +2,11 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, inject, computed,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnDialog, TnIconButtonComponent,
+  TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -24,7 +24,6 @@ import { searchDelayConst } from 'app/modules/global-search/constants/delay.cons
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dashboardPoolElements } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.elements';
@@ -49,22 +48,18 @@ import { StorageHealthCardComponent } from './storage-health-card/storage-health
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RequiresRolesDirective,
-    MatButton,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
-    TnTooltipDirective,
-    TestDirective,
+    TnButtonComponent,
+    TnIconButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     UiSearchDirective,
-    TnIconComponent,
     VDevsCardComponent,
     PoolUsageCardComponent,
     StorageHealthCardComponent,
     DiskHealthCardComponent,
     NgxSkeletonLoaderModule,
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
     TranslateModule,
     SedLockedWarningComponent,
   ],

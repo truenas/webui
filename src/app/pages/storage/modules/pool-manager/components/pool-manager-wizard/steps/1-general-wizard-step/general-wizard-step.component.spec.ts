@@ -3,15 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnStepperComponent } from '@truenas/ui-components';
+import {
+  TnInputHarness, TnRadioHarness, TnSelectHarness, TnStepperComponent,
+} from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import {
   GeneralWizardStepComponent,
@@ -75,8 +74,20 @@ describe('GeneralWizardStepComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
+  function getNameInput(): Promise<TnInputHarness> {
+    return loader.getHarness(TnInputHarness.with({ selector: '[formControlName="name"]' }));
+  }
+
+  function getEncryptionStandardSelect(): Promise<TnSelectHarness> {
+    return loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="encryptionStandard"]' }));
+  }
+
+  function selectEncryptionType(label: string): Promise<void> {
+    return loader.getHarness(TnRadioHarness.with({ label })).then((radio) => radio.check());
+  }
+
   it('updates store when name is edited', async () => {
-    const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+    const nameInput = await getNameInput();
     await nameInput.setValue('newpool');
 
     expect(spectator.inject(PoolManagerStore).setGeneralOptions).toHaveBeenCalledWith({
@@ -87,26 +98,23 @@ describe('GeneralWizardStepComponent', () => {
   });
 
   it('shows encryption type radio group with None and Software options when no SED disks', async () => {
-    const encryptionRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Encryption' }));
-    const optionLabels = await encryptionRadio.getOptionLabels();
+    const radios = await loader.getAllHarnesses(TnRadioHarness);
 
-    expect(optionLabels).toHaveLength(2);
-    expect(optionLabels[0]).toBe('None');
-    expect(optionLabels[1]).toBe('Software Encryption (ZFS)');
+    expect(radios).toHaveLength(2);
+    expect(await radios[0].getLabelText()).toBe('None');
+    expect(await radios[1].getLabelText()).toBe('Software Encryption (ZFS)');
   });
 
   it('shows Encryption Standard dropdown when Software Encryption is selected', async () => {
-    const encryptionRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Encryption' }));
-    await encryptionRadio.setValue('Software Encryption (ZFS)');
+    await selectEncryptionType('Software Encryption (ZFS)');
     spectator.detectChanges();
 
-    const encryptionStandards = await loader.getHarness(IxSelectHarness.with({ label: 'Encryption Standard' }));
-    expect(await encryptionStandards.getOptionLabels()).toEqual(['AES-192-GCM', 'AES-128-GCM']);
+    const encryptionStandards = await getEncryptionStandardSelect();
+    expect(await encryptionStandards.getOptions()).toEqual(['AES-192-GCM', 'AES-128-GCM']);
   });
 
   it('shows warning when Software Encryption is selected', async () => {
-    const encryptionRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Encryption' }));
-    await encryptionRadio.setValue('Software Encryption (ZFS)');
+    await selectEncryptionType('Software Encryption (ZFS)');
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -117,15 +125,14 @@ describe('GeneralWizardStepComponent', () => {
   });
 
   it('updates store when Software Encryption fields are updated', async () => {
-    const encryptionRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Encryption' }));
-    await encryptionRadio.setValue('Software Encryption (ZFS)');
+    await selectEncryptionType('Software Encryption (ZFS)');
     spectator.detectChanges();
 
-    const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+    const nameInput = await getNameInput();
     await nameInput.setValue('test');
 
-    const encryptionStandards = await loader.getHarness(IxSelectHarness.with({ label: 'Encryption Standard' }));
-    await encryptionStandards.setValue('AES-128-GCM');
+    const encryptionStandards = await getEncryptionStandardSelect();
+    await encryptionStandards.selectOption('AES-128-GCM');
 
     expect(spectator.inject(PoolManagerStore).setEncryptionOptions).toHaveBeenCalledWith({
       encryptionType: EncryptionType.Software,
@@ -219,6 +226,54 @@ describe('GeneralWizardStepComponent', () => {
       expect(form.value.encryptionType).toBe(EncryptionType.None);
       expect(form.value.name).toBe('');
     });
+  });
+});
+
+describe('GeneralWizardStepComponent with SED disks and no global password', () => {
+  let spectator: Spectator<GeneralWizardStepComponent>;
+
+  const startOver$ = new Subject<void>();
+
+  const createComponent = createComponentFactory({
+    component: GeneralWizardStepComponent,
+    imports: [ReactiveFormsModule, PoolWarningsComponent],
+    providers: [
+      mockProvider(TnStepperComponent),
+      mockApi([
+        mockCall('pool.query', []),
+        mockCall('pool.validate_name', true),
+        mockCall('pool.dataset.encryption_algorithm_choices', {
+          'AES-192-GCM': 'AES-192-GCM',
+        }),
+        mockCall('system.advanced.sed_global_password_is_set', false),
+      ]),
+      mockProvider(PoolWizardNameValidationService, {
+        validatePoolName: () => of(null),
+      }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(PoolManagerStore, {
+        startOver$,
+        hasSedCapableDisks$: of(true),
+        encryptionType$: of(EncryptionType.None),
+        setGeneralOptions: jest.fn(),
+        setEncryptionOptions: jest.fn(),
+        setDiskWarningOptions: jest.fn(),
+      }),
+      mockProvider(DiskStore, {
+        selectableDisks$: of([]),
+      }),
+      provideMockStore({
+        selectors: [
+          { selector: selectIsEnterprise, value: true },
+        ],
+      }),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
   });
 
   it('shows info message when no global SED password is set', () => {

@@ -1,14 +1,13 @@
 import {
   ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, inject,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
-} from '@angular/material/card';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
+  TnIconComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -21,7 +20,6 @@ import {
   TopologyDisk,
   VDevItem,
 } from 'app/interfaces/storage.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { vDevsCardElements } from 'app/pages/storage/components/dashboard-pool/vdevs-card/vdevs-card.elements';
@@ -69,14 +67,12 @@ export type EmptyDiskObject = Record<
   styleUrls: ['./vdevs-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatCardHeader,
-    MatCardTitle,
     PoolCardIconComponent,
-    MatButton,
-    TestDirective,
-    MatCardContent,
+    TnButtonComponent,
     TnIconComponent,
     TnTooltipDirective,
     TranslateModule,

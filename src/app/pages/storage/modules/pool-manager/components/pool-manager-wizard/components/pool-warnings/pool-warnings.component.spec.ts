@@ -1,13 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness, TnRadioHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
@@ -59,8 +58,8 @@ describe('PoolWarningsComponent', () => {
   });
 
   it('checks allow non unique serial radio button', async () => {
-    const allowNonUniqueSerial = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Allow non-unique serialed disks (not recommended)' }));
-    await allowNonUniqueSerial.setValue('Allow');
+    const allowRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Allow' }));
+    await allowRadio.check();
 
     expect(spectator.inject(PoolManagerStore).setDiskWarningOptions).toHaveBeenCalledWith({
       allowNonUniqueSerialDisks: true,
@@ -69,16 +68,23 @@ describe('PoolWarningsComponent', () => {
   });
 
   it('checks exported pools checkboxes', async () => {
-    const exportedPoolCheckboxes = await loader.getAllHarnesses(MatCheckboxHarness);
+    const exportedPoolCheckboxes = await loader.getAllHarnesses(TnCheckboxHarness);
 
     expect(exportedPoolCheckboxes).toHaveLength(2);
 
     await exportedPoolCheckboxes[0].check();
     await exportedPoolCheckboxes[1].check();
 
-    expect(spectator.inject(PoolManagerStore).setDiskWarningOptions).toHaveBeenCalledWith({
+    expect(spectator.inject(PoolManagerStore).setDiskWarningOptions).toHaveBeenLastCalledWith({
       allowNonUniqueSerialDisks: false,
       allowExportedPools: ['FAKE_POOL', 'MOCK_POOL'],
+    });
+
+    await exportedPoolCheckboxes[0].uncheck();
+
+    expect(spectator.inject(PoolManagerStore).setDiskWarningOptions).toHaveBeenLastCalledWith({
+      allowNonUniqueSerialDisks: false,
+      allowExportedPools: ['MOCK_POOL'],
     });
   });
 
@@ -124,13 +130,13 @@ describe('PoolWarningsComponent', () => {
       const sedSpectator = createSedComponent();
       const sedLoader = TestbedHarnessEnvironment.loader(sedSpectator.fixture);
 
-      let checkboxes = await sedLoader.getAllHarnesses(MatCheckboxHarness);
+      let checkboxes = await sedLoader.getAllHarnesses(TnCheckboxHarness);
       expect(checkboxes).toHaveLength(2);
 
       encryptionType$.next(EncryptionType.Sed);
       sedSpectator.detectChanges();
 
-      checkboxes = await sedLoader.getAllHarnesses(MatCheckboxHarness);
+      checkboxes = await sedLoader.getAllHarnesses(TnCheckboxHarness);
       expect(checkboxes).toHaveLength(1);
       expect(await checkboxes[0].getLabelText()).toContain('SED_POOL');
     });

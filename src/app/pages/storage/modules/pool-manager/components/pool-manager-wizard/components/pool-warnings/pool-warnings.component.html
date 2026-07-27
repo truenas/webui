@@ -2,14 +2,20 @@
   @if (nonUniqueSerialDisks.length) {
     <div class="spacer-top">
       <ix-warning [message]="nonUniqueSerialDisksTooltip"></ix-warning>
-      <ix-radio-group
-        formControlName="allowNonUniqueSerialDisks"
+      <tn-form-field
         [label]="'Allow non-unique serialed disks (not recommended)' | translate"
         [tooltip]="nonUniqueSerialDisksTooltip | translate"
         [required]="true"
-        [options]="allowNonUniqueSerialDisksOptions$"
-        [inlineFields]="true"
-      ></ix-radio-group>
+      >
+        @for (option of (allowNonUniqueSerialDisksOptions$ | async) ?? []; track option.value) {
+          <tn-radio
+            name="allowNonUniqueSerialDisks"
+            formControlName="allowNonUniqueSerialDisks"
+            [value]="option.value"
+            [label]="option.label"
+          ></tn-radio>
+        }
+      </tn-form-field>
     </div>
   }
 
@@ -18,17 +24,15 @@
       <ix-warning [message]="exportedPoolsWarning"></ix-warning>
       <ix-label [label]="'Select disks you want to use' | translate"></ix-label>
       @for (item of poolAndDisks | keyvalue; track item.key) {
-        <mat-checkbox
-          color="primary"
-          [ixTest]="[item.key, 'exported_pool']"
-          [value]="item.key"
-          (change)="checkboxChanged($event)"
+        <tn-checkbox
+          [testId]="[item.key, 'exported_pool']"
+          (change)="checkboxChanged(item.key, $event)"
         >
-          <div class="label">
+          <div tnCheckboxLabel class="label">
             <strong class="pool-name">{{ item.key }}</strong>
             <small class="disk-name">{{ item.value.join(', ') }}</small>
           </div>
-        </mat-checkbox>
+        </tn-checkbox>
       }
     </div>
   }

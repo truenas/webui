@@ -2,11 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponents } from 'ng-mocks';
+import {
+  TnFormFieldComponent, TnFormFieldHarness, TnSelectComponent, TnSelectHarness,
+} from '@truenas/ui-components';
+import { MockComponents, ngMocks } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import {
   AutomatedDiskSelectionComponent,
@@ -19,6 +21,12 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/normal-selection/normal-selection.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
+// `MockComponents(NormalSelectionComponent, DraidSelectionComponent)` deep-mocks their
+// standalone import graphs, which transitively include the tn-* form primitives — that
+// mock leaks into the TestBed and blanks *this* component's own real Layout field.
+ngMocks.globalKeep(TnFormFieldComponent);
+ngMocks.globalKeep(TnSelectComponent);
+
 describe('AutomatedDiskSelection', () => {
   let spectator: Spectator<AutomatedDiskSelectionComponent>;
   let loader: HarnessLoader;
@@ -26,7 +34,7 @@ describe('AutomatedDiskSelection', () => {
   const startOver$ = new Subject<void>();
   const resetStep$ = new Subject<VDevType>();
 
-  let layoutSelect: IxSelectHarness | null;
+  let layoutSelect: TnSelectHarness | null;
 
   const inventory: DetailsDisk[] = [] as DetailsDisk[];
 
@@ -62,8 +70,13 @@ describe('AutomatedDiskSelection', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    layoutSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Layout' }));
+    layoutSelect = await loader.getHarnessOrNull(TnSelectHarness);
   });
+
+  async function getLayoutHint(): Promise<string | null> {
+    const field = await loader.getHarness(TnFormFieldHarness);
+    return field.getHint();
+  }
 
   it('shows NormalSelectionComponent for non-dRAID layouts', async () => {
     let normalSelection = spectator.query(NormalSelectionComponent)!;
@@ -72,7 +85,7 @@ describe('AutomatedDiskSelection', () => {
     expect(normalSelection.inventory).toBe(inventory);
     expect(normalSelection.isStepActive).toBe(false);
 
-    await layoutSelect!.setValue('Mirror');
+    await layoutSelect!.selectOption('Mirror');
 
     normalSelection = spectator.query(NormalSelectionComponent)!;
     expect(normalSelection).not.toBeNull();
@@ -82,7 +95,7 @@ describe('AutomatedDiskSelection', () => {
   });
 
   it('shows DraidSelectionComponent for dRAID layouts', async () => {
-    await layoutSelect!.setValue('dRAID2');
+    await layoutSelect!.selectOption('dRAID2');
 
     const draidSelection = spectator.query(DraidSelectionComponent)!;
     expect(draidSelection).not.toBeNull();
@@ -97,16 +110,16 @@ describe('AutomatedDiskSelection', () => {
   it('does not let the layout change when canChangeLayout is false', async () => {
     spectator.setInput('canChangeLayout', false);
 
-    layoutSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Layout' }));
+    layoutSelect = await loader.getHarnessOrNull(TnSelectHarness);
     expect(layoutSelect).toBeNull();
   });
 
   it('resets to default values when store emits a reset event', async () => {
-    await layoutSelect!.setValue('Mirror');
+    await layoutSelect!.selectOption('Mirror');
 
     startOver$.next();
 
-    expect(await layoutSelect!.getValue()).toBe('');
+    expect(await layoutSelect!.getDisplayText()).toBe('Select an option');
   });
 
   it('keeps the sole allowed layout selected after a reset when parity-locked', () => {
@@ -118,7 +131,7 @@ describe('AutomatedDiskSelection', () => {
   });
 
   it('updates layout in store when it is changed', async () => {
-    await layoutSelect!.setValue('Mirror');
+    await layoutSelect!.selectOption('Mirror');
 
     expect(spectator.inject(PoolManagerStore).setTopologyCategoryLayout).toHaveBeenCalledWith(
       VDevType.Data,
@@ -126,42 +139,36 @@ describe('AutomatedDiskSelection', () => {
     );
   });
 
-  it('does not show the data parity hint for data vdevs', () => {
-    expect(spectator.query('mat-hint')).toBeNull();
+  it('does not show the data parity hint for data vdevs', async () => {
+    expect(await getLayoutHint()).toBeNull();
   });
 
-  it('does not show the data parity hint for metadata vdevs when any layout is allowed', () => {
+  it('does not show the data parity hint for metadata vdevs when any layout is allowed', async () => {
     spectator.setInput('type', VDevType.Special);
 
-    expect(spectator.query('mat-hint')).toBeNull();
+    expect(await getLayoutHint()).toBeNull();
   });
 
-  it('shows the single-layout hint for metadata vdevs when the layout is strict-locked', () => {
+  it('shows the single-layout hint for metadata vdevs when the layout is strict-locked', async () => {
     spectator.setInput('type', VDevType.Special);
     spectator.setInput('limitLayouts', [CreateVdevLayout.Raidz2]);
 
-    const hint = spectator.query('mat-hint');
-    expect(hint).not.toBeNull();
-    expect(hint!.textContent).toContain('Locked to this layout');
+    expect(await getLayoutHint()).toContain('Locked to this layout');
   });
 
-  it('shows the single-layout hint for dedup vdevs when the layout is strict-locked', () => {
+  it('shows the single-layout hint for dedup vdevs when the layout is strict-locked', async () => {
     spectator.setInput('type', VDevType.Dedup);
     spectator.setInput('limitLayouts', [CreateVdevLayout.Raidz2]);
 
-    const hint = spectator.query('mat-hint');
-    expect(hint).not.toBeNull();
-    expect(hint!.textContent).toContain('Locked to this layout');
+    expect(await getLayoutHint()).toContain('Locked to this layout');
   });
 
-  it('shows the parity-level hint for metadata vdevs when multiple layouts match data parity', () => {
+  it('shows the parity-level hint for metadata vdevs when multiple layouts match data parity', async () => {
     spectator.setInput('type', VDevType.Special);
     spectator.setInput('limitLayouts', [
       CreateVdevLayout.Mirror, CreateVdevLayout.Raidz2, CreateVdevLayout.Raidz3,
     ]);
 
-    const hint = spectator.query('mat-hint');
-    expect(hint).not.toBeNull();
-    expect(hint!.textContent).toContain('tolerate at least as many drive failures');
+    expect(await getLayoutHint()).toContain('tolerate at least as many drive failures');
   });
 });

@@ -2,12 +2,11 @@ import { PercentPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, inject, input, OnInit,
 } from '@angular/core';
-import { MatAnchor } from '@angular/material/button';
-import {
-  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
-} from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
+} from '@truenas/ui-components';
 import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
@@ -28,15 +27,14 @@ import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-dis
   styleUrls: ['./pool-usage-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatCardHeader,
-    MatCardTitle,
     PoolCardIconComponent,
-    MatAnchor,
+    TnButtonComponent,
     TestDirective,
     RouterLink,
-    MatCardContent,
     GaugeChartComponent,
     TranslateModule,
     FileSizePipe,

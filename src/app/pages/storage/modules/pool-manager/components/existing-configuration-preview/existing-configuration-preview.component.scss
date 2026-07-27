@@ -1,5 +1,14 @@
 @import 'mixins/cards';
 
+@include tn-detail-card;
+
+// `tn-card` and this component's own host default to `display: inline`; without this an
+// inline box wrapping block content paints stray background/padding fragments.
+:host,
 .card {
-  @include details-card();
+  display: block;
+}
+
+.card {
+  @include tn-details-item();
 }

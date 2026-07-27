@@ -1,48 +1,57 @@
-<ix-modal-header
-  [title]="'Tiering' | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="formGroup" (submit)="submit()">
-      <ix-fieldset [title]="'Tiering Configuration' | translate">
-        <ix-checkbox
-          formControlName="enabled"
-          [label]="'Enabled' | translate"
-        ></ix-checkbox>
+@if (slideInRef) {
+  <ix-modal-header
+    [title]="'Tiering' | translate"
+    [loading]="isFormLoading()"
+  ></ix-modal-header>
+}
 
-        @if (showEnabledWarning()) {
-          <tn-banner
-            type="warning"
-            [heading]="enabledWarningHeading | translate"
-            [message]="enabledWarningMessage | translate"
-          ></tn-banner>
-        }
-        <ix-input
-          formControlName="max_concurrent_jobs"
-          type="number"
-          [label]="'Max Concurrent Jobs' | translate"
-          [hint]="helptext.maxConcurrentJobs | translate"
-        ></ix-input>
-        <ix-input
-          formControlName="max_used_percentage"
-          type="number"
-          [label]="'Max Used Percentage' | translate"
-          [hint]="helptext.maxUsedPercentage | translate"
-        ></ix-input>
-      </ix-fieldset>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <tn-form-section [heading]="'Tiering Configuration' | translate">
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="enabled"
+        [label]="'Enabled' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-      <ix-form-actions>
-        <button
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="formGroup.invalid || isFormLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+    @if (showEnabledWarning()) {
+      <tn-banner
+        type="warning"
+        [heading]="enabledWarningHeading | translate"
+        [message]="enabledWarningMessage | translate"
+      ></tn-banner>
+    }
+
+    <tn-form-field
+      [label]="'Max Concurrent Jobs' | translate"
+      [hint]="helptext.maxConcurrentJobs | translate"
+    >
+      <tn-input
+        formControlName="max_concurrent_jobs"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Max Used Percentage' | translate"
+      [hint]="helptext.maxUsedPercentage | translate"
+    >
+      <tn-input
+        formControlName="max_used_percentage"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+  </tn-form-section>
+
+  <ix-form-actions>
+    @if (slideInRef) {
+      <tn-button
+        type="submit"
+        color="primary"
+        [testId]="'save'"
+        [disabled]="form.invalid || isFormLoading()"
+        [label]="'Save' | translate"
+      ></tn-button>
+    }
+  </ix-form-actions>
+</form>

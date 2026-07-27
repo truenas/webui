@@ -1,17 +1,22 @@
 <div class="unlock-sed-disks">
   <form class="form-container" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <ix-input
-      formControlName="globalPassword"
-      type="password"
+    <tn-form-field
       [label]="'Global SED Password' | translate"
       [hint]="'This password will be used to unlock all selected disks.' | translate"
       [required]="true"
-    ></ix-input>
+    >
+      <tn-input
+        formControlName="globalPassword"
+        [inputType]="InputType.Password"
+      ></tn-input>
+    </tn-form-field>
 
-    <mat-checkbox formControlName="updateGlobalSettings" ixTest="update-global-settings" aria-describedby="update-global-hint">
-      <span class="checkbox-label">{{ 'Update global settings (applies to all disks/pools)' | translate }}</span>
-      <span id="update-global-hint" class="checkbox-hint">{{ 'Save this password to the system configuration for future use with these disks.' | translate }}</span>
-    </mat-checkbox>
+    <tn-checkbox formControlName="updateGlobalSettings" [testId]="'update-global-settings'">
+      <div tnCheckboxLabel>
+        <span class="checkbox-label">{{ 'Update global settings (applies to all disks/pools)' | translate }}</span>
+        <span class="checkbox-hint">{{ 'Save this password to the system configuration for future use with these disks.' | translate }}</span>
+      </div>
+    </tn-checkbox>
 
     <div class="exceptions-section">
       <h3 class="section-title">{{ 'Individual Disk Passwords (Optional)' | translate }}</h3>
@@ -20,64 +25,54 @@
       <div class="exceptions-list" formArrayName="exceptions" role="list" [attr.aria-label]="'Disk password exceptions' | translate">
         @for (exception of form.controls.exceptions.controls; track $index) {
           <div class="exception-item" role="listitem" [formGroupName]="$index">
-            <button
-              mat-icon-button
-              type="button"
+            <tn-icon-button
               class="remove-button"
-              ixTest="remove-exception"
-              [attr.aria-label]="'Remove disk exception' | translate"
-              (click)="removeException($index)"
-            >
-              <tn-icon name="close" library="mdi"></tn-icon>
-            </button>
-            <ix-select
-              formControlName="diskName"
-              [label]="'Disk' | translate"
-              [options]="getOptionsForException($index)"
-              [required]="true"
-            ></ix-select>
-            <ix-input
-              formControlName="password"
-              type="password"
-              [label]="'Password' | translate"
-              [required]="true"
-            ></ix-input>
+              name="close"
+              library="mdi"
+              [testId]="'remove-exception'"
+              [ariaLabel]="'Remove disk exception' | translate"
+              (onClick)="removeException($index)"
+            ></tn-icon-button>
+            <tn-form-field [label]="'Disk' | translate" [required]="true">
+              <tn-select
+                formControlName="diskName"
+                [options]="getOptionsForException($index)"
+              ></tn-select>
+            </tn-form-field>
+            <tn-form-field [label]="'Password' | translate" [required]="true">
+              <tn-input
+                formControlName="password"
+                [inputType]="InputType.Password"
+              ></tn-input>
+            </tn-form-field>
           </div>
         }
       </div>
 
-      <button
-        mat-button
-        type="button"
+      <tn-button
         class="add-exception-button"
-        ixTest="add-exception"
+        icon="mdi-plus"
+        [testId]="'add-exception'"
         [disabled]="availableDisksForException().length === 0"
-        (click)="addException()"
-      >
-        <tn-icon name="plus" library="mdi" customSize="18px"></tn-icon>
-        {{ 'Add Disk Exception' | translate }}
-      </button>
+        [label]="'Add Disk Exception' | translate"
+        (onClick)="addException()"
+      ></tn-button>
     </div>
 
     <ix-form-actions>
-      <button
-        mat-button
-        type="button"
-        ixTest="skip"
-        (click)="onSkip()"
-      >
-        {{ 'Skip' | translate }}
-      </button>
-      <button
+      <tn-button
+        [testId]="'skip'"
+        [label]="'Skip' | translate"
+        (onClick)="onSkip()"
+      ></tn-button>
+      <tn-button
         *ixRequiresRoles="[Role.DiskWrite]"
-        mat-button
         type="submit"
         color="primary"
-        ixTest="unlock-disks"
+        [testId]="'unlock-disks'"
         [disabled]="form.invalid || isUnlocking()"
-      >
-        {{ 'Unlock Disks' | translate }}
-      </button>
+        [label]="'Unlock Disks' | translate"
+      ></tn-button>
     </ix-form-actions>
   </form>
 </div>
