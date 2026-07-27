@@ -4,16 +4,19 @@ import {
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ControlValueAccessor } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnIconComponent,
+  TnListComponent,
+  TnListItemComponent,
+  TnSlideToggleComponent,
+} from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { normalizeTestId } from 'app/modules/test-id/normalize-test-id.utils';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
@@ -24,11 +27,10 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   imports: [
     IxLabelComponent,
     CdkDropList,
-    MatList,
-    MatListItem,
     CdkDrag,
-    MatSlideToggle,
-    TestDirective,
+    TnListComponent,
+    TnListItemComponent,
+    TnSlideToggleComponent,
     TnIconComponent,
     IxErrorsComponent,
     TranslateModule,
@@ -79,6 +81,16 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   setDisabledState(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
+  }
+
+  /**
+   * Options here are interface names (`eth0`, `bond0`), which the library would
+   * leave as-is where `[ixTest]` produced `eth-0`. Normalizing up front keeps
+   * `toggle-lag-ports-eth-0` intact; the `toggle` prefix comes from
+   * `tn-slide-toggle`. See {@link normalizeTestId}.
+   */
+  protected toggleTestId(item: Option): string[] {
+    return normalizeTestId([this.controlDirective.name, item.label]);
   }
 
   isChecked(value: BaseOptionValueType): boolean {

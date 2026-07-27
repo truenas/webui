@@ -1,8 +1,6 @@
 import { Directive, ElementRef, HostBinding, input, inject } from '@angular/core';
-import { kebabCase } from 'lodash-es';
+import { normalizeTestId, SupportedTestId } from 'app/modules/test-id/normalize-test-id.utils';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
-
-type SupportedTestId = number | string | null | undefined | (string | number | null | undefined)[];
 
 /**
  * Adds test attribute to the element for the benefit of Release Engineering.
@@ -30,21 +28,20 @@ export class TestDirective {
 
   get normalizedDescription(): string[] {
     const description = this.overrideDirective?.overrideDescription() ?? this.description();
-    let normalizedDescription = Array.isArray(description) ? description : [description];
-
-    normalizedDescription = normalizedDescription
-      .filter((part) => part)
-      .map((part) => kebabCase(String(part)));
+    const normalizedDescription = normalizeTestId(description);
 
     if (this.overrideDirective?.keepLastPart()) {
       const initialDescription = this.description();
       const normalizedInitialDescription = Array.isArray(initialDescription)
         ? initialDescription
         : [initialDescription];
-      normalizedDescription.push(normalizedInitialDescription[normalizedInitialDescription.length - 1]);
+      const lastPart = normalizedInitialDescription[normalizedInitialDescription.length - 1];
+      if (lastPart) {
+        normalizedDescription.push(String(lastPart));
+      }
     }
 
-    return normalizedDescription as string[];
+    return normalizedDescription;
   }
 
   @HostBinding('attr.data-test')

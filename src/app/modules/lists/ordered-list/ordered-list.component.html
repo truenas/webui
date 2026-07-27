@@ -13,26 +13,41 @@
   [style.maxHeight]="maxHeight()"
   (cdkDropListDropped)="drop($event)"
   >
-  <mat-list [attr.aria-label]="label()">
+  <tn-list [attr.aria-label]="label()">
     @for (item of items; track item) {
-      <mat-list-item cdkDrag>
-        <mat-slide-toggle
-          color="primary"
-          [checked]="isChecked(item.value)"
-          [disabled]="isDisabled"
-          [ixTest]="[controlDirective.name, item.label]"
-          [attr.aria-label]="item.label"
-          (change)="onCheckboxChanged(item.value)"
-          (blur)="onTouch()"
-        >
-          <div class="toggle-label">
+      <tn-list-item cdkDrag>
+        <!--
+          Everything sits in tn-list-item's default slot rather than its
+          [tnListIcon] / [tnListItemTrailing] slots: those slots are gated behind
+          flags the library only sets from a DOM query in ngAfterContentInit, which
+          can never see content that has not been projected yet, so they never
+          render. See NAS-141021.
+        -->
+        <div class="toggle-row">
+          <!--
+            `for` points at the toggle's own input so that clicking the option name
+            still flips it, the way it did when this markup lived inside
+            <mat-slide-toggle>'s label.
+          -->
+          <label class="toggle-label" [attr.for]="toggle.id">
             <tn-icon name="drag-vertical" library="mdi"></tn-icon>
             {{ item.label | translate }}
-          </div>
-        </mat-slide-toggle>
-      </mat-list-item>
+          </label>
+
+          <tn-slide-toggle
+            #toggle
+            color="primary"
+            [checked]="isChecked(item.value)"
+            [disabled]="isDisabled"
+            [testId]="toggleTestId(item)"
+            [ariaLabel]="item.label | translate"
+            (change)="onCheckboxChanged(item.value)"
+            (focusout)="onTouch()"
+          ></tn-slide-toggle>
+        </div>
+      </tn-list-item>
     }
-  </mat-list>
+  </tn-list>
 </div>
 
 <ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>

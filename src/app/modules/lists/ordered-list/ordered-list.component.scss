@@ -3,29 +3,30 @@
   padding: 8px 0;
 }
 
-mat-slide-toggle {
-  width: 100%;
-
-  ::ng-deep .mdc-form-field {
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    width: 100%;
-  }
-}
-
 .container-items {
   border: 1px solid var(--lines);
   box-sizing: border-box;
   overflow-y: auto;
 
-  .mat-mdc-list {
+  // tn-list ships a standalone card look (own background, rounded corners, vertical
+  // padding). Here it fills a bordered box, so flatten it back out.
+  tn-list {
+    background: none;
+    border-radius: 0;
+    padding: 0;
     width: 100%;
   }
 }
 
-.mat-mdc-list-item {
+tn-list-item {
   cursor: move;
-  padding-left: 0;
+
+  .toggle-row {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
 
   .toggle-label {
     align-items: center;

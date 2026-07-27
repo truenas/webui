@@ -76,23 +76,25 @@
         opacity: 0.5;
       }
 
+      // TEMP: until @truenas/ui-components exposes a dense / wrapping list variant.
       // tn-list-item is opinionated for standard lists (48px rows, 16px leading gap,
-      // single-line ellipsis). Override its internals to reproduce the compact, wrapping
-      // rows this drag-drop widget has always used. Revisit if the library exposes a
-      // dense / wrapping variant. See NAS-141021.
+      // single-line ellipsis); these reach into its internals to reproduce the compact,
+      // wrapping rows this drag-drop widget has always used. See NAS-141021.
       ::ng-deep .tn-list-item__content {
         min-height: 23px;
         padding: 12px 16px;
       }
 
-      ::ng-deep .tn-list-item__leading {
-        margin-right: 5px;
-      }
-
+      // TEMP: same follow-up as .tn-list-item__content above.
       ::ng-deep .tn-list-item__primary-text {
         color: var(--fg2);
         overflow: visible;
         white-space: normal;
+      }
+
+      .list-item-icon {
+        margin-right: 5px;
+        vertical-align: middle;
       }
 
       label {

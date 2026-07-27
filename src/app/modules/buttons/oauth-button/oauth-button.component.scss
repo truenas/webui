@@ -1,3 +1,10 @@
 :host {
   display: block;
 }
+
+// TEMP: until @truenas/ui-components ships a full-width input on tn-button.
+// Consumers stretch `.oauth-button` to the form width; propagate that to the
+// inner <button> so the rendered control still fills the row.
+:host ::ng-deep .oauth-button button {
+  width: 100%;
+}

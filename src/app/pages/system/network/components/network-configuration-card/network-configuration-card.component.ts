@@ -6,7 +6,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnIconComponent,
-  TnListComponent, TnListIconDirective, TnListItemComponent,
+  TnListComponent, TnListItemComponent,
 } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
 import { combineLatest } from 'rxjs';
@@ -40,7 +40,6 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     UiSearchDirective,
     TnListComponent,
     TnListItemComponent,
-    TnListIconDirective,
     TnIconComponent,
     TranslateModule,
     CastPipe,

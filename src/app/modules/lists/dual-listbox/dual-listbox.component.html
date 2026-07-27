@@ -1,3 +1,9 @@
+<!--
+  Item icons sit in tn-list-item's default slot rather than its [tnListIcon] slot:
+  that slot is gated behind a flag the library only sets from a DOM query in
+  ngAfterContentInit, which can never see content that has not been projected yet,
+  so it never renders. See NAS-141021.
+-->
 <div class="dual-list">
   <div class="listbox">
     <p>{{ sourceName() }}</p>
@@ -22,7 +28,7 @@
             (keydown)="onItemKeydown('available', idx, $event)"
           >
             @if (listItemIcon(); as icon) {
-              <tn-icon tnListIcon [name]="icon"></tn-icon>
+              <tn-icon class="list-item-icon" [name]="icon"></tn-icon>
             }
 
             <label>{{ getDisplayValue(item) }}</label>
@@ -105,7 +111,7 @@
             (keydown)="onItemKeydown('selected', idx, $event)"
           >
             @if (listItemIcon(); as icon) {
-              <tn-icon tnListIcon [name]="icon"></tn-icon>
+              <tn-icon class="list-item-icon" [name]="icon"></tn-icon>
             }
 
             <label>{{ getDisplayValue(item) }}</label>

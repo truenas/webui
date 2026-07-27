@@ -33,7 +33,14 @@
           <tn-list class="list" [dense]="true">
             <div class="section-title">{{ 'Default Route' | translate }}</div>
             <tn-list-item>
-              <tn-icon tnListIcon name="router" library="mdi" class="list-icon"></tn-icon>
+              <!--
+                The icon sits in tn-list-item's default slot rather than its
+                [tnListIcon] slot: that slot is gated behind a flag the library only
+                sets from a DOM query in ngAfterContentInit, which can never see
+                content that has not been projected yet, so it never renders.
+                See NAS-141021.
+              -->
+              <tn-icon name="router" library="mdi" class="list-icon"></tn-icon>
               <span class="label">{{ 'IPv4' | translate }}:</span>
               <ul class="value">
                 @for (ip of ipv4(); track ip) {
@@ -47,7 +54,7 @@
         @if (ipv6().length > 0) {
           <tn-list class="list" [dense]="true">
             <tn-list-item>
-              <tn-icon tnListIcon name="router" library="mdi" class="list-icon"></tn-icon>
+              <tn-icon name="router" library="mdi" class="list-icon"></tn-icon>
               <span class="label">{{ 'IPv6' | translate }}:</span>
               <ul class="value">
                 @for (ip of ipv6(); track ip) {
