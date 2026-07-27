@@ -118,7 +118,7 @@ export class ServiceSshComponent extends IxFormHostForm implements OnInit {
     });
   }
 
-  onAdvancedSettingsToggled(): void {
+  private onAdvancedSettingsToggled(): void {
     this.isBasicMode.update((isBasic) => !isBasic);
   }
 

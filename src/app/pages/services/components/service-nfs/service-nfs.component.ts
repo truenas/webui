@@ -36,6 +36,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
+/**
+ * The form's own value shape, which is NOT `NfsConfig`: `servers_auto` is a UI-only control
+ * (mapped from `managed_nfsd` and dropped in {@link ServiceNfsComponent.handleSubmit}).
+ * `<ix-form>` infers its generic from the snapshot, so typing it against the API shape would
+ * make `FormSubmitEvent` lie.
+ */
+type NfsFormValue = ReturnType<ServiceNfsComponent['form']['getRawValue']>;
+
 @Component({
   selector: 'ix-service-nfs',
   templateUrl: './service-nfs.component.html',
@@ -69,7 +77,7 @@ export class ServiceNfsComponent extends IxFormHostForm implements OnInit {
 
   protected readonly InputType = InputType;
   protected readonly dataLoading = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<NfsConfig> | null>(null);
+  protected readonly initialFormSnapshot = signal<Partial<NfsFormValue> | null>(null);
   protected readonly isAddSpnDisabled = signal(true);
   protected readonly hasNfsStatus = signal(false);
   protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
@@ -139,7 +147,7 @@ export class ServiceNfsComponent extends IxFormHostForm implements OnInit {
       )
       .subscribe(() => {
         this.setFieldDependencies();
-        this.initialFormSnapshot.set(this.form.getRawValue() as Partial<NfsConfig>);
+        this.initialFormSnapshot.set(this.form.getRawValue());
       });
   }
 

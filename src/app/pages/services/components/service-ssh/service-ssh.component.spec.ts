@@ -47,6 +47,12 @@ describe('ServiceSshComponent', () => {
   const hasSelect = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
     TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
   )).length > 0;
+  // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`.
+  const toggleAdvancedSettings = (): void => {
+    const [toggleAdvanced] = spectator.component.footerActions;
+    toggleAdvanced.onClick();
+    spectator.detectChanges();
+  };
 
   const createComponent = createRoutingFactory({
     component: ServiceSshComponent,
@@ -115,9 +121,20 @@ describe('ServiceSshComponent', () => {
     expect(await (await getCheckbox('tcpfwd')).isChecked()).toBe(false);
   });
 
+  it('exposes a single footer action that flips between Advanced and Basic Settings', () => {
+    expect(spectator.component.footerActions).toHaveLength(1);
+
+    const [toggleAdvanced] = spectator.component.footerActions;
+    expect(toggleAdvanced.label).toBe('Advanced Settings');
+    expect(toggleAdvanced.testId).toBe('toggle-advanced-options');
+
+    toggleAdvancedSettings();
+
+    expect(spectator.component.footerActions[0].label).toBe('Basic Settings');
+  });
+
   it('shows advanced settings when advanced mode is toggled', async () => {
-    spectator.component.onAdvancedSettingsToggled();
-    spectator.detectChanges();
+    toggleAdvancedSettings();
 
     expect(await (await getInput('tcpport')).getValue()).toBe('22');
     expect(await (await getCheckbox('passwordauth')).isChecked()).toBe(true);
@@ -159,8 +176,7 @@ describe('ServiceSshComponent', () => {
   });
 
   it('sends an update payload to websocket when advanced form is filled and saved', async () => {
-    spectator.component.onAdvancedSettingsToggled();
-    spectator.detectChanges();
+    toggleAdvancedSettings();
 
     await (await getSelect('bindiface')).selectOption('macvtap0');
     await (await getCheckbox('compression')).uncheck();
@@ -191,8 +207,7 @@ describe('ServiceSshComponent', () => {
   });
 
   it('submits an empty SFTP log level when the selection is cleared', async () => {
-    spectator.component.onAdvancedSettingsToggled();
-    spectator.detectChanges();
+    toggleAdvancedSettings();
 
     await (await getSelect('sftp_log_level')).selectOption('--');
 

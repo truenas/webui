@@ -20,6 +20,14 @@ import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
+/**
+ * The form's own value shape, which is NOT `UpsConfigUpdate` (controls are nullable and the
+ * mode-specific fields are stripped in {@link ServiceUpsComponent.handleSubmit}). `<ix-form>`
+ * infers its generic from the snapshot, so typing it against the API shape would make
+ * `FormSubmitEvent` lie.
+ */
+type UpsFormValue = ReturnType<ServiceUpsComponent['form']['getRawValue']>;
+
 @Component({
   selector: 'ix-service-ups',
   templateUrl: './service-ups.component.html',
@@ -49,7 +57,7 @@ export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
   protected readonly InputType = InputType;
 
   protected readonly dataLoading = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<UpsConfigUpdate> | null>(null);
+  protected readonly initialFormSnapshot = signal<Partial<UpsFormValue> | null>(null);
   protected readonly isMasterMode = signal(true);
 
   form = this.fb.group({
@@ -163,7 +171,7 @@ export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
       .subscribe({
         next: (config) => {
           this.form.patchValue(config);
-          this.initialFormSnapshot.set(this.form.getRawValue() as unknown as Partial<UpsConfigUpdate>);
+          this.initialFormSnapshot.set(this.form.getRawValue());
           this.dataLoading.set(false);
         },
         error: (error: unknown) => {

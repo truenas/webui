@@ -38,10 +38,17 @@ describe('ServiceSmbComponent', () => {
   let consoleWarnSpy: jest.SpyInstance | undefined;
 
   // <ix-form> logs a dev-only nested-changedValues notice because `bindip` is a FormArray;
-  // this form builds its payload from getRawValue(), so the notice is advisory here.
-  // Restored in afterEach so the spy cannot mask an unrelated warning in a later test.
+  // this form builds its payload from getRawValue(), so the notice is advisory here. Only that
+  // notice is swallowed — anything else still reaches the console — and the spy is restored in
+  // afterEach so it cannot mask an unrelated warning in a later test.
   const silenceNestedChangedValuesWarning = (): void => {
-    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const originalWarn = console.warn.bind(console) as (...args: unknown[]) => void;
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
+      if (typeof args[0] === 'string' && args[0].startsWith('[ix-form]')) {
+        return;
+      }
+      originalWarn(...args);
+    });
   };
 
   const tncConfigSignal = signal<TruenasConnectConfig>({
@@ -57,6 +64,12 @@ describe('ServiceSmbComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`.
+  const toggleAdvancedSettings = (): void => {
+    const [toggleAdvanced] = spectator.component.footerActions;
+    toggleAdvanced.onClick();
+    spectator.detectChanges();
+  };
 
   const createComponent = createComponentFactory({
     component: ServiceSmbComponent,
@@ -164,9 +177,20 @@ describe('ServiceSmbComponent', () => {
     expect(await (await getCheckbox('ntlmv1_auth')).isChecked()).toBe(false);
   });
 
+  it('exposes a single footer action that flips between Advanced and Basic Settings', () => {
+    expect(spectator.component.footerActions).toHaveLength(1);
+
+    const [toggleAdvanced] = spectator.component.footerActions;
+    expect(toggleAdvanced.label).toBe('Advanced Settings');
+    expect(toggleAdvanced.testId).toBe('toggle-advanced-settings');
+
+    toggleAdvancedSettings();
+
+    expect(spectator.component.footerActions[0].label).toBe('Basic Settings');
+  });
+
   it('shows advanced settings when advanced mode is toggled', async () => {
-    spectator.component.onAdvancedSettingsToggled();
-    spectator.detectChanges();
+    toggleAdvancedSettings();
 
     expect(await (await getInput('netbiosname')).getValue()).toBe('truenas');
     expect(await (await getInput('workgroup')).getValue()).toBe('WORKGROUP');
@@ -228,8 +252,7 @@ describe('ServiceSmbComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    spectator.component.onAdvancedSettingsToggled();
-    spectator.detectChanges();
+    toggleAdvancedSettings();
 
     const searchCheckbox = await getCheckbox('spotlight_search');
     expect(await searchCheckbox.isChecked()).toBe(false);
@@ -249,8 +272,7 @@ describe('ServiceSmbComponent', () => {
     await aliasChips.addChip('truenas-alias');
     await aliasChips.addChip('truenas-alias2');
 
-    spectator.component.onAdvancedSettingsToggled();
-    spectator.detectChanges();
+    toggleAdvancedSettings();
     const searchCheckbox = await getCheckbox('spotlight_search');
     expect(await searchCheckbox.isChecked()).toBe(true);
 
@@ -285,8 +307,7 @@ describe('ServiceSmbComponent', () => {
 
   it('sends an update payload to websocket when advanced form is filled and saved', async () => {
     silenceNestedChangedValuesWarning();
-    spectator.component.onAdvancedSettingsToggled();
-    spectator.detectChanges();
+    toggleAdvancedSettings();
 
     const bindIpList = await loader.getHarness(IxListHarness.with({ label: 'Bind IP Addresses' }));
     await bindIpList.pressAddButton();
@@ -358,8 +379,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const searchCheckbox = await getCheckbox('spotlight_search');
       expect(await searchCheckbox.isDisabled()).toBe(true);
@@ -374,8 +394,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const searchCheckbox = await getCheckbox('spotlight_search');
       expect(await searchCheckbox.isDisabled()).toBe(false);
@@ -390,8 +409,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const searchCheckbox = await getCheckbox('spotlight_search');
       expect(await searchCheckbox.isDisabled()).toBe(true);
@@ -417,8 +435,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const notice = spectator.query('.truenas-connect-notice');
       expect(notice).toBeTruthy();
@@ -433,8 +450,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const notice = spectator.query('.truenas-connect-notice');
       expect(notice).toBeFalsy();
@@ -448,8 +464,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const truenasConnectService = spectator.inject(TruenasConnectService);
 
@@ -467,8 +482,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const truenasConnectService = spectator.inject(TruenasConnectService);
 
@@ -486,8 +500,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const truenasConnectService = spectator.inject(TruenasConnectService);
 
@@ -505,8 +518,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const truenasConnectService = spectator.inject(TruenasConnectService);
 
@@ -524,8 +536,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const noticeLink = spectator.query('.truenas-connect-link') as HTMLElement;
       expect(noticeLink.getAttribute('role')).toBe('button');
@@ -543,8 +554,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const searchCheckbox = await getCheckbox('spotlight_search');
       expect(await searchCheckbox.isDisabled()).toBe(false);
@@ -562,8 +572,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const notice = spectator.query('.truenas-connect-notice');
       expect(notice).toBeFalsy();
@@ -580,8 +589,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const searchCheckbox = await getCheckbox('spotlight_search');
       expect(await searchCheckbox.isDisabled()).toBe(true);
@@ -600,8 +608,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const statefulFailoverCheckbox = await loader.getHarnessOrNull(
         TnCheckboxHarness.with({ selector: '[formControlName="stateful_failover"]' }),
@@ -616,8 +623,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const statefulFailoverCheckbox = await getCheckbox('stateful_failover');
       expect(await statefulFailoverCheckbox.isDisabled()).toBe(false);
@@ -650,8 +656,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const statefulFailoverCheckbox = await getCheckbox('stateful_failover');
       expect(await statefulFailoverCheckbox.isDisabled()).toBe(true);
@@ -684,8 +689,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       const statefulFailoverCheckbox = await getCheckbox('stateful_failover');
       expect(await statefulFailoverCheckbox.isDisabled()).toBe(true);
@@ -698,8 +702,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      spectator.component.onAdvancedSettingsToggled();
-      spectator.detectChanges();
+      toggleAdvancedSettings();
 
       // Initially enabled (no incompatible shares, minimum protocol is SMB2)
       const statefulFailoverCheckbox = await getCheckbox('stateful_failover');

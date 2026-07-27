@@ -85,6 +85,12 @@ describe('ServiceFtpComponent', () => {
   const hasCheckbox = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   )).length > 0;
+  // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`.
+  const toggleAdvancedOptions = (): void => {
+    const [toggleAdvanced] = spectator.component.footerActions;
+    toggleAdvanced.onClick();
+    spectator.detectChanges();
+  };
 
   const createComponent = createRoutingFactory({
     component: ServiceFtpComponent,
@@ -137,9 +143,20 @@ describe('ServiceFtpComponent', () => {
     expect(await (await getInput('timeout')).getValue()).toBe('600');
   });
 
+  it('exposes a single footer action that flips between Advanced and Basic Options', () => {
+    expect(spectator.component.footerActions).toHaveLength(1);
+
+    const [toggleAdvanced] = spectator.component.footerActions;
+    expect(toggleAdvanced.label).toBe('Advanced Options');
+    expect(toggleAdvanced.testId).toBe('toggle-advanced-options');
+
+    toggleAdvancedOptions();
+
+    expect(spectator.component.footerActions[0].label).toBe('Basic Options');
+  });
+
   it('shows advanced options when advanced mode is toggled', async () => {
-    spectator.component.onToggleAdvancedOptions();
-    spectator.detectChanges();
+    toggleAdvancedOptions();
 
     expect(await (await getSelect('ssltls_certificate')).getDisplayText()).toBe('Secure certificate');
 
@@ -178,8 +195,7 @@ describe('ServiceFtpComponent', () => {
   });
 
   it('updates config for FTP service when form is submitted', async () => {
-    spectator.component.onToggleAdvancedOptions();
-    spectator.detectChanges();
+    toggleAdvancedOptions();
 
     await (await getCheckbox('tls_opt_ip_address_required')).check();
     await (await getInput('anonuserdlbw')).setValue('5');
@@ -194,8 +210,7 @@ describe('ServiceFtpComponent', () => {
   });
 
   it('does not show TLS fields when TLS is off', async () => {
-    spectator.component.onToggleAdvancedOptions();
-    spectator.detectChanges();
+    toggleAdvancedOptions();
 
     await (await getCheckbox('tls')).uncheck();
 

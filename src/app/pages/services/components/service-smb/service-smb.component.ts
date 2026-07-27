@@ -44,6 +44,14 @@ interface BindIp {
   bindIp: string;
 }
 
+/**
+ * The form's own value shape, which is deliberately NOT `SmbConfigUpdate`: `bindip` is a
+ * FormArray of `{ bindIp }` rows and `spotlight_search` stands in for `search_protocols`
+ * (both reshaped in {@link ServiceSmbComponent.handleSubmit}). `<ix-form>` infers its generic
+ * from the snapshot, so typing it against the API shape would make `FormSubmitEvent` lie.
+ */
+type SmbFormValue = ReturnType<ServiceSmbComponent['form']['getRawValue']>;
+
 @Component({
   selector: 'ix-service-smb',
   templateUrl: './service-smb.component.html',
@@ -78,7 +86,7 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly dataLoading = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<SmbConfigUpdate> | null>(null);
+  protected readonly initialFormSnapshot = signal<Partial<SmbFormValue> | null>(null);
   protected hasIncompatibleShares = signal(false);
   protected isSmb1Enabled = signal(false);
   protected readonly minimumProtocolOptions = mapToOptions(smbMinProtocolLabels, this.translate);
@@ -295,7 +303,7 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
           bindip: config.bindip.map((ip) => ({ bindIp: ip })),
         });
         this.isSmb1Enabled.set(config.minimum_protocol === SmbMinProtocol.Smb1);
-        this.initialFormSnapshot.set(this.form.getRawValue() as unknown as Partial<SmbConfigUpdate>);
+        this.initialFormSnapshot.set(this.form.getRawValue());
         this.dataLoading.set(false);
       },
       error: (error: unknown) => {
@@ -315,7 +323,7 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
     this.form.controls.bindip.removeAt(index);
   }
 
-  onAdvancedSettingsToggled(): void {
+  private onAdvancedSettingsToggled(): void {
     this.isBasicMode.update((isBasic) => !isBasic);
   }
 

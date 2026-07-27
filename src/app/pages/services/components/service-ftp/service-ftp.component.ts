@@ -162,7 +162,7 @@ export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
     };
   };
 
-  onToggleAdvancedOptions(): void {
+  private onToggleAdvancedOptions(): void {
     this.isAdvancedMode.update((isAdvanced) => !isAdvanced);
   }
 
