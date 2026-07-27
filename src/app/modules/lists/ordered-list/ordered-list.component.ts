@@ -19,6 +19,17 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { normalizeTestId } from 'app/modules/test-id/normalize-test-id.utils';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
+interface OrderedOption extends Option {
+  /**
+   * Options here are interface names (`eth0`, `bond0`), which the library would
+   * leave as-is where `[ixTest]` produced `eth-0`. Normalizing once, when the
+   * options arrive, keeps `toggle-lag-ports-eth-0` intact without rebuilding the
+   * array on every change detection pass. The `toggle` prefix comes from
+   * `tn-slide-toggle`. See {@link normalizeTestId}.
+   */
+  testId: string[];
+}
+
 @Component({
   selector: 'ix-ordered-listbox',
   styleUrls: ['./ordered-list.component.scss'],
@@ -49,7 +60,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   readonly minHeight = input('100px');
   readonly maxHeight = input('300px');
 
-  items: Option[];
+  items: OrderedOption[];
 
   isDisabled = false;
   value: BaseOptionValueType[];
@@ -83,16 +94,6 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
     this.cdr.markForCheck();
   }
 
-  /**
-   * Options here are interface names (`eth0`, `bond0`), which the library would
-   * leave as-is where `[ixTest]` produced `eth-0`. Normalizing up front keeps
-   * `toggle-lag-ports-eth-0` intact; the `toggle` prefix comes from
-   * `tn-slide-toggle`. See {@link normalizeTestId}.
-   */
-  protected toggleTestId(item: Option): string[] {
-    return normalizeTestId([this.controlDirective.name, item.label]);
-  }
-
   isChecked(value: BaseOptionValueType): boolean {
     return this.value.includes(value);
   }
@@ -109,7 +110,10 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
 
   ngOnInit(): void {
     this.options().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((options) => {
-      this.items = options;
+      this.items = options.map((option) => ({
+        ...option,
+        testId: normalizeTestId([this.controlDirective.name, option.label]),
+      }));
       this.orderOptions();
       this.cdr.markForCheck();
     });

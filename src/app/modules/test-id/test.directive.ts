@@ -87,8 +87,6 @@ export class TestDirective {
       case 'tn-button':
       case 'tn-icon-button':
         return 'button';
-      case 'tn-menu-item':
-        return 'menu-item';
       case 'tn-select':
         return 'select';
       case 'div':

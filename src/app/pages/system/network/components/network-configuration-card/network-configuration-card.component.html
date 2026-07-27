@@ -34,11 +34,9 @@
             <div class="section-title">{{ 'Default Route' | translate }}</div>
             <tn-list-item>
               <!--
-                The icon sits in tn-list-item's default slot rather than its
-                [tnListIcon] slot: that slot is gated behind a flag the library only
-                sets from a DOM query in ngAfterContentInit, which can never see
-                content that has not been projected yet, so it never renders.
-                See NAS-141021.
+                TEMP: the icons sit in tn-list-item's default slot rather than its
+                [tnListIcon] slot, which never renders. Same library bug as in
+                dual-listbox.component.html, tracked under NAS-141021.
               -->
               <tn-icon name="router" library="mdi" class="list-icon"></tn-icon>
               <span class="label">{{ 'IPv4' | translate }}:</span>

@@ -16,6 +16,9 @@ import { OauthProviderData } from 'app/pages/credentials/backup-credentials/clou
   templateUrl: './oauth-button.component.html',
   styleUrls: ['./oauth-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.full-width]': 'fullWidth()',
+  },
   imports: [
     TnButtonComponent,
     TranslateModule,
@@ -32,6 +35,8 @@ export class OauthButtonComponent implements OnDestroy {
   readonly isLoggedIn = input(false);
   readonly disabled = input(false);
   readonly oauthUrl = input<string>();
+  /** Stretches the rendered button to the width of its container. */
+  readonly fullWidth = input(false);
   // TODO: Figure out in another way.
   readonly testId = input.required<string>();
 

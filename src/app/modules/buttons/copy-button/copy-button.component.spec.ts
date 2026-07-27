@@ -80,11 +80,15 @@ describe('CopyButtonComponent', () => {
 
     // The menu-item test ids are the ones the old `<button mat-menu-item ixTest="copy-text">`
     // resolved to. The prefix is now composed by the library, so pin the resolved values.
+    // This asserts the Release Engineering contract, so reading `data-test` is the point
+    // of the test — the items themselves are still located by their rendered element.
     it('keeps the legacy test ids on the menu items', async () => {
       await openMenu();
 
-      expect(document.querySelector('[data-test="button-copy-text"]')).not.toBeNull();
-      expect(document.querySelector('[data-test="button-copy-json-text"]')).not.toBeNull();
+      const items = Array.from(document.querySelectorAll('.tn-menu-item'));
+
+      expect(items.map((item) => item.getAttribute('data-test')))
+        .toEqual(['button-copy-text', 'button-copy-json-text']);
     });
 
     it('copies the plain text when Copy Text is selected', async () => {

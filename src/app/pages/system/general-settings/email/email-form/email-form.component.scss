@@ -7,9 +7,6 @@
   }
 }
 
-:host ::ng-deep {
-  .oauth-button {
-    margin: 10px 0;
-    width: 100%;
-  }
+.oauth-button {
+  margin: 10px 0;
 }

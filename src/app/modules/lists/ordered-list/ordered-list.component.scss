@@ -24,15 +24,27 @@ tn-list-item {
   .toggle-row {
     align-items: center;
     display: flex;
-    justify-content: space-between;
+    gap: 2px;
     width: 100%;
   }
 
-  .toggle-label {
-    align-items: center;
-    cursor: move;
-    display: flex;
-    gap: 2px;
+  .drag-handle {
+    flex-shrink: 0;
+  }
+
+  .toggle {
+    flex: 1;
+    min-width: 0;
+  }
+
+  // TEMP: until @truenas/ui-components ships a full-width variant of tn-slide-toggle.
+  // The component is inline-flex and shrink-wraps around its label and track; stretch
+  // it so the option name sits at the start of the row and the track at the end, the
+  // way this widget rendered with <mat-slide-toggle>. See NAS-141021.
+  .toggle ::ng-deep .tn-slide-toggle,
+  .toggle ::ng-deep .tn-slide-toggle__label {
+    justify-content: space-between;
+    width: 100%;
   }
 }
 

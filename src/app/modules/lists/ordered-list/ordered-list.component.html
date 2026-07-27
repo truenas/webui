@@ -17,30 +17,21 @@
     @for (item of items; track item) {
       <tn-list-item cdkDrag>
         <!--
-          Everything sits in tn-list-item's default slot rather than its
-          [tnListIcon] / [tnListItemTrailing] slots: those slots are gated behind
-          flags the library only sets from a DOM query in ngAfterContentInit, which
-          can never see content that has not been projected yet, so they never
-          render. See NAS-141021.
+          TEMP: the drag handle sits in tn-list-item's default slot rather than its
+          [tnListIcon] slot, which never renders. Same library bug as in
+          dual-listbox.component.html, tracked under NAS-141021.
         -->
         <div class="toggle-row">
-          <!--
-            `for` points at the toggle's own input so that clicking the option name
-            still flips it, the way it did when this markup lived inside
-            <mat-slide-toggle>'s label.
-          -->
-          <label class="toggle-label" [attr.for]="toggle.id">
-            <tn-icon name="drag-vertical" library="mdi"></tn-icon>
-            {{ item.label | translate }}
-          </label>
+          <tn-icon class="drag-handle" name="drag-vertical" library="mdi"></tn-icon>
 
           <tn-slide-toggle
-            #toggle
+            class="toggle"
             color="primary"
+            labelPosition="before"
+            [label]="item.label | translate"
             [checked]="isChecked(item.value)"
             [disabled]="isDisabled"
-            [testId]="toggleTestId(item)"
-            [ariaLabel]="item.label | translate"
+            [testId]="item.testId"
             (change)="onCheckboxChanged(item.value)"
             (focusout)="onTouch()"
           ></tn-slide-toggle>

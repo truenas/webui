@@ -1,8 +1,11 @@
 <!--
-  Item icons sit in tn-list-item's default slot rather than its [tnListIcon] slot:
-  that slot is gated behind a flag the library only sets from a DOM query in
-  ngAfterContentInit, which can never see content that has not been projected yet,
-  so it never renders. See NAS-141021.
+  TEMP: item icons sit in tn-list-item's default slot rather than its [tnListIcon]
+  slot. That slot is gated behind a flag @truenas/ui-components only sets from a DOM
+  query in ngAfterContentInit, which can never see content that has not been projected
+  yet, so it never renders. This is the canonical explanation for the same workaround
+  in ordered-list.component.html and network-configuration-card.component.html; all
+  three come out once the library fixes its content-query flags. Tracked under
+  NAS-141021.
 -->
 <div class="dual-list">
   <div class="listbox">

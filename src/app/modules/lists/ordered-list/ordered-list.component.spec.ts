@@ -49,10 +49,10 @@ describe('OrderedListboxComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('lists every option, with the selected ones hoisted to the top', () => {
-    const labels = spectator.queryAll('tn-list-item').map((item) => item.textContent?.trim());
+  it('lists every option, with the selected ones hoisted to the top', async () => {
+    const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
 
-    expect(labels).toEqual(['eth2', 'eth0', 'eth1']);
+    expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth2', 'eth0', 'eth1']);
   });
 
   // `[ixTest]` on the old `<mat-slide-toggle>` resolved to `toggle-<control>-<option>`,
@@ -86,7 +86,7 @@ describe('OrderedListboxComponent', () => {
   });
 
   it('toggles an option when its label is clicked', () => {
-    spectator.click(spectator.queryAll('label.toggle-label')[1]);
+    spectator.click(spectator.queryAll('.tn-slide-toggle__label-text')[1]);
 
     expect(onChange).toHaveBeenCalledWith(['eth2', 'eth0']);
   });
