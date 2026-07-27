@@ -12,11 +12,11 @@ import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServiceWebshareComponent } from './service-webshare.component';
 
 describe('ServiceWebshareComponent', () => {
@@ -52,6 +52,7 @@ describe('ServiceWebshareComponent', () => {
         mockCall('webshare.update', mockWebShareConfig),
       ]),
       ...ixFormTestingProviders(),
+      mockProvider(ErrorHandlerService),
       { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(TruenasConnectService, {
         config: tnConnectConfig,
@@ -96,12 +97,12 @@ describe('ServiceWebshareComponent', () => {
 
   it('handles error when loading config fails', () => {
     const api = spectator.inject(ApiService);
-    const formErrorHandler = spectator.inject(FormErrorHandlerService);
+    const errorHandler = spectator.inject(ErrorHandlerService);
     jest.spyOn(api, 'call').mockReturnValue(throwError(() => new Error('Failed to load config')));
 
     spectator.component.ngOnInit();
 
-    expect(formErrorHandler.handleValidationErrors).toHaveBeenCalled();
+    expect(errorHandler.showErrorModal).toHaveBeenCalled();
   });
 
   it('handles error when saving config fails', () => {

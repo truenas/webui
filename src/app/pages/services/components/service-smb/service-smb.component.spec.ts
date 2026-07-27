@@ -35,6 +35,14 @@ describe('ServiceSmbComponent', () => {
   let loader: HarnessLoader;
   let api: ApiService;
   let store$: MockStore;
+  let consoleWarnSpy: jest.SpyInstance | undefined;
+
+  // <ix-form> logs a dev-only nested-changedValues notice because `bindip` is a FormArray;
+  // this form builds its payload from getRawValue(), so the notice is advisory here.
+  // Restored in afterEach so the spy cannot mask an unrelated warning in a later test.
+  const silenceNestedChangedValuesWarning = (): void => {
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+  };
 
   const tncConfigSignal = signal<TruenasConnectConfig>({
     status: TruenasConnectStatus.Configured,
@@ -141,6 +149,11 @@ describe('ServiceSmbComponent', () => {
     store$ = spectator.inject(MockStore);
   });
 
+  afterEach(() => {
+    consoleWarnSpy?.mockRestore();
+    consoleWarnSpy = undefined;
+  });
+
   it('loads and shows current settings for Smb service when form is opened', async () => {
     expect(api.call).toHaveBeenCalledWith('smb.config');
 
@@ -151,7 +164,7 @@ describe('ServiceSmbComponent', () => {
     expect(await (await getCheckbox('ntlmv1_auth')).isChecked()).toBe(false);
   });
 
-  it('shows advanced settings when Advanced Settings button is pressed', async () => {
+  it('shows advanced settings when advanced mode is toggled', async () => {
     spectator.component.onAdvancedSettingsToggled();
     spectator.detectChanges();
 
@@ -223,9 +236,7 @@ describe('ServiceSmbComponent', () => {
   });
 
   it('sends an update payload to websocket when basic form is filled and saved', async () => {
-    // <ix-form> logs a dev-only nested-changedValues notice because `bindip` is a FormArray;
-    // this form builds its payload from getRawValue(), so the notice is advisory here.
-    jest.spyOn(console, 'warn').mockImplementation();
+    silenceNestedChangedValuesWarning();
     await (await getInput('netbiosname')).setValue('truenas-scale');
     await (await getInput('description')).setValue('TrueNAS SCALE Server');
     await (await getSelect('minimum_protocol')).selectOption('SMB1 – legacy clients (not recommended)');
@@ -273,9 +284,7 @@ describe('ServiceSmbComponent', () => {
   });
 
   it('sends an update payload to websocket when advanced form is filled and saved', async () => {
-    // <ix-form> logs a dev-only nested-changedValues notice because `bindip` is a FormArray;
-    // this form builds its payload from getRawValue(), so the notice is advisory here.
-    jest.spyOn(console, 'warn').mockImplementation();
+    silenceNestedChangedValuesWarning();
     spectator.component.onAdvancedSettingsToggled();
     spectator.detectChanges();
 

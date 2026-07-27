@@ -115,7 +115,7 @@ describe('ServiceSshComponent', () => {
     expect(await (await getCheckbox('tcpfwd')).isChecked()).toBe(false);
   });
 
-  it('shows advanced settings when Advanced Settings button is pressed', async () => {
+  it('shows advanced settings when advanced mode is toggled', async () => {
     spectator.component.onAdvancedSettingsToggled();
     spectator.detectChanges();
 

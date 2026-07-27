@@ -15,11 +15,11 @@ import { helptextServiceWebshare } from 'app/helptext/services/components/servic
 import { WebShareConfig, WebShareConfigUpdate } from 'app/interfaces/webshare-config.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
-  FormSubmitEvent, IxFormComponent, SubmitResult,
+  IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-service-webshare',
@@ -41,7 +41,7 @@ export class ServiceWebshareComponent extends IxFormHostForm implements OnInit {
   readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
 
   private api = inject(ApiService);
-  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -99,13 +99,15 @@ export class ServiceWebshareComponent extends IxFormHostForm implements OnInit {
       },
       error: (error: unknown) => {
         this.dataLoading.set(false);
-        this.formErrorHandler.handleValidationErrors(error, this.form);
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
 
-  protected handleSubmit = (event: FormSubmitEvent<WebShareConfigUpdate>): SubmitResult => ({
-    request$: this.api.call('webshare.update', [event.allValues]),
+  // getRawValue() rather than value: `search` is disabled while TrueNAS Connect is not
+  // configured, and the API still expects it in the payload (as false).
+  protected handleSubmit = (): SubmitResult => ({
+    request$: this.api.call('webshare.update', [this.form.getRawValue()]),
     successMessage: this.translate.instant('Service configuration saved'),
     closeWith: () => true,
   });

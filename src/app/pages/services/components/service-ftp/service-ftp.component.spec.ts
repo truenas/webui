@@ -137,7 +137,7 @@ describe('ServiceFtpComponent', () => {
     expect(await (await getInput('timeout')).getValue()).toBe('600');
   });
 
-  it('shows advanced options when Advanced Options button is pressed', async () => {
+  it('shows advanced options when advanced mode is toggled', async () => {
     spectator.component.onToggleAdvancedOptions();
     spectator.detectChanges();
 
