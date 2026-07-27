@@ -47,12 +47,27 @@ export type SupportedFormControlHarness = InstanceType<(typeof supportedFormCont
 
 export type IxFormBasicValueType = string | number | boolean | string[] | number[];
 
-export async function indexControlsByLabel(
-  controls: SupportedFormControlHarness[],
-): Promise<Record<string, SupportedFormControlHarness>> {
-  const result: Record<string, SupportedFormControlHarness> = {};
+/**
+ * All four helpers below take the {@link IxFormControlHarness} surface rather than the narrower
+ * {@link SupportedFormControlHarness} union: it is the only surface they use, and forms part-way
+ * through the tn-* migration index a mix of ix-* harnesses and {@link TnFormControlHarness}, which
+ * is not a member of that union. Callers holding the narrower type still pass without a cast.
+ */
+export async function indexControlsByLabel<T extends IxFormControlHarness>(
+  controls: T[],
+): Promise<Record<string, T>> {
+  const result: Record<string, T> = {};
   for (const control of controls) {
     const label = await control.getLabelText();
+    // Label-less controls all index under '', so a second one would silently replace the first
+    // and every lookup by label would quietly target the wrong control. Fail loudly instead.
+    if (label in result) {
+      throw new Error(
+        label
+          ? `Duplicate form control label "${label}" — indexing by label cannot disambiguate them.`
+          : 'More than one form control has no label — give them labels, or query them directly.',
+      );
+    }
     result[label] = control;
   }
 
@@ -60,26 +75,24 @@ export async function indexControlsByLabel(
 }
 
 export async function getControlValues(
-  controlsDict: Record<string, SupportedFormControlHarness>,
+  controlsDict: Record<string, IxFormControlHarness>,
 ): Promise<Record<string, IxFormBasicValueType>> {
   const result: Record<string, IxFormBasicValueType> = {};
   // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const label in controlsDict) {
-    const control = controlsDict[label] as IxFormControlHarness;
-
-    result[label] = await control.getValue() as IxFormBasicValueType;
+    result[label] = await controlsDict[label].getValue() as IxFormBasicValueType;
   }
 
   return result;
 }
 
 export async function fillControlValues(
-  controlsDict: Record<string, SupportedFormControlHarness>,
+  controlsDict: Record<string, IxFormControlHarness>,
   values: Record<string, unknown>,
 ): Promise<void> {
   // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const label in values) {
-    const control = controlsDict[label] as IxFormControlHarness;
+    const control = controlsDict[label];
 
     if (!control) {
       throw new Error(`Could not find control with label ${label}.`);
@@ -90,14 +103,12 @@ export async function fillControlValues(
 }
 
 export async function getDisabledStates(
-  controlsDict: Record<string, SupportedFormControlHarness>,
+  controlsDict: Record<string, IxFormControlHarness>,
 ): Promise<Record<string, boolean>> {
   const result: Record<string, boolean> = {};
   // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const label in controlsDict) {
-    const control = controlsDict[label] as IxFormControlHarness;
-
-    result[label] = await control.isDisabled();
+    result[label] = await controlsDict[label].isDisabled();
   }
 
   return result;

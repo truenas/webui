@@ -16,11 +16,11 @@
     <tn-checkbox
       formControlName="updateGlobalSettings"
       [testId]="'update-global-settings'"
-      [label]="updateGlobalSettingsAriaLabel"
+      [label]="updateGlobalSettingsAriaLabel()"
     >
       <div tnCheckboxLabel>
-        <span class="checkbox-label">{{ updateGlobalSettingsLabel }}</span>
-        <span class="checkbox-hint">{{ updateGlobalSettingsHint }}</span>
+        <span class="checkbox-label">{{ updateGlobalSettingsLabel | translate }}</span>
+        <span class="checkbox-hint">{{ updateGlobalSettingsHint | translate }}</span>
       </div>
     </tn-checkbox>
 

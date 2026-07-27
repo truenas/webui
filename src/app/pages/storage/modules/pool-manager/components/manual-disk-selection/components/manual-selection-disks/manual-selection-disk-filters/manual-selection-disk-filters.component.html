@@ -27,6 +27,11 @@
         ></tn-select>
       </tn-form-field>
     </div>
+    <!--
+      Label-less by design: the checkbox carries its own label. The wrapper is not decoration —
+      it keeps this control on the same 12px field rhythm as its siblings (see the SCSS) and
+      keeps it addressable by label through TnFormControlHarness, which hosts on tn-form-field.
+    -->
     <tn-form-field>
       <tn-checkbox
         formControlName="sedCapable"

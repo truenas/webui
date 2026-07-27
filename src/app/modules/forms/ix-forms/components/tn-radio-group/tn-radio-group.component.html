@@ -1,11 +1,11 @@
-<div role="radiogroup" [attr.aria-label]="ariaLabel()">
-  @for (option of options(); track option.value) {
+<div role="radiogroup" [attr.aria-label]="resolvedAriaLabel()">
+  @for (item of renderItems(); track item.trackBy) {
     <tn-radio
       [formControl]="innerControl"
       [name]="name()"
-      [value]="option.value"
-      [label]="option.label"
-      [testId]="optionTestId(option)"
+      [value]="item.option.value"
+      [label]="item.option.label"
+      [testId]="optionTestId(item.option)"
     ></tn-radio>
   }
 </div>

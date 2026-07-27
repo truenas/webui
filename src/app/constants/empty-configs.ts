@@ -3,14 +3,6 @@ import { tnIconMarker } from '@truenas/ui-components';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 
-export const storageEmptyConfig = {
-  type: EmptyType.NoPageData,
-  icon: tnIconMarker('dns', 'material'),
-  large: true,
-  title: T('No Pools'),
-  message: T('Storage features in TrueNAS require at least one Pool to exist. <br>\nA Pool is a group of disks working together to store and protect your data. <br>\nOnce you have a pool, this page will provide an overview of your pool’s health and status.'),
-} as EmptyConfig;
-
 export const datasetEmptyConfig = {
   type: EmptyType.NoPageData,
   large: true,

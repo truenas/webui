@@ -6,7 +6,7 @@ import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-f
 import {
   fillControlValues,
   getControlValues, getDisabledStates,
-  indexControlsByLabel, IxFormBasicValueType, SupportedFormControlHarness,
+  indexControlsByLabel, IxFormBasicValueType,
   supportedFormControlSelectors,
 } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
@@ -14,6 +14,16 @@ import { ConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-mana
 import { ExistingConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/existing-configuration-preview/existing-configuration-preview.harness';
 import { NewDevicesConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/new-devices/new-devices-configuration-preview.harness';
 import { ReviewWizardStepHarness } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.harness';
+
+/**
+ * Every control-harness type a wizard step may contain, typed once as harnesses that expose the
+ * {@link IxFormControlHarness} surface. This is the one place the heterogeneous list has to be
+ * described for `locatorForAll`; keeping the assertion here means the callers below need none.
+ */
+const controlHarnessTypes = [
+  ...supportedFormControlSelectors,
+  TnFormControlHarness,
+] as unknown as ComponentHarnessConstructor<ComponentHarness & IxFormControlHarness>[];
 
 /**
  * Lightweight stand-in for the old MatStepHarness. tn-stepper renders only the
@@ -65,14 +75,11 @@ export class PoolManagerHarness extends ComponentHarness {
     // wrapped in `tn-form-field` and driven through TnFormControlHarness so a
     // step mixing ix-* and tn-* controls can still be filled/read by label.
     const controlsByTypes = await parallel(() => {
-      return [...supportedFormControlSelectors, TnFormControlHarness].map((selector) => {
-        return this.locatorForAll(selector as ComponentHarnessConstructor<ComponentHarness>)();
-      });
+      return controlHarnessTypes.map((harnessType) => this.locatorForAll(harnessType)());
     });
 
     const controls = controlsByTypes.flatMap((controlsInType) => controlsInType.flat());
-    return indexControlsByLabel(controls as unknown as SupportedFormControlHarness[]) as
-      Promise<Record<string, IxFormControlHarness>>;
+    return indexControlsByLabel(controls);
   }
 
   async getConfigurationPreviewSummary(): Promise<Record<string, string>> {
@@ -109,7 +116,7 @@ export class PoolManagerHarness extends ComponentHarness {
 
   async fillStep(values: Record<string, unknown>): Promise<void> {
     const controls = await this.getControlHarnessesInStep();
-    return fillControlValues(controls as Record<string, SupportedFormControlHarness>, values);
+    return fillControlValues(controls, values);
   }
 
   async getControl(label: string): Promise<IxFormControlHarness> {
@@ -119,11 +126,11 @@ export class PoolManagerHarness extends ComponentHarness {
 
   async getStepValues(): Promise<Record<string, IxFormBasicValueType>> {
     const controlsDict = await this.getControlHarnessesInStep();
-    return getControlValues(controlsDict as Record<string, SupportedFormControlHarness>);
+    return getControlValues(controlsDict);
   }
 
   async getStepDisabledStates(): Promise<Record<string, boolean>> {
     const controls = await this.getControlHarnessesInStep();
-    return getDisabledStates(controls as Record<string, SupportedFormControlHarness>);
+    return getDisabledStates(controls);
   }
 }

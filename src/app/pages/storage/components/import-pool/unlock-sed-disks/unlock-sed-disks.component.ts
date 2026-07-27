@@ -5,6 +5,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
@@ -73,8 +74,11 @@ export class UnlockSedDisksComponent {
 
   protected readonly Role = Role;
 
-  protected readonly updateGlobalSettingsLabel = this.translate.instant('Update global settings (applies to all disks/pools)');
-  protected readonly updateGlobalSettingsHint = this.translate.instant('Save this password to the system configuration for future use with these disks.');
+  protected readonly updateGlobalSettingsLabel = T('Update global settings (applies to all disks/pools)');
+  protected readonly updateGlobalSettingsHint = T('Save this password to the system configuration for future use with these disks.');
+
+  /** Re-translated on language change, which a plain `instant()` field initializer would miss. */
+  private readonly currentLang = toSignal(this.translate.onLangChange, { initialValue: null });
 
   /**
    * `tn-checkbox` emits `label` as the input's `aria-label`, which overrides the projected content
@@ -83,9 +87,12 @@ export class UnlockSedDisksComponent {
    * component API forces.) Composed through a translatable pattern so clause order and
    * punctuation stay in the translator's hands rather than being hard-coded as `+ '. ' +`.
    */
-  protected readonly updateGlobalSettingsAriaLabel = this.translate.instant('{label}. {hint}', {
-    label: this.updateGlobalSettingsLabel,
-    hint: this.updateGlobalSettingsHint,
+  protected readonly updateGlobalSettingsAriaLabel = computed(() => {
+    this.currentLang();
+    return this.translate.instant('{label}. {hint}', {
+      label: this.translate.instant(this.updateGlobalSettingsLabel),
+      hint: this.translate.instant(this.updateGlobalSettingsHint),
+    });
   });
 
   protected form = this.formBuilder.nonNullable.group({

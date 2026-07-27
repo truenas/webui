@@ -177,6 +177,10 @@
 
 // Shared overrides for the apps detail cards migrated to tn-card (app-info,
 // app-metadata, app-notes). Hoisted here so the three siblings can't drift.
+//
+// Every `TEMP (NAS-141021)` block below works around a defect in the pinned
+// @truenas/ui-components; they are indexed in the tn-migration playbook's
+// "Known upstream defects" table, which is the checklist for the cleanup pass.
 @mixin tn-detail-card {
   // TEMP (NAS-141021): cards that pass tn-card's [title] input get the library's
   // own scoped .tn-card__title; cards that project a custom header (app-info,

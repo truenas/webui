@@ -1,17 +1,16 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnEmptyComponent } from '@truenas/ui-components';
-import { storageEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
@@ -52,20 +51,25 @@ export class PoolsDashboardComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
   private tierService = inject(SharingTierService);
-  private authService = inject(AuthService);
 
   protected readonly requiredRoles = [Role.PoolWrite];
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly searchableElements = storageElements;
 
-  protected readonly canCreatePool = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
-  protected readonly emptyTitle = storageEmptyConfig.title;
+  protected readonly emptyTitle = T('No Pools');
+
+  /**
+   * The `<br>` markup is dead — `tn-empty` renders `description` as text — but it is part of the
+   * translation key, so stripping it from the source string here would orphan the existing
+   * translations. Strip it at render time instead, tolerating every spelling of the tag.
+   */
+  private readonly emptyMessage = T('Storage features in TrueNAS require at least one Pool to exist. <br>\nA Pool is a group of disks working together to store and protect your data. <br>\nOnce you have a pool, this page will provide an overview of your pool’s health and status.');
 
   /** Re-translated on language change, which a plain `instant()` field initializer would miss. */
   private readonly currentLang = toSignal(this.translate.onLangChange, { initialValue: null });
   protected readonly emptyDescription = computed(() => {
     this.currentLang();
-    return (this.translate.instant(storageEmptyConfig.message) as string).replace(/<br>/g, ' ');
+    return (this.translate.instant(this.emptyMessage) as string).replace(/<br\s*\/?>/gi, ' ');
   });
 
   protected rootDatasets: Record<string, Dataset> = {};

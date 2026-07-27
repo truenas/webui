@@ -74,7 +74,8 @@ export class PoolWarningsComponent implements OnInit {
   }
 
   protected checkboxChanged(pool: string, event: boolean | Event): void {
-    // Library defect in the pinned @truenas/ui-components (0.3.26): tn-checkbox emits a boolean
+    // TEMP (NAS-141021): library defect in the pinned @truenas/ui-components (0.3.26) — indexed
+    // in the tn-migration playbook's "Known upstream defects" table. tn-checkbox emits a boolean
     // from its `change` output, but the inner <input>'s native `change` event also bubbles to the
     // host, and Ivy invokes a `(change)` binding for both the output and the DOM event — so the
     // handler fires a second time with an Event. Only act on the component's boolean emission.

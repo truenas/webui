@@ -262,6 +262,25 @@ Material UI). Leave these alone:
 
 Keep `EmptyService` (used by data providers) — only `EmptyComponent` is replaced.
 
+## Known upstream defects (worked around in webui)
+
+Defects observed in the **pinned** `@truenas/ui-components` (`package.json` currently `~0.3.26`).
+Every workaround in webui should carry a `TEMP (NAS-141021)` marker and a "drop once …" condition
+so this table stays the single index for the cleanup pass. **Check this list before inventing a new
+workaround** — and add to it when you find a new one, rather than leaving the knowledge in one
+component's comment.
+
+| Defect | Symptom | Workaround | Drop when |
+|---|---|---|---|
+| `tn-checkbox` does not `stopPropagation()` the inner `<input>`'s native `change` | Ivy invokes a `(change)` binding for both the component output and the bubbled DOM event, so handlers fire twice — the second time with an `Event`, not the boolean | Guard with `typeof event !== 'boolean'` (see `pool-warnings.component.ts`). Handlers that ignore the payload entirely (e.g. `services.component.html`'s `enableToggle(row)`) fire twice with no signal at all — check these | Fixed in **0.4.x**; drop once the dependency range moves past 0.4.0. `tn-radio` already stops it in 0.3.26 |
+| `tn-select`'s `writeValue` unwraps an array to its first element in single-select mode | An array-valued option can never be written back into the control | Model the value as an object, not a tuple (see `size-and-type.interface.ts`) | Library preserves array values in single-select |
+| `tn-card` declares no host `display`, so it defaults to `inline` | An inline box wrapping block content fragments, each painting the host background — stray rectangles above/below the card | `tn-card-block-host` mixin in `mixins/cards.scss` | Library sets a block host display |
+| `.tn-card__title` is style-scoped to `tn-card` | A consumer projecting an adornment next to the title can't lay the row out without `::ng-deep` | `tn-card-inline-title` / `tn-detail-card` mixins in `mixins/cards.scss` | Library exposes a styled-title projection slot |
+| `tn-card` header/footer dividers use the unmapped `--tn-lines` token | Divider falls back to a light colour that reads wrong in the dark theme | `tn-detail-card` repoints them at webui's `--lines` | Design tokens are bridged |
+| No `TnRadioGroupComponent`; `tn-radio` is a per-option CVA with `checked` as a plain field | Angular suppresses the model→view write on the accessor that originated a change, so the other radios keep `checked === true`; writing a value straight back is then a no-op for its binding and the group renders with nothing selected | Use `ix-tn-radio-group` (`modules/forms/ix-forms/components/tn-radio-group`), which recreates the radios on a model write | Library ships a radio-group component, or `tn-radio` exposes `checked` as an input |
+| `tn-empty`'s internal action button carries no test id, and the input exposes no way to set one | Empty-state CTAs are unaddressable by automation | Render the button outside `tn-empty` instead of via `actionText` | Library accepts a test id for the action |
+| No `TnCardHarness` | Card titles can only be asserted by reaching for `.tn-card__title` in the DOM | White-box query, commented as such | Library ships a card harness |
+
 ## Recipe 1 — Card (`mat-card` → `tn-card`)
 
 `tn-card` is declarative: the toolbar row disappears and its contents become **inputs**.
