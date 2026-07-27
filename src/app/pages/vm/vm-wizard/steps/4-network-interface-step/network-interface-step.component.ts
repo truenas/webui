@@ -6,7 +6,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
   TnCheckboxComponent,
-  TnFormFieldComponent,
+  TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent,
   TnSelectComponent,
   TnStepperNextDirective,
@@ -32,6 +32,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     AsyncPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,
+    TnFormSectionComponent,
     TnSelectComponent,
     TnInputComponent,
     TnCheckboxComponent,

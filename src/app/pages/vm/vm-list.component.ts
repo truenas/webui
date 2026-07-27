@@ -1,13 +1,25 @@
-import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit,
+  computed, effect, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective, tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCardComponent,
+  TnCellDefDirective,
+  TnDetailRowDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnIconComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
 import { take, tap } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -19,31 +31,27 @@ import {
 } from 'app/enums/vm.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import {
-  toggleColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+  IxTableDetailsRowComponent,
+} from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
+import {
+  TableColumnPickerComponent,
+} from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { createTable } from 'app/modules/ix-table/utils';
+import {
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
+} from 'app/modules/ix-table/utils';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualMachineDetailsRowComponent } from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
 import { vmListElements } from 'app/pages/vm/vm-list.elements';
@@ -51,6 +59,13 @@ import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { VmService } from 'app/services/vm.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+
+/**
+ * tn-table column name for the derived Display Port column. It has no backing
+ * VirtualMachine property, so it is named here once and reused by the column model and
+ * the sort-accessor map.
+ */
+const displayPortColumn = 'display_port';
 
 @Component({
   selector: 'ix-vm-list',
@@ -65,29 +80,28 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnIconComponent,
     TnTooltipDirective,
     BasicSearchComponent,
-    IxTableColumnsSelectorComponent,
+    TableColumnPickerComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableDetailsRowDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
+    TnTestIdDirective,
+    TableToggleCellComponent,
     IxTableDetailsRowComponent,
     VirtualMachineDetailsRowComponent,
     TnTablePagerComponent,
-    MatCard,
-    MatCardContent,
-    EmptyComponent,
+    TnCardComponent,
+    TnEmptyComponent,
     TranslateModule,
-    AsyncPipe,
     FileSizePipe,
   ],
 })
 export class VmListComponent implements OnInit {
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -99,39 +113,61 @@ export class VmListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.VmWrite];
   protected readonly searchableElements = vmListElements;
+  protected readonly VmState = VmState;
+  protected readonly MiB = MiB;
+  protected readonly vmTimeNames = vmTimeNames;
 
   private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  vmMachines: VirtualMachine[] = [];
-  searchQuery = signal('');
-  dataProvider: AsyncDataProvider<VirtualMachine>;
+  private vmMachines: VirtualMachine[] = [];
+  protected readonly searchQuery = signal('');
   protected memWarning = helptextVmWizard.memory_warning;
-  protected hasVirtualizationSupport$ = this.vmService.hasVirtualizationSupport$;
+  protected readonly hasVirtualizationSupport = toSignal(this.vmService.hasVirtualizationSupport$);
   protected availableMemory$ = this.vmService.getAvailableMemory().pipe(toLoadingState());
-  vmMap = new Map<string | number, VirtualMachine>();
+  private vmMap = new Map<string | number, VirtualMachine>();
 
-  vmNotSupportedConfig: EmptyConfig = {
-    large: true,
-    icon: tnIconMarker('laptop', 'mdi'),
-    title: this.translate.instant('Virtualization is not supported'),
-  };
+  // TODO: Refactor VM data provider to use ngrx/store
+  private readonly virtualMachines$ = this.api.call('vm.query').pipe(
+    tap((vms) => {
+      this.vmMachines = vms;
+      this.vmMap = new Map<number, VirtualMachine>(vms.map((vm) => [vm.id, vm]));
+    }),
+  );
 
-  columns = createTable<VirtualMachine>([
+  readonly dataProvider = new AsyncDataProvider<VirtualMachine>(this.virtualMachines$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
+
+  private readonly table = viewChild(TnTableComponent<VirtualMachine>);
+
+  /**
+   * ix-table column model retained purely to drive `<ix-table-column-picker>` (visibility
+   * + saved `vmList` prefs) and the hidden-column readout in the expanded detail row.
+   * tn-table renders the visible cells from the template and derives its
+   * `displayedColumns` from these via `toDisplayedColumns`, so every column carries the
+   * `propertyName` that names its `tnColumnDef`.
+   *
+   * The two toggle columns are declared as text columns here on purpose: the interactive
+   * switch is rendered by `<ix-table-toggle-cell>` in the template, and this model only
+   * needs a readable value for the case where the user hides the column and it falls
+   * through to the detail row.
+   */
+  protected readonly columns = signal(createTable<VirtualMachine>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
-    toggleColumn({
+    textColumn({
       title: this.translate.instant('Running'),
-      requiredRoles: this.requiredRoles,
-      getValue: (row) => row.status.state === VmState.Running,
-      sortBy: (row) => (row.status.state === VmState.Running ? 1 : 0),
-      onRowToggle: (row, checked, toggle) => this.handleVmStatusToggle(row, checked, toggle),
+      propertyName: 'status',
+      getValue: (row) => (row.status.state === VmState.Running
+        ? this.translate.instant('Yes')
+        : this.translate.instant('No')),
     }),
-    toggleColumn({
+    textColumn({
       title: this.translate.instant('Start on Boot'),
-      requiredRoles: this.requiredRoles,
       propertyName: 'autostart',
-      onRowToggle: (row, checked, toggle) => this.handleAutostartToggle(row, checked, toggle),
+      getValue: (row) => (row.autostart ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
     textColumn({
       title: this.translate.instant('Virtual CPUs'),
@@ -150,11 +186,11 @@ export class VmListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Memory Size'),
+      propertyName: 'memory',
       hidden: true,
       getValue: (row) => {
         return this.fileSizePipe.transform(row.memory * MiB);
       },
-      sortBy: (row) => row.memory,
     }),
     textColumn({
       title: this.translate.instant('Boot Loader Type'),
@@ -165,13 +201,17 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('System Clock'),
       propertyName: 'time',
       hidden: true,
-      getValue: (row) => vmTimeNames.get(row.time),
+      // vmTimeNames values are T()-marked, so they need translating; `?? ''` guards a VM
+      // whose `time` is absent, which `translate.instant(undefined)` would throw on.
+      getValue: (row) => this.translate.instant(vmTimeNames.get(row.time) ?? ''),
     }),
     textColumn({
       title: this.translate.instant('Display Port'),
+      // The cast is nominal: `propertyName` only names the `tnColumnDef`, and `sortByMap`
+      // supplies the actual sort accessor, so the value is never read off the row.
+      propertyName: displayPortColumn as keyof VirtualMachine,
       hidden: true,
       getValue: (row) => this.getDisplayPort(row),
-      sortBy: (row) => this.getDisplayPortSortValue(row),
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -180,43 +220,65 @@ export class VmListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Shutdown Timeout'),
+      propertyName: 'shutdown_timeout',
       hidden: true,
-      getValue: (row) => `${row.shutdown_timeout} seconds`,
-      sortBy: (row) => row.shutdown_timeout,
+      getValue: (row) => this.translate.instant('{n} seconds', { n: row.shutdown_timeout }),
     }),
   ], {
     uniqueRowTag: (row) => 'virtual-machine-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Virtual Machine')],
-  });
+  }));
 
-  get hiddenColumns(): Column<VirtualMachine, ColumnComponent<VirtualMachine>>[] {
-    return this.columns.filter((column) => column?.hidden);
+  protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
+
+  protected readonly hiddenColumns = computed<Column<VirtualMachine, ColumnComponent<VirtualMachine>>[]>(
+    () => this.columns().filter((column) => column?.hidden),
+  );
+
+  /**
+   * Sort accessors for the columns tn-table can't sort by `propertyName` alone —
+   * `status` is an object and `display_port` is derived from the VM's devices.
+   */
+  private readonly sortByMap: Record<string, (row: VirtualMachine) => string | number> = {
+    status: (row) => (row.status.state === VmState.Running ? 1 : 0),
+    [displayPortColumn]: (row) => this.getDisplayPortSortValue(row),
+  };
+
+  protected readonly trackByVmId = (_index: number, row: VirtualMachine): number => row.id;
+
+  // TEMP: tn-table allows several rows expanded at once and exposes no single-expand input
+  // (0.3.26 has only `expandable` / `isRowExpandable`), so restore the previous ix-table
+  // behaviour here: whenever a second row opens, collapse back to just the newly-opened one.
+  // Remove once the library grows a single-expand mode — see NAS-141021 library follow-ups.
+  private previousExpandedRows = new Set<unknown>();
+
+  constructor() {
+    effect(() => {
+      const table = this.table();
+      if (!table) {
+        return;
+      }
+      const expanded = table.expandedRows();
+      if (expanded.size <= 1) {
+        this.previousExpandedRows = new Set(expanded);
+        return;
+      }
+      const newest = [...expanded].find((row) => !this.previousExpandedRows.has(row));
+      const collapsed = newest ? new Set<unknown>([newest]) : new Set<unknown>();
+      this.previousExpandedRows = collapsed;
+      table.expandedRows.set(collapsed);
+    });
   }
 
   ngOnInit(): void {
-    this.createDataProvider();
+    this.refresh();
     this.subscribeToVmEvents();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
 
-  createDataProvider(): void {
-    // TODO: Refactor VM data provider to use ngrx/store
-    const virtualMachines$ = this.api.call('vm.query').pipe(
-      tap((vms) => {
-        this.vmMachines = vms;
-
-        this.vmMap = new Map<number, VirtualMachine>(
-          vms.map((vm) => [vm.id, vm]),
-        );
-      }),
-    );
-    this.dataProvider = new AsyncDataProvider(virtualMachines$);
-    this.refresh();
-  }
-
-  subscribeToVmEvents(): void {
+  private subscribeToVmEvents(): void {
     this.api.subscribe('vm.query')
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
@@ -253,14 +315,19 @@ export class VmListComponent implements OnInit {
       });
   }
 
-  doAdd(): void {
-    this.slideIn.open(VmWizardComponent).onSuccess(() => {
+  protected doAdd(): void {
+    // Footerless — the wizard's stepper owns its own Back/Save buttons.
+    this.formPanel.open(VmWizardComponent, {
+      title: this.translate.instant('Create Virtual Machine'),
+      wide: true,
+      footerless: true,
+    }).onSuccess(() => {
       this.vmService.checkMemory();
       this.refresh();
     }, this.destroyRef);
   }
 
-  getDisplayPort(vm: VirtualMachine): boolean | number | string {
+  protected getDisplayPort(vm: VirtualMachine): boolean | number | string {
     if (!vm.display_available) {
       return this.translate.instant('N/A');
     }
@@ -286,7 +353,7 @@ export class VmListComponent implements OnInit {
     return ports.join(', ');
   }
 
-  getDisplayPortSortValue(vm: VirtualMachine): number {
+  private getDisplayPortSortValue(vm: VirtualMachine): number {
     if (!vm.display_available) {
       return Number.MAX_SAFE_INTEGER; // N/A items should sort to the end
     }
@@ -308,10 +375,24 @@ export class VmListComponent implements OnInit {
     return Math.min(...ports);
   }
 
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
+  protected uniqueRowTag(row: VirtualMachine): string {
+    return toUniqueRowTag('virtual-machine-' + row.name);
+  }
+
+  protected ariaLabel(row: VirtualMachine): string {
+    return [row.name, this.translate.instant('Virtual Machine')].join(' ');
+  }
+
+  protected onColumnsChange(columns: Column<VirtualMachine, ColumnComponent<VirtualMachine>>[]): void {
+    this.columns.set([...columns]);
+  }
+
+  protected onRowClick(row: VirtualMachine): void {
+    this.table()?.toggleRowExpansion(row);
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns(), this.sortByMap));
   }
 
   protected onListFiltered(query: string): void {
@@ -323,7 +404,7 @@ export class VmListComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  private handleVmStatusToggle(vm: VirtualMachine, checked: boolean, toggle: { toggle(): void }): void {
+  protected handleVmStatusToggle(vm: VirtualMachine, checked: boolean, cell: TableToggleCellComponent): void {
     if (vm.status.state === VmState.Running && !checked) {
       // User wants to stop a running VM - show stop dialog
       this.vmService.doStop(vm).pipe(
@@ -332,7 +413,7 @@ export class VmListComponent implements OnInit {
       ).subscribe((confirmed: boolean) => {
         if (!confirmed) {
           // User cancelled - revert toggle state
-          setTimeout(() => toggle.toggle(), 0);
+          cell.revert();
         }
       });
     } else if (vm.status.state !== VmState.Running && checked) {
@@ -343,20 +424,20 @@ export class VmListComponent implements OnInit {
       ).subscribe((success: boolean) => {
         if (!success) {
           // Start failed - revert toggle state
-          setTimeout(() => toggle.toggle(), 0);
+          cell.revert();
         }
       });
     }
   }
 
-  private handleAutostartToggle(vm: VirtualMachine, _checked: boolean, toggle: { toggle(): void }): void {
+  protected handleAutostartToggle(vm: VirtualMachine, cell: TableToggleCellComponent): void {
     this.vmService.toggleVmAutostart(vm).pipe(
       take(1),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((success: boolean) => {
       if (!success) {
         // Operation failed - revert toggle state
-        setTimeout(() => toggle.toggle(), 0);
+        cell.revert();
       }
     });
   }

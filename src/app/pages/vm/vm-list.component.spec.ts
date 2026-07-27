@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -14,16 +14,17 @@ import { VmBootloader, VmDeviceType, VmDisplayType, VmState } from 'app/enums/vm
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+  TableColumnPickerComponent,
+} from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  VirtualMachineDetailsRowComponent,
+} from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
 import { VmListComponent } from 'app/pages/vm/vm-list.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -92,18 +93,26 @@ const virtualMachines = [
 describe('VmListComponent', () => {
   let spectator: Spectator<VmListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
   let vmSubscriptionSubject$: Subject<unknown>;
+
+  // The members below are template-facing (`protected`) or component-internal (`private`).
+  // These typed accessors keep the pure-logic cases below unit-testable without a
+  // bracket-access suppression at every one of their ~15 call sites.
+  /* eslint-disable @typescript-eslint/dot-notation */
+  const getDisplayPort = (vm: VirtualMachine): boolean | number | string => spectator.component['getDisplayPort'](vm);
+  const getDisplayPortSortValue = (vm: VirtualMachine): number => spectator.component['getDisplayPortSortValue'](vm);
+  const vmMap = (): Map<string | number, VirtualMachine> => spectator.component['vmMap'];
+  const subscribeToVmEvents = (): void => spectator.component['subscribeToVmEvents']();
+  /* eslint-enable @typescript-eslint/dot-notation */
 
   const createComponent = createComponentFactory({
     component: VmListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
+      TableColumnPickerComponent,
       FileSizePipe,
-      IxTableDetailsRowDirective,
-      MockComponent(VmWizardComponent),
     ],
     providers: [
       mockAuth(),
@@ -130,7 +139,7 @@ describe('VmListComponent', () => {
         getAvailableMemory: jest.fn(() => of(4096)),
         hasVirtualizationSupport$: of(true),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
@@ -149,45 +158,124 @@ describe('VmListComponent', () => {
 
     // Initialize the vmMap with test data
     virtualMachines.forEach((vm) => {
-      spectator.component.vmMap.set(vm.id, vm);
+      vmMap().set(vm.id, vm);
     });
 
     // Initialize the subscription by calling the method directly
-    spectator.component.subscribeToVmEvents();
+    subscribeToVmEvents();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Running', 'Start on Boot'],
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'Running', 'Start on Boot']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['test', '', ''],
       ['test_refactoring', '', ''],
       ['test_with_spice', '', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 
   it('opens vm wizard when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(VmWizardComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(VmWizardComponent, {
+      title: 'Create Virtual Machine',
+      wide: true,
+      footerless: true,
+    });
+  });
+
+  describe('row expansion', () => {
+    it('expands a row into the VM details row on click', async () => {
+      expect(await table.isRowExpanded(0)).toBe(false);
+
+      await table.clickRow(0);
+
+      expect(await table.isRowExpanded(0)).toBe(true);
+      expect(spectator.query(VirtualMachineDetailsRowComponent)).toBeTruthy();
+    });
+
+    it('keeps only one row expanded at a time', async () => {
+      await table.clickRow(0);
+      await table.clickRow(1);
+
+      expect(await table.getExpandedRowCount()).toBe(1);
+      expect(await table.isRowExpanded(0)).toBe(false);
+      expect(await table.isRowExpanded(1)).toBe(true);
+    });
+  });
+
+  describe('toggle columns', () => {
+    it('reflects VM running and autostart state', async () => {
+      const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
+
+      // Two toggles per row, in column order: Running, Start on Boot.
+      expect(await toggles[0].isChecked()).toBe(true); // 'test' is Running
+      expect(await toggles[1].isChecked()).toBe(true); // ...and autostarts
+      expect(await toggles[2].isChecked()).toBe(false); // 'test_refactoring' is Stopped
+      expect(await toggles[3].isChecked()).toBe(false);
+    });
+
+    it('reverts the Running toggle when the stop dialog is cancelled', async () => {
+      // Answer through a Subject rather than of(false) so the flip is optimistic first and the
+      // revert lands afterwards — the same ordering as the real confirmation dialog.
+      const stopConfirmed$ = new Subject<boolean>();
+      jest.spyOn(spectator.inject(VmService), 'doStop').mockReturnValue(stopConfirmed$.asObservable());
+
+      const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
+      await toggles[0].uncheck();
+
+      expect(spectator.inject(VmService).doStop).toHaveBeenCalledWith(virtualMachines[0]);
+      expect(await toggles[0].isChecked()).toBe(false);
+
+      stopConfirmed$.next(false);
+      spectator.detectChanges();
+
+      expect(await toggles[0].isChecked()).toBe(true);
+    });
+
+    it('reverts the Start on Boot toggle when the update fails', async () => {
+      const autostartUpdated$ = new Subject<boolean>();
+      jest.spyOn(spectator.inject(VmService), 'toggleVmAutostart').mockReturnValue(autostartUpdated$.asObservable());
+
+      const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
+      await toggles[1].uncheck();
+
+      expect(spectator.inject(VmService).toggleVmAutostart).toHaveBeenCalledWith(virtualMachines[0]);
+
+      autostartUpdated$.next(false);
+      spectator.detectChanges();
+
+      expect(await toggles[1].isChecked()).toBe(true);
+    });
+
+    // Regression: the table is [clickable], and its row handler preventDefaults Enter/Space
+    // for any keydown that reaches it — which would cancel the checkbox's own Space
+    // activation and expand the row instead of flipping the switch.
+    it('does not let Space on a toggle reach the clickable row', async () => {
+      const toggleInput = spectator.query('ix-table-toggle-cell input');
+      const event = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
+      toggleInput.dispatchEvent(event);
+      spectator.detectChanges();
+
+      expect(event.defaultPrevented).toBe(false);
+      expect(await table.getExpandedRowCount()).toBe(0);
+    });
   });
 
   describe('getDisplayPort', () => {
     it('returns "N/A" when display is not available', () => {
       const vm = virtualMachines[1]; // test_refactoring with display_available: false
-      const result = spectator.component.getDisplayPort(vm);
+      const result = getDisplayPort(vm);
       expect(result).toBe('N/A');
     });
 
     it('returns false when no devices exist', () => {
       const vm = { ...virtualMachines[0], devices: [] as VmDisplayDevice[] };
-      const result = spectator.component.getDisplayPort(vm);
+      const result = getDisplayPort(vm);
       expect(result).toBe(false);
     });
 
@@ -196,19 +284,19 @@ describe('VmListComponent', () => {
         ...virtualMachines[0],
         devices: [] as VmDisplayDevice[],
       };
-      const result = spectator.component.getDisplayPort(vm);
+      const result = getDisplayPort(vm);
       expect(result).toBe(false);
     });
 
     it('returns VNC port for VNC display device', () => {
       const vm = virtualMachines[0]; // test with VNC display
-      const result = spectator.component.getDisplayPort(vm);
+      const result = getDisplayPort(vm);
       expect(result).toBe('VNC:5900');
     });
 
     it('returns SPICE port for SPICE display device', () => {
       const vm = virtualMachines[2]; // test_with_spice
-      const result = spectator.component.getDisplayPort(vm);
+      const result = getDisplayPort(vm);
       expect(result).toBe('SPICE:5901');
     });
 
@@ -232,7 +320,7 @@ describe('VmListComponent', () => {
           },
         ] as VmDisplayDevice[],
       };
-      const result = spectator.component.getDisplayPort(vm);
+      const result = getDisplayPort(vm);
       expect(result).toBe('VNC:5900, SPICE:5901');
     });
   });
@@ -241,7 +329,7 @@ describe('VmListComponent', () => {
     it('should preserve devices when VM update does not include devices', () => {
       // Initial VM has devices
       const originalVm = virtualMachines[0];
-      spectator.component.vmMap.set(originalVm.id, originalVm);
+      vmMap().set(originalVm.id, originalVm);
 
       // Simulate a partial update without devices (like a state change)
       const partialUpdate = {
@@ -255,14 +343,14 @@ describe('VmListComponent', () => {
         fields: partialUpdate,
       });
 
-      const updatedVm = spectator.component.vmMap.get(originalVm.id);
+      const updatedVm = vmMap().get(originalVm.id);
       expect(updatedVm?.devices).toEqual(originalVm.devices);
       expect(updatedVm?.status?.state).toBe(VmState.Stopped);
     });
 
     it('should update devices when VM update includes devices', () => {
       const originalVm = virtualMachines[0];
-      spectator.component.vmMap.set(originalVm.id, originalVm);
+      vmMap().set(originalVm.id, originalVm);
 
       const newDevices = [
         {
@@ -287,7 +375,7 @@ describe('VmListComponent', () => {
         fields: updateWithDevices,
       });
 
-      const updatedVm = spectator.component.vmMap.get(originalVm.id);
+      const updatedVm = vmMap().get(originalVm.id);
       expect(updatedVm?.devices).toEqual(newDevices);
     });
 
@@ -312,26 +400,26 @@ describe('VmListComponent', () => {
         fields: newVm,
       });
 
-      expect(spectator.component.vmMap.get(newVm.id)).toEqual(newVm);
+      expect(vmMap().get(newVm.id)).toEqual(newVm);
     });
 
     it('should remove VM from map when VM is removed', () => {
       const vmToRemove = virtualMachines[0];
-      spectator.component.vmMap.set(vmToRemove.id, vmToRemove);
+      vmMap().set(vmToRemove.id, vmToRemove);
 
       vmSubscriptionSubject$.next({
         msg: CollectionChangeType.Removed,
         id: vmToRemove.id,
       });
 
-      expect(spectator.component.vmMap.has(vmToRemove.id)).toBe(false);
+      expect(vmMap().has(vmToRemove.id)).toBe(false);
     });
   });
 
   describe('getDisplayPortSortValue', () => {
     it('returns MAX_SAFE_INTEGER for VMs without display available', () => {
       const vm = virtualMachines[1]; // display_available: false
-      const result = spectator.component.getDisplayPortSortValue(vm);
+      const result = getDisplayPortSortValue(vm);
       expect(result).toBe(Number.MAX_SAFE_INTEGER);
     });
 
@@ -345,8 +433,56 @@ describe('VmListComponent', () => {
         ] as VmDisplayDevice[],
       };
 
-      const result = spectator.component.getDisplayPortSortValue(vm);
+      const result = getDisplayPortSortValue(vm);
       expect(result).toBe(5900);
     });
+  });
+});
+
+describe('VmListComponent without virtualization support', () => {
+  let spectator: Spectator<VmListComponent>;
+  let loader: HarnessLoader;
+
+  // Own factory rather than a per-test provider override: `hasVirtualizationSupport` is read
+  // into a signal in a field initializer, so the provider has to be in place at construction.
+  const createComponent = createComponentFactory({
+    component: VmListComponent,
+    imports: [
+      MockComponent(PageHeaderComponent),
+      BasicSearchComponent,
+      TableColumnPickerComponent,
+      FileSizePipe,
+    ],
+    providers: [
+      mockAuth(),
+      mockApi([mockCall('vm.query', [])]),
+      provideMockStore({
+        initialState: {
+          preferences: { preferences: { vmList: {} } },
+          systemInfo: {
+            systemInfo: null,
+            productType: ProductType.CommunityEdition,
+            isIxHardware: false,
+            buildYear: 2024,
+          },
+        },
+      }),
+      mockProvider(SystemGeneralService),
+      mockProvider(VmService, {
+        getAvailableMemory: jest.fn(() => of(4096)),
+        hasVirtualizationSupport$: of(false),
+      }),
+      mockProvider(FormSidePanelService),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('renders the unsupported empty state instead of the table', async () => {
+    expect(await loader.getAllHarnesses(TnTableHarness)).toHaveLength(0);
+    expect(spectator.query('tn-empty')).toHaveText('Virtualization is not supported');
   });
 });

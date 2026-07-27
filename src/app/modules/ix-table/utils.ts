@@ -1,7 +1,7 @@
 import { isSignal, Signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { type TnSortEvent } from '@truenas/ui-components';
-import { get } from 'lodash-es';
+import { get, kebabCase } from 'lodash-es';
 import { Observable, switchMap } from 'rxjs';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
@@ -23,6 +23,18 @@ export function convertStringToId(inputString: string): string {
     .replace(/[/,#.[\]@!$%^&*()+={}|\\:;"'<>?`~]/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+/**
+ * Builds the per-row test-id fragment a migrated tn-table cell passes to `[tnTestId]`.
+ *
+ * Pre-splits with lodash `kebabCase` so the tag resolves identically through the legacy
+ * `[ixTest]` directive and the library's `[tnTestId]`: the library's kebab does not break
+ * letter–digit boundaries ('vm1' stays 'vm1') where lodash does ('vm-1'). Without this every
+ * row-keyed cell id would silently shift for any row whose name ends in a digit.
+ */
+export function toUniqueRowTag(value: string): string {
+  return kebabCase(convertStringToId(value));
 }
 
 export function createTable<T>(
@@ -50,10 +62,15 @@ export function createTable<T>(
  * data providers expect. `active` is the index of the sorted column within the
  * displayed column list (or `null` when sorting is cleared). Shared so every
  * tn-table migration maps sort state the same way.
+ *
+ * `sortByMap` supplies accessors for the columns tn-table can't sort by `propertyName` alone
+ * — a column whose value is derived (an object field, or a value computed off the row) needs
+ * one, and it is applied only while a direction is active.
  */
 export function mapTnSortToTableSort<T>(
   event: TnSortEvent,
   displayedColumns: string[],
+  sortByMap?: Record<string, (row: T) => string | number>,
 ): TableSort<T> {
   let direction: SortDirection | null = null;
   if (event.direction === 'asc') {
@@ -63,11 +80,17 @@ export function mapTnSortToTableSort<T>(
   }
 
   const columnIndex = displayedColumns.indexOf(event.column);
-  return {
+  const sorting: TableSort<T> = {
     propertyName: direction ? (event.column as keyof T) : null,
     direction,
     active: direction && columnIndex >= 0 ? columnIndex : null,
   };
+
+  if (direction && sortByMap?.[event.column]) {
+    sorting.sortBy = sortByMap[event.column];
+  }
+
+  return sorting;
 }
 
 /**

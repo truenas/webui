@@ -1,16 +1,15 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
@@ -61,7 +60,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
         doPowerOff: jest.fn(() => of()),
         openDisplay: jest.fn(() => of()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -82,18 +81,40 @@ describe('VirtualMachineDetailsRowComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
+  // White-box: TnButtonHarness exposes no test-id getter yet, so the resolved data-test values
+  // are read off the native buttons tn-button renders (library request pending — see the
+  // NAS-141021 follow-ups). Order-insensitive on purpose: this guards ID preservation across
+  // the migration, not the buttons' layout order.
+  it('keeps per-vm test ids on the action buttons', () => {
+    const testIds = Array.from(spectator.queryAll('tn-button button'))
+      .map((el) => el.getAttribute('data-test'));
+
+    expect(testIds).toEqual(expect.arrayContaining([
+      'button-stop-2',
+      'button-restart-2',
+      'button-power-off-2',
+      'button-edit-2',
+      'button-delete-2',
+      'button-devices-2',
+      'button-clone-2',
+      'button-open-display-2',
+      'button-open-serial-shell-2',
+      'button-download-logs-2',
+    ]));
+  });
+
   it('should open edit form', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       VmEditFormComponent,
-      { data: virtualMachine },
+      { title: 'Edit VM', inputs: { vmToEdit: virtualMachine } },
     );
   });
 
   it('should open clone dialog', async () => {
-    const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: /Clone/ }));
+    const cloneButton = await loader.getHarness(TnButtonHarness.with({ label: /Clone/ }));
     await cloneButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
@@ -103,7 +124,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
   });
 
   it('should open delete dialog', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: /Delete/ }));
     await deleteButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
@@ -113,21 +134,21 @@ describe('VirtualMachineDetailsRowComponent', () => {
   });
 
   it('should redirect to devices page', async () => {
-    const devicesButton = await loader.getHarness(MatButtonHarness.with({ text: /Devices/ }));
+    const devicesButton = await loader.getHarness(TnButtonHarness.with({ label: /Devices/ }));
     await devicesButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/vm', '2', 'devices']);
   });
 
   it('should redirect to serial shell page', async () => {
-    const serialButton = await loader.getHarness(MatButtonHarness.with({ text: /Serial Shell/ }));
+    const serialButton = await loader.getHarness(TnButtonHarness.with({ label: /Serial Shell/ }));
     await serialButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/vm', '2', 'serial']);
   });
 
   it('should return log file when pressed the "Download Logs" button', async () => {
-    const downloadLogsButton = await loader.getHarness(MatButtonHarness.with({ text: /Download Logs/ }));
+    const downloadLogsButton = await loader.getHarness(TnButtonHarness.with({ label: /Download Logs/ }));
     await downloadLogsButton.click();
 
     expect(spectator.inject(VmService).downloadLogs).toHaveBeenCalled();
@@ -136,9 +157,8 @@ describe('VirtualMachineDetailsRowComponent', () => {
   it('should call service to start the VM', async () => {
     spectator.setInput('vm', stoppedVirtualMachine);
 
-    const startButton = await loader.getHarness(MatButtonHarness.with({ text: /Start/ }));
-    const startIcon = await startButton.getHarness(TnIconHarness.with({ name: 'play-circle' }));
-    expect(await startIcon.getName()).toBe('play-circle');
+    const startButton = await loader.getHarness(TnButtonHarness.with({ label: /Start/ }));
+    expect(await startButton.getIconName()).toBe('mdi-play-circle');
 
     await startButton.click();
 
@@ -146,17 +166,16 @@ describe('VirtualMachineDetailsRowComponent', () => {
   });
 
   it('should call service to restart the VM', async () => {
-    const restartButton = await loader.getHarness(MatButtonHarness.with({ text: /Restart/ }));
+    const restartButton = await loader.getHarness(TnButtonHarness.with({ label: /Restart/ }));
     await restartButton.click();
 
     expect(spectator.inject(VmService).doRestart).toHaveBeenCalledWith(virtualMachine);
   });
 
   it('should call service to stop the VM', async () => {
-    const stopButton = await loader.getHarness(MatButtonHarness.with({ text: /Stop/ }));
+    const stopButton = await loader.getHarness(TnButtonHarness.with({ label: /Stop/ }));
 
-    const stopIcon = await stopButton.getHarness(TnIconHarness.with({ name: 'stop-circle' }));
-    expect(await stopIcon.getName()).toBe('stop-circle');
+    expect(await stopButton.getIconName()).toBe('mdi-stop-circle');
 
     await stopButton.click();
 
@@ -164,14 +183,14 @@ describe('VirtualMachineDetailsRowComponent', () => {
   });
 
   it('should call service to power off the VM', async () => {
-    const powerOffButton = await loader.getHarness(MatButtonHarness.with({ text: /Power Off/ }));
+    const powerOffButton = await loader.getHarness(TnButtonHarness.with({ label: /Power Off/ }));
     await powerOffButton.click();
 
     expect(spectator.inject(VmService).doPowerOff).toHaveBeenCalledWith(virtualMachine);
   });
 
   it('should call service to open display', async () => {
-    const openDisplayButton = await loader.getHarness(MatButtonHarness.with({ text: /Display/ }));
+    const openDisplayButton = await loader.getHarness(TnButtonHarness.with({ label: /Display/ }));
     await openDisplayButton.click();
 
     expect(spectator.inject(VmService).openDisplay).toHaveBeenCalledWith(virtualMachine);
@@ -183,40 +202,38 @@ describe('VirtualMachineDetailsRowComponent', () => {
     });
 
     it('should show Resume button for suspended VM', async () => {
-      const resumeButton = await loader.getHarness(MatButtonHarness.with({ text: /Resume/ }));
-      const resumeIcon = await resumeButton.getHarness(TnIconHarness.with({ name: 'play-circle' }));
-
-      expect(await resumeIcon.getName()).toBe('play-circle');
+      const resumeButton = await loader.getHarness(TnButtonHarness.with({ label: /Resume/ }));
+      expect(await resumeButton.getIconName()).toBe('mdi-play-circle');
       expect(resumeButton).toBeTruthy();
     });
 
     it('should show Power Off button for suspended VM', async () => {
-      const powerOffButton = await loader.getHarness(MatButtonHarness.with({ text: /Power Off/ }));
+      const powerOffButton = await loader.getHarness(TnButtonHarness.with({ label: /Power Off/ }));
       expect(powerOffButton).toBeTruthy();
     });
 
     it('should call service to resume suspended VM', async () => {
-      const resumeButton = await loader.getHarness(MatButtonHarness.with({ text: /Resume/ }));
+      const resumeButton = await loader.getHarness(TnButtonHarness.with({ label: /Resume/ }));
       await resumeButton.click();
 
       expect(spectator.inject(VmService).doStartResume).toHaveBeenCalledWith(suspendedVirtualMachine);
     });
 
     it('should not show Stop or Restart buttons for suspended VM', async () => {
-      const stopButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: /Stop/ }));
-      const restartButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: /Restart/ }));
+      const stopButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: /Stop/ }));
+      const restartButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: /Restart/ }));
 
       expect(stopButtons).toHaveLength(0);
       expect(restartButtons).toHaveLength(0);
     });
 
     it('should not show Display button for suspended VM', async () => {
-      const displayButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: /Display/ }));
+      const displayButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: /Display/ }));
       expect(displayButtons).toHaveLength(0);
     });
 
     it('should not show Serial Shell button for suspended VM', async () => {
-      const serialButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: /Serial Shell/ }));
+      const serialButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: /Serial Shell/ }));
       expect(serialButtons).toHaveLength(0);
     });
   });
