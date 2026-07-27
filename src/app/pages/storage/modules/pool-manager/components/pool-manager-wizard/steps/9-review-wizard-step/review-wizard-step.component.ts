@@ -70,7 +70,7 @@ export class ReviewWizardStepComponent implements OnInit {
   readonly createPool = output();
 
   // force_topology is a Community Edition escape hatch; middleware rejects it on Enterprise.
-  protected readonly isEnterprise = toSignal(this.systemStore$.select(selectIsEnterprise));
+  protected readonly isEnterprise = toSignal(this.systemStore$.select(selectIsEnterprise), { requireSync: true });
   protected readonly forceTopologyControl = new FormControl(false, { nonNullable: true });
 
   state: PoolManagerState;
