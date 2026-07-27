@@ -10,23 +10,20 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnRadioComponent, tnIconMarker,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnRadioComponent,
 } from '@truenas/ui-components';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiQueryParams, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import {
   SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
@@ -46,16 +43,12 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnRadioComponent,
     TnCheckboxComponent,
     TnInputComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -72,14 +65,10 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private destroyRef = inject(DestroyRef);
 
-  /**
-   * IPMI channel id to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
-   * carry data). Unused in the legacy SlideIn host, which supplies it via `slideInRef.getData()`.
-   */
+  /** IPMI channel id to edit, supplied by the `<tn-side-panel>` host (`FormSidePanelService.open`). */
   readonly editIpmiId = input<number | undefined>(undefined);
 
-  protected readonly requiredRoles = [Role.IpmiWrite];
-  protected readonly identifyLightIcon = tnIconMarker('lightbulb-on-outline', 'mdi');
+  readonly requiredRoles = [Role.IpmiWrite];
   protected readonly InputType = InputType;
 
   isManageButtonDisabled = false;
@@ -116,7 +105,7 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
   readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   /** Secondary actions rendered in the side-panel footer's overflow (three-dots) menu. */
-  protected readonly footerMenu = computed<SidePanelFooterMenu>(() => ({
+  readonly footerMenu = computed<SidePanelFooterMenu>(() => ({
     label: T('IPMI Actions'),
     testId: 'ipmi-actions',
     items: [
@@ -139,9 +128,7 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
   }));
 
   ngOnInit(): void {
-    this.ipmiId = this.slideInRef
-      ? this.slideInRef.getData() as number
-      : this.editIpmiId();
+    this.ipmiId = this.editIpmiId();
     this.setFormRelations();
     this.loadFormData();
 

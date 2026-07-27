@@ -11,6 +11,8 @@
     <ix-nfs-card></ix-nfs-card>
     <ix-iscsi-card></ix-iscsi-card>
     <ix-nvme-of-card></ix-nvme-of-card>
-    <ix-webshare-card></ix-webshare-card>
+    @if (shouldShowWebshare()) {
+      <ix-webshare-card></ix-webshare-card>
+    }
   </div>
 }

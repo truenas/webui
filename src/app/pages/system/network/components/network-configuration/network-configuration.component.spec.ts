@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  TnCheckboxHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,8 +15,6 @@ import { NetworkConfiguration, NetworkConfigurationActivity } from 'app/interfac
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LanguageService } from 'app/modules/language/language.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NetworkConfigurationComponent } from 'app/pages/system/network/components/network-configuration/network-configuration.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -25,12 +23,6 @@ describe('NetworkConfigurationComponent', () => {
   let spectator: Spectator<NetworkConfigurationComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const createComponent = createComponentFactory({
     component: NetworkConfigurationComponent,
@@ -76,13 +68,11 @@ describe('NetworkConfigurationComponent', () => {
         } as NetworkConfiguration),
         mockCall('network.configuration.update'),
       ]),
-      mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(Router),
       mockProvider(LanguageService),
       mockProvider(SystemGeneralService),
-      mockProvider(SlideInRef, slideInRef),
       provideMockStore({
         initialState: {
           systemInfo: {
@@ -124,10 +114,14 @@ describe('NetworkConfigurationComponent', () => {
   });
 
   it('shows outbound_network_value select when outbound_network_activity is changed', async () => {
+    // The outbound_network_value select is the only tn-select in this form and is rendered
+    // only for the "Allow/Deny Specific" activities, so its presence is asserted via harness count.
+    expect(await loader.getAllHarnesses(TnSelectHarness)).toHaveLength(0);
+
     const allowSpecificOption = await loader.getHarness(TnRadioHarness.with({ label: 'Allow Specific' }));
     await allowSpecificOption.check();
 
-    expect(spectator.query('.outbound-network-value')).toBeVisible();
+    expect(await loader.getAllHarnesses(TnSelectHarness)).toHaveLength(1);
   });
 
   it('saves network global configuration when saved is pressed', async () => {
@@ -146,8 +140,7 @@ describe('NetworkConfigurationComponent', () => {
     const services = await loader.getHarness(TnSelectHarness);
     await services.selectOption('Cloud sync');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith(
       'network.configuration.update',
@@ -181,8 +174,7 @@ describe('NetworkConfigurationComponent', () => {
     const denyAllOption = await loader.getHarness(TnRadioHarness.with({ label: 'Deny All' }));
     await denyAllOption.check();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith(
       'network.configuration.update',

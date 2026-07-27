@@ -9,15 +9,14 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnRadioComponent, TnSelectComponent, TnTooltipDirective,
+  TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnRadioComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { range } from 'lodash-es';
 import {
   BehaviorSubject, EMPTY, forkJoin, of, Observable,
 } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   CreateNetworkInterfaceType,
   LacpduRate,
@@ -33,7 +32,6 @@ import {
   NetworkInterfaceCreate,
   NetworkInterfaceUpdate,
 } from 'app/interfaces/network-interface.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -43,7 +41,6 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -72,7 +69,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [InterfaceNameValidatorService],
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -85,12 +81,8 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxListItemComponent,
     IxIpInputWithNetmaskComponent,
     IxErrorsComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
     AsyncPipe,
-    TnTooltipDirective,
   ],
 })
 export class InterfaceFormComponent extends SidePanelForm implements OnInit {
@@ -108,15 +100,12 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
 
-  /**
-   * Interface to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to carry
-   * data). Unused in the legacy SlideIn host, which supplies it via `slideInRef.getData()`.
-   */
+  /** Interface to edit, supplied by the `<tn-side-panel>` host (`FormSidePanelService.open`). */
   readonly editInterface = input<NetworkInterface | undefined>(undefined);
-  /** Existing interfaces (for auto-naming), when hosted in a `<tn-side-panel>`. */
+  /** Existing interfaces (for auto-naming), supplied by the `<tn-side-panel>` host. */
   readonly interfacesList = input<NetworkInterface[]>([]);
 
-  protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
+  readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected readonly InputType = InputType;
   protected existingInterface: NetworkInterface | undefined;
   private interfaceList: NetworkInterface[] = [];
@@ -244,14 +233,10 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
-    // Edit record and the existing-interfaces list arrive via `slideInRef.getData()` in the legacy
-    // SlideIn host, or via the `editInterface` / `interfacesList` inputs in a `<tn-side-panel>` host.
-    const slideInData = this.slideInRef?.getData() as {
-      interfaces?: NetworkInterface[];
-      interface?: NetworkInterface;
-    } | undefined;
-    this.existingInterface = this.slideInRef ? slideInData?.interface : this.editInterface();
-    this.interfaceList = this.slideInRef ? (slideInData?.interfaces ?? []) : this.interfacesList();
+    // Edit record and the existing-interfaces list arrive via the `editInterface` / `interfacesList`
+    // inputs from the `<tn-side-panel>` host (`FormSidePanelService.open`).
+    this.existingInterface = this.editInterface();
+    this.interfaceList = this.interfacesList();
 
     this.loadFailoverStatus();
     this.validateNameOnTypeChange();

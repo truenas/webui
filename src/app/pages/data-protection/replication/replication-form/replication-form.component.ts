@@ -6,10 +6,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
 import { merge, of } from 'rxjs';
 import { debounceTime, startWith, switchMap } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Direction } from 'app/enums/direction.enum';
 import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
@@ -21,7 +19,6 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import {
   SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
@@ -61,14 +58,11 @@ import { ReplicationService } from 'app/services/replication.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService],
   imports: [
-    ModalHeaderComponent,
     GeneralSectionComponent,
     TransportSectionComponent,
     SourceSectionComponent,
     TargetSectionComponent,
     ScheduleSectionComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
   ],
 })

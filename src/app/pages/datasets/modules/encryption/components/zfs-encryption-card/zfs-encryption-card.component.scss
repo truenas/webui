@@ -12,3 +12,29 @@
     gap: 5px;
   }
 }
+
+// TEMP (NAS-141021): tn-card's `.tn-card__footer-right` is `flex-shrink: 0`, so a
+// footer with several action buttons (Edit, Export All Keys, Export Key, Lock) can't
+// shrink — it overflows and is clipped by the card's `overflow: hidden` in the narrow
+// details panel. The left slot is reserved for `footerLink` (unused here), so drop it
+// and let the action slot take the full, bounded footer width; `.footer-actions`
+// (flex-wrap: wrap, justify-content: flex-end) then keeps the buttons right-clustered
+// and wraps them when they don't fit. Remove once the library handles footer overflow.
+:host ::ng-deep .tn-card__footer {
+  .tn-card__footer-left {
+    display: none;
+  }
+
+  .tn-card__footer-right {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  width: 100%;
+}

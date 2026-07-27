@@ -6,24 +6,26 @@
   [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
   [secondaryAction]="openAction()"
 >
-  <a
-    tnCardHeader
-    class="card-title-link"
-    [ixTest]="['webshare', 'open-in-new']"
-    [routerLink]="['/sharing', 'webshare']"
-    [tnTooltip]="'Open WebShare list in full page' | translate"
-  >
-    <h3 class="tn-card__title">
-      {{ 'WebShare' | translate }}
-      <tn-icon
-        name="open-in-new"
-        library="mdi"
-        class="title-icon"
-        [attr.aria-label]="'Open WebShare list in full page' | translate"
-      ></tn-icon>
-      <ix-card-alert-badge [menuPath]="cardMenuPath" />
-    </h3>
-  </a>
+  <div tnCardHeader class="card-header-title">
+    <a
+      class="card-title-link"
+      [ixTest]="['webshare', 'open-in-new']"
+      [routerLink]="['/sharing', 'webshare']"
+      [tnTooltip]="'Open WebShare list in full page' | translate"
+    >
+      <h3 class="tn-card__title">
+        {{ 'WebShare' | translate }}
+        <tn-icon
+          name="open-in-new"
+          library="mdi"
+          class="title-icon"
+          [attr.aria-label]="'Open WebShare list in full page' | translate"
+        ></tn-icon>
+        <ix-card-alert-badge [menuPath]="cardMenuPath" />
+      </h3>
+    </a>
+    <span class="experimental-badge">{{ 'Experimental' | translate }}</span>
+  </div>
 
   <ng-template tnCardHeaderActions>
     @if (service(); as service) {
