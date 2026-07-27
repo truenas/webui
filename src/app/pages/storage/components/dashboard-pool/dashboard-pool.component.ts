@@ -27,19 +27,19 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dashboardPoolElements } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.elements';
+import { DiskHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.component';
 import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
+import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
+import { SedLockedWarningComponent } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/sed-locked-warning.component';
 import {
   AutotrimDialog,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/autotrim-dialog/autotrim-dialog.component';
+import { StorageHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/storage-health-card/storage-health-card.component';
 import { VDevsCardComponent } from 'app/pages/storage/components/dashboard-pool/vdevs-card/vdevs-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { DiskHealthCardComponent } from './disk-health-card/disk-health-card.component';
-import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.component';
-import { SedLockedWarningComponent } from './sed-locked-warning/sed-locked-warning.component';
-import { StorageHealthCardComponent } from './storage-health-card/storage-health-card.component';
 
 @Component({
   selector: 'ix-dashboard-pool',
@@ -101,7 +101,7 @@ export class DashboardPoolComponent implements OnChanges {
     }
   }
 
-  onDisconnect(): void {
+  protected onDisconnect(): void {
     this.tnDialog
       .open(ExportDisconnectModalComponent, {
         data: this.pool(),
@@ -117,7 +117,7 @@ export class DashboardPoolComponent implements OnChanges {
       });
   }
 
-  onExpand(): void {
+  protected onExpand(): void {
     this.dialogService.confirm({
       title: this.translate.instant(helptextVolumes.expandPoolDialog.title),
       message: this.translate.instant(helptextVolumes.expandPoolDialog.message),
@@ -140,7 +140,7 @@ export class DashboardPoolComponent implements OnChanges {
       .subscribe();
   }
 
-  onUpgrade(): void {
+  protected onUpgrade(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Upgrade Pool'),
       message: this.translate.instant(helptextVolumes.upgradePoolDialogWarning) + this.pool().name as TranslatedString,
@@ -160,7 +160,7 @@ export class DashboardPoolComponent implements OnChanges {
     ).subscribe();
   }
 
-  onEditAutotrim(): void {
+  protected onEditAutotrim(): void {
     this.tnDialog
       .open(AutotrimDialog, { data: this.pool() })
       .closed
@@ -168,11 +168,11 @@ export class DashboardPoolComponent implements OnChanges {
       .subscribe(() => this.store.loadDashboard());
   }
 
-  onImportSuccess(): void {
+  protected onImportSuccess(): void {
     this.store.loadDashboard();
   }
 
-  counter(i: number): number[] {
+  protected counter(i: number): number[] {
     return new Array<number>(i).fill(0).map((_, index) => index);
   }
 

@@ -58,7 +58,8 @@
           }
         </div>
         <a
-          ixTest="view-disk-reports"
+          tnTestIdType="link"
+          [tnTestId]="'view-disk-reports'"
           [routerLink]="['/reportsdashboard', 'disk']"
           [queryParams]="{ disks: disksNames }"
         >

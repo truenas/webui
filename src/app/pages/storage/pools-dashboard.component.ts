@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnEmptyComponent } from '@truenas/ui-components';
@@ -32,6 +32,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   imports: [
     PageHeaderComponent,
     RequiresRolesDirective,
+    RouterLink,
     TnButtonComponent,
     UiSearchDirective,
     DashboardPoolComponent,
@@ -44,31 +45,36 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class PoolsDashboardComponent implements OnInit {
-  protected router = inject(Router);
   private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
   private store = inject(PoolsDashboardStore);
-  protected translate = inject(TranslateService);
+  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
   private tierService = inject(SharingTierService);
   private authService = inject(AuthService);
 
   protected readonly requiredRoles = [Role.PoolWrite];
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  readonly searchableElements = storageElements;
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly searchableElements = storageElements;
 
   protected readonly canCreatePool = toSignal(this.authService.hasRole(this.requiredRoles), { initialValue: false });
   protected readonly emptyTitle = storageEmptyConfig.title;
-  protected readonly emptyDescription = this.translate.instant(storageEmptyConfig.message).replace(/<br>/g, ' ');
 
-  rootDatasets: Record<string, Dataset> = {};
+  /** Re-translated on language change, which a plain `instant()` field initializer would miss. */
+  private readonly currentLang = toSignal(this.translate.onLangChange, { initialValue: null });
+  protected readonly emptyDescription = computed(() => {
+    this.currentLang();
+    return (this.translate.instant(storageEmptyConfig.message) as string).replace(/<br>/g, ' ');
+  });
 
-  readonly pools = this.store.pools;
-  readonly arePoolsLoading = this.store.arePoolsLoading;
-  readonly isLoadingPoolDetails = this.store.isLoadingPoolDetails;
+  protected rootDatasets: Record<string, Dataset> = {};
 
-  readonly hasNoPools = computed(() => this.pools().length === 0);
+  protected readonly pools = this.store.pools;
+  protected readonly arePoolsLoading = this.store.arePoolsLoading;
+  protected readonly isLoadingPoolDetails = this.store.isLoadingPoolDetails;
+
+  protected readonly hasNoPools = computed(() => this.pools().length === 0);
 
   ngOnInit(): void {
     this.store.rootDatasets$
@@ -83,10 +89,6 @@ export class PoolsDashboardComponent implements OnInit {
     this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
     this.store.loadDashboard();
-  }
-
-  protected createPool(): void {
-    this.router.navigate(['/storage', 'create']);
   }
 
   protected getDisksByPool(pool: Pool): StorageDashboardDisk[] {

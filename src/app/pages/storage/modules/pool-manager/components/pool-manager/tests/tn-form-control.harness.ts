@@ -1,6 +1,5 @@
-import { ComponentHarness } from '@angular/cdk/testing';
 import {
-  TnCheckboxHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 
@@ -9,23 +8,29 @@ import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-f
  * same {@link IxFormControlHarness} contract the pool-manager tests use for
  * ix-* controls, so a wizard step mixing tn-* and ix-* controls can still be
  * filled/read by label via {@link PoolManagerHarness}.
+ *
+ * Extends {@link TnFormFieldHarness} rather than composing it: both share the same
+ * `tn-form-field` host, and `locatorFor` only searches descendants — so inheriting is
+ * the only way to reuse the library's own `getLabel()` instead of re-deriving it.
  */
-export class TnFormControlHarness extends ComponentHarness implements IxFormControlHarness {
-  static readonly hostSelector = 'tn-form-field';
+export class TnFormControlHarness extends TnFormFieldHarness implements IxFormControlHarness {
+  static override readonly hostSelector = 'tn-form-field';
 
-  private label = this.locatorForOptional('.tn-form-field-label');
   private input = this.locatorForOptional(TnInputHarness);
   private select = this.locatorForOptional(TnSelectHarness);
   private checkbox = this.locatorForOptional(TnCheckboxHarness);
   private radios = this.locatorForAll(TnRadioHarness);
-  /** Present only while the select shows its placeholder, i.e. nothing is selected. */
+  /**
+   * White-box: present only while the select shows its placeholder, i.e. nothing is selected.
+   * `TnSelectHarness.getDisplayText()` returns the placeholder string rather than '', and the
+   * library exposes no `hasValue()`, so there is no public equivalent to compose here yet.
+   */
   private selectPlaceholder = this.locatorForOptional('.tn-select-text.placeholder');
 
   async getLabelText(): Promise<string> {
-    const label = await this.label();
+    const label = await this.getLabel();
     if (label) {
-      // Strip the trailing required asterisk, matching TnFormFieldHarness.getLabel().
-      return (await label.text()).replace(/\s*\*\s*$/, '').trim();
+      return label;
     }
     // A tn-checkbox carries its own label (via `[label]`) inside a bare tn-form-field
     // that has no field-level label of its own.

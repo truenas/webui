@@ -2,6 +2,7 @@
 @import 'mixins/animations';
 
 @include tn-detail-card;
+@include tn-card-inline-title;
 
 :host {
   display: flex;
@@ -182,16 +183,9 @@
   }
 }
 
-
 .link {
   color: var(--primary);
   cursor: pointer;
   margin-top: 25px;
   text-decoration: underline;
-}
-
-:host ::ng-deep .tn-card__title {
-  align-items: center;
-  column-gap: 5px;
-  display: flex;
 }

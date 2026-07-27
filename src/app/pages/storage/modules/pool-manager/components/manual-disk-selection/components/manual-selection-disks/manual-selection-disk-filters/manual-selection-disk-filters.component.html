@@ -13,6 +13,8 @@
           formControlName="diskType"
           [allowEmpty]="true"
           [options]="(typeOptions$ | async) ?? []"
+          [placeholder]="'Select an option' | translate"
+          [noOptionsLabel]="'No options' | translate"
         ></tn-select>
       </tn-form-field>
       <tn-form-field [label]="'Filter by Disk Size' | translate">
@@ -20,6 +22,8 @@
           formControlName="diskSize"
           [allowEmpty]="true"
           [options]="(sizeOptions$ | async) ?? []"
+          [placeholder]="'Select an option' | translate"
+          [noOptionsLabel]="'No options' | translate"
         ></tn-select>
       </tn-form-field>
     </div>

@@ -49,7 +49,7 @@ describe('DiskSizeSelectsComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    diskSizeSelect = await loader.getHarness(TnSelectHarness);
+    diskSizeSelect = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="sizeAndType"]' }));
 
     jest.spyOn(spectator.component.disksSelected, 'emit');
   });

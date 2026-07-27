@@ -1,6 +1,7 @@
 @import 'mixins/cards';
 
 @include tn-detail-card;
+@include tn-card-inline-title;
 
 :host {
   display: flex;
@@ -29,14 +30,3 @@
   }
 }
 
-.header {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-}
-
-:host ::ng-deep .tn-card__title {
-  align-items: center;
-  column-gap: 5px;
-  display: flex;
-}

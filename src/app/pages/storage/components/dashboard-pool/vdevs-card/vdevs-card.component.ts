@@ -79,9 +79,9 @@ export type EmptyDiskObject = Record<
   ],
 })
 export class VDevsCardComponent implements OnInit, OnChanges {
-  router = inject(Router);
-  translate = inject(TranslateService);
-  storageService = inject(StorageService);
+  protected router = inject(Router);
+  private translate = inject(TranslateService);
+  private storageService = inject(StorageService);
   private tierService = inject(SharingTierService);
 
   readonly poolState = input.required<Pool>();

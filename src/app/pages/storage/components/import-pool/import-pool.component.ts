@@ -1,5 +1,4 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -45,7 +44,6 @@ type ImportStep = 'loading' | 'locked-sed' | 'unlock-sed' | 'import';
     RequiresRolesDirective,
     TnButtonComponent,
     TranslateModule,
-    AsyncPipe,
     LockedSedDisksComponent,
     UnlockSedDisksComponent,
   ],
@@ -80,14 +78,27 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
 
   readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
-  pool = {
-    fcName: 'guid',
-    label: helptextImport.poolLabel,
-    options: of<Option[]>([]),
-  };
+  protected readonly poolLabel = helptextImport.poolLabel;
+  protected readonly poolOptions = signal<Option[]>([]);
+
+  /**
+   * The option label is `<name> | <guid>` while the value is the bare guid, so the
+   * test id is pinned to the label to keep the pre-migration `option-guid-<name>-<guid>`.
+   */
+  protected readonly poolOptionTestIdKey = (option: Option): string => String(option.label);
+
+  private readonly unlockSedDisks = viewChild(UnlockSedDisksComponent);
 
   ngOnInit(): void {
     this.checkForLockedDisks();
+  }
+
+  /**
+   * The unlock-SED step edits a form owned by the child component, which the inherited guard
+   * (which only sees `form`) can't see — so a half-typed SED password would be discarded silently.
+   */
+  override hasUnsavedChanges(): boolean {
+    return super.hasUnsavedChanges() || Boolean(this.unlockSedDisks()?.hasUnsavedChanges());
   }
 
   private checkForLockedDisks(): void {
@@ -138,11 +149,10 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
           guid: pool.guid,
         }));
 
-        const opts = result.map((pool) => ({
+        this.poolOptions.set(result.map((pool) => ({
           label: `${pool.name} | ${pool.guid}`,
           value: pool.guid,
-        } as Option));
-        this.pool.options = of(opts);
+        } as Option)));
 
         this.currentStep.set('import');
       },

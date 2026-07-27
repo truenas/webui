@@ -201,6 +201,30 @@
   }
 }
 
+// TEMP (NAS-141021): the library's `.tn-card__title` style is scoped to tn-card, so a consumer
+// that projects an adornment (a status icon) next to the title text can't lay the row out without
+// reaching in. Hoisted here so the pool dashboard's four sibling cards — disk-health,
+// storage-health, pool-usage, vdevs — can't drift. Drop once the library exposes a styled-title
+// projection slot. Kept separate from `tn-detail-card` so title-only cards aren't made flex.
+@mixin tn-card-inline-title {
+  :host ::ng-deep .tn-card__title {
+    align-items: center;
+    column-gap: 5px;
+    display: flex;
+  }
+}
+
+// TEMP (NAS-141021): tn-card declares no host `display`, so it defaults to `inline`. An inline box
+// wrapping block content is split into fragments that each paint the host background and padding,
+// which shows up as stray rectangles above and below the card. Hoisted here so the pool-manager
+// preview cards can't drift. Drop once the library sets a block host display.
+@mixin tn-card-block-host {
+  :host,
+  .card {
+    display: block;
+  }
+}
+
 // Shared `.details-item` row layout for detail cards migrated to tn-card. Pair with
 // `tn-detail-card` (title + divider theming) which is included at the stylesheet top level;
 // this mixin is included inside the card host rule (e.g. `.card { @include tn-details-item(); }`).

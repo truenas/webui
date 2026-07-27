@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject, Signal } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnDialog,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { filter, map, shareReplay, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -21,7 +22,6 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -67,7 +67,7 @@ interface StatusIconData {
     PoolCardIconComponent,
     RequiresRolesDirective,
     TnButtonComponent,
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
     TooltipComponent,
     ActivePoolScanComponent,
@@ -157,6 +157,7 @@ export class StorageHealthCardComponent {
         filter(Boolean),
         switchMap(() => this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Start])),
         this.errorHandler.withErrorHandler(),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -165,7 +166,7 @@ export class StorageHealthCardComponent {
     this.tnDialog
       .open(AutotrimDialog, { data: this.pool() })
       .closed
-      .pipe(filter(Boolean))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.store.loadDashboard());
   }
 

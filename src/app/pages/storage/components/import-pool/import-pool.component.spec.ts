@@ -200,4 +200,47 @@ describe('ImportPoolComponent', () => {
       expect(lockedSpectator.fixture.nativeElement.textContent).toContain('Global SED Password');
     });
   });
+
+  // pools-dashboard opens this form through FormSidePanelService with `footerless: true`, so the
+  // form keeps its own Import button and closes through the `closed` output rather than a SlideInRef.
+  describe('hosted in a side panel', () => {
+    const createPanelHostedComponent = createComponentFactory({
+      component: ImportPoolComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockApi([
+          mockJob('pool.import_pool', fakeSuccessfulJob()),
+          mockJob('pool.import_find', fakeSuccessfulJob(mockPools)),
+          mockCall('disk.details', mockDiskDetailsNoLocked),
+          mockCall('system.advanced.sed_global_password', 'existingpassword'),
+          mockCall('pool.dataset.query', [{ id: '/mnt/pewl', locked: false } as Dataset]),
+        ]),
+        { provide: SlideInRef, useValue: null },
+        mockProvider(DialogService, {
+          confirm: jest.fn(() => of(true)),
+          jobDialog: jest.fn((job$) => ({
+            afterClosed: () => job$,
+          })),
+        }),
+        mockAuth(),
+        mockProvider(Router),
+      ],
+    });
+
+    it('keeps its own Import button and emits closed on success', async () => {
+      const panelSpectator = createPanelHostedComponent();
+      const panelLoader = TestbedHarnessEnvironment.loader(panelSpectator.fixture);
+      const closed = jest.fn();
+      panelSpectator.component.closed.subscribe(closed);
+
+      const poolSelect = await panelLoader.getHarness(TnSelectHarness.with({ selector: '[formControlName="guid"]' }));
+      await poolSelect.selectOption('pool_name_1 | pool_guid_1');
+
+      const importButton = await panelLoader.getHarness(TnButtonHarness.with({ label: 'Import' }));
+      await importButton.click();
+
+      expect(panelSpectator.inject(ApiService).job).toHaveBeenCalledWith('pool.import_pool', [{ guid: 'pool_guid_1' }]);
+      expect(closed).toHaveBeenCalledWith(true);
+    });
+  });
 });

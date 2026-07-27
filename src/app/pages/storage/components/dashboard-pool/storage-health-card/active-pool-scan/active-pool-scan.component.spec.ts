@@ -55,8 +55,11 @@ describe('ActivePoolScanComponent', () => {
       const description = spectator.query('.scan-description');
       expect(description).toHaveText('Scrub In Progress:  50.00%');
 
+      // White-box: @truenas/ui-components ships no TnProgressBarHarness. Assert the ARIA
+      // attribute directly (never `ng-reflect-*`, which is dev-mode-only Angular debug output)
+      // so a regression in the progressbar contract actually fails the test.
       const progressBar = spectator.query('tn-progress-bar')!;
-      expect(progressBar.getAttribute('aria-valuenow') || progressBar.getAttribute('ng-reflect-value')).toBe('50');
+      expect(progressBar.getAttribute('aria-valuenow')).toBe('50');
     });
 
     it('shows time left', () => {
@@ -96,8 +99,11 @@ describe('ActivePoolScanComponent', () => {
       const description = spectator.query('.scan-description');
       expect(description).toHaveText('Scrub Paused  50.00%');
 
+      // White-box: @truenas/ui-components ships no TnProgressBarHarness. Assert the ARIA
+      // attribute directly (never `ng-reflect-*`, which is dev-mode-only Angular debug output)
+      // so a regression in the progressbar contract actually fails the test.
       const progressBar = spectator.query('tn-progress-bar')!;
-      expect(progressBar.getAttribute('aria-valuenow') || progressBar.getAttribute('ng-reflect-value')).toBe('50');
+      expect(progressBar.getAttribute('aria-valuenow')).toBe('50');
     });
 
     it('resumes scrub when Resume Scrub is pressed', async () => {
@@ -122,8 +128,11 @@ describe('ActivePoolScanComponent', () => {
       const description = spectator.query('.scan-description');
       expect(description).toHaveText('Resilvering:  50.00%');
 
+      // White-box: @truenas/ui-components ships no TnProgressBarHarness. Assert the ARIA
+      // attribute directly (never `ng-reflect-*`, which is dev-mode-only Angular debug output)
+      // so a regression in the progressbar contract actually fails the test.
       const progressBar = spectator.query('tn-progress-bar')!;
-      expect(progressBar.getAttribute('aria-valuenow') || progressBar.getAttribute('ng-reflect-value')).toBe('50');
+      expect(progressBar.getAttribute('aria-valuenow')).toBe('50');
     });
 
     it('shows time left', () => {

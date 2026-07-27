@@ -167,7 +167,8 @@
 
       <a
         class="link"
-        [ixTest]="[poolState().name, 'view-disk-reports']"
+        tnTestIdType="link"
+        [tnTestId]="[poolState().name, 'view-disk-reports']"
         [routerLink]="['/reportsdashboard', 'disk']"
         [queryParams]="{ disks: disks() }"
       >

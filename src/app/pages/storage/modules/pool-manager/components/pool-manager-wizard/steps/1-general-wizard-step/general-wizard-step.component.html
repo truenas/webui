@@ -9,14 +9,21 @@
   @if (!isAddingVdevs()) {
     <!-- Encryption type radio group -->
     <tn-form-field [label]="'Encryption' | translate">
-      @for (option of (encryptionTypeOptions$ | async) ?? []; track option.value) {
-        <tn-radio
-          name="encryptionType"
-          formControlName="encryptionType"
-          [value]="option.value"
-          [label]="option.label"
-        ></tn-radio>
-      }
+      <!--
+        tn-radio doesn't consume the form-field's ARIA context, so the group's name and
+        `radiogroup` role have to be declared here or the options are announced ungrouped.
+      -->
+      <div role="radiogroup" [attr.aria-label]="'Encryption' | translate">
+        @for (option of (encryptionTypeOptions$ | async) ?? []; track option.value) {
+          <tn-radio
+            name="encryptionType"
+            formControlName="encryptionType"
+            [testId]="['radio-button', 'encryption-type', option.label]"
+            [value]="option.value"
+            [label]="option.label"
+          ></tn-radio>
+        }
+      </div>
     </tn-form-field>
 
     <!-- Software Encryption Standard dropdown -->
@@ -32,6 +39,8 @@
         <tn-select
           formControlName="encryptionStandard"
           [options]="(encryptionAlgorithmOptions$ | async) ?? []"
+          [placeholder]="'Select an option' | translate"
+          [noOptionsLabel]="'No options' | translate"
         ></tn-select>
       </tn-form-field>
     }
@@ -48,6 +57,7 @@
         >
           <tn-input
             formControlName="sedPassword"
+            [testId]="'sed-password'"
             [inputType]="InputType.Password"
           ></tn-input>
         </tn-form-field>
@@ -55,6 +65,7 @@
         <tn-form-field [label]="helptext.sedPasswordConfirmLabel | translate">
           <tn-input
             formControlName="sedPasswordConfirm"
+            [testId]="'sed-password-confirm'"
             [inputType]="InputType.Password"
           ></tn-input>
         </tn-form-field>
@@ -68,6 +79,7 @@
         >
           <tn-input
             formControlName="sedPassword"
+            [testId]="'sed-password'"
             [inputType]="InputType.Password"
           ></tn-input>
         </tn-form-field>
@@ -75,6 +87,7 @@
         <tn-form-field [label]="helptext.sedPasswordConfirmLabel | translate" [required]="true">
           <tn-input
             formControlName="sedPasswordConfirm"
+            [testId]="'sed-password-confirm'"
             [inputType]="InputType.Password"
           ></tn-input>
         </tn-form-field>

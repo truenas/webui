@@ -4,6 +4,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnInputComponent, TnSelectComponent } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { filter, take } from 'rxjs/operators';
 import { CreateVdevLayout, vdevLayoutOptions, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -64,9 +65,8 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   });
 
   /**
-   * Explains the parity lock on special/dedup layout dropdowns. Rendered as a
-   * mat-hint on the layout select so screen readers pick it up via the form
-   * field's aria-describedby wiring.
+   * Explains the parity lock on special/dedup layout dropdowns. Bound to the layout field's
+   * `[hint]` input, which tn-form-field associates with the control via aria-describedby.
    *   - No hint when the Stripe option is present (data has no redundancy, so
    *     there's no meaningful restriction to explain).
    *   - Exact-match copy when only one layout remains (pool already has vdevs
@@ -99,6 +99,14 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   protected vdevLayoutOptions$ = toObservable(computed(() => (
     vdevLayoutOptions.filter((option) => this.limitLayouts().includes(option.value))
   )));
+
+  /**
+   * Derives the option test id from the label the way the legacy `ixTest` directive did, so
+   * `RAIDZ1`/`dRAID1` keep resolving to `option-layout-raidz-1`/`option-layout-d-raid-1`. The
+   * library's own normalizer would key off the `CreateVdevLayout` value and drop the hyphen
+   * before the digit (`raidz1`), silently renaming the ids.
+   */
+  protected readonly layoutOptionTestIdKey = (option: { label: string }): string => kebabCase(option.label);
 
   constructor() {
     this.updateStoreOnChanges();

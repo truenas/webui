@@ -31,7 +31,15 @@
         {{ getErrorText() }}
       </div>
       @if (hasErrors()) {
-        <a tabindex="0" (click)="goToVdevsPage()" (keydown.enter)="goToVdevsPage()">
+        <a
+          role="button"
+          tabindex="0"
+          tnTestIdType="link"
+          [tnTestId]="'view-errors'"
+          (click)="goToVdevsPage()"
+          (keydown.enter)="goToVdevsPage()"
+          (keydown.space)="goToVdevsPage(); $event.preventDefault()"
+        >
           {{ 'View' | translate }}
         </a>
       }
@@ -53,7 +61,15 @@
         <div class="value">
           {{ scrub().schedule | scheduleDescription }}
         </div>
-        <a ixTest="configure-scrub" (click)="onConfigureScrub()">
+        <a
+          role="button"
+          tabindex="0"
+          tnTestIdType="link"
+          [tnTestId]="'configure-scrub'"
+          (click)="onConfigureScrub()"
+          (keydown.enter)="onConfigureScrub()"
+          (keydown.space)="onConfigureScrub(); $event.preventDefault()"
+        >
           {{ 'Configure' | translate }}
         </a>
       }
@@ -61,7 +77,15 @@
         <div class="value">
           {{ 'Not Set' | translate }}
         </div>
-        <a ixTest="configure-scrub" (click)="onConfigureScrub()">
+        <a
+          role="button"
+          tabindex="0"
+          tnTestIdType="link"
+          [tnTestId]="'configure-scrub'"
+          (click)="onConfigureScrub()"
+          (keydown.enter)="onConfigureScrub()"
+          (keydown.space)="onConfigureScrub(); $event.preventDefault()"
+        >
           {{ 'Schedule' | translate }}
         </a>
       }

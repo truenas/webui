@@ -93,6 +93,9 @@ export class ScrubFormComponent extends SidePanelForm implements OnInit {
     const params = this.slideInRef
       ? this.slideInRef.getData() as ScrubFormParams
       : this.scrubParams();
+    if (!params) {
+      return;
+    }
     this.poolId = params.poolId;
     this.existingTask = params.existingScrubTask ?? undefined;
     if (this.existingTask) {

@@ -70,11 +70,17 @@ describe('AutomatedDiskSelection', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    layoutSelect = await loader.getHarnessOrNull(TnSelectHarness);
+    layoutSelect = await getLayoutSelect();
   });
 
+  // Scoped to this component's own `.layout-container`, so "the Layout select is gone" can't be
+  // satisfied by an unrelated select disappearing — the read-only branch renders no such wrapper.
+  function getLayoutSelect(): Promise<TnSelectHarness | null> {
+    return loader.getHarnessOrNull(TnSelectHarness.with({ ancestor: '.layout-container' }));
+  }
+
   async function getLayoutHint(): Promise<string | null> {
-    const field = await loader.getHarness(TnFormFieldHarness);
+    const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Layout' }));
     return field.getHint();
   }
 
@@ -110,7 +116,7 @@ describe('AutomatedDiskSelection', () => {
   it('does not let the layout change when canChangeLayout is false', async () => {
     spectator.setInput('canChangeLayout', false);
 
-    layoutSelect = await loader.getHarnessOrNull(TnSelectHarness);
+    layoutSelect = await getLayoutSelect();
     expect(layoutSelect).toBeNull();
   });
 

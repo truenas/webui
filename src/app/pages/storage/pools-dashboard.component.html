@@ -55,10 +55,22 @@
         iconLibrary="material"
         iconSize="72px"
         [title]="emptyTitle | translate"
-        [description]="emptyDescription"
-        [actionText]="canCreatePool() ? ('Create Pool' | translate) : undefined"
-        (onAction)="createPool()"
+        [description]="emptyDescription()"
       ></tn-empty>
+
+      <!--
+        Rendered outside tn-empty rather than through its `actionText` input: the action button
+        tn-empty renders internally carries no test id, and the input exposes no way to set one.
+      -->
+      @if (canCreatePool()) {
+        <tn-button
+          color="primary"
+          variant="outline"
+          [testId]="'create-pool'"
+          [routerLink]="['/storage', 'create']"
+          [label]="'Create Pool' | translate"
+        ></tn-button>
+      }
     </div>
   }
 

@@ -15,6 +15,8 @@
           formControlName="dataDevicesPerGroup"
           [testId]="['data-devices-per-group', type()]"
           [options]="(dataDevicesPerGroupOptions$ | async) ?? []"
+          [placeholder]="'Select an option' | translate"
+          [noOptionsLabel]="'No options' | translate"
         ></tn-select>
       </tn-form-field>
 
@@ -23,6 +25,8 @@
           formControlName="spares"
           [testId]="['spares', type()]"
           [options]="(sparesOptions$ | async) ?? []"
+          [placeholder]="'Select an option' | translate"
+          [noOptionsLabel]="'No options' | translate"
         ></tn-select>
       </tn-form-field>
     </div>
@@ -33,6 +37,8 @@
           formControlName="children"
           [testId]="['children', type()]"
           [options]="(widthOptions$ | async) ?? []"
+          [placeholder]="'Select an option' | translate"
+          [noOptionsLabel]="'No options' | translate"
         ></tn-select>
       </tn-form-field>
 
@@ -45,6 +51,8 @@
           formControlName="vdevsNumber"
           [testId]="['vdevs-number', type()]"
           [options]="(vdevsNumberOptions$ | async) ?? []"
+          [placeholder]="'Select an option' | translate"
+          [noOptionsLabel]="'No options' | translate"
         ></tn-select>
       </tn-form-field>
     </div>

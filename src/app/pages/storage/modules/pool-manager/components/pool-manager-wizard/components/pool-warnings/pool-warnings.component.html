@@ -7,14 +7,21 @@
         [tooltip]="nonUniqueSerialDisksTooltip | translate"
         [required]="true"
       >
-        @for (option of (allowNonUniqueSerialDisksOptions$ | async) ?? []; track option.value) {
-          <tn-radio
-            name="allowNonUniqueSerialDisks"
-            formControlName="allowNonUniqueSerialDisks"
-            [value]="option.value"
-            [label]="option.label"
-          ></tn-radio>
-        }
+        <!--
+          tn-radio doesn't consume the form-field's ARIA context, so the group's name and
+          `radiogroup` role have to be declared here or the options are announced ungrouped.
+        -->
+        <div role="radiogroup" [attr.aria-label]="'Allow non-unique serialed disks (not recommended)' | translate">
+          @for (option of (allowNonUniqueSerialDisksOptions$ | async) ?? []; track option.value) {
+            <tn-radio
+              name="allowNonUniqueSerialDisks"
+              formControlName="allowNonUniqueSerialDisks"
+              [testId]="['radio-button', 'allow-non-unique-serial-disks', option.label]"
+              [value]="option.value"
+              [label]="option.label"
+            ></tn-radio>
+          }
+        </div>
       </tn-form-field>
     </div>
   }
@@ -24,8 +31,14 @@
       <ix-warning [message]="exportedPoolsWarning"></ix-warning>
       <ix-label [label]="'Select disks you want to use' | translate"></ix-label>
       @for (item of poolAndDisks | keyvalue; track item.key) {
+        <!--
+          `label` is what tn-checkbox emits as the input's `aria-label`, which overrides the
+          projected content as the accessible name — without it every row in this loop would be
+          announced as the default "Checkbox", with no way to tell the pools apart.
+        -->
         <tn-checkbox
           [testId]="[item.key, 'exported_pool']"
+          [label]="item.key + ': ' + item.value.join(', ')"
           (change)="checkboxChanged(item.key, $event)"
         >
           <div tnCheckboxLabel class="label">

@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, output, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -11,8 +11,8 @@ import {
   TnButtonComponent, TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent,
   TnIconButtonComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
-import { filter, finalize, switchMap } from 'rxjs/operators';
+import { of, startWith } from 'rxjs';
+import { filter, finalize, map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -80,37 +80,45 @@ export class UnlockSedDisksComponent {
 
   protected isUnlocking = signal(false);
 
-  // Signal to track FormArray changes since FormArray is not signal-based
-  private exceptionsVersion = signal(0);
+  /**
+   * A `FormArray` isn't signal-based, so mirror its emissions (push/removeAt both emit) into a
+   * signal and derive the option lists from it, rather than from a hand-rolled version counter.
+   */
+  private readonly exceptions = toSignal(
+    this.form.controls.exceptions.valueChanges.pipe(
+      startWith(null),
+      map(() => this.form.controls.exceptions.getRawValue()),
+    ),
+    { initialValue: [] as { diskName: string; password: string }[] },
+  );
+
+  private readonly diskOptions = computed<Option[]>(() => this.lockedDisks().map((disk) => ({
+    label: `${disk.name} - ${disk.model} (${disk.serial})`,
+    value: disk.name,
+  })));
 
   protected availableDisksForException = computed(() => {
-    this.exceptionsVersion(); // Trigger recompute when exceptions change
-    const usedDiskNames = new Set(
-      this.form.controls.exceptions.controls.map((control) => control.controls.diskName.value),
-    );
-    return this.lockedDisks()
-      .filter((disk) => !usedDiskNames.has(disk.name))
-      .map((disk) => ({
-        label: `${disk.name} - ${disk.model} (${disk.serial})`,
-        value: disk.name,
-      }));
+    const usedDiskNames = new Set(this.exceptions().map((exception) => exception.diskName));
+    return this.diskOptions().filter((option) => !usedDiskNames.has(String(option.value)));
   });
 
-  protected getOptionsForException(index: number): Option[] {
-    const currentDiskName = this.form.controls.exceptions.at(index).controls.diskName.value;
-    const usedDiskNames = new Set(
-      this.form.controls.exceptions.controls
-        .filter((_, i) => i !== index)
-        .map((control) => control.controls.diskName.value),
-    );
+  /** Per-row option list: every disk not claimed by another row, plus the row's own selection. */
+  protected readonly exceptionOptions = computed<Option[][]>(() => {
+    const exceptions = this.exceptions();
+    return exceptions.map((exception, index) => {
+      const usedDiskNames = new Set(
+        exceptions.filter((_, i) => i !== index).map((other) => other.diskName),
+      );
+      return this.diskOptions()
+        .filter((option) => !usedDiskNames.has(String(option.value)) || option.value === exception.diskName);
+    });
+  });
 
-    return this.lockedDisks()
-      .filter((disk) => !usedDiskNames.has(disk.name) || disk.name === currentDiskName)
-      .map((disk) => ({
-        label: `${disk.name} - ${disk.model} (${disk.serial})`,
-        value: disk.name,
-      }));
-  }
+  /**
+   * The option label is `<name> - <model> (<serial>)` while the value is the bare disk name, so
+   * the test id is pinned to the label to keep the pre-migration `option-disk-name-<label>`.
+   */
+  protected readonly diskOptionTestIdKey = (option: Option): string => String(option.label);
 
   protected addException(): void {
     const available = this.availableDisksForException();
@@ -122,12 +130,15 @@ export class UnlockSedDisksComponent {
         password: ['', Validators.required],
       }),
     );
-    this.exceptionsVersion.update((version) => version + 1);
   }
 
   protected removeException(index: number): void {
     this.form.controls.exceptions.removeAt(index);
-    this.exceptionsVersion.update((version) => version + 1);
+  }
+
+  /** Consulted by the hosting {@link ImportPoolComponent}'s unsaved-changes guard. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 
   protected onSkip(): void {

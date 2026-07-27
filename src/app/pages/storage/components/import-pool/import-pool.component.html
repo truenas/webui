@@ -16,6 +16,7 @@
   }
   @case ('unlock-sed') {
     <ix-unlock-sed-disks
+      #unlockSedDisks
       [lockedDisks]="lockedSedDisks()"
       [globalSedPassword]="globalSedPassword()"
       (skip)="onUnlockSkip()"
@@ -30,12 +31,15 @@
     >
       <tn-form-section [heading]="helptext.selectPool | translate">
         <tn-form-field
-          [label]="pool.label | translate"
+          [label]="poolLabel | translate"
           [required]="true"
         >
           <tn-select
             formControlName="guid"
-            [options]="(pool.options | async) ?? []"
+            [options]="poolOptions()"
+            [optionTestIdKey]="poolOptionTestIdKey"
+            [placeholder]="'Select an option' | translate"
+            [noOptionsLabel]="'No options' | translate"
           ></tn-select>
         </tn-form-field>
       </tn-form-section>

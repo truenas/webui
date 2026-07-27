@@ -1,9 +1,12 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
@@ -20,6 +23,7 @@ import { selectPreferencesState } from 'app/store/preferences/preferences.select
 
 describe('PoolUsageCardComponent', () => {
   let spectator: Spectator<PoolUsageCardComponent>;
+  let loader: HarnessLoader;
   const tierEnabled = signal(false);
   const metadataReservePct = signal(0);
 
@@ -96,6 +100,7 @@ describe('PoolUsageCardComponent', () => {
         } as Pool,
       },
     });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('renders component properties when usage is below 80%', () => {
@@ -162,8 +167,10 @@ describe('PoolUsageCardComponent', () => {
     expect(href).toBe('/reportsdashboard/disk?disks=sda&disks=sdb');
   });
 
-  it('shows a "View Datasets" link', () => {
-    expect(spectator.query(byText('View Datasets'))).toExist();
+  it('links to the pool datasets page', async () => {
+    const link = await loader.getHarness(TnButtonHarness.with({ label: 'View Datasets' }));
+
+    expect(await link.getHref()).toBe('/datasets/bingo');
   });
 
   it('does not show tier breakdown when tiering is disabled', () => {

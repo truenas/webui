@@ -7,11 +7,23 @@
     >
       <tn-input
         formControlName="globalPassword"
+        [testId]="'global-password'"
         [inputType]="InputType.Password"
       ></tn-input>
     </tn-form-field>
 
-    <tn-checkbox formControlName="updateGlobalSettings" [testId]="'update-global-settings'">
+    <!--
+      `label` is what tn-checkbox emits as the input's `aria-label`, which overrides the projected
+      content as the accessible name — so it has to carry the hint the projection renders below.
+    -->
+    <tn-checkbox
+      formControlName="updateGlobalSettings"
+      [testId]="'update-global-settings'"
+      [label]="
+        ('Update global settings (applies to all disks/pools)' | translate)
+          + '. ' + ('Save this password to the system configuration for future use with these disks.' | translate)
+      "
+    >
       <div tnCheckboxLabel>
         <span class="checkbox-label">{{ 'Update global settings (applies to all disks/pools)' | translate }}</span>
         <span class="checkbox-hint">{{ 'Save this password to the system configuration for future use with these disks.' | translate }}</span>
@@ -36,12 +48,16 @@
             <tn-form-field [label]="'Disk' | translate" [required]="true">
               <tn-select
                 formControlName="diskName"
-                [options]="getOptionsForException($index)"
+                [options]="exceptionOptions()[$index] ?? []"
+                [optionTestIdKey]="diskOptionTestIdKey"
+                [placeholder]="'Select an option' | translate"
+                [noOptionsLabel]="'No options' | translate"
               ></tn-select>
             </tn-form-field>
             <tn-form-field [label]="'Password' | translate" [required]="true">
               <tn-input
                 formControlName="password"
+                [testId]="'password'"
                 [inputType]="InputType.Password"
               ></tn-input>
             </tn-form-field>

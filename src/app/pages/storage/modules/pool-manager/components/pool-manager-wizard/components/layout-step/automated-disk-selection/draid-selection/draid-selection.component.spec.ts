@@ -234,19 +234,20 @@ describe('DraidSelectionComponent', () => {
         'Treat Disk Size as Minimum': true,
         'Data Devices': '2',
         'Distributed Hot Spares': '1',
-        Children: '5',
-        'Number of VDEVs': '1',
+        Children: '4',
       },
     );
 
     startOver$.next();
 
-    // Assert the form's reset state directly: after reset the control values no
-    // longer match the (now empty) option lists, so tn-select's trigger shows the
-    // raw value rather than a label — reading the model is the robust check.
-    expect(spectator.component.form.value).toMatchObject({
-      spares: 0,
-      vdevsNumber: 1,
-    });
+    // Every control is asserted through the rendered UI. Disk Size, Data Devices, Spares and
+    // Children all start from a non-default value, so their assertions can't pass vacuously;
+    // Number of VDEVs only ever offers '1' for this fixture, so it is a presence check.
+    const controls = await getControls();
+    expect(await controls['Disk Size'].getValue()).toBe('');
+    expect(await controls['Data Devices'].getValue()).toBe('8');
+    expect(await controls['Distributed Hot Spares'].getValue()).toBe('0');
+    expect(await controls.Children.getValue()).toBe('0');
+    expect(await controls['Number of VDEVs'].getValue()).toBe('1');
   });
 });

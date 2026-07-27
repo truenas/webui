@@ -1,3 +1,12 @@
+// The Create Pool action sits outside tn-empty (it needs a test id the component can't emit),
+// so centre it under the empty state the way tn-empty's own action slot would.
+.entity-empty-wrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .pool {
   margin-bottom: 30px;
 

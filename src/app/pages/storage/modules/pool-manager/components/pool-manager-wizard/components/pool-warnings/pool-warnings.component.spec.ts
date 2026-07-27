@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness, TnRadioHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnFormFieldHarness, TnRadioHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -58,6 +58,13 @@ describe('PoolWarningsComponent', () => {
   });
 
   it('checks allow non unique serial radio button', async () => {
+    // The group label lives on the wrapping tn-form-field; assert it so a bare "Allow" radio
+    // can't satisfy this test if the group it belongs to changes.
+    const group = await loader.getHarness(
+      TnFormFieldHarness.with({ label: 'Allow non-unique serialed disks (not recommended)' }),
+    );
+    expect(group).toBeTruthy();
+
     const allowRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Allow' }));
     await allowRadio.check();
 

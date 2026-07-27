@@ -154,4 +154,43 @@ describe('ScrubTaskFormComponent', () => {
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
+
+  // storage-health-card opens this form through FormSidePanelService with `inputs: { scrubParams }`,
+  // so the input arm of the data resolution — not slideInRef.getData() — is the shipping path.
+  describe('hosted in a side panel', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          { provide: SlideInRef, useValue: null },
+        ],
+        props: {
+          scrubParams: { poolId: 2, existingScrubTask } as ScrubFormParams,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('loads the task from the scrubParams input instead of the SlideInRef', async () => {
+      expect(await (await getInput('threshold')).getValue()).toBe('40');
+      expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
+    });
+
+    it('renders no in-form Save', async () => {
+      expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Save' }))).toBeNull();
+    });
+
+    it('submits through the host and emits closed', async () => {
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
+      await (await getInput('threshold')).setValue('20');
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'pool.scrub.update',
+        [13, expect.objectContaining({ threshold: 20, pool: 2 })],
+      );
+      expect(closed).toHaveBeenCalledWith(true);
+    });
+  });
 });

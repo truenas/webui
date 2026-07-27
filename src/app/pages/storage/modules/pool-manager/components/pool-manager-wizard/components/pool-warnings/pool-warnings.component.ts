@@ -72,10 +72,11 @@ export class PoolWarningsComponent implements OnInit {
     this.connectWarningsToStore();
   }
 
-  checkboxChanged(pool: string, event: boolean | Event): void {
-    // tn-checkbox emits a boolean from its `change` output, but the inner
-    // <input>'s native `change` event also bubbles to the host and re-triggers
-    // this handler with an Event. Only act on the component's boolean emission.
+  protected checkboxChanged(pool: string, event: boolean | Event): void {
+    // Library defect: tn-checkbox emits a boolean from its `change` output, but the inner
+    // <input>'s native `change` event also bubbles to the host and re-triggers this handler
+    // with an Event (the component should stopPropagation on it). Only act on the component's
+    // boolean emission. Drop this guard once @truenas/ui-components stops the native event.
     if (typeof event !== 'boolean') {
       return;
     }

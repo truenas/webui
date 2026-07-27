@@ -4,13 +4,13 @@ import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { diskHealthCardElements } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.elements';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
@@ -35,14 +35,14 @@ interface DiskState {
     UiSearchDirective,
     PoolCardIconComponent,
     TnButtonComponent,
-    TestDirective,
+    TnTestIdDirective,
     RouterLink,
     TranslateModule,
     DecimalPipe,
   ],
 })
 export class DiskHealthCardComponent implements OnInit, OnChanges {
-  translate = inject(TranslateService);
+  private translate = inject(TranslateService);
 
   readonly poolState = input.required<Pool>();
   readonly disks = input<StorageDashboardDisk[]>([]);

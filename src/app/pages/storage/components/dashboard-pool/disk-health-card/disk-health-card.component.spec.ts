@@ -68,10 +68,10 @@ describe('DiskHealthCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows a button to manage all disks', async () => {
+  it('shows a button that links to the disks page', async () => {
     const manageDisksButton = await loader.getHarness(TnButtonHarness.with({ label: 'View Disks' }));
 
-    expect(manageDisksButton).toBeTruthy();
+    expect(await manageDisksButton.getHref()).toBe('/storage/disks');
   });
 
   describe('Temperatures', () => {

@@ -1,13 +1,20 @@
 <ng-container [formGroup]="form">
   <tn-form-field>
-    @for (option of (dispersalOptions$ | async) ?? []; track option.value) {
-      <tn-radio
-        name="dispersalStrategy"
-        formControlName="dispersalStrategy"
-        [value]="option.value"
-        [label]="option.label"
-      ></tn-radio>
-    }
+    <!--
+      tn-radio doesn't consume the form-field's ARIA context, and this group has no visible
+      label — so the `radiogroup` role and its name have to be declared here.
+    -->
+    <div role="radiogroup" [attr.aria-label]="'Enclosure dispersal strategy' | translate">
+      @for (option of (dispersalOptions$ | async) ?? []; track option.value) {
+        <tn-radio
+          name="dispersalStrategy"
+          formControlName="dispersalStrategy"
+          [testId]="['radio-button', 'dispersal-strategy', option.label]"
+          [value]="option.value"
+          [label]="option.label"
+        ></tn-radio>
+      }
+    </div>
   </tn-form-field>
 
   @if (isLimitingToSingle) {
@@ -16,6 +23,9 @@
         <tn-select
           formControlName="limitToEnclosure"
           [options]="(enclosureOptions$ | async) ?? []"
+          [optionTestIdKey]="enclosureOptionTestIdKey"
+          [placeholder]="'Select an option' | translate"
+          [noOptionsLabel]="'No options' | translate"
         ></tn-select>
       </tn-form-field>
 
