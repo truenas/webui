@@ -1,4 +1,8 @@
 @import 'mixins/cards';
 
 @include tn-detail-card;
-@include tn-details-item;
+@include tn-card-block-host;
+
+.card {
+  @include tn-details-item();
+}

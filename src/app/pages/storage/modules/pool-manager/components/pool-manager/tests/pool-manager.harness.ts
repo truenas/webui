@@ -9,10 +9,10 @@ import {
   indexControlsByLabel, IxFormBasicValueType, SupportedFormControlHarness,
   supportedFormControlSelectors,
 } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
+import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { ConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.harness';
 import { ExistingConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/existing-configuration-preview/existing-configuration-preview.harness';
 import { NewDevicesConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/new-devices/new-devices-configuration-preview.harness';
-import { TnFormControlHarness } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/tn-form-control.harness';
 import { ReviewWizardStepHarness } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.harness';
 
 /**

@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnRadioComponent,
+  TnButtonComponent, TnFormFieldComponent, TnInputComponent,
   TnSelectComponent, TnStepperNextDirective,
 } from '@truenas/ui-components';
 import {
@@ -19,6 +19,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { TnRadioGroupComponent } from 'app/modules/forms/ix-forms/components/tn-radio-group/tn-radio-group.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
@@ -42,7 +43,7 @@ const defaultEncryptionStandard = 'AES-256-GCM';
     ReactiveFormsModule,
     TnFormFieldComponent,
     TnInputComponent,
-    TnRadioComponent,
+    TnRadioGroupComponent,
     TnSelectComponent,
     PoolWarningsComponent,
     FormActionsComponent,

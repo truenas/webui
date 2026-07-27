@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent, TnRadioComponent,
+  TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent,
 } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import {
@@ -14,6 +14,7 @@ import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { TnRadioGroupComponent } from 'app/modules/forms/ix-forms/components/tn-radio-group/tn-radio-group.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
@@ -32,7 +33,7 @@ import { hasNonUniqueSerial, hasExportedPool, isSedCapable } from 'app/pages/sto
     ReactiveFormsModule,
     WarningComponent,
     TnFormFieldComponent,
-    TnRadioComponent,
+    TnRadioGroupComponent,
     IxLabelComponent,
     TnCheckboxComponent,
     TnCheckboxLabelDirective,
@@ -73,10 +74,12 @@ export class PoolWarningsComponent implements OnInit {
   }
 
   protected checkboxChanged(pool: string, event: boolean | Event): void {
-    // Library defect: tn-checkbox emits a boolean from its `change` output, but the inner
-    // <input>'s native `change` event also bubbles to the host and re-triggers this handler
-    // with an Event (the component should stopPropagation on it). Only act on the component's
-    // boolean emission. Drop this guard once @truenas/ui-components stops the native event.
+    // Library defect in the pinned @truenas/ui-components (0.3.26): tn-checkbox emits a boolean
+    // from its `change` output, but the inner <input>'s native `change` event also bubbles to the
+    // host, and Ivy invokes a `(change)` binding for both the output and the DOM event — so the
+    // handler fires a second time with an Event. Only act on the component's boolean emission.
+    // Fixed upstream in 0.4.x, which calls `stopPropagation()` in `onCheckboxChange` (tn-radio
+    // already did); drop this guard once the dependency range moves past 0.4.0.
     if (typeof event !== 'boolean') {
       return;
     }

@@ -1,6 +1,8 @@
 <tn-card class="card" [title]="title() | translate">
   <div class="card-body">
-    <h1 class="value">{{ disks().length }}</h1>
+    <!-- A count, not a section heading: styled large by class so it doesn't outrank the
+         card's own <h3> title in the document outline. -->
+    <div class="value">{{ disks().length }}</div>
     <tn-button
       *ixRequiresRoles="requiredRoles"
       [testId]="'add-to-pool'"

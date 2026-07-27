@@ -7,14 +7,12 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
-  TnBannerComponent, TnButtonComponent, TnCheckboxComponent,
+  TnBannerComponent, TnCheckboxComponent,
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -24,14 +22,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './tier-config-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnCheckboxComponent,
     TnInputComponent,
-    FormActionsComponent,
-    TnButtonComponent,
     TnBannerComponent,
     TranslateModule,
   ],

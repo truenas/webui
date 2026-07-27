@@ -9,21 +9,13 @@
   @if (!isAddingVdevs()) {
     <!-- Encryption type radio group -->
     <tn-form-field [label]="'Encryption' | translate">
-      <!--
-        tn-radio doesn't consume the form-field's ARIA context, so the group's name and
-        `radiogroup` role have to be declared here or the options are announced ungrouped.
-      -->
-      <div role="radiogroup" [attr.aria-label]="'Encryption' | translate">
-        @for (option of (encryptionTypeOptions$ | async) ?? []; track option.value) {
-          <tn-radio
-            name="encryptionType"
-            formControlName="encryptionType"
-            [testId]="['radio-button', 'encryption-type', option.label]"
-            [value]="option.value"
-            [label]="option.label"
-          ></tn-radio>
-        }
-      </div>
+      <ix-tn-radio-group
+        name="encryptionType"
+        formControlName="encryptionType"
+        [options]="(encryptionTypeOptions$ | async) ?? []"
+        [ariaLabel]="'Encryption' | translate"
+        [testId]="['radio-button', 'encryption-type']"
+      ></ix-tn-radio-group>
     </tn-form-field>
 
     <!-- Software Encryption Standard dropdown -->

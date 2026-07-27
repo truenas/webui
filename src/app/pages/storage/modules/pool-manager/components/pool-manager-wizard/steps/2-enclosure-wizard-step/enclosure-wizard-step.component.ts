@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnFormFieldComponent, TnRadioComponent, TnSelectComponent,
+  TnButtonComponent, TnFormFieldComponent, TnSelectComponent,
   TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { of, timer } from 'rxjs';
@@ -14,6 +14,7 @@ import {
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { TnRadioGroupComponent } from 'app/modules/forms/ix-forms/components/tn-radio-group/tn-radio-group.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 export enum DispersalStrategy {
@@ -31,7 +32,7 @@ export enum DispersalStrategy {
     AsyncPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,
-    TnRadioComponent,
+    TnRadioGroupComponent,
     TnSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
@@ -111,17 +112,12 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
     ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
     this.store.startOver$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      // Clear before restoring the default. Angular suppresses the model->view write on
-      // the accessor that originated a change, so the radio the user picked leaves every
-      // *other* `tn-radio`'s `checked` field stale-true; writing `None` straight back is
-      // then a no-op for its `[checked]` binding and the group renders with nothing
-      // selected. Passing through `null` forces each binding to actually change.
-      this.form.controls.dispersalStrategy.setValue(null);
-      this.cdr.detectChanges();
+      // `ix-tn-radio-group` owns the re-render of the radios' stale `checked` state; a plain
+      // reset is enough here.
       this.form.reset({
         dispersalStrategy: DispersalStrategy.None,
       });
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     });
   }
 

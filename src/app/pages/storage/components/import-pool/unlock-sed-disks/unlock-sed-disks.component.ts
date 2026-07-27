@@ -11,8 +11,9 @@ import {
   TnButtonComponent, TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent,
   TnIconButtonComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
+import { isEqual } from 'lodash-es';
 import { of, startWith } from 'rxjs';
-import { filter, finalize, map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, finalize, map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -72,6 +73,21 @@ export class UnlockSedDisksComponent {
 
   protected readonly Role = Role;
 
+  protected readonly updateGlobalSettingsLabel = this.translate.instant('Update global settings (applies to all disks/pools)');
+  protected readonly updateGlobalSettingsHint = this.translate.instant('Save this password to the system configuration for future use with these disks.');
+
+  /**
+   * `tn-checkbox` emits `label` as the input's `aria-label`, which overrides the projected content
+   * as the accessible name — so it has to carry the hint the projection renders below. (That the
+   * hint lands in the name rather than an `aria-describedby` description is a downgrade the
+   * component API forces.) Composed through a translatable pattern so clause order and
+   * punctuation stay in the translator's hands rather than being hard-coded as `+ '. ' +`.
+   */
+  protected readonly updateGlobalSettingsAriaLabel = this.translate.instant('{label}. {hint}', {
+    label: this.updateGlobalSettingsLabel,
+    hint: this.updateGlobalSettingsHint,
+  });
+
   protected form = this.formBuilder.nonNullable.group({
     globalPassword: ['', Validators.required],
     updateGlobalSettings: [true],
@@ -83,13 +99,18 @@ export class UnlockSedDisksComponent {
   /**
    * A `FormArray` isn't signal-based, so mirror its emissions (push/removeAt both emit) into a
    * signal and derive the option lists from it, rather than from a hand-rolled version counter.
+   *
+   * Only the disk names feed the option lists, so the projection stops there and
+   * `distinctUntilChanged` drops the emissions typing in a password field produces — otherwise
+   * every keystroke would hand each `tn-select` a freshly built options array.
    */
-  private readonly exceptions = toSignal(
+  private readonly exceptionDiskNames = toSignal(
     this.form.controls.exceptions.valueChanges.pipe(
       startWith(null),
-      map(() => this.form.controls.exceptions.getRawValue()),
+      map(() => this.form.controls.exceptions.getRawValue().map((exception) => exception.diskName)),
+      distinctUntilChanged<string[]>(isEqual),
     ),
-    { initialValue: [] as { diskName: string; password: string }[] },
+    { initialValue: [] as string[] },
   );
 
   private readonly diskOptions = computed<Option[]>(() => this.lockedDisks().map((disk) => ({
@@ -98,19 +119,17 @@ export class UnlockSedDisksComponent {
   })));
 
   protected availableDisksForException = computed(() => {
-    const usedDiskNames = new Set(this.exceptions().map((exception) => exception.diskName));
+    const usedDiskNames = new Set(this.exceptionDiskNames());
     return this.diskOptions().filter((option) => !usedDiskNames.has(String(option.value)));
   });
 
   /** Per-row option list: every disk not claimed by another row, plus the row's own selection. */
   protected readonly exceptionOptions = computed<Option[][]>(() => {
-    const exceptions = this.exceptions();
-    return exceptions.map((exception, index) => {
-      const usedDiskNames = new Set(
-        exceptions.filter((_, i) => i !== index).map((other) => other.diskName),
-      );
+    const diskNames = this.exceptionDiskNames();
+    return diskNames.map((diskName, index) => {
+      const usedDiskNames = new Set(diskNames.filter((_, i) => i !== index));
       return this.diskOptions()
-        .filter((option) => !usedDiskNames.has(String(option.value)) || option.value === exception.diskName);
+        .filter((option) => !usedDiskNames.has(String(option.value)) || option.value === diskName);
     });
   });
 

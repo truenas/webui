@@ -211,7 +211,11 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
 
     unsetControlIfNoMatchingOption(this.form.controls.children, nextOptions);
 
-    if (this.isStepActive()) {
+    // Only default to the optimal width when there is one. With no disks selected
+    // `maxPossibleWidth` is 0, and defaulting to it would leave a meaningless "Children: 0"
+    // in the control — invisible with `ix-select` (which blanked a value that matched no
+    // option) but rendered verbatim by `tn-select`.
+    if (this.isStepActive() && maxPossibleWidth) {
       setValueIfNotSame(
         this.form.controls.children,
         maxPossibleWidth,

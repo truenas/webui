@@ -15,7 +15,7 @@ import {
 } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import {
   TnFormControlHarness,
-} from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/tn-form-control.harness';
+} from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import {
   DiskSizeSelectsComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/disk-size-selects/disk-size-selects.component';
@@ -240,14 +240,15 @@ describe('DraidSelectionComponent', () => {
 
     startOver$.next();
 
-    // Every control is asserted through the rendered UI. Disk Size, Data Devices, Spares and
-    // Children all start from a non-default value, so their assertions can't pass vacuously;
-    // Number of VDEVs only ever offers '1' for this fixture, so it is a presence check.
+    // Start Over clears the disk selection and restores the form defaults. `tn-select` renders
+    // a value verbatim even when no option matches it (`ix-select` used to blank it), so these
+    // assertions read exactly what the user sees: the defaults the reset writes back, and an
+    // empty Children — there is no optimal width to default to without disks.
     const controls = await getControls();
     expect(await controls['Disk Size'].getValue()).toBe('');
-    expect(await controls['Data Devices'].getValue()).toBe('8');
+    expect(await controls['Data Devices'].getValue()).toBe(String(spectator.component.defaultDataDevicesPerGroup));
     expect(await controls['Distributed Hot Spares'].getValue()).toBe('0');
-    expect(await controls.Children.getValue()).toBe('0');
+    expect(await controls.Children.getValue()).toBe('');
     expect(await controls['Number of VDEVs'].getValue()).toBe('1');
   });
 });

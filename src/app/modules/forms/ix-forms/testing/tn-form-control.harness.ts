@@ -4,10 +4,10 @@ import {
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 
 /**
- * Adapter that lets a `tn-form-field`-wrapped tn-* control be driven through the
- * same {@link IxFormControlHarness} contract the pool-manager tests use for
- * ix-* controls, so a wizard step mixing tn-* and ix-* controls can still be
- * filled/read by label via {@link PoolManagerHarness}.
+ * Adapter that lets a `tn-form-field`-wrapped tn-* control be driven through the same
+ * {@link IxFormControlHarness} contract the ix-* control harnesses implement, so a form
+ * part-way through the tn-* migration — with ix-* and tn-* controls side by side — can still
+ * be filled and read by label through one indexed lookup.
  *
  * Extends {@link TnFormFieldHarness} rather than composing it: both share the same
  * `tn-form-field` host, and `locatorFor` only searches descendants — so inheriting is

@@ -14,7 +14,6 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ImportPoolComponent } from './import-pool.component';
 
@@ -22,12 +21,6 @@ describe('ImportPoolComponent', () => {
   let spectator: Spectator<ImportPoolComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const mockPools: PoolFindResult[] = [{
     name: 'pool_name_1',
@@ -84,7 +77,6 @@ describe('ImportPoolComponent', () => {
           encryption_root: '/mnt/pewl',
         } as Dataset]),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn((job$) => ({
@@ -118,7 +110,12 @@ describe('ImportPoolComponent', () => {
     ]);
   });
 
+  // pools-dashboard opens this form through FormSidePanelService with `footerless: true`, which is
+  // its only host: the form keeps its own Import button and closes through the `closed` output.
   it('imports a pool when form is submitted', async () => {
+    const closed = jest.fn();
+    spectator.component.closed.subscribe(closed);
+
     await (await getPoolSelect()).selectOption('pool_name_1 | pool_guid_1');
 
     const importButton = await loader.getHarness(TnButtonHarness.with({ label: 'Import' }));
@@ -126,6 +123,7 @@ describe('ImportPoolComponent', () => {
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(api.job).toHaveBeenCalledWith('pool.import_pool', [{ guid: 'pool_guid_1' }]);
+    expect(closed).toHaveBeenCalledWith(true);
   });
 
   it('checks if pool needs to be unlocked and prompts user to unlock it', async () => {
@@ -155,7 +153,6 @@ describe('ImportPoolComponent', () => {
           mockCall('disk.unlock_sed'),
           mockCall('pool.dataset.query', [{ id: '/mnt/pewl', locked: false } as Dataset]),
         ]),
-        mockProvider(SlideInRef, slideInRef),
         mockProvider(DialogService, {
           confirm: jest.fn(() => of(true)),
           jobDialog: jest.fn((job$) => ({
@@ -198,49 +195,6 @@ describe('ImportPoolComponent', () => {
 
       expect(lockedSpectator.fixture.nativeElement.textContent).not.toContain('Locked SED Disks Detected');
       expect(lockedSpectator.fixture.nativeElement.textContent).toContain('Global SED Password');
-    });
-  });
-
-  // pools-dashboard opens this form through FormSidePanelService with `footerless: true`, so the
-  // form keeps its own Import button and closes through the `closed` output rather than a SlideInRef.
-  describe('hosted in a side panel', () => {
-    const createPanelHostedComponent = createComponentFactory({
-      component: ImportPoolComponent,
-      imports: [ReactiveFormsModule],
-      providers: [
-        mockApi([
-          mockJob('pool.import_pool', fakeSuccessfulJob()),
-          mockJob('pool.import_find', fakeSuccessfulJob(mockPools)),
-          mockCall('disk.details', mockDiskDetailsNoLocked),
-          mockCall('system.advanced.sed_global_password', 'existingpassword'),
-          mockCall('pool.dataset.query', [{ id: '/mnt/pewl', locked: false } as Dataset]),
-        ]),
-        { provide: SlideInRef, useValue: null },
-        mockProvider(DialogService, {
-          confirm: jest.fn(() => of(true)),
-          jobDialog: jest.fn((job$) => ({
-            afterClosed: () => job$,
-          })),
-        }),
-        mockAuth(),
-        mockProvider(Router),
-      ],
-    });
-
-    it('keeps its own Import button and emits closed on success', async () => {
-      const panelSpectator = createPanelHostedComponent();
-      const panelLoader = TestbedHarnessEnvironment.loader(panelSpectator.fixture);
-      const closed = jest.fn();
-      panelSpectator.component.closed.subscribe(closed);
-
-      const poolSelect = await panelLoader.getHarness(TnSelectHarness.with({ selector: '[formControlName="guid"]' }));
-      await poolSelect.selectOption('pool_name_1 | pool_guid_1');
-
-      const importButton = await panelLoader.getHarness(TnButtonHarness.with({ label: 'Import' }));
-      await importButton.click();
-
-      expect(panelSpectator.inject(ApiService).job).toHaveBeenCalledWith('pool.import_pool', [{ guid: 'pool_guid_1' }]);
-      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 });

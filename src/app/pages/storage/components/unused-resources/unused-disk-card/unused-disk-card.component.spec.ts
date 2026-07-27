@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCardComponent } from '@truenas/ui-components';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
@@ -37,10 +37,11 @@ describe('UnusedDiskCardComponent', () => {
   });
 
   it('shows a title', () => {
-    // White-box: the <h3> is emitted by tn-card from its [title] input, not by this component,
-    // and @truenas/ui-components ships no TnCardHarness. Read the input instead of the
-    // library's internal DOM; swap to a harness once one lands upstream.
-    expect(spectator.query(TnCardComponent)!.title()).toBe('Unassigned Disks');
+    // White-box: the heading is emitted by tn-card from its [title] input, not by this
+    // component, and @truenas/ui-components ships no TnCardHarness. Assert the rendered node
+    // rather than the input, so the test still fails if the card stops rendering the title;
+    // swap to a harness once one lands upstream.
+    expect(spectator.query('.tn-card__title')).toHaveText('Unassigned Disks');
   });
 
   it('shows a value', () => {

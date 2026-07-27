@@ -136,7 +136,7 @@ the ticket and document it in the PR.
 | `<button mat-raised-button>` | `<tn-button variant="filled">` | |
 | `<button mat-stroked-button>` | `<tn-button variant="outline">` | |
 | `<button mat-flat-button>` | `<tn-button variant="filled" color="default">` | |
-| `<a mat-button [routerLink]>` | `<tn-button [routerLink]>` | ⚠ `tn-button` accepts `[routerLink]`/`[href]` but renders an internal `<button>`, not `<a>`. Verify middle-click "open in new tab," right-click context menu, and focus parity. The test-id prefix also shifts (`link-*` → `button-*`); see "Test IDs." |
+| `<a mat-button [routerLink]>` | `<tn-button [routerLink]>` | `tn-button` renders a real `<a routerLink>` in anchor mode (`[routerLink]`/`[href]`), so middle-click "open in new tab" and right-click "copy link" are preserved — verified in 0.3.26. ⚠ The test-id prefix still shifts (`link-*` → `button-*`): the anchor arm hard-codes `tnTestIdType="button"`, and `composeTestId` only skips a prefix the base already starts with, so a legacy `link-*` value cannot be pinned through the `testId` input. See "Test IDs." |
 | `<button mat-icon-button>` | `<tn-icon-button>` | ⚠ Bare icon-only buttons MUST have `[ariaLabel]` — no accessible name otherwise. |
 | `<button mat-fab>` / `<button mat-mini-fab>` | *(no equivalent — hold)* | No FAB component. Rework to a primary action button or surface to lead. |
 | `<mat-button-toggle-group>` / `<mat-button-toggle>` | `<tn-button-toggle-group>` / `<tn-button-toggle>` | See **Recipe 7**. ⚠ No `[label]` input — must provide `[ariaLabel]` or `[ariaLabelledby]`. ⚠ Per-option test IDs are not auto-synthesized; set `[testId]` per `<tn-button-toggle>`. |
@@ -700,9 +700,12 @@ menu-item IDs — reuse it, don't hand-roll the string.
 type, changing the type changes the resolved value even when the base is identical:
 
 - `<a mat-button [ixTest]="'foo'">` resolved to `link-foo`. `<tn-button [testId]="'foo'">`
-  resolves to `button-foo` (tn-button declares `button`). Intentional anchor → button change,
-  but RE-visible: if a legacy `link-*` selector is referenced anywhere, pin the full legacy
-  value verbatim on a typeless host or coordinate the rename.
+  resolves to `button-foo` — tn-button declares `button` on all three arms, including the two
+  that render an `<a>`. There is no escape hatch through the component: passing
+  `testId="link-foo"` yields `button-link-foo`, because `composeTestId`'s idempotent guard only
+  skips a prefix the base *already* starts with. So if a legacy `link-*` selector is referenced
+  anywhere, either keep a typeless host element and put `[tnTestId]` on it, or coordinate the
+  rename with whoever owns the e2e selectors.
 - `<button mat-menu-item [ixTest]="'foo'">` resolved to `button-foo`. `<tn-menu-item
   [testId]="'foo'">` resolves to `menu-item-foo` because `tn-menu-item` declares the
   `menu-item` prefix. To preserve the legacy `button-foo`, pass `testId="button-foo"` on the

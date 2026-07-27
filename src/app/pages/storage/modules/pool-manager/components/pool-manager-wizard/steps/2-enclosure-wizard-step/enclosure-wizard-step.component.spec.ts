@@ -87,16 +87,28 @@ describe('EnclosureWizardStepComponent', () => {
     });
   });
 
-  it('resets form if Start Over confirmed', () => {
+  it('resets form if Start Over confirmed', async () => {
     const form = spectator.component.form;
 
-    form.patchValue({ dispersalStrategy: DispersalStrategy.Maximize, limitToEnclosure: null });
+    // Picked through the UI rather than patched: only a user-originated change leaves the other
+    // radios' `checked` state stale, which is what the reset has to recover from.
+    const maximizeRadio = await loader.getHarness(
+      TnRadioHarness.with({ label: 'Maximize Enclosure Dispersal' }),
+    );
+    await maximizeRadio.check();
 
     expect(form.value).toStrictEqual({ dispersalStrategy: DispersalStrategy.Maximize, limitToEnclosure: null });
 
     const store = spectator.inject(PoolManagerStore);
     store.startOver$.next();
+    spectator.detectChanges();
 
     expect(form.value).toStrictEqual({ dispersalStrategy: DispersalStrategy.None, limitToEnclosure: null });
+
+    const noneRadio = await loader.getHarness(
+      TnRadioHarness.with({ label: 'No Enclosure Dispersal Strategy' }),
+    );
+    expect(await noneRadio.isChecked()).toBe(true);
+    expect(await maximizeRadio.isChecked()).toBe(false);
   });
 });

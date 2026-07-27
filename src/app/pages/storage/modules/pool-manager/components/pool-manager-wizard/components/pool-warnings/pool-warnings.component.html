@@ -7,21 +7,13 @@
         [tooltip]="nonUniqueSerialDisksTooltip | translate"
         [required]="true"
       >
-        <!--
-          tn-radio doesn't consume the form-field's ARIA context, so the group's name and
-          `radiogroup` role have to be declared here or the options are announced ungrouped.
-        -->
-        <div role="radiogroup" [attr.aria-label]="'Allow non-unique serialed disks (not recommended)' | translate">
-          @for (option of (allowNonUniqueSerialDisksOptions$ | async) ?? []; track option.value) {
-            <tn-radio
-              name="allowNonUniqueSerialDisks"
-              formControlName="allowNonUniqueSerialDisks"
-              [testId]="['radio-button', 'allow-non-unique-serial-disks', option.label]"
-              [value]="option.value"
-              [label]="option.label"
-            ></tn-radio>
-          }
-        </div>
+        <ix-tn-radio-group
+          name="allowNonUniqueSerialDisks"
+          formControlName="allowNonUniqueSerialDisks"
+          [options]="(allowNonUniqueSerialDisksOptions$ | async) ?? []"
+          [ariaLabel]="'Allow non-unique serialed disks (not recommended)' | translate"
+          [testId]="['radio-button', 'allow-non-unique-serial-disks']"
+        ></ix-tn-radio-group>
       </tn-form-field>
     </div>
   }

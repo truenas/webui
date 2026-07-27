@@ -202,7 +202,7 @@ describe('NormalSelectionComponent', () => {
 
     expect(await vdevsSelect.getOptions()).toStrictEqual(['1']);
 
-    const vdevsValue = await widthSelect.getDisplayText();
+    const vdevsValue = await vdevsSelect.getDisplayText();
     expect(vdevsValue).toBe('1');
   });
 

@@ -1,20 +1,13 @@
 <ng-container [formGroup]="form">
   <tn-form-field>
-    <!--
-      tn-radio doesn't consume the form-field's ARIA context, and this group has no visible
-      label — so the `radiogroup` role and its name have to be declared here.
-    -->
-    <div role="radiogroup" [attr.aria-label]="'Enclosure dispersal strategy' | translate">
-      @for (option of (dispersalOptions$ | async) ?? []; track option.value) {
-        <tn-radio
-          name="dispersalStrategy"
-          formControlName="dispersalStrategy"
-          [testId]="['radio-button', 'dispersal-strategy', option.label]"
-          [value]="option.value"
-          [label]="option.label"
-        ></tn-radio>
-      }
-    </div>
+    <!-- This group has no visible label, so the accessible name is supplied explicitly. -->
+    <ix-tn-radio-group
+      name="dispersalStrategy"
+      formControlName="dispersalStrategy"
+      [options]="(dispersalOptions$ | async) ?? []"
+      [ariaLabel]="'Enclosure dispersal strategy' | translate"
+      [testId]="['radio-button', 'dispersal-strategy']"
+    ></ix-tn-radio-group>
   </tn-form-field>
 
   @if (isLimitingToSingle) {
