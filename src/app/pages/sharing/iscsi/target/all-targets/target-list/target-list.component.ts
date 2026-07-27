@@ -9,7 +9,6 @@ import {
   TnTablePagerComponent, TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -24,6 +23,7 @@ import {
   convertStringToId, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
 import { targetListElements } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.elements';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 
@@ -89,9 +89,7 @@ export class TargetListComponent implements OnInit {
   protected readonly trackByTargetId = (_index: number, row: IscsiTarget): number => row.id;
 
   protected uniqueRowTag(row: IscsiTarget): string {
-    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
-    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-    return kebabCase(convertStringToId('iscsi-target-' + row.name));
+    return normalizeTestIdSegment(convertStringToId('iscsi-target-' + row.name));
   }
 
   protected modeLabel(row: IscsiTarget): string {

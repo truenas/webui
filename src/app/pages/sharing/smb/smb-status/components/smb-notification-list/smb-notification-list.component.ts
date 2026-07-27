@@ -8,7 +8,6 @@ import {
   TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbNotificationInfo } from 'app/interfaces/smb-status.interface';
@@ -20,6 +19,7 @@ import { TableColumnPickerComponent } from 'app/modules/ix-table/components/tabl
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
+import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -103,9 +103,9 @@ export class SmbNotificationListComponent implements OnInit {
   }
 
   protected uniqueRowTag(row: SmbNotificationInfo): string {
-    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
-    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-    return kebabCase(convertStringToId('smb-notification-' + row.creation_time + '-' + row.server_id.unique_id));
+    return normalizeTestIdSegment(
+      convertStringToId('smb-notification-' + row.creation_time + '-' + row.server_id.unique_id),
+    );
   }
 
   protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {

@@ -9,7 +9,6 @@ import {
   TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -27,6 +26,7 @@ import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
@@ -133,9 +133,7 @@ export class PortalListComponent implements OnInit {
   protected readonly trackByPortalId = (_index: number, row: IscsiPortal): number => row.id;
 
   protected uniqueRowTag(row: IscsiPortal): string {
-    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
-    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-    return kebabCase(convertStringToId('iscsi-portal-' + row.comment));
+    return normalizeTestIdSegment(convertStringToId('iscsi-portal-' + row.comment));
   }
 
   protected ariaLabel(row: IscsiPortal): string {

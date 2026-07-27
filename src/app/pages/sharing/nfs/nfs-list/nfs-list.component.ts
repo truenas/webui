@@ -11,7 +11,6 @@ import {
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -35,6 +34,7 @@ import {
 } from 'app/modules/ix-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -184,11 +184,7 @@ export class NfsListComponent implements OnInit {
   protected readonly trackByNfsId = (_index: number, row: NfsShare): number => row.id;
 
   protected uniqueRowTag(row: NfsShare): string {
-    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('pool1' → 'pool-1')
-    // while the library's kebab does not, so the pre-split tag resolves identically through
-    // the legacy [ixTest] directive, the library [tnTestId] directive, and the tn cell
-    // components — byte-matching the pre-migration data-test values.
-    return kebabCase(convertStringToId('nfs-share-' + row.path + '-' + row.comment));
+    return normalizeTestIdSegment(convertStringToId('nfs-share-' + row.path + '-' + row.comment));
   }
 
   protected ariaLabel(row: NfsShare): string {

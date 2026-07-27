@@ -77,6 +77,7 @@
       }
 
       // TEMP: until @truenas/ui-components exposes a dense / wrapping list variant.
+      // Gap 2 in TRUENAS_UI_INTEGRATION.md ("Known Library Gaps").
       // tn-list-item is opinionated for standard lists (48px rows, 16px leading gap,
       // single-line ellipsis); these reach into its internals to reproduce the compact,
       // wrapping rows this drag-drop widget has always used. See NAS-141021.

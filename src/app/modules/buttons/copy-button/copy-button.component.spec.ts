@@ -1,3 +1,4 @@
+import { OverlayContainer } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -80,12 +81,14 @@ describe('CopyButtonComponent', () => {
 
     // The menu-item test ids are the ones the old `<button mat-menu-item ixTest="copy-text">`
     // resolved to. The prefix is now composed by the library, so pin the resolved values.
-    // This asserts the Release Engineering contract, so reading `data-test` is the point
-    // of the test — the items themselves are still located by their rendered element.
+    // This asserts the Release Engineering contract, so reading `data-test` is the point of
+    // the test. TnMenuHarness has no per-item harness to read it from, so the items are
+    // located in this fixture's own overlay container rather than the whole document.
     it('keeps the legacy test ids on the menu items', async () => {
       await openMenu();
 
-      const items = Array.from(document.querySelectorAll('.tn-menu-item'));
+      const overlay = spectator.inject(OverlayContainer).getContainerElement();
+      const items = Array.from(overlay.querySelectorAll('.tn-menu-item'));
 
       expect(items.map((item) => item.getAttribute('data-test')))
         .toEqual(['button-copy-text', 'button-copy-json-text']);

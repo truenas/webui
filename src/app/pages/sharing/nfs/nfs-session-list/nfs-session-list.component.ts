@@ -9,7 +9,6 @@ import {
   TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { combineLatest, map, tap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
@@ -23,6 +22,7 @@ import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
 
@@ -165,15 +165,12 @@ export class NfsSessionListComponent implements OnInit {
     return stringToTitleCase(status);
   }
 
-  // Pre-split with lodash kebabCase ('nfs3' → 'nfs-3'): the library's [tnTestId] kebab does
-  // not break letter–digit boundaries, so pre-splitting keeps the resolved data-test values
-  // byte-identical to the legacy [ixTest] directive's lodash normalization.
   protected uniqueRowTag3(row: Nfs3Session): string {
-    return kebabCase(convertStringToId('nfs3-session-' + row.export + '-' + row.ip));
+    return normalizeTestIdSegment(convertStringToId('nfs3-session-' + row.export + '-' + row.ip));
   }
 
   protected uniqueRowTag4(row: Nfs4Session['info']): string {
-    return kebabCase(convertStringToId(`nfs4-session-${row.address}-${row.clientid}`));
+    return normalizeTestIdSegment(convertStringToId(`nfs4-session-${row.address}-${row.clientid}`));
   }
 
   ngOnInit(): void {

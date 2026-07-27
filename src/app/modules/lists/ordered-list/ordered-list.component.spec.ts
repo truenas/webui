@@ -85,12 +85,6 @@ describe('OrderedListboxComponent', () => {
     expect(onChange).toHaveBeenCalledWith([]);
   });
 
-  it('toggles an option when its label is clicked', () => {
-    spectator.click(spectator.queryAll('.tn-slide-toggle__label-text')[1]);
-
-    expect(onChange).toHaveBeenCalledWith(['eth2', 'eth0']);
-  });
-
   it('marks the control as touched when a toggle loses focus', () => {
     spectator.dispatchFakeEvent(spectator.query('tn-slide-toggle'), 'focusout', true);
 

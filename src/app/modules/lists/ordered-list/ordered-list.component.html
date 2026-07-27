@@ -14,15 +14,15 @@
   (cdkDropListDropped)="drop($event)"
   >
   <tn-list [attr.aria-label]="label()">
-    @for (item of items; track item) {
+    @for (item of items; track item.value) {
       <tn-list-item cdkDrag>
         <!--
           TEMP: the drag handle sits in tn-list-item's default slot rather than its
           [tnListIcon] slot, which never renders. Same library bug as in
-          dual-listbox.component.html, tracked under NAS-141021.
+          dual-listbox.component.html — gap 1 in TRUENAS_UI_INTEGRATION.md.
         -->
         <div class="toggle-row">
-          <tn-icon class="drag-handle" name="drag-vertical" library="mdi"></tn-icon>
+          <tn-icon class="drag-handle" name="drag-vertical" library="mdi" aria-hidden="true"></tn-icon>
 
           <tn-slide-toggle
             class="toggle"

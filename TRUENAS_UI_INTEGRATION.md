@@ -303,6 +303,23 @@ See the full list in: `node_modules/@truenas/ui-components/assets/tn-icons/sprit
 - **Type-safe**: Full TypeScript support with proper types
 - **Accessible**: Built with WCAG accessibility standards in mind
 
+## Known Library Gaps (pending upstream fixes)
+
+Migration work under epic NAS-141021 has had to reach into `@truenas/ui-components`
+internals in a few places. Each workaround site is marked `TEMP:` in code and points
+here. **These still need individual tickets filed against the library**; once a fix
+ships, delete the workaround and the row below.
+
+| # | Library gap | Workaround sites |
+|---|---|---|
+| 1 | `tn-list-item`'s `[tnListIcon]` / `[tnListAvatar]` / `[tnListItemTrailing]` slots never render: the flags gating them are set from a `querySelector` in `ngAfterContentInit`, which cannot see content that has not been projected yet. | `dual-listbox.component.html` (canonical explanation), `ordered-list.component.html`, `network-configuration-card.component.html` — icons moved to the default slot with an explicit `aria-hidden="true"` |
+| 2 | No dense / wrapping `tn-list-item` variant — it is fixed at 48px rows, a 16px leading gap and single-line ellipsis. | `dual-listbox.component.scss` — `::ng-deep .tn-list-item__content` / `__primary-text` |
+| 3 | No `fullWidth` input on `tn-button`. | `oauth-button.component.scss` — `:host(.full-width) ::ng-deep … button { width: 100% }`, exposed to consumers as `ix-oauth-button`'s own `fullWidth` input |
+| 4 | No full-width variant of `tn-slide-toggle` — it is `inline-flex` and shrink-wraps its label and track, so it cannot fill a row. | `ordered-list.component.scss` — `::ng-deep .tn-slide-toggle` / `.tn-slide-toggle__label` |
+
+Separately, `TnMenuHarness` exposes no per-item harness (and so no `getTestId()`), which
+is why `copy-button.component.spec.ts` reads `data-test` off `.tn-menu-item` directly.
+
 ## Additional Resources
 
 - [npm package](https://www.npmjs.com/package/@truenas/ui-components)

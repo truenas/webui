@@ -7,6 +7,8 @@
   }
 }
 
-.oauth-button {
+// `ix-oauth-button`'s host. Not to be confused with `.oauth-button` inside that
+// component, which is its inner tn-button.
+.oauth-login {
   margin: 10px 0;
 }
