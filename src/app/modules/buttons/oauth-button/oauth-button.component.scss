@@ -1,11 +1,3 @@
 :host {
   display: block;
 }
-
-// TEMP: gap 3 in TRUENAS_UI_INTEGRATION.md — no fullWidth input on tn-button. Owning
-// the contract here keeps consumers from reaching into this component's internals,
-// and leaves the button shrink-wrapped where full width was never asked for (e.g.
-// the File Ticket dialog actions). See NAS-141021.
-:host(.full-width) ::ng-deep .oauth-button button {
-  width: 100%;
-}

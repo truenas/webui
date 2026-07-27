@@ -16,26 +16,24 @@
   <tn-list [attr.aria-label]="label()">
     @for (item of items; track item.value) {
       <tn-list-item cdkDrag>
-        <!--
-          TEMP: the drag handle sits in tn-list-item's default slot rather than its
-          [tnListIcon] slot, which never renders. Same library bug as in
-          dual-listbox.component.html — gap 1 in TRUENAS_UI_INTEGRATION.md.
-        -->
-        <div class="toggle-row">
-          <tn-icon class="drag-handle" name="drag-vertical" library="mdi" aria-hidden="true"></tn-icon>
+        <tn-icon
+          tnListIcon
+          name="drag-vertical"
+          library="mdi"
+          aria-hidden="true"
+        ></tn-icon>
 
-          <tn-slide-toggle
-            class="toggle"
-            color="primary"
-            labelPosition="before"
-            [label]="item.label | translate"
-            [checked]="isChecked(item.value)"
-            [disabled]="isDisabled"
-            [testId]="item.testId"
-            (change)="onCheckboxChanged(item.value)"
-            (focusout)="onTouch()"
-          ></tn-slide-toggle>
-        </div>
+        <tn-slide-toggle
+          color="primary"
+          labelPosition="before"
+          [fullWidth]="true"
+          [label]="item.label | translate"
+          [checked]="isChecked(item.value)"
+          [disabled]="isDisabled"
+          [testId]="item.testId"
+          (change)="onCheckboxChanged(item.value)"
+          (focusout)="onTouch()"
+        ></tn-slide-toggle>
       </tn-list-item>
     }
   </tn-list>

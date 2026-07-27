@@ -33,12 +33,7 @@
           <tn-list class="list" [dense]="true">
             <div class="section-title">{{ 'Default Route' | translate }}</div>
             <tn-list-item>
-              <!--
-                TEMP: the icons sit in tn-list-item's default slot rather than its
-                [tnListIcon] slot, which never renders. Same library bug as in
-                dual-listbox.component.html — gap 1 in TRUENAS_UI_INTEGRATION.md.
-              -->
-              <tn-icon name="router" library="mdi" class="list-icon" aria-hidden="true"></tn-icon>
+              <tn-icon tnListIcon name="router" library="mdi" class="list-icon" aria-hidden="true"></tn-icon>
               <span class="label">{{ 'IPv4' | translate }}:</span>
               <ul class="value">
                 @for (ip of ipv4(); track ip) {
@@ -52,7 +47,7 @@
         @if (ipv6().length > 0) {
           <tn-list class="list" [dense]="true">
             <tn-list-item>
-              <tn-icon name="router" library="mdi" class="list-icon" aria-hidden="true"></tn-icon>
+              <tn-icon tnListIcon name="router" library="mdi" class="list-icon" aria-hidden="true"></tn-icon>
               <span class="label">{{ 'IPv6' | translate }}:</span>
               <ul class="value">
                 @for (ip of ipv6(); track ip) {

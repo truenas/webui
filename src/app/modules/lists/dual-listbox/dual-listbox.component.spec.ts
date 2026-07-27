@@ -39,11 +39,11 @@ describe('DualListBoxComponent', () => {
     expect(paragraphs[1]).toHaveText('Selected Items');
   });
 
-  it('should render the item icon when listItemIcon is set', () => {
+  it('should render the item icon in the list item leading slot when listItemIcon is set', () => {
     spectator.setInput('listItemIcon', 'account');
     spectator.detectChanges();
 
-    expect(spectator.queryAll('tn-list-item tn-icon')).toHaveLength(testData.length);
+    expect(spectator.queryAll('tn-list-item .tn-list-item__leading tn-icon')).toHaveLength(testData.length);
   });
 
   it('should initialize with all items in available list', () => {

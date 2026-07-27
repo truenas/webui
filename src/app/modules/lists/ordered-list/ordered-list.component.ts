@@ -9,6 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   TnIconComponent,
   TnListComponent,
+  TnListIconDirective,
   TnListItemComponent,
   TnSlideToggleComponent,
 } from '@truenas/ui-components';
@@ -40,6 +41,7 @@ interface OrderedOption extends Option {
     CdkDropList,
     CdkDrag,
     TnListComponent,
+    TnListIconDirective,
     TnListItemComponent,
     TnSlideToggleComponent,
     TnIconComponent,

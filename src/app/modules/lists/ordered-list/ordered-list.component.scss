@@ -21,30 +21,9 @@
 tn-list-item {
   cursor: move;
 
-  .toggle-row {
-    align-items: center;
-    display: flex;
-    gap: 2px;
-    width: 100%;
-  }
-
-  .drag-handle {
-    flex-shrink: 0;
-  }
-
-  .toggle {
-    flex: 1;
-    min-width: 0;
-  }
-
-  // TEMP: gap 4 in TRUENAS_UI_INTEGRATION.md — no full-width variant of tn-slide-toggle.
-  // The component is inline-flex and shrink-wraps around its label and track; stretch
-  // it so the option name sits at the start of the row and the track at the end, the
-  // way this widget rendered with <mat-slide-toggle>.
-  .toggle ::ng-deep .tn-slide-toggle,
-  .toggle ::ng-deep .tn-slide-toggle__label {
-    justify-content: space-between;
-    width: 100%;
+  // The drag handle sits closer to the label than a standard leading icon would.
+  ::ng-deep .tn-list-item__leading {
+    margin-right: 2px;
   }
 }
 

@@ -1,12 +1,3 @@
-<!--
-  TEMP: item icons sit in tn-list-item's default slot rather than its [tnListIcon]
-  slot. That slot is gated behind a flag @truenas/ui-components only sets from a DOM
-  query in ngAfterContentInit, which can never see content that has not been projected
-  yet, so it never renders. This is the canonical explanation for the same workaround
-  in ordered-list.component.html and network-configuration-card.component.html; all
-  three come out once the library fixes its content-query flags.
-  See gap 1 in TRUENAS_UI_INTEGRATION.md ("Known Library Gaps"), under NAS-141021.
--->
 <div class="dual-list">
   <div class="listbox">
     <p>{{ sourceName() }}</p>
@@ -26,12 +17,13 @@
           <tn-list-item
             cdkDrag
             tabindex="0"
+            [wrap]="true"
             [ngClass]="{ selected: isItemSelected(availableList(), idx) }"
             (click)="onItemClick('available', idx, $event)"
             (keydown)="onItemKeydown('available', idx, $event)"
           >
             @if (listItemIcon(); as icon) {
-              <tn-icon class="list-item-icon" aria-hidden="true" [name]="icon"></tn-icon>
+              <tn-icon tnListIcon aria-hidden="true" [name]="icon"></tn-icon>
             }
 
             <label>{{ getDisplayValue(item) }}</label>
@@ -109,12 +101,13 @@
           <tn-list-item
             cdkDrag
             tabindex="0"
+            [wrap]="true"
             [ngClass]="{ selected: isItemSelected(selectedList(), idx) }"
             (click)="onItemClick('selected', idx, $event)"
             (keydown)="onItemKeydown('selected', idx, $event)"
           >
             @if (listItemIcon(); as icon) {
-              <tn-icon class="list-item-icon" aria-hidden="true" [name]="icon"></tn-icon>
+              <tn-icon tnListIcon aria-hidden="true" [name]="icon"></tn-icon>
             }
 
             <label>{{ getDisplayValue(item) }}</label>

@@ -33,10 +33,15 @@
 .list {
   margin-bottom: 10px;
 
+  // The leading slot centres the icon for us; keep this row's own tighter gap
+  // rather than the library's standard 16px.
+  ::ng-deep .tn-list-item__leading {
+    margin-right: 0;
+  }
+
   .list-icon {
     min-width: 30px;
     padding: 4px 5px 4px 0;
-    vertical-align: middle;
   }
 
   .label {

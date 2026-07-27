@@ -303,22 +303,44 @@ See the full list in: `node_modules/@truenas/ui-components/assets/tn-icons/sprit
 - **Type-safe**: Full TypeScript support with proper types
 - **Accessible**: Built with WCAG accessibility standards in mind
 
-## Known Library Gaps (pending upstream fixes)
+## Known Library Gaps
 
-Migration work under epic NAS-141021 has had to reach into `@truenas/ui-components`
-internals in a few places. Each workaround site is marked `TEMP:` in code and points
-here. **These still need individual tickets filed against the library**; once a fix
-ships, delete the workaround and the row below.
+Migration work under epic NAS-141021 turned up several places where
+`@truenas/ui-components` had to be worked around. The four below were **fixed
+upstream** on branch `fix-list-item-slots-and-full-width`; this app now uses the
+library APIs directly and carries no `::ng-deep` workaround for them.
 
-| # | Library gap | Workaround sites |
-|---|---|---|
-| 1 | `tn-list-item`'s `[tnListIcon]` / `[tnListAvatar]` / `[tnListItemTrailing]` slots never render: the flags gating them are set from a `querySelector` in `ngAfterContentInit`, which cannot see content that has not been projected yet. | `dual-listbox.component.html` (canonical explanation), `ordered-list.component.html`, `network-configuration-card.component.html` — icons moved to the default slot with an explicit `aria-hidden="true"` |
-| 2 | No dense / wrapping `tn-list-item` variant — it is fixed at 48px rows, a 16px leading gap and single-line ellipsis. | `dual-listbox.component.scss` — `::ng-deep .tn-list-item__content` / `__primary-text` |
-| 3 | No `fullWidth` input on `tn-button`. | `oauth-button.component.scss` — `:host(.full-width) ::ng-deep … button { width: 100% }`, exposed to consumers as `ix-oauth-button`'s own `fullWidth` input |
-| 4 | No full-width variant of `tn-slide-toggle` — it is `inline-flex` and shrink-wraps its label and track, so it cannot fill a row. | `ordered-list.component.scss` — `::ng-deep .tn-slide-toggle` / `.tn-slide-toggle__label` |
+**This requires a `@truenas/ui-components` version that includes that branch.** Until
+it is released and the dependency is bumped, run against a local build of the library
+(see "Local library builds" below).
 
-Separately, `TnMenuHarness` exposes no per-item harness (and so no `getTestId()`), which
-is why `copy-button.component.spec.ts` reads `data-test` off `.tn-menu-item` directly.
+| # | Library gap | Fix | Now used by |
+|---|---|---|---|
+| 1 | `tn-list-item`'s `[tnListIcon]` / `[tnListAvatar]` / `[tnListItemLine]` / `[tnListItemTrailing]` slots never rendered: the flags gating them were set from a `querySelector` in `ngAfterContentInit`, which cannot see content whose slot has not rendered yet. | Signal `contentChildren` queries | `dual-listbox`, `ordered-list`, `network-configuration-card` |
+| 2 | No dense / wrapping `tn-list-item` variant — fixed at 48px rows and single-line ellipsis. | `[dense]` and `[wrap]` inputs | `dual-listbox` (`[wrap]`) |
+| 3 | No full-width `tn-button`. | `[fullWidth]` input | `ix-oauth-button`, which re-exposes its own `fullWidth` |
+| 4 | No full-width `tn-slide-toggle` — `inline-flex`, so it shrink-wraps its label and track. | `[fullWidth]` input | `ordered-list` |
+
+Still outstanding: `TnMenuHarness` exposes no per-item harness (and so no `getTestId()`),
+which is why `copy-button.component.spec.ts` reads `data-test` off `.tn-menu-item`
+directly.
+
+### Local library builds
+
+To run this app against an unreleased library build:
+
+```bash
+cd ../truenas-ui-components && yarn build
+cd ../webui
+rm -rf node_modules/@truenas/ui-components
+cp -R ../truenas-ui-components/dist/truenas-ui node_modules/@truenas/ui-components
+```
+
+Use a real copy, not a symlink: Jest resolves a symlink to a path outside
+`node_modules`, so `transformIgnorePatterns` never applies, the Angular linker never
+runs over the partial-Ivy FESM, and every `TestBed` fails with "class doesn't have
+@Component decorator". Re-run the copy after any library rebuild — and after any
+`yarn install`, which restores the published package.
 
 ## Additional Resources
 

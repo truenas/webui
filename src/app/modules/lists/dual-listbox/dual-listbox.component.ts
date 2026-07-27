@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnIconButtonComponent, TnIconComponent, TnListComponent, TnListItemComponent,
+  TnIconButtonComponent, TnIconComponent, TnListComponent, TnListIconDirective, TnListItemComponent,
 } from '@truenas/ui-components';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
 
@@ -37,6 +37,7 @@ interface ListState<T> {
     TnIconComponent,
     TnIconButtonComponent,
     TnListComponent,
+    TnListIconDirective,
     TnListItemComponent,
     TranslateModule,
   ],
