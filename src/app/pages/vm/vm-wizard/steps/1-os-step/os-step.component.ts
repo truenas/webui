@@ -5,6 +5,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
+  TnBannerComponent,
   TnButtonComponent,
   TnCheckboxComponent,
   TnFormFieldComponent,
@@ -47,6 +48,7 @@ import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
+    TnBannerComponent,
     FormActionsComponent,
     TnButtonComponent,
     TnStepperNextDirective,

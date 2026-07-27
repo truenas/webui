@@ -124,9 +124,11 @@
         ></tn-input>
       </tn-form-field>
 
-      <div class="vnc-warning">
-        <p><strong>{{ 'Note' | translate }}:</strong> {{ 'VNC requires a separate client application and cannot be accessed through the web browser. Password is limited to 8 characters.' | translate }}</p>
-      </div>
+      <tn-banner
+        type="info"
+        [heading]="'Note' | translate"
+        [message]="'VNC requires a separate client application and cannot be accessed through the web browser. Password is limited to 8 characters.' | translate"
+      ></tn-banner>
     }
   </tn-form-section>
 

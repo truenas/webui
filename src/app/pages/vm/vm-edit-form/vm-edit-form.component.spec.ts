@@ -1,8 +1,10 @@
-import { HarnessLoader } from '@angular/cdk/testing';
+import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { AsyncValidatorFn, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -203,6 +205,19 @@ describe('VmEditFormComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.component.canSubmit()).toBe(false);
+  });
+
+  // The cases below address controls by `formControlName`, which observes no label at all —
+  // whereas the pre-migration label-keyed `form.getValues()` would have failed on a mislabeled
+  // or untranslated field. This keeps the visible copy pinned.
+  it('labels every field', async () => {
+    const fields = await loader.getAllHarnesses(TnFormFieldHarness);
+    const labels = await parallel(() => fields.map((field) => field.getLabel()));
+
+    expect(labels).toEqual(expect.arrayContaining([
+      'Name', 'Description', 'System Clock', 'Boot Method', 'Shutdown Timeout',
+      'Virtual CPUs', 'Cores', 'Threads', 'CPU Mode', 'CPU Model',
+    ]));
   });
 
   it('shows values when existing VM is opened for edit', async () => {

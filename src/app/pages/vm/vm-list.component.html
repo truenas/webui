@@ -33,6 +33,14 @@
   </ix-page-header>
 
   @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
+  <!--
+    TEMP: [expandable] makes tn-table render the expand/collapse button itself, with a
+    hard-coded English aria-label and no label input to override it (0.3.26) — so that control
+    is untranslated in every non-English locale, where the ix-table it replaced tooltipped
+    'Expand Row' / 'Collapse Row' through the translate pipe. Remove once the library grows an
+    expandRowLabel/collapseRowLabel input or a TN_TABLE_LABELS provider (mirroring
+    TN_TABLE_PAGER_LABELS) — see NAS-141021 library follow-ups.
+  -->
   <tn-table
     [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.vm"
@@ -70,7 +78,7 @@
           #runningToggle
           [title]="'Running' | translate"
           [uniqueRowTag]="uniqueRowTag(row)"
-          [ariaLabel]="ariaLabel(row)"
+          [ariaLabel]="ariaLabel(row, 'Running' | translate)"
           [checked]="row.status.state === VmState.Running"
           [requiredRoles]="requiredRoles"
           (toggled)="handleVmStatusToggle(row, $event, runningToggle)"
@@ -85,7 +93,7 @@
           #autostartToggle
           [title]="'Start on Boot' | translate"
           [uniqueRowTag]="uniqueRowTag(row)"
-          [ariaLabel]="ariaLabel(row)"
+          [ariaLabel]="ariaLabel(row, 'Start on Boot' | translate)"
           [checked]="!!row.autostart"
           [requiredRoles]="requiredRoles"
           (toggled)="handleAutostartToggle(row, autostartToggle)"

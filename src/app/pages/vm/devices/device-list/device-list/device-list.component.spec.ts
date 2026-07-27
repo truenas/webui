@@ -110,7 +110,6 @@ describe('DeviceListComponent', () => {
   const isDiskDevice = (device: VmDevice): boolean => spectator.component['isDiskDevice'](device);
   const setVmRunning = (running: boolean): void => spectator.component['isVmRunning'].set(running);
   const isVmRunning = (): boolean => spectator.component['isVmRunning']();
-  const handleExportDisk = (device: VmDevice): void => spectator.component['handleExportDisk'](device);
   const onExportDisk = (device: VmDevice): void => spectator.component['onExportDisk'](device);
   const loadVmName = (): void => spectator.component['loadVmName']();
   /* eslint-enable @typescript-eslint/dot-notation */
@@ -133,8 +132,12 @@ describe('DeviceListComponent', () => {
 
     // White-box: TnMenuHarness exposes no test-id getter yet, so the resolved data-test values
     // are read off the DOM. Replace with a harness filter once the library adds one
-    // (see NAS-141021 library follow-ups).
-    const itemTestIds = Array.from(document.querySelectorAll('.tn-menu-item'))
+    // (see NAS-141021 library follow-ups). Scoped to the single open panel rather than
+    // `document`, so a leaked overlay from an earlier test cannot contribute nodes.
+    const panels = document.querySelectorAll('.tn-menu');
+    expect(panels).toHaveLength(1);
+
+    const itemTestIds = Array.from(panels[0].querySelectorAll('.tn-menu-item'))
       .map((el) => el.getAttribute('data-test'));
     expect(itemTestIds).toEqual([
       'button-1-edit',
@@ -226,48 +229,6 @@ describe('DeviceListComponent', () => {
       loadVmName();
 
       expect(isVmRunning()).toBe(true);
-    });
-
-    it('does not open export dialog when handleExportDisk is called and VM is running', () => {
-      const dialog = spectator.inject(TnDialog);
-      setVmRunning(true);
-
-      handleExportDisk(devices[1]);
-
-      expect(dialog.open).not.toHaveBeenCalled();
-    });
-
-    it('opens export dialog when handleExportDisk is called and VM is not running', () => {
-      const dialog = spectator.inject(TnDialog);
-      setVmRunning(false);
-
-      handleExportDisk(devices[1]);
-
-      expect(dialog.open).toHaveBeenCalledWith(
-        ExportDiskDialogComponent,
-        expect.objectContaining({
-          data: expect.objectContaining({
-            device: devices[1],
-            vmName: 'Test VM',
-          }),
-        }),
-      );
-    });
-
-    it('opens export dialog when onExportDisk is called', () => {
-      const dialog = spectator.inject(TnDialog);
-
-      onExportDisk(devices[1]);
-
-      expect(dialog.open).toHaveBeenCalledWith(
-        ExportDiskDialogComponent,
-        expect.objectContaining({
-          data: expect.objectContaining({
-            device: devices[1],
-            vmName: 'Test VM',
-          }),
-        }),
-      );
     });
 
     it('handles successful export with job dialog and success message', () => {

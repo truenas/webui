@@ -124,13 +124,26 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
     return this.isLoading();
   }
 
+  /**
+   * `isLoading` is only ever set around a submit (this form has no initial load), so it
+   * doubles as the host's "Saving…" signal for the footer Save.
+   */
+  isSubmitting(): boolean {
+    return this.isLoading();
+  }
+
   /** Entry point for the `<tn-side-panel>` footer Save. */
   submit(): void {
     this.confirmAndSend();
   }
 
   hasUnsavedChanges(): boolean {
-    return this.typeSpecificForm.dirty;
+    // The three standalone controls live outside `typeSpecificForm` but are rendered in the
+    // same panel, so edits confined to them must still trip the host's close guard.
+    return this.typeSpecificForm.dirty
+      || this.typeControl.dirty
+      || this.orderControl.dirty
+      || this.newOrExistingControl.dirty;
   }
 
   get isNew(): boolean {

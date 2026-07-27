@@ -225,8 +225,10 @@ export class VmListComponent implements OnInit {
       getValue: (row) => this.translate.instant('{n} seconds', { n: row.shutdown_timeout }),
     }),
   ], {
-    uniqueRowTag: (row) => 'virtual-machine-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('Virtual Machine')],
+    // Both delegate to the helpers the template cells use, so the row tag a hidden column
+    // renders in the detail row can't drift from the one its visible counterpart renders.
+    uniqueRowTag: (row) => this.uniqueRowTag(row),
+    ariaLabels: (row) => [this.vmAriaLabel(row)],
   }));
 
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
@@ -379,8 +381,18 @@ export class VmListComponent implements OnInit {
     return toUniqueRowTag('virtual-machine-' + row.name);
   }
 
-  protected ariaLabel(row: VirtualMachine): string {
+  /** Base accessible name identifying a row: "<name> Virtual Machine". */
+  private vmAriaLabel(row: VirtualMachine): string {
     return [row.name, this.translate.instant('Virtual Machine')].join(' ');
+  }
+
+  /**
+   * Accessible name for a row's interactive cells. The column title leads because this table
+   * has two toggle columns per row — without it both switches announce identically
+   * ("Enable <name> Virtual Machine") and only their position tells them apart.
+   */
+  protected ariaLabel(row: VirtualMachine, columnTitle: string): string {
+    return `${columnTitle} ${this.vmAriaLabel(row)}`;
   }
 
   protected onColumnsChange(columns: Column<VirtualMachine, ColumnComponent<VirtualMachine>>[]): void {

@@ -51,13 +51,17 @@ describe('DeviceFormComponent', () => {
    */
   const saveButton = {
     async click(): Promise<void> {
+      // The real footer renders Save as [disabled]="!form.canSubmit()", so a test that saves an
+      // unsubmittable form would be asserting a flow the user cannot reach. Thrown rather than
+      // expect()ed because this runs outside a test block (jest/no-standalone-expect).
+      if (!spectator.component.canSubmit()) {
+        throw new Error('Save clicked while canSubmit() is false — the panel footer would have disabled it.');
+      }
+
       spectator.component.submit();
       spectator.detectChanges();
       await spectator.fixture.whenStable();
       spectator.detectChanges();
-    },
-    isDisabled(): boolean {
-      return !spectator.component.canSubmit();
     },
   };
   let api: ApiService;

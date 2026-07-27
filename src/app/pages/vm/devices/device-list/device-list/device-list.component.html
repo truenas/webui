@@ -56,6 +56,14 @@
   <ng-container [tnColumnDef]="'actions'" [width]="'70px'">
     <ng-template tnHeaderCellDef></ng-template>
     <ng-template let-device tnCellDef>
+      <!--
+        TEMP: MatMenuTrigger host-bound aria-haspopup="menu" and aria-expanded;
+        TnMenuTriggerDirective binds neither (0.3.26 binds only click/keydown.arrowDown), so a
+        screen reader is no longer told this button opens a menu or whether it is open. Not
+        fixable here — [attr.aria-*] would land on the custom-element host rather than the inner
+        <button>, and the directive's isMenuOpen is private. Remove once the library host-binds
+        both — see NAS-141021 library follow-ups.
+      -->
       <tn-icon-button
         name="dots-vertical"
         library="mdi"

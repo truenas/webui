@@ -3,7 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnEmptyHarness, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -209,14 +211,22 @@ describe('VmListComponent', () => {
   });
 
   describe('toggle columns', () => {
-    it('reflects VM running and autostart state', async () => {
-      const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
+    /**
+     * Addresses a toggle by its resolved test ID rather than by position in
+     * `getAllHarnesses` — with two toggle columns per row, a positional lookup silently
+     * follows a column reorder onto the wrong switch.
+     */
+    function getToggle(column: 'running' | 'start-on-boot', vmName: string): Promise<TnSlideToggleHarness> {
+      return loader.getHarness(TnSlideToggleHarness.with({
+        testId: `toggle-${column}-virtual-machine-${vmName.replace(/_/g, '-')}-row-toggle`,
+      }));
+    }
 
-      // Two toggles per row, in column order: Running, Start on Boot.
-      expect(await toggles[0].isChecked()).toBe(true); // 'test' is Running
-      expect(await toggles[1].isChecked()).toBe(true); // ...and autostarts
-      expect(await toggles[2].isChecked()).toBe(false); // 'test_refactoring' is Stopped
-      expect(await toggles[3].isChecked()).toBe(false);
+    it('reflects VM running and autostart state', async () => {
+      expect(await (await getToggle('running', 'test')).isChecked()).toBe(true);
+      expect(await (await getToggle('start-on-boot', 'test')).isChecked()).toBe(true);
+      expect(await (await getToggle('running', 'test_refactoring')).isChecked()).toBe(false);
+      expect(await (await getToggle('start-on-boot', 'test_refactoring')).isChecked()).toBe(false);
     });
 
     it('reverts the Running toggle when the stop dialog is cancelled', async () => {
@@ -225,37 +235,40 @@ describe('VmListComponent', () => {
       const stopConfirmed$ = new Subject<boolean>();
       jest.spyOn(spectator.inject(VmService), 'doStop').mockReturnValue(stopConfirmed$.asObservable());
 
-      const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
-      await toggles[0].uncheck();
+      const toggle = await getToggle('running', 'test');
+      await toggle.uncheck();
 
       expect(spectator.inject(VmService).doStop).toHaveBeenCalledWith(virtualMachines[0]);
-      expect(await toggles[0].isChecked()).toBe(false);
+      expect(await toggle.isChecked()).toBe(false);
 
       stopConfirmed$.next(false);
       spectator.detectChanges();
 
-      expect(await toggles[0].isChecked()).toBe(true);
+      expect(await toggle.isChecked()).toBe(true);
     });
 
     it('reverts the Start on Boot toggle when the update fails', async () => {
       const autostartUpdated$ = new Subject<boolean>();
       jest.spyOn(spectator.inject(VmService), 'toggleVmAutostart').mockReturnValue(autostartUpdated$.asObservable());
 
-      const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
-      await toggles[1].uncheck();
+      const toggle = await getToggle('start-on-boot', 'test');
+      await toggle.uncheck();
 
       expect(spectator.inject(VmService).toggleVmAutostart).toHaveBeenCalledWith(virtualMachines[0]);
 
       autostartUpdated$.next(false);
       spectator.detectChanges();
 
-      expect(await toggles[1].isChecked()).toBe(true);
+      expect(await toggle.isChecked()).toBe(true);
     });
 
     // Regression: the table is [clickable], and its row handler preventDefaults Enter/Space
     // for any keydown that reaches it — which would cancel the checkbox's own Space
     // activation and expand the row instead of flipping the switch.
     it('does not let Space on a toggle reach the clickable row', async () => {
+      // White-box: no harness can express this. `TestElement.dispatchEvent` does not hand the
+      // event back, so `defaultPrevented` is unreachable through the abstraction — the raw
+      // element is the only way to observe it. Scoped to the cell so it can't match elsewhere.
       const toggleInput = spectator.query('ix-table-toggle-cell input');
       const event = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
       toggleInput.dispatchEvent(event);
@@ -483,6 +496,8 @@ describe('VmListComponent without virtualization support', () => {
 
   it('renders the unsupported empty state instead of the table', async () => {
     expect(await loader.getAllHarnesses(TnTableHarness)).toHaveLength(0);
-    expect(spectator.query('tn-empty')).toHaveText('Virtualization is not supported');
+
+    const empty = await loader.getHarness(TnEmptyHarness);
+    expect(await empty.getTitle()).toBe('Virtualization is not supported');
   });
 });
