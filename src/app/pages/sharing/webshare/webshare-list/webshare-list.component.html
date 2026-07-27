@@ -1,7 +1,10 @@
 <mat-card>
   <ix-fake-progress-bar [loading]="!!(dataProvider.isLoading$ | async)"></ix-fake-progress-bar>
   <mat-toolbar-row>
-    <h3>{{ 'WebShare' | translate }}</h3>
+    <h3>
+      {{ 'WebShare' | translate }}
+      <span class="experimental-badge">{{ 'Experimental' | translate }}</span>
+    </h3>
     <ix-service-state-button
       [service]="service$ | async"
       [count]="+(dataProvider.currentPageCount$ | async)"

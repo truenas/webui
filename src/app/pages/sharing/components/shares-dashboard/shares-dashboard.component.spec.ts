@@ -11,6 +11,7 @@ import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-da
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { WebShareCardComponent } from 'app/pages/sharing/components/shares-dashboard/webshare-card/webshare-card.component';
 import { poolStore } from 'app/services/global-store/stores.constant';
+import { LicenseService } from 'app/services/license.service';
 
 describe('SharesDashboardComponent', () => {
   let spectator: Spectator<SharesDashboardComponent>;
@@ -40,15 +41,29 @@ describe('SharesDashboardComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-  });
+  function setup(shouldShowWebshare = true): void {
+    spectator = createComponent({
+      providers: [
+        mockProvider(LicenseService, {
+          shouldShowWebshare$: of(shouldShowWebshare),
+        }),
+      ],
+    });
+  }
 
   it('shows cards for each share type', () => {
+    setup();
+
     expect(spectator.query(SmbCardComponent)).toExist();
     expect(spectator.query(NfsCardComponent)).toExist();
     expect(spectator.query(IscsiCardComponent)).toExist();
     expect(spectator.query(NvmeOfCardComponent)).toExist();
     expect(spectator.query(WebShareCardComponent)).toExist();
+  });
+
+  it('hides WebShare card on enterprise systems', () => {
+    setup(false);
+
+    expect(spectator.query(WebShareCardComponent)).not.toExist();
   });
 });
