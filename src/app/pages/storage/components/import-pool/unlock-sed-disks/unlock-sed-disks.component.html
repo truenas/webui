@@ -44,8 +44,8 @@
                 formControlName="diskName"
                 [options]="exceptionOptions()[$index] ?? []"
                 [optionTestIdKey]="diskOptionTestIdKey"
-                [placeholder]="'Select an option' | translate"
-                [noOptionsLabel]="'No options' | translate"
+                [placeholder]="tnSelectLabels.placeholder | translate"
+                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>
             </tn-form-field>
             <tn-form-field [label]="'Password' | translate" [required]="true">

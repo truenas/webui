@@ -7,8 +7,12 @@
 
   // Bare tn-form-fields (no <ix-form>/<tn-form-section> host to space them): restore the
   // inter-field gap the legacy ix-* controls used to carry.
-  tn-form-field {
+  tn-form-field:not(:last-child) {
     display: block;
     margin-bottom: 12px;
+  }
+
+  tn-form-field:last-child {
+    display: block;
   }
 }

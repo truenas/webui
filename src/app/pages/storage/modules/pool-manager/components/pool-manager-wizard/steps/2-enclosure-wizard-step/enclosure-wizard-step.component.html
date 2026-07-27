@@ -17,8 +17,8 @@
           formControlName="limitToEnclosure"
           [options]="(enclosureOptions$ | async) ?? []"
           [optionTestIdKey]="enclosureOptionTestIdKey"
-          [placeholder]="'Select an option' | translate"
-          [noOptionsLabel]="'No options' | translate"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
 

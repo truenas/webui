@@ -13,6 +13,7 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { SizeAndType } from 'app/pages/storage/modules/pool-manager/interfaces/size-and-type.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -36,6 +37,8 @@ export class DiskSizeSelectsComponent implements OnChanges {
   private formBuilder = inject(FormBuilder);
   private store = inject(PoolManagerStore);
   private destroyRef = inject(DestroyRef);
+
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   readonly layout = input.required<CreateVdevLayout>();
   readonly type = input.required<VDevType>();

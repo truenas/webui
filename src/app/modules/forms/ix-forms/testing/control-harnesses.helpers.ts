@@ -59,13 +59,15 @@ export async function indexControlsByLabel<T extends IxFormControlHarness>(
   const result: Record<string, T> = {};
   for (const control of controls) {
     const label = await control.getLabelText();
-    // Label-less controls all index under '', so a second one would silently replace the first
-    // and every lookup by label would quietly target the wrong control. Fail loudly instead.
-    if (label in result) {
+    // Repeated *labelled* controls are legitimate and long-standing here — an `ix-list` renders
+    // one set of labels per row — so those stay last-wins, as they have always been. An unlabelled
+    // control is different: every one of them indexes under '', and there is no label a caller
+    // could pass to reach either, so a second one is always a spec bug rather than a lookup the
+    // caller opted into. Fail loudly for that case only.
+    if (!label && '' in result) {
       throw new Error(
-        label
-          ? `Duplicate form control label "${label}" — indexing by label cannot disambiguate them.`
-          : 'More than one form control has no label — give them labels, or query them directly.',
+        'More than one form control has no label, so neither can be reached by label. '
+        + 'Give them labels, or query them directly through their own harness.',
       );
     }
     result[label] = control;

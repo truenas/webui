@@ -5,8 +5,8 @@
       [testId]="['size-and-type', type()]"
       [options]="(diskSizeAndTypeOptions$ | async) ?? []"
       [compareWith]="compareSizeAndTypeWith"
-      [placeholder]="'Select an option' | translate"
-      [noOptionsLabel]="'No options' | translate"
+      [placeholder]="tnSelectLabels.placeholder | translate"
+      [noOptionsLabel]="tnSelectLabels.noOptions | translate"
     ></tn-select>
   </tn-form-field>
 

@@ -207,11 +207,18 @@
 
 // TEMP (NAS-141021): the library's `.tn-card__title` style is scoped to tn-card, so a consumer
 // that projects an adornment (a status icon) next to the title text can't lay the row out without
-// reaching in. Hoisted here so the pool dashboard's four sibling cards — disk-health,
-// storage-health, pool-usage, vdevs — can't drift. Drop once the library exposes a styled-title
-// projection slot. Kept separate from `tn-detail-card` so title-only cards aren't made flex.
+// restating the class on its own heading. Hoisted here so the pool dashboard's four sibling cards
+// — disk-health, storage-health, pool-usage, vdevs — can't drift. Drop once the library exposes a
+// styled-title projection slot. Kept separate from `tn-detail-card` so title-only cards aren't
+// made flex.
+//
+// No `::ng-deep` here, unlike `tn-detail-card`: these four cards project their own
+// `<h3 tnCardHeader class="tn-card__title">` from their own template, so the heading already
+// carries the consumer's encapsulation attribute and a plain descendant selector reaches it.
+// `tn-detail-card` needs `::ng-deep` because it also has to reach the heading tn-card itself
+// renders from its `[title]` input, which carries the library's attribute instead.
 @mixin tn-card-inline-title {
-  :host ::ng-deep .tn-card__title {
+  :host .tn-card__title {
     align-items: center;
     column-gap: 5px;
     display: flex;

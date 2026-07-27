@@ -9,6 +9,7 @@ import { filter, take } from 'rxjs/operators';
 import { CreateVdevLayout, vdevLayoutOptions, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -39,6 +40,8 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   protected store = inject(PoolManagerStore);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   readonly isStepActive = input<boolean>(false);
   readonly type = input<VDevType>();

@@ -21,6 +21,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TnRadioGroupComponent } from 'app/modules/forms/ix-forms/components/tn-radio-group/tn-radio-group.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -63,6 +64,8 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   private cdr = inject(ChangeDetectorRef);
   private poolWizardNameValidationService = inject(PoolWizardNameValidationService);
   private destroyRef = inject(DestroyRef);
+
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   readonly isAddingVdevs = input(false);
   readonly pool = input<Pool | undefined>(undefined);

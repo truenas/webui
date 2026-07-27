@@ -15,6 +15,7 @@ import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TnRadioGroupComponent } from 'app/modules/forms/ix-forms/components/tn-radio-group/tn-radio-group.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 export enum DispersalStrategy {
@@ -47,6 +48,8 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
+
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   readonly isStepActive = input<boolean>();
   readonly stepWarning = input<string | null>();

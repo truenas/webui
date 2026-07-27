@@ -54,6 +54,11 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
   /**
    * Native `name` shared by every option's `<input type="radio">`, which is what makes the
    * browser treat them as one group for arrow-key navigation.
+   *
+   * **Must be unique per rendered group.** The native `name` scope is the whole document, so two
+   * groups sharing one — the same call site repeated in a list, or a step reused per vdev type —
+   * fuse into a single native group and break arrow-key navigation between them. Derive a
+   * discriminator into the name (e.g. the row id) when a group can render more than once.
    */
   readonly name = input.required<string>();
 
@@ -115,6 +120,10 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
       // `tn-radio` wrote it — i.e. the user picked an option.
       this.renderedValue = value;
       this.onChange(value);
+      // Marks touched on pick rather than on blur: `tn-radio` exposes no blur output, and its
+      // <input> is inside the component's template where a host listener can't see the
+      // (non-bubbling) blur event. A required group the user tabs past without picking
+      // therefore stays untouched, so touched-gated error text will not show for it.
       this.onTouched();
     });
   }

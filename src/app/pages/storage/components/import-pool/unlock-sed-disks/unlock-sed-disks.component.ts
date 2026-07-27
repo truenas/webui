@@ -23,6 +23,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
@@ -58,6 +59,8 @@ export class UnlockSedDisksComponent {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
+  protected readonly tnSelectLabels = tnSelectLabels;
+
   readonly lockedDisks = input.required<LockedSedDisk[]>();
   readonly globalSedPassword = input<string>('');
   readonly skip = output();
@@ -82,10 +85,18 @@ export class UnlockSedDisksComponent {
 
   /**
    * `tn-checkbox` emits `label` as the input's `aria-label`, which overrides the projected content
-   * as the accessible name — so it has to carry the hint the projection renders below. (That the
-   * hint lands in the name rather than an `aria-describedby` description is a downgrade the
-   * component API forces.) Composed through a translatable pattern so clause order and
-   * punctuation stay in the translator's hands rather than being hard-coded as `+ '. ' +`.
+   * as the accessible name — so it has to carry the hint the projection renders below. Composed
+   * through a translatable pattern so clause order and punctuation stay in the translator's hands
+   * rather than being hard-coded as `+ '. ' +`.
+   *
+   * Folding the hint into the *name* rather than exposing it as an `aria-describedby`
+   * *description* is a downgrade, and the obvious fix — wrapping this in a `tn-form-field
+   * [hint]`, as the layout dropdowns do — does not work: in the pinned 0.3.26 only `tn-input`,
+   * `tn-select`, `tn-autocomplete` and `tn-chip-input` consume `TN_FORM_FIELD_CONTEXT`.
+   * `tn-checkbox`'s `aria-describedby` is hard-wired to its own error id, so a field-level hint
+   * would render visibly but reach no screen reader at all — strictly worse than this. See the
+   * tn-migration playbook's "Known upstream defects" table; revisit once tn-checkbox wires up
+   * the field context.
    */
   protected readonly updateGlobalSettingsAriaLabel = computed(() => {
     this.currentLang();
