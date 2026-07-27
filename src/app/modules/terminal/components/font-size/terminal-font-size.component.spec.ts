@@ -56,6 +56,17 @@ describe('TerminalFontSizeComponent', () => {
     expect(spectator.inject(Store).dispatch).toHaveBeenLastCalledWith(terminalFontSizeUpdated({ fontSize: 25 }));
   });
 
+  // The accessible name has to land on the inner <button>, not the tn-icon-button host —
+  // the host is not what receives focus. TnIconButtonHarness exposes no aria-label getter.
+  it('gives both font size buttons an accessible name', () => {
+    const buttons = spectator.queryAll('tn-icon-button button');
+
+    expect(buttons.map((button) => button.getAttribute('aria-label'))).toEqual([
+      'Decrease font size',
+      'Increase font size',
+    ]);
+  });
+
   it('does not go below min font size', async () => {
     const button = await loader.getHarness(TnIconButtonHarness.with({ name: 'minus' }));
     for (let i = 0; i < 16 - 10 + 1; i++) {
