@@ -1,29 +1,17 @@
 import {
-  ComponentHarness, ComponentHarnessConstructor, HarnessQuery, parallel,
+  ComponentHarness, HarnessQuery, parallel,
 } from '@angular/cdk/testing';
 import { TnButtonHarness, TnStepperHarness } from '@truenas/ui-components';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import {
-  fillControlValues,
+  fillControlValues, formControlHarnessTypes,
   getControlValues, getDisabledStates,
   indexControlsByLabel, IxFormBasicValueType,
-  supportedFormControlSelectors,
 } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
-import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { ConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.harness';
 import { ExistingConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/existing-configuration-preview/existing-configuration-preview.harness';
 import { NewDevicesConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/new-devices/new-devices-configuration-preview.harness';
 import { ReviewWizardStepHarness } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.harness';
-
-/**
- * Every control-harness type a wizard step may contain, typed once as harnesses that expose the
- * {@link IxFormControlHarness} surface. This is the one place the heterogeneous list has to be
- * described for `locatorForAll`; keeping the assertion here means the callers below need none.
- */
-const controlHarnessTypes = [
-  ...supportedFormControlSelectors,
-  TnFormControlHarness,
-] as unknown as ComponentHarnessConstructor<ComponentHarness & IxFormControlHarness>[];
 
 /**
  * Lightweight stand-in for the old MatStepHarness. tn-stepper renders only the
@@ -75,7 +63,7 @@ export class PoolManagerHarness extends ComponentHarness {
     // wrapped in `tn-form-field` and driven through TnFormControlHarness so a
     // step mixing ix-* and tn-* controls can still be filled/read by label.
     const controlsByTypes = await parallel(() => {
-      return controlHarnessTypes.map((harnessType) => this.locatorForAll(harnessType)());
+      return formControlHarnessTypes.map((harnessType) => this.locatorForAll(harnessType)());
     });
 
     const controls = controlsByTypes.flatMap((controlsInType) => controlsInType.flat());

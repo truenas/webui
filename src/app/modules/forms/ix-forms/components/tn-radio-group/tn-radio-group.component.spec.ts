@@ -88,6 +88,36 @@ describe('TnRadioGroupComponent', () => {
     expect(await (await getRadio('Beta')).isChecked()).toBe(false);
   });
 
+  it('keeps focus inside the group when a model write recreates the options', () => {
+    setup();
+    const alpha = spectator.query('[data-test="radio-button-letter-alpha"] input') as HTMLInputElement;
+    alpha.focus();
+
+    spectator.hostComponent.control.setValue('b');
+    spectator.detectChanges();
+
+    // The radios are destroyed and recreated, so the focused element is a new node — assert on
+    // what the user perceives (focus is on the now-checked option) rather than on node identity.
+    const focused = document.activeElement as HTMLInputElement;
+
+    expect(focused).not.toBe(document.body);
+    expect(focused.value).toBe('b');
+    expect(focused.checked).toBe(true);
+  });
+
+  it('does not move focus when the group did not have it', () => {
+    setup();
+    const outside = document.createElement('button');
+    document.body.append(outside);
+    outside.focus();
+
+    spectator.hostComponent.control.setValue('b');
+    spectator.detectChanges();
+
+    expect(document.activeElement).toBe(outside);
+    outside.remove();
+  });
+
   it('does not emit the transient reset value to the bound control', async () => {
     setup();
     await (await getRadio('Beta')).check();

@@ -1,3 +1,6 @@
+import {
+  ComponentHarness, ComponentHarnessConstructor, HarnessLoader, parallel,
+} from '@angular/cdk/testing';
 import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.harness';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
@@ -19,6 +22,7 @@ import { IxStarRatingHarness } from 'app/modules/forms/ix-forms/components/ix-st
 import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxUserPickerHarness } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.harness';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
+import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 
 export const supportedFormControlSelectors = [
@@ -48,6 +52,34 @@ export type SupportedFormControlHarness = InstanceType<(typeof supportedFormCont
 export type IxFormBasicValueType = string | number | boolean | string[] | number[];
 
 /**
+ * Every control-harness type a form may contain — the ix-* harnesses plus {@link
+ * TnFormControlHarness} — typed once as harnesses that expose the {@link IxFormControlHarness}
+ * surface. Forms part-way through the tn-* migration hold both kinds side by side, so anything
+ * that wants "every control in this form" has to query the whole heterogeneous list.
+ *
+ * Described here rather than at each call site so the list can't drift between them. The
+ * assertion is the price of a heterogeneous constructor list: `locatorForAll`/`getAllHarnesses`
+ * need a single constructor type, and the harnesses share only the interface, not a base class.
+ */
+export const formControlHarnessTypes = [
+  ...supportedFormControlSelectors,
+  TnFormControlHarness,
+] as unknown as ComponentHarnessConstructor<ComponentHarness & IxFormControlHarness>[];
+
+/**
+ * Every form control under `loader`, indexed by label. The loader-scoped counterpart of
+ * `PoolManagerHarness.getControlHarnessesInStep()`, which has to scope to its own component host
+ * instead — both share {@link formControlHarnessTypes} so they can't index different things.
+ */
+export async function indexFormControls(loader: HarnessLoader): Promise<Record<string, IxFormControlHarness>> {
+  const controlsByType = await parallel(() => {
+    return formControlHarnessTypes.map((harnessType) => loader.getAllHarnesses(harnessType));
+  });
+
+  return indexControlsByLabel(controlsByType.flat());
+}
+
+/**
  * All four helpers below take the {@link IxFormControlHarness} surface rather than the narrower
  * {@link SupportedFormControlHarness} union: it is the only surface they use, and forms part-way
  * through the tn-* migration index a mix of ix-* harnesses and {@link TnFormControlHarness}, which
@@ -57,20 +89,25 @@ export async function indexControlsByLabel<T extends IxFormControlHarness>(
   controls: T[],
 ): Promise<Record<string, T>> {
   const result: Record<string, T> = {};
+  let unlabelledCount = 0;
   for (const control of controls) {
     const label = await control.getLabelText();
-    // Repeated *labelled* controls are legitimate and long-standing here — an `ix-list` renders
-    // one set of labels per row — so those stay last-wins, as they have always been. An unlabelled
-    // control is different: every one of them indexes under '', and there is no label a caller
-    // could pass to reach either, so a second one is always a spec bug rather than a lookup the
-    // caller opted into. Fail loudly for that case only.
-    if (!label && '' in result) {
-      throw new Error(
-        'More than one form control has no label, so neither can be reached by label. '
-        + 'Give them labels, or query them directly through their own harness.',
-      );
+    if (!label) {
+      unlabelledCount += 1;
     }
     result[label] = control;
+  }
+
+  // Repeated *labelled* controls are legitimate and long-standing here — an `ix-list` renders
+  // one set of labels per row — so those stay last-wins, as they have always been. Two or more
+  // unlabelled controls are different: they all index under '', and there is no label a caller
+  // could pass to reach a specific one, so handing back whichever happened to be last is a
+  // silently wrong answer. Drop the ambiguous entry instead of throwing: the index backs whole
+  // forms, and a form is allowed to contain an unreachable control alongside perfectly
+  // addressable ones. Only the '' lookup then fails, with `fillControlValues`'
+  // "Could not find control with label ." — every sibling keeps working.
+  if (unlabelledCount > 1) {
+    delete result[''];
   }
 
   return result;

@@ -1,4 +1,4 @@
-import { ComponentHarness, ComponentHarnessConstructor, HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -10,12 +10,8 @@ import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import {
-  getDisabledStates, indexControlsByLabel,
-  SupportedFormControlHarness, supportedFormControlSelectors,
+  fillControlValues, getDisabledStates, indexFormControls,
 } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
-import {
-  TnFormControlHarness,
-} from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import {
   DiskSizeSelectsComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/disk-size-selects/disk-size-selects.component';
@@ -31,16 +27,10 @@ describe('DraidSelectionComponent', () => {
   const startOver$ = new Subject<void>();
   const resetStep$ = new Subject<void>();
 
-  // The draid form mixes ix-* (Disk Size) and tn-* controls; index both by label
-  // so the tests can fill/read/inspect by label as before.
-  async function getControls(): Promise<Record<string, IxFormControlHarness>> {
-    const groups = await parallel(() => {
-      return [...supportedFormControlSelectors, TnFormControlHarness].map((selector) => {
-        return loader.getAllHarnesses(selector as ComponentHarnessConstructor<ComponentHarness>);
-      });
-    });
-    const controls = groups.flat() as unknown as SupportedFormControlHarness[];
-    return indexControlsByLabel(controls) as Promise<Record<string, IxFormControlHarness>>;
+  // The draid form mixes ix-* (Disk Size) and tn-* controls; `indexFormControls` indexes both by
+  // label so the tests can fill/read/inspect by label as before.
+  function getControls(): Promise<Record<string, IxFormControlHarness>> {
+    return indexFormControls(loader);
   }
 
   const form = {
@@ -49,18 +39,11 @@ describe('DraidSelectionComponent', () => {
     fillForm: async (values: Record<string, unknown>): Promise<void> => {
       // eslint-disable-next-line guard-for-in,no-restricted-syntax
       for (const label in values) {
-        const control = (await getControls())[label];
-        if (!control) {
-          throw new Error(`Could not find control with label ${label}.`);
-        }
-        await control.setValue(values[label]);
+        await fillControlValues(await getControls(), { [label]: values[label] });
       }
     },
     getDisabledState: async (): Promise<Record<string, boolean>> => {
-      return getDisabledStates(await getControls() as Record<string, SupportedFormControlHarness>);
-    },
-    getControl: async (label: string): Promise<IxFormControlHarness> => {
-      return (await getControls())[label];
+      return getDisabledStates(await getControls());
     },
   };
 
@@ -246,7 +229,7 @@ describe('DraidSelectionComponent', () => {
     // empty Children — there is no optimal width to default to without disks.
     const controls = await getControls();
     expect(await controls['Disk Size'].getValue()).toBe('');
-    expect(await controls['Data Devices'].getValue()).toBe(String(spectator.component.defaultDataDevicesPerGroup));
+    expect(await controls['Data Devices'].getValue()).toBe('8');
     expect(await controls['Distributed Hot Spares'].getValue()).toBe('0');
     expect(await controls.Children.getValue()).toBe('');
     expect(await controls['Number of VDEVs'].getValue()).toBe('1');

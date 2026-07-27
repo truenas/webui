@@ -29,9 +29,9 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
 
   /**
    * Empty when the field carries no label and holds no self-labeling control (e.g. the
-   * label-less search fields in the pool-manager wizard). {@link indexControlsByLabel} keys on
-   * this, and rejects a second empty key rather than letting two such controls collide — query
-   * those directly through their own tn-* harness instead.
+   * label-less search fields in the pool-manager wizard). `indexControlsByLabel` keys on this,
+   * and drops the empty key entirely once a second such control appears rather than letting them
+   * collide — query those directly through their own tn-* harness instead.
    */
   async getLabelText(): Promise<string> {
     const label = await this.getLabel();

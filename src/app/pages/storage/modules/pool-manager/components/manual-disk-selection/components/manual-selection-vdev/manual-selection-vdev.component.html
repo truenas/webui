@@ -67,19 +67,14 @@
         </div>
       </div>
       @if (editable()) {
-        <div
-          role="button"
-          tabindex="0"
+        <tn-icon-button
           class="delete-container"
-          tnTestIdType="button"
-          [tnTestId]="['delete-vdev', layout()]"
-          [attr.aria-label]="'Delete VDEV' | translate"
-          (click)="deleteVdev()"
-          (keydown.enter)="deleteVdev()"
-          (keydown.space)="deleteVdev(); $event.preventDefault()"
-        >
-          <tn-icon name="delete" library="mdi"></tn-icon>
-        </div>
+          name="delete"
+          library="mdi"
+          [testId]="['delete-vdev', layout()]"
+          [ariaLabel]="'Delete VDEV' | translate"
+          (onClick)="deleteVdev()"
+        ></tn-icon-button>
       }
     </div>
     @if (editable()) {

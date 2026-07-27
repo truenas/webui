@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, signal,
+  afterNextRender,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, Injector, input, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -41,6 +42,8 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
   private controlDirective = inject(NgControl);
   private destroyRef = inject(DestroyRef);
   private formField = inject(TnFormFieldComponent, { optional: true });
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private injector = inject(Injector);
 
   readonly options = input<Option<unknown>[]>([]);
 
@@ -74,6 +77,13 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
    * Drives the `<tn-radio>` accessors. Kept separate from the outer control so a model write
    * never emits a transient value to the consumer's form, and so `onTouched` fires only for a
    * real user pick (the only thing that reaches `valueChanges` here).
+   *
+   * **Must stay validator-free.** Every `<tn-radio>` in the template binds `[formControl]` to
+   * this one instance, so N `FormControlDirective`s attach to it — outside Angular's supported
+   * usage, where a control has exactly one accessor. Each `setUpControl` overwrites the
+   * control's validators with its own directive's, so the last radio to attach would win; with
+   * no validators there is nothing to lose. Validation belongs on the *outer* control the
+   * consumer binds, which this component only reads through {@link writeValue}.
    */
   protected readonly innerControl = new FormControl<unknown>(null);
 
@@ -92,7 +102,8 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
    * the DOM write, leaving the group rendered with nothing selected. Bumping this key on a model
    * write instead destroys and recreates the radios, so each one runs `writeValue` fresh on init
    * and renders the right state with no imperative change-detection pass. A user pick does not
-   * bump it, so keyboard focus survives the interaction it came from.
+   * bump it, so keyboard focus survives the interaction it came from; a model write does, and
+   * {@link writeValue} restores focus explicitly.
    */
   private readonly renderKey = signal(0);
 
@@ -133,12 +144,48 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
   }
 
   writeValue(value: unknown): void {
+    // Reference equality on purpose. With object- or array-valued options this never matches, so
+    // such a group rebuilds its radios on every model write, including no-op ones — wasteful but
+    // correct. A deep-equality fallback would not be: `tn-radio` decides its own `checked` by
+    // comparing its `[value]` to the control value, and the comparison it uses is not ours to
+    // assume, so skipping a rebuild for a structurally-equal-but-distinct object risks leaving
+    // the group rendered with nothing checked. Give such a group stable option identities (hoist
+    // the `options` array) rather than loosening this.
     if (this.renderedValue === value) {
       return;
     }
+    // Recreating the radios (below) detaches whichever one holds focus, dropping it to <body>.
+    // Restore it afterwards so a programmatic write — a `reset()`, or the pool wizard's
+    // "Start Over" — doesn't cost a keyboard user their place.
+    const shouldRestoreFocus = this.hasFocus();
+
     this.renderedValue = value;
     this.innerControl.setValue(value, { emitEvent: false });
     this.renderKey.update((key) => key + 1);
+
+    if (shouldRestoreFocus) {
+      afterNextRender({
+        read: () => this.focusCheckedOption(),
+      }, { injector: this.injector });
+    }
+  }
+
+  private hasFocus(): boolean {
+    const active = this.elementRef.nativeElement.ownerDocument.activeElement;
+    return !!active && this.elementRef.nativeElement.contains(active);
+  }
+
+  /**
+   * Focuses the option the group now renders as checked, falling back to the first one when the
+   * written value matches none — a group with nothing checked still has to be reachable by
+   * keyboard, and the first radio is where native arrow-key navigation starts.
+   */
+  private focusCheckedOption(): void {
+    const host = this.elementRef.nativeElement;
+    const target = host.querySelector<HTMLElement>('input[type="radio"]:checked')
+      ?? host.querySelector<HTMLElement>('input[type="radio"]');
+
+    target?.focus();
   }
 
   registerOnChange(onChange: (value: unknown) => void): void {

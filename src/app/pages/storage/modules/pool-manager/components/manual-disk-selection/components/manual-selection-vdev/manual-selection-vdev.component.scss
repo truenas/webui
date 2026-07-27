@@ -36,12 +36,10 @@ p {
   margin: 5px 0;
 }
 
+// tn-icon-button brings its own hit area, cursor and focus ring; all that is left is centring it
+// against the (taller) disk grid it sits beside.
 .delete-container {
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-self: center;
 }
 
 .grabbed {

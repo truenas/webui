@@ -117,7 +117,7 @@ describe('DiskSizeSelectsComponent', () => {
 
     it('emits (disksSelected) when checkbox is ticked', async () => {
       await diskSizeSelect.selectOption('10 GiB (HDD)');
-      const minimumCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ selector: '[formControlName="treatDiskSizeAsMinimum"]' }));
+      const minimumCheckbox = await loader.getHarness(TnCheckboxHarness.with({ selector: '[formControlName="treatDiskSizeAsMinimum"]' }));
       await minimumCheckbox.check();
       const expectedDisks = inventoryDisks.filter(
         (disk) => disk.type === DiskType.Hdd && disk.size >= 10 * GiB,
