@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, OnInit, inject, input,
+} from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import {
+  TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import { EMPTY, of } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs/operators';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -14,15 +15,11 @@ import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
+import {
+  IxFormHostForm,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 
@@ -32,35 +29,28 @@ import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/dis
   styleUrl: 'disk-bulk-edit.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    IxFormComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
     TnIconComponent,
-    IxSelectComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnSelectComponent,
     TranslateModule,
-    TranslateOptionsPipe,
   ],
 })
-export class DiskBulkEditComponent {
+export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | null> implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private snackbarService = inject(SnackbarService);
-  private errorHandler = inject(FormErrorHandlerService);
-  slideInRef = inject<SlideInRef<Disk[], DiskFormResponse>>(SlideInRef);
-  private destroyRef = inject(DestroyRef);
+
+  /** The disks being edited, supplied by the `<tn-side-panel>` host before `ngOnInit`. */
+  readonly disksToEdit = input.required<Disk[]>();
 
   protected readonly requiredRoles = [Role.DiskWrite];
 
-  diskIds: string[] = [];
-  isLoading = false;
+  private diskIds: string[] = [];
+
   form = this.fb.group({
     disknames: [[] as string[]],
     hddstandby: [null as DiskStandby | null],
@@ -70,16 +60,55 @@ export class DiskBulkEditComponent {
   readonly helptext = helptextDisks;
   readonly helptextBulkEdit = helptextDisks.bulkEdit;
   protected readonly disksTooltip = this.translate.instant(helptextDisks.bulkEdit.disks.tooltip);
-  readonly hddstandbyOptions$ = of(helptextDisks.standbyOptions);
-  readonly advpowermgmtOptions$ = of(
+  protected readonly hddstandbyOptions = translateOptions(this.translate, helptextDisks.standbyOptions);
+  protected readonly advpowermgmtOptions = translateOptions(
+    this.translate,
     helptextDisks.advancedPowerManagementOptions,
   );
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.setFormDiskBulk(this.slideInRef.getData());
+  // Captured on a successful save so the panel host can hand the updated disks back to its
+  // opener: `<ix-form>` emits a bare `true` in the side-panel host, dropping the payload.
+  private submittedResponse: DiskFormResponse | null = null;
+
+  ngOnInit(): void {
+    this.setFormDiskBulk(this.disksToEdit());
+  }
+
+  protected readonly handleSubmit = (): SubmitResult => {
+    const req = this.prepareDataSubmit();
+    const successText = this.translate.instant(
+      'Successfully saved {n, plural, one {Disk} other {Disks}} settings.',
+      { n: req.length },
+    );
+
+    return {
+      request$: this.api.job('core.bulk', ['disk.update', req]).pipe(
+        filter((job) => job.state === JobState.Success),
+        take(1),
+        switchMap((job) => {
+          // core.bulk reports per-disk failures in its result rather than failing the job,
+          // so surface the first one here and complete without emitting: no success
+          // snackbar, and the form stays open so the user can retry.
+          const failure = job.result.find((result) => result.error !== null);
+          if (failure) {
+            this.dialogService.error({
+              title: this.translate.instant(helptextDisks.errorDialogTitle),
+              message: failure.error,
+            });
+            return EMPTY;
+          }
+          return of(req);
+        }),
+      ),
+      successMessage: successText,
+      onSuccess: () => {
+        this.submittedResponse = req.map(([identifier, diskUpdate]) => ({ identifier, ...diskUpdate }));
+      },
+    };
+  };
+
+  protected onFormClosed(): void {
+    this.closed.emit(this.submittedResponse);
   }
 
   private setFormDiskBulk(selectedDisks: Disk[]): void {
@@ -90,6 +119,8 @@ export class DiskBulkEditComponent {
     };
     const hddStandby: DiskStandby[] = [];
     const advPowerMgt: DiskPowerLevel[] = [];
+
+    this.diskIds = [];
 
     selectedDisks.forEach((disk) => {
       this.diskIds.push(disk.identifier);
@@ -116,6 +147,8 @@ export class DiskBulkEditComponent {
   }
 
   private prepareDataSubmit(): [id: string, update: DiskUpdate][] {
+    // `form.value` (not getRawValue) so the disabled, display-only `disknames`
+    // control never leaks into the update payload.
     const data = { ...this.form.value };
 
     Object.keys(data).forEach((key) => {
@@ -125,54 +158,5 @@ export class DiskBulkEditComponent {
     });
 
     return this.diskIds.map((id) => [id, data]);
-  }
-
-  onSubmit(): void {
-    const req = this.prepareDataSubmit();
-    const successText = this.translate.instant(
-      'Successfully saved {n, plural, one {Disk} other {Disks}} settings.',
-      { n: req.length },
-    );
-    this.isLoading = true;
-    this.api
-      .job('core.bulk', ['disk.update', req])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (job) => {
-          if (job.state !== JobState.Success) {
-            return;
-          }
-
-          this.isLoading = false;
-          const isSuccessful = job.result.every((result) => {
-            if (result.error !== null) {
-              this.dialogService.error({
-                title: helptextDisks.errorDialogTitle,
-                message: result.error,
-              });
-              return false;
-            }
-
-            return true;
-          });
-
-          if (isSuccessful) {
-            this.slideInRef.close({
-              response: req.map((diskUpdate) => ({
-                identifier: diskUpdate[0],
-                ...diskUpdate[1],
-              })),
-            });
-            this.snackbarService.success(successText);
-          } else {
-            this.slideInRef.close({ response: [] });
-          }
-        },
-        error: (error: unknown) => {
-          this.isLoading = false;
-          this.slideInRef.close({ response: [] });
-          this.errorHandler.handleValidationErrors(error, this.form);
-        },
-      });
   }
 }

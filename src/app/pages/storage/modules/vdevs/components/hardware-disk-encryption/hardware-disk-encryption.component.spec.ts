@@ -105,5 +105,10 @@ describe('HardwareDiskEncryptionComponent', () => {
       expect(spectator.inject(NavigateAndHighlightService).navigateAndHighlight)
         .toHaveBeenCalledWith(['/system', 'advanced'], 'sed-card', { inset: false });
     });
+
+    it('keeps the legacy link test ids after moving to the library test-id directive', () => {
+      expect(spectator.query('[data-test="link-manage-sed-password"]')).toExist();
+      expect(spectator.query('[data-test="link-manage-global-sed-password"]')).toExist();
+    });
   });
 });

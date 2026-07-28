@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -16,9 +16,9 @@ import {
 } from 'app/interfaces/core-bulk.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from './disk-bulk-edit.component';
@@ -37,7 +37,6 @@ const mockJobSuccessResponse = [
 describe('DiskBulkEditComponent', () => {
   let spectator: Spectator<DiskBulkEditComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let api: ApiService;
 
   const dataDisk1 = {
@@ -53,19 +52,15 @@ describe('DiskBulkEditComponent', () => {
     advpowermgmt: DiskPowerLevel.Level64,
   } as Disk;
 
-  const slideInRef: SlideInRef<Disk[] | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => [dataDisk1, dataDisk2]),
-  };
-
   const createComponent = createComponentFactory({
     component: DiskBulkEditComponent,
     imports: [ReactiveFormsModule],
     providers: [
       mockAuth(),
-      mockProvider(SlideInRef, slideInRef),
-      mockProvider(SnackbarService),
+      ...ixFormTestingProviders(),
+      // The side-panel host otherwise holds a successful submit for the
+      // minimum-feedback window before emitting `closed`.
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(DialogService),
       mockApi([
         mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
@@ -73,45 +68,36 @@ describe('DiskBulkEditComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
-    spectator = createComponent();
+  function getSelect(controlName: string): Promise<TnSelectHarness> {
+    return loader.getHarness(TnSelectHarness.with({ selector: `[formControlName="${controlName}"]` }));
+  }
+
+  async function fillSettings(): Promise<void> {
+    await (await getSelect('hddstandby')).selectOption('10');
+    await (await getSelect('advpowermgmt')).selectOption('Level 64 - Intermediate power usage with Standby');
+  }
+
+  beforeEach(() => {
+    spectator = createComponent({ props: { disksToEdit: [dataDisk1, dataDisk2] } });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     api = spectator.inject(ApiService);
   });
 
   it('sets disks settings when form is opened', async () => {
-    const formValue = await form.getValues();
-    const diskIds = spectator.component.diskIds;
     const diskNames = spectator.component.form.controls.disknames.value;
 
-    expect(formValue).toEqual({
-      'HDD Standby': '',
-      'Advanced Power Management': '',
-    });
     expect(diskNames).toEqual(['sda', 'sdc']);
-    expect(diskIds).toEqual([
-      '{serial}VB76b9dd9d-4e5d8cf2',
-      '{serial}VB5a315293-ea077d3d',
-    ]);
+    expect(await (await getSelect('hddstandby')).getDisplayText()).toBe('Select an option');
+    expect(await (await getSelect('advpowermgmt')).getDisplayText()).toBe('Select an option');
+    expect(spectator.query('.disk-list').textContent).toContain('sda');
+    expect(spectator.query('.disk-list').textContent).toContain('sdc');
   });
 
   it('updates selected disks when form is submitted', async () => {
-    spectator.component.diskIds = [
-      '{serial}VB76b9dd9d-4e5d8cf2',
-      '{serial}VBd494d425-607efd80',
-    ];
+    await fillSettings();
 
-    const changeValue = {
-      'HDD Standby': '10',
-      'Advanced Power Management':
-        'Level 64 - Intermediate power usage with Standby',
-    };
-    await form.fillForm(changeValue);
-    const saveButton = await loader.getHarness(
-      MatButtonHarness.with({ text: 'Save' }),
-    );
-    await saveButton.click();
+    spectator.component.submit();
+
     const req: CoreBulkQuery = [
       'disk.update',
       [
@@ -123,7 +109,7 @@ describe('DiskBulkEditComponent', () => {
           },
         ],
         [
-          '{serial}VBd494d425-607efd80',
+          '{serial}VB5a315293-ea077d3d',
           {
             advpowermgmt: '64',
             hddstandby: '10',
@@ -133,8 +119,20 @@ describe('DiskBulkEditComponent', () => {
     ];
 
     expect(api.job).toHaveBeenCalledWith('core.bulk', req);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+  });
+
+  it('emits the disk updates through closed so the opener can reconcile its rows', async () => {
+    const closed = jest.fn();
+    spectator.component.closed.subscribe(closed);
+
+    await fillSettings();
+    spectator.component.submit();
+
+    expect(closed).toHaveBeenCalledWith([
+      { identifier: '{serial}VB76b9dd9d-4e5d8cf2', advpowermgmt: '64', hddstandby: '10' },
+      { identifier: '{serial}VB5a315293-ea077d3d', advpowermgmt: '64', hddstandby: '10' },
+    ]);
   });
 
   it('opens an error dialog if not all jobs are successful', async () => {
@@ -156,27 +154,15 @@ describe('DiskBulkEditComponent', () => {
       return of(fakeSuccessfulJob(mockJobSuccessResponse));
     });
 
-    spectator.component.diskIds = [
-      '{serial}VB76b9dd9d-4e5d8cf2',
-      '{serial}VBd494d425-607efd80',
-    ];
-
-    const changeValue = {
-      'HDD Standby': '10',
-      'Advanced Power Management':
-        'Level 64 - Intermediate power usage with Standby',
-    };
-    await form.fillForm(changeValue);
-    const saveButton = await loader.getHarness(
-      MatButtonHarness.with({ text: 'Save' }),
-    );
-    await saveButton.click();
+    await fillSettings();
+    spectator.component.submit();
 
     expect(api.job).toHaveBeenCalledWith('core.bulk', expect.anything());
     expect(dialogService.error).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
   });
 
-  it('closes the slidein and handles validation errors on exception', async () => {
+  it('handles validation errors on exception', async () => {
     const errorHandler = spectator.inject(FormErrorHandlerService);
     const jobSpy = jest.spyOn(api, 'job');
 
@@ -190,13 +176,10 @@ describe('DiskBulkEditComponent', () => {
       return of(fakeSuccessfulJob(mockJobSuccessResponse));
     });
 
-    const saveButton = await loader.getHarness(
-      MatButtonHarness.with({ text: 'Save' }),
-    );
-    await saveButton.click();
+    await fillSettings();
+    spectator.component.submit();
 
     expect(api.job).toHaveBeenCalledWith('core.bulk', expect.anything());
-    expect(slideInRef.close).toHaveBeenCalled();
     expect(errorHandler.handleValidationErrors).toHaveBeenCalled();
   });
 });

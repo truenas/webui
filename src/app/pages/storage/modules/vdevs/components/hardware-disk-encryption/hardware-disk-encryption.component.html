@@ -11,7 +11,8 @@
 
       <a
         *ixHasRole="requiredRoles"
-        ixTest="manage-sed-password"
+        tnTestIdType="link"
+        [tnTestId]="'manage-sed-password'"
         (click)="onManageSedPassword()"
       >
         {{ 'Manage SED Password' | translate }}
@@ -30,7 +31,8 @@
       <a
         *ixHasRole="requiredRoles"
         ixNavigateAndHighlight
-        ixTest="manage-global-sed-password"
+        tnTestIdType="link"
+        [tnTestId]="'manage-global-sed-password'"
         [navigateHash]="'sed-card'"
         [navigateRoute]="['/system', 'advanced']"
       >
