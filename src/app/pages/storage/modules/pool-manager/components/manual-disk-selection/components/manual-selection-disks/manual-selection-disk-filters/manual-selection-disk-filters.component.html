@@ -1,10 +1,15 @@
 <div class="filter-container">
   <form [formGroup]="filterForm">
+    <!--
+      Label-less by design — the magnifier icon and placeholder carry the meaning visually.
+      A placeholder is not an accessible name, so the name comes from [ariaLabel].
+    -->
     <tn-form-field>
       <tn-input
         formControlName="search"
         [prefixIcon]="tnIconMarker('magnify', 'mdi')"
         [placeholder]="'Search' | translate"
+        [ariaLabel]="'Search' | translate"
       ></tn-input>
     </tn-form-field>
     <div class="select-container">

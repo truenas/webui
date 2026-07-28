@@ -112,10 +112,19 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
    * {@link renderKey} straight from the `track` expression, which the repeater evaluates outside
    * the view's reactive context — so the signal read would not mark the view dirty and the
    * recreation would never be scheduled.
+   *
+   * The index is part of the key so that options whose values stringify alike — two objects
+   * (both `[object Object]`), or `1` and `'1'` — still get distinct keys; duplicates would make
+   * Angular throw NG0955 and the group would not render at all. The stringified value stays in
+   * the key so that swapping the options array recreates the radios rather than rebinding
+   * `[value]` on the existing ones, which would leave their `checked` state stale.
    */
   protected readonly renderItems = computed(() => {
     const key = this.renderKey();
-    return this.options().map((option) => ({ option, trackBy: `${key}-${String(option.value)}` }));
+    return this.options().map((option, index) => ({
+      option,
+      trackBy: `${key}-${index}-${String(option.value)}`,
+    }));
   });
 
   private onChange: (value: unknown) => void = (): void => {};

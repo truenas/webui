@@ -148,7 +148,7 @@ the ticket and document it in the PR.
 | Angular Material | @truenas/ui-components | Notes |
 |---|---|---|
 | `<mat-menu>` | `<tn-menu>` | `[items]` input takes `TnMenuItem[]`. See `ServiceActionsMenuService` for the composition pattern (Recipe 2). |
-| `<button mat-menu-item>` | `<tn-menu-item>` | ⚠ Test IDs resolve to `menu-item-*`, not `button-*` (tn-menu-item declares the `menu-item` prefix). To preserve a legacy `button-foo`, pass `testId="button-foo"` — a per-item `testId` is written verbatim. Do NOT edit `test.directive.ts`. See "Test IDs." |
+| `<button mat-menu-item>` | `<tn-menu-item>` | Test IDs resolve to `button-*`, matching the legacy value — `tn-menu-panel` renders each item as a `<button tnTestIdType="button">`. Pass the bare semantic base (`[testId]="['expand', name]"` → `button-expand-<name>`). Do NOT edit `test.directive.ts`. See "Test IDs." |
 | `[matMenuTriggerFor]` | `[tnMenuTriggerFor]` | `TnMenuTriggerDirective`; same usage shape. |
 | `[matTooltip]` | `[tnTooltip]` | `TnTooltipDirective`. ⚠ Tooltips are not accessible descriptions on their own — for form controls prefer the `[tooltip]` input on `ix-input`/`ix-checkbox`/etc., reserve `[tnTooltip]` for hover-only context (disabled-state hints, etc.). |
 
@@ -682,20 +682,28 @@ the component's `testId` input, and the library assembles `${type}-${base}`, keb
 <li [tnTestId]="['username', option.value]" tnTestIdType="option"></li>
 ```
 
-Verified prefixes: `tn-button`/`tn-icon-button` → `button`, `tn-card` title link → `link`,
-`tn-menu-item` → `menu-item`, `tn-select` → `select` (options `option`), `tn-checkbox` →
-`checkbox`, `tn-radio` → `radio`, `tn-slide-toggle` → `toggle`, `tn-input` → `input`
-(textarea `textarea`), `tn-button-toggle` → `button-toggle`. Exception: `tn-table`,
-`tn-tree`, `tn-selection-list`, `tn-calendar` are **not yet typed** — they write `testId`
-verbatim, so pass the full value (prefix included) on those.
+Verified prefixes: `tn-button`/`tn-icon-button` → `button`, `tn-menu-item` → `button` (the
+panel renders each item as a `<button tnTestIdType="button">`), `tn-card` `[footerLink]` →
+`link`, `tn-select` → `select` (options `option`), `tn-checkbox` → `checkbox`, `tn-radio` →
+`radio`, `tn-slide-toggle` → `toggle`, `tn-input` → `input` (textarea `textarea`),
+`tn-button-toggle` → `button-toggle`. Exception: `tn-table`, `tn-tree`, `tn-selection-list`,
+`tn-calendar` are **not yet typed** — they write `testId` verbatim, so pass the full value
+(prefix included) on those.
 
-Two properties make this safe:
+Three properties make this safe:
 - **Kebab-parity** with the legacy directive (mirrors lodash `kebabCase`), so a migrated
   base resolves byte-identically (`sshPort` → `ssh-port`).
 - **Idempotent prefix** — a base that already starts with its prefix is not doubled
   (`button-save` stays `button-save`). The migration is therefore order-independent, but
   **pass the bare semantic base** (`'save'`, not `'button-save'`) — let the component supply
   the prefix.
+- **Form controls fall back to the bound control name.** `tn-input`, `tn-select`,
+  `tn-checkbox`, `tn-radio`, `tn-slide-toggle`, `tn-autocomplete` and `tn-file-picker` route
+  `testId` through the library's `controlTestId()`, which reads `formControlName` (or a named
+  `[formControl]`/`ngModel`) when no explicit `testId` is given. So `<tn-input
+  formControlName="sshPort">` emits `input-ssh-port` with no `testId` at all — matching what
+  `ix-input`'s `[ixTest]="controlDirective.name"` produced. Passing an explicit `testId` on a
+  bound control is redundant, not required; it is only needed to *override* the control name.
 
 **Attribute name (required once, at the app root).** `{ provide: TN_TEST_ATTR, useValue:
 'data-test' }` makes the library write `data-test` instead of its default `data-testid`.
@@ -727,10 +735,13 @@ type, changing the type changes the resolved value even when the base is identic
   skips a prefix the base *already* starts with. So if a legacy `link-*` selector is referenced
   anywhere, either keep a typeless host element and put `[tnTestId]` on it, or coordinate the
   rename with whoever owns the e2e selectors.
-- `<button mat-menu-item [ixTest]="'foo'">` resolved to `button-foo`. `<tn-menu-item
-  [testId]="'foo'">` resolves to `menu-item-foo` because `tn-menu-item` declares the
-  `menu-item` prefix. To preserve the legacy `button-foo`, pass `testId="button-foo"` on the
-  menu item — a per-item `testId` is written verbatim. Do NOT edit `test.directive.ts`.
+- `<button mat-menu-item [ixTest]="'foo'">` resolved to `button-foo`, and `<tn-menu-item
+  [testId]="'foo'">` also resolves to `button-foo` — the `menu-item` prefix this playbook
+  previously documented is not what the library emits. `tn-menu-panel` renders every item
+  (projected or from `[items]`) as `<button tnTestIdType="button" [tnTestId]="…">`, so menu
+  items are the one element→component conversion that needs **no** prefix compensation. Pass
+  the bare base; do NOT pass `testId="button-foo"` (it survives only because of the idempotent
+  guard) and do NOT edit `test.directive.ts`.
 
 ## Spec / test updates
 

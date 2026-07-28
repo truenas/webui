@@ -52,6 +52,13 @@ export class ManualSelectionVdevComponent implements OnChanges {
   readonly layout = input.required<CreateVdevLayout>();
   readonly editable = input(false);
 
+  /**
+   * 1-based position of this vdev within its list, used to disambiguate the delete button.
+   * Every card in a list shares the same {@link layout}, so without it all of them resolve to
+   * one `data-test` value (a Playwright strict-mode violation) and to the same accessible name.
+   */
+  readonly position = input(1);
+
   readonly enclosures = input<Enclosure[]>();
 
   readonly enclosureById = computed(() => {

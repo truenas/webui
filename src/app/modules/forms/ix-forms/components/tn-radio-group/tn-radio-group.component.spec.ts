@@ -23,6 +23,16 @@ class HostComponent {
     { label: 'Alpha', value: 'a' },
     { label: 'Beta', value: 'b' },
   ];
+
+  // Values that all collapse to the same string: two distinct objects (`[object Object]`)
+  // and a number/string pair that both render as `1`.
+  readonly ambiguousControl = new FormControl<unknown>(null);
+  readonly ambiguousOptions: Option<unknown>[] = [
+    { label: 'First', value: { id: 1 } },
+    { label: 'Second', value: { id: 2 } },
+    { label: 'Number', value: 1 },
+    { label: 'String', value: '1' },
+  ];
 }
 
 describe('TnRadioGroupComponent', () => {
@@ -144,6 +154,38 @@ describe('TnRadioGroupComponent', () => {
     setup();
     expect(spectator.query('[data-test="radio-button-letter-alpha"]')).toExist();
     expect(spectator.query('[data-test="radio-button-letter-beta"]')).toExist();
+  });
+
+  describe('options whose values stringify alike', () => {
+    // The `@for` track key used to be `${renderKey}-${String(option.value)}`, which collides for
+    // any two objects and for `1` vs `'1'`. Angular rejects duplicate keys (NG0955) and the group
+    // renders broken — so this covers the object/array-valued options `writeValue` documents.
+    function setupAmbiguous(): void {
+      setup(`
+        <ix-tn-radio-group
+          name="ambiguous"
+          [formControl]="ambiguousControl"
+          [options]="ambiguousOptions"
+          [ariaLabel]="'Ambiguous'"
+        ></ix-tn-radio-group>
+      `);
+    }
+
+    it('renders every option', () => {
+      setupAmbiguous();
+
+      expect(spectator.queryAll('tn-radio')).toHaveLength(4);
+    });
+
+    it('keeps each option independently selectable', async () => {
+      setupAmbiguous();
+      await (await getRadio('Second')).check();
+
+      expect(spectator.hostComponent.ambiguousControl.value)
+        .toBe(spectator.hostComponent.ambiguousOptions[1].value);
+      expect(await (await getRadio('First')).isChecked()).toBe(false);
+      expect(await (await getRadio('Second')).isChecked()).toBe(true);
+    });
   });
 
   describe('inside a labelled tn-form-field', () => {

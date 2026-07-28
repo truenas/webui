@@ -71,8 +71,8 @@
           class="delete-container"
           name="delete"
           library="mdi"
-          [testId]="['delete-vdev', layout()]"
-          [ariaLabel]="'Delete VDEV' | translate"
+          [testId]="['delete-vdev', layout(), position()]"
+          [ariaLabel]="'Delete VDEV {position}' | translate: { position: position() }"
           (onClick)="deleteVdev()"
         ></tn-icon-button>
       }

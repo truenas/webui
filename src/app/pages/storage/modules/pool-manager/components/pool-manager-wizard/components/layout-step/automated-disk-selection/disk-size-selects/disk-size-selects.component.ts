@@ -147,6 +147,12 @@ export class DiskSizeSelectsComponent implements OnChanges {
       // the freshly rebuilt size -> disks map downstream, so the store regenerates this
       // category's vdevs against the current disk objects. Without it the store's
       // identity check against `allowedDisks` sees stale objects and resets the step.
+      //
+      // It stays load-bearing when the value is *already* `null`, so do not add a
+      // "only if something was picked" guard to skip the apparent no-op: every category
+      // re-emits on an inventory change, and dropping the null ones makes
+      // `unsetting-on-fewer-disks.spec.ts`'s "does not reset category if after changing
+      // disks constraints there are still enough disks" case lose its Data topology.
       this.form.controls.sizeAndType.setValue(null);
     }
 
