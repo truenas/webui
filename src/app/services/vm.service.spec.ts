@@ -54,7 +54,9 @@ describe('VmService', () => {
         withLoader: () => <T>(source$: T) => source$,
       }),
       mockProvider(TranslateService, {
-        instant: jest.fn((key: string) => key),
+        instant: jest.fn((key: string, params?: Record<string, unknown>) => {
+          return params ? key.replace(/{(\w+)}/g, (_, name: string) => String(params[name])) : key;
+        }),
       }),
       mockProvider(ErrorHandlerService, {
         showErrorModal: jest.fn(),
@@ -136,9 +138,7 @@ describe('VmService', () => {
 
     expect(dialogService.confirm).toHaveBeenCalled();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.reset', [1]);
-    expect(spectator.inject(TranslateService).instant)
-      .toHaveBeenCalledWith('{vmName} has been reset.', { vmName: 'vm' });
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('VM vm has been reset.');
     expect(wasReset).toBe(true);
   });
 
@@ -150,6 +150,29 @@ describe('VmService', () => {
     const wasReset = await firstValueFrom(spectator.service.doReset(vm));
 
     expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('vm.reset', [1]);
+    expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+    expect(wasReset).toBe(false);
+  });
+
+  it('should show an error and not report success when resetting vm fails', async () => {
+    const vm = mockVm(VmState.Running);
+    const apiService = spectator.inject(ApiService);
+    const errorHandlerService = spectator.inject(ErrorHandlerService);
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true));
+    const callSpy = jest.spyOn(apiService, 'call');
+    const mockImpl = callSpy.getMockImplementation();
+
+    callSpy.mockImplementation((method) => {
+      if (method === 'vm.reset') {
+        return throwError(() => new ApiCallError({ code: JsonRpcErrorCode.CallError, message: 'Failed to reset VM' }));
+      }
+
+      return mockImpl(method);
+    });
+
+    const wasReset = await firstValueFrom(spectator.service.doReset(vm));
+
+    expect(errorHandlerService.showErrorModal).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
     expect(wasReset).toBe(false);
   });

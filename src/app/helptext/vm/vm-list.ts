@@ -26,7 +26,7 @@ export const helptextVmList = {
  will not be shut down cleanly, which may result in data loss or filesystem corruption. Are you sure you want to\
  continue?'),
     buttonMessage: T('Reset'),
-    successMessage: T('{vmName} has been reset.'),
+    successMessage: T('VM {vmName} has been reset.'),
   },
 
   stop_dialog: {

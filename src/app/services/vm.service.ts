@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { TnDialog } from '@truenas/ui-components';
 import {
-  BehaviorSubject, catchError, filter, Observable, of, repeat, Subject, switchMap, take,
+  BehaviorSubject, catchError, filter, map, Observable, of, repeat, Subject, switchMap, take, tap,
 } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { VmDisplayType, VmState } from 'app/enums/vm.enum';
@@ -147,6 +147,7 @@ export class VmService {
       buttonColor: 'warn',
     })
       .pipe(
+        take(1),
         switchMap((confirmed) => {
           if (!confirmed) {
             return of(false);
@@ -154,12 +155,11 @@ export class VmService {
 
           return this.api.call(this.wsMethods.reset, [vm.id]).pipe(
             this.loader.withLoader(),
-            switchMap(() => {
-              this.snackbar.success(
-                this.translate.instant(helptextVmList.reset_dialog.successMessage, { vmName: vm.name }),
-              );
-              return of(true);
-            }),
+            take(1),
+            tap(() => this.snackbar.success(
+              this.translate.instant(helptextVmList.reset_dialog.successMessage, { vmName: vm.name }),
+            )),
+            map(() => true),
             catchError((error: unknown) => {
               this.errorHandler.showErrorModal(error);
               return of(false);
