@@ -5,10 +5,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmState } from 'app/enums/vm.enum';
+import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -30,6 +31,7 @@ import { VmService } from 'app/services/vm.service';
     MatButton,
     TestDirective,
     TnIconComponent,
+    TnTooltipDirective,
     TranslateModule,
   ],
 })
@@ -46,6 +48,7 @@ export class VirtualMachineDetailsRowComponent {
 
   protected readonly requiredReadRoles = [Role.VmRead];
   protected readonly requiredRoles = [Role.VmWrite];
+  protected readonly resetButtonText = helptextVmList.reset_button;
 
   readonly vmStateInfo = computed(() => {
     const state = this.vm().status.state;

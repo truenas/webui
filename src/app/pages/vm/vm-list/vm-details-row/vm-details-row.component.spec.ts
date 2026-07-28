@@ -173,8 +173,11 @@ describe('VirtualMachineDetailsRowComponent', () => {
 
   it('should call service to reset the VM', async () => {
     const resetButton = await loader.getHarness(MatButtonHarness.with({ text: /Reset/ }));
-    const resetIcon = await resetButton.getHarness(TnIconHarness.with({ name: 'restart-alert' }));
-    expect(await resetIcon.getName()).toBe('restart-alert');
+    await resetButton.getHarness(TnIconHarness.with({ name: 'restart-alert' }));
+
+    const resetButtonHost = await resetButton.host();
+    expect(await resetButtonHost.getAttribute('aria-label'))
+      .toBe('Reset (hard reset, the guest OS is not shut down cleanly)');
 
     await resetButton.click();
 

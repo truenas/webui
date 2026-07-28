@@ -20,6 +20,12 @@ export const helptextVmList = {
     devicesListHeader: T('The following disks will be deleted:'),
   },
 
+  reset_button: {
+    tooltip: T('Hard reset. The guest OS is not shut down cleanly, which may result in data loss or filesystem\
+ corruption.'),
+    ariaLabel: T('Reset (hard reset, the guest OS is not shut down cleanly)'),
+  },
+
   reset_dialog: {
     title: T('Reset Virtual Machine'),
     message: T('Resetting {vmName} is the equivalent of pressing the reset button on a physical machine. The guest OS\
