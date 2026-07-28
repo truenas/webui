@@ -147,13 +147,17 @@ export class VmService {
       buttonColor: 'warn',
     })
       .pipe(
-        take(1),
-        filter(Boolean),
-        switchMap(() => {
+        switchMap((confirmed) => {
+          if (!confirmed) {
+            return of(false);
+          }
+
           return this.api.call(this.wsMethods.reset, [vm.id]).pipe(
             this.loader.withLoader(),
             switchMap(() => {
-              this.snackbar.success(this.translate.instant('{vmName} has been reset.', { vmName: vm.name }));
+              this.snackbar.success(
+                this.translate.instant(helptextVmList.reset_dialog.successMessage, { vmName: vm.name }),
+              );
               return of(true);
             }),
             catchError((error: unknown) => {

@@ -132,11 +132,14 @@ describe('VmService', () => {
     const dialogService = spectator.inject(DialogService);
     jest.spyOn(dialogService, 'confirm').mockReturnValue(of(true));
 
-    await firstValueFrom(spectator.service.doReset(vm));
+    const wasReset = await firstValueFrom(spectator.service.doReset(vm));
 
     expect(dialogService.confirm).toHaveBeenCalled();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.reset', [1]);
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('{vmName} has been reset.');
+    expect(spectator.inject(TranslateService).instant)
+      .toHaveBeenCalledWith('{vmName} has been reset.', { vmName: 'vm' });
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    expect(wasReset).toBe(true);
   });
 
   it('should not reset vm when confirmation is declined', async () => {
@@ -144,9 +147,11 @@ describe('VmService', () => {
     const dialogService = spectator.inject(DialogService);
     jest.spyOn(dialogService, 'confirm').mockReturnValue(of(false));
 
-    await firstValueFrom(spectator.service.doReset(vm), { defaultValue: false });
+    const wasReset = await firstValueFrom(spectator.service.doReset(vm));
 
     expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('vm.reset', [1]);
+    expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+    expect(wasReset).toBe(false);
   });
 
   it('should call websocket to download vm logs', () => {
