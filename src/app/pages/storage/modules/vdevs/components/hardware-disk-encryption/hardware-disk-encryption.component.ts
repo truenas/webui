@@ -40,7 +40,7 @@ export class HardwareDiskEncryptionComponent {
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly requiredRoles = [Role.DiskWrite];
 
-  hasSedSupport = computed(() => {
+  protected readonly hasSedSupport = computed(() => {
     return this.isEnterprise() || (this.hasDiskEncryption() || this.hasGlobalEncryption());
   });
 
@@ -56,7 +56,7 @@ export class HardwareDiskEncryptionComponent {
     ),
   );
 
-  onManageSedPassword(): void {
+  protected onManageSedPassword(): void {
     this.tnDialog.open(ManageDiskSedDialog, {
       data: this.topologyDisk().disk,
     }).closed

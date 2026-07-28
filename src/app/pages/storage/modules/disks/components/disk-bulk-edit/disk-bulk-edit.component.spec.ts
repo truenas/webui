@@ -84,13 +84,12 @@ describe('DiskBulkEditComponent', () => {
   });
 
   it('sets disks settings when form is opened', async () => {
-    const diskNames = spectator.component.form.controls.disknames.value;
-
-    expect(diskNames).toEqual(['sda', 'sdc']);
+    // the two disks disagree on both settings, so neither select is pre-filled
     expect(await (await getSelect('hddstandby')).getDisplayText()).toBe('Select an option');
     expect(await (await getSelect('advpowermgmt')).getDisplayText()).toBe('Select an option');
-    expect(spectator.query('.disk-list').textContent).toContain('sda');
-    expect(spectator.query('.disk-list').textContent).toContain('sdc');
+
+    const diskNames = spectator.queryAll('[role="listitem"]').map((item) => item.textContent.trim());
+    expect(diskNames).toEqual(['sda', 'sdc']);
   });
 
   it('updates selected disks when form is submitted', async () => {

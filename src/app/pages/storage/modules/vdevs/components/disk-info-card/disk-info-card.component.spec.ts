@@ -60,7 +60,9 @@ describe('DiskInfoCardComponent', () => {
           closed: of(),
         })),
       }),
-      mockProvider(VDevsStore),
+      // `reloadList` is a ComponentStore effect assigned at construction, so it is not on the
+      // prototype for mockProvider to auto-stub.
+      mockProvider(VDevsStore, { reloadList: jest.fn() }),
     ],
   });
 
@@ -110,6 +112,16 @@ describe('DiskInfoCardComponent', () => {
       title: 'Edit Disk',
       inputs: { diskToEdit: disk },
     });
+  });
+
+  it('reloads the vdev list after the disk edit form is saved', async () => {
+    jest.spyOn(spectator.inject(FormSidePanelService), 'open')
+      .mockReturnValue(SlideInResult.success(true));
+
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
+    await editButton.click();
+
+    expect(spectator.inject(VDevsStore).reloadList).toHaveBeenCalled();
   });
 
   it('opens a ReplaceDiskDialogComponent when clicks Replace button', async () => {

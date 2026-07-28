@@ -2,7 +2,7 @@ import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnDialog } from '@truenas/ui-components';
+import { TnCardComponent, TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -67,7 +67,7 @@ describe('HardwareDiskEncryptionComponent', () => {
     });
 
     it('checks no hardware disk encryption support', () => {
-      expect(spectator.query('tn-card')).not.toExist();
+      expect(spectator.query(TnCardComponent)).toBeNull();
     });
   });
 

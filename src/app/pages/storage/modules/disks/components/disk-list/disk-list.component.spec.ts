@@ -170,7 +170,25 @@ describe('DiskListComponent', () => {
     expect(spectator.query('[data-test="button-sdc-edit"]')).toExist();
     expect(spectator.query('[data-test="button-sdc-unlock"]')).toExist();
     expect(spectator.query('[data-test="button-sdc-reset-sed"]')).toExist();
+  });
+
+  it('keeps the legacy batch-operations test id after moving to tn-button', async () => {
     expect(spectator.query('[data-test="button-edit-selected"]')).not.toExist();
+
+    await table.toggleRowSelection(0);
+
+    expect(spectator.query('[data-test="button-edit-selected"]')).toExist();
+  });
+
+  it('keeps only one detail row open at a time', async () => {
+    await table.toggleRowExpansion(0);
+
+    expect(await table.isRowExpanded(0)).toBe(true);
+
+    await table.toggleRowExpansion(1);
+
+    expect(await table.isRowExpanded(0)).toBe(false);
+    expect(await table.isRowExpanded(1)).toBe(true);
   });
 
   it('opens edit form when Edit button is pressed', async () => {
@@ -243,7 +261,7 @@ describe('DiskListComponent', () => {
     });
   });
 
-  it('updates disks when edit form is saved', async () => {
+  it('reloads disks when edit form is saved', async () => {
     const api = spectator.inject(ApiService);
     const formPanel = spectator.inject(FormSidePanelService);
 
@@ -251,6 +269,9 @@ describe('DiskListComponent', () => {
     jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.success(mockUpd));
 
     await table.toggleRowExpansion(0);
+
+    // the initial load already called both endpoints, so only count what the save triggers
+    (api.call as jest.Mock).mockClear();
 
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
@@ -260,7 +281,6 @@ describe('DiskListComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('disk.query', expect.anything());
     expect(api.call).toHaveBeenCalledWith('disk.details');
-    expect(await table.getCellText(0, 'serial')).toBe('serial1');
   });
 });
 

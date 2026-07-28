@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
-  byText, createComponentFactory, mockProvider, Spectator,
+  createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
@@ -79,9 +79,21 @@ describe('DiskFormComponent', () => {
       store$.refreshState();
     });
 
-    it('does not show SED section', () => {
-      expect(spectator.query(byText('SED Password'))).toBeNull();
-      expect(spectator.query(byText('Clear SED Password'))).toBeNull();
+    it('does not show SED section', async () => {
+      expect(await loader.getHarnessOrNull(
+        TnInputHarness.with({ selector: '[formControlName="passwd"]' }),
+      )).toBeNull();
+      expect(await loader.getHarnessOrNull(
+        TnCheckboxHarness.with({ label: 'Clear SED Password' }),
+      )).toBeNull();
+    });
+
+    it('keeps the legacy label-derived option test ids for advanced power management', async () => {
+      await (await getSelect('advpowermgmt')).open();
+
+      expect(document.querySelector(
+        '[data-test="option-advpowermgmt-level-127-maximum-power-usage-with-standby"]',
+      )).toBeTruthy();
     });
 
     it('sets disk settings when form is opened', async () => {
@@ -146,7 +158,7 @@ describe('DiskFormComponent', () => {
 
       // make sure it *isn't* there anymore
       expect(await sedPassword.isDisabled()).toBe(true);
-      expect(spectator.component.form.controls.passwd.value).toBe('');
+      expect(await sedPassword.getValue()).toBe('');
     });
 
     it('sets disk settings when form is opened', async () => {

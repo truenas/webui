@@ -87,7 +87,7 @@ export class DiskInfoCardComponent {
     };
   });
 
-  onEdit(): void {
+  private onEdit(): void {
     this.formPanel.open<DiskFormResponse | null>(DiskFormComponent, {
       title: this.translate.instant('Edit Disk'),
       inputs: { diskToEdit: this.disk() },
@@ -95,7 +95,7 @@ export class DiskInfoCardComponent {
       .onSuccess(() => this.vDevsStore.reloadList(), this.destroyRef);
   }
 
-  onReplace(): void {
+  private onReplace(): void {
     const poolId = this.route.snapshot.params.poolId as string;
     this.tnDialog
       .open(ReplaceDiskDialog, {

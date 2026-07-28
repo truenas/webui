@@ -11,9 +11,13 @@
 
       <a
         *ixHasRole="requiredRoles"
+        role="button"
+        tabindex="0"
         tnTestIdType="link"
         [tnTestId]="'manage-sed-password'"
         (click)="onManageSedPassword()"
+        (keydown.enter)="onManageSedPassword()"
+        (keydown.space)="onManageSedPassword(); $event.preventDefault()"
       >
         {{ 'Manage SED Password' | translate }}
       </a>
@@ -31,6 +35,8 @@
       <a
         *ixHasRole="requiredRoles"
         ixNavigateAndHighlight
+        role="button"
+        tabindex="0"
         tnTestIdType="link"
         [tnTestId]="'manage-global-sed-password'"
         [navigateHash]="'sed-card'"

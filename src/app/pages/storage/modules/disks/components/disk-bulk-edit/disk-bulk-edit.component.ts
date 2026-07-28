@@ -4,7 +4,7 @@ import {
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnSelectComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnSelectComponent, type TnSelectOption,
 } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
@@ -51,20 +51,27 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | nul
 
   private diskIds: string[] = [];
 
-  form = this.fb.group({
+  protected form = this.fb.group({
     disknames: [[] as string[]],
     hddstandby: [null as DiskStandby | null],
     advpowermgmt: [null as DiskPowerLevel | null],
   });
 
-  readonly helptext = helptextDisks;
-  readonly helptextBulkEdit = helptextDisks.bulkEdit;
+  protected readonly helptext = helptextDisks;
+  protected readonly helptextBulkEdit = helptextDisks.bulkEdit;
   protected readonly disksTooltip = this.translate.instant(helptextDisks.bulkEdit.disks.tooltip);
   protected readonly hddstandbyOptions = translateOptions(this.translate, helptextDisks.standbyOptions);
   protected readonly advpowermgmtOptions = translateOptions(
     this.translate,
     helptextDisks.advancedPowerManagementOptions,
   );
+
+  /**
+   * `tn-select` derives an option's test id from a primitive `value` before falling back to the
+   * label, which would collapse `option-advpowermgmt-level-127-…` down to `option-advpowermgmt-127`.
+   * The legacy `ix-select` ids were label-derived, so pin the extractor to keep them byte-stable.
+   */
+  protected readonly optionLabelTestId = (option: TnSelectOption<DiskPowerLevel>): string => option.label;
 
   // Captured on a successful save so the panel host can hand the updated disks back to its
   // opener: `<ix-form>` emits a bare `true` in the side-panel host, dropping the payload.

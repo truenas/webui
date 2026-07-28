@@ -79,11 +79,10 @@ export class DiskListComponent {
 
   protected readonly requiredRoles = [Role.DiskWrite];
   protected readonly searchableElements = diskListElements;
-  protected readonly EmptyType = EmptyType;
 
-  protected diskUpdates$ = new Subject<DiskFormResponse[number]>();
+  private readonly diskUpdates$ = new Subject<DiskFormResponse[number]>();
 
-  searchQuery = signal('');
+  protected readonly searchQuery = signal('');
 
   // `hasSed$` is a store selector, so this resolves synchronously at field init —
   // both the SED column's default visibility and the disk.query `extra` args read it.
@@ -121,12 +120,25 @@ export class DiskListComponent {
     );
   });
 
-  dataProvider = new AsyncDataProvider<Disk>(this.disks$);
+  protected readonly dataProvider = new AsyncDataProvider<Disk>(this.disks$);
 
   protected readonly rows = dataProviderRows(this.dataProvider);
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$, { initialValue: 0 });
   protected readonly emptyType = toSignal(this.dataProvider.emptyType$, { initialValue: EmptyType.Loading });
+
+  // `tn-empty` renders its action whenever `actionText` is set, so keep the previous behavior of
+  // only offering one for the no-results and error states — the other states had no button.
+  protected readonly emptyActionText = computed<string | undefined>(() => {
+    switch (this.emptyType()) {
+      case EmptyType.NoSearchResults:
+        return this.translate.instant('Reset');
+      case EmptyType.Errors:
+        return this.translate.instant('Retry');
+      default:
+        return undefined;
+    }
+  });
 
   private readonly table = viewChild(TnTableComponent<Disk>);
   protected readonly selectedDisks = signal<Disk[]>([]);

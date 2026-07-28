@@ -36,7 +36,7 @@
     [icon]="emptyService.iconForType(emptyType())"
     [title]="emptyConfig.title | translate"
     [description]="emptyConfig.message ? (emptyConfig.message | translate) : undefined"
-    [actionText]="emptyType() === EmptyType.NoSearchResults ? ('Reset' | translate) : ('Retry' | translate)"
+    [actionText]="emptyActionText()"
     (onAction)="onEmptyAction()"
   ></tn-empty>
 } @else {

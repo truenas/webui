@@ -2,7 +2,6 @@
   [formGroup]="form"
   [editData]="diskToEdit()"
   [isEditMode]="true"
-  [title]="'Edit Disk' | translate"
   [requiredRoles]="requiredRoles"
   [submitHandler]="handleSubmit"
   (closed)="onFormClosed()"
@@ -46,6 +45,7 @@
       <tn-select
         formControlName="advpowermgmt"
         [options]="advpowermgmtOptions"
+        [optionTestIdKey]="optionLabelTestId"
       ></tn-select>
     </tn-form-field>
   </tn-form-section>

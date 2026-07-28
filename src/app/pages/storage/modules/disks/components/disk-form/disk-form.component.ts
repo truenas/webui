@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  type TnSelectOption,
 } from '@truenas/ui-components';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
@@ -62,7 +63,7 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse | null> i
   protected readonly requiredRoles = [Role.DiskWrite];
   protected readonly InputType = InputType;
 
-  form = this.fb.group({
+  protected form = this.fb.group({
     name: [''],
     serial: [''],
     description: [''],
@@ -72,15 +73,22 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse | null> i
     clear_pw: [false],
   });
 
-  readonly helptext = helptextDisks;
+  protected readonly helptext = helptextDisks;
   protected readonly hddstandbyOptions = translateOptions(this.translate, helptextDisks.standbyOptions);
   protected readonly advpowermgmtOptions = translateOptions(
     this.translate,
     helptextDisks.advancedPowerManagementOptions,
   );
 
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  readonly showSedSection = computed(() => {
+  /**
+   * `tn-select` derives an option's test id from a primitive `value` before falling back to the
+   * label, which would collapse `option-advpowermgmt-level-127-…` down to `option-advpowermgmt-127`.
+   * The legacy `ix-select` ids were label-derived, so pin the extractor to keep them byte-stable.
+   */
+  protected readonly optionLabelTestId = (option: TnSelectOption<DiskPowerLevel>): string => option.label;
+
+  private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly showSedSection = computed(() => {
     const disk = this.diskToEdit();
     return this.isEnterprise() || (!!disk?.passwd && disk.passwd !== '');
   });
