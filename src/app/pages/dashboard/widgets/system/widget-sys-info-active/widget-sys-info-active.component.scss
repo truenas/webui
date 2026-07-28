@@ -31,4 +31,10 @@
   @media (max-width: $breakpoint-sm) {
     height: calc(var(--mdc-list-list-item-one-line-container-height, 48px) * 1.2);
   }
+
+  ::ng-deep .mdc-list-item__primary-text {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
 }
