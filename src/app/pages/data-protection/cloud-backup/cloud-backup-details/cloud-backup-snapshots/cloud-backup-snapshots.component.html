@@ -1,15 +1,13 @@
 <tn-card class="card" [padContent]="false" [title]="'Snapshots' | translate">
-  @if (!(dataProvider.isLoading$ | async)) {
-    @let emptyType = dataProvider.emptyType$ | async;
-    @let emptyConf = emptyService.defaultEmptyConfig(emptyType);
+  @if (!isLoading()) {
     <tn-table
       class="table"
       [testId]="'table-table'"
-      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [dataSource]="rows()"
       [displayedColumns]="displayedColumns"
       [trackBy]="trackBySnapshotId"
-      [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
-      [emptyIcon]="emptyService.iconForType(emptyType)"
+      [emptyMessage]="empty.message()"
+      [emptyIcon]="empty.icon()"
       (sortChange)="onSortChange($event)"
     >
       <ng-container [tnColumnDef]="'time'">
@@ -50,5 +48,5 @@
       <tn-spinner mode="indeterminate" [diameter]="40"></tn-spinner>
     </div>
   }
-  <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+  <tn-table-pager [dataProvider]="dataProvider()"></tn-table-pager>
 </tn-card>

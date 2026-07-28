@@ -1,5 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnCardComponent } from '@truenas/ui-components';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { CloudBackupScheduleComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-schedule/cloud-backup-schedule.component';
@@ -49,8 +50,8 @@ describe('CloudBackupScheduleComponent', () => {
   });
 
   it('checks card title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Schedule');
+    // Read the tn-card input rather than its internal <h3>, which is library markup.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Schedule');
   });
 
   it('renders Details in card', () => {

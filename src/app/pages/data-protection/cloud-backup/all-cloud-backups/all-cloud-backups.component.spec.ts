@@ -160,6 +160,17 @@ describe('AllCloudBackupsComponent', () => {
       ]);
     });
 
+    // The rows are `[clickable]` and a row click selects the master-detail row, so the
+    // actions cell has to swallow its own clicks — otherwise opening the row menu also
+    // re-selects (or deselects) the row underneath it.
+    it('does not change the selected row when the row action menu is opened', async () => {
+      const selectedBefore = spectator.component.dataProvider.expandedRow;
+
+      await openRowMenu();
+
+      expect(spectator.component.dataProvider.expandedRow).toBe(selectedBefore);
+    });
+
     it('sets the default sort for dataProvider', () => {
       spectator.component.dataProvider.load();
 

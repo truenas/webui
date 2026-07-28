@@ -19,6 +19,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import {
   TableColumnPickerComponent,
 } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -195,6 +196,35 @@ describe('RsyncTaskListComponent', () => {
 
     expect(await table.getHeaderTexts()).toEqual(expectedHeaders);
     expect(await table.getAllRowTexts()).toEqual(expectedRows);
+  });
+
+  // `Frequency` has no propertyName, so it only reaches tn-table through the explicit
+  // `columnName` -> `[tnColumnDef]` pairing. Hiding it proves the column-picker model and
+  // `toDisplayedColumns` still agree for a computed column.
+  it('hides a computed column in the table when the column picker deselects it', async () => {
+    expect(await table.getHeaderTexts()).toContain('Frequency');
+
+    spectator.component.columnsChange(
+      spectator.component.columns().map((column) => (
+        column.title === 'Frequency' ? { ...column, hidden: true } : column
+      )),
+    );
+    spectator.detectChanges();
+
+    expect(await table.getHeaderTexts()).not.toContain('Frequency');
+  });
+
+  it('sorts through the data provider when a sortable header is clicked', async () => {
+    jest.spyOn(spectator.component.dataProvider, 'setSorting');
+
+    await table.clickSortHeader('path');
+
+    expect(spectator.component.dataProvider.setSorting).toHaveBeenCalledWith({
+      propertyName: 'path',
+      direction: SortDirection.Asc,
+      active: 0,
+    });
+    expect(await table.getSortDirection('path')).toBe('ascending');
   });
 
   it('opens edit form when Edit icon is pressed', async () => {

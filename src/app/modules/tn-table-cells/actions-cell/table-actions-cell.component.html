@@ -1,6 +1,13 @@
 <!-- Swallow clicks so an action (or opening the menu) never also triggers the
-  row click of a `[clickable]` tn-table — e.g. deselecting a master-detail row. -->
-<div class="actions" (click)="$event.stopPropagation()">
+  row click of a `[clickable]` tn-table — e.g. deselecting a master-detail row.
+  Keydown too: tn-table's row handler calls preventDefault() on Enter/Space
+  without checking the event target, which would cancel the button's own
+  activation and toggle the row instead. -->
+<div
+  class="actions"
+  (click)="$event.stopPropagation()"
+  (keydown)="$event.stopPropagation()"
+>
   @if (mode() === 'inline' || visibleActions().length === 1) {
     @for (action of visibleActions(); track action) {
       @let isDisabled = action.disabled ? (action.disabled(row()) | async) : false;
@@ -16,6 +23,9 @@
       ></tn-icon-button>
     }
   } @else if (visibleActions().length > 1) {
+    <!-- TODO: NAS-141021 — matMenuTriggerFor set aria-haspopup/aria-expanded; TnMenuTriggerDirective
+      sets neither, and its open state is private with no exportAs, so this can't be restored
+      app-side without reaching into library internals. Needs a library change. -->
     <tn-icon-button
       name="dots-vertical"
       library="mdi"

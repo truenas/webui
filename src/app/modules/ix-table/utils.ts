@@ -1,9 +1,14 @@
-import { isSignal, Signal } from '@angular/core';
+import {
+  computed, inject, isSignal, Signal,
+} from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { TranslateService } from '@ngx-translate/core';
 import { type TnSortEvent } from '@truenas/ui-components';
 import { get, kebabCase } from 'lodash-es';
 import { Observable, switchMap } from 'rxjs';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
@@ -80,11 +85,11 @@ export function mapTnSortToTableSort<T>(
  *
  * A column's tn-table name is its `propertyName` — matching the `(sortChange)`
  * convention `mapTnSortToTableSort` relies on, which casts the name back to a
- * property key. A titled column without a `propertyName` (a computed cell such
- * as a state pill or a derived "Last Run") falls back to its kebab-cased title:
- * titles are unique within a table — the picker keys visibility on them — so the
- * fallback can't collide, and such a column is never sortable. Only an untitled
- * column (the actions column) falls back to `'actions'`.
+ * property key. A computed column with no `propertyName` (a state pill, a
+ * derived "Last Run") must declare an explicit `columnName`. Deriving one from
+ * `title` is not an option: titles are already translated, so the derived name
+ * would stop matching the template's hard-coded `[tnColumnDef]` in every
+ * non-English locale. Only a column with neither falls back to `'actions'`.
  */
 export function toDisplayedColumns<T>(columns: Column<T, ColumnComponent<T>>[]): string[] {
   return columns
@@ -93,8 +98,21 @@ export function toDisplayedColumns<T>(columns: Column<T, ColumnComponent<T>>[]):
       if (column.propertyName) {
         return String(column.propertyName);
       }
-      return column.title ? kebabCase(column.title) : 'actions';
+      return column.columnName || 'actions';
     });
+}
+
+/**
+ * Builds the test id for a detail-row action button from the row values that
+ * identified it under the legacy `[ixTest]` directive.
+ *
+ * Pre-splits with lodash `kebabCase`: it breaks letter–digit boundaries
+ * ('esxi1' → 'esxi-1') while the library's kebab does not, so the id the
+ * library composes matches what `[ixTest]` used to resolve to. Shared so the
+ * migrated detail rows can't drift apart on this.
+ */
+export function detailActionTestId(parts: (string | number | undefined)[], action: string): string {
+  return kebabCase([...parts, action].join('-'));
 }
 
 function fromProvider<T, R>(
@@ -125,6 +143,52 @@ export function dataProviderRows<T>(provider: BaseDataProvider<T> | Signal<BaseD
  */
 export function dataProviderLoading<T>(provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>): Signal<boolean> {
   return toSignal(fromProvider(provider, (instance) => instance.isLoading$), { initialValue: false });
+}
+
+/**
+ * The empty-state bindings a `tn-table` needs, derived from its data provider.
+ */
+export interface TableEmptyState {
+  /** Current empty type — also drives page-level "first use" empty states. */
+  type: Signal<EmptyType>;
+  /** Translated title for `[emptyMessage]`. */
+  message: Signal<string>;
+  /** Icon marker for `[emptyIcon]`. */
+  icon: Signal<string>;
+  /** Row count of the current page, for gating a page-level empty state. */
+  count: Signal<number>;
+}
+
+/**
+ * Derives a tn-table's empty-state bindings from a data provider. Replaces the
+ * `@let emptyType = dataProvider.emptyType$ | async` + `emptyService.…(emptyType)`
+ * block each migrated list would otherwise copy into its template, which also
+ * keeps those service calls out of the change-detection path. Must be called
+ * from an injection context (e.g. a component field initializer).
+ *
+ * Note: only `EmptyConfig.title` survives — `tn-table` has no input for the
+ * config's `message`, so the second translated line ix-table rendered on the
+ * no-search-results state is not shown. Tracked for the epic.
+ */
+export function dataProviderEmptyState<T>(
+  provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
+): TableEmptyState {
+  const emptyService = inject(EmptyService);
+  const translate = inject(TranslateService);
+
+  const type = toSignal(fromProvider(provider, (instance) => instance.emptyType$), {
+    initialValue: EmptyType.Loading,
+  });
+
+  return {
+    type,
+    message: computed(() => {
+      const title = emptyService.defaultEmptyConfig(type())?.title;
+      return title ? translate.instant(title) : '';
+    }),
+    icon: computed(() => emptyService.iconForType(type())),
+    count: toSignal(fromProvider(provider, (instance) => instance.currentPageCount$), { initialValue: 0 }),
+  };
 }
 
 /**

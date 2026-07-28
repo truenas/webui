@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnEmptyComponent } from '@truenas/ui-components';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnEmptyComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
+import { dataProtectionEmptyConfig } from 'app/constants/empty-configs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dataProtectionDashboardElements } from 'app/pages/data-protection/data-protection-dashboard.elements';
@@ -29,6 +30,8 @@ import { SnapshotTaskCardComponent } from './snapshot-task/snapshot-task-card/sn
     RsyncTaskCardComponent,
     ReplicationTaskCardComponent,
     TnEmptyComponent,
+    TnButtonComponent,
+    RequiresRolesDirective,
     TranslateModule,
     PageHeaderComponent,
   ],
@@ -36,17 +39,20 @@ import { SnapshotTaskCardComponent } from './snapshot-task/snapshot-task-card/sn
 export class DataProtectionDashboardComponent {
   private api = inject(ApiService);
   private router = inject(Router);
-  private authService = inject(AuthService);
+  private translate = inject(TranslateService);
 
   protected readonly searchableElements = dataProtectionDashboardElements;
   protected readonly requiredRoles = [Role.PoolWrite];
 
-  // tn-empty has no role-gating input, so the action is withheld (no `actionText`)
-  // instead of the button being removed by *ixRequiresRoles as it was on ix-empty.
-  protected readonly canCreatePool = toSignal(
-    this.authService.hasRole(this.requiredRoles),
-    { initialValue: false },
-  );
+  protected readonly emptyTitle = dataProtectionEmptyConfig.title;
+
+  // Reuse the catalog string rather than a reworded one — it is translated in every
+  // locale. It carries the `<br>` markup ix-empty rendered as HTML, and tn-empty's
+  // [description] is a text input, so flatten the markup to whitespace.
+  protected readonly emptyDescription = this.translate.instant(dataProtectionEmptyConfig.message)
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 
   protected createPool(): void {
     this.router.navigate(['/storage', 'create']);

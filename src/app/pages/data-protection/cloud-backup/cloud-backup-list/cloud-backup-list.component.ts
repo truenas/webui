@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, effect, input, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -24,11 +23,12 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
+} from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -69,7 +69,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TaskStateCellComponent,
     YesNoPipe,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class CloudBackupListComponent {
@@ -81,7 +80,6 @@ export class CloudBackupListComponent {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
-  protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
   readonly dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
@@ -94,6 +92,7 @@ export class CloudBackupListComponent {
 
   protected readonly rows = dataProviderRows(this.dataProvider);
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
   protected readonly displayedColumns = ['description', 'enabled', 'snapshot', 'state', 'last-run', 'actions'];
 
@@ -165,7 +164,7 @@ export class CloudBackupListComponent {
     });
   }
 
-  runNow(row: CloudBackup): void {
+  private runNow(row: CloudBackup): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: this.translate.instant('Run «{name}» Cloud Backup Task now?', { name: row.description }),
@@ -209,7 +208,7 @@ export class CloudBackupListComponent {
   // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
   private readonly cloudBackupForm = CloudBackupFormComponent as unknown as Type<SidePanelForm>;
 
-  openForm(row?: CloudBackup): void {
+  protected openForm(row?: CloudBackup): void {
     this.formPanel.open(this.cloudBackupForm, {
       title: row
         ? this.translate.instant('Edit TrueCloud Backup Task')
@@ -219,7 +218,7 @@ export class CloudBackupListComponent {
     }).onSuccess(() => this.dataProvider().load(), this.destroyRef);
   }
 
-  doDelete(row: CloudBackup): void {
+  private doDelete(row: CloudBackup): void {
     this.dialogService.confirmDelete({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Backup Task <b>"{name}"</b>?', {

@@ -1,5 +1,6 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -26,10 +27,11 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, dataProviderEmptyState, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
+} from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -58,11 +60,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnSpinnerComponent,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class CloudBackupSnapshotsComponent implements OnChanges {
-  protected emptyService = inject(EmptyService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -76,7 +76,12 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
 
   protected readonly requiredRoles = [Role.CloudBackupWrite];
 
-  dataProvider: AsyncDataProvider<CloudBackupSnapshot>;
+  // Rebuilt whenever the `backup` input changes, so the provider is held in a signal
+  // and the row/loading/empty signals track whichever provider is current.
+  protected readonly dataProvider = signal(new AsyncDataProvider<CloudBackupSnapshot>(EMPTY));
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
   protected readonly displayedColumns = ['time', 'hostname', 'actions'];
 
@@ -109,7 +114,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<CloudBackupSnapshot>(event, this.displayedColumns));
+    this.dataProvider().setSorting(mapTnSortToTableSort<CloudBackupSnapshot>(event, this.displayedColumns));
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -121,12 +126,12 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       map((snapshots) => [...snapshots].sort((a, b) => b.time.$date - a.time.$date)),
       takeUntilDestroyed(this.destroyRef),
     );
-    this.dataProvider = new AsyncDataProvider<CloudBackupSnapshot>(cloudBackupSnapshots$);
+    this.dataProvider.set(new AsyncDataProvider<CloudBackupSnapshot>(cloudBackupSnapshots$));
     this.getCloudBackupSnapshots();
   }
 
   private getCloudBackupSnapshots(): void {
-    this.dataProvider.load();
+    this.dataProvider().load();
   }
 
   private restore(row: CloudBackupSnapshot): void {
@@ -141,7 +146,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     }).onSuccess(() => this.getCloudBackupSnapshots(), this.destroyRef);
   }
 
-  doDelete(row: CloudBackupSnapshot): void {
+  private doDelete(row: CloudBackupSnapshot): void {
     this.dialog
       .confirm({
         title: this.translate.instant('Delete Snapshot'),

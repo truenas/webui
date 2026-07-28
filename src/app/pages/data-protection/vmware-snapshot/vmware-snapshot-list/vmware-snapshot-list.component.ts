@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, inject, viewChild, signal,
 } from '@angular/core';
@@ -22,10 +21,12 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { convertStringToId, mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
+  detailActionTestId, mapTnSortToTableSort,
+} from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -54,13 +55,11 @@ import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-ce
     VmwareStatusCellComponent,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class VmwareSnapshotListComponent implements OnInit {
   protected translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
-  protected emptyService = inject(EmptyService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);
@@ -69,10 +68,19 @@ export class VmwareSnapshotListComponent implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly displayedColumns = ['hostname', 'username', 'filesystem', 'datastore', 'state'];
 
-  searchQuery = signal('');
+  protected readonly searchQuery = signal('');
 
-  protected snapshots: VmwareSnapshot[] = [];
-  dataProvider: AsyncDataProvider<VmwareSnapshot>;
+  private snapshots: VmwareSnapshot[] = [];
+
+  private readonly snapshots$ = this.api.call('vmware.query').pipe(
+    tap((snapshots) => this.snapshots = snapshots),
+    takeUntilDestroyed(),
+  );
+
+  readonly dataProvider = new AsyncDataProvider<VmwareSnapshot>(this.snapshots$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
   protected readonly trackBySnapshotId = (_index: number, row: VmwareSnapshot): number => row.id;
 
@@ -87,12 +95,11 @@ export class VmwareSnapshotListComponent implements OnInit {
     return [row.hostname, this.translate.instant('VMware Snapshot')].join(' ');
   }
 
+  protected detailActionTestId(row: VmwareSnapshot, action: string): string {
+    return detailActionTestId([row.hostname, row.filesystem], action);
+  }
+
   ngOnInit(): void {
-    const snapshots$ = this.api.call('vmware.query').pipe(
-      tap((snapshots) => this.snapshots = snapshots),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<VmwareSnapshot>(snapshots$);
     this.getSnapshotsData();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());

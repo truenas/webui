@@ -20,7 +20,7 @@
   ></tn-button>
 </ix-page-header>
 
-@if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
+@if (empty.type() === EmptyType.NoPageData && !empty.count()) {
   <tn-empty
     icon="cloud-outline"
     iconLibrary="mdi"
@@ -28,20 +28,18 @@
     [title]="'Sync data to a popular cloud storage provider, such as: Google Drive and Photos, Dropbox, Amazon S3 and many others.' | translate"
   ></tn-empty>
 } @else {
-  @let emptyType = dataProvider.emptyType$ | async;
-  @let emptyConf = emptyService.defaultEmptyConfig(emptyType);
   <tn-table
     class="table"
     [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.tasks"
-    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+    [dataSource]="rows()"
     [displayedColumns]="displayedColumns()"
     [trackBy]="trackByTaskId"
-    [loading]="!!(dataProvider.isLoading$ | async)"
+    [loading]="isLoading()"
     [expandable]="true"
     [clickable]="true"
-    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
-    [emptyIcon]="emptyService.iconForType(emptyType)"
+    [emptyMessage]="empty.message()"
+    [emptyIcon]="empty.icon()"
     (rowClick)="onRowClick($event)"
     (sortChange)="onSortChange($event)"
   >

@@ -23,7 +23,7 @@ export class CloudBackupStatsComponent {
   readonly backup = input.required<CloudBackup>();
   protected readonly cloudsyncTransferSettingLabels = cloudsyncTransferSettingLabels;
 
-  formatRateLimit(value: number): string {
+  protected formatRateLimit(value: number): string {
     // Convert KiB to bytes, then format using binary units (base 2)
     const bytesValue = value * 1024;
     return `${buildNormalizedFileSize(bytesValue, 'B', 2)}/s`;

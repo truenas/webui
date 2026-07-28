@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, Type, computed, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
@@ -29,7 +28,6 @@ import { TaskState } from 'app/enums/task-state.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
@@ -46,7 +44,10 @@ import {
   yesNoColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
+  mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
@@ -93,7 +94,6 @@ import { TaskService } from 'app/services/task.service';
     ScheduleDescriptionPipe,
     YesNoPipe,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class RsyncTaskListComponent implements OnInit {
@@ -104,7 +104,6 @@ export class RsyncTaskListComponent implements OnInit {
   private crontabExplanation = inject(CrontabExplanationPipe);
   private taskService = inject(TaskService);
   private snackbar = inject(SnackbarService);
-  protected emptyService = inject(EmptyService);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
 
@@ -112,8 +111,14 @@ export class RsyncTaskListComponent implements OnInit {
   protected readonly searchableElements = rsyncTaskListElements;
   protected readonly EmptyType = EmptyType;
 
-  dataProvider: AsyncDataProvider<RsyncTask>;
-  searchQuery = signal('');
+  protected readonly searchQuery = signal('');
+
+  private readonly rsyncTasks$ = this.api.call('rsynctask.query');
+
+  readonly dataProvider = new AsyncDataProvider<RsyncTask>(this.rsyncTasks$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
   protected readonly actions: IconActionConfig<RsyncTask>[] = [
     {
@@ -175,12 +180,15 @@ export class RsyncTaskListComponent implements OnInit {
     // meaningful. Renders as the derived `frequency` column instead.
     textColumn({
       title: this.translate.instant('Frequency'),
+      columnName: 'frequency',
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
+      columnName: 'next-run',
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
+      columnName: 'last-run',
       hidden: true,
     }),
     textColumn({
@@ -198,6 +206,7 @@ export class RsyncTaskListComponent implements OnInit {
     }),
     stateButtonColumn({
       title: this.translate.instant('Status'),
+      columnName: 'status',
     }),
     yesNoColumn({
       title: this.translate.instant('Enabled'),
@@ -242,8 +251,6 @@ export class RsyncTaskListComponent implements OnInit {
   ngOnInit(): void {
     this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
 
-    const request$ = this.api.call('rsynctask.query');
-    this.dataProvider = new AsyncDataProvider(request$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());

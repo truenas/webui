@@ -5,7 +5,7 @@
   ></ix-basic-search>
 </div>
 
-@if (!(dataProvider()?.currentPageCount$ | async) && !(dataProvider().isLoading$ | async)) {
+@if (!empty.count() && !isLoading()) {
   @if (searchQuery()) {
     <tn-empty
       icon="magnify-scan"
@@ -23,8 +23,6 @@
     ></tn-empty>
   }
 } @else {
-  @let emptyType = dataProvider().emptyType$ | async;
-  @let emptyConf = emptyService.defaultEmptyConfig(emptyType);
   <tn-table
     class="backups"
     [testId]="'table-table'"
@@ -35,8 +33,8 @@
     [loading]="isLoading()"
     [clickable]="true"
     [activeRow]="activeRow()"
-    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
-    [emptyIcon]="emptyService.iconForType(emptyType)"
+    [emptyMessage]="empty.message()"
+    [emptyIcon]="empty.icon()"
     (rowClick)="onRowClick($event)"
   >
     <ng-container [tnColumnDef]="'description'">

@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, computed, inject, viewChild, signal,
 } from '@angular/core';
@@ -31,7 +30,6 @@ import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult 
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -45,7 +43,10 @@ import {
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
+  detailActionTestId, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -95,12 +96,10 @@ import { TaskService } from 'app/services/task.service';
     ScheduleDescriptionPipe,
     YesNoPipe,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class SnapshotTaskListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
-  protected emptyService = inject(EmptyService);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private taskService = inject(TaskService);
@@ -114,9 +113,20 @@ export class SnapshotTaskListComponent implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = snapshotTaskListElements;
 
-  snapshotTasks: PeriodicSnapshotTaskUi[] = [];
-  searchQuery = signal('');
-  dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
+  private snapshotTasks: PeriodicSnapshotTaskUi[] = [];
+  protected readonly searchQuery = signal('');
+
+  private readonly tasks$ = this.api.call('pool.snapshottask.query').pipe(
+    tap((tasks) => {
+      this.snapshotTasks = tasks as PeriodicSnapshotTaskUi[];
+    }),
+    takeUntilDestroyed(),
+  ) as Observable<PeriodicSnapshotTaskUi[]>;
+
+  readonly dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(this.tasks$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly empty = dataProviderEmptyState(this.dataProvider);
   protected readonly EmptyType = EmptyType;
 
   // ix-table column model retained purely to drive <ix-table-column-picker>
@@ -144,15 +154,18 @@ export class SnapshotTaskListComponent implements OnInit {
     }),
     scheduleColumn({
       title: this.translate.instant('Frequency'),
+      columnName: 'frequency',
       getValue: (row) => row.schedule,
     }),
     relativeDateColumn({
       hidden: true,
       title: this.translate.instant('Next Run'),
+      columnName: 'next-run',
       getValue: (task) => this.getNextRun(task),
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
+      columnName: 'last-run',
       hidden: true,
       getValue: (row) => row.state?.datetime?.$date,
     }),
@@ -181,6 +194,7 @@ export class SnapshotTaskListComponent implements OnInit {
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
+      columnName: 'state',
       getValue: (row) => row.state.state,
     }),
   ], {
@@ -210,7 +224,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   protected detailActionTestId(row: PeriodicSnapshotTaskUi, action: string): string {
-    return kebabCase([row.dataset, row.naming_schema, action].join('-'));
+    return detailActionTestId([row.dataset, row.naming_schema], action);
   }
 
   protected getActiveHours(row: PeriodicSnapshotTaskUi): string {
@@ -237,18 +251,10 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const tasks$ = this.api.call('pool.snapshottask.query').pipe(
-      tap((tasks) => {
-        this.snapshotTasks = tasks as PeriodicSnapshotTaskUi[];
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    );
-
-    this.dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(tasks$ as Observable<PeriodicSnapshotTaskUi[]>);
-
     this.getSnapshotTasks();
 
-    tasks$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe(() => this.onListFiltered(this.searchQuery()));
+    this.tasks$.pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.onListFiltered(this.searchQuery()));
 
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());

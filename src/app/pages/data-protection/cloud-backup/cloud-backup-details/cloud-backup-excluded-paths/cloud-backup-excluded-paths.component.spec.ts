@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnCardComponent } from '@truenas/ui-components';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { CloudBackupExcludedPathsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-excluded-paths/cloud-backup-excluded-paths.component';
 
@@ -23,8 +24,8 @@ describe('CloudBackupExcludedPathsComponent', () => {
   });
 
   it('checks card title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Excluded Paths');
+    // Read the tn-card input rather than its internal <h3>, which is library markup.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Excluded Paths');
   });
 
   it('renders Excluded Paths in card', () => {

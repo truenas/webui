@@ -57,8 +57,14 @@ export class VmwareStatusCellComponent {
   });
 
   protected readonly ariaLabel = computed<string>(() => {
-    const stateText = this.translate.instant(this.state().state);
-    return this.rowLabel() ? `${this.rowLabel()}, ${stateText}` : stateText;
+    const status = this.state().state;
+    const stateText = this.translate.instant(status);
+    // ERROR/BLOCKED carry their explanation only in the tooltip, which is unreachable
+    // on a non-focusable element — fold it into the accessible name instead.
+    const isExplained = status === VmwareSnapshotStatus.Error || status === VmwareSnapshotStatus.Blocked;
+    return [this.rowLabel(), stateText, isExplained ? this.tooltip() : '']
+      .filter(Boolean)
+      .join(', ');
   });
 
   protected readonly stateClass = computed<string>(() => {

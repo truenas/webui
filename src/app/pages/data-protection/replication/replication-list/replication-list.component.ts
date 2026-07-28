@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, computed, inject, viewChild, signal,
 } from '@angular/core';
@@ -29,7 +28,6 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -43,9 +41,11 @@ import {
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
+  detailActionTestId, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -100,7 +100,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TaskStateCellComponent,
     YesNoPipe,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class ReplicationListComponent implements OnInit {
@@ -114,16 +113,25 @@ export class ReplicationListComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private download = inject(DownloadService);
   private loader = inject(LoaderService);
-  protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
-  replicationTasks: ReplicationTask[] = [];
-  searchQuery = signal('');
-  dataProvider: AsyncDataProvider<ReplicationTask>;
-  readonly jobState = JobState;
+  private replicationTasks: ReplicationTask[] = [];
+  protected readonly searchQuery = signal('');
+  protected readonly jobState = JobState;
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly searchableElements = replicationListElements;
   protected readonly EmptyType = EmptyType;
+
+  private readonly replicationTasks$ = this.api.call('replication.query', [[], {
+    extra: {
+      check_dataset_encryption_keys: true,
+    },
+  }]).pipe(tap((replicationTasks) => this.replicationTasks = replicationTasks));
+
+  readonly dataProvider = new AsyncDataProvider<ReplicationTask>(this.replicationTasks$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
   // ix-table column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs) and the hidden-column list rendered in the detail
@@ -171,10 +179,12 @@ export class ReplicationListComponent implements OnInit {
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
+      columnName: 'last-run',
       getValue: (row) => row.state?.datetime?.$date,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
+      columnName: 'state',
       getValue: (row) => row.state.state,
       cssClass: 'state-button',
       getJob: (row) => row.job || null,
@@ -185,6 +195,7 @@ export class ReplicationListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Last Snapshot'),
+      columnName: 'last-snapshot',
       getValue: (task) => this.getLastSnapshot(task),
     }),
   ], {
@@ -218,7 +229,7 @@ export class ReplicationListComponent implements OnInit {
   }
 
   protected detailActionTestId(row: ReplicationTask, action: string): string {
-    return kebabCase([row.id, action].join('-'));
+    return detailActionTestId([row.id], action);
   }
 
   protected getSshConnection(task: ReplicationTask): string {
@@ -230,23 +241,9 @@ export class ReplicationListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const replicationTasks$ = this.api.call('replication.query', [[], {
-      extra: {
-        check_dataset_encryption_keys: true,
-      },
-    }]).pipe(tap((replicationTasks) => this.replicationTasks = replicationTasks));
-    this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
     this.getReplicationTasks();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
-    });
-  }
-
-  protected setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 1,
-      direction: SortDirection.Asc,
-      propertyName: 'name',
     });
   }
 

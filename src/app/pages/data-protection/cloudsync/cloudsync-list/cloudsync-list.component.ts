@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, computed, inject, viewChild, OnInit, signal,
 } from '@angular/core';
@@ -34,7 +33,6 @@ import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -47,7 +45,10 @@ import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells
 import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import {
+  convertStringToId, createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
+  detailActionTestId, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -99,7 +100,6 @@ import { AppState } from 'app/store';
     ScheduleDescriptionPipe,
     YesNoPipe,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class CloudSyncListComponent implements OnInit {
@@ -114,17 +114,30 @@ export class CloudSyncListComponent implements OnInit {
   private tnDialog = inject(TnDialog);
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
-  protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = cloudSyncListElements;
   protected readonly EmptyType = EmptyType;
 
-  cloudSyncTasks: CloudSyncTaskUi[] = [];
-  searchQuery = signal('');
-  dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
-  readonly jobState = JobState;
+  private cloudSyncTasks: CloudSyncTaskUi[] = [];
+  protected readonly searchQuery = signal('');
+  protected readonly jobState = JobState;
   protected readonly requiredRoles = [Role.CloudSyncWrite];
+
+  private readonly cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
+    map((cloudSyncTasks) => CloudSyncDataTransformer.transformTasks(
+      cloudSyncTasks,
+      this.taskService,
+      this.translate,
+    )),
+    tap((cloudSyncTasks) => this.setupJobSubscriptions(cloudSyncTasks)),
+    tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
+  );
+
+  readonly dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(this.cloudSyncTasks$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
   // ix-table column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs) and the hidden-column list rendered in the detail
@@ -137,6 +150,7 @@ export class CloudSyncListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Credential'),
+      columnName: 'credential',
       hidden: true,
       getValue: (task) => task.credentials.name,
     }),
@@ -180,6 +194,7 @@ export class CloudSyncListComponent implements OnInit {
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
+      columnName: 'state',
       getValue: (row) => row.state.state,
       getJob: (row) => row.job,
       cssClass: 'state-button',
@@ -215,7 +230,7 @@ export class CloudSyncListComponent implements OnInit {
   }
 
   protected detailActionTestId(row: CloudSyncTaskUi, action: string): string {
-    return kebabCase([row.id, action].join('-'));
+    return detailActionTestId([row.id], action);
   }
 
   protected getSchedule(task: CloudSyncTaskUi): string {
@@ -229,16 +244,6 @@ export class CloudSyncListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
-      map((cloudSyncTasks) => CloudSyncDataTransformer.transformTasks(
-        cloudSyncTasks,
-        this.taskService,
-        this.translate,
-      )),
-      tap((cloudSyncTasks) => this.setupJobSubscriptions(cloudSyncTasks)),
-      tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
-    );
-    this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
@@ -340,7 +345,7 @@ export class CloudSyncListComponent implements OnInit {
   // CloudSyncFormComponent structurally provides the host surface (closed/canSubmit/submit/
   // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
   private readonly cloudSyncForm = CloudSyncFormComponent as unknown as Type<SidePanelForm>;
-  // Wizard is hosted `footerless` — its mat-stepper owns its own Next/Save buttons.
+  // Wizard is hosted `footerless` — its tn-stepper owns its own Next/Save buttons.
   private readonly cloudSyncWizard = CloudSyncWizardComponent as unknown as Type<SidePanelForm>;
 
   protected openForm(row?: CloudSyncTaskUi): void {

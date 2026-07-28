@@ -4,7 +4,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+  TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -100,8 +100,8 @@ describe('CloudBackupSnapshotsComponent', () => {
   }
 
   it('checks page title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Snapshots');
+    // Read the tn-card input rather than its internal <h3>, which is library markup.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Snapshots');
   });
 
   it('handles restore functionality', async () => {

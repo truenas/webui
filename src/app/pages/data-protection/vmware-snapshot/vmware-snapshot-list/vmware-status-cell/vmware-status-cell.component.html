@@ -1,4 +1,7 @@
+<!-- role="img": aria-label is ignored on a role-less generic element, so without it
+  the row context and state would never be announced. -->
 <span
+  role="img"
   tnTooltipPosition="above"
   [class]="'state-button ' + stateClass()"
   [tnTooltip]="tooltip()"

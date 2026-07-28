@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnCardComponent } from '@truenas/ui-components';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -43,8 +44,8 @@ describe('CloudBackupStatsComponent', () => {
   });
 
   it('checks card title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Details');
+    // Read the tn-card input rather than its internal <h3>, which is library markup.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Details');
   });
 
   it('renders Details in card', () => {

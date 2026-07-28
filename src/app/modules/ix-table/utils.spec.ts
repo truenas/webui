@@ -204,13 +204,20 @@ describe('toDisplayedColumns', () => {
     expect(toDisplayedColumns(columns([{}, { hidden: true }]))).toEqual(['name', 'actions']);
   });
 
-  it('falls back to the kebab-cased title for a titled column without a propertyName', () => {
+  it('uses the explicit columnName for a computed column without a propertyName', () => {
     expect(toDisplayedColumns([
-      { title: 'Last Run' } as Column<Row, ColumnComponent<Row>>,
+      { title: 'Last Run', columnName: 'last-run' } as Column<Row, ColumnComponent<Row>>,
     ])).toEqual(['last-run']);
   });
 
-  it('falls back to "actions" for a column with neither a propertyName nor a title', () => {
+  it('does not derive a column name from the translated title', () => {
+    expect(toDisplayedColumns([
+      { title: 'Dernière exécution', columnName: 'last-run' } as Column<Row, ColumnComponent<Row>>,
+    ])).toEqual(['last-run']);
+  });
+
+  it('falls back to "actions" for a column with neither a propertyName nor a columnName', () => {
+    expect(toDisplayedColumns([{ title: 'Actions' } as Column<Row, ColumnComponent<Row>>])).toEqual(['actions']);
     expect(toDisplayedColumns([{} as Column<Row, ColumnComponent<Row>>])).toEqual(['actions']);
   });
 });

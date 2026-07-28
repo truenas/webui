@@ -1,15 +1,26 @@
 <ix-page-header [loading]="pools() === null"></ix-page-header>
 
 @if (pools() === 0) {
-  <tn-empty
-    icon="security"
-    iconLibrary="material"
-    iconSize="56px"
-    [title]="'No Data Protection Tasks' | translate"
-    [description]="'This page will help you protect your data by syncing it with other systems on the cloud. But first, you need to create a storage pool to get started.' | translate"
-    [actionText]="(canCreatePool() ? ('Create Pool' | translate) : undefined)"
-    (onAction)="createPool()"
-  ></tn-empty>
+  <div class="empty-state">
+    <tn-empty
+      icon="security"
+      iconLibrary="material"
+      iconSize="56px"
+      [title]="emptyTitle | translate"
+      [description]="emptyDescription"
+    ></tn-empty>
+
+    <!-- Hosted outside tn-empty: its [actionText] button exposes no testId input,
+      which would drop the legacy `button-create-pool` id. -->
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      variant="outline"
+      [testId]="'create-pool'"
+      [label]="'Create Pool' | translate"
+      (onClick)="createPool()"
+    ></tn-button>
+  </div>
 } @else {
   <div class="cards" [ixUiSearch]="searchableElements.elements.dashboard">
     <ix-cloud-backup-card></ix-cloud-backup-card>

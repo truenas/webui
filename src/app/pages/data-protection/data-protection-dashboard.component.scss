@@ -1,5 +1,19 @@
 @import 'scss-imports/cssvars';
 
+// The Create Pool button is hosted next to tn-empty rather than through its
+// [actionText] (see the template), so reproduce the layout tn-empty gives its own
+// action: centred, 8px below the description. Trimming the host's bottom padding
+// keeps the button where [actionText] would have put it.
+.empty-state {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+
+  tn-empty {
+    padding-bottom: 8px;
+  }
+}
+
 .cards {
   display: grid;
   gap: 8px;

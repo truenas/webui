@@ -11,20 +11,18 @@
 </ix-page-header>
 
 <div class="table-container">
-  @let emptyType = dataProvider.emptyType$ | async;
-  @let emptyConf = emptyService.defaultEmptyConfig(emptyType);
   <tn-table
     class="table"
     [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.vmwareSnapshots"
-    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+    [dataSource]="rows()"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackBySnapshotId"
-    [loading]="!!(dataProvider.isLoading$ | async)"
+    [loading]="isLoading()"
     [expandable]="true"
     [clickable]="true"
-    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
-    [emptyIcon]="emptyService.iconForType(emptyType)"
+    [emptyMessage]="empty.message()"
+    [emptyIcon]="empty.icon()"
     (rowClick)="onRowClick($event)"
     (sortChange)="onSortChange($event)"
   >
@@ -81,13 +79,13 @@
     <ng-template let-snapshot tnDetailRowDef>
       <div class="table-details-row-actions">
         <tn-button
-          [testId]="[snapshot.hostname, snapshot.filesystem, 'edit']"
+          [testId]="detailActionTestId(snapshot, 'edit')"
           [label]="'Edit' | translate"
           (onClick)="doEdit(snapshot)"
         ></tn-button>
         <tn-button
           *ixRequiresRoles="requiredRoles"
-          [testId]="[snapshot.hostname, snapshot.filesystem, 'delete']"
+          [testId]="detailActionTestId(snapshot, 'delete')"
           [label]="'Delete' | translate"
           (onClick)="doDelete(snapshot)"
         ></tn-button>
