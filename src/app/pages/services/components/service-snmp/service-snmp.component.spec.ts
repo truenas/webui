@@ -59,7 +59,6 @@ describe('ServiceSnmpComponent', () => {
           v3_privpassphrase: '87654321',
           options: 'leave_pidfile=true',
           zilstat: true,
-          loglevel: 4,
         } as SnmpConfig),
       ]),
       mockProvider(SlideInRef, slideInRef),
@@ -89,7 +88,6 @@ describe('ServiceSnmpComponent', () => {
 
     expect(await (await getInput('options')).getValue()).toBe('leave_pidfile=true');
     expect(await (await getCheckbox('zilstat')).isChecked()).toBe(true);
-    expect(await (await getSelect('loglevel')).getDisplayText()).toBe('Warning');
   });
 
   it('saves SNMP settings when form is submitted', async () => {
@@ -105,7 +103,6 @@ describe('ServiceSnmpComponent', () => {
 
     await (await getInput('options')).setValue('leave_pidfile=false');
     await (await getCheckbox('zilstat')).uncheck();
-    await (await getSelect('loglevel')).selectOption('Error');
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
@@ -124,7 +121,6 @@ describe('ServiceSnmpComponent', () => {
 
       options: 'leave_pidfile=false',
       zilstat: false,
-      loglevel: 3,
     }]);
   });
 
