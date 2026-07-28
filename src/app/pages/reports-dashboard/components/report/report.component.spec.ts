@@ -127,6 +127,12 @@ describe('ReportComponent', () => {
       });
     });
 
+    afterEach(() => {
+      jest.useRealTimers();
+      // Destroy the component so that pending resize subscriptions cannot leak into the next test
+      spectator.fixture.destroy();
+    });
+
     it('should initialize viewport change detection on init', () => {
       // Simply verify that ngOnInit completes without errors
       expect(() => {
@@ -134,34 +140,28 @@ describe('ReportComponent', () => {
       }).not.toThrow();
     });
 
-    it('should resize chart when window resize event occurs', async () => {
-      spectator.component.ngOnInit();
+    it('should resize chart when window resize event occurs', () => {
+      jest.useFakeTimers();
       spectator.component.isReady = true;
 
       // Trigger window resize event
-      const resizeEvent = new Event('resize');
-      global.dispatchEvent(resizeEvent);
+      global.dispatchEvent(new Event('resize'));
 
-      // Wait for debounce
-      await new Promise<void>((resolve): void => {
-        setTimeout(() => resolve(), 150);
-      });
+      // Fast-forward past the debounce and the setTimeout in resizeChart
+      jest.advanceTimersByTime(150);
 
       expect(mockLineChart.render).toHaveBeenCalledWith(true);
     });
 
-    it('should not resize chart before component is ready', async () => {
-      spectator.component.ngOnInit();
+    it('should not resize chart before component is ready', () => {
+      jest.useFakeTimers();
       spectator.component.isReady = false;
 
       // Trigger window resize event
-      const resizeEvent = new Event('resize');
-      global.dispatchEvent(resizeEvent);
+      global.dispatchEvent(new Event('resize'));
 
-      // Wait for debounce
-      await new Promise<void>((resolve): void => {
-        setTimeout(() => resolve(), 150);
-      });
+      // Fast-forward past the debounce and the setTimeout in resizeChart
+      jest.advanceTimersByTime(150);
 
       expect(mockLineChart.render).not.toHaveBeenCalled();
     });
