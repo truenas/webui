@@ -94,6 +94,7 @@ describe('PoolManagerWizardComponent', () => {
   } as PoolManagerState;
   const state$ = new BehaviorSubject(state);
   const createdPool = {} as Pool;
+  const existingPool$ = new BehaviorSubject<Pool | null>(null);
 
   const createComponent = createComponentFactory({
     component: PoolManagerWizardComponent,
@@ -122,6 +123,7 @@ describe('PoolManagerWizardComponent', () => {
       mockApi([
         mockCall('pool.query', []),
         mockJob('pool.create', fakeSuccessfulJob(createdPool)),
+        mockJob('pool.update', fakeSuccessfulJob(createdPool)),
       ]),
       mockProvider(ActivatedRoute, {
         params: of({}),
@@ -147,7 +149,7 @@ describe('PoolManagerWizardComponent', () => {
         ],
       }),
       mockProvider(AddVdevsStore, {
-        pool$: of(null),
+        pool$: existingPool$,
         isLoading$: of(false),
       }),
       mockProvider(Router),
@@ -257,6 +259,48 @@ describe('PoolManagerWizardComponent', () => {
         disableClose: true,
         data: createdPool,
       });
+    });
+
+    it('adds force_topology to the payload when forceTopology is set in the store', async () => {
+      state$.next({ ...state, forceTopology: true });
+
+      await wizard.selectStep((await wizard.getStepLabels()).indexOf('Review'));
+      spectator.query(ReviewWizardStepComponent)!.createPool.emit();
+
+      expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.create', [
+        expect.objectContaining({ force_topology: true }),
+      ]);
+
+      state$.next(state);
+    });
+  });
+
+  describe('updating an existing pool', () => {
+    const existingPool = { id: 42 } as Pool;
+
+    beforeEach(async () => {
+      existingPool$.next(existingPool);
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      wizard = await loader.getHarness(TnStepperHarness);
+    });
+
+    afterEach(() => {
+      existingPool$.next(null);
+    });
+
+    it('adds force_topology to the pool.update payload when forceTopology is set in the store', async () => {
+      state$.next({ ...state, forceTopology: true });
+
+      await wizard.selectStep((await wizard.getStepLabels()).indexOf('Review'));
+      spectator.query(ReviewWizardStepComponent)!.createPool.emit();
+
+      expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.update', [
+        existingPool.id,
+        expect.objectContaining({ force_topology: true }),
+      ]);
+
+      state$.next(state);
     });
   });
 });
