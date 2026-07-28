@@ -12,6 +12,14 @@ import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-f
  * Extends {@link TnFormFieldHarness} rather than composing it: both share the same
  * `tn-form-field` host, and `locatorFor` only searches descendants — so inheriting is
  * the only way to reuse the library's own `getLabel()` instead of re-deriving it.
+ *
+ * **Supported controls: `tn-input`, `tn-select`, `tn-checkbox`, `tn-radio`.** A field wrapping
+ * anything else (`tn-autocomplete`, `tn-chip-input`, `tn-file-input`, …) still indexes by label,
+ * but reads back as `''`/`false` — the {@link IxFormControlHarness} contract has no "unsupported"
+ * value, and whole-form readers like `getControlValues` walk every control at once, so a throw
+ * there would take the rest of the form's values down with it. {@link setValue} targets one
+ * control and does throw. Extend the branches below when a form needs one of those, or drive that
+ * control through its own tn-* harness.
  */
 export class TnFormControlHarness extends TnFormFieldHarness implements IxFormControlHarness {
   static override readonly hostSelector = 'tn-form-field';
@@ -92,13 +100,19 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
       return;
     }
     const radios = await this.radios();
-    for (const radio of radios) {
-      if ((await radio.getLabelText()) === String(value)) {
-        await radio.check();
-        return;
+    if (radios.length) {
+      for (const radio of radios) {
+        if ((await radio.getLabelText()) === String(value)) {
+          await radio.check();
+          return;
+        }
       }
+      throw new Error(`No radio option labelled "${String(value)}" in tn-form-field "${await this.getLabelText()}".`);
     }
-    throw new Error(`Could not set value "${String(value)}" on tn-form-field control.`);
+    throw new Error(
+      `tn-form-field "${await this.getLabelText()}" holds no control TnFormControlHarness can set `
+      + '(supported: tn-input, tn-select, tn-checkbox, tn-radio) — drive it through its own tn-* harness.',
+    );
   }
 
   async isDisabled(): Promise<boolean> {

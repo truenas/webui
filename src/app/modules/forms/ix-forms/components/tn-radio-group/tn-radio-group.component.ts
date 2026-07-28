@@ -71,7 +71,13 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
    */
   readonly testId = input<string[]>([]);
 
-  protected readonly resolvedAriaLabel = computed(() => this.ariaLabel() || this.formField?.label() || '');
+  /**
+   * `null` rather than `''` when there is no name to render: Angular only drops an attribute
+   * binding for `null`/`undefined`, so an empty string would emit `aria-label=""` — a group that
+   * looks named to a DOM check while being unnamed to a screen reader. Omitting the attribute
+   * leaves the missing name visible to an axe/a11y-lint pass.
+   */
+  protected readonly resolvedAriaLabel = computed(() => this.ariaLabel() || this.formField?.label() || null);
 
   /**
    * Drives the `<tn-radio>` accessors. Kept separate from the outer control so a model write
@@ -108,7 +114,7 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
   private readonly renderKey = signal(0);
 
   /**
-   * The options paired with their `@for` track keys. Built here rather than reading
+   * The options paired with their resolved test ids and `@for` track keys. Built here rather than reading
    * {@link renderKey} straight from the `track` expression, which the repeater evaluates outside
    * the view's reactive context — so the signal read would not mark the view dirty and the
    * recreation would never be scheduled.
@@ -121,8 +127,10 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
    */
   protected readonly renderItems = computed(() => {
     const key = this.renderKey();
+    const base = this.testId();
     return this.options().map((option, index) => ({
       option,
+      testId: [...base, option.label],
       trackBy: `${key}-${index}-${String(option.value)}`,
     }));
   });
@@ -146,10 +154,6 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
       // therefore stays untouched, so touched-gated error text will not show for it.
       this.onTouched();
     });
-  }
-
-  protected optionTestId(option: Option<unknown>): string[] {
-    return [...this.testId(), option.label];
   }
 
   writeValue(value: unknown): void {

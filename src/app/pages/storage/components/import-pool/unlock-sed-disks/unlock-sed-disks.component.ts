@@ -153,7 +153,9 @@ export class UnlockSedDisksComponent {
 
   /**
    * The option label is `<name> - <model> (<serial>)` while the value is the bare disk name, so
-   * the test id is pinned to the label to keep the pre-migration `option-disk-name-<label>`.
+   * the test id is pinned to the label rather than the value, keeping the pre-migration
+   * `…-<label>` tail. The select's own base carries the row position, so an option resolves to
+   * `option-disk-name-<position>-<label>` — unique across rows.
    */
   protected readonly diskOptionTestIdKey = (option: Option): string => String(option.label);
 

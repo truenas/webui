@@ -199,6 +199,17 @@ describe('TnRadioGroupComponent', () => {
       expect(spectator.query('[role="radiogroup"]')).toHaveAttribute('aria-label', 'Letter');
     });
 
+    it('omits aria-label entirely when neither the field nor the group names it', () => {
+      setup(`
+        <tn-form-field>
+          <ix-tn-radio-group name="letter" [formControl]="control" [options]="options"></ix-tn-radio-group>
+        </tn-form-field>
+      `);
+
+      // Not aria-label="", which would read as named to a DOM check but not to a screen reader.
+      expect(spectator.query('[role="radiogroup"]')).not.toHaveAttribute('aria-label');
+    });
+
     it('prefers an explicit ariaLabel over the field label', () => {
       setup(`
         <tn-form-field [label]="'Letter'">

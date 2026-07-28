@@ -144,6 +144,27 @@ describe('UnlockSedDisksComponent', () => {
     expect(passwordInputs).toHaveLength(1);
   });
 
+  it('gives each exception row its own test ids and remove-button label', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Disk Exception' }));
+    await addButton.click();
+    await addButton.click();
+
+    // One row per locked disk, so nothing here may resolve to a shared id — repeated rows would
+    // otherwise trip Playwright's strict mode and leave the remove buttons indistinguishable.
+    const testIds = Array.from(spectator.queryAll('.exception-item [data-test]'))
+      .map((element) => element.getAttribute('data-test'));
+
+    expect(testIds).toEqual([...new Set(testIds)]);
+    expect(testIds).toEqual(expect.arrayContaining([
+      'button-remove-exception-1', 'select-disk-name-1', 'input-password-1',
+      'button-remove-exception-2', 'select-disk-name-2', 'input-password-2',
+    ]));
+    // `tn-icon-button` mirrors `ariaLabel` onto its host as well as the button it renders.
+    expect(spectator.queryAll('.exception-item button[aria-label^="Remove disk exception"]').map(
+      (element) => element.getAttribute('aria-label'),
+    )).toEqual(['Remove disk exception 1', 'Remove disk exception 2']);
+  });
+
   describe('partial success', () => {
     const partialSuccessResponse: CoreBulkResponse[] = [
       { error: null, result: null },
