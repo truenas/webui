@@ -24,6 +24,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
@@ -40,8 +41,11 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
 import { createTable } from 'app/modules/ix-table/utils';
+import { getMachineTime, LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
@@ -65,6 +69,10 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
   templateUrl: './snapshot-list.component.html',
   styleUrls: ['./snapshot-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // FileSizePipe / FormatDateTimePipe are injected (not only used in the template)
+  // so the search filter can render the extra columns' values into the same strings
+  // the cells display. See buildSearchFilter.
+  providers: [FileSizePipe, FormatDateTimePipe],
   imports: [
     PageHeaderComponent,
     MatProgressSpinner,
@@ -99,6 +107,9 @@ export class SnapshotListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
+  private fileSize = inject(FileSizePipe);
+  private formatDateTime = inject(FormatDateTimePipe);
+  private localeService = inject(LocaleService);
 
   protected readonly requiredRoles = [Role.SnapshotDelete];
   searchQuery = signal('');
@@ -322,11 +333,59 @@ export class SnapshotListComponent implements OnInit {
       });
 
       if (this.dataProvider.totalRows === 0) {
-        this.dataProvider.setFilter({ list: this.snapshots, query, columnKeys: ['name'] });
+        this.dataProvider.setFilter(this.buildSearchFilter(query));
       }
     } else {
-      this.dataProvider.setFilter({ list: this.snapshots, query, columnKeys: ['name'] });
+      this.dataProvider.setFilter(this.buildSearchFilter(query));
     }
+  }
+
+  /**
+   * `name` carries both the dataset and the snapshot name, so it covers the two
+   * default columns. When the extra columns are visible the search should also
+   * match what those cells show — `used`, `referenced` and `created` are
+   * display-only columns backed by nested `properties` fields, so we point
+   * `filterTableRows` at those dot-paths (resolved via lodash `get`) and format
+   * each raw value into the exact string the cell renders via the preprocessMap.
+   * The casts are nominal: the paths aren't literal `ZfsSnapshotUi` keys.
+   */
+  private buildSearchFilter(query: string): TableFilter<ZfsSnapshotUi> {
+    if (!this.showExtraColumnsControl.value) {
+      return { list: this.snapshots, query, columnKeys: ['name'] };
+    }
+
+    const usedPath = 'properties.used.parsed';
+    const referencedPath = 'properties.referenced.parsed';
+    const createdPath = 'properties.creation.parsed';
+
+    const preprocessMap = {
+      [usedPath]: (value: unknown) => this.formatSize(value),
+      [referencedPath]: (value: unknown) => this.formatSize(value),
+      [createdPath]: (value: unknown) => this.formatCreated(value),
+    } as TableFilter<ZfsSnapshotUi>['preprocessMap'];
+
+    return {
+      list: this.snapshots,
+      query,
+      columnKeys: ['name', usedPath, referencedPath, createdPath] as (keyof ZfsSnapshotUi)[],
+      preprocessMap,
+    };
+  }
+
+  private formatSize(value: unknown): string {
+    const bytes = getFiniteNumber(value);
+    return bytes === undefined ? '' : this.fileSize.transform(bytes);
+  }
+
+  private formatCreated(value: unknown): string {
+    // `creation.parsed` is unix-seconds (see getSnapshotCreationMs). Mirror <ix-date>:
+    // convert to the machine timezone, then format with the same locale-aware pipe the
+    // cell uses so a search matches the on-screen date/time.
+    if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) {
+      return '';
+    }
+    const machineTime = getMachineTime(value * 1000, this.localeService.timezone);
+    return this.formatDateTime.transform(machineTime);
   }
 
   private setDefaultSort(): void {
