@@ -31,17 +31,17 @@
         {{ getErrorText() }}
       </div>
       @if (hasErrors()) {
-        <a
-          role="button"
-          tabindex="0"
+        <!-- A link-styled action, not a navigation: a <button> carries the role, focusability and
+             Enter/Space handling natively. `tnTestIdType="link"` keeps the pre-migration test id. -->
+        <button
+          type="button"
+          class="link-button"
           tnTestIdType="link"
           [tnTestId]="'view-errors'"
           (click)="goToVdevsPage()"
-          (keydown.enter)="goToVdevsPage()"
-          (keydown.space)="goToVdevsPage(); $event.preventDefault()"
         >
           {{ 'View' | translate }}
-        </a>
+        </button>
       }
     </div>
 
@@ -61,33 +61,29 @@
         <div class="value">
           {{ scrub().schedule | scheduleDescription }}
         </div>
-        <a
-          role="button"
-          tabindex="0"
+        <button
+          type="button"
+          class="link-button"
           tnTestIdType="link"
           [tnTestId]="'configure-scrub'"
           (click)="onConfigureScrub()"
-          (keydown.enter)="onConfigureScrub()"
-          (keydown.space)="onConfigureScrub(); $event.preventDefault()"
         >
           {{ 'Configure' | translate }}
-        </a>
+        </button>
       }
       @else {
         <div class="value">
           {{ 'Not Set' | translate }}
         </div>
-        <a
-          role="button"
-          tabindex="0"
+        <button
+          type="button"
+          class="link-button"
           tnTestIdType="link"
           [tnTestId]="'configure-scrub'"
           (click)="onConfigureScrub()"
-          (keydown.enter)="onConfigureScrub()"
-          (keydown.space)="onConfigureScrub(); $event.preventDefault()"
         >
           {{ 'Schedule' | translate }}
-        </a>
+        </button>
       }
     </div>
 

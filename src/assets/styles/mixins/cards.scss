@@ -265,7 +265,11 @@
       white-space: normal;
     }
 
-    a {
+    // `a` for real navigations. `.link-button` is for row actions that only run a handler:
+    // those are `<button>`s so that role, focusability and Enter/Space activation come from
+    // the element, and only the link *appearance* has to be restored here.
+    a,
+    .link-button {
       color: var(--primary);
       cursor: pointer;
       margin-left: auto;
@@ -274,6 +278,14 @@
       text-decoration: underline;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .link-button {
+      background: none;
+      border: 0;
+      font: inherit;
+      padding: 0;
+      text-align: inherit;
     }
 
     ngx-skeleton-loader {

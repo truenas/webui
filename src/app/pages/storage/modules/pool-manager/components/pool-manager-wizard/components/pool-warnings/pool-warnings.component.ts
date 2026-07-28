@@ -16,6 +16,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { TnRadioGroupComponent } from 'app/modules/forms/ix-forms/components/tn-radio-group/tn-radio-group.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
+import { isTnCheckboxChange } from 'app/modules/forms/ix-forms/utils/tn-checkbox-change.utils';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
@@ -74,14 +75,9 @@ export class PoolWarningsComponent implements OnInit {
   }
 
   protected checkboxChanged(pool: string, event: boolean | Event): void {
-    // TEMP (NAS-141021): library defect in the pinned @truenas/ui-components (0.3.26) — indexed
-    // in the tn-migration playbook's "Known upstream defects" table. tn-checkbox emits a boolean
-    // from its `change` output, but the inner <input>'s native `change` event also bubbles to the
-    // host, and Ivy invokes a `(change)` binding for both the output and the DOM event — so the
-    // handler fires a second time with an Event. Only act on the component's boolean emission.
-    // Fixed upstream in 0.4.x, which calls `stopPropagation()` in `onCheckboxChange` (tn-radio
-    // already did); drop this guard once the dependency range moves past 0.4.0.
-    if (typeof event !== 'boolean') {
+    // Only act on the component's boolean emission — see the helper for why the handler is
+    // invoked a second time with a DOM Event.
+    if (!isTnCheckboxChange(event)) {
       return;
     }
 

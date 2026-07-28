@@ -294,7 +294,7 @@ describe('StorageHealthCardComponent', () => {
       it('opens the form to create/edit scrub task when Configure link is pressed', () => {
         const detailsItem = spectator.query(byText('Scheduled Scrub:'))!.parentElement!;
 
-        const link = detailsItem.querySelector('a')!;
+        const link = detailsItem.querySelector('button.link-button')!;
         expect(link).toHaveText('Configure');
 
         spectator.click(link);

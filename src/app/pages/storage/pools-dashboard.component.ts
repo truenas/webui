@@ -61,7 +61,8 @@ export class PoolsDashboardComponent implements OnInit {
   /**
    * The `<br>` markup is dead — `tn-empty` renders `description` as text — but it is part of the
    * translation key, so stripping it from the source string here would orphan the existing
-   * translations. Strip it at render time instead, tolerating every spelling of the tag.
+   * translations. Strip it at render time instead, tolerating every spelling of the tag, and
+   * collapse the newlines it left behind so no whitespace artifacts reach the accessibility tree.
    */
   private readonly emptyMessage = T('Storage features in TrueNAS require at least one Pool to exist. <br>\nA Pool is a group of disks working together to store and protect your data. <br>\nOnce you have a pool, this page will provide an overview of your pool’s health and status.');
 
@@ -69,7 +70,10 @@ export class PoolsDashboardComponent implements OnInit {
   private readonly currentLang = toSignal(this.translate.onLangChange, { initialValue: null });
   protected readonly emptyDescription = computed(() => {
     this.currentLang();
-    return (this.translate.instant(this.emptyMessage) as string).replace(/<br\s*\/?>/gi, ' ');
+    return (this.translate.instant(this.emptyMessage) as string)
+      .replace(/<br\s*\/?>/gi, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   });
 
   protected rootDatasets: Record<string, Dataset> = {};

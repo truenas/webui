@@ -24,6 +24,11 @@ import { Option } from 'app/interfaces/option.interface';
  *
  * Bind it like any other control: `<ix-tn-radio-group formControlName="…">`.
  *
+ * **No validation display.** The group does not consume `TN_FORM_FIELD_CONTEXT`, so a wrapping
+ * `tn-form-field` never renders error text for it — a `Validators.required` group will block
+ * submission with no visible reason. (Nor does `touched` help: see the note in the constructor.)
+ * A group that needs a required-ness message has to render it itself.
+ *
  * TEMP (NAS-141021): this component exists only because the library ships no radio-group.
  * Indexed in the tn-migration playbook's "Known upstream defects" table; retire it once
  * `@truenas/ui-components` provides one (or exposes `tn-radio`'s `checked` as an input).
