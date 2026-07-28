@@ -108,17 +108,4 @@ describe('PoolsDashboardComponent', () => {
     const createPool = await loader.getHarness(TnButtonHarness.with({ label: 'Create Pool' }));
     expect(await createPool.getHref()).toBe('/storage/create');
   });
-
-  it('renders the empty description with the <br> markup stripped and no whitespace artifacts', async () => {
-    pools.set([]);
-    spectator.detectChanges();
-
-    const description = await (await loader.getHarness(TnEmptyHarness)).getDescription();
-
-    expect(description).toBe(
-      'Storage features in TrueNAS require at least one Pool to exist. '
-      + 'A Pool is a group of disks working together to store and protect your data. '
-      + 'Once you have a pool, this page will provide an overview of your pool’s health and status.',
-    );
-  });
 });

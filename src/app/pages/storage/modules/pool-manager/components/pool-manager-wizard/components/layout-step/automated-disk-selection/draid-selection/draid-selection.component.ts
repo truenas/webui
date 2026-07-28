@@ -109,6 +109,14 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
     )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
+        // Restores the form's declared defaults verbatim, so a reset form is indistinguishable
+        // from a freshly constructed one. With no disks selected `tn-select` renders those
+        // defaults even though no option matches them (`ix-select` used to blank such a value),
+        // which reads oddly but is the same thing the user sees on first render.
+        //
+        // Only `children` is guarded against that, in `updateChildrenOptions` — it is the one
+        // control with no static default. Its default is *computed* from the disk count, so with
+        // no disks it would be 0: an arithmetic artifact rather than a declared starting value.
         this.form.setValue({
           children: null,
           dataDevicesPerGroup: this.defaultDataDevicesPerGroup,
@@ -217,7 +225,8 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
     // Only default to the optimal width when there is one. With no disks selected
     // `maxPossibleWidth` is 0, and defaulting to it would leave a meaningless "Children: 0"
     // in the control — invisible with `ix-select` (which blanked a value that matched no
-    // option) but rendered verbatim by `tn-select`.
+    // option) but rendered verbatim by `tn-select`. The sibling controls need no such guard:
+    // see the note on the reset in `listenForResetEvents`.
     if (this.isStepActive() && maxPossibleWidth) {
       setValueIfNotSame(
         this.form.controls.children,

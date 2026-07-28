@@ -7,7 +7,6 @@
     >
       <tn-input
         formControlName="globalPassword"
-        [testId]="'global-password'"
         [inputType]="InputType.Password"
       ></tn-input>
     </tn-form-field>
@@ -15,7 +14,6 @@
     <!-- See `updateGlobalSettingsAriaLabel` for why `label` repeats the projected hint. -->
     <tn-checkbox
       formControlName="updateGlobalSettings"
-      [testId]="'update-global-settings'"
       [label]="updateGlobalSettingsAriaLabel()"
     >
       <div tnCheckboxLabel>

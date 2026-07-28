@@ -24,7 +24,9 @@ import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -80,9 +82,6 @@ export class UnlockSedDisksComponent {
   protected readonly updateGlobalSettingsLabel = T('Update global settings (applies to all disks/pools)');
   protected readonly updateGlobalSettingsHint = T('Save this password to the system configuration for future use with these disks.');
 
-  /** Re-translated on language change, which a plain `instant()` field initializer would miss. */
-  private readonly currentLang = toSignal(this.translate.onLangChange, { initialValue: null });
-
   /**
    * `tn-checkbox` emits `label` as the input's `aria-label`, which overrides the projected content
    * as the accessible name — so it has to carry the hint the projection renders below. Composed
@@ -98,13 +97,13 @@ export class UnlockSedDisksComponent {
    * tn-migration playbook's "Known upstream defects" table; revisit once tn-checkbox wires up
    * the field context.
    */
-  protected readonly updateGlobalSettingsAriaLabel = computed(() => {
-    this.currentLang();
-    return this.translate.instant('{label}. {hint}', {
-      label: this.translate.instant(this.updateGlobalSettingsLabel),
-      hint: this.translate.instant(this.updateGlobalSettingsHint),
-    });
-  });
+  protected readonly updateGlobalSettingsAriaLabel = translatedSignal((translate) => translate.instant(
+    '{label}. {hint}',
+    {
+      label: translate.instant(this.updateGlobalSettingsLabel),
+      hint: translate.instant(this.updateGlobalSettingsHint),
+    },
+  ));
 
   protected form = this.formBuilder.nonNullable.group({
     globalPassword: ['', Validators.required],
@@ -157,7 +156,7 @@ export class UnlockSedDisksComponent {
    * `…-<label>` tail. The select's own base carries the row position, so an option resolves to
    * `option-disk-name-<position>-<label>` — unique across rows.
    */
-  protected readonly diskOptionTestIdKey = (option: Option): string => String(option.label);
+  protected readonly diskOptionTestIdKey = optionTestIdByLabel;
 
   protected addException(): void {
     const available = this.availableDisksForException();

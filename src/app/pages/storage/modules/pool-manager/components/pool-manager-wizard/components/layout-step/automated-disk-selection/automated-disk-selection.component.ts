@@ -4,12 +4,12 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnInputComponent, TnSelectComponent } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { filter, take } from 'rxjs/operators';
 import { CreateVdevLayout, vdevLayoutOptions, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
+import { optionTestIdByKebabLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -104,12 +104,10 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   )));
 
   /**
-   * Derives the option test id from the label the way the legacy `ixTest` directive did, so
-   * `RAIDZ1`/`dRAID1` keep resolving to `option-layout-raidz-1`/`option-layout-d-raid-1`. The
-   * library's own normalizer would key off the `CreateVdevLayout` value and drop the hyphen
-   * before the digit (`raidz1`), silently renaming the ids.
+   * Keeps `RAIDZ1`/`dRAID1` resolving to `option-layout-raidz-1`/`option-layout-d-raid-1`,
+   * which keying off the `CreateVdevLayout` value would not.
    */
-  protected readonly layoutOptionTestIdKey = (option: { label: string }): string => kebabCase(option.label);
+  protected readonly layoutOptionTestIdKey = optionTestIdByKebabLabel;
 
   constructor() {
     this.updateStoreOnChanges();

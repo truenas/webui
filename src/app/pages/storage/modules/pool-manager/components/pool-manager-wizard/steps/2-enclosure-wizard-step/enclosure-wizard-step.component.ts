@@ -16,6 +16,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { TnRadioGroupComponent } from 'app/modules/forms/ix-forms/components/tn-radio-group/tn-radio-group.component';
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 export enum DispersalStrategy {
@@ -87,7 +88,7 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
    * The option label is the enclosure name while the value is its id, so the test id is pinned
    * to the label to keep the pre-migration `option-limit-to-enclosure-<name>`.
    */
-  protected readonly enclosureOptionTestIdKey = (option: { label: string }): string => option.label;
+  protected readonly enclosureOptionTestIdKey = optionTestIdByLabel;
 
   protected readonly helptext = helptextPoolCreation;
 

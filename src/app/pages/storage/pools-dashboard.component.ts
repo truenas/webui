@@ -59,22 +59,13 @@ export class PoolsDashboardComponent implements OnInit {
   protected readonly emptyTitle = T('No Pools');
 
   /**
-   * The `<br>` markup is dead — `tn-empty` renders `description` as text — but it is part of the
-   * translation key, so stripping it from the source string here would orphan the existing
-   * translations. Strip it at render time instead, tolerating every spelling of the tag, and
-   * collapse the newlines it left behind so no whitespace artifacts reach the accessibility tree.
+   * The pre-migration copy carried `<br>` markup for its line breaks, which `tn-empty` — it
+   * renders `description` as text — would have shown verbatim. Re-keyed without the tags rather
+   * than stripped at render time: extraction is automated and the locale files are generated, so
+   * this costs one re-translation instead of a permanently misleading source string plus a
+   * regex on every render. Run `yarn translations` to pick the new key up.
    */
-  private readonly emptyMessage = T('Storage features in TrueNAS require at least one Pool to exist. <br>\nA Pool is a group of disks working together to store and protect your data. <br>\nOnce you have a pool, this page will provide an overview of your pool’s health and status.');
-
-  /** Re-translated on language change, which a plain `instant()` field initializer would miss. */
-  private readonly currentLang = toSignal(this.translate.onLangChange, { initialValue: null });
-  protected readonly emptyDescription = computed(() => {
-    this.currentLang();
-    return (this.translate.instant(this.emptyMessage) as string)
-      .replace(/<br\s*\/?>/gi, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-  });
+  protected readonly emptyMessage = T('Storage features in TrueNAS require at least one Pool to exist. A Pool is a group of disks working together to store and protect your data. Once you have a pool, this page will provide an overview of your pool’s health and status.');
 
   protected rootDatasets: Record<string, Dataset> = {};
 

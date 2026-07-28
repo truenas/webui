@@ -19,6 +19,7 @@ import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -86,7 +87,7 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
    * The option label is `<name> | <guid>` while the value is the bare guid, so the
    * test id is pinned to the label to keep the pre-migration `option-guid-<name>-<guid>`.
    */
-  protected readonly poolOptionTestIdKey = (option: Option): string => String(option.label);
+  protected readonly poolOptionTestIdKey = optionTestIdByLabel;
 
   private readonly unlockSedDisks = viewChild(UnlockSedDisksComponent);
 

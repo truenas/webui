@@ -421,6 +421,17 @@ protected addAction = computed<TnCardAction | undefined>(() => {
   `*ixRequiresRoles` on the old `<button>`.
 - Import the input types: `TnCardAction`, `TnCardHeaderStatus`, `TnMenuItem`.
 
+### Translated strings inside a signal
+
+Moving a string from the template into a `computed()` loses the `translate` pipe's language
+tracking: `instant()` reads the translations current at first evaluation and the signal never
+re-runs. **Prefer keeping the pipe** — `[description]="messageKey | translate"` — whenever the
+string goes straight into a tn-* input. When it genuinely has to be composed in TypeScript
+(several keys folded into one string, a labels object handed to a library token, an `instant()`
+used as an interpolation parameter), build it with `translatedSignal()`
+(`modules/translate/translated-signal.ts`) rather than re-deriving the
+`toSignal(translate.onLangChange)` idiom per component.
+
 ### Shared service-menu builders
 
 Service cards build their `headerMenu` from **`ServiceActionsMenuService`**
@@ -705,6 +716,13 @@ Three properties make this safe:
   formControlName="sshPort">` emits `input-ssh-port` with no `testId` at all — matching what
   `ix-input`'s `[ixTest]="controlDirective.name"` produced. Passing an explicit `testId` on a
   bound control is redundant, not required; it is only needed to *override* the control name.
+- **Options key off the value, not the label.** `tn-select`/`tn-autocomplete` derive an option's
+  id from its `value`, where `[ixTest]` used the `label` — so any select whose two differ
+  silently renames every option id. Pin it back with the shared callbacks in
+  `modules/forms/ix-forms/constants/tn-select-option-test-id.constant.ts`
+  (`[optionTestIdKey]="optionTestIdByLabel"`, or `optionTestIdByKebabLabel` when the legacy id
+  had collapsed case/spaces the label still carries). Only write a bespoke callback when the id
+  comes from neither.
 
 **Attribute name (required once, at the app root).** `{ provide: TN_TEST_ATTR, useValue:
 'data-test' }` makes the library write `data-test` instead of its default `data-testid`.
@@ -754,6 +772,16 @@ type, changing the type changes the resolved value even when the base is identic
   import.
 - Signal-based `viewChild` (e.g. `viewChild(ServiceSmbComponent)`) needs the real child
   rendered for panel tests — don't mock it away if the test exercises the side panel.
+- **`MockComponents(...)` deep-mocks a standalone child's whole import graph**, so mocking a
+  migrated child also mocks the tn-* primitives *the parent itself* renders — the parent's own
+  fields come back blank, and signal queries trip
+  [ng-mocks#8634](https://github.com/help-me-mom/ng-mocks/issues/8634). Fix with
+  `ngMocks.globalKeep(TnFormFieldComponent)` etc. **at module scope**, above the `describe`:
+  ng-mocks reads its global config when the TestBed is configured, which for Spectator happens
+  inside the `beforeEach` that `createComponentFactory` registers, and Jest's per-file module
+  registry keeps the mutation from reaching another spec. Established in
+  `automated-disk-selection`, `widget-group-slot-form`, `widget-group-form`,
+  `dashboard.component.spec.ts`.
 - Run `yarn test src/app/.../file.spec.ts` per file; `yarn lint <file>` before commit.
 
 ## Accessibility — verify per migration

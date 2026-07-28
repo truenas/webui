@@ -24,6 +24,12 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 // `MockComponents(NormalSelectionComponent, DraidSelectionComponent)` deep-mocks their
 // standalone import graphs, which transitively include the tn-* form primitives — that
 // mock leaks into the TestBed and blanks *this* component's own real Layout field.
+//
+// Module scope is deliberate and is the house pattern for this (see also
+// `widget-group-slot-form`, `widget-group-form`, `dashboard.component.spec.ts`): ng-mocks reads
+// its global config while the TestBed is configured, which for Spectator happens inside the
+// `beforeEach` that `createComponentFactory` registers. Jest gives each spec file its own module
+// registry, so the mutation cannot reach another file.
 ngMocks.globalKeep(TnFormFieldComponent);
 ngMocks.globalKeep(TnSelectComponent);
 
