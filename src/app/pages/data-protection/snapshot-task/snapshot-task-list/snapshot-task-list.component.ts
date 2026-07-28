@@ -1,16 +1,27 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, computed, inject, viewChild, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnDetailRowDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import {
   Observable, filter, switchMap, take, tap,
 } from 'rxjs';
-import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -18,33 +29,36 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   scheduleColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import {
+  IxTableDetailsRowComponent,
+} from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableRelativeDateCellComponent,
+} from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  TaskStateCellComponent,
+} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { snapshotTaskListElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -61,23 +75,27 @@ import { TaskService } from 'app/services/task.service';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     RouterLink,
-    IxTableColumnsSelectorComponent,
+    TableColumnPickerComponent,
     RequiresRolesDirective,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableDetailsRowDirective,
-    IxTableDetailsRowComponent,
-    TnIconComponent,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
+    TnTestIdDirective,
+    TnTooltipDirective,
     TnTablePagerComponent,
+    IxTableDetailsRowComponent,
+    TableRelativeDateCellComponent,
+    TaskStateCellComponent,
+    ScheduleDescriptionPipe,
+    YesNoPipe,
     TranslateModule,
     AsyncPipe,
-    EmptyComponent,
   ],
 })
 export class SnapshotTaskListComponent implements OnInit {
@@ -91,7 +109,6 @@ export class SnapshotTaskListComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formPanel = inject(FormSidePanelService);
   private route = inject(ActivatedRoute);
-  private cdr = inject(ChangeDetectorRef);
   private loader = inject(LoaderService);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
@@ -100,10 +117,13 @@ export class SnapshotTaskListComponent implements OnInit {
   snapshotTasks: PeriodicSnapshotTaskUi[] = [];
   searchQuery = signal('');
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
-  protected readonly emptyConfig = snapshotTaskEmptyConfig;
   protected readonly EmptyType = EmptyType;
 
-  protected columns = createTable<PeriodicSnapshotTaskUi>([
+  // ix-table column model retained purely to drive <ix-table-column-picker>
+  // (visibility + saved prefs) and the hidden-column list rendered in the detail
+  // row; tn-table renders cells from the template and derives its
+  // `displayedColumns` from these via `toDisplayedColumns`.
+  protected columns = signal(createTable<PeriodicSnapshotTaskUi>([
     textColumn({
       title: this.translate.instant('Pool/Dataset'),
       propertyName: 'dataset',
@@ -120,14 +140,7 @@ export class SnapshotTaskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('When'),
       propertyName: 'when',
-      getValue: (row) => {
-        const cronSchedule = scheduleToCrontab(row.schedule);
-        const activeHours = extractActiveHoursFromCron(cronSchedule);
-        return this.translate.instant('From {task_begin} to {task_end}', {
-          task_begin: activeHours.start,
-          task_end: activeHours.end,
-        });
-      },
+      getValue: (row) => this.getActiveHours(row),
     }),
     scheduleColumn({
       title: this.translate.instant('Frequency'),
@@ -136,12 +149,7 @@ export class SnapshotTaskListComponent implements OnInit {
     relativeDateColumn({
       hidden: true,
       title: this.translate.instant('Next Run'),
-      getValue: (task) => {
-        if (task.enabled) {
-          return this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule));
-        }
-        return this.translate.instant('Disabled');
-      },
+      getValue: (task) => this.getNextRun(task),
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
@@ -150,7 +158,7 @@ export class SnapshotTaskListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Keep snapshot for'),
-      getValue: (row) => `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase(),
+      getValue: (row) => this.getLifetime(row),
       propertyName: 'lifetime_unit',
       hidden: true,
     }),
@@ -174,15 +182,54 @@ export class SnapshotTaskListComponent implements OnInit {
     stateButtonColumn({
       title: this.translate.instant('State'),
       getValue: (row) => row.state.state,
-      cssClass: 'state-button',
     }),
   ], {
+    // Still needed: <ix-table-details-row> renders the hidden columns through the
+    // ix cell components, which read `uniqueRowTag`/`ariaLabels` off the column.
     uniqueRowTag: (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,
     ariaLabels: (row) => [row.dataset, this.translate.instant('Snapshot Task')],
-  });
+  }));
 
-  get hiddenColumns(): Column<PeriodicSnapshotTaskUi, ColumnComponent<PeriodicSnapshotTaskUi>>[] {
-    return this.columns.filter((column) => column?.hidden);
+  protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
+
+  protected readonly hiddenColumns = computed<
+    Column<PeriodicSnapshotTaskUi, ColumnComponent<PeriodicSnapshotTaskUi>>[]
+  >(() => this.columns().filter((column) => column?.hidden));
+
+  protected readonly trackByTaskId = (_index: number, row: PeriodicSnapshotTaskUi): number => row.id;
+
+  protected uniqueRowTag(row: PeriodicSnapshotTaskUi): string {
+    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('pool1' → 'pool-1')
+    // while the library's kebab does not, so the tag resolves identically through the legacy
+    // [ixTest] directive and the library [tnTestId] directive.
+    return kebabCase(convertStringToId('snapshot-task-' + row.dataset + '-' + row.naming_schema));
+  }
+
+  protected ariaLabel(row: PeriodicSnapshotTaskUi): string {
+    return [row.dataset, this.translate.instant('Snapshot Task')].join(' ');
+  }
+
+  protected detailActionTestId(row: PeriodicSnapshotTaskUi, action: string): string {
+    return kebabCase([row.dataset, row.naming_schema, action].join('-'));
+  }
+
+  protected getActiveHours(row: PeriodicSnapshotTaskUi): string {
+    const activeHours = extractActiveHoursFromCron(scheduleToCrontab(row.schedule));
+    return this.translate.instant('From {task_begin} to {task_end}', {
+      task_begin: activeHours.start,
+      task_end: activeHours.end,
+    });
+  }
+
+  protected getNextRun(row: PeriodicSnapshotTaskUi): unknown {
+    if (row.enabled) {
+      return this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule));
+    }
+    return this.translate.instant('Disabled');
+  }
+
+  protected getLifetime(row: PeriodicSnapshotTaskUi): string {
+    return `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase();
   }
 
   constructor() {
@@ -217,10 +264,22 @@ export class SnapshotTaskListComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
+  protected columnsChange(columns: ReturnType<typeof this.columns>): void {
+    this.columns.set([...columns]);
+  }
+
+  private readonly table = viewChild(TnTableComponent<PeriodicSnapshotTaskUi>);
+
+  /**
+   * tn-table only expands through its chevron; the ix-table this replaced expanded on a
+   * row click too, so drive the expansion from `(rowClick)` to keep that behaviour.
+   */
+  protected onRowClick(row: PeriodicSnapshotTaskUi): void {
+    this.table()?.toggleRowExpansion(row);
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<PeriodicSnapshotTaskUi>(event, this.displayedColumns()));
   }
 
   protected onListFiltered(query: string): void {

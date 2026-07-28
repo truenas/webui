@@ -4,74 +4,199 @@
     (queryChange)="onListFiltered($event)"
   ></ix-basic-search>
 
-  <button mat-button ixTest="snapshots" [routerLink]="['/datasets', 'snapshots']">
-    {{ 'Snapshots' | translate }}
-  </button>
+  <tn-button
+    [testId]="'snapshots'"
+    [label]="'Snapshots' | translate"
+    [routerLink]="['/datasets', 'snapshots']"
+  ></tn-button>
 
-  <ix-table-columns-selector
+  <ix-table-column-picker
+    [columns]="columns()"
     [columnPreferencesKey]="'snapshotTaskList'"
-    [columns]="columns"
     (columnsChange)="columnsChange($event)"
-  ></ix-table-columns-selector>
+  ></ix-table-column-picker>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    ixTest="add-task"
     color="primary"
+    [testId]="'add-task'"
+    [label]="'Add' | translate"
     [ixUiSearch]="searchableElements.elements.add"
-    (click)="doAdd()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    (onClick)="doAdd()"
+  ></tn-button>
 </ix-page-header>
 
 <div class="table-container">
   @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
-    <ix-empty [conf]="emptyConfig"></ix-empty>
+    <tn-empty
+      icon="file-multiple-outline"
+      iconLibrary="mdi"
+      iconSize="56px"
+      [title]="'Automatically create point-in-time snapshots of selected datasets at regular intervals. These snapshots help preserve data states for recovery, backup, and versioning purposes, ensuring minimal data loss in case of accidental deletion or corruption.' | translate"
+    ></tn-empty>
   } @else {
-    <ix-table
+    @let emptyType = dataProvider.emptyType$ | async;
+    @let emptyConf = emptyService.defaultEmptyConfig(emptyType);
+    <tn-table
       class="table"
+      [testId]="'table-table'"
       [ixUiSearch]="searchableElements.elements.tasks"
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [displayedColumns]="displayedColumns()"
+      [trackBy]="trackByTaskId"
+      [loading]="!!(dataProvider.isLoading$ | async)"
+      [expandable]="true"
+      [clickable]="true"
+      [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+      [emptyIcon]="emptyService.iconForType(emptyType)"
+      (rowClick)="onRowClick($event)"
+      (sortChange)="onSortChange($event)"
     >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(dataProvider.isLoading$ | async)"
-      >
-        <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
-          <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="task">
-            <div class="table-details-row-actions">
-              <button
-                mat-button
-                [ixTest]="[task.dataset, task.naming_schema, 'edit']"
-                (click)="doEdit(task)"
-              >
-                <tn-icon name="pencil" library="mdi"></tn-icon>
-                <span>{{ 'Edit' | translate }}</span>
-              </button>
-              <button
-                *ixRequiresRoles="requiredRoles"
-                mat-button
-                [ixTest]="[task.dataset, task.naming_schema, 'delete']"
-                (click)="doDelete(task)"
-              >
-                <tn-icon name="delete" library="mdi"></tn-icon>
-                <span>{{ 'Delete' | translate }}</span>
-              </button>
-            </div>
-          </ix-table-details-row>
+      <ng-container [tnColumnDef]="'dataset'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Pool/Dataset' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Pool/Dataset' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="row.dataset || ''"
+          >{{ row.dataset }}</span>
         </ng-template>
-      </tbody>
-    </ix-table>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'recursive'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Recursive' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Recursive' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.recursive | yesNo | translate }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'naming_schema'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Naming Schema' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Naming Schema' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.naming_schema }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'when'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'When' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('When' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ getActiveHours(row) }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'frequency'">
+        <ng-template tnHeaderCellDef>{{ 'Frequency' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Frequency' | translate), uniqueRowTag(row), 'row-schedule']"
+            [tnTooltip]="row.schedule | scheduleDescription"
+          >{{ row.schedule | scheduleDescription }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'next-run'">
+        <ng-template tnHeaderCellDef>{{ 'Next Run' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-relative-date-cell
+            [value]="getNextRun(row)"
+            [title]="'Next Run' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-relative-date-cell>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'last-run'">
+        <ng-template tnHeaderCellDef>{{ 'Last Run' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-relative-date-cell
+            [value]="row.state?.datetime?.$date"
+            [title]="'Last Run' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-relative-date-cell>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'lifetime_unit'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Keep snapshot for' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Keep snapshot for' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ getLifetime(row) }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'legacy'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Legacy' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Legacy' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.legacy | yesNo | translate }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'vmware_sync'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'VMware Sync' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('VMware Sync' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.vmware_sync | yesNo | translate }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
+        <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Enabled' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.enabled | yesNo | translate }}</span>
+        </ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'state'" [width]="'120px'">
+        <ng-template tnHeaderCellDef>{{ 'State' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-task-state-cell
+            [state]="row.state.state"
+            [testId]="[('State' | translate), uniqueRowTag(row), 'row-state']"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-task-state-cell>
+        </ng-template>
+      </ng-container>
+
+      <ng-template let-task tnDetailRowDef>
+        <ix-table-details-row [hiddenColumns]="hiddenColumns()" [row]="task">
+          <div class="table-details-row-actions">
+            <tn-button
+              icon="mdi-pencil"
+              [testId]="detailActionTestId(task, 'edit')"
+              [label]="'Edit' | translate"
+              (onClick)="doEdit(task)"
+            ></tn-button>
+            <tn-button
+              *ixRequiresRoles="requiredRoles"
+              icon="mdi-delete"
+              [testId]="detailActionTestId(task, 'delete')"
+              [label]="'Delete' | translate"
+              (onClick)="doDelete(task)"
+            ></tn-button>
+          </div>
+        </ix-table-details-row>
+      </ng-template>
+    </tn-table>
 
     <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
   }

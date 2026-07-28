@@ -1,13 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -17,7 +16,7 @@ import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-sn
 describe('VmwareSnapshotListComponent', () => {
   let spectator: Spectator<VmwareSnapshotListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const vmwareSnapshots = [
     {
@@ -50,20 +49,26 @@ describe('VmwareSnapshotListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const cells = await table.getCellTexts();
-    const expectedRows = [
-      ['Hostname', 'Username', 'Filesystem', 'Datastore', 'State'],
+    expect(await table.getHeaderTexts()).toEqual(['Hostname', 'Username', 'Filesystem', 'Datastore', 'State']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['esxi-host-1', 'admin', 'tank/vm', 'datastore1', 'Success'],
-    ];
-    expect(cells).toEqual(expectedRows);
+    ]);
+  });
+
+  it('expands the detail row when the row itself is clicked', async () => {
+    expect(await table.isRowExpanded(0)).toBe(false);
+
+    await table.clickRow(0);
+
+    expect(await table.isRowExpanded(0)).toBe(true);
   });
 
   it('opens form to create new VMware snapshot when Add button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
@@ -73,9 +78,9 @@ describe('VmwareSnapshotListComponent', () => {
   });
 
   it('opens form to edit a VMware snapshot when Edit button is pressed', async () => {
-    await table.expandRow(0);
+    await table.toggleRowExpansion(0);
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
@@ -85,9 +90,9 @@ describe('VmwareSnapshotListComponent', () => {
   });
 
   it('deletes a VMware snapshot with confirmation when Delete button is pressed', async () => {
-    await table.expandRow(0);
+    await table.toggleRowExpansion(0);
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({

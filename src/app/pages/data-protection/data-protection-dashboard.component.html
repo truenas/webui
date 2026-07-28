@@ -1,10 +1,15 @@
 <ix-page-header [loading]="pools() === null"></ix-page-header>
 
 @if (pools() === 0) {
-  <ix-empty
-    [conf]="emptyConfig"
-    [requiredRoles]="requiredRoles"
-  ></ix-empty>
+  <tn-empty
+    icon="security"
+    iconLibrary="material"
+    iconSize="56px"
+    [title]="'No Data Protection Tasks' | translate"
+    [description]="'This page will help you protect your data by syncing it with other systems on the cloud. But first, you need to create a storage pool to get started.' | translate"
+    [actionText]="(canCreatePool() ? ('Create Pool' | translate) : undefined)"
+    (onAction)="createPool()"
+  ></tn-empty>
 } @else {
   <div class="cards" [ixUiSearch]="searchableElements.elements.dashboard">
     <ix-cloud-backup-card></ix-cloud-backup-card>

@@ -48,7 +48,7 @@ describe('CloudBackupStatsComponent', () => {
   });
 
   it('renders Details in card', () => {
-    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
+    const chartExtra = spectator.queryAll('tn-card p');
     expect(chartExtra).toHaveLength(10);
     expect(chartExtra[0]).toHaveText('Path: /mnt/test');
     expect(chartExtra[1]).toHaveText('Cache Path: /mnt/cache');
@@ -70,7 +70,7 @@ describe('CloudBackupStatsComponent', () => {
     spectator.setInput('backup', testBackupWithoutRateLimit);
     spectator.detectChanges();
 
-    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
+    const chartExtra = spectator.queryAll('tn-card p');
     expect(chartExtra[6]).toHaveText('Rate Limit: No limit');
   });
 
@@ -82,7 +82,7 @@ describe('CloudBackupStatsComponent', () => {
     spectator.setInput('backup', testBackupWithSmallRateLimit);
     spectator.detectChanges();
 
-    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
+    const chartExtra = spectator.queryAll('tn-card p');
     expect(chartExtra[6]).toHaveText('Rate Limit: 1000 KiB/s');
   });
 });

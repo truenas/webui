@@ -1,8 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -14,10 +16,9 @@ import { Job } from 'app/interfaces/job.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+  TableColumnPickerComponent,
+} from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -32,7 +33,7 @@ import { selectGeneralConfig, selectSystemConfigState } from 'app/store/system-c
 describe('RsyncTaskListComponent', () => {
   let spectator: Spectator<RsyncTaskListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const tasks = [
     {
@@ -84,7 +85,7 @@ describe('RsyncTaskListComponent', () => {
     imports: [
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
+      TableColumnPickerComponent,
     ],
     providers: [
       mockProvider(FormSidePanelService, {
@@ -137,27 +138,33 @@ describe('RsyncTaskListComponent', () => {
     ],
   });
 
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    const [trigger] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('shows table rows', async () => {
+    const expectedHeaders = [
+      'Path',
+      'Remote Host',
+      'Remote Module Name',
+      'Direction',
+      'Frequency',
+      'Next Run',
+      'Short Description',
+      'User',
+      'Status',
+      'Enabled',
+      '',
+    ];
     const expectedRows = [
-      [
-        'Path',
-        'Remote Host',
-        'Remote Module Name',
-        'Direction',
-        'Frequency',
-        'Next Run',
-        'Short Description',
-        'User',
-        'Status',
-        'Enabled',
-        '',
-      ],
       [
         '/mnt/Pool1',
         'server.com',
@@ -186,14 +193,13 @@ describe('RsyncTaskListComponent', () => {
       ],
     ];
 
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    expect(await table.getHeaderTexts()).toEqual(expectedHeaders);
+    expect(await table.getAllRowTexts()).toEqual(expectedRows);
   });
 
   it('opens edit form when Edit icon is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Edit' });
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       RsyncTaskFormComponent,
@@ -206,9 +212,8 @@ describe('RsyncTaskListComponent', () => {
   });
 
   it('deletes a network interface with confirmation when Delete icon is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Delete Task',
@@ -220,9 +225,8 @@ describe('RsyncTaskListComponent', () => {
   });
 
   it('runs a task when run button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Run job' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Run job' });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
   });

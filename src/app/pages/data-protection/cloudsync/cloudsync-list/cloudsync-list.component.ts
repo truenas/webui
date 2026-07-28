@@ -1,16 +1,28 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, inject, OnInit, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, computed, inject, viewChild, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnDetailRowDefDirective,
+  TnDialog,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import {
   EMPTY, catchError, filter, map, switchMap, tap,
 } from 'rxjs';
-import { cloudSyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -20,12 +32,11 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   scheduleColumn,
@@ -33,29 +44,30 @@ import {
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableRelativeDateCellComponent,
+} from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { cloudSyncListElements } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.elements';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { CloudSyncDataTransformer } from 'app/pages/data-protection/cloudsync/utils/cloudsync-data-transformer';
+import {
+  TaskStateCellComponent,
+} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
@@ -68,22 +80,26 @@ import { AppState } from 'app/store';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    IxTableColumnsSelectorComponent,
+    TableColumnPickerComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableDetailsRowDirective,
-    IxTableDetailsRowComponent,
-    TnIconComponent,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
+    TnTestIdDirective,
+    TnTooltipDirective,
     TnTablePagerComponent,
+    IxTableDetailsRowComponent,
+    TableRelativeDateCellComponent,
+    TaskStateCellComponent,
+    ScheduleDescriptionPipe,
+    YesNoPipe,
     TranslateModule,
     AsyncPipe,
-    EmptyComponent,
   ],
 })
 export class CloudSyncListComponent implements OnInit {
@@ -91,7 +107,6 @@ export class CloudSyncListComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private taskService = inject(TaskService);
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
@@ -103,7 +118,6 @@ export class CloudSyncListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = cloudSyncListElements;
-  protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
   protected readonly EmptyType = EmptyType;
 
   cloudSyncTasks: CloudSyncTaskUi[] = [];
@@ -112,7 +126,11 @@ export class CloudSyncListComponent implements OnInit {
   readonly jobState = JobState;
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
-  columns = createTable<CloudSyncTaskUi>([
+  // ix-table column model retained purely to drive <ix-table-column-picker>
+  // (visibility + saved prefs) and the hidden-column list rendered in the detail
+  // row; tn-table renders cells from the template and derives its
+  // `displayedColumns` from these via `toDisplayedColumns`.
+  protected readonly columns = signal(createTable<CloudSyncTaskUi>([
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
@@ -141,7 +159,7 @@ export class CloudSyncListComponent implements OnInit {
       title: this.translate.instant('Schedule'),
       propertyName: 'schedule',
       hidden: true,
-      getValue: (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
+      getValue: (task) => this.getSchedule(task),
     }),
     scheduleColumn({
       title: this.translate.instant('Frequency'),
@@ -151,14 +169,7 @@ export class CloudSyncListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Next Run'),
       hidden: true,
-      getValue: (task: CloudSyncTaskUi) => {
-        // For disabled tasks, show "Disabled" text
-        if (!task.enabled) {
-          return this.translate.instant('Disabled');
-        }
-        // For enabled tasks, show the pre-computed relative time string
-        return task.next_run;
-      },
+      getValue: (task: CloudSyncTaskUi) => this.getNextRun(task),
       propertyName: 'next_run_sort_key',
     }),
     relativeDateColumn({
@@ -178,12 +189,43 @@ export class CloudSyncListComponent implements OnInit {
       propertyName: 'enabled',
     }),
   ], {
+    // Still needed: <ix-table-details-row> renders the hidden columns through the
+    // ix cell components, which read `uniqueRowTag`/`ariaLabels` off the column.
     uniqueRowTag: (row) => 'cloudsync-task-' + row.description,
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
-  });
+  }));
 
-  protected get hiddenColumns(): Column<CloudSyncTaskUi, ColumnComponent<CloudSyncTaskUi>>[] {
-    return this.columns.filter((column) => column?.hidden);
+  protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
+
+  protected readonly hiddenColumns = computed<Column<CloudSyncTaskUi, ColumnComponent<CloudSyncTaskUi>>[]>(
+    () => this.columns().filter((column) => column?.hidden),
+  );
+
+  protected readonly trackByTaskId = (_index: number, row: CloudSyncTaskUi): number => row.id;
+
+  protected uniqueRowTag(row: CloudSyncTaskUi): string {
+    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('task1' → 'task-1')
+    // while the library's kebab does not, so the tag resolves identically through the legacy
+    // [ixTest] directive and the library [tnTestId] directive.
+    return kebabCase(convertStringToId('cloudsync-task-' + row.description));
+  }
+
+  protected ariaLabel(row: CloudSyncTaskUi): string {
+    return [row.description, this.translate.instant('Cloud Sync Task')].join(' ');
+  }
+
+  protected detailActionTestId(row: CloudSyncTaskUi, action: string): string {
+    return kebabCase([row.id, action].join('-'));
+  }
+
+  protected getSchedule(task: CloudSyncTaskUi): string {
+    return task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled');
+  }
+
+  protected getNextRun(task: CloudSyncTaskUi): string {
+    // For disabled tasks, show "Disabled" text; for enabled tasks, the
+    // pre-computed relative time string.
+    return task.enabled ? task.next_run : this.translate.instant('Disabled');
   }
 
   ngOnInit(): void {
@@ -332,10 +374,22 @@ export class CloudSyncListComponent implements OnInit {
     this.dataProvider.setFilter({ query, columnKeys: ['description'] });
   }
 
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
+  protected columnsChange(columns: ReturnType<typeof this.columns>): void {
+    this.columns.set([...columns]);
+  }
+
+  private readonly table = viewChild(TnTableComponent<CloudSyncTaskUi>);
+
+  /**
+   * tn-table only expands through its chevron; the ix-table this replaced expanded on a
+   * row click too, so drive the expansion from `(rowClick)` to keep that behaviour.
+   */
+  protected onRowClick(row: CloudSyncTaskUi): void {
+    this.table()?.toggleRowExpansion(row);
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<CloudSyncTaskUi>(event, this.displayedColumns()));
   }
 
   private setupJobSubscriptions(cloudSyncTasks: CloudSyncTaskUi[]): void {

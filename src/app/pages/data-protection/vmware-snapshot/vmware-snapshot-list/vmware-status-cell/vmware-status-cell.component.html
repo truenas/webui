@@ -1,10 +1,6 @@
-<button
-  mat-stroked-button
-  class="state-button"
+<span
   tnTooltipPosition="above"
-  disabled
-  [ngClass]="getButtonClass()"
-  [tnTooltip]="tooltip"
->
-  {{ state().state | translate | titlecase }}
-</button>
+  [class]="'state-button ' + stateClass()"
+  [tnTooltip]="tooltip()"
+  [attr.aria-label]="ariaLabel()"
+>{{ state().state | translate | titlecase }}</span>

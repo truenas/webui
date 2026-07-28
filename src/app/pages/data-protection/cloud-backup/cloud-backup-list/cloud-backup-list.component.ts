@@ -1,44 +1,50 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, effect, input, output, signal, inject, computed } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, effect, input, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
-import { cloudBackupTaskEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import {
-  toggleColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import {
+  TableRelativeDateCellComponent,
+} from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.elements';
+import {
+  TaskStateCellComponent,
+} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -48,15 +54,22 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableBodyComponent,
+    BasicSearchComponent,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnTestIdDirective,
+    TnTooltipDirective,
     TnTablePagerComponent,
-    IxTableHeadComponent,
+    TableActionsCellComponent,
+    TableRelativeDateCellComponent,
+    TableToggleCellComponent,
+    TaskStateCellComponent,
+    YesNoPipe,
     TranslateModule,
     AsyncPipe,
-    BasicSearchComponent,
-    EmptyComponent,
   ],
 })
 export class CloudBackupListComponent {
@@ -79,65 +92,69 @@ export class CloudBackupListComponent {
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = cloudBackupListElements;
 
-  protected readonly emptyConfig = computed<EmptyConfig>(() => {
-    if (this.searchQuery()?.length) {
-      return noSearchResultsConfig;
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+
+  protected readonly displayedColumns = ['description', 'enabled', 'snapshot', 'state', 'last-run', 'actions'];
+
+  protected readonly actions: IconActionConfig<CloudBackup>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.openForm(row),
+    },
+    {
+      iconName: tnIconMarker('play-circle', 'mdi'),
+      tooltip: this.translate.instant('Run job'),
+      hidden: (row) => of(row.job?.state === JobState.Running),
+      onClick: (row) => this.runNow(row),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  protected readonly trackByBackupId = (_index: number, row: CloudBackup): number => row.id;
+
+  protected uniqueRowTag(row: CloudBackup): string {
+    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('backup1' → 'backup-1')
+    // while the library's kebab does not, so the tag resolves identically through the legacy
+    // [ixTest] directive and the library [tnTestId] directive.
+    return kebabCase(convertStringToId('cloud-backup-' + row.description));
+  }
+
+  protected ariaLabel(row: CloudBackup): string {
+    return [row.description, this.translate.instant('Cloud Backup')].join(' ');
+  }
+
+  /**
+   * `tn-table` matches the active row by object identity, but `expandedRow` can hold a
+   * copy (a finished job replaces it with a spread of the row to re-trigger the detail
+   * pane), so resolve back to the reference actually rendered in the table.
+   */
+  protected activeRow(): CloudBackup | null {
+    const expanded = this.dataProvider().expandedRow;
+    if (!expanded) {
+      return null;
+    }
+    return this.rows().find((backup) => backup.id === expanded.id) ?? null;
+  }
+
+  protected onRowClick(row: CloudBackup): void {
+    const provider = this.dataProvider();
+    const isSameRow = provider.expandedRow?.id === row.id;
+    provider.expandedRow = isSameRow ? null : row;
+
+    if (provider.expandedRow) {
+      this.toggleShowMobileDetails.emit(true);
     }
 
-    return cloudBackupTaskEmptyConfig;
-  });
-
-  columns = createTable<CloudBackup>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'description',
-    }),
-    toggleColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-      onRowToggle: (row) => this.onChangeEnabledState(row),
-      requiredRoles: this.requiredRoles,
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Snapshot'),
-      propertyName: 'snapshot',
-    }),
-    stateButtonColumn({
-      title: this.translate.instant('State'),
-      getValue: (row) => row?.job?.state,
-      getJob: (row) => row?.job,
-      cssClass: 'state-button',
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Last Run'),
-      getValue: (row) => row.job?.time_finished?.$date,
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.openForm(row),
-        },
-        {
-          iconName: tnIconMarker('play-circle', 'mdi'),
-          tooltip: this.translate.instant('Run job'),
-          hidden: (row) => of(row.job?.state === JobState.Running),
-          onClick: (row) => this.runNow(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'cloud-backup-' + row.description,
-    ariaLabels: (row) => [row.description, this.translate.instant('Cloud Backup')],
-  });
+    this.cdr.markForCheck();
+  }
 
   constructor() {
     effect(() => {
@@ -215,19 +232,14 @@ export class CloudBackupListComponent {
     ).subscribe(() => this.dataProvider().load());
   }
 
-  expanded(row: CloudBackup): void {
-    if (!row) return;
-
-    this.toggleShowMobileDetails.emit(true);
-  }
-
-  private onChangeEnabledState(cloudBackup: CloudBackup): void {
+  protected onChangeEnabledState(cloudBackup: CloudBackup, toggle: TableToggleCellComponent): void {
     this.api
       .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled }])
       .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.dataProvider().load(),
         error: (error: unknown) => {
+          toggle.revert();
           this.dataProvider().load();
           this.errorHandler.showErrorModal(error);
         },

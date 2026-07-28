@@ -1,12 +1,5 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'Excluded Paths' | translate }}
-    </h3>
-  </mat-card-header>
-  <mat-card-content>
-    @for (item of backup().exclude; track item) {
-      <p>{{ item }}</p>
-    }
-  </mat-card-content>
-</mat-card>
+<tn-card class="card" [title]="'Excluded Paths' | translate">
+  @for (item of backup().exclude; track item) {
+    <p>{{ item }}</p>
+  }
+</tn-card>

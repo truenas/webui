@@ -6,28 +6,110 @@
 </div>
 
 @if (!(dataProvider()?.currentPageCount$ | async) && !(dataProvider().isLoading$ | async)) {
-  <ix-empty [conf]="emptyConfig()"></ix-empty>
+  @if (searchQuery()) {
+    <tn-empty
+      icon="magnify-scan"
+      iconLibrary="mdi"
+      iconSize="56px"
+      [title]="'No Search Results.' | translate"
+      [description]="'No matching results found' | translate"
+    ></tn-empty>
+  } @else {
+    <tn-empty
+      icon="true-cloud"
+      iconLibrary="custom"
+      iconSize="56px"
+      [title]="'Back up to the decentralized network provided by Storj in partnership with TrueNAS.' | translate"
+    ></tn-empty>
+  }
 } @else {
-  <ix-table
+  @let emptyType = dataProvider().emptyType$ | async;
+  @let emptyConf = emptyService.defaultEmptyConfig(emptyType);
+  <tn-table
     class="backups"
+    [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.tasks"
-    [ix-table-empty]="!(dataProvider()?.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider()?.emptyType$ | async)"
+    [dataSource]="rows()"
+    [displayedColumns]="displayedColumns"
+    [trackBy]="trackByBackupId"
+    [loading]="isLoading()"
+    [clickable]="true"
+    [activeRow]="activeRow()"
+    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyIcon]="emptyService.iconForType(emptyType)"
+    (rowClick)="onRowClick($event)"
   >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider()"
-    ></thead>
+    <ng-container [tnColumnDef]="'description'">
+      <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTooltip]="row.description || ''"
+        >{{ row.description }}</span>
+      </ng-template>
+    </ng-container>
 
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider()"
-      [isLoading]="!!(dataProvider().isLoading$ | async)"
-      (expanded)="expanded($event)"
-    ></tbody>
-  </ix-table>
+    <ng-container [tnColumnDef]="'enabled'" [width]="'70px'">
+      <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-toggle-cell
+          #enabledToggle
+          [title]="'Enabled' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [ariaLabel]="ariaLabel(row)"
+          [checked]="!!row.enabled"
+          [requiredRoles]="requiredRoles"
+          (toggled)="onChangeEnabledState(row, enabledToggle)"
+        ></ix-table-toggle-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'snapshot'" [width]="'90px'">
+      <ng-template tnHeaderCellDef>{{ 'Snapshot' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Snapshot' | translate), uniqueRowTag(row), 'row-yesno']"
+        >{{ row.snapshot | yesNo | translate }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'state'" [width]="'120px'">
+      <ng-template tnHeaderCellDef>{{ 'State' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-task-state-cell
+          [state]="row.job?.state"
+          [job]="row.job"
+          [testId]="[('State' | translate), uniqueRowTag(row), 'row-state']"
+          [ariaLabel]="ariaLabel(row)"
+        ></ix-task-state-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'last-run'">
+      <ng-template tnHeaderCellDef>{{ 'Last Run' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-relative-date-cell
+          [value]="row.job?.time_finished?.$date"
+          [title]="'Last Run' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-relative-date-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+      <ng-template tnHeaderCellDef></ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-actions-cell
+          [actions]="actions"
+          [row]="row"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [ariaLabel]="ariaLabel(row)"
+        ></ix-table-actions-cell>
+      </ng-template>
+    </ng-container>
+  </tn-table>
 
   <tn-table-pager [dataProvider]="dataProvider()"></tn-table-pager>
 }

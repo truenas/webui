@@ -1,4 +1,6 @@
-<div class="actions">
+<!-- Swallow clicks so an action (or opening the menu) never also triggers the
+  row click of a `[clickable]` tn-table — e.g. deselecting a master-detail row. -->
+<div class="actions" (click)="$event.stopPropagation()">
   @if (mode() === 'inline' || visibleActions().length === 1) {
     @for (action of visibleActions(); track action) {
       @let isDisabled = action.disabled ? (action.disabled(row()) | async) : false;

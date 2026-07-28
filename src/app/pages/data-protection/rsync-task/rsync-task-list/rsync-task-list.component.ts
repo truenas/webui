@@ -1,26 +1,38 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, Type, inject, signal, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Type, computed, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
-import { rsyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { DisplayableState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
@@ -33,19 +45,23 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import {
   yesNoColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import {
+  TableRelativeDateCellComponent,
+} from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  TaskStateCellComponent,
+} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { rsyncTaskListElements } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.elements';
 import { TaskService } from 'app/services/task.service';
@@ -59,19 +75,25 @@ import { TaskService } from 'app/services/task.service';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    IxTableColumnsSelectorComponent,
+    TableColumnPickerComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnTestIdDirective,
+    TnTooltipDirective,
     TnTablePagerComponent,
+    TableActionsCellComponent,
+    TableRelativeDateCellComponent,
+    TaskStateCellComponent,
+    ScheduleDescriptionPipe,
+    YesNoPipe,
     TranslateModule,
     AsyncPipe,
-    EmptyComponent,
   ],
 })
 export class RsyncTaskListComponent implements OnInit {
@@ -83,19 +105,40 @@ export class RsyncTaskListComponent implements OnInit {
   private taskService = inject(TaskService);
   private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);
-  private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = rsyncTaskListElements;
-  protected readonly emptyConfig = rsyncTaskEmptyConfig;
   protected readonly EmptyType = EmptyType;
 
   dataProvider: AsyncDataProvider<RsyncTask>;
   searchQuery = signal('');
 
-  columns = createTable<RsyncTask>([
+  protected readonly actions: IconActionConfig<RsyncTask>[] = [
+    {
+      iconName: tnIconMarker('play-circle', 'mdi'),
+      tooltip: this.translate.instant('Run job'),
+      requiredRoles: this.requiredRoles,
+      onClick: (row) => this.runNow(row),
+    },
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.edit(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      requiredRoles: this.requiredRoles,
+      onClick: (row) => this.delete(row),
+    },
+  ];
+
+  // ix-table column model retained purely to drive <ix-table-column-picker>
+  // (visibility + saved prefs); tn-table renders cells from the template and
+  // derives its `displayedColumns` from these via `toDisplayedColumns`.
+  protected readonly columns = signal(createTable<RsyncTask>([
     textColumn({
       title: this.translate.instant('Path'),
       propertyName: 'path',
@@ -127,20 +170,17 @@ export class RsyncTaskListComponent implements OnInit {
       propertyName: 'schedule',
       hidden: true,
     }),
+    // No `propertyName`: it would collide with the Schedule column above on the
+    // tn-table column name, and sorting on the raw schedule object was never
+    // meaningful. Renders as the derived `frequency` column instead.
     textColumn({
       title: this.translate.instant('Frequency'),
-      propertyName: 'schedule',
-      getValue: (task) => this.crontabExplanation.transform(scheduleToCrontab(task.schedule)),
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      getValue: (row) => (row.enabled
-        ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
-        : this.translate.instant('Disabled')),
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      getValue: (row) => row.job?.time_finished?.$date,
       hidden: true,
     }),
     textColumn({
@@ -158,45 +198,46 @@ export class RsyncTaskListComponent implements OnInit {
     }),
     stateButtonColumn({
       title: this.translate.instant('Status'),
-      getValue: (row) => {
-        if (!row.job) {
-          return row.locked ? TaskState.Locked : TaskState.Pending;
-        }
-
-        return row.job.state;
-      },
-      getJob: (row) => row.job,
-      cssClass: 'state-button',
     }),
     yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('play-circle', 'mdi'),
-          tooltip: this.translate.instant('Run job'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => this.runNow(row),
-        },
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.edit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => this.delete(row),
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'rsync-task-' + row.path + '-' + row.remotehost,
-    ariaLabels: (row) => [row.path, row.remotehost, this.translate.instant('Rsync Task')],
-  });
+    actionsWithMenuColumn({}),
+  ]));
+
+  protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
+
+  protected readonly trackByTaskId = (_index: number, row: RsyncTask): number => row.id;
+
+  protected uniqueRowTag(row: RsyncTask): string {
+    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('pool1' → 'pool-1')
+    // while the library's kebab does not, so the tag resolves identically through the legacy
+    // [ixTest] directive and the library [tnTestId] directive.
+    return kebabCase(convertStringToId('rsync-task-' + row.path + '-' + row.remotehost));
+  }
+
+  protected ariaLabel(row: RsyncTask): string {
+    return [row.path, row.remotehost, this.translate.instant('Rsync Task')].join(' ');
+  }
+
+  protected getFrequency(row: RsyncTask): string {
+    return this.crontabExplanation.transform(scheduleToCrontab(row.schedule));
+  }
+
+  protected getNextRun(row: RsyncTask): unknown {
+    return row.enabled
+      ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
+      : this.translate.instant('Disabled');
+  }
+
+  protected getTaskState(row: RsyncTask): DisplayableState {
+    if (!row.job) {
+      return row.locked ? TaskState.Locked : TaskState.Pending;
+    }
+
+    return row.job.state;
+  }
 
   ngOnInit(): void {
     this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
@@ -214,10 +255,12 @@ export class RsyncTaskListComponent implements OnInit {
     this.dataProvider.setFilter({ query, columnKeys: ['path', 'desc'] });
   }
 
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<RsyncTask>(event, this.displayedColumns()));
+  }
+
+  protected columnsChange(columns: ReturnType<typeof this.columns>): void {
+    this.columns.set([...columns]);
   }
 
   protected runNow(row: RsyncTask): void {

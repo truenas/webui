@@ -1,11 +1,25 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, computed, inject, viewChild, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnDetailRowDefDirective,
+  TnDialog,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { filter, switchMap, tap } from 'rxjs';
-import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -15,11 +29,9 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   stateButtonColumn,
@@ -29,22 +41,25 @@ import {
   toggleColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { createTable } from 'app/modules/ix-table/utils';
+import { convertStringToId, createTable, mapTnSortToTableSort, toDisplayedColumns } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableRelativeDateCellComponent,
+} from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  TaskStateCellComponent,
+} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -66,22 +81,26 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    IxTableColumnsSelectorComponent,
+    TableColumnPickerComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableDetailsRowDirective,
-    IxTableDetailsRowComponent,
-    TnIconComponent,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
+    TnTestIdDirective,
+    TnTooltipDirective,
     TnTablePagerComponent,
+    IxTableDetailsRowComponent,
+    TableRelativeDateCellComponent,
+    TableToggleCellComponent,
+    TaskStateCellComponent,
+    YesNoPipe,
     TranslateModule,
     AsyncPipe,
-    EmptyComponent,
   ],
 })
 export class ReplicationListComponent implements OnInit {
@@ -104,10 +123,13 @@ export class ReplicationListComponent implements OnInit {
   readonly jobState = JobState;
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly searchableElements = replicationListElements;
-  protected readonly emptyConfig = replicationTaskEmptyConfig;
   protected readonly EmptyType = EmptyType;
 
-  columns = createTable<ReplicationTask>([
+  // ix-table column model retained purely to drive <ix-table-column-picker>
+  // (visibility + saved prefs) and the hidden-column list rendered in the detail
+  // row; tn-table renders cells from the template and derives its
+  // `displayedColumns` from these via `toDisplayedColumns`.
+  protected readonly columns = signal(createTable<ReplicationTask>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
@@ -125,11 +147,7 @@ export class ReplicationListComponent implements OnInit {
       title: this.translate.instant('SSH Connection'),
       hidden: true,
       propertyName: 'ssh_credentials',
-      getValue: (task) => {
-        return task.ssh_credentials
-          ? task.ssh_credentials.name
-          : this.translate.instant('N/A');
-      },
+      getValue: (task) => this.getSshConnection(task),
     }),
     textColumn({
       title: this.translate.instant('Source Dataset'),
@@ -164,24 +182,51 @@ export class ReplicationListComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      onRowToggle: (row) => this.onChangeEnabledState(row),
-      requiredRoles: this.requiredRoles,
     }),
     textColumn({
       title: this.translate.instant('Last Snapshot'),
-      getValue: (task) => {
-        return task.state.last_snapshot
-          ? task.state.last_snapshot
-          : this.translate.instant('No snapshots sent yet');
-      },
+      getValue: (task) => this.getLastSnapshot(task),
     }),
   ], {
+    // Still needed: <ix-table-details-row> renders the hidden columns through the
+    // ix cell components, which read `uniqueRowTag`/`ariaLabels` off the column.
     ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
-    uniqueRowTag: (row) => `replication-task-${row.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`,
-  });
+    uniqueRowTag: (row) => this.rowTag(row),
+  }));
 
-  protected get hiddenColumns(): Column<ReplicationTask, ColumnComponent<ReplicationTask>>[] {
-    return this.columns.filter((column) => column?.hidden);
+  protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
+
+  protected readonly hiddenColumns = computed<Column<ReplicationTask, ColumnComponent<ReplicationTask>>[]>(
+    () => this.columns().filter((column) => column?.hidden),
+  );
+
+  protected readonly trackByTaskId = (_index: number, row: ReplicationTask): number => row.id;
+
+  private rowTag(row: ReplicationTask): string {
+    return `replication-task-${row.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`;
+  }
+
+  protected uniqueRowTag(row: ReplicationTask): string {
+    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('task1' → 'task-1')
+    // while the library's kebab does not, so the tag resolves identically through the legacy
+    // [ixTest] directive and the library [tnTestId] directive.
+    return kebabCase(convertStringToId(this.rowTag(row)));
+  }
+
+  protected ariaLabel(row: ReplicationTask): string {
+    return [row.name, this.translate.instant('Replication Task')].join(' ');
+  }
+
+  protected detailActionTestId(row: ReplicationTask, action: string): string {
+    return kebabCase([row.id, action].join('-'));
+  }
+
+  protected getSshConnection(task: ReplicationTask): string {
+    return task.ssh_credentials ? task.ssh_credentials.name : this.translate.instant('N/A');
+  }
+
+  protected getLastSnapshot(task: ReplicationTask): string {
+    return task.state.last_snapshot ? task.state.last_snapshot : this.translate.instant('No snapshots sent yet');
   }
 
   ngOnInit(): void {
@@ -284,10 +329,22 @@ export class ReplicationListComponent implements OnInit {
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
+  protected columnsChange(columns: ReturnType<typeof this.columns>): void {
+    this.columns.set([...columns]);
+  }
+
+  private readonly table = viewChild(TnTableComponent<ReplicationTask>);
+
+  /**
+   * tn-table only expands through its chevron; the ix-table this replaced expanded on a
+   * row click too, so drive the expansion from `(rowClick)` to keep that behaviour.
+   */
+  protected onRowClick(row: ReplicationTask): void {
+    this.table()?.toggleRowExpansion(row);
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<ReplicationTask>(event, this.displayedColumns()));
   }
 
   protected downloadKeys(row: ReplicationTask): void {
@@ -306,7 +363,7 @@ export class ReplicationListComponent implements OnInit {
       .subscribe();
   }
 
-  private onChangeEnabledState(replicationTask: ReplicationTask): void {
+  protected onChangeEnabledState(replicationTask: ReplicationTask, toggle: TableToggleCellComponent): void {
     this.api
       .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -315,6 +372,7 @@ export class ReplicationListComponent implements OnInit {
           this.getReplicationTasks();
         },
         error: (error: unknown) => {
+          toggle.revert();
           this.getReplicationTasks();
           this.errorHandler.showErrorModal(error);
         },

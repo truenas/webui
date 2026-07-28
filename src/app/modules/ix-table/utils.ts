@@ -1,7 +1,7 @@
 import { isSignal, Signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { type TnSortEvent } from '@truenas/ui-components';
-import { get } from 'lodash-es';
+import { get, kebabCase } from 'lodash-es';
 import { Observable, switchMap } from 'rxjs';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
@@ -79,14 +79,22 @@ export function mapTnSortToTableSort<T>(
  * tn-table migration bridges the two models identically.
  *
  * A column's tn-table name is its `propertyName` — matching the `(sortChange)`
- * convention `mapTnSortToTableSort` relies on. Columns without a `propertyName`
- * (e.g. an actions column, which is also never user-toggleable since it has no
- * `title`) fall back to `'actions'`.
+ * convention `mapTnSortToTableSort` relies on, which casts the name back to a
+ * property key. A titled column without a `propertyName` (a computed cell such
+ * as a state pill or a derived "Last Run") falls back to its kebab-cased title:
+ * titles are unique within a table — the picker keys visibility on them — so the
+ * fallback can't collide, and such a column is never sortable. Only an untitled
+ * column (the actions column) falls back to `'actions'`.
  */
 export function toDisplayedColumns<T>(columns: Column<T, ColumnComponent<T>>[]): string[] {
   return columns
     .filter((column) => !column.hidden)
-    .map((column) => (column.propertyName ? String(column.propertyName) : 'actions'));
+    .map((column) => {
+      if (column.propertyName) {
+        return String(column.propertyName);
+      }
+      return column.title ? kebabCase(column.title) : 'actions';
+    });
 }
 
 function fromProvider<T, R>(
