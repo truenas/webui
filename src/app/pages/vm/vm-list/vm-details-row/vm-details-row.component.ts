@@ -79,6 +79,13 @@ export class VirtualMachineDetailsRowComponent {
       });
   }
 
+  protected doReset(): void {
+    this.vmService
+      .doReset(this.vm())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
+  }
+
   protected doPowerOff(): void {
     this.vmService.doPowerOff(this.vm());
   }

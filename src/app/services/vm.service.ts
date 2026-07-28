@@ -20,6 +20,7 @@ import {
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StopVmDialogComponent, StopVmDialogData } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { DownloadService } from 'app/services/download.service';
@@ -33,6 +34,7 @@ export class VmService {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private download = inject(DownloadService);
+  private snackbar = inject(SnackbarService);
   private tnDialog = inject(TnDialog);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
@@ -44,6 +46,7 @@ export class VmService {
     start: 'vm.start',
     restart: 'vm.restart',
     poweroff: 'vm.poweroff',
+    reset: 'vm.reset',
     resume: 'vm.resume',
   } as const;
 
@@ -130,6 +133,36 @@ export class VmService {
 
   doPowerOff(vm: VirtualMachine): void {
     this.doAction(vm, this.wsMethods.poweroff, [vm.id]);
+  }
+
+  /**
+   * Hard-resets the VM, equivalent to pressing the reset button on a physical machine.
+   * The guest OS is not shut down cleanly, so confirmation is required first.
+   */
+  doReset(vm: VirtualMachine): Observable<boolean> {
+    return this.dialogService.confirm({
+      title: this.translate.instant(helptextVmList.reset_dialog.title),
+      message: this.translate.instant(helptextVmList.reset_dialog.message, { vmName: vm.name }),
+      buttonText: this.translate.instant(helptextVmList.reset_dialog.buttonMessage),
+      buttonColor: 'warn',
+    })
+      .pipe(
+        take(1),
+        filter(Boolean),
+        switchMap(() => {
+          return this.api.call(this.wsMethods.reset, [vm.id]).pipe(
+            this.loader.withLoader(),
+            switchMap(() => {
+              this.snackbar.success(this.translate.instant('{vmName} has been reset.', { vmName: vm.name }));
+              return of(true);
+            }),
+            catchError((error: unknown) => {
+              this.errorHandler.showErrorModal(error);
+              return of(false);
+            }),
+          );
+        }),
+      );
   }
 
   downloadLogs(vm: VirtualMachine): Observable<Blob> {

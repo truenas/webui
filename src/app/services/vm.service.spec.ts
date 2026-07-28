@@ -12,6 +12,7 @@ import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { DownloadService } from 'app/services/download.service';
@@ -38,6 +39,7 @@ describe('VmService', () => {
         mockCall('vm.start'),
         mockCall('vm.resume'),
         mockCall('vm.poweroff'),
+        mockCall('vm.reset'),
         mockCall('vm.get_available_memory', 4096),
         mockJob('vm.stop', fakeSuccessfulJob()),
         mockJob('vm.restart', fakeSuccessfulJob()),
@@ -61,6 +63,7 @@ describe('VmService', () => {
       mockProvider(DownloadService, {
         downloadUrl: jest.fn(),
       }),
+      mockProvider(SnackbarService),
       {
         provide: WINDOW,
         useValue: {
@@ -122,6 +125,28 @@ describe('VmService', () => {
     const vm = mockVm(VmState.Running);
     spectator.service.doPowerOff(vm);
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.poweroff', [1]);
+  });
+
+  it('should call websocket to reset vm after confirmation', async () => {
+    const vm = mockVm(VmState.Running);
+    const dialogService = spectator.inject(DialogService);
+    jest.spyOn(dialogService, 'confirm').mockReturnValue(of(true));
+
+    await firstValueFrom(spectator.service.doReset(vm));
+
+    expect(dialogService.confirm).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.reset', [1]);
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('{vmName} has been reset.');
+  });
+
+  it('should not reset vm when confirmation is declined', async () => {
+    const vm = mockVm(VmState.Running);
+    const dialogService = spectator.inject(DialogService);
+    jest.spyOn(dialogService, 'confirm').mockReturnValue(of(false));
+
+    await firstValueFrom(spectator.service.doReset(vm), { defaultValue: false });
+
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('vm.reset', [1]);
   });
 
   it('should call websocket to download vm logs', () => {

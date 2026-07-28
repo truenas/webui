@@ -24,6 +24,17 @@
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
+    [attr.aria-label]="'Reset' | translate"
+    [ixTest]="['reset', vm().id]"
+    (click)="doReset()"
+  >
+    <tn-icon name="restart-alert" library="mdi"></tn-icon>
+    <span>{{ 'Reset' | translate }}</span>
+  </button>
+
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
     [attr.aria-label]="'Power Off' | translate"
     [ixTest]="['power_off', vm().id]"
     (click)="doPowerOff()"

@@ -20,6 +20,14 @@ export const helptextVmList = {
     devicesListHeader: T('The following disks will be deleted:'),
   },
 
+  reset_dialog: {
+    title: T('Reset Virtual Machine'),
+    message: T('Resetting {vmName} is the equivalent of pressing the reset button on a physical machine. The guest OS\
+ will not be shut down cleanly, which may result in data loss or filesystem corruption. Are you sure you want to\
+ continue?'),
+    buttonMessage: T('Reset'),
+  },
+
   stop_dialog: {
     forceTooltip: T('Force the VM to stop if it has not already\
  stopped within the specified shutdown timeout. Without this option selected, the VM will\

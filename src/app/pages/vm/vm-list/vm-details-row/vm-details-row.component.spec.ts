@@ -59,6 +59,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
         doStop: jest.fn(() => of()),
         doRestart: jest.fn(() => of()),
         doPowerOff: jest.fn(() => of()),
+        doReset: jest.fn(() => of(true)),
         openDisplay: jest.fn(() => of()),
       }),
       mockProvider(SlideIn, {
@@ -170,6 +171,16 @@ describe('VirtualMachineDetailsRowComponent', () => {
     expect(spectator.inject(VmService).doPowerOff).toHaveBeenCalledWith(virtualMachine);
   });
 
+  it('should call service to reset the VM', async () => {
+    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: /Reset/ }));
+    const resetIcon = await resetButton.getHarness(TnIconHarness.with({ name: 'restart-alert' }));
+    expect(await resetIcon.getName()).toBe('restart-alert');
+
+    await resetButton.click();
+
+    expect(spectator.inject(VmService).doReset).toHaveBeenCalledWith(virtualMachine);
+  });
+
   it('should call service to open display', async () => {
     const openDisplayButton = await loader.getHarness(MatButtonHarness.with({ text: /Display/ }));
     await openDisplayButton.click();
@@ -202,12 +213,14 @@ describe('VirtualMachineDetailsRowComponent', () => {
       expect(spectator.inject(VmService).doStartResume).toHaveBeenCalledWith(suspendedVirtualMachine);
     });
 
-    it('should not show Stop or Restart buttons for suspended VM', async () => {
+    it('should not show Stop, Restart or Reset buttons for suspended VM', async () => {
       const stopButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: /Stop/ }));
       const restartButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: /Restart/ }));
+      const resetButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: /Reset/ }));
 
       expect(stopButtons).toHaveLength(0);
       expect(restartButtons).toHaveLength(0);
+      expect(resetButtons).toHaveLength(0);
     });
 
     it('should not show Display button for suspended VM', async () => {
