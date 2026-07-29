@@ -39,6 +39,15 @@ export abstract class IxFormHostForm<R = boolean> implements SidePanelHostForm<R
     return this.ixForm()?.isLoading() ?? false;
   }
 
+  /**
+   * Whether a save is actually in flight, as opposed to the initial data load that also trips
+   * {@link isBusy}. The host reads this (as `HostedSidePanelForm.isSubmitting`) to flip the panel's
+   * Save to "Saving…", so a slow config load never mislabels the button.
+   */
+  isSubmitting(): boolean {
+    return this.ixForm()?.isSubmitting() ?? false;
+  }
+
   /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
   hasUnsavedChanges(): boolean {
     return this.ixForm()?.hasUnsavedChanges() ?? false;

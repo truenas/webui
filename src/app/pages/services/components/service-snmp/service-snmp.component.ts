@@ -8,7 +8,6 @@ import {
 } from '@truenas/ui-components';
 import { Role } from 'app/enums/role.enum';
 import { helptextServiceSnmp } from 'app/helptext/services/components/service-snmp';
-import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   IxFormComponent, SubmitResult,
@@ -18,6 +17,14 @@ import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-vali
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+/**
+ * The form's own value shape, which is NOT `SnmpConfigUpdate`: `loglevel` is nullable here and the
+ * v3 controls are blanked (and `v3_privproto` nulled) for the API in
+ * {@link ServiceSnmpComponent.handleSubmit}. `<ix-form>` infers its generic from the snapshot, so
+ * typing it against the API shape would make `FormSubmitEvent` lie.
+ */
+type SnmpFormValue = ReturnType<ServiceSnmpComponent['form']['getRawValue']>;
 
 @Component({
   selector: 'ix-service-snmp',
@@ -47,7 +54,7 @@ export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
   protected readonly InputType = InputType;
 
   protected readonly dataLoading = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<SnmpConfigUpdate> | null>(null);
+  protected readonly initialFormSnapshot = signal<Partial<SnmpFormValue> | null>(null);
 
   form = this.fb.group({
     location: [''],
@@ -114,7 +121,6 @@ export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
     return {
       request$: this.api.call('snmp.update', [values]),
       successMessage: this.translate.instant('Service configuration saved'),
-      closeWith: () => true,
     };
   };
 
@@ -122,9 +128,9 @@ export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
     this.dataLoading.set(true);
     this.api.call('snmp.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (config) => {
-        this.dataLoading.set(false);
         this.form.patchValue(config);
         this.initialFormSnapshot.set(this.form.getRawValue());
+        this.dataLoading.set(false);
       },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);

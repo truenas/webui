@@ -111,14 +111,21 @@
     </tn-form-field>
   </tn-form-section>
 
-  <div class="add-spn-container">
-    @if (isAddSpnVisible && isAddSpnDisabled()) {
-      <ix-tooltip
-        [header]="'Add SPN' | translate"
-        [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SMP' | translate"
-      ></ix-tooltip>
-    }
-    @if (isAddSpnVisible) {
+  <!--
+    Deliberately in the form body rather than a `footerActions` entry: the action is inseparable
+    from the help icon that explains WHY it is disabled, and a footer action has no tooltip slot
+    (a tooltip on the button itself would not fire — tn-button renders a native `disabled`, which
+    swallows pointer events). Keeping the pair together beats a disabled footer button with no
+    explanation.
+  -->
+  @if (isAddSpnVisible) {
+    <div class="add-spn-container">
+      @if (isAddSpnDisabled()) {
+        <ix-tooltip
+          [header]="'Add SPN' | translate"
+          [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SPN' | translate"
+        ></ix-tooltip>
+      }
       <ng-container *ixRequiresRoles="requiredRoles">
         <tn-button
           color="primary"
@@ -128,6 +135,6 @@
           (onClick)="addSpn()"
         ></tn-button>
       </ng-container>
-    }
-  </div>
+    </div>
+  }
 </ix-form>

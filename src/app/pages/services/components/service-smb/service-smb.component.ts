@@ -350,7 +350,6 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
     return {
       request$: this.api.call('smb.update', [values]),
       successMessage: this.translate.instant('Service configuration saved'),
-      closeWith: () => true,
     };
   };
 }

@@ -12,6 +12,7 @@ import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -120,6 +121,9 @@ describe('ServiceWebshareComponent', () => {
     const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
     spectator.component.submit();
 
+    // Assert the failure actually reached the error handler — `closed` not firing alone would
+    // also hold if the submit never ran at all.
+    expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalled();
     expect(closeSpy).not.toHaveBeenCalled();
   });
 

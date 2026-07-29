@@ -13,7 +13,6 @@ import { Role } from 'app/enums/role.enum';
 import { invertUmask } from 'app/helpers/mode.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceFtp } from 'app/helptext/services/components/service-ftp';
-import { FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
@@ -31,6 +30,15 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+
+/**
+ * The form's own value shape, which is NOT `FtpConfigUpdate`: the numeric controls are nullable,
+ * `filemask`/`dirmask` hold pre-{@link invertUmask} values and the bandwidth controls are in bytes
+ * where the API takes KB (all reshaped in {@link ServiceFtpComponent.handleSubmit}). `<ix-form>`
+ * infers its generic from the snapshot, so typing it against the API shape would make
+ * `FormSubmitEvent` lie.
+ */
+type FtpFormValue = ReturnType<ServiceFtpComponent['form']['getRawValue']>;
 
 @Component({
   selector: 'ix-service-ftp',
@@ -66,8 +74,8 @@ export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
   protected readonly InputType = InputType;
 
   protected readonly dataLoading = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<FtpConfigUpdate> | null>(null);
-  protected readonly isAdvancedMode = signal<boolean>(false);
+  protected readonly initialFormSnapshot = signal<Partial<FtpFormValue> | null>(null);
+  protected readonly isAdvancedMode = signal(false);
 
   form = this.formBuilder.group({
     port: new FormControl(null as number | null, [portRangeValidator(), Validators.required]),
@@ -158,7 +166,6 @@ export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
     return {
       request$: this.api.call('ftp.update', [values]),
       successMessage: this.translate.instant('Service configuration saved'),
-      closeWith: () => true,
     };
   };
 

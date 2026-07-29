@@ -12,7 +12,6 @@ import { Role } from 'app/enums/role.enum';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceSsh } from 'app/helptext/services/components/service-ssh';
-import { SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   IxFormComponent, SubmitResult,
@@ -22,6 +21,14 @@ import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/for
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+/**
+ * The form's own value shape, which is NOT `SshConfigUpdate`: `tcpport` and the two SFTP log
+ * controls are nullable here, and `sftp_log_level` is coerced to `''` for the API in
+ * {@link ServiceSshComponent.handleSubmit}. `<ix-form>` infers its generic from the snapshot, so
+ * typing it against the API shape would make `FormSubmitEvent` lie.
+ */
+type SshFormValue = ReturnType<ServiceSshComponent['form']['getRawValue']>;
 
 @Component({
   selector: 'ix-service-ssh',
@@ -52,8 +59,8 @@ export class ServiceSshComponent extends IxFormHostForm implements OnInit {
   protected readonly InputType = InputType;
 
   protected readonly dataLoading = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<SshConfigUpdate> | null>(null);
-  protected readonly isBasicMode = signal<boolean>(true);
+  protected readonly initialFormSnapshot = signal<Partial<SshFormValue> | null>(null);
+  protected readonly isBasicMode = signal(true);
 
   form = this.fb.group({
     tcpport: [null as number | null],
@@ -130,7 +137,6 @@ export class ServiceSshComponent extends IxFormHostForm implements OnInit {
     return {
       request$: this.api.call('ssh.update', [values]),
       successMessage: this.translate.instant('Service configuration saved'),
-      closeWith: () => true,
     };
   };
 }

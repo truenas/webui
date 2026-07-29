@@ -163,7 +163,6 @@ export class ServiceNfsComponent extends IxFormHostForm implements OnInit {
     return {
       request$: this.api.call('nfs.update', [params]),
       successMessage: this.translate.instant('Service configuration saved'),
-      closeWith: () => true,
     };
   };
 

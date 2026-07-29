@@ -194,7 +194,6 @@ export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
     return {
       request$: this.api.call('ups.update', [params as UpsConfigUpdate]),
       successMessage: this.translate.instant('Service configuration saved'),
-      closeWith: () => true,
     };
   };
 }

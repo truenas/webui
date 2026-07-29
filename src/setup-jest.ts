@@ -136,6 +136,13 @@ const silenceJsDomCssParseError: (message: string, methodName: string) => boolea
   if (methodName === 'warn' && message.startsWith('[ix-form] submitHandler close payload resolved to undefined')) {
     return true;
   }
+  // <ix-form> emits this dev-mode notice for any form with a nested FormGroup/FormArray,
+  // advising against `changedValues`. Forms that intentionally build their payload from
+  // `getRawValue()` (e.g. service-smb's `bindip` array) are already doing the right thing,
+  // so the notice is pure noise in tests. Production dev builds still log it.
+  if (methodName === 'warn' && message.startsWith('[ix-form] changedValues diffs top-level keys shallowly')) {
+    return true;
+  }
   return false;
 };
 failOnConsole({ silenceMessage: silenceJsDomCssParseError });
