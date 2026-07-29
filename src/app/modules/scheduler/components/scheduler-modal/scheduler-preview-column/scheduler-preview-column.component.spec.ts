@@ -69,6 +69,46 @@ describe('SchedulerPreviewColumnComponent', () => {
     expect(highlightedDays).toEqual(['24', '25', '28']);
   });
 
+  // Near a month boundary the browser and the configured system time zone disagree about
+  // which month "now" is in — Kiev has already rolled over to March here while New York is
+  // still in February. The calendar shows the browser's month, so that is where the marks
+  // have to land; counting from the system time zone would put them in a month off screen.
+  it('marks days in the month on screen when the system timezone is in another month', async () => {
+    jest.setSystemTime(new Date('2022-03-01 00:30:00'));
+    spectator = createComponent({
+      props: {
+        crontab: '0 2 24-25 * mon',
+        timezone: 'America/New_York',
+      },
+    });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+    const calendar = await loader.getHarness(TnCalendarHarness);
+
+    expect(await calendar.getCurrentViewLabel()).toBe('MAR 2022');
+    expect(await getHighlightedCalendarDays()).toEqual(['7', '14', '21', '24', '25', '28']);
+  });
+
+  // The mirror of the case above, with the clocks the other way round: Kiritimati has
+  // already rolled over to March while the browser is still on the last evening of
+  // February. February is the month on screen, so the preview counts from now — rewinding
+  // to the 1st instead would mark every day of a month that is all but over.
+  it('marks only days still to come when the system timezone is a month ahead', async () => {
+    jest.setSystemTime(new Date('2022-02-28 23:00:00'));
+    spectator = createComponent({
+      props: {
+        crontab: '30 23 * * *',
+        timezone: 'Pacific/Kiritimati',
+      },
+    });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+    const calendar = await loader.getHarness(TnCalendarHarness);
+
+    expect(await calendar.getCurrentViewLabel()).toBe('FEB 2022');
+    expect(await getHighlightedCalendarDays()).toEqual(['28']);
+  });
+
   it('shows current system timezone', () => {
     const timezoneElement = spectator.query('.timezone-message');
 
