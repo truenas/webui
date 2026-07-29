@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -17,7 +17,6 @@ import {
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -37,7 +36,6 @@ const mockJobSuccessResponse = [
 describe('DiskBulkEditComponent', () => {
   let spectator: Spectator<DiskBulkEditComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let api: ApiService;
 
   const dataDisk1 = {
@@ -59,6 +57,16 @@ describe('DiskBulkEditComponent', () => {
     getData: jest.fn(() => [dataDisk1, dataDisk2]),
   };
 
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  /** Fills both selects with the values every save test submits. */
+  const fillForm = async (): Promise<void> => {
+    await (await getSelect('hddstandby')).selectOption('10');
+    await (await getSelect('advpowermgmt')).selectOption('Level 64 - Intermediate power usage with Standby');
+  };
+
   const createComponent = createComponentFactory({
     component: DiskBulkEditComponent,
     imports: [ReactiveFormsModule],
@@ -76,42 +84,27 @@ describe('DiskBulkEditComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     api = spectator.inject(ApiService);
+    await spectator.fixture.whenStable();
   });
 
   it('sets disks settings when form is opened', async () => {
-    const formValue = await form.getValues();
-    const diskIds = spectator.component.diskIds;
-    const diskNames = spectator.component.form.controls.disknames.value;
+    // The two disks disagree on both settings, so each select opens unset.
+    expect(await (await getSelect('hddstandby')).getDisplayText()).toBe('Select an option');
+    expect(await (await getSelect('advpowermgmt')).getDisplayText()).toBe('Select an option');
 
-    expect(formValue).toEqual({
-      'HDD Standby': '',
-      'Advanced Power Management': '',
-    });
+    const diskNames = spectator.queryAll('.disk-name').map((el) => el.textContent.trim());
     expect(diskNames).toEqual(['sda', 'sdc']);
-    expect(diskIds).toEqual([
-      '{serial}VB76b9dd9d-4e5d8cf2',
-      '{serial}VB5a315293-ea077d3d',
-    ]);
   });
 
   it('updates selected disks when form is submitted', async () => {
-    spectator.component.diskIds = [
-      '{serial}VB76b9dd9d-4e5d8cf2',
-      '{serial}VBd494d425-607efd80',
-    ];
+    await fillForm();
 
-    const changeValue = {
-      'HDD Standby': '10',
-      'Advanced Power Management':
-        'Level 64 - Intermediate power usage with Standby',
-    };
-    await form.fillForm(changeValue);
     const saveButton = await loader.getHarness(
       TnButtonHarness.with({ label: 'Save' }),
     );
     await saveButton.click();
+
     const req: CoreBulkQuery = [
       'disk.update',
       [
@@ -123,7 +116,7 @@ describe('DiskBulkEditComponent', () => {
           },
         ],
         [
-          '{serial}VBd494d425-607efd80',
+          '{serial}VB5a315293-ea077d3d',
           {
             advpowermgmt: '64',
             hddstandby: '10',
@@ -156,17 +149,8 @@ describe('DiskBulkEditComponent', () => {
       return of(fakeSuccessfulJob(mockJobSuccessResponse));
     });
 
-    spectator.component.diskIds = [
-      '{serial}VB76b9dd9d-4e5d8cf2',
-      '{serial}VBd494d425-607efd80',
-    ];
+    await fillForm();
 
-    const changeValue = {
-      'HDD Standby': '10',
-      'Advanced Power Management':
-        'Level 64 - Intermediate power usage with Standby',
-    };
-    await form.fillForm(changeValue);
     const saveButton = await loader.getHarness(
       TnButtonHarness.with({ label: 'Save' }),
     );

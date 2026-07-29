@@ -1,20 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import {
-  byText, createComponentFactory, mockProvider, Spectator,
-} from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -24,7 +21,6 @@ import { DiskFormComponent } from './disk-form.component';
 describe('DiskFormComponent', () => {
   let spectator: Spectator<DiskFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let store$: MockStore;
 
   const dataDisk = {
@@ -43,6 +39,16 @@ describe('DiskFormComponent', () => {
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => dataDisk),
   };
+
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   const createComponent = createComponentFactory({
     component: DiskFormComponent,
@@ -69,8 +75,8 @@ describe('DiskFormComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     store$ = spectator.inject(MockStore);
+    await spectator.fixture.whenStable();
   });
 
   describe('community edition', () => {
@@ -79,28 +85,28 @@ describe('DiskFormComponent', () => {
       store$.refreshState();
     });
 
-    it('does not show SED section', () => {
-      expect(spectator.query(byText('SED Password'))).toBeNull();
-      expect(spectator.query(byText('Clear SED Password'))).toBeNull();
+    it('does not show SED section', async () => {
+      expect(await loader.getHarnessOrNull(
+        TnInputHarness.with({ selector: '[formControlName="passwd"]' }),
+      )).toBeNull();
+      expect(await loader.getHarnessOrNull(
+        TnCheckboxHarness.with({ selector: '[formControlName="clear_pw"]' }),
+      )).toBeNull();
     });
 
     it('sets disk settings when form is opened', async () => {
-      const formValue = await form.getValues();
-      expect(formValue).toEqual({
-        'Advanced Power Management': 'Level 127 - Maximum power usage with Standby',
-        Description: 'Some disk description',
-        'HDD Standby': '10',
-        Name: 'sdc',
-        Serial: 'VB9fbb6dfe-9cf26570',
-      });
+      expect(await (await getInput('name')).getValue()).toBe('sdc');
+      expect(await (await getInput('serial')).getValue()).toBe('VB9fbb6dfe-9cf26570');
+      expect(await (await getInput('description')).getValue()).toBe('Some disk description');
+      expect(await (await getSelect('hddstandby')).getDisplayText()).toBe('10');
+      expect(await (await getSelect('advpowermgmt')).getDisplayText())
+        .toBe('Level 127 - Maximum power usage with Standby');
     });
 
     it('saves disk settings when form is saved', async () => {
-      await form.fillForm({
-        'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
-        Description: 'New disk description',
-        'HDD Standby': '10',
-      });
+      await (await getInput('description')).setValue('New disk description');
+      await (await getSelect('advpowermgmt')).selectOption('Level 64 - Intermediate power usage with Standby');
+
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 
@@ -130,48 +136,40 @@ describe('DiskFormComponent', () => {
       // to ensure that `ngOnInit` picks up those changes.
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
+      await spectator.fixture.whenStable();
     });
 
     it('disables and clears \'SED Password\' when \'Clear SED Password\' is checked', async () => {
-      await form.fillForm({
-        'SED Password': 'sedPassword',
-      });
-
-      const clearPassword = await loader.getHarness(IxCheckboxHarness.with({ label: 'Clear SED Password' }));
-      const sedPassword = await loader.getHarness(IxInputHarness.with({ label: 'SED Password' }));
+      const sedPassword = await getInput('passwd');
+      await sedPassword.setValue('sedPassword');
 
       // make sure the password is there
       expect(await sedPassword.getValue()).toBe('sedPassword');
 
       // clear it
-      await clearPassword.setValue(true);
+      await (await getCheckbox('clear_pw')).check();
 
       // make sure it *isn't* there anymore
-      expect(await sedPassword.isDisabled()).toBeTruthy();
-      expect(spectator.component.form.controls.passwd.value).toBe('');
+      expect(await sedPassword.isDisabled()).toBe(true);
+      expect(await sedPassword.getValue()).toBe('');
     });
 
     it('sets disk settings when form is opened', async () => {
-      const formValue = await form.getValues();
-      expect(formValue).toEqual({
-        'Advanced Power Management': 'Level 127 - Maximum power usage with Standby',
-        'Clear SED Password': false,
-        Description: 'Some disk description',
-        'HDD Standby': '10',
-        Name: 'sdc',
-        'SED Password': '',
-        Serial: 'VB9fbb6dfe-9cf26570',
-      });
+      expect(await (await getInput('name')).getValue()).toBe('sdc');
+      expect(await (await getInput('serial')).getValue()).toBe('VB9fbb6dfe-9cf26570');
+      expect(await (await getInput('description')).getValue()).toBe('Some disk description');
+      expect(await (await getInput('passwd')).getValue()).toBe('');
+      expect(await (await getCheckbox('clear_pw')).isChecked()).toBe(false);
+      expect(await (await getSelect('hddstandby')).getDisplayText()).toBe('10');
+      expect(await (await getSelect('advpowermgmt')).getDisplayText())
+        .toBe('Level 127 - Maximum power usage with Standby');
     });
 
     it('saves disk settings when form is saved', async () => {
-      await form.fillForm({
-        'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
-        Description: 'New disk description',
-        'HDD Standby': '10',
-        'SED Password': '123456',
-      });
+      await (await getInput('description')).setValue('New disk description');
+      await (await getInput('passwd')).setValue('123456');
+      await (await getSelect('advpowermgmt')).selectOption('Level 64 - Intermediate power usage with Standby');
+
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await saveButton.click();
 

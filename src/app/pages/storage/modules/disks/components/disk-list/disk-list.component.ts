@@ -36,7 +36,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -80,7 +80,7 @@ export class DiskListComponent implements OnInit {
   private router = inject(Router);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
   private cdr = inject(ChangeDetectorRef);
   private licenseService = inject(LicenseService);
@@ -310,8 +310,14 @@ export class DiskListComponent implements OnInit {
   protected edit(disks: DiskUi[]): void {
     const preparedDisks = this.prepareDisks(disks);
     const result$ = preparedDisks.length > 1
-      ? this.slideIn.open(DiskBulkEditComponent, { data: preparedDisks })
-      : this.slideIn.open(DiskFormComponent, { data: preparedDisks[0] });
+      ? this.formPanel.open<DiskFormResponse>(DiskBulkEditComponent, {
+          title: this.translate.instant('Bulk Edit Disks'),
+          inputs: { disksToEdit: preparedDisks },
+        })
+      : this.formPanel.open<DiskFormResponse>(DiskFormComponent, {
+          title: this.translate.instant('Edit Disk'),
+          inputs: { diskToEdit: preparedDisks[0] },
+        });
 
     result$.onSuccess((response) => {
       // this gets the updated disk data from the disk edit form (both single and bulk)

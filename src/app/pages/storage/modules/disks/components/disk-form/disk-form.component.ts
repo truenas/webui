@@ -1,10 +1,20 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, computed, input, OnInit, signal, inject,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDividerComponent } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import {
+  InputType,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnDividerComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
@@ -12,15 +22,11 @@ import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
+import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -34,31 +40,38 @@ export type DiskFormResponse = (DiskUpdate & { identifier: string })[];
   imports: [
     ModalHeaderComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     TnDividerComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     TranslateModule,
-    TranslateOptionsPipe,
   ],
 })
-export class DiskFormComponent implements OnInit {
+export class DiskFormComponent extends SidePanelForm<DiskFormResponse> implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private snackbarService = inject(SnackbarService);
-  slideInRef = inject<SlideInRef<Disk, DiskFormResponse>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
+  protected readonly InputType = InputType;
 
-  form = this.fb.group({
+  /**
+   * Disk to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
+   * carry data). Unused in the legacy SlideIn host (which supplies it via
+   * `slideInRef.getData()`).
+   */
+  readonly diskToEdit = input<Disk | undefined>(undefined);
+
+  protected readonly form = this.fb.group({
     name: [''],
     serial: [''],
     description: [''],
@@ -68,25 +81,31 @@ export class DiskFormComponent implements OnInit {
     clear_pw: [false],
   });
 
-  readonly helptext = helptextDisks;
-  readonly hddstandbyOptions$ = of(helptextDisks.standbyOptions);
-  readonly advpowermgmtOptions$ = of(helptextDisks.advancedPowerManagementOptions);
-  readonly isLoading = signal<boolean>(false);
-  readonly existingDisk = signal<Disk | null>(null);
+  protected readonly helptext = helptextDisks;
+  protected readonly hddstandbyOptions = translateOptions(this.translate, helptextDisks.standbyOptions);
+  protected readonly advpowermgmtOptions = translateOptions(
+    this.translate,
+    helptextDisks.advancedPowerManagementOptions,
+  );
 
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  readonly showSedSection = computed(() => {
+  readonly isLoading = signal<boolean>(false);
+  private readonly existingDisk = signal<Disk | null>(null);
+
+  private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly showSedSection = computed(() => {
     return this.isEnterprise() || (this.existingDisk()?.passwd && this.existingDisk()?.passwd !== '');
   });
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.setFormDisk(this.slideInRef.getData());
-  }
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   ngOnInit(): void {
+    const disk = this.slideInRef
+      ? this.slideInRef.getData() as Disk
+      : this.diskToEdit();
+    if (disk) {
+      this.setFormDisk(disk);
+    }
+
     if (this.showSedSection()) {
       this.clearPasswordField();
     }
@@ -143,12 +162,10 @@ export class DiskFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.slideInRef.close({
-            response: [{
-              identifier: diskId,
-              ...valuesDiskUpdate,
-            }],
-          });
+          this.closeWith([{
+            identifier: diskId,
+            ...valuesDiskUpdate,
+          }]);
           this.snackbarService.success(this.translate.instant('Disk settings successfully saved.'));
         },
         error: (error: unknown) => {

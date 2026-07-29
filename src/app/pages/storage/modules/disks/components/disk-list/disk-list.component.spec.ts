@@ -21,7 +21,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -120,7 +120,7 @@ describe('DiskListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(Router),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -200,7 +200,10 @@ describe('DiskListComponent', () => {
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { data: fakeDisk });
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(DiskFormComponent, {
+      title: 'Edit Disk',
+      inputs: { diskToEdit: fakeDisk },
+    });
   });
 
   it('shows wipe disk dialog when Wipe button is pressed', async () => {
@@ -224,17 +227,20 @@ describe('DiskListComponent', () => {
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit Disks' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       DiskBulkEditComponent,
       {
-        data: [
-          expect.objectContaining({
-            name: 'sda',
-          }),
-          expect.objectContaining({
-            name: 'sdb',
-          }),
-        ],
+        title: 'Bulk Edit Disks',
+        inputs: {
+          disksToEdit: [
+            expect.objectContaining({
+              name: 'sda',
+            }),
+            expect.objectContaining({
+              name: 'sdb',
+            }),
+          ],
+        },
       },
     );
   });
@@ -263,19 +269,22 @@ describe('DiskListComponent', () => {
 
   it('updates disks when edit form is saved', async () => {
     const api = spectator.inject(ApiService);
-    const slideIn = spectator.inject(SlideIn);
+    const formPanel = spectator.inject(FormSidePanelService);
     const fakeDisk = fakeDisks[0];
 
     const mockUpd: DiskFormResponse = [fakeDisk];
 
-    jest.spyOn(slideIn, 'open').mockReturnValue(SlideInResult.success(mockUpd));
+    jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.success(mockUpd));
 
     await table.expandRow(0);
 
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
-    expect(slideIn.open).toHaveBeenCalledWith(DiskFormComponent, { data: fakeDisk });
+    expect(formPanel.open).toHaveBeenCalledWith(DiskFormComponent, {
+      title: 'Edit Disk',
+      inputs: { diskToEdit: fakeDisk },
+    });
 
     spectator.detectChanges();
     await spectator.fixture.whenStable();
@@ -312,7 +321,7 @@ describe('DiskListComponent - without SED license', () => {
     providers: [
       mockAuth(),
       mockProvider(Router),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog),

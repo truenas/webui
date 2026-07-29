@@ -1,9 +1,16 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import {
+  TnButtonComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnIconComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
@@ -13,13 +20,11 @@ import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
+import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 
@@ -31,49 +36,58 @@ import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/dis
   imports: [
     ModalHeaderComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
     TnIconComponent,
-    IxSelectComponent,
+    TnSelectComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     TranslateModule,
-    TranslateOptionsPipe,
   ],
 })
-export class DiskBulkEditComponent {
+export class DiskBulkEditComponent extends SidePanelForm<DiskFormResponse> implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private snackbarService = inject(SnackbarService);
   private errorHandler = inject(FormErrorHandlerService);
-  slideInRef = inject<SlideInRef<Disk[], DiskFormResponse>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
 
-  diskIds: string[] = [];
-  isLoading = false;
-  form = this.fb.group({
+  /**
+   * Disks to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
+   * carry data). Unused in the legacy SlideIn host (which supplies them via
+   * `slideInRef.getData()`).
+   */
+  readonly disksToEdit = input<Disk[]>([]);
+
+  private diskIds: string[] = [];
+  readonly isLoading = signal(false);
+  protected readonly form = this.fb.group({
     disknames: [[] as string[]],
     hddstandby: [null as DiskStandby | null],
     advpowermgmt: [null as DiskPowerLevel | null],
   });
 
-  readonly helptext = helptextDisks;
-  readonly helptextBulkEdit = helptextDisks.bulkEdit;
+  protected readonly helptext = helptextDisks;
+  protected readonly helptextBulkEdit = helptextDisks.bulkEdit;
   protected readonly disksTooltip = this.translate.instant(helptextDisks.bulkEdit.disks.tooltip);
-  readonly hddstandbyOptions$ = of(helptextDisks.standbyOptions);
-  readonly advpowermgmtOptions$ = of(
+  protected readonly hddstandbyOptions = translateOptions(this.translate, helptextDisks.standbyOptions);
+  protected readonly advpowermgmtOptions = translateOptions(
+    this.translate,
     helptextDisks.advancedPowerManagementOptions,
   );
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.setFormDiskBulk(this.slideInRef.getData());
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
+
+  ngOnInit(): void {
+    const disks = this.slideInRef
+      ? this.slideInRef.getData() as Disk[]
+      : this.disksToEdit();
+    this.setFormDiskBulk(disks ?? []);
   }
 
   private setFormDiskBulk(selectedDisks: Disk[]): void {
@@ -85,6 +99,7 @@ export class DiskBulkEditComponent {
     const hddStandby: DiskStandby[] = [];
     const advPowerMgt: DiskPowerLevel[] = [];
 
+    this.diskIds = [];
     selectedDisks.forEach((disk) => {
       this.diskIds.push(disk.identifier);
       setForm.disknames.push(disk.name);
@@ -121,13 +136,13 @@ export class DiskBulkEditComponent {
     return this.diskIds.map((id) => [id, data]);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const req = this.prepareDataSubmit();
     const successText = this.translate.instant(
       'Successfully saved {n, plural, one {Disk} other {Disks}} settings.',
       { n: req.length },
     );
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.api
       .job('core.bulk', ['disk.update', req])
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -137,7 +152,7 @@ export class DiskBulkEditComponent {
             return;
           }
 
-          this.isLoading = false;
+          this.isLoading.set(false);
           const isSuccessful = job.result.every((result) => {
             if (result.error !== null) {
               this.dialogService.error({
@@ -151,20 +166,18 @@ export class DiskBulkEditComponent {
           });
 
           if (isSuccessful) {
-            this.slideInRef.close({
-              response: req.map((diskUpdate) => ({
-                identifier: diskUpdate[0],
-                ...diskUpdate[1],
-              })),
-            });
+            this.closeWith(req.map((diskUpdate) => ({
+              identifier: diskUpdate[0],
+              ...diskUpdate[1],
+            })));
             this.snackbarService.success(successText);
           } else {
-            this.slideInRef.close({ response: [] });
+            this.closeWith([]);
           }
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.slideInRef.close({ response: [] });
+          this.isLoading.set(false);
+          this.closeWith([]);
           this.errorHandler.handleValidationErrors(error, this.form);
         },
       });
