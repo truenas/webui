@@ -12,7 +12,7 @@
       <ix-tn-radio-group
         name="encryptionType"
         formControlName="encryptionType"
-        [options]="(encryptionTypeOptions$ | async) ?? []"
+        [options]="encryptionTypeOptions()"
         [testId]="['radio-button', 'encryption-type']"
       ></ix-tn-radio-group>
     </tn-form-field>

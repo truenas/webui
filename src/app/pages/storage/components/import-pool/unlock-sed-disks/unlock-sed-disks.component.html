@@ -27,7 +27,8 @@
       <p class="section-hint">{{ 'Override the global password for specific disks that use a different password.' | translate }}</p>
 
       <div class="exceptions-list" formArrayName="exceptions" role="list" [attr.aria-label]="'Disk password exceptions' | translate">
-        @for (exception of form.controls.exceptions.controls; track $index) {
+        <!-- The row's controls are reached through `formGroupName`, so the loop only needs `$index`. -->
+        @for (_ of form.controls.exceptions.controls; track $index) {
           <div class="exception-item" role="listitem" [formGroupName]="$index">
             <!--
               Ids and labels carry the 1-based row position: without it the repeated rows resolve

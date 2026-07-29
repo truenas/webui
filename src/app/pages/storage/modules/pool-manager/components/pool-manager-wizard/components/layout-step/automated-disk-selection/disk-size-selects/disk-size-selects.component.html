@@ -11,14 +11,15 @@
   </tn-form-field>
 
   @if (canSelectLargerDisk()) {
-    <tn-form-field
-      [tooltip]="'If checked, disks of the selected size or larger will be used. If unchecked, only disks of the selected size will be used.' | translate"
-    >
+    <tn-form-field [tooltip]="treatDiskSizeAsMinimumHint | translate">
+      <!-- See `treatDiskSizeAsMinimumAriaLabel` for why `label` repeats the field tooltip. -->
       <tn-checkbox
         formControlName="treatDiskSizeAsMinimum"
         [testId]="['treat-disk-size-as-minimum', type()]"
-        [label]="'Treat Disk Size as Minimum' | translate"
-      ></tn-checkbox>
+        [label]="treatDiskSizeAsMinimumAriaLabel()"
+      >
+        <span tnCheckboxLabel>{{ treatDiskSizeAsMinimumLabel | translate }}</span>
+      </tn-checkbox>
     </tn-form-field>
   }
 </ng-container>

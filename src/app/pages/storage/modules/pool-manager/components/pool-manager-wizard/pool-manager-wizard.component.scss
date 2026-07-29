@@ -19,7 +19,10 @@
 //
 // Scoped to `tn-stepper`, NOT `tn-step`: the stepper renders each step's body through an
 // `ngTemplateOutlet` in its own template, so the step content is never a DOM descendant of
-// the `<tn-step>` element that declared it.
+// the `<tn-step>` element that declared it. A per-step scoping class would not narrow this
+// either — the fields that need the rhythm are spread across the step components *and* their
+// children (`ix-disk-size-dropdowns`, `ix-pool-warnings`), so the reach is deliberately
+// "every field rendered anywhere inside this wizard's stepper", library components included.
 :host ::ng-deep tn-stepper {
   // No `:last-child` reset here — `ix-disk-size-dropdowns` wraps its own field, so the
   // Disk Size field is the last child of *that* element and would lose the gap before

@@ -27,10 +27,15 @@
           `label` is what tn-checkbox emits as the input's `aria-label`, which overrides the
           projected content as the accessible name — without it every row in this loop would be
           announced as the default "Checkbox", with no way to tell the pools apart.
+
+          The pool and disk names are data, but the punctuation between them is not: it goes
+          through a translatable pattern rather than a hard-coded `+ ': ' +`, so the separator and
+          the clause order stay in the translator's hands. The `, ` joining the disk names stays
+          hard-coded on purpose — it mirrors the visible list rendered right below.
         -->
         <tn-checkbox
           [testId]="[item.key, 'exported_pool']"
-          [label]="item.key + ': ' + item.value.join(', ')"
+          [label]="'{pool}: {disks}' | translate: { pool: item.key, disks: item.value.join(', ') }"
           (change)="checkboxChanged(item.key, $event)"
         >
           <div tnCheckboxLabel class="label">

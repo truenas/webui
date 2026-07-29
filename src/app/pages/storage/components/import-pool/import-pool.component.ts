@@ -80,6 +80,12 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
     guid: ['' as string, Validators.required],
   });
 
+  /**
+   * Required by {@link SidePanelForm}, but inert here: `PoolsDashboardComponent` opens this form
+   * `footerless`, so the panel renders no Save action to read it and the template carries its own
+   * submit button. Wire the footer to it before deleting the in-template one, not the other way
+   * round — the multi-step flow (locked SED -> unlock -> import) has steps with no submit at all.
+   */
   readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   protected readonly poolLabel = helptextImport.poolLabel;
