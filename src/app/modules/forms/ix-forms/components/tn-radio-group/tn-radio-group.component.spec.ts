@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { TnFormFieldComponent, TnRadioHarness } from '@truenas/ui-components';
 import { Option } from 'app/interfaces/option.interface';
@@ -33,6 +33,8 @@ class HostComponent {
     { label: 'Number', value: 1 },
     { label: 'String', value: '1' },
   ];
+
+  readonly requiredControl = new FormControl<string | null>(null, Validators.required);
 }
 
 describe('TnRadioGroupComponent', () => {
@@ -187,6 +189,34 @@ describe('TnRadioGroupComponent', () => {
     setup();
     expect(spectator.query('[data-test="radio-button-letter-alpha"]')).toExist();
     expect(spectator.query('[data-test="radio-button-letter-beta"]')).toExist();
+  });
+
+  describe('required-validator guard', () => {
+    let consoleError: jest.SpyInstance;
+
+    beforeEach(() => {
+      consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    });
+
+    afterEach(() => consoleError.mockRestore());
+
+    it('errors in dev mode when the bound control is required, since no error text can show', () => {
+      setup(`
+        <ix-tn-radio-group
+          name="letter"
+          [formControl]="requiredControl"
+          [options]="options"
+        ></ix-tn-radio-group>
+      `);
+
+      expect(consoleError).toHaveBeenCalledWith(expect.stringContaining('Validators.required'));
+    });
+
+    it('stays quiet for a control with no required validator', () => {
+      setup();
+
+      expect(consoleError).not.toHaveBeenCalled();
+    });
   });
 
   describe('options whose values stringify alike', () => {

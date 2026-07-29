@@ -156,25 +156,6 @@
   }
 }
 
-@mixin resource-card {
-  @include details-card();
-
-  mat-card-header {
-    border-bottom: none;
-  }
-
-  mat-card-content {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-
-    .value {
-      font-size: 3.5em;
-      white-space: nowrap;
-    }
-  }
-}
-
 // Shared overrides for the apps detail cards migrated to tn-card (app-info,
 // app-metadata, app-notes). Hoisted here so the three siblings can't drift.
 //

@@ -1,10 +1,10 @@
 import {
   afterNextRender,
-  ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, Injector, input, signal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, Injector, input, isDevMode, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule,
+  ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { TnFormFieldComponent, TnRadioComponent } from '@truenas/ui-components';
 import { Option } from 'app/interfaces/option.interface';
@@ -30,7 +30,8 @@ let nextInstanceId = 0;
  * **No validation display.** The group does not consume `TN_FORM_FIELD_CONTEXT`, so a wrapping
  * `tn-form-field` never renders error text for it — a `Validators.required` group will block
  * submission with no visible reason. (Nor does `touched` help: see the note in the constructor.)
- * A group that needs a required-ness message has to render it itself.
+ * A group that needs a required-ness message has to render it itself —
+ * {@link assertNoRequiredValidator} flags the trap in dev mode.
  *
  * TEMP (NAS-141021): this component exists only because the library ships no radio-group.
  * Indexed in the tn-migration playbook's "Known upstream defects" table; retire it once
@@ -160,6 +161,13 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
   constructor() {
     this.controlDirective.valueAccessor = this;
 
+    if (isDevMode()) {
+      // Deferred: the directive binds its `control` after this constructor runs.
+      afterNextRender({
+        read: () => this.assertNoRequiredValidator(),
+      }, { injector: this.injector });
+    }
+
     this.innerControl.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((value) => {
@@ -173,6 +181,27 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
       // therefore stays untouched, so touched-gated error text will not show for it.
       this.onTouched();
     });
+  }
+
+  /**
+   * Turns the class doc's "No validation display" trap into an immediate console error rather than
+   * a form that silently refuses to submit: the group renders no error text, and `touched` marks on
+   * pick rather than blur, so a required group the user never picked blocks Save with nothing on
+   * screen to explain it. Dev-mode only — production ships no check.
+   *
+   * Only catches `Validators.required` by reference, which is how call sites attach it; a bespoke
+   * required-ness validator is invisible here.
+   */
+  private assertNoRequiredValidator(): void {
+    if (!this.controlDirective.control?.hasValidator(Validators.required)) {
+      return;
+    }
+
+    console.error(
+      `<ix-tn-radio-group name="${this.name()}"> is bound to a control with Validators.required, `
+      + 'but the group renders no validation error — an unpicked group blocks submission with no '
+      + 'visible reason. Render the required-ness message at the call site, or drop the validator.',
+    );
   }
 
   writeValue(value: unknown): void {

@@ -147,5 +147,34 @@ describe('PoolWarningsComponent', () => {
       expect(checkboxes).toHaveLength(1);
       expect(await checkboxes[0].getLabelText()).toContain('SED_POOL');
     });
+
+    it('drops an allowed exported pool from the store when its checkbox disappears', async () => {
+      encryptionType$ = new BehaviorSubject<EncryptionType>(EncryptionType.None);
+      const sedSpectator = createSedComponent();
+      const sedLoader = TestbedHarnessEnvironment.loader(sedSpectator.fixture);
+
+      // The rows are keyed by pool name and rendered through KeyValuePipe, so they come out
+      // alphabetically rather than in disk order — find the row by label instead of by index.
+      const checkboxes = await sedLoader.getAllHarnesses(TnCheckboxHarness);
+      const labels = await Promise.all(checkboxes.map((checkbox) => checkbox.getLabelText()));
+      const nonSedCheckbox = checkboxes[labels.findIndex((label) => label.includes('NON_SED_POOL'))];
+      expect(nonSedCheckbox).toBeTruthy();
+      await nonSedCheckbox.check();
+
+      expect(sedSpectator.inject(PoolManagerStore).setDiskWarningOptions).toHaveBeenLastCalledWith({
+        allowNonUniqueSerialDisks: false,
+        allowExportedPools: ['NON_SED_POOL'],
+      });
+
+      // Switching to SED filters NON_SED_POOL's disk out, so the user can no longer see or
+      // uncheck it — the allowance has to go with the checkbox.
+      encryptionType$.next(EncryptionType.Sed);
+      sedSpectator.detectChanges();
+
+      expect(sedSpectator.inject(PoolManagerStore).setDiskWarningOptions).toHaveBeenLastCalledWith({
+        allowNonUniqueSerialDisks: false,
+        allowExportedPools: [],
+      });
+    });
   });
 });

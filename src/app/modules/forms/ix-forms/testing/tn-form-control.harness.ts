@@ -127,6 +127,13 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
     );
   }
 
+  /**
+   * **Sharp edge:** a radio group reports disabled only when *every* option is, which is what the
+   * `IxFormControlHarness` contract means for a group disabled as a unit (how `setDisabledState`
+   * drives one). A partially-disabled group — individual options disabled to bar certain choices —
+   * therefore reads as enabled, and no assertion here can see which options are off. Assert those
+   * through `TnRadioHarness.isDisabled()` per option instead.
+   */
   async isDisabled(): Promise<boolean> {
     const input = await this.input();
     if (input) {

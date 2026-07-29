@@ -125,6 +125,23 @@ export class PoolWarningsComponent implements OnInit {
     uniq(exportedPools).forEach((pool) => {
       this.poolAndDisks.set(pool, this.getDiskNamesByPool(pool));
     });
+    this.pruneAllowedExportedPools();
+  }
+
+  /**
+   * Drops allowances for pools that no longer have a checkbox. The disk list is re-filtered
+   * whenever the encryption type changes (SED keeps only SED-capable disks), so a pool the user
+   * allowed can disappear from the form — and without this the store would keep being told to
+   * allow a pool the user can neither see nor uncheck.
+   */
+  private pruneAllowedExportedPools(): void {
+    const allowedPools = this.form.controls.allowExportedPools.value;
+    const survivingPools = allowedPools.filter((pool) => this.poolAndDisks.has(pool));
+
+    // Guarded so an unchanged list doesn't push a redundant update to the store.
+    if (survivingPools.length !== allowedPools.length) {
+      this.form.controls.allowExportedPools.setValue(survivingPools);
+    }
   }
 
   private getDiskNamesByPool(pool: string): string[] {
