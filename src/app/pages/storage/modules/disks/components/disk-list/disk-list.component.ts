@@ -1,15 +1,24 @@
-import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialog, TnTablePagerComponent, tnIconMarker,
+  TnButtonComponent,
+  TnDialog,
+  TnDividerComponent,
+  TnEmptyComponent,
+  TnSortEvent,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTableColumnDirective,
+  TnCellDefDirective,
+  TnDetailRowDefDirective,
+  TnHeaderCellDefDirective,
+  tnIconMarker,
 } from '@truenas/ui-components';
 import {
-  filter, forkJoin, map, Subject, take,
+  filter, forkJoin, map, Subject, switchMap, take, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -20,21 +29,14 @@ import { Role } from 'app/enums/role.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Disk, DetailsDisk, ExtraDiskQueryOptions } from 'app/interfaces/disk.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { createTable } from 'app/modules/ix-table/utils';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import {
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -42,14 +44,15 @@ import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/component
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { ResetSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/reset-sed-dialog/reset-sed-dialog.component';
-import { sedStatusColumn } from 'app/pages/storage/modules/disks/components/disk-list/sed-status-cell/sed-status-cell.component';
 import { UnlockSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/unlock-sed-dialog/unlock-sed-dialog.component';
 import { DiskWipeDialog } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
+import { sedStatusLabel } from 'app/pages/storage/modules/disks/utils/sed-status.utils';
 import { LicenseService } from 'app/services/license.service';
 
-// TODO: Exclude AnythingUi when NAS-127632 is done
-interface DiskUi extends Disk {
-  selected?: boolean;
+/** A hidden column surfaced in a row's expanded details. */
+interface HiddenColumnDetail {
+  title: string;
+  value: string;
 }
 
 @Component({
@@ -60,29 +63,27 @@ interface DiskUi extends Disk {
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    IxTableColumnsSelectorComponent,
+    TableColumnPickerComponent,
     UiSearchDirective,
     TnButtonComponent,
+    TnDividerComponent,
+    TnEmptyComponent,
     RequiresRolesDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableDetailsRowDirective,
-    IxTableDetailsRowComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class DiskListComponent implements OnInit {
   private api = inject(ApiService);
-  private router = inject(Router);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
-  private cdr = inject(ChangeDetectorRef);
   private licenseService = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
 
@@ -98,163 +99,69 @@ export class DiskListComponent implements OnInit {
 
   protected diskUpdates$ = new Subject<DiskFormResponse[number]>();
 
-  dataProvider: AsyncDataProvider<DiskUi>;
-  searchQuery = signal('');
+  protected readonly searchQuery = signal('');
+  protected readonly selectedDisks = signal<Disk[]>([]);
 
-  columns = createTable<DiskUi>([
-    checkboxColumn({
-      propertyName: 'selected',
-      onRowCheck: (row, checked) => {
-        const diskToSelect = this.disks.find((disk) => row.name === disk.name);
-        if (diskToSelect) {
-          diskToSelect.selected = checked;
-        }
-        this.dataProvider.setRows([]);
-        this.onListFiltered(this.searchQuery());
-      },
-      onColumnCheck: (checked) => {
-        this.dataProvider.currentPage$.pipe(
-          take(1),
-          takeUntilDestroyed(this.destroyRef),
-        ).subscribe((disks) => {
-          disks.forEach((disk) => disk.selected = checked);
-          this.dataProvider.setRows([]);
-          this.onListFiltered(this.searchQuery());
-        });
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('Serial'),
-      propertyName: 'serial',
-    }),
+  /**
+   * Column metadata only — cells render through the `tnCellDef` templates. The
+   * picker reads `title`/`hidden`, and `toDisplayedColumns` reads `propertyName`.
+   */
+  protected readonly columns = signal(createTable<Disk>([
+    textColumn({ title: this.translate.instant('Name'), propertyName: 'name' }),
+    textColumn({ title: this.translate.instant('Serial'), propertyName: 'serial' }),
     textColumn({
       title: this.translate.instant('Disk Size'),
       propertyName: 'size',
       getValue: (disk) => buildNormalizedFileSize(disk.size),
-      sortBy: (disk) => disk.size,
     }),
-    textColumn({
-      title: this.translate.instant('Pool'),
-      propertyName: 'pool',
-    }),
-    textColumn({
-      title: this.translate.instant('Disk Type'),
-      propertyName: 'type',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'description',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Model'),
-      propertyName: 'model',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Transfer Mode'),
-      propertyName: 'transfermode',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Rotation Rate (RPM)'),
-      propertyName: 'rotationrate',
-      hidden: true,
-    }),
+    textColumn({ title: this.translate.instant('Pool'), propertyName: 'pool' }),
+    textColumn({ title: this.translate.instant('Disk Type'), propertyName: 'type', hidden: true }),
+    textColumn({ title: this.translate.instant('Description'), propertyName: 'description', hidden: true }),
+    textColumn({ title: this.translate.instant('Model'), propertyName: 'model', hidden: true }),
+    textColumn({ title: this.translate.instant('Transfer Mode'), propertyName: 'transfermode', hidden: true }),
+    textColumn({ title: this.translate.instant('Rotation Rate (RPM)'), propertyName: 'rotationrate', hidden: true }),
     textColumn({
       title: this.translate.instant('HDD Standby'),
       propertyName: 'hddstandby',
-      getValue: (row) => {
-        if (row.hddstandby === DiskStandby.AlwaysOn) {
-          return this.translate.instant('Always On');
-        }
-
-        return row.hddstandby;
-      },
+      getValue: (disk) => this.formatHddStandby(disk),
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Adv. Power Management'),
       propertyName: 'advpowermgmt',
-      getValue: (row) => {
-        if (row.advpowermgmt === DiskPowerLevel.Disabled) {
-          return this.translate.instant('Disabled');
-        }
-
-        return row.advpowermgmt;
-      },
+      getValue: (disk) => this.formatAdvPowerMgmt(disk),
       hidden: true,
     }),
-    sedStatusColumn({
+    textColumn({
       title: this.translate.instant('Self-Encrypting Drive (SED)'),
       propertyName: 'sed_status',
+      getValue: (disk) => this.formatSedStatus(disk),
       hidden: true,
     }),
   ], {
     uniqueRowTag: (row) => `disk-${row.name}`,
     ariaLabels: (row) => [row.name, this.translate.instant('Disk')],
-  });
+  }));
 
-  get hiddenColumns(): Column<DiskUi, ColumnComponent<DiskUi>>[] {
-    return this.columns.filter((column) => column?.hidden);
-  }
+  protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
 
-  get selectedDisks(): DiskUi[] {
-    return this.disks.filter((disk) => disk.selected);
-  }
-
-  protected get editSelectedLabel(): string {
-    return this.selectedDisks.length === 1
-      ? this.translate.instant('Edit Disk')
-      : this.translate.instant('Edit Disks');
-  }
-
-  private disks: DiskUi[] = [];
+  private disks: Disk[] = [];
   private unusedDisks: DetailsDisk[] = [];
 
-  protected get emptyConfig(): EmptyConfig {
-    const type = this.dataProvider.emptyType$.value;
-    if (type === EmptyType.NoSearchResults) {
-      return {
-        ...this.emptyService.defaultEmptyConfig(type),
-        button: {
-          action: () => {
-            this.searchQuery.set('');
-            this.onListFiltered('');
-          },
-          label: this.translate.instant('Reset'),
-        },
-      };
-    }
-    if (type === EmptyType.Errors) {
-      return {
-        ...this.emptyService.defaultEmptyConfig(type),
-        button: {
-          action: () => this.dataProvider.load(),
-          label: this.translate.instant('Retry'),
-        },
-      };
-    }
-    return this.emptyService.defaultEmptyConfig(type);
-  }
-
-  ngOnInit(): void {
-    this.licenseService.hasSed$.pipe(
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((hasSed) => {
+  /**
+   * SED columns and the `sed_status` extra are only meaningful on licensed systems,
+   * so the whole request hangs off `hasSed$`.
+   */
+  private readonly request$ = this.licenseService.hasSed$.pipe(
+    take(1),
+    tap((hasSed) => {
       if (hasSed) {
-        const sedColumn = this.columns.find((column) => column.propertyName === 'sed_status');
-        if (sedColumn) {
-          sedColumn.hidden = false;
-        }
+        this.columns.update((columns) => columns.map((column) => {
+          return column.propertyName === 'sed_status' ? { ...column, hidden: false } : column;
+        }));
       }
-
+    }),
+    switchMap((hasSed) => {
       const extraOptions: ExtraDiskQueryOptions = {
         extra: {
           pools: true,
@@ -263,7 +170,7 @@ export class DiskListComponent implements OnInit {
         },
       };
 
-      const request$ = forkJoin([
+      return forkJoin([
         this.api.call('disk.details').pipe(
           map((diskDetails) => [
             ...diskDetails.unused,
@@ -271,52 +178,119 @@ export class DiskListComponent implements OnInit {
           ]),
         ),
         this.api.call('disk.query', [[], extraOptions]),
-      ]).pipe(
-        map(([unusedDisks, disks]) => {
-          this.unusedDisks = unusedDisks;
-          this.disks = disks.map((disk) => ({
-            ...disk,
-            pool: this.getPoolColumn(disk),
-            selected: false,
-          }));
-          return this.disks;
-        }),
-      );
-      this.dataProvider = new AsyncDataProvider(request$);
-      this.dataProvider.load();
+      ]);
+    }),
+    map(([unusedDisks, disks]) => {
+      this.unusedDisks = unusedDisks;
+      this.disks = disks.map((disk) => ({
+        ...disk,
+        pool: this.getPoolColumn(disk),
+      }));
+      return this.disks;
+    }),
+  );
 
-      this.diskUpdates$.pipe(
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe((diskUpdate) => {
-        // find the edited disk inside our internal representation of the disks
-        // and update it to match the new params.
-        this.disks = this.disks.map((disk) => {
-          if (disk.identifier === diskUpdate.identifier) {
-            return { ...disk, ...diskUpdate };
-          }
+  readonly dataProvider = new AsyncDataProvider<Disk>(this.request$);
 
-          return disk;
-        });
+  protected readonly currentPage = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
 
-        // trigger a UI update by manually setting the rows in the data provider.
-        // ultimately, if this is being called, we've already called the data provider's
-        // `load` method and are just waiting for it to come back. this takes some time though (5-10s), so
-        // we reconcile the local UI immediately so there is zero inconsistency.
-        this.dataProvider.setRows(this.disks);
+  protected readonly currentPageCount = computed(() => this.currentPage().length);
+
+  protected readonly emptyType = computed(() => {
+    if (this.isLoading()) {
+      return EmptyType.Loading;
+    }
+    return this.searchQuery() ? EmptyType.NoSearchResults : EmptyType.NoPageData;
+  });
+
+  protected readonly editSelectedLabel = computed(() => {
+    return this.selectedDisks().length === 1
+      ? this.translate.instant('Edit Disk')
+      : this.translate.instant('Edit Disks');
+  });
+
+  ngOnInit(): void {
+    this.dataProvider.load();
+
+    this.diskUpdates$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((diskUpdate) => {
+      // find the edited disk inside our internal representation of the disks
+      // and update it to match the new params.
+      this.disks = this.disks.map((disk) => {
+        if (disk.identifier === diskUpdate.identifier) {
+          return { ...disk, ...diskUpdate };
+        }
+
+        return disk;
       });
+
+      // trigger a UI update by manually setting the rows in the data provider.
+      // ultimately, if this is being called, we've already called the data provider's
+      // `load` method and are just waiting for it to come back. this takes some time though (5-10s), so
+      // we reconcile the local UI immediately so there is zero inconsistency.
+      this.dataProvider.setRows(this.disks);
     });
   }
 
-  protected edit(disks: DiskUi[]): void {
-    const preparedDisks = this.prepareDisks(disks);
-    const result$ = preparedDisks.length > 1
+  protected trackByIdentifier(index: number, disk: Disk): string {
+    return disk.identifier;
+  }
+
+  protected formatSize(disk: Disk): string {
+    return buildNormalizedFileSize(disk.size);
+  }
+
+  protected formatHddStandby(disk: Disk): string {
+    return disk.hddstandby === DiskStandby.AlwaysOn
+      ? this.translate.instant('Always On')
+      : disk.hddstandby;
+  }
+
+  protected formatAdvPowerMgmt(disk: Disk): string {
+    return disk.advpowermgmt === DiskPowerLevel.Disabled
+      ? this.translate.instant('Disabled')
+      : disk.advpowermgmt;
+  }
+
+  protected formatSedStatus(disk: Disk): string {
+    return this.translate.instant(sedStatusLabel(disk));
+  }
+
+  /** Values of the currently-hidden columns, surfaced in a row's expanded details. */
+  protected hiddenColumnDetails(disk: Disk): HiddenColumnDetail[] {
+    return this.columns()
+      .filter((column) => column.hidden && !!column.title)
+      .map((column) => ({
+        title: column.title,
+        value: column.getValue
+          ? String(column.getValue(disk) ?? '')
+          : String(disk[column.propertyName] ?? ''),
+      }));
+  }
+
+  protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
+    this.columns.set([...columns]);
+  }
+
+  protected onSelectionChange(disks: Disk[]): void {
+    this.selectedDisks.set(disks);
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<Disk>(event, this.displayedColumns()));
+  }
+
+  protected edit(disks: Disk[]): void {
+    const result$ = disks.length > 1
       ? this.formPanel.open<DiskFormResponse>(DiskBulkEditComponent, {
           title: this.translate.instant('Bulk Edit Disks'),
-          inputs: { disksToEdit: preparedDisks },
+          inputs: { disksToEdit: disks },
         })
       : this.formPanel.open<DiskFormResponse>(DiskFormComponent, {
           title: this.translate.instant('Edit Disk'),
-          inputs: { diskToEdit: preparedDisks[0] },
+          inputs: { diskToEdit: disks[0] },
         });
 
     result$.onSuccess((response) => {
@@ -369,25 +343,11 @@ export class DiskListComponent implements OnInit {
     this.dataProvider.setFilter({ list: this.disks, query, columnKeys: ['name', 'pool', 'serial', 'size'] });
   }
 
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
-  }
-
   private getPoolColumn(diskToCheck: Disk): string {
     const unusedDisk = this.unusedDisks.find((disk) => disk.devname === diskToCheck.devname);
     if (unusedDisk?.exported_zpool) {
       return `${unusedDisk.exported_zpool} (${this.translate.instant('Exported')})`;
     }
     return diskToCheck.pool || this.translate.instant('N/A');
-  }
-
-  private prepareDisks(disks: DiskUi[]): Disk[] {
-    return disks.map((disk) => {
-      const newDisk = { ...disk };
-      delete newDisk.selected;
-      return newDisk as Disk;
-    });
   }
 }

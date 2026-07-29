@@ -4,7 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -12,14 +12,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import {
-  IxTableDetailsRowComponent,
-} from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+  TableColumnPickerComponent,
+} from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -44,7 +39,7 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 describe('DiskListComponent', () => {
   let spectator: Spectator<DiskListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const fakeDisks = [
     {
@@ -113,9 +108,7 @@ describe('DiskListComponent', () => {
     imports: [
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
-      IxTableDetailsRowDirective,
-      IxTableDetailsRowComponent,
+      TableColumnPickerComponent,
     ],
     providers: [
       mockAuth(),
@@ -150,52 +143,28 @@ describe('DiskListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('shows table rows', async () => {
-    const expectedRows = [
-      [
-        '',
-        'Name',
-        'Serial',
-        'Disk Size',
-        'Pool',
-        'Self-Encrypting Drive (SED)',
-      ],
-      [
-        '',
-        'sda',
-        'serial1',
-        '40 GiB',
-        'boot-pool',
-        'Unsupported',
-      ],
-      [
-        '',
-        'sdb',
-        'serial2',
-        '5 GiB',
-        'test pool (Exported)',
-        'Unsupported',
-      ],
-      [
-        '',
-        'sdc',
-        'serial3',
-        '5 GiB',
-        'N/A',
-        'Locked',
-      ],
-    ];
+    expect(await table.getHeaderTexts()).toEqual([
+      'Name',
+      'Serial',
+      'Disk Size',
+      'Pool',
+      'Self-Encrypting Drive (SED)',
+    ]);
 
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    expect(await table.getAllRowTexts()).toEqual([
+      ['sda', 'serial1', '40 GiB', 'boot-pool', 'Unsupported'],
+      ['sdb', 'serial2', '5 GiB', 'test pool (Exported)', 'Unsupported'],
+      ['sdc', 'serial3', '5 GiB', 'N/A', 'Locked'],
+    ]);
   });
 
   it('opens edit form when Edit button is pressed', async () => {
     const fakeDisk = fakeDisks[0];
-    await table.expandRow(0);
+    await table.toggleRowExpansion(0);
 
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
@@ -208,7 +177,7 @@ describe('DiskListComponent', () => {
 
   it('shows wipe disk dialog when Wipe button is pressed', async () => {
     const fakeDisk = fakeDisks[1];
-    await table.expandRow(1);
+    await table.toggleRowExpansion(1);
 
     const manualTestButton = await loader.getHarness(TnButtonHarness.with({ label: 'Wipe' }));
     await manualTestButton.click();
@@ -222,7 +191,8 @@ describe('DiskListComponent', () => {
   });
 
   it('opens bulk edit form when multiple disks are selected and Edit is pressed', async () => {
-    await table.selectRows([0, 1]);
+    await table.toggleRowSelection(0);
+    await table.toggleRowSelection(1);
 
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit Disks' }));
     await editButton.click();
@@ -246,7 +216,7 @@ describe('DiskListComponent', () => {
   });
 
   it('shows unlock SED dialog when Unlock button is pressed for locked SED disk', async () => {
-    await table.expandRow(2);
+    await table.toggleRowExpansion(2);
 
     const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
     await unlockButton.click();
@@ -257,7 +227,7 @@ describe('DiskListComponent', () => {
   });
 
   it('shows reset SED dialog when SED Reset button is pressed for locked SED disk', async () => {
-    await table.expandRow(2);
+    await table.toggleRowExpansion(2);
 
     const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'SED Reset' }));
     await resetButton.click();
@@ -276,7 +246,7 @@ describe('DiskListComponent', () => {
 
     jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.success(mockUpd));
 
-    await table.expandRow(0);
+    await table.toggleRowExpansion(0);
 
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
@@ -297,7 +267,7 @@ describe('DiskListComponent', () => {
 describe('DiskListComponent - without SED license', () => {
   let spectator: Spectator<DiskListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const fakeDisks = [
     {
@@ -314,9 +284,7 @@ describe('DiskListComponent - without SED license', () => {
     imports: [
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
-      IxTableDetailsRowDirective,
-      IxTableDetailsRowComponent,
+      TableColumnPickerComponent,
     ],
     providers: [
       mockAuth(),
@@ -346,14 +314,13 @@ describe('DiskListComponent - without SED license', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('hides SED column when hasSed$ is false', async () => {
-    const cells = await table.getCellTexts();
-    const headerRow = cells[0];
+    const headerRow = await table.getHeaderTexts();
 
     expect(headerRow).not.toContain('Self-Encrypting Drive (SED)');
-    expect(headerRow).toEqual(['', 'Name', 'Serial', 'Disk Size', 'Pool']);
+    expect(headerRow).toEqual(['Name', 'Serial', 'Disk Size', 'Pool']);
   });
 });

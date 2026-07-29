@@ -1,17 +1,17 @@
-<ix-page-header [loading]="!!(dataProvider.isLoading$ | async)">
+<ix-page-header [loading]="isLoading()">
   <ix-basic-search
     [query]="searchQuery()"
     (queryChange)="onListFiltered($event)"
   ></ix-basic-search>
 
-  <ix-table-columns-selector
+  <ix-table-column-picker
+    [columns]="columns()"
     [columnPreferencesKey]="'diskList'"
-    [columns]="columns"
-    (columnsChange)="columnsChange($event)"
-  ></ix-table-columns-selector>
+    (columnsChange)="onColumnsChange($event)"
+  ></ix-table-column-picker>
 </ix-page-header>
 
-@if (selectedDisks.length) {
+@if (selectedDisks().length) {
   <div
     class="batch-actions-toolbar"
     [ixUiSearch]="searchableElements.elements.disks"
@@ -24,75 +24,149 @@
         variant="outline"
         [testId]="'edit-selected'"
         [icon]="editIcon"
-        [label]="editSelectedLabel"
-        (onClick)="edit(selectedDisks)"
+        [label]="editSelectedLabel()"
+        (onClick)="edit(selectedDisks())"
       ></tn-button>
     </div>
   </div>
 }
 
-<ix-table
-  class="table"
-  [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-  [emptyConfig]="emptyConfig"
->
-  <thead
-    ix-table-head
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-  ></thead>
-  <tbody
-    ix-table-body
-    detailsRowIdentifier="identifier"
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-    [isLoading]="!!(dataProvider.isLoading$ | async)"
+@if (!currentPageCount() && !isLoading()) {
+  @let emptyConfig = emptyService.defaultEmptyConfig(emptyType());
+  <tn-empty
+    [icon]="emptyService.iconForType(emptyType())"
+    [title]="emptyConfig.title | translate"
+    [description]="emptyConfig.message ? (emptyConfig.message | translate) : undefined"
+  ></tn-empty>
+} @else {
+  <tn-table
+    class="table"
+    [dataSource]="currentPage()"
+    [displayedColumns]="displayedColumns()"
+    [trackBy]="trackByIdentifier"
+    [selectable]="true"
+    [expandable]="true"
+    [loading]="isLoading()"
+    (selectionChange)="onSelectionChange($event)"
+    (sortChange)="onSortChange($event)"
   >
-    <ng-template let-disk ix-table-details-row [dataProvider]="dataProvider">
-      <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="disk">
-        <div class="table-details-row-actions">
+    <ng-container tnColumnDef="name" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.name }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="serial" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Serial' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.serial }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="size" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Disk Size' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ formatSize(row) }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="pool" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Pool' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.pool }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="type" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Disk Type' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.type }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="description" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.description }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="model" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Model' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.model }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="transfermode" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Transfer Mode' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.transfermode }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="rotationrate" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Rotation Rate (RPM)' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.rotationrate }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="hddstandby" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'HDD Standby' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ formatHddStandby(row) }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="advpowermgmt" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Adv. Power Management' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ formatAdvPowerMgmt(row) }}</ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="sed_status" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Self-Encrypting Drive (SED)' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>{{ formatSedStatus(row) }}</ng-template>
+    </ng-container>
+
+    <ng-template let-disk tnDetailRowDef>
+      @if (hiddenColumnDetails(disk); as details) {
+        @if (details.length) {
+          <dl class="table-hidden-columns">
+            @for (detail of details; track detail.title) {
+              <div>
+                <b>{{ detail.title | translate }}:</b>
+                <span>{{ detail.value }}</span>
+              </div>
+            }
+          </dl>
+          <tn-divider></tn-divider>
+        }
+      }
+
+      <div class="table-details-row-actions">
+        <tn-button
+          variant="outline"
+          [testId]="[disk.name, 'edit']"
+          [icon]="editIcon"
+          [label]="'Edit' | translate"
+          (onClick)="edit([disk])"
+        ></tn-button>
+
+        @if (isUnusedDisk(disk)) {
           <tn-button
+            *ixRequiresRoles="requiredRoles"
             variant="outline"
-            [testId]="[disk.name, 'edit']"
-            [icon]="editIcon"
-            [label]="'Edit' | translate"
-            (onClick)="edit([disk])"
+            [testId]="[disk.name, 'wipe']"
+            [icon]="wipeIcon"
+            [label]="'Wipe' | translate"
+            (onClick)="wipe(disk)"
+          ></tn-button>
+        }
+
+        @if (isSedLocked(disk)) {
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            variant="outline"
+            [testId]="[disk.name, 'unlock']"
+            [icon]="unlockIcon"
+            [label]="'Unlock' | translate"
+            (onClick)="unlock(disk)"
           ></tn-button>
 
-          @if (isUnusedDisk(disk)) {
-            <tn-button
-              *ixRequiresRoles="requiredRoles"
-              variant="outline"
-              [testId]="[disk.name, 'wipe']"
-              [icon]="wipeIcon"
-              [label]="'Wipe' | translate"
-              (onClick)="wipe(disk)"
-            ></tn-button>
-          }
-
-          @if (isSedLocked(disk)) {
-            <tn-button
-              *ixRequiresRoles="requiredRoles"
-              variant="outline"
-              [testId]="[disk.name, 'unlock']"
-              [icon]="unlockIcon"
-              [label]="'Unlock' | translate"
-              (onClick)="unlock(disk)"
-            ></tn-button>
-
-            <tn-button
-              *ixRequiresRoles="requiredRoles"
-              variant="outline"
-              [testId]="[disk.name, 'reset-sed']"
-              [icon]="resetSedIcon"
-              [label]="'SED Reset' | translate"
-              (onClick)="resetSed(disk)"
-            ></tn-button>
-          }
-        </div>
-      </ix-table-details-row>
-
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            variant="outline"
+            [testId]="[disk.name, 'reset-sed']"
+            [icon]="resetSedIcon"
+            [label]="'SED Reset' | translate"
+            (onClick)="resetSed(disk)"
+          ></tn-button>
+        }
+      </div>
     </ng-template>
-  </tbody>
-</ix-table>
-<tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+  </tn-table>
+
+  <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+}
