@@ -1,11 +1,10 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -198,7 +197,7 @@ describe('DiskListComponent', () => {
     const fakeDisk = fakeDisks[0];
     await table.expandRow(0);
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { data: fakeDisk });
@@ -208,7 +207,7 @@ describe('DiskListComponent', () => {
     const fakeDisk = fakeDisks[1];
     await table.expandRow(1);
 
-    const manualTestButton = await loader.getHarness(MatButtonHarness.with({ text: 'Wipe' }));
+    const manualTestButton = await loader.getHarness(TnButtonHarness.with({ label: 'Wipe' }));
     await manualTestButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DiskWipeDialog, {
@@ -222,7 +221,7 @@ describe('DiskListComponent', () => {
   it('opens bulk edit form when multiple disks are selected and Edit is pressed', async () => {
     await table.selectRows([0, 1]);
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Disks' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit Disks' }));
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
@@ -243,7 +242,7 @@ describe('DiskListComponent', () => {
   it('shows unlock SED dialog when Unlock button is pressed for locked SED disk', async () => {
     await table.expandRow(2);
 
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
     await unlockButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(UnlockSedDialog, {
@@ -254,7 +253,7 @@ describe('DiskListComponent', () => {
   it('shows reset SED dialog when SED Reset button is pressed for locked SED disk', async () => {
     await table.expandRow(2);
 
-    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'SED Reset' }));
+    const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'SED Reset' }));
     await resetButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ResetSedDialog, {
@@ -273,7 +272,7 @@ describe('DiskListComponent', () => {
 
     await table.expandRow(0);
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
     expect(slideIn.open).toHaveBeenCalledWith(DiskFormComponent, { data: fakeDisk });

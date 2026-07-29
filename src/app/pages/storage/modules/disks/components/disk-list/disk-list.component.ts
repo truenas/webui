@@ -3,10 +3,11 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialog, TnTablePagerComponent, tnIconMarker,
+} from '@truenas/ui-components';
 import {
   filter, forkJoin, map, Subject, take,
 } from 'rxjs';
@@ -36,7 +37,6 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -62,9 +62,7 @@ interface DiskUi extends Disk {
     BasicSearchComponent,
     IxTableColumnsSelectorComponent,
     UiSearchDirective,
-    MatButton,
-    TestDirective,
-    TnIconComponent,
+    TnButtonComponent,
     RequiresRolesDirective,
     IxTableComponent,
     IxTableEmptyDirective,
@@ -90,6 +88,13 @@ export class DiskListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.DiskWrite];
   protected readonly searchableElements = diskListElements;
+
+  // tn-button is not in the library's icon forwarding manifest, so a static
+  // icon="..." would be invisible to the sprite extractor. Mark them here.
+  protected readonly editIcon = tnIconMarker('pencil', 'mdi');
+  protected readonly wipeIcon = tnIconMarker('delete-sweep', 'mdi');
+  protected readonly unlockIcon = tnIconMarker('lock-open-variant', 'mdi');
+  protected readonly resetSedIcon = tnIconMarker('restart', 'mdi');
 
   protected diskUpdates$ = new Subject<DiskFormResponse[number]>();
 
@@ -201,6 +206,12 @@ export class DiskListComponent implements OnInit {
 
   get selectedDisks(): DiskUi[] {
     return this.disks.filter((disk) => disk.selected);
+  }
+
+  protected get editSelectedLabel(): string {
+    return this.selectedDisks.length === 1
+      ? this.translate.instant('Edit Disk')
+      : this.translate.instant('Edit Disks');
   }
 
   private disks: DiskUi[] = [];
