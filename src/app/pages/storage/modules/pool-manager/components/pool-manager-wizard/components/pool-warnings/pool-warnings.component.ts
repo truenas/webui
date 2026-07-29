@@ -1,4 +1,4 @@
-import { AsyncPipe, KeyValuePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -7,9 +7,7 @@ import {
   TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent,
 } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
-import {
-  of, combineLatest, startWith,
-} from 'rxjs';
+import { combineLatest, startWith } from 'rxjs';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -17,7 +15,6 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { TnRadioGroupComponent } from 'app/modules/forms/ix-forms/components/tn-radio-group/tn-radio-group.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { isTnCheckboxChange } from 'app/modules/forms/ix-forms/utils/tn-checkbox-change.utils';
-import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
@@ -31,7 +28,6 @@ import { hasNonUniqueSerial, hasExportedPool, isSedCapable } from 'app/pages/sto
   styleUrls: ['./pool-warnings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     ReactiveFormsModule,
     WarningComponent,
     TnFormFieldComponent,
@@ -64,7 +60,6 @@ export class PoolWarningsComponent implements OnInit {
   nonUniqueSerialDisksTooltip: string;
 
   disksWithExportedPools: DetailsDisk[] = [];
-  exportedPoolsOptions$ = of<Option[]>([]);
   poolAndDisks = new Map<string, string[]>();
 
   // `translatedSignal`, not a plain field: the labels are composed in TypeScript rather than
@@ -127,11 +122,9 @@ export class PoolWarningsComponent implements OnInit {
     const exportedPools = this.disksWithExportedPools
       .map((disk) => disk.exported_zpool)
       .filter((pool): pool is string => !!pool);
-    const options = uniq(exportedPools).map((pool) => {
+    uniq(exportedPools).forEach((pool) => {
       this.poolAndDisks.set(pool, this.getDiskNamesByPool(pool));
-      return { label: ignoreTranslation(pool), value: pool };
     });
-    this.exportedPoolsOptions$ = of(options);
   }
 
   private getDiskNamesByPool(pool: string): string[] {
