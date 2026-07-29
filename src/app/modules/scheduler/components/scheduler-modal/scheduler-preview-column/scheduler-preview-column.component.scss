@@ -36,10 +36,6 @@
   display: flex;
   justify-content: space-between;
   margin-right: -5px;
-
-  button {
-    margin-bottom: 1px;
-  }
 }
 
 .crontab-explanation {
@@ -61,8 +57,4 @@
     flex: 1;
     flex-basis: 0;
   }
-}
-
-.close-wrapper {
-  display: inline-block;
 }
