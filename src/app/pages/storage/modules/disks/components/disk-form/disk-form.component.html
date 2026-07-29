@@ -21,8 +21,6 @@
     </tn-form-field>
   </tn-form-section>
 
-  <tn-divider></tn-divider>
-
   <tn-form-section [heading]="helptext.powerManagementTitle | translate">
     <tn-form-field
       [label]="'HDD Standby' | translate"
@@ -40,27 +38,23 @@
     </tn-form-field>
   </tn-form-section>
 
-  <tn-divider></tn-divider>
+  @if (showSedSection()) {
+    <tn-form-section [heading]="helptext.sedTitle | translate">
+      <tn-form-field
+        [label]="'SED Password' | translate"
+        [tooltip]="helptext.passwordTooltip | translate"
+      >
+        <tn-input formControlName="passwd" [inputType]="InputType.Password"></tn-input>
+      </tn-form-field>
 
-  <div class="two-columns">
-    @if (showSedSection()) {
-      <tn-form-section [heading]="helptext.sedTitle | translate">
-        <tn-form-field
-          [label]="'SED Password' | translate"
-          [tooltip]="helptext.passwordTooltip | translate"
-        >
-          <tn-input formControlName="passwd" [inputType]="InputType.Password"></tn-input>
-        </tn-form-field>
-
-        <tn-form-field>
-          <tn-checkbox
-            formControlName="clear_pw"
-            [label]="'Clear SED Password' | translate"
-          ></tn-checkbox>
-        </tn-form-field>
-      </tn-form-section>
-    }
-  </div>
+      <tn-form-field>
+        <tn-checkbox
+          formControlName="clear_pw"
+          [label]="'Clear SED Password' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+    </tn-form-section>
+  }
 
   @if (slideInRef) {
     <ix-form-actions>
