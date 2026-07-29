@@ -129,8 +129,6 @@ describe('ReportComponent', () => {
 
     afterEach(() => {
       jest.useRealTimers();
-      // Destroy the component so that pending resize subscriptions cannot leak into the next test
-      spectator.fixture.destroy();
     });
 
     it('should initialize viewport change detection on init', () => {
@@ -147,8 +145,8 @@ describe('ReportComponent', () => {
       // Trigger window resize event
       global.dispatchEvent(new Event('resize'));
 
-      // Fast-forward past the debounce and the setTimeout in resizeChart
-      jest.advanceTimersByTime(150);
+      // Fast-forward past the 100ms debounce and the setTimeout in resizeChart
+      jest.advanceTimersByTime(200);
 
       expect(mockLineChart.render).toHaveBeenCalledWith(true);
     });
@@ -160,8 +158,8 @@ describe('ReportComponent', () => {
       // Trigger window resize event
       global.dispatchEvent(new Event('resize'));
 
-      // Fast-forward past the debounce and the setTimeout in resizeChart
-      jest.advanceTimersByTime(150);
+      // Fast-forward past the 100ms debounce and the setTimeout in resizeChart
+      jest.advanceTimersByTime(200);
 
       expect(mockLineChart.render).not.toHaveBeenCalled();
     });

@@ -23,7 +23,6 @@ export const helptextVmList = {
   reset_button: {
     tooltip: T('Hard reset. The guest OS is not shut down cleanly, which may result in data loss or filesystem\
  corruption.'),
-    ariaLabel: T('Reset (hard reset, the guest OS is not shut down cleanly)'),
   },
 
   reset_dialog: {

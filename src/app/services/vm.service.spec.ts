@@ -156,19 +156,12 @@ describe('VmService', () => {
 
   it('should show an error and not report success when resetting vm fails', async () => {
     const vm = mockVm(VmState.Running);
-    const apiService = spectator.inject(ApiService);
     const errorHandlerService = spectator.inject(ErrorHandlerService);
     jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true));
-    const callSpy = jest.spyOn(apiService, 'call');
-    const mockImpl = callSpy.getMockImplementation();
-
-    callSpy.mockImplementation((method) => {
-      if (method === 'vm.reset') {
-        return throwError(() => new ApiCallError({ code: JsonRpcErrorCode.CallError, message: 'Failed to reset VM' }));
-      }
-
-      return mockImpl(method);
-    });
+    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValueOnce(throwError(() => new ApiCallError({
+      code: JsonRpcErrorCode.CallError,
+      message: 'Failed to reset VM',
+    })));
 
     const wasReset = await firstValueFrom(spectator.service.doReset(vm));
 

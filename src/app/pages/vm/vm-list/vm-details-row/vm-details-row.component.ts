@@ -48,7 +48,7 @@ export class VirtualMachineDetailsRowComponent {
 
   protected readonly requiredReadRoles = [Role.VmRead];
   protected readonly requiredRoles = [Role.VmWrite];
-  protected readonly resetButtonText = helptextVmList.reset_button;
+  protected readonly resetTooltip = helptextVmList.reset_button.tooltip;
 
   readonly vmStateInfo = computed(() => {
     const state = this.vm().status.state;
