@@ -105,9 +105,13 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   isEnterprise$ = this.store$.select(selectIsEnterprise);
   isSedPasswordSet$ = this.api.call('system.advanced.sed_global_password_is_set');
 
+  // `onLangChange` is a source, not decoration: the labels are composed with `instant()` inside
+  // the `map`, so without it the list keeps whatever language was active the last time one of the
+  // other sources emitted.
   encryptionTypeOptions$: Observable<Option<EncryptionType>[]> = combineLatest([
     this.hasSedCapableDisks$,
     this.isEnterprise$,
+    this.translate.onLangChange.pipe(startWith(null)),
   ]).pipe(
     map(([hasSedDisks, isEnterprise]) => {
       const options: Option<EncryptionType>[] = [

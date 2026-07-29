@@ -56,8 +56,12 @@ export class ManualSelectionVdevComponent implements OnChanges {
    * 1-based position of this vdev within its list, used to disambiguate the delete button.
    * Every card in a list shares the same {@link layout}, so without it all of them resolve to
    * one `data-test` value (a Playwright strict-mode violation) and to the same accessible name.
+   *
+   * Required rather than defaulted: a default of `1` silently re-creates that collision for any
+   * caller that forgets to pass it, and only `editable` callers would notice (the delete button
+   * is the sole consumer).
    */
-  readonly position = input(1);
+  readonly position = input.required<number>();
 
   readonly enclosures = input<Enclosure[]>();
 

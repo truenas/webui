@@ -61,6 +61,25 @@ describe('DiskSizeSelectsComponent', () => {
       expect(options).toEqual(['10 GiB (HDD)', '20 GiB (HDD)', '20 GiB (SSD)']);
     });
 
+    it('gives each option its own test id even though the values are objects', async () => {
+      // No `[optionTestIdKey]` is passed: the option value is a `{ size, type }` object, which the
+      // library's `optionTestId()` does not treat as a key, so it falls back to the label on its
+      // own. Pinned here because the alternative — every option collapsing to one shared id — is a
+      // silent Playwright strict-mode violation, not a visible failure.
+      //
+      // `gi-b`, not `gib`: the library's kebab normalizer splits `GiB` at the lower→upper
+      // boundary. Ugly but stable, and each id stays distinct, which is what this test is for.
+      await diskSizeSelect.open();
+      const ids = Array.from(document.querySelectorAll('[data-test^="option-size-and-type-"]'))
+        .map((option) => option.getAttribute('data-test'));
+
+      expect(ids).toEqual([
+        'option-size-and-type-spare-10-gi-b-hdd',
+        'option-size-and-type-spare-20-gi-b-hdd',
+        'option-size-and-type-spare-20-gi-b-ssd',
+      ]);
+    });
+
     it('updates value in store when disk type/size is selected', async () => {
       await diskSizeSelect.selectOption('20 GiB (HDD)');
 

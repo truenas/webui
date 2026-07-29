@@ -4,7 +4,7 @@
     <ix-tn-radio-group
       name="dispersalStrategy"
       formControlName="dispersalStrategy"
-      [options]="(dispersalOptions$ | async) ?? []"
+      [options]="dispersalOptions()"
       [ariaLabel]="'Enclosure dispersal strategy' | translate"
       [testId]="['radio-button', 'dispersal-strategy']"
     ></ix-tn-radio-group>

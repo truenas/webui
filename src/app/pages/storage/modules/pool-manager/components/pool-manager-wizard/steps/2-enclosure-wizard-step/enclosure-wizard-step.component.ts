@@ -2,12 +2,12 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnFormFieldComponent, TnSelectComponent,
   TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
-import { of, timer } from 'rxjs';
+import { timer } from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
@@ -17,6 +17,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { TnRadioGroupComponent } from 'app/modules/forms/ix-forms/components/tn-radio-group/tn-radio-group.component';
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
+import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 export enum DispersalStrategy {
@@ -45,7 +46,6 @@ export enum DispersalStrategy {
 })
 export class EnclosureWizardStepComponent implements OnInit, OnChanges {
   private store = inject(PoolManagerStore);
-  private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
@@ -69,17 +69,20 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
     }),
   );
 
-  protected readonly dispersalOptions$ = of([
+  // `translatedSignal`, not a plain field: the labels are composed in TypeScript rather than
+  // piped in the template, so `instant()` alone would freeze them in whatever language was
+  // active when the component was constructed.
+  protected readonly dispersalOptions = translatedSignal((translate) => [
     {
-      label: this.translate.instant('No Enclosure Dispersal Strategy'),
+      label: translate.instant('No Enclosure Dispersal Strategy'),
       value: DispersalStrategy.None,
     },
     {
-      label: this.translate.instant('Maximize Enclosure Dispersal'),
+      label: translate.instant('Maximize Enclosure Dispersal'),
       value: DispersalStrategy.Maximize,
     },
     {
-      label: this.translate.instant('Limit Pool To A Single Enclosure'),
+      label: translate.instant('Limit Pool To A Single Enclosure'),
       value: DispersalStrategy.LimitToSingle,
     },
   ]);

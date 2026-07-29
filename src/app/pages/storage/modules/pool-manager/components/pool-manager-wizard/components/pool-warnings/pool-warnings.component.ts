@@ -8,7 +8,7 @@ import {
 } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import {
-  of, Observable, combineLatest, startWith,
+  of, combineLatest, startWith,
 } from 'rxjs';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -18,6 +18,7 @@ import { TnRadioGroupComponent } from 'app/modules/forms/ix-forms/components/tn-
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { isTnCheckboxChange } from 'app/modules/forms/ix-forms/utils/tn-checkbox-change.utils';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
+import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
@@ -55,7 +56,9 @@ export class PoolWarningsComponent implements OnInit {
     allowExportedPools: [[] as string[]],
   });
 
-  exportedPoolsWarning = this.translate.instant(helptextPoolCreation.exportedDisksWarning);
+  // The key, not the resolved string — the template pipes it, so it re-translates on a language
+  // switch instead of freezing at construction time.
+  protected readonly exportedPoolsWarning = helptextPoolCreation.exportedDisksWarning;
 
   nonUniqueSerialDisks: DetailsDisk[] = [];
   nonUniqueSerialDisksTooltip: string;
@@ -64,10 +67,15 @@ export class PoolWarningsComponent implements OnInit {
   exportedPoolsOptions$ = of<Option[]>([]);
   poolAndDisks = new Map<string, string[]>();
 
-  allowNonUniqueSerialDisksOptions$: Observable<Option<boolean>[]> = of([
-    { label: this.translate.instant('Allow'), value: true },
-    { label: this.translate.instant('Don\'t Allow'), value: false },
-  ]);
+  // `translatedSignal`, not a plain field: the labels are composed in TypeScript rather than
+  // piped in the template, so `instant()` alone would freeze them in whatever language was
+  // active when the component was constructed.
+  protected readonly allowNonUniqueSerialDisksOptions = translatedSignal<Option<boolean>[]>(
+    (translate) => [
+      { label: translate.instant('Allow'), value: true },
+      { label: translate.instant('Don\'t Allow'), value: false },
+    ],
+  );
 
   ngOnInit(): void {
     this.initUnsafeDisksWarnings();

@@ -10,7 +10,7 @@
         <ix-tn-radio-group
           name="allowNonUniqueSerialDisks"
           formControlName="allowNonUniqueSerialDisks"
-          [options]="(allowNonUniqueSerialDisksOptions$ | async) ?? []"
+          [options]="allowNonUniqueSerialDisksOptions()"
           [inline]="true"
           [testId]="['radio-button', 'allow-non-unique-serial-disks']"
         ></ix-tn-radio-group>
@@ -20,7 +20,7 @@
 
   @if (disksWithExportedPools.length) {
     <div class="spacer-bottom">
-      <ix-warning [message]="exportedPoolsWarning"></ix-warning>
+      <ix-warning [message]="exportedPoolsWarning | translate"></ix-warning>
       <ix-label [label]="'Select disks you want to use' | translate"></ix-label>
       @for (item of poolAndDisks | keyvalue; track item.key) {
         <!--

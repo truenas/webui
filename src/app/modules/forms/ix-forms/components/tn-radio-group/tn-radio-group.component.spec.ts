@@ -100,7 +100,7 @@ describe('TnRadioGroupComponent', () => {
 
   it('keeps focus inside the group when a model write recreates the options', () => {
     setup();
-    const alpha = spectator.query('[data-test="radio-button-letter-alpha"] input') as HTMLInputElement;
+    const alpha = spectator.query('tn-radio input[value="a"]') as HTMLInputElement;
     alpha.focus();
 
     spectator.hostComponent.control.setValue('b');
