@@ -10,7 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -59,7 +59,7 @@ describe('CloudBackupSnapshotsComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(StorageService),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SlideInRef, slideInRef),
@@ -98,16 +98,19 @@ describe('CloudBackupSnapshotsComponent', () => {
   });
 
   it('handles restore functionality', async () => {
-    const slideInService = spectator.inject(SlideIn);
+    const formPanel = spectator.inject(FormSidePanelService);
 
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
     await menu.open();
     await menu.clickItem({ text: 'Restore' });
 
-    expect(slideInService.open).toHaveBeenCalledWith(CloudBackupRestoreFromSnapshotFormComponent, {
-      data: {
-        backup: { id: 1 } as CloudBackup,
-        snapshot: cloudBackupSnapshots[1],
+    expect(formPanel.open).toHaveBeenCalledWith(CloudBackupRestoreFromSnapshotFormComponent, {
+      title: 'Restore from Snapshot',
+      inputs: {
+        restoreData: {
+          backup: { id: 1 } as CloudBackup,
+          snapshot: cloudBackupSnapshots[1],
+        },
       },
     });
   });

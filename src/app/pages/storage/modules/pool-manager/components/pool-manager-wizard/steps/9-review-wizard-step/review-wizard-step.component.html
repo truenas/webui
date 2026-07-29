@@ -77,6 +77,20 @@
   }
 </div>
 
+@if (!isEnterprise()) {
+  <div class="force-topology">
+    <tn-form-field
+      [tooltip]="'Bypass topology recommendation checks (equal data VDEV width, RAIDZ/mirror width limits, and special/dedup redundancy). Not recommended.' | translate"
+    >
+      <tn-checkbox
+        [formControl]="forceTopologyControl"
+        [testId]="'force-topology'"
+        [label]="'Force' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </div>
+}
+
 <ix-form-actions>
   <tn-button
     tnStepperPrevious

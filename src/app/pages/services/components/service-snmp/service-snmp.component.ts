@@ -14,13 +14,12 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
-import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
- * The form's own value shape, which is NOT `SnmpConfigUpdate`: `loglevel` is nullable here and the
- * v3 controls are blanked (and `v3_privproto` nulled) for the API in
+ * The form's own value shape, which is NOT `SnmpConfigUpdate`: the v3 controls are blanked
+ * (and `v3_privproto` nulled) for the API in
  * {@link ServiceSnmpComponent.handleSubmit}. `<ix-form>` infers its generic from the snapshot, so
  * typing it against the API shape would make `FormSubmitEvent` lie.
  */
@@ -76,7 +75,6 @@ export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
 
     options: [''],
     zilstat: [false],
-    loglevel: [null as number | null],
   });
 
   readonly tooltips = {
@@ -90,13 +88,10 @@ export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
     v3_privproto: helptextServiceSnmp.v3.privprotoTooltip,
     v3_privpassphrase: helptextServiceSnmp.v3.privpassphraseTooltip,
     options: helptextServiceSnmp.optionsTooltip,
-    loglevel: helptextServiceSnmp.loglevelTooltip,
   };
 
   readonly authtypeOptions = helptextServiceSnmp.v3.authTypeOptions;
   readonly privprotoOptions = helptextServiceSnmp.v3.privprotoOptions;
-  // tn-select does not translate option labels, so translate up-front.
-  readonly logLevelOptions = translateOptions(this.translate, helptextServiceSnmp.loglevelOptions);
 
   get isV3SupportEnabled(): boolean {
     return this.form?.value?.v3 || false;

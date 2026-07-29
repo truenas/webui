@@ -29,7 +29,6 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -46,7 +45,6 @@ import { ReplicationService } from 'app/services/replication.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService],
   imports: [
-    ModalHeaderComponent,
     TnStepperComponent,
     TnStepComponent,
     ReplicationWhatAndWhereComponent,
@@ -72,8 +70,6 @@ export class ReplicationWizardComponent {
 
   protected whatAndWhere = viewChild.required(ReplicationWhatAndWhereComponent);
   protected when = viewChild.required(ReplicationWhenComponent);
-
-  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   /** Fired on a successful submit when hosted in a `<tn-side-panel>` (true = saved). */
   readonly closed = output<boolean>();
