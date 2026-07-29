@@ -5,7 +5,7 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
@@ -16,6 +16,7 @@ import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
 const fakeGroupDataSource = [{
@@ -110,6 +111,22 @@ describe('ServiceSshComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
+  });
+
+  it('blocks Save when the initial config load fails', () => {
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
+      .mockReturnValue(of(true));
+    jest.spyOn(api, 'call').mockReturnValue(throwError(() => new Error('Failed to load config')));
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    expect(showErrorModal).toHaveBeenCalled();
+    // The form keeps the values loaded above, so it is still valid — only `loadFailed`
+    // (fed to `<ix-form>`'s extraDisabled) keeps Save blocked.
+    expect(spectator.component.canSubmit()).toBe(false);
   });
 
   it('loads and shows current settings for SSH service when form is opened', async () => {

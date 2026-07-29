@@ -193,6 +193,11 @@ export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
     // would then re-run the reshaping over already-mutated values.
     const params = { ...this.form.value };
 
+    // Belt-and-braces today: `form.value` already omits disabled controls, and the mode watcher in
+    // ngOnInit disables exactly these fields (remotehost/remoteport in master mode, driver in
+    // slave mode), so the deletes are no-ops. They stay because they are what actually pins the
+    // payload to the mode — switching this read to the wrapper's `allValues` (a `getRawValue()`,
+    // disabled controls included) would silently start sending the other mode's fields otherwise.
     if (this.isMasterMode()) {
       delete params.remoteport;
       delete params.remotehost;

@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
@@ -21,10 +21,13 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
-import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import {
+  ixFormTestingProviders, silenceIxFormNestedGroupNotice,
+} from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UserService } from 'app/services/user.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -136,24 +139,12 @@ describe('ServiceSmbComponent', () => {
     ],
   });
 
-  /**
-   * `<ix-form>` logs a dev-mode notice for any form holding a nested FormGroup/FormArray, warning
-   * that `changedValues` reports the whole subtree as changed. This form's `bindip` FormArray is
-   * exactly that case, and `handleSubmit` deliberately builds its payload from `allValues` — so the
-   * notice is expected noise here. Silenced locally rather than in `setup-jest` so the guard keeps
-   * failing tests for every other form. Every other message still reaches `failOnConsole`.
-   */
-  const nestedChangedValuesNotice = '[ix-form] changedValues diffs top-level keys shallowly';
+  // This form's `bindip` FormArray trips the nested-group notice, and `handleSubmit` deliberately
+  // builds its payload from `allValues` — so the warning is expected noise here.
   let consoleWarnSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    const originalWarn = console.warn.bind(console) as (...args: unknown[]) => void;
-    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
-      if (typeof args[0] === 'string' && args[0].startsWith(nestedChangedValuesNotice)) {
-        return;
-      }
-      originalWarn(...args);
-    });
+    consoleWarnSpy = silenceIxFormNestedGroupNotice();
 
     tncConfigSignal.set({
       status: TruenasConnectStatus.Configured,
@@ -167,6 +158,28 @@ describe('ServiceSmbComponent', () => {
 
   afterEach(() => {
     consoleWarnSpy.mockRestore();
+  });
+
+  it('blocks Save when the initial config load fails', () => {
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
+      .mockReturnValue(of(true));
+    // Only `smb.config` fails: the sibling `sharing.smb.query` subscription has no error callback,
+    // so failing it too would surface as an unhandled rejection instead.
+    jest.spyOn(api, 'call').mockImplementation((method) => {
+      return method === 'smb.config'
+        ? throwError(() => new Error('Failed to load config'))
+        : of([]);
+    });
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    expect(showErrorModal).toHaveBeenCalled();
+    // The form keeps the values loaded above, so it is still valid — only `loadFailed`
+    // (fed to `<ix-form>`'s extraDisabled) keeps Save blocked.
+    expect(spectator.component.canSubmit()).toBe(false);
   });
 
   it('loads and shows current settings for Smb service when form is opened', async () => {

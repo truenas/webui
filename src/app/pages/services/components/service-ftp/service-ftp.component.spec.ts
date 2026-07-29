@@ -6,7 +6,7 @@ import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FtpConfig } from 'app/interfaces/ftp-config.interface';
@@ -22,6 +22,7 @@ import {
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -130,6 +131,23 @@ describe('ServiceFtpComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('blocks Save when the initial config load fails', () => {
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
+      .mockReturnValue(of(true));
+    jest.spyOn(spectator.inject(ApiService), 'call')
+      .mockReturnValue(throwError(() => new Error('Failed to load config')));
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    expect(showErrorModal).toHaveBeenCalled();
+    // The form keeps the values loaded above, so it is still valid — only `loadFailed`
+    // (fed to `<ix-form>`'s extraDisabled) keeps Save blocked.
+    expect(spectator.component.canSubmit()).toBe(false);
   });
 
   it('loads and shows current settings for FTP service', async () => {

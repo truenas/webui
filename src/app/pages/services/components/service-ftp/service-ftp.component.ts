@@ -158,6 +158,9 @@ export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
   }
 
   protected handleSubmit = (): SubmitResult => {
+    // Read straight off the form: this form disables no controls, so `form.value` is the whole
+    // payload, and the live value object is only spread into `values` below — never mutated — so
+    // no defensive copy is needed (unlike SSH/SNMP/UPS, which delete keys off their snapshot).
     const formValues = this.form.value;
     const values = {
       ...formValues,

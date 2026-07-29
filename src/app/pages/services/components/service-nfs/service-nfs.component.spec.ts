@@ -6,7 +6,9 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import {
+  catchError, EMPTY, Observable, of, throwError,
+} from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
@@ -21,6 +23,7 @@ import {
   AddSpnDialog,
 } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('ServiceNfsComponent', () => {
@@ -99,6 +102,35 @@ describe('ServiceNfsComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
     await spectator.fixture.whenStable();
+  });
+
+  // Guards the pipe order in ngOnInit: `tap({ error })` has to sit AHEAD of `withErrorHandler()`,
+  // which swallows the error. A reorder would silently leave Save enabled on a failed load.
+  it('blocks Save when the initial config load fails', () => {
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    const errorHandler = spectator.inject(ErrorHandlerService);
+    // `mockAuth()` stubs `withErrorHandler` as a pass-through, which would let a `tap` placed
+    // AFTER it still see the error. Restore the real swallow-and-report behaviour so the ordering
+    // is actually under test.
+    const showErrorModal = jest.spyOn(errorHandler, 'showErrorModal').mockReturnValue(of(true));
+    jest.spyOn(errorHandler, 'withErrorHandler').mockReturnValue(
+      (source$: Observable<unknown>) => source$.pipe(
+        catchError((error: unknown) => {
+          errorHandler.showErrorModal(error);
+          return EMPTY;
+        }),
+      ),
+    );
+    jest.spyOn(api, 'call').mockReturnValue(throwError(() => new Error('Failed to load config')));
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    expect(showErrorModal).toHaveBeenCalled();
+    // The form keeps the values loaded above, so it is still valid — only `loadFailed`
+    // (fed to `<ix-form>`'s extraDisabled) keeps Save blocked.
+    expect(spectator.component.canSubmit()).toBe(false);
   });
 
   it('shows current settings for NFS service when form is opened', async () => {

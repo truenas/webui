@@ -33,7 +33,6 @@ type SshFormValue = ReturnType<ServiceSshComponent['form']['getRawValue']>;
 @Component({
   selector: 'ix-service-ssh',
   templateUrl: './service-ssh.component.html',
-  styleUrls: ['./service-ssh.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
