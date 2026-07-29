@@ -158,13 +158,16 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
   private onChange: (value: unknown) => void = (): void => {};
   private onTouched: () => void = (): void => {};
 
+  /** Latches {@link assertNoRequiredValidator} to a single report; see its doc. */
+  private hasReportedRequiredValidator = false;
+
   constructor() {
     this.controlDirective.valueAccessor = this;
 
     if (isDevMode()) {
       // Deferred: the directive binds its `control` after this constructor runs.
       afterNextRender({
-        read: () => this.assertNoRequiredValidator(),
+        read: () => this.watchForRequiredValidator(),
       }, { injector: this.injector });
     }
 
@@ -184,18 +187,42 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
   }
 
   /**
+   * Runs {@link assertNoRequiredValidator} at first render and again whenever the bound control's
+   * status changes. The later re-check is the point: a wizard step that becomes relevant attaches
+   * its validators with `setValidators()` + `updateValueAndValidity()` long after first render, and
+   * that is exactly the case the trap bites in — a first-render-only check would stay silent for it.
+   * `updateValueAndValidity()` emits on `statusChanges`, so that is the hook.
+   *
+   * Dev-mode only, so production ships neither the check nor this subscription.
+   */
+  private watchForRequiredValidator(): void {
+    this.assertNoRequiredValidator();
+
+    this.controlDirective.control?.statusChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.assertNoRequiredValidator());
+  }
+
+  /**
    * Turns the class doc's "No validation display" trap into an immediate console error rather than
    * a form that silently refuses to submit: the group renders no error text, and `touched` marks on
    * pick rather than blur, so a required group the user never picked blocks Save with nothing on
    * screen to explain it. Dev-mode only — production ships no check.
    *
-   * Only catches `Validators.required` by reference, which is how call sites attach it; a bespoke
-   * required-ness validator is invisible here.
+   * Two things it cannot see. It only catches `Validators.required` **by reference**, which is how
+   * call sites attach it — a bespoke required-ness validator is invisible. And it only looks at
+   * first render and on each `statusChanges` emission (see {@link watchForRequiredValidator}), so a
+   * validator attached with `setValidators()` and no following `updateValueAndValidity()` goes
+   * unreported until something else revalidates the control.
+   *
+   * Reports once per instance: a validator toggled on and off mid-flow is still the same trap, and
+   * `statusChanges` fires on every keystroke elsewhere in the form.
    */
   private assertNoRequiredValidator(): void {
-    if (!this.controlDirective.control?.hasValidator(Validators.required)) {
+    if (this.hasReportedRequiredValidator || !this.controlDirective.control?.hasValidator(Validators.required)) {
       return;
     }
+    this.hasReportedRequiredValidator = true;
 
     console.error(
       `<ix-tn-radio-group name="${this.name()}"> is bound to a control with Validators.required, `

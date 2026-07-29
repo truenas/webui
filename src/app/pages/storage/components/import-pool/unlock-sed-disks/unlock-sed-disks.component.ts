@@ -135,9 +135,20 @@ export class UnlockSedDisksComponent {
     value: disk.name,
   })));
 
-  protected availableDisksForException = computed(() => {
-    const usedDiskNames = new Set(this.exceptionDiskNames());
-    return this.diskOptions().filter((option) => !usedDiskNames.has(String(option.value)));
+  /**
+   * How many locked disks a new exception row could still pick from: those no row has claimed,
+   * less one slot for every row already added but left unpicked. Counting the blank rows matters —
+   * their `diskName` is `''`, which claims no disk, so without it "Add Disk Exception" stayed
+   * enabled indefinitely and the surplus rows each rendered over a "No options" dropdown.
+   */
+  protected readonly availableDiskCountForException = computed(() => {
+    const diskNames = this.exceptionDiskNames();
+    const claimedDiskNames = new Set(diskNames.filter(Boolean));
+    const blankRowCount = diskNames.filter((diskName) => !diskName).length;
+    const unclaimedCount = this.diskOptions()
+      .filter((option) => !claimedDiskNames.has(String(option.value))).length;
+
+    return unclaimedCount - blankRowCount;
   });
 
   /** Per-row option list: every disk not claimed by another row, plus the row's own selection. */
@@ -159,8 +170,7 @@ export class UnlockSedDisksComponent {
   protected readonly diskOptionTestIdKey = optionTestIdByLabel;
 
   protected addException(): void {
-    const available = this.availableDisksForException();
-    if (available.length === 0) return;
+    if (this.availableDiskCountForException() <= 0) return;
 
     this.form.controls.exceptions.push(
       this.formBuilder.group({

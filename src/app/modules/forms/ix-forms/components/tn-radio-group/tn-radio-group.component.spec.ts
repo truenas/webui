@@ -217,6 +217,34 @@ describe('TnRadioGroupComponent', () => {
 
       expect(consoleError).not.toHaveBeenCalled();
     });
+
+    it('errors when the validator is attached after first render', () => {
+      setup();
+      expect(consoleError).not.toHaveBeenCalled();
+
+      // The case a first-render-only check misses, and the one the trap actually bites in: a
+      // wizard step turns its control required as it becomes relevant.
+      spectator.hostComponent.control.setValidators(Validators.required);
+      spectator.hostComponent.control.updateValueAndValidity();
+      spectator.detectChanges();
+
+      expect(consoleError).toHaveBeenCalledWith(expect.stringContaining('Validators.required'));
+    });
+
+    it('reports once, not on every later revalidation', () => {
+      setup(`
+        <ix-tn-radio-group
+          name="letter"
+          [formControl]="requiredControl"
+          [options]="options"
+        ></ix-tn-radio-group>
+      `);
+
+      spectator.hostComponent.requiredControl.updateValueAndValidity();
+      spectator.hostComponent.requiredControl.updateValueAndValidity();
+
+      expect(consoleError).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('options whose values stringify alike', () => {

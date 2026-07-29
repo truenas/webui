@@ -144,6 +144,20 @@ describe('UnlockSedDisksComponent', () => {
     expect(passwordInputs).toHaveLength(1);
   });
 
+  it('stops adding exception rows once every locked disk has a row, picked or not', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Disk Exception' }));
+
+    // Two locked disks, so two rows — even though neither has picked a disk yet, and so neither
+    // has claimed one. A third row would render over a "No options" dropdown.
+    await addButton.click();
+    await addButton.click();
+
+    expect(await addButton.isDisabled()).toBe(true);
+    expect(await loader.getAllHarnesses(
+      TnSelectHarness.with({ selector: '[formControlName="diskName"]' }),
+    )).toHaveLength(2);
+  });
+
   it('gives each exception row its own test ids and remove-button label', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Disk Exception' }));
     await addButton.click();

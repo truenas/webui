@@ -1,14 +1,9 @@
 import {
   TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
-
-/**
- * Returned by {@link TnFormControlHarness.getValue} for a `tn-form-field` holding a control the
- * harness cannot read. Whole-form readers (`getControlValues`) leave such a control out of their
- * result rather than reporting a made-up value for it.
- */
-export const unreadableControlValue = Symbol('unreadableControlValue');
+import {
+  IxFormControlHarness, unreadableControl,
+} from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 
 /**
  * Adapter that lets a `tn-form-field`-wrapped tn-* control be driven through the same
@@ -22,12 +17,13 @@ export const unreadableControlValue = Symbol('unreadableControlValue');
  *
  * **Supported controls: `tn-input`, `tn-select`, `tn-checkbox`, `tn-radio`.** A field wrapping
  * anything else (`tn-autocomplete`, `tn-chip-input`, `tn-file-input`, …) still indexes by label,
- * but {@link getValue} returns {@link unreadableControlValue} — whole-form readers like
- * `getControlValues` walk every control at once, so a throw there would take the rest of the
- * form's values down with it, while returning `''` would let an assertion pass while reading
- * nothing. The sentinel does neither: readers drop the entry, so a form-wide `toEqual` fails on
- * the missing key. {@link setValue} targets one control and does throw. Extend the branches below
- * when a form needs one of those, or drive that control through its own tn-* harness.
+ * but {@link getValue} and {@link isDisabled} return {@link unreadableControl} — whole-form
+ * readers like `getControlValues`/`getDisabledStates` walk every control at once, so a throw there
+ * would take the rest of the form down with it, while returning `''`/`false` would let an
+ * assertion pass while reading nothing. The sentinel does neither: readers drop the entry, so a
+ * form-wide `toEqual` fails on the missing key. {@link setValue} targets one control and does
+ * throw. Extend the branches below when a form needs one of those, or drive that control through
+ * its own tn-* harness.
  */
 export class TnFormControlHarness extends TnFormFieldHarness implements IxFormControlHarness {
   static override readonly hostSelector = 'tn-form-field';
@@ -42,12 +38,14 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
    * library exposes no `hasValue()`, so there is no public equivalent to compose here yet.
    */
   private selectPlaceholder = this.locatorForOptional('.tn-select-text.placeholder');
+  /** Only `ix-tn-radio-group` renders this, and only with an explicit accessible name. */
+  private namedRadioGroup = this.locatorForOptional('[role="radiogroup"][aria-label]');
 
   /**
-   * Empty when the field carries no label and holds no self-labeling control (e.g. the
-   * label-less search fields in the pool-manager wizard). `indexControlsByLabel` keys on this,
-   * and drops the empty key entirely once a second such control appears rather than letting them
-   * collide — query those directly through their own tn-* harness instead.
+   * Empty only when the field carries no label and holds nothing that names itself — neither a
+   * `tn-checkbox`'s own `[label]` nor a radio group's `[ariaLabel]`. `indexControlsByLabel` leaves
+   * such a control out of the index entirely (no label a caller could pass would reach it); query
+   * it through its own tn-* harness instead.
    */
   async getLabelText(): Promise<string> {
     const label = await this.getLabel();
@@ -59,6 +57,13 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
     const checkbox = await this.checkbox();
     if (checkbox) {
       return checkbox.getLabelText();
+    }
+    // Same idea for a label-less `ix-tn-radio-group`: its `[ariaLabel]` is the group's accessible
+    // name, so it is a real name to index under rather than a nameless control. (When the field
+    // does carry a label the group mirrors it into `aria-label`, so this never competes with it.)
+    const radioGroup = await this.namedRadioGroup();
+    if (radioGroup) {
+      return (await radioGroup.getAttribute('aria-label')) ?? '';
     }
     return '';
   }
@@ -88,7 +93,7 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
       // A group with nothing picked, which is a real value — not an unreadable control.
       return '';
     }
-    return unreadableControlValue;
+    return unreadableControl;
   }
 
   async setValue(value: unknown): Promise<void> {
@@ -133,8 +138,11 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
    * drives one). A partially-disabled group — individual options disabled to bar certain choices —
    * therefore reads as enabled, and no assertion here can see which options are off. Assert those
    * through `TnRadioHarness.isDisabled()` per option instead.
+   *
+   * Returns {@link unreadableControl} for a control with no branch here, for the reason spelled out
+   * on {@link getValue}: a `false` would read as "enabled" for a control that may well be disabled.
    */
-  async isDisabled(): Promise<boolean> {
+  async isDisabled(): Promise<boolean | typeof unreadableControl> {
     const input = await this.input();
     if (input) {
       return input.isDisabled();
@@ -152,6 +160,6 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
       const disabledStates = await Promise.all(radios.map((radio) => radio.isDisabled()));
       return disabledStates.every(Boolean);
     }
-    return false;
+    return unreadableControl;
   }
 }

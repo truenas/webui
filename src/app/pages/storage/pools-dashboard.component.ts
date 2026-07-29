@@ -65,6 +65,10 @@ export class PoolsDashboardComponent implements OnInit {
    * than stripped at render time: extraction is automated and the locale files are generated, so
    * this costs one re-translation instead of a permanently misleading source string plus a
    * regex on every render. Run `yarn translations` to pick the new key up.
+   *
+   * The three sentences run together as one paragraph now that the breaks are gone.
+   * `.tn-empty__description` caps itself at 420px and centres, so it still wraps to a short,
+   * readable column rather than a single full-width line — no extra styling needed here.
    */
   protected readonly emptyMessage = T('Storage features in TrueNAS require at least one Pool to exist. A Pool is a group of disks working together to store and protect your data. Once you have a pool, this page will provide an overview of your pool’s health and status.');
 

@@ -248,7 +248,8 @@ describe('PoolManagerComponent – start over functionality', () => {
     // ENCLOSURE step activated and reset to default
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Enclosure Options');
     expect(await wizard.getStepValues()).toStrictEqual({
-      '': 'No Enclosure Dispersal Strategy',
+      // The group carries no visible field label, so it indexes under its accessible name.
+      'Enclosure dispersal strategy': 'No Enclosure Dispersal Strategy',
     });
     await wizard.clickNext();
 

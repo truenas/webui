@@ -26,10 +26,12 @@
     ></ix-unlock-sed-disks>
   }
   @case ('import') {
+    <!-- Submission routes through the host-facing submit() — not onSubmit() — so the panel
+         footer's Save would latch to "Saving…" if this form is ever opened with a footer. -->
     <form
       class="ix-form-container"
       [formGroup]="form"
-      (ngSubmit)="onSubmit()"
+      (submit)="submit()"
     >
       <tn-form-section [heading]="helptext.selectPool | translate">
         <tn-form-field

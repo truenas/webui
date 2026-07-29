@@ -73,7 +73,7 @@
         icon="mdi-plus"
         type="button"
         [testId]="'add-exception'"
-        [disabled]="availableDisksForException().length === 0"
+        [disabled]="availableDiskCountForException() <= 0"
         [label]="'Add Disk Exception' | translate"
         (onClick)="addException()"
       ></tn-button>

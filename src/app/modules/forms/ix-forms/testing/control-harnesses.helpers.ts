@@ -21,8 +21,10 @@ import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-s
 import { IxStarRatingHarness } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.harness';
 import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxUserPickerHarness } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.harness';
-import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
-import { TnFormControlHarness, unreadableControlValue } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
+import {
+  IxFormControlHarness, unreadableControl,
+} from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
+import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 
 export const supportedFormControlSelectors = [
@@ -89,25 +91,23 @@ export async function indexControlsByLabel<T extends IxFormControlHarness>(
   controls: T[],
 ): Promise<Record<string, T>> {
   const result: Record<string, T> = {};
-  let unlabelledCount = 0;
   for (const control of controls) {
     const label = await control.getLabelText();
+    // Repeated *labelled* controls are legitimate and long-standing here — an `ix-list` renders
+    // one set of labels per row — so those stay last-wins, as they have always been. An unlabelled
+    // control is different: '' is not a name any caller would ask for, and a second one would
+    // collide with the first under it. Skip them unconditionally rather than only once a second
+    // appears — a threshold would make whether '' resolves depend on unrelated markup elsewhere
+    // in the form, so adding a label-less field could silently drop an existing `''` assertion's
+    // coverage instead of breaking it. Skipping rather than throwing keeps the index usable: a
+    // form is allowed to hold an unreachable control alongside addressable ones, and only the ''
+    // lookup fails — `fillControlValues` explains why. Note that "unlabelled" is narrow: a
+    // `tn-checkbox`'s own `[label]` and a radio group's `[ariaLabel]` both count as labels
+    // (see `TnFormControlHarness.getLabelText`), so only a genuinely nameless control lands here.
     if (!label) {
-      unlabelledCount += 1;
+      continue;
     }
     result[label] = control;
-  }
-
-  // Repeated *labelled* controls are legitimate and long-standing here — an `ix-list` renders
-  // one set of labels per row — so those stay last-wins, as they have always been. Two or more
-  // unlabelled controls are different: they all index under '', and there is no label a caller
-  // could pass to reach a specific one, so handing back whichever happened to be last is a
-  // silently wrong answer. Drop the ambiguous entry instead of throwing: the index backs whole
-  // forms, and a form is allowed to contain an unreachable control alongside perfectly
-  // addressable ones. Only the '' lookup then fails, and `fillControlValues` explains why —
-  // every sibling keeps working.
-  if (unlabelledCount > 1) {
-    delete result[''];
   }
 
   return result;
@@ -123,7 +123,7 @@ export async function getControlValues(
     // Leave a control the harness can't read out of the result entirely, rather than reporting a
     // stand-in value for it — a form-wide `toEqual` then fails on the missing key instead of
     // passing against a `''` that was never read from anything.
-    if (value !== unreadableControlValue) {
+    if (value !== unreadableControl) {
       result[label] = value as IxFormBasicValueType;
     }
   }
@@ -140,15 +140,14 @@ export async function fillControlValues(
     const control = controlsDict[label];
 
     if (!control) {
-      // An empty label is never a typo, so say what it actually means: controls with no label
-      // index under '', and `indexControlsByLabel` drops that entry once a form holds more than
-      // one of them, because no label could pick between them.
+      // An empty label is never a typo, so say what it actually means: a control with no label of
+      // any kind is left out of the index entirely, because no label could reach it.
       throw new Error(
         label
           ? `Could not find control with label ${label}.`
-          : 'No control is indexed under an empty label. Unlabelled controls index under \'\', and '
-            + 'that entry is dropped when a form holds more than one of them — reach those through '
-            + 'their own ix-*/tn-* harness instead.',
+          : 'No control is indexed under an empty label — unlabelled controls are left out of the '
+            + 'index, because no label would pick between them. Reach those through their own '
+            + 'ix-*/tn-* harness instead.',
       );
     }
 
@@ -162,7 +161,14 @@ export async function getDisabledStates(
   const result: Record<string, boolean> = {};
   // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const label in controlsDict) {
-    result[label] = await controlsDict[label].isDisabled();
+    const isDisabled = await controlsDict[label].isDisabled();
+    // Same treatment `getControlValues` gives an unreadable value, and for the same reason: a
+    // control whose disabled state the harness cannot read is left out entirely rather than
+    // reported as `false`, which would let a form-wide `toEqual` pass while the control is
+    // genuinely disabled. The missing key fails the assertion instead.
+    if (isDisabled !== unreadableControl) {
+      result[label] = isDisabled;
+    }
   }
 
   return result;
