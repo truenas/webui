@@ -4,7 +4,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCalendarComponent, TnIconButtonComponent } from '@truenas/ui-components';
 import {
-  isBefore, startOfMonth, differenceInCalendarMonths,
+  isBefore, isSameMonth, startOfMonth,
 } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
@@ -36,16 +36,29 @@ export class SchedulerPreviewColumnComponent {
   /** The month currently on screen. The calendar owns navigation; this mirrors it. */
   protected readonly activeDate = signal<Date>(new Date());
 
-  protected readonly isPastMonth = computed(() => isBefore(this.activeDate(), startOfMonth(new Date())));
+  private readonly isPastMonth = computed(() => isBefore(this.activeDate(), startOfMonth(new Date())));
 
   /**
-   * Where the preview starts counting from: right now while the current month is on
-   * screen, otherwise the first of whichever month is being viewed.
+   * Where the preview starts counting from: right now while the month on screen is still
+   * running, otherwise the first of whichever month is being viewed.
+   *
+   * The month this lands in has to be the month the calendar is showing — `markedDates`
+   * places run days within it. Near a month boundary the system time zone and the browser
+   * disagree about which month "now" is in, and either one can be the month on screen, so
+   * try both clocks before falling back to the first of the month. Falling back too eagerly
+   * would rewind into a month already half over and mark days that have already passed.
    */
   protected readonly startDate = computed(() => {
     const activeDate = this.activeDate();
-    if (differenceInCalendarMonths(activeDate, new Date()) < 1) {
-      return toZonedTime(new Date(), this.timezone());
+    const now = new Date();
+    const zonedNow = toZonedTime(now, this.timezone());
+
+    if (isSameMonth(zonedNow, activeDate)) {
+      return zonedNow;
+    }
+
+    if (isSameMonth(now, activeDate)) {
+      return now;
     }
 
     return startOfMonth(activeDate);
@@ -77,12 +90,7 @@ export class SchedulerPreviewColumnComponent {
 
     const startDate = this.startDate();
 
-    try {
-      return [...cronPreview.getNextDaysInMonthWithRuns(startDate)]
-        .map((day) => new Date(startDate.getFullYear(), startDate.getMonth(), day));
-    } catch (error: unknown) {
-      console.error(error);
-      return [];
-    }
+    return [...cronPreview.getNextDaysInMonthWithRuns(startDate)]
+      .map((day) => new Date(startDate.getFullYear(), startDate.getMonth(), day));
   });
 }
