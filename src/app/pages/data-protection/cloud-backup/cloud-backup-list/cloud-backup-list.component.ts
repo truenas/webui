@@ -11,14 +11,16 @@ import {
   TnTablePagerComponent,
   TnTestIdDirective,
   TnTooltipDirective,
+  type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
+import { cloudBackupTaskEmptyConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -27,7 +29,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import {
-  convertStringToId, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
+  dataProviderEmptyState, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, perRow, rowTestIdTag,
 } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -94,6 +96,12 @@ export class CloudBackupListComponent {
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
+  // Bound from the shared catalog config rather than inlined in the template, so the
+  // translated string has a single source of truth.
+  protected readonly emptyMessage = flattenEmptyConfigMessage(
+    this.translate.instant(cloudBackupTaskEmptyConfig.message),
+  );
+
   protected readonly displayedColumns = ['description', 'enabled', 'snapshot', 'state', 'last-run', 'actions'];
 
   protected readonly actions: IconActionConfig<CloudBackup>[] = [
@@ -119,15 +127,14 @@ export class CloudBackupListComponent {
 
   protected readonly trackByBackupId = (_index: number, row: CloudBackup): number => row.id;
 
-  protected uniqueRowTag(row: CloudBackup): string {
-    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('backup1' → 'backup-1')
-    // while the library's kebab does not, so the tag resolves identically through the legacy
-    // [ixTest] directive and the library [tnTestId] directive.
-    return kebabCase(convertStringToId('cloud-backup-' + row.description));
-  }
+  protected readonly uniqueRowTag = rowTestIdTag<CloudBackup>((row) => 'cloud-backup-' + row.description);
 
-  protected ariaLabel(row: CloudBackup): string {
-    return [row.description, this.translate.instant('Cloud Backup')].join(' ');
+  protected readonly ariaLabel = perRow<CloudBackup, string>(
+    (row) => [row.description, this.translate.instant('Cloud Backup')].join(' '),
+  );
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider().setSorting(mapTnSortToTableSort<CloudBackup>(event, this.displayedColumns));
   }
 
   /**

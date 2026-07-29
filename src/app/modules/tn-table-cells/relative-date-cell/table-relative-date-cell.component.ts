@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { isValid } from 'date-fns';
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
@@ -22,7 +22,7 @@ import { LocaleService } from 'app/modules/language/locale.service';
   selector: 'ix-table-relative-date-cell',
   templateUrl: './table-relative-date-cell.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TnTooltipDirective, TnTestIdDirective, TranslateModule],
+  imports: [TnTooltipDirective, TnTestIdDirective],
   providers: [FormatDateTimePipe],
 })
 export class TableRelativeDateCellComponent {

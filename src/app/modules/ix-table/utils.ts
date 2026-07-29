@@ -115,6 +115,40 @@ export function detailActionTestId(parts: (string | number | undefined)[], actio
   return kebabCase([...parts, action].join('-'));
 }
 
+/**
+ * Memoizes a per-row derivation against the row object itself. A migrated table
+ * calls these from the template — once per cell, again on every change-detection
+ * pass — so a wide row can ask for the same tag or label a dozen times. Keyed by
+ * row identity in a `WeakMap`, so entries go away with the rows a reload drops.
+ *
+ * Only for derivations of the row and nothing else — a test-id tag, an aria
+ * label, a parsed crontab. Anything that also depends on the clock (a "next run"
+ * countdown) must stay uncached or it will freeze at its first render.
+ */
+export function perRow<T extends object, R>(derive: (row: T) => R): (row: T) => R {
+  const cache = new WeakMap<T, R>();
+  return (row: T): R => {
+    if (!cache.has(row)) {
+      cache.set(row, derive(row));
+    }
+    return cache.get(row) as R;
+  };
+}
+
+/**
+ * Builds a row's unique test-id tag from the base string that identified it
+ * under the legacy `[ixTest]` directive, memoized per row.
+ *
+ * Pre-splits with lodash `kebabCase` for the same reason `detailActionTestId`
+ * does: it breaks letter–digit boundaries ('task1' → 'task-1') while the
+ * library's kebab does not, so the tag resolves identically through the legacy
+ * `[ixTest]` directive and the library `[tnTestId]` directive. Shared so the
+ * migrated tables can't drift apart on this.
+ */
+export function rowTestIdTag<T extends object>(base: (row: T) => string): (row: T) => string {
+  return perRow((row: T) => kebabCase(convertStringToId(base(row))));
+}
+
 function fromProvider<T, R>(
   provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
   select: (instance: BaseDataProvider<T>) => Observable<R>,

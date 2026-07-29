@@ -8,6 +8,7 @@ import { dataProtectionEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dataProtectionDashboardElements } from 'app/pages/data-protection/data-protection-dashboard.elements';
@@ -49,10 +50,9 @@ export class DataProtectionDashboardComponent {
   // Reuse the catalog string rather than a reworded one — it is translated in every
   // locale. It carries the `<br>` markup ix-empty rendered as HTML, and tn-empty's
   // [description] is a text input, so flatten the markup to whitespace.
-  protected readonly emptyDescription = this.translate.instant(dataProtectionEmptyConfig.message)
-    .replace(/<br\s*\/?>/gi, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  protected readonly emptyDescription = flattenEmptyConfigMessage(
+    this.translate.instant(dataProtectionEmptyConfig.message),
+  );
 
   protected createPool(): void {
     this.router.navigate(['/storage', 'create']);

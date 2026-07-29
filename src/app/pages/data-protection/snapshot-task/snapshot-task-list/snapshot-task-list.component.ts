@@ -17,14 +17,15 @@ import {
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import {
   Observable, filter, switchMap, take, tap,
 } from 'rxjs';
+import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -44,8 +45,8 @@ import {
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
-  convertStringToId, createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
-  detailActionTestId, mapTnSortToTableSort, toDisplayedColumns,
+  createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
+  detailActionTestId, mapTnSortToTableSort, perRow, rowTestIdTag, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -128,6 +129,13 @@ export class SnapshotTaskListComponent implements OnInit {
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly empty = dataProviderEmptyState(this.dataProvider);
   protected readonly EmptyType = EmptyType;
+
+  // Bound from the shared catalog config rather than inlined in the template: the
+  // catalog key is the `<p>`-wrapped markup and is already translated in every
+  // locale, so re-wording it here would mint a new key and lose those translations.
+  protected readonly emptyMessage = flattenEmptyConfigMessage(
+    this.translate.instant(snapshotTaskEmptyConfig.message),
+  );
 
   // ix-table column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs) and the hidden-column list rendered in the detail
@@ -212,30 +220,29 @@ export class SnapshotTaskListComponent implements OnInit {
 
   protected readonly trackByTaskId = (_index: number, row: PeriodicSnapshotTaskUi): number => row.id;
 
-  protected uniqueRowTag(row: PeriodicSnapshotTaskUi): string {
-    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('pool1' → 'pool-1')
-    // while the library's kebab does not, so the tag resolves identically through the legacy
-    // [ixTest] directive and the library [tnTestId] directive.
-    return kebabCase(convertStringToId('snapshot-task-' + row.dataset + '-' + row.naming_schema));
-  }
+  protected readonly uniqueRowTag = rowTestIdTag<PeriodicSnapshotTaskUi>(
+    (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,
+  );
 
-  protected ariaLabel(row: PeriodicSnapshotTaskUi): string {
-    return [row.dataset, this.translate.instant('Snapshot Task')].join(' ');
-  }
+  protected readonly ariaLabel = perRow<PeriodicSnapshotTaskUi, string>(
+    (row) => [row.dataset, this.translate.instant('Snapshot Task')].join(' '),
+  );
 
   protected detailActionTestId(row: PeriodicSnapshotTaskUi, action: string): string {
     return detailActionTestId([row.dataset, row.naming_schema], action);
   }
 
-  protected getActiveHours(row: PeriodicSnapshotTaskUi): string {
+  protected readonly getActiveHours = perRow<PeriodicSnapshotTaskUi, string>((row) => {
     const activeHours = extractActiveHoursFromCron(scheduleToCrontab(row.schedule));
     return this.translate.instant('From {task_begin} to {task_end}', {
       task_begin: activeHours.start,
       task_end: activeHours.end,
     });
-  }
+  });
 
-  protected getNextRun(row: PeriodicSnapshotTaskUi): unknown {
+  // Not memoized per row like the derivations above: the next occurrence is relative
+  // to now, so it has to be recomputed as the table renders.
+  protected getNextRun(row: PeriodicSnapshotTaskUi): Date | string {
     if (row.enabled) {
       return this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule));
     }

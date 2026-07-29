@@ -17,13 +17,14 @@ import {
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { filter, switchMap, tap } from 'rxjs';
+import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -35,16 +36,13 @@ import {
   stateButtonColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import {
-  toggleColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
-  convertStringToId, createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
-  detailActionTestId, mapTnSortToTableSort, toDisplayedColumns,
+  createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
+  detailActionTestId, mapTnSortToTableSort, perRow, rowTestIdTag, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -133,6 +131,12 @@ export class ReplicationListComponent implements OnInit {
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
+  // Bound from the shared catalog config rather than inlined in the template, so the
+  // translated string has a single source of truth.
+  protected readonly emptyMessage = flattenEmptyConfigMessage(
+    this.translate.instant(replicationTaskEmptyConfig.message),
+  );
+
   // ix-table column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs) and the hidden-column list rendered in the detail
   // row; tn-table renders cells from the template and derives its
@@ -189,7 +193,11 @@ export class ReplicationListComponent implements OnInit {
       cssClass: 'state-button',
       getJob: (row) => row.job || null,
     }),
-    toggleColumn({
+    // Modelled as yes/no rather than a toggle: the template renders the visible
+    // column as an <ix-table-toggle-cell>, but when the picker hides this column
+    // <ix-table-details-row> renders it through the ix cell components, where a
+    // toggle would be interactive without an `onRowToggle`/`requiredRoles`.
+    yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
@@ -217,16 +225,11 @@ export class ReplicationListComponent implements OnInit {
     return `replication-task-${row.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`;
   }
 
-  protected uniqueRowTag(row: ReplicationTask): string {
-    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('task1' → 'task-1')
-    // while the library's kebab does not, so the tag resolves identically through the legacy
-    // [ixTest] directive and the library [tnTestId] directive.
-    return kebabCase(convertStringToId(this.rowTag(row)));
-  }
+  protected readonly uniqueRowTag = rowTestIdTag<ReplicationTask>((row) => this.rowTag(row));
 
-  protected ariaLabel(row: ReplicationTask): string {
-    return [row.name, this.translate.instant('Replication Task')].join(' ');
-  }
+  protected readonly ariaLabel = perRow<ReplicationTask, string>(
+    (row) => [row.name, this.translate.instant('Replication Task')].join(' '),
+  );
 
   protected detailActionTestId(row: ReplicationTask, action: string): string {
     return detailActionTestId([row.id], action);

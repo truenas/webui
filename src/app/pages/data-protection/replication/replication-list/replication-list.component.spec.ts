@@ -279,6 +279,25 @@ describe('ReplicationListComponent', () => {
     );
   });
 
+  // The visible `Enabled` column renders as a toggle from the template, but the picker can
+  // hide it, and <ix-table-details-row> then renders it through the ix cell components — where
+  // a toggle would have no `onRowToggle`/`requiredRoles`. It has to fall back to plain yes/no.
+  it('renders the hidden Enabled column as text, not a toggle, in the detail row', async () => {
+    spectator.component.columnsChange(
+      spectator.component.columns().map((column) => (
+        column.title === 'Enabled' ? { ...column, hidden: true } : column
+      )),
+    );
+    spectator.detectChanges();
+
+    expect(await table.getHeaderTexts()).not.toContain('Enabled');
+
+    await table.toggleRowExpansion(0);
+
+    expect(spectator.query('ix-table-details-row')).toHaveText('Enabled');
+    expect(await loader.getAllHarnesses(TnSlideToggleHarness)).toHaveLength(0);
+  });
+
   it('checks if downloads encryption keys when button is pressed', async () => {
     await table.toggleRowExpansion(0);
 

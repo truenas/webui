@@ -19,7 +19,7 @@
       icon="true-cloud"
       iconLibrary="custom"
       iconSize="56px"
-      [title]="'Back up to the decentralized network provided by Storj in partnership with TrueNAS.' | translate"
+      [title]="emptyMessage"
     ></tn-empty>
   }
 } @else {
@@ -36,8 +36,9 @@
     [emptyMessage]="empty.message()"
     [emptyIcon]="empty.icon()"
     (rowClick)="onRowClick($event)"
+    (sortChange)="onSortChange($event)"
   >
-    <ng-container [tnColumnDef]="'description'">
+    <ng-container [tnColumnDef]="'description'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <span
@@ -48,7 +49,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'enabled'" [width]="'70px'">
+    <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
       <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-toggle-cell
@@ -63,7 +64,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'snapshot'" [width]="'90px'">
+    <ng-container [tnColumnDef]="'snapshot'" [sortable]="true" [width]="'90px'">
       <ng-template tnHeaderCellDef>{{ 'Snapshot' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <span

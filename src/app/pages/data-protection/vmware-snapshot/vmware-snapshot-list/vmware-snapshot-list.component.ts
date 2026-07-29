@@ -14,7 +14,6 @@ import {
   TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -24,8 +23,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import {
-  convertStringToId, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
-  detailActionTestId, mapTnSortToTableSort,
+  dataProviderEmptyState, dataProviderLoading, dataProviderRows,
+  detailActionTestId, mapTnSortToTableSort, perRow, rowTestIdTag,
 } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -84,16 +83,11 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   protected readonly trackBySnapshotId = (_index: number, row: VmwareSnapshot): number => row.id;
 
-  protected uniqueRowTag(row: VmwareSnapshot): string {
-    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('esxi1' → 'esxi-1')
-    // while the library's kebab does not, so the tag resolves identically through the legacy
-    // [ixTest] directive and the library [tnTestId] directive.
-    return kebabCase(convertStringToId('vmware-snapshot-' + row.hostname));
-  }
+  protected readonly uniqueRowTag = rowTestIdTag<VmwareSnapshot>((row) => 'vmware-snapshot-' + row.hostname);
 
-  protected ariaLabel(row: VmwareSnapshot): string {
-    return [row.hostname, this.translate.instant('VMware Snapshot')].join(' ');
-  }
+  protected readonly ariaLabel = perRow<VmwareSnapshot, string>(
+    (row) => [row.hostname, this.translate.instant('VMware Snapshot')].join(' '),
+  );
 
   protected detailActionTestId(row: VmwareSnapshot, action: string): string {
     return detailActionTestId([row.hostname, row.filesystem], action);

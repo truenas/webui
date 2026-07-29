@@ -16,6 +16,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -212,6 +213,24 @@ describe('CloudBackupListComponent', () => {
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
+  });
+
+  it('sorts through the data provider when a sortable header is clicked', async () => {
+    const dataProvider = spectator.component.dataProvider();
+    jest.spyOn(dataProvider, 'setSorting');
+
+    expect(await table.isSortable('description')).toBe(true);
+    expect(await table.isSortable('enabled')).toBe(true);
+    expect(await table.isSortable('snapshot')).toBe(true);
+
+    await table.clickSortHeader('description');
+
+    expect(dataProvider.setSorting).toHaveBeenCalledWith({
+      propertyName: 'description',
+      direction: SortDirection.Asc,
+      active: 0,
+    });
+    expect(await table.getSortDirection('description')).toBe('ascending');
   });
 
   it('updates Cloud Backup Enabled status once the toggle is updated', async () => {

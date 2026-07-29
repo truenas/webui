@@ -18,15 +18,16 @@ import {
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import {
   EMPTY, catchError, filter, map, switchMap, tap,
 } from 'rxjs';
+import { cloudSyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
@@ -46,8 +47,8 @@ import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-t
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
-  convertStringToId, createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
-  detailActionTestId, mapTnSortToTableSort, toDisplayedColumns,
+  createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
+  detailActionTestId, mapTnSortToTableSort, perRow, rowTestIdTag, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -139,6 +140,12 @@ export class CloudSyncListComponent implements OnInit {
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
+  // Bound from the shared catalog config rather than inlined in the template, so the
+  // translated string has a single source of truth.
+  protected readonly emptyMessage = flattenEmptyConfigMessage(
+    this.translate.instant(cloudSyncTaskEmptyConfig.message),
+  );
+
   // ix-table column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs) and the hidden-column list rendered in the detail
   // row; tn-table renders cells from the template and derives its
@@ -218,16 +225,11 @@ export class CloudSyncListComponent implements OnInit {
 
   protected readonly trackByTaskId = (_index: number, row: CloudSyncTaskUi): number => row.id;
 
-  protected uniqueRowTag(row: CloudSyncTaskUi): string {
-    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('task1' → 'task-1')
-    // while the library's kebab does not, so the tag resolves identically through the legacy
-    // [ixTest] directive and the library [tnTestId] directive.
-    return kebabCase(convertStringToId('cloudsync-task-' + row.description));
-  }
+  protected readonly uniqueRowTag = rowTestIdTag<CloudSyncTaskUi>((row) => 'cloudsync-task-' + row.description);
 
-  protected ariaLabel(row: CloudSyncTaskUi): string {
-    return [row.description, this.translate.instant('Cloud Sync Task')].join(' ');
-  }
+  protected readonly ariaLabel = perRow<CloudSyncTaskUi, string>(
+    (row) => [row.description, this.translate.instant('Cloud Sync Task')].join(' '),
+  );
 
   protected detailActionTestId(row: CloudSyncTaskUi, action: string): string {
     return detailActionTestId([row.id], action);

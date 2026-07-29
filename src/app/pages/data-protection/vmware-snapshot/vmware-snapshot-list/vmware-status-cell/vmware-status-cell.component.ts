@@ -1,6 +1,6 @@
 import { TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { TnTooltipDirective } from '@truenas/ui-components';
 
 export enum VmwareSnapshotStatus {
@@ -28,14 +28,21 @@ export interface VmwareState {
   templateUrl: './vmware-status-cell.component.html',
   styleUrls: ['./vmware-status-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TnTooltipDirective, TranslateModule, TitleCasePipe],
+  imports: [TnTooltipDirective],
+  providers: [TitleCasePipe],
 })
 export class VmwareStatusCellComponent {
   private translate = inject(TranslateService);
+  private titleCase = inject(TitleCasePipe);
 
   readonly state = input.required<VmwareState>();
   /** Row description the state is folded into, so status isn't conveyed by colour alone. */
   readonly rowLabel = input<string>('');
+
+  /** Rendered as the pill's text and reused in its accessible name, so the two can't diverge. */
+  protected readonly stateText = computed<string>(
+    () => this.titleCase.transform(this.translate.instant(this.state().state)),
+  );
 
   protected readonly tooltip = computed<string>(() => {
     const status = this.state().state;
@@ -58,11 +65,10 @@ export class VmwareStatusCellComponent {
 
   protected readonly ariaLabel = computed<string>(() => {
     const status = this.state().state;
-    const stateText = this.translate.instant(status);
     // ERROR/BLOCKED carry their explanation only in the tooltip, which is unreachable
     // on a non-focusable element — fold it into the accessible name instead.
     const isExplained = status === VmwareSnapshotStatus.Error || status === VmwareSnapshotStatus.Blocked;
-    return [this.rowLabel(), stateText, isExplained ? this.tooltip() : '']
+    return [this.rowLabel(), this.stateText(), isExplained ? this.tooltip() : '']
       .filter(Boolean)
       .join(', ');
   });

@@ -15,16 +15,17 @@ import {
   TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
+import { rsyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { DisplayableState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { TaskState } from 'app/enums/task-state.enum';
+import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -45,8 +46,8 @@ import {
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import {
-  convertStringToId, createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
-  mapTnSortToTableSort, toDisplayedColumns,
+  createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
+  mapTnSortToTableSort, perRow, rowTestIdTag, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -119,6 +120,12 @@ export class RsyncTaskListComponent implements OnInit {
   protected readonly rows = dataProviderRows(this.dataProvider);
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly empty = dataProviderEmptyState(this.dataProvider);
+
+  // Bound from the shared catalog config rather than inlined in the template, so the
+  // translated string has a single source of truth.
+  protected readonly emptyMessage = flattenEmptyConfigMessage(
+    this.translate.instant(rsyncTaskEmptyConfig.message),
+  );
 
   protected readonly actions: IconActionConfig<RsyncTask>[] = [
     {
@@ -219,22 +226,21 @@ export class RsyncTaskListComponent implements OnInit {
 
   protected readonly trackByTaskId = (_index: number, row: RsyncTask): number => row.id;
 
-  protected uniqueRowTag(row: RsyncTask): string {
-    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('pool1' → 'pool-1')
-    // while the library's kebab does not, so the tag resolves identically through the legacy
-    // [ixTest] directive and the library [tnTestId] directive.
-    return kebabCase(convertStringToId('rsync-task-' + row.path + '-' + row.remotehost));
-  }
+  protected readonly uniqueRowTag = rowTestIdTag<RsyncTask>(
+    (row) => 'rsync-task-' + row.path + '-' + row.remotehost,
+  );
 
-  protected ariaLabel(row: RsyncTask): string {
-    return [row.path, row.remotehost, this.translate.instant('Rsync Task')].join(' ');
-  }
+  protected readonly ariaLabel = perRow<RsyncTask, string>(
+    (row) => [row.path, row.remotehost, this.translate.instant('Rsync Task')].join(' '),
+  );
 
-  protected getFrequency(row: RsyncTask): string {
-    return this.crontabExplanation.transform(scheduleToCrontab(row.schedule));
-  }
+  protected readonly getFrequency = perRow<RsyncTask, string>(
+    (row) => this.crontabExplanation.transform(scheduleToCrontab(row.schedule)),
+  );
 
-  protected getNextRun(row: RsyncTask): unknown {
+  // Not memoized per row like the derivations above: the next occurrence is relative
+  // to now, so it has to be recomputed as the table renders.
+  protected getNextRun(row: RsyncTask): Date | string {
     return row.enabled
       ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
       : this.translate.instant('Disabled');

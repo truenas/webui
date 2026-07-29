@@ -15,7 +15,6 @@ import {
   TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import {
   catchError,
   EMPTY,
@@ -30,7 +29,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import {
-  convertStringToId, dataProviderEmptyState, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
+  dataProviderEmptyState, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, perRow, rowTestIdTag,
 } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -102,16 +101,13 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
 
   protected readonly trackBySnapshotId = (_index: number, row: CloudBackupSnapshot): string => row.id;
 
-  protected uniqueRowTag(row: CloudBackupSnapshot): string {
-    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('host1' → 'host-1')
-    // while the library's kebab does not, so the tag resolves identically through the legacy
-    // [ixTest] directive and the library [tnTestId] directive.
-    return kebabCase(convertStringToId('cloud-backup-snapshot-' + row.hostname));
-  }
+  protected readonly uniqueRowTag = rowTestIdTag<CloudBackupSnapshot>(
+    (row) => 'cloud-backup-snapshot-' + row.hostname,
+  );
 
-  protected ariaLabel(row: CloudBackupSnapshot): string {
-    return [row.hostname, this.translate.instant('Cloud Backup Snapshot')].join(' ');
-  }
+  protected readonly ariaLabel = perRow<CloudBackupSnapshot, string>(
+    (row) => [row.hostname, this.translate.instant('Cloud Backup Snapshot')].join(' '),
+  );
 
   protected onSortChange(event: TnSortEvent): void {
     this.dataProvider().setSorting(mapTnSortToTableSort<CloudBackupSnapshot>(event, this.displayedColumns));

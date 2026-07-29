@@ -6,7 +6,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
   dataProviderLoading, dataProviderRows, filterTableRows, mapTnSortToProviderSorting,
-  mapTnSortToTableSort, toDisplayedColumns,
+  mapTnSortToTableSort, perRow, rowTestIdTag, toDisplayedColumns,
 } from './utils';
 
 describe('dataProviderRows / dataProviderLoading', () => {
@@ -219,5 +219,48 @@ describe('toDisplayedColumns', () => {
   it('falls back to "actions" for a column with neither a propertyName nor a columnName', () => {
     expect(toDisplayedColumns([{ title: 'Actions' } as Column<Row, ColumnComponent<Row>>])).toEqual(['actions']);
     expect(toDisplayedColumns([{} as Column<Row, ColumnComponent<Row>>])).toEqual(['actions']);
+  });
+});
+
+describe('perRow', () => {
+  it('derives the value from the row', () => {
+    const label = perRow<{ name: string }, string>((row) => row.name.toUpperCase());
+
+    expect(label({ name: 'tank' })).toBe('TANK');
+  });
+
+  it('derives once per row and reuses the result on later calls', () => {
+    const derive = jest.fn((row: { name: string }) => row.name.toUpperCase());
+    const label = perRow(derive);
+    const row = { name: 'tank' };
+
+    expect(label(row)).toBe('TANK');
+    expect(label(row)).toBe('TANK');
+    expect(derive).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps a separate result per row', () => {
+    const label = perRow<{ name: string }, string>((row) => row.name.toUpperCase());
+
+    expect(label({ name: 'tank' })).toBe('TANK');
+    expect(label({ name: 'dozer' })).toBe('DOZER');
+  });
+});
+
+describe('rowTestIdTag', () => {
+  interface Row { name: string }
+
+  const tag = rowTestIdTag<Row>((row) => 'replication-task-' + row.name);
+
+  it('kebab-cases the base so the tag resolves the same as the legacy [ixTest] directive', () => {
+    expect(tag({ name: 'My Task' })).toBe('replication-task-my-task');
+  });
+
+  it('splits letter-digit boundaries, which the library kebab does not', () => {
+    expect(tag({ name: 'task1' })).toBe('replication-task-task-1');
+  });
+
+  it('strips the punctuation convertStringToId removes', () => {
+    expect(tag({ name: 'pool/dataset' })).toBe('replication-task-pool-dataset');
   });
 });

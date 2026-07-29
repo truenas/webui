@@ -45,7 +45,19 @@ describe('VmwareStatusCellComponent', () => {
       spectator.setInput('rowLabel', 'esxi-host-1 VMware Snapshot');
       spectator.detectChanges();
 
-      expect(pill()).toHaveAttribute('aria-label', 'esxi-host-1 VMware Snapshot, SUCCESS');
+      // Same wording as the visible pill text, so the accessible name and the label match.
+      expect(pill()).toHaveText('Success');
+      expect(pill()).toHaveAttribute('aria-label', 'esxi-host-1 VMware Snapshot, Success');
+    });
+
+    it('appends the explanation to the accessible name for states that only tooltip it', () => {
+      spectator.setInput('rowLabel', 'esxi-host-1 VMware Snapshot');
+      setState({ state: VmwareSnapshotStatus.Error, error: 'Connection timeout' });
+
+      expect(pill()).toHaveAttribute(
+        'aria-label',
+        'esxi-host-1 VMware Snapshot, Error, Connection timeout',
+      );
     });
   });
 
