@@ -36,6 +36,12 @@ export class SchedulerPreviewColumnComponent {
   /** The month currently on screen. The calendar owns navigation; this mirrors it. */
   protected readonly activeDate = signal<Date>(new Date());
 
+  /**
+   * `new Date()` is an untracked read, here and in `startDate` below, so "now" is memoized
+   * until `activeDate`/`timezone`/`crontab` next change rather than tracking the wall clock.
+   * That is fine for a modal: it cannot outlive a month rollover by long enough to matter,
+   * and navigating the calendar — the only way to reach a stale month — invalidates it anyway.
+   */
   private readonly isPastMonth = computed(() => isBefore(this.activeDate(), startOfMonth(new Date())));
 
   /**
@@ -76,6 +82,10 @@ export class SchedulerPreviewColumnComponent {
         endTime: this.endTime(),
       });
     } catch (error: unknown) {
+      // Defensive only: the scheduler modal is this component's sole consumer and it holds
+      // `crontab` back until the form is valid, so an unparseable expression never arrives.
+      // Logging from a computed is a side effect, but it is memoized to at most once per
+      // crontab and there is no user-facing state to report the failure through.
       console.error(error);
       return null;
     }

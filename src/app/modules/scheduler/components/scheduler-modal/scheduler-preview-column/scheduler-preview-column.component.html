@@ -1,16 +1,13 @@
 <section class="preview-header">
   <h4 class="crontab-header">
     {{ 'Schedule Preview' | translate }}
-    <div class="close-wrapper">
-      <tn-icon-button
-        class="close-btn"
-        name="close"
-        library="mdi"
-        testId="close-scheduler"
-        [ariaLabel]="'Close scheduler' | translate"
-        (onClick)="closeRequested.emit()"
-      ></tn-icon-button>
-    </div>
+    <tn-icon-button
+      name="close"
+      library="mdi"
+      testId="close-scheduler"
+      [ariaLabel]="'Close scheduler' | translate"
+      (onClick)="closeRequested.emit()"
+    ></tn-icon-button>
   </h4>
   <div class="crontab">{{ crontab() }}</div>
   <div class="crontab-explanation">{{ crontab() | crontabExplanation }}</div>
@@ -28,7 +25,8 @@
     <strong>{{ 'System Time Zone:' | translate }}</strong> {{ timezone() }}
   </div>
 
-  <!-- cronPreview is null for a past month, so it doubles as the "nothing to preview" guard. -->
+  <!-- cronPreview is null for a past month, and for a crontab that fails to parse, so it
+       doubles as the "nothing to preview" guard for both. -->
   @if (cronPreview(); as preview) {
     <ix-scheduler-date-examples
       class="schedule-example-section"
