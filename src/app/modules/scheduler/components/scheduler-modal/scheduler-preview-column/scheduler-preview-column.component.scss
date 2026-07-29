@@ -10,14 +10,16 @@
 .calendar {
   width: 100%;
 
-  // TEMP (NAS-141021): tn-calendar carries popup chrome — card background, border,
-  // shadow, 24px padding and a 380px min-width — on its element selector. Inline in this
-  // 400px column that reads as a raised card inside a panel and overflows horizontally.
-  // Drop this block once the library moves the popup chrome onto a wrapper.
+  // TEMP (NAS-141021): tn-calendar carries popup chrome — border, shadow, 24px padding
+  // and a 380px min-width — on its element selector, which overflows this 400px column
+  // and reads as a raised card inside a panel. Drop this block once the library moves
+  // the popup chrome onto a wrapper.
+  //
+  // The calendar's own `background` is deliberately left alone: the library colours a
+  // marked day relative to that surface, and against this panel's background instead the
+  // two are within 1.03 contrast, i.e. invisible.
   tn-calendar {
-    background: none;
     border: 0;
-    border-radius: 0;
     box-shadow: none;
     min-width: 0;
     padding: 0;
