@@ -245,4 +245,36 @@ describe('CloudBackupListComponent', () => {
       [1, { enabled: true }],
     );
   });
+
+  // `[activeRow]` matches by object identity and `expandedRow` may hold a copy, so the
+  // component resolves it back to the rendered reference — as a computed, which has to
+  // stay in step with writes made by this component *and* by its parent.
+  describe('active row', () => {
+    it('marks the clicked row active', async () => {
+      expect(await table.getActiveRowIndex()).toBeNull();
+
+      await table.clickRow(1);
+      spectator.detectChanges();
+
+      expect(await table.getActiveRowIndex()).toBe(1);
+    });
+
+    it('follows a row the parent expands, including a structurally-equal copy', async () => {
+      spectator.component.dataProvider().expandedRow = { ...cloudBackups[0] };
+      spectator.detectChanges();
+
+      expect(await table.getActiveRowIndex()).toBe(0);
+    });
+
+    it('clears the active row when the expansion is cleared', async () => {
+      await table.clickRow(0);
+      spectator.detectChanges();
+      expect(await table.getActiveRowIndex()).toBe(0);
+
+      spectator.component.dataProvider().expandedRow = null;
+      spectator.detectChanges();
+
+      expect(await table.getActiveRowIndex()).toBeNull();
+    });
+  });
 });

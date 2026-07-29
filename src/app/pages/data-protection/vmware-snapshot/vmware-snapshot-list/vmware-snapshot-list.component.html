@@ -12,57 +12,61 @@
 
 <div class="table-container">
   <tn-table
+    ixExpandOnRowClick
     class="table"
     [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.vmwareSnapshots"
-    [dataSource]="rows()"
-    [displayedColumns]="displayedColumns"
+    [dataSource]="list.rows()"
+    [displayedColumns]="list.displayedColumns()"
     [trackBy]="trackBySnapshotId"
-    [loading]="isLoading()"
+    [loading]="list.isLoading()"
     [expandable]="true"
     [clickable]="true"
-    [emptyMessage]="empty.message()"
-    [emptyIcon]="empty.icon()"
-    (rowClick)="onRowClick($event)"
-    (sortChange)="onSortChange($event)"
+    [emptyMessage]="list.empty.message()"
+    [emptyIcon]="list.empty.icon()"
+    (sortChange)="list.onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'hostname'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Hostname' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Hostname' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.hostname }}</span>
+        <ix-table-text-cell
+          [value]="row.hostname"
+          [title]="'Hostname' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'username'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Username' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Username' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.username }}</span>
+        <ix-table-text-cell
+          [value]="row.username"
+          [title]="'Username' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'filesystem'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Filesystem' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Filesystem' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.filesystem }}</span>
+        <ix-table-text-cell
+          [value]="row.filesystem"
+          [title]="'Filesystem' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'datastore'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Datastore' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Datastore' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.datastore }}</span>
+        <ix-table-text-cell
+          [value]="row.datastore"
+          [title]="'Datastore' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 

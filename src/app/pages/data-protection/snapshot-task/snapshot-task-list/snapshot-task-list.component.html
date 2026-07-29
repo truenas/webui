@@ -11,9 +11,9 @@
   ></tn-button>
 
   <ix-table-column-picker
-    [columns]="columns()"
+    [columns]="list.columns()"
     [columnPreferencesKey]="'snapshotTaskList'"
-    (columnsChange)="columnsChange($event)"
+    (columnsChange)="list.columnsChange($event)"
   ></ix-table-column-picker>
 
   <tn-button
@@ -27,7 +27,7 @@
 </ix-page-header>
 
 <div class="table-container">
-  @if (empty.type() === EmptyType.NoPageData && !empty.count()) {
+  @if (list.empty.type() === EmptyType.NoPageData && !list.empty.count()) {
     <tn-empty
       [icon]="emptyIcon.name"
       [iconLibrary]="emptyIcon.library"
@@ -36,69 +36,75 @@
     ></tn-empty>
   } @else {
     <tn-table
+      ixExpandOnRowClick
       class="table"
       [testId]="'table-table'"
       [ixUiSearch]="searchableElements.elements.tasks"
-      [dataSource]="rows()"
-      [displayedColumns]="displayedColumns()"
+      [dataSource]="list.rows()"
+      [displayedColumns]="list.displayedColumns()"
       [trackBy]="trackByTaskId"
-      [loading]="isLoading()"
+      [loading]="list.isLoading()"
       [expandable]="true"
       [clickable]="true"
-      [emptyMessage]="empty.message()"
-      [emptyIcon]="empty.icon()"
-      (rowClick)="onRowClick($event)"
-      (sortChange)="onSortChange($event)"
+      [emptyMessage]="list.empty.message()"
+      [emptyIcon]="list.empty.icon()"
+      (sortChange)="list.onSortChange($event)"
     >
       <ng-container [tnColumnDef]="'dataset'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Pool/Dataset' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span
-            tnTestIdType="text"
-            [tnTestId]="[('Pool/Dataset' | translate), uniqueRowTag(row), 'row-text']"
-            [tnTooltip]="row.dataset || ''"
-          >{{ row.dataset }}</span>
+          <ix-table-text-cell
+            [value]="row.dataset"
+            [title]="'Pool/Dataset' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [tooltip]="row.dataset || ''"
+          ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'recursive'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Recursive' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span
-            tnTestIdType="text"
-            [tnTestId]="[('Recursive' | translate), uniqueRowTag(row), 'row-text']"
-          >{{ row.recursive | yesNo | translate }}</span>
+          <ix-table-text-cell
+            [value]="row.recursive | yesNo | translate"
+            [title]="'Recursive' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'naming_schema'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Naming Schema' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span
-            tnTestIdType="text"
-            [tnTestId]="[('Naming Schema' | translate), uniqueRowTag(row), 'row-text']"
-          >{{ row.naming_schema }}</span>
+          <ix-table-text-cell
+            [value]="row.naming_schema"
+            [title]="'Naming Schema' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'when'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'When' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span
-            tnTestIdType="text"
-            [tnTestId]="[('When' | translate), uniqueRowTag(row), 'row-text']"
-          >{{ getActiveHours(row) }}</span>
+          <ix-table-text-cell
+            [value]="getActiveHours(row)"
+            [title]="'When' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'frequency'">
         <ng-template tnHeaderCellDef>{{ 'Frequency' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span
-            tnTestIdType="text"
-            [tnTestId]="[('Frequency' | translate), uniqueRowTag(row), 'row-schedule']"
-            [tnTooltip]="row.schedule | scheduleDescription"
-          >{{ row.schedule | scheduleDescription }}</span>
+          <ix-table-text-cell
+            testIdSuffix="row-schedule"
+            [value]="row.schedule | scheduleDescription"
+            [title]="'Frequency' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [tooltip]="row.schedule | scheduleDescription"
+          ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
@@ -127,40 +133,44 @@
       <ng-container [tnColumnDef]="'lifetime_unit'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Keep snapshot for' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span
-            tnTestIdType="text"
-            [tnTestId]="[('Keep snapshot for' | translate), uniqueRowTag(row), 'row-text']"
-          >{{ getLifetime(row) }}</span>
+          <ix-table-text-cell
+            [value]="getLifetime(row)"
+            [title]="'Keep snapshot for' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'legacy'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Legacy' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span
-            tnTestIdType="text"
-            [tnTestId]="[('Legacy' | translate), uniqueRowTag(row), 'row-text']"
-          >{{ row.legacy | yesNo | translate }}</span>
+          <ix-table-text-cell
+            [value]="row.legacy | yesNo | translate"
+            [title]="'Legacy' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'vmware_sync'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'VMware Sync' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span
-            tnTestIdType="text"
-            [tnTestId]="[('VMware Sync' | translate), uniqueRowTag(row), 'row-text']"
-          >{{ row.vmware_sync | yesNo | translate }}</span>
+          <ix-table-text-cell
+            [value]="row.vmware_sync | yesNo | translate"
+            [title]="'VMware Sync' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
         <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span
-            tnTestIdType="text"
-            [tnTestId]="[('Enabled' | translate), uniqueRowTag(row), 'row-text']"
-          >{{ row.enabled | yesNo | translate }}</span>
+          <ix-table-text-cell
+            [value]="row.enabled | yesNo | translate"
+            [title]="'Enabled' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
@@ -176,7 +186,7 @@
       </ng-container>
 
       <ng-template let-task tnDetailRowDef>
-        <ix-table-details-row [hiddenColumns]="hiddenColumns()" [row]="task">
+        <ix-table-details-row [hiddenColumns]="list.hiddenColumns()" [row]="task">
           <div class="table-details-row-actions">
             <tn-button
               icon="mdi-pencil"

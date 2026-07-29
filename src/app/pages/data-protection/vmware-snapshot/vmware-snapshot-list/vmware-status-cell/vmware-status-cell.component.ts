@@ -2,6 +2,7 @@ import { TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TnTooltipDirective } from '@truenas/ui-components';
+import { translated } from 'app/helpers/translated.helper';
 
 export enum VmwareSnapshotStatus {
   Pending = 'PENDING',
@@ -40,12 +41,15 @@ export class VmwareStatusCellComponent {
   /**
    * The pill's visible text, and the whole of its accessible name for the states that need
    * no explanation — so status is never conveyed by colour alone.
+   *
+   * `translated` rather than a plain `computed`: these were `| translate` bindings before the
+   * migration, so they have to keep following a language change.
    */
-  protected readonly stateText = computed<string>(
+  protected readonly stateText = translated<string>(
     () => this.titleCase.transform(this.translate.instant(this.state().state)),
   );
 
-  protected readonly tooltip = computed<string>(() => {
+  protected readonly tooltip = translated<string>(() => {
     const status = this.state().state;
 
     if (status === VmwareSnapshotStatus.Error) {

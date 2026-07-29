@@ -317,6 +317,20 @@ the epic's follow-up list.
 | `tn-empty`'s `[title]`/`[description]` are text-only, so an `EmptyConfig.message` written as HTML has to be flattened at runtime | `FlattenEmptyMessagePipe` | library |
 | `tn-table` has no input for a second empty-state line, so the `EmptyConfig.message` ix-table showed under the no-search-results title is dropped | `dataProviderEmptyState` in `ix-table/utils.ts` | library |
 | Replication "Enabled" is read-only Yes/No in the detail row when the picker hides the column (it was an interactive toggle before); a dead toggle would be worse, so the toggle stays in the visible column only | `replication-list.component.ts` | webui |
+| `tn-table` expands a row only through its chevron; the `ix-table` it replaces expanded on a row click too, so migrated lists re-add that from `(rowClick)` | `ExpandOnRowClickDirective` in `ix-table/directives/expand-on-row-click.directive.ts` | library |
+
+### Shared pieces for a migrated list page
+
+Built while migrating the Data Protection lists; reach for these rather than
+re-deriving them per page.
+
+| Piece | What it replaces |
+| --- | --- |
+| `tnTableListHost(provider, config)` (`ix-table/utils.ts`) | The `rows`/`isLoading`/`empty`/`displayedColumns`/`hiddenColumns`/`onSortChange`/`columnsChange` block every list otherwise copies, plus `perRow`/`rowTag` memoization keyed to the loaded rows |
+| `ExpandOnRowClickDirective` (`ixExpandOnRowClick`) | A `viewChild(TnTableComponent)` and a `(rowClick)` handler calling `toggleRowExpansion` |
+| `<ix-table-text-cell>` (`tn-table-cells/text-cell`) | The `<span tnTestIdType="text" [tnTestId]="[…]">` markup for text, yes/no and schedule cells |
+| `translated(derive)` (`helpers/translated.helper.ts`) | A `computed` calling `TranslateService.instant()`, which would otherwise freeze on the first locale |
+| `sr-only` mixin (`assets/styles/mixins/sr-only.scss`) | A hand-rolled visually-hidden block |
 
 ## Additional Resources
 

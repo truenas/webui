@@ -12,8 +12,6 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
-  TnTestIdDirective,
-  type TnSortEvent,
 } from '@truenas/ui-components';
 import {
   catchError,
@@ -28,9 +26,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import {
-  dataProviderEmptyState, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, perRow, rowTestIdTag,
-} from 'app/modules/ix-table/utils';
+import { tnTableListHost } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -38,6 +34,7 @@ import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-ce
 import {
   TableRelativeDateCellComponent,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -53,8 +50,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
-    TnTestIdDirective,
     TableRelativeDateCellComponent,
+    TableTextCellComponent,
     TableActionsCellComponent,
     TnSpinnerComponent,
     TnTablePagerComponent,
@@ -78,11 +75,10 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
   // Rebuilt whenever the `backup` input changes, so the provider is held in a signal
   // and the row/loading/empty signals track whichever provider is current.
   protected readonly dataProvider = signal(new AsyncDataProvider<CloudBackupSnapshot>(EMPTY));
-  protected readonly rows = dataProviderRows(this.dataProvider);
-  protected readonly isLoading = dataProviderLoading(this.dataProvider);
-  protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
-  protected readonly displayedColumns = ['time', 'hostname', 'actions'];
+  protected readonly list = tnTableListHost<CloudBackupSnapshot>(this.dataProvider, {
+    displayedColumns: ['time', 'hostname', 'actions'],
+  });
 
   protected readonly actions: IconActionConfig<CloudBackupSnapshot>[] = [
     {
@@ -101,17 +97,11 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
 
   protected readonly trackBySnapshotId = (_index: number, row: CloudBackupSnapshot): string => row.id;
 
-  protected readonly uniqueRowTag = rowTestIdTag<CloudBackupSnapshot>(
-    (row) => 'cloud-backup-snapshot-' + row.hostname,
-  );
+  protected readonly uniqueRowTag = this.list.rowTag((row) => 'cloud-backup-snapshot-' + row.hostname);
 
-  protected readonly ariaLabel = perRow<CloudBackupSnapshot, string>(
+  protected readonly ariaLabel = this.list.perRow(
     (row) => [row.hostname, this.translate.instant('Cloud Backup Snapshot')].join(' '),
   );
-
-  protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider().setSorting(mapTnSortToTableSort<CloudBackupSnapshot>(event, this.displayedColumns));
-  }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (!changes.backup.currentValue?.id) {

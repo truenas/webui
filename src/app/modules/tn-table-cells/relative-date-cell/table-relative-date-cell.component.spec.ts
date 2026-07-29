@@ -1,18 +1,21 @@
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { Actions } from '@ngrx/effects';
 import { TnTooltipDirective } from '@truenas/ui-components';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { RelativeDateTickerService } from 'app/modules/dates/services/relative-date-ticker.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import {
   TableRelativeDateCellComponent,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 
 describe('TableRelativeDateCellComponent', () => {
   let spectator: Spectator<TableRelativeDateCellComponent>;
 
   const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   let tick$: BehaviorSubject<number>;
+  let actions$: Subject<unknown>;
 
   const createComponent = createComponentFactory({
     component: TableRelativeDateCellComponent,
@@ -20,11 +23,13 @@ describe('TableRelativeDateCellComponent', () => {
       mockProvider(LocaleService, { timezone: browserTimezone }),
       // Drive the clock dependency by hand instead of waiting on the real 30s interval.
       mockProvider(RelativeDateTickerService, { get tick$() { return tick$; } }),
+      { provide: Actions, useFactory: () => actions$ },
     ],
   });
 
   beforeEach(() => {
     tick$ = new BehaviorSubject(0);
+    actions$ = new Subject<unknown>();
   });
 
   const setup = (value: unknown): void => {
@@ -101,5 +106,24 @@ describe('TableRelativeDateCellComponent', () => {
 
     expect(tooltip()).toContain('Machine Time:');
     expect(tooltip()).toContain('Browser Time:');
+  });
+
+  // The tooltip is formatted with the user's date/time preference, which FormatDateTimePipe
+  // re-reads on `localizationFormSubmitted`. tn-table reuses this cell via trackBy, so the
+  // `value` input never changes and the computed has to take that dependency itself.
+  it('reformats the tooltip when the date/time format preference changes', () => {
+    setup(new Date('2024-03-05T10:00:00Z'));
+    const before = tooltip();
+
+    localStorage.setItem('dateFormat', 'yyyy/MM/dd');
+    try {
+      actions$.next(localizationFormSubmitted({ dateFormat: 'yyyy/MM/dd', timeFormat: 'HH:mm:ss', language: 'en' }));
+      spectator.detectChanges();
+
+      expect(tooltip()).not.toBe(before);
+      expect(tooltip()).toContain('2024/03/05');
+    } finally {
+      localStorage.removeItem('dateFormat');
+    }
   });
 });

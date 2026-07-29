@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, effect, input, output, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, computed, effect, input, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -9,9 +9,6 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
-  TnTestIdDirective,
-  TnTooltipDirective,
-  type TnSortEvent,
 } from '@truenas/ui-components';
 import {
   filter, of, switchMap, tap,
@@ -29,9 +26,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import {
-  dataProviderEmptyState, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, perRow, rowTestIdTag,
-} from 'app/modules/ix-table/utils';
+import { tnTableListHost } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -42,6 +37,7 @@ import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-ce
 import {
   TableRelativeDateCellComponent,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
@@ -64,11 +60,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
-    TnTestIdDirective,
-    TnTooltipDirective,
     TnTablePagerComponent,
     TableActionsCellComponent,
     TableRelativeDateCellComponent,
+    TableTextCellComponent,
     TableToggleCellComponent,
     TaskStateCellComponent,
     YesNoPipe,
@@ -96,9 +91,9 @@ export class CloudBackupListComponent {
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = cloudBackupListElements;
 
-  protected readonly rows = dataProviderRows(this.dataProvider);
-  protected readonly isLoading = dataProviderLoading(this.dataProvider);
-  protected readonly empty = dataProviderEmptyState(this.dataProvider);
+  protected readonly list = tnTableListHost<CloudBackup>(this.dataProvider, {
+    displayedColumns: ['description', 'enabled', 'snapshot', 'state', 'last-run', 'actions'],
+  });
 
   // Bound from the shared catalog configs rather than inlined in the template, so the
   // translated strings have a single source of truth and follow a language change.
@@ -119,8 +114,6 @@ export class CloudBackupListComponent {
     noSearchResultsConfig,
     this.emptyService.iconForType(noSearchResultsConfig.type),
   );
-
-  protected readonly displayedColumns = ['description', 'enabled', 'snapshot', 'state', 'last-run', 'actions'];
 
   protected readonly actions: IconActionConfig<CloudBackup>[] = [
     {
@@ -145,28 +138,29 @@ export class CloudBackupListComponent {
 
   protected readonly trackByBackupId = (_index: number, row: CloudBackup): number => row.id;
 
-  protected readonly uniqueRowTag = rowTestIdTag<CloudBackup>((row) => 'cloud-backup-' + row.description);
+  protected readonly uniqueRowTag = this.list.rowTag((row) => 'cloud-backup-' + row.description);
 
-  protected readonly ariaLabel = perRow<CloudBackup, string>(
+  protected readonly ariaLabel = this.list.perRow(
     (row) => [row.description, this.translate.instant('Cloud Backup')].join(' '),
   );
-
-  protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider().setSorting(mapTnSortToTableSort<CloudBackup>(event, this.displayedColumns));
-  }
 
   /**
    * `tn-table` matches the active row by object identity, but `expandedRow` can hold a
    * copy (a finished job replaces it with a spread of the row to re-trigger the detail
    * pane), so resolve back to the reference actually rendered in the table.
+   *
+   * A `computed` rather than a method: `[activeRow]` is bound on a `[clickable]` table, so
+   * a method would re-run this lookup over every row on every change-detection pass.
+   * `BaseDataProvider.expandedRow` is signal-backed, so both it and the parent's writes to
+   * it invalidate this.
    */
-  protected activeRow(): CloudBackup | null {
+  protected readonly activeRow = computed<CloudBackup | null>(() => {
     const expanded = this.dataProvider().expandedRow;
     if (!expanded) {
       return null;
     }
-    return this.rows().find((backup) => backup.id === expanded.id) ?? null;
-  }
+    return this.list.rows().find((backup) => backup.id === expanded.id) ?? null;
+  });
 
   protected onRowClick(row: CloudBackup): void {
     const provider = this.dataProvider();

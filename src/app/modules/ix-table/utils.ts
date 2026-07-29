@@ -1,5 +1,5 @@
 import {
-  computed, inject, isSignal, Signal,
+  computed, inject, isSignal, signal, Signal,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
@@ -8,6 +8,7 @@ import { get, kebabCase } from 'lodash-es';
 import { Observable, switchMap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
+import { langChangeSignal } from 'app/helpers/translated.helper';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -115,52 +116,6 @@ export function detailActionTestId(parts: (string | number | undefined)[], actio
   return kebabCase([...parts, action].join('-'));
 }
 
-/**
- * Memoizes a per-row derivation against the row object itself. A migrated table
- * calls these from the template — once per cell, again on every change-detection
- * pass — so a wide row can ask for the same tag or label a dozen times. Keyed by
- * row identity in a `WeakMap`, so entries go away with the rows a reload drops.
- *
- * Only for derivations of the row and nothing else — a test-id tag, an aria
- * label, a parsed crontab. Anything that also depends on the clock (a "next run"
- * countdown) must stay uncached or it will freeze at its first render.
- *
- * Derive only from fields that never change on a live row object. Rows are not
- * always replaced on update — a job subscription may mutate the row in place
- * (see `cloud-backup-list.updateRowJob()`, `cloudsync-list.setupJobSubscriptions()`),
- * and the cache is keyed on that same object, so a derivation reading a field
- * those updates touch (a state label, a progress string) would freeze at its
- * first value. Identity fields (description, path, dataset, schedule) are safe.
- *
- * Reach for it where the derivation is more than a field read — parsing a
- * crontab, composing and translating a label, kebab-casing a test-id tag. A
- * plain method is the right call for a ternary over two properties; the WeakMap
- * lookup would cost more than re-deriving it.
- */
-export function perRow<T extends object, R>(derive: (row: T) => R): (row: T) => R {
-  const cache = new WeakMap<T, R>();
-  return (row: T): R => {
-    if (!cache.has(row)) {
-      cache.set(row, derive(row));
-    }
-    return cache.get(row) as R;
-  };
-}
-
-/**
- * Builds a row's unique test-id tag from the base string that identified it
- * under the legacy `[ixTest]` directive, memoized per row.
- *
- * Pre-splits with lodash `kebabCase` for the same reason `detailActionTestId`
- * does: it breaks letter–digit boundaries ('task1' → 'task-1') while the
- * library's kebab does not, so the tag resolves identically through the legacy
- * `[ixTest]` directive and the library `[tnTestId]` directive. Shared so the
- * migrated tables can't drift apart on this.
- */
-export function rowTestIdTag<T extends object>(base: (row: T) => string): (row: T) => string {
-  return perRow((row: T) => kebabCase(convertStringToId(base(row))));
-}
-
 function fromProvider<T, R>(
   provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
   select: (instance: BaseDataProvider<T>) => Observable<R>,
@@ -229,7 +184,7 @@ export function dataProviderEmptyState<T>(
 
   // Keyed into `message` below so it re-translates on a language change, the way the
   // `| translate` bindings around it do — `instant()` alone would freeze the first locale.
-  const lang = toSignal(translate.onLangChange, { initialValue: null });
+  const lang = langChangeSignal();
 
   return {
     type,
@@ -242,6 +197,170 @@ export function dataProviderEmptyState<T>(
     }),
     icon: computed(() => emptyService.iconForType(type())),
     count: toSignal(fromProvider(provider, (instance) => instance.currentPageCount$), { initialValue: 0 }),
+  };
+}
+
+/**
+ * Everything a page-level `tn-table` list binds that is the same on every one of
+ * them. See {@link tnTableListHost}.
+ */
+export interface TnTableListHost<T extends object> {
+  /** Current page of rows, for `[dataSource]`. */
+  readonly rows: Signal<T[]>;
+  /** For `[loading]`. */
+  readonly isLoading: Signal<boolean>;
+  /** For `[emptyMessage]`/`[emptyIcon]` and the page-level empty state. */
+  readonly empty: TableEmptyState;
+  /** For `[displayedColumns]`. */
+  readonly displayedColumns: Signal<string[]>;
+  /** For `(sortChange)`. */
+  onSortChange(event: TnSortEvent): void;
+  /**
+   * Memoizes a per-row derivation. A migrated table calls these from the
+   * template — once per cell, again on every change-detection pass — so a wide
+   * row can ask for the same tag or label a dozen times.
+   *
+   * The cache is discarded whenever the loaded rows or the active language
+   * change, so a reload, a re-filter, a page change or a locale switch all
+   * re-derive; within one set of rows it is keyed by row identity in a
+   * `WeakMap`. What it cannot see is a row mutated in place without the provider
+   * re-emitting (a job subscription writing `row.state`), so derive from the
+   * row's identity — description, path, dataset, schedule — and not from
+   * live job state. Anything that depends on the clock (a "next run" countdown)
+   * must stay uncached too, or it freezes at its first render.
+   *
+   * Reach for it where the derivation is more than a field read — parsing a
+   * crontab, composing and translating a label, kebab-casing a test-id tag. A
+   * plain method is the right call for a ternary over two properties; the
+   * `WeakMap` lookup would cost more than re-deriving it.
+   */
+  perRow<R>(derive: (row: T) => R): (row: T) => R;
+  /**
+   * Builds a row's unique test-id tag from the base string that identified it
+   * under the legacy `[ixTest]` directive, memoized through `perRow`.
+   *
+   * Pre-splits with lodash `kebabCase` for the same reason `detailActionTestId`
+   * does: it breaks letter–digit boundaries ('task1' → 'task-1') while the
+   * library's kebab does not, so the tag resolves identically through the legacy
+   * `[ixTest]` directive and the library `[tnTestId]` directive.
+   */
+  rowTag(base: (row: T) => string): (row: T) => string;
+}
+
+/**
+ * A {@link TnTableListHost} whose columns are driven by
+ * `<ix-table-column-picker>`.
+ */
+export interface TnTableListPickerHost<T extends object> extends TnTableListHost<T> {
+  /**
+   * ix-table column model retained purely to drive `<ix-table-column-picker>`
+   * (visibility + saved prefs) and the hidden-column list rendered in the detail
+   * row; tn-table renders cells from the template and derives its
+   * `displayedColumns` from these via {@link toDisplayedColumns}.
+   */
+  readonly columns: Signal<Column<T, ColumnComponent<T>>[]>;
+  /** For `<ix-table-details-row [hiddenColumns]>`. */
+  readonly hiddenColumns: Signal<Column<T, ColumnComponent<T>>[]>;
+  /** For `<ix-table-column-picker (columnsChange)>`. */
+  columnsChange(columns: Column<T, ColumnComponent<T>>[]): void;
+}
+
+/** Columns of a table whose column set is fixed. */
+export interface FixedColumnsConfig {
+  displayedColumns: string[];
+}
+
+/** Columns of a table whose column set is driven by `<ix-table-column-picker>`. */
+export interface PickerColumnsConfig<T> {
+  columns: Column<T, ColumnComponent<T>>[];
+  /**
+   * Column names appended after the picker's, for columns rendered from the
+   * template that the picker must never offer — an actions column, say, which
+   * has no cell component behind it and would misdescribe the table if modelled.
+   */
+  appendedColumns?: string[];
+}
+
+/**
+ * Builds the bindings a page-level `tn-table` list needs from its data provider,
+ * so a migrated list declares what is specific to it (its columns, its actions,
+ * its row tag) and nothing else.
+ *
+ * Must be called from an injection context (e.g. a component field initializer).
+ * Accepts the provider directly or as a signal (e.g. an `input.required`
+ * provider).
+ *
+ * @example
+ * protected readonly list = tnTableListHost(this.dataProvider, { columns: [...] });
+ * protected readonly uniqueRowTag = this.list.rowTag((row) => 'rsync-task-' + row.path);
+ */
+export function tnTableListHost<T extends object>(
+  provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
+  config: FixedColumnsConfig,
+): TnTableListHost<T>;
+export function tnTableListHost<T extends object>(
+  provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
+  config: PickerColumnsConfig<T>,
+): TnTableListPickerHost<T>;
+export function tnTableListHost<T extends object>(
+  provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
+  config: FixedColumnsConfig | PickerColumnsConfig<T>,
+): TnTableListHost<T> | TnTableListPickerHost<T> {
+  const rows = dataProviderRows(provider);
+  const isLoading = dataProviderLoading(provider);
+  const empty = dataProviderEmptyState(provider);
+  const lang = langChangeSignal();
+
+  function perRow<R>(derive: (row: T) => R): (row: T) => R {
+    // A fresh cache per (rows, language) rather than one that lives for the
+    // component's lifetime, so invalidation is structural instead of a promise
+    // the caller has to keep.
+    const cache = computed(() => {
+      rows();
+      lang();
+      return new WeakMap<T, R>();
+    });
+
+    return (row: T): R => {
+      const memo = cache();
+      if (!memo.has(row)) {
+        memo.set(row, derive(row));
+      }
+      return memo.get(row) as R;
+    };
+  }
+
+  const base = {
+    rows,
+    isLoading,
+    empty,
+    perRow,
+    rowTag: (tagBase: (row: T) => string) => perRow((row: T) => kebabCase(convertStringToId(tagBase(row)))),
+  };
+
+  const withSorting = (displayedColumns: Signal<string[]>): TnTableListHost<T> => ({
+    ...base,
+    displayedColumns,
+    onSortChange: (event: TnSortEvent) => {
+      const instance = isSignal(provider) ? provider() : provider;
+      instance.setSorting(mapTnSortToTableSort<T>(event, displayedColumns()));
+    },
+  });
+
+  if (!('columns' in config)) {
+    return withSorting(signal(config.displayedColumns).asReadonly());
+  }
+
+  const columns = signal(config.columns);
+  const appendedColumns = config.appendedColumns ?? [];
+
+  return {
+    ...withSorting(computed(() => [...toDisplayedColumns(columns()), ...appendedColumns])),
+    columns: columns.asReadonly(),
+    hiddenColumns: computed(() => columns().filter((column) => column?.hidden)),
+    // The picker hands back the same array it was given with `hidden` flipped, so
+    // copy it — the signal would otherwise compare equal and not notify.
+    columnsChange: (next: Column<T, ColumnComponent<T>>[]) => columns.set([...next]),
   };
 }
 

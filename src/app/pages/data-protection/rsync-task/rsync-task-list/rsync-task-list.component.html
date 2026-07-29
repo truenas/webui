@@ -5,9 +5,9 @@
   ></ix-basic-search>
 
   <ix-table-column-picker
-    [columns]="columns()"
+    [columns]="list.columns()"
     [columnPreferencesKey]="'rsyncList'"
-    (columnsChange)="columnsChange($event)"
+    (columnsChange)="list.columnsChange($event)"
   ></ix-table-column-picker>
 
   <tn-button
@@ -20,7 +20,7 @@
   ></tn-button>
 </ix-page-header>
 
-@if (empty.type() === EmptyType.NoPageData && !empty.count()) {
+@if (list.empty.type() === EmptyType.NoPageData && !list.empty.count()) {
   <tn-empty
     [icon]="emptyIcon.name"
     [iconLibrary]="emptyIcon.library"
@@ -32,93 +32,102 @@
     class="table"
     [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.tasks"
-    [dataSource]="rows()"
-    [displayedColumns]="displayedColumns()"
+    [dataSource]="list.rows()"
+    [displayedColumns]="list.displayedColumns()"
     [trackBy]="trackByTaskId"
-    [loading]="isLoading()"
-    [emptyMessage]="empty.message()"
-    [emptyIcon]="empty.icon()"
-    (sortChange)="onSortChange($event)"
+    [loading]="list.isLoading()"
+    [emptyMessage]="list.empty.message()"
+    [emptyIcon]="list.empty.icon()"
+    (sortChange)="list.onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'path'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
-          [tnTooltip]="row.path || ''"
-        >{{ row.path }}</span>
+        <ix-table-text-cell
+          [value]="row.path"
+          [title]="'Path' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [tooltip]="row.path || ''"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'remotehost'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Remote Host' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Remote Host' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.remotehost }}</span>
+        <ix-table-text-cell
+          [value]="row.remotehost"
+          [title]="'Remote Host' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'remoteport'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Remote SSH Port' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Remote SSH Port' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.remoteport }}</span>
+        <ix-table-text-cell
+          [value]="row.remoteport"
+          [title]="'Remote SSH Port' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'remotemodule'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Remote Module Name' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Remote Module Name' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.remotemodule }}</span>
+        <ix-table-text-cell
+          [value]="row.remotemodule"
+          [title]="'Remote Module Name' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'remotepath'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Remote Path' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Remote Path' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.remotepath }}</span>
+        <ix-table-text-cell
+          [value]="row.remotepath"
+          [title]="'Remote Path' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'direction'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Direction' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Direction' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.direction }}</span>
+        <ix-table-text-cell
+          [value]="row.direction"
+          [title]="'Direction' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'schedule'">
       <ng-template tnHeaderCellDef>{{ 'Schedule' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Schedule' | translate), uniqueRowTag(row), 'row-schedule']"
-          [tnTooltip]="row.schedule | scheduleDescription"
-        >{{ row.schedule | scheduleDescription }}</span>
+        <ix-table-text-cell
+          testIdSuffix="row-schedule"
+          [value]="row.schedule | scheduleDescription"
+          [title]="'Schedule' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [tooltip]="row.schedule | scheduleDescription"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'frequency'">
       <ng-template tnHeaderCellDef>{{ 'Frequency' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Frequency' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ getFrequency(row) }}</span>
+        <ix-table-text-cell
+          [value]="getFrequency(row)"
+          [title]="'Frequency' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
@@ -147,30 +156,34 @@
     <ng-container [tnColumnDef]="'desc'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Short Description' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Short Description' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.desc }}</span>
+        <ix-table-text-cell
+          [value]="row.desc"
+          [title]="'Short Description' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'user'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'User' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('User' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.user }}</span>
+        <ix-table-text-cell
+          [value]="row.user"
+          [title]="'User' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'delayupdates'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Delay Updates' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Delay Updates' | translate), uniqueRowTag(row), 'row-yesno']"
-        >{{ row.delayupdates | yesNo | translate }}</span>
+        <ix-table-text-cell
+          testIdSuffix="row-yesno"
+          [value]="row.delayupdates | yesNo | translate"
+          [title]="'Delay Updates' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
@@ -189,10 +202,12 @@
     <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
       <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Enabled' | translate), uniqueRowTag(row), 'row-yesno']"
-        >{{ row.enabled | yesNo | translate }}</span>
+        <ix-table-text-cell
+          testIdSuffix="row-yesno"
+          [value]="row.enabled | yesNo | translate"
+          [title]="'Enabled' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 

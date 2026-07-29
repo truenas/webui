@@ -1,0 +1,17 @@
+// Hides an element visually while keeping it in the accessibility tree, for text
+// that only screen readers should reach (a live region, a "opens in a new tab"
+// suffix, the explanation behind a status pill).
+//
+// Shared rather than re-declared per component: the clip/size/position values
+// have to stay together to work, and a partial copy silently stops hiding.
+@mixin sr-only {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}

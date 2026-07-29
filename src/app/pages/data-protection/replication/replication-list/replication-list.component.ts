@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, computed, inject, viewChild, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -13,9 +13,6 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
-  TnTestIdDirective,
-  TnTooltipDirective,
-  type TnSortEvent,
 } from '@truenas/ui-components';
 import { filter, switchMap, tap } from 'rxjs';
 import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
@@ -39,11 +36,8 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import {
-  createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
-  detailActionTestId, mapTnSortToTableSort, perRow, rowTestIdTag, toDisplayedColumns,
-} from 'app/modules/ix-table/utils';
+import { ExpandOnRowClickDirective } from 'app/modules/ix-table/directives/expand-on-row-click.directive';
+import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
@@ -54,6 +48,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   TableRelativeDateCellComponent,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -90,11 +85,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TnDetailRowDefDirective,
-    TnTestIdDirective,
-    TnTooltipDirective,
     TnTablePagerComponent,
+    ExpandOnRowClickDirective,
     IxTableDetailsRowComponent,
     TableRelativeDateCellComponent,
+    TableTextCellComponent,
     TableToggleCellComponent,
     TaskStateCellComponent,
     YesNoPipe,
@@ -129,101 +124,87 @@ export class ReplicationListComponent implements OnInit {
   }]).pipe(tap((replicationTasks) => this.replicationTasks = replicationTasks));
 
   readonly dataProvider = new AsyncDataProvider<ReplicationTask>(this.replicationTasks$);
-  protected readonly rows = dataProviderRows(this.dataProvider);
-  protected readonly isLoading = dataProviderLoading(this.dataProvider);
-  protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
   // Bound from the shared catalog config rather than inlined in the template, so the
   // translated string has a single source of truth and follows a language change.
   protected readonly emptyConfig = replicationTaskEmptyConfig;
-
-  // Icon split out of the same config rather than hand-copied into the template, so
-  // the catalog stays the single source of truth for the icon as well as the message.
   protected readonly emptyIcon = emptyConfigIcon(replicationTaskEmptyConfig);
 
-  // ix-table column model retained purely to drive <ix-table-column-picker>
-  // (visibility + saved prefs) and the hidden-column list rendered in the detail
-  // row; tn-table renders cells from the template and derives its
-  // `displayedColumns` from these via `toDisplayedColumns`.
-  protected readonly columns = signal(createTable<ReplicationTask>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
+  protected readonly list = tnTableListHost<ReplicationTask>(this.dataProvider, {
+    columns: createTable<ReplicationTask>([
+      textColumn({
+        title: this.translate.instant('Name'),
+        propertyName: 'name',
+      }),
+      textColumn({
+        title: this.translate.instant('Direction'),
+        propertyName: 'direction',
+      }),
+      textColumn({
+        title: this.translate.instant('Transport'),
+        propertyName: 'transport',
+        hidden: true,
+      }),
+      textColumn({
+        title: this.translate.instant('SSH Connection'),
+        hidden: true,
+        propertyName: 'ssh_credentials',
+        getValue: (task) => this.getSshConnection(task),
+      }),
+      textColumn({
+        title: this.translate.instant('Source Dataset'),
+        propertyName: 'source_datasets',
+        hidden: true,
+      }),
+      textColumn({
+        title: this.translate.instant('Target Dataset'),
+        propertyName: 'target_dataset',
+        hidden: true,
+      }),
+      yesNoColumn({
+        title: this.translate.instant('Recursive'),
+        propertyName: 'recursive',
+        hidden: true,
+      }),
+      yesNoColumn({
+        title: this.translate.instant('Auto'),
+        propertyName: 'auto',
+        hidden: true,
+      }),
+      relativeDateColumn({
+        title: this.translate.instant('Last Run'),
+        columnName: 'last-run',
+        getValue: (row) => row.state?.datetime?.$date,
+      }),
+      stateButtonColumn({
+        title: this.translate.instant('State'),
+        columnName: 'state',
+        getValue: (row) => row.state.state,
+        cssClass: 'state-button',
+        getJob: (row) => row.job || null,
+      }),
+      // Modelled as yes/no rather than a toggle: the template renders the visible
+      // column as an <ix-table-toggle-cell>, but when the picker hides this column
+      // <ix-table-details-row> renders it through the ix cell components, where a
+      // toggle would be interactive without an `onRowToggle`/`requiredRoles`.
+      // Read-only in the detail row is a small regression from the pre-migration
+      // toggle — see "Migration follow-ups" in TRUENAS_UI_INTEGRATION.md.
+      yesNoColumn({
+        title: this.translate.instant('Enabled'),
+        propertyName: 'enabled',
+      }),
+      textColumn({
+        title: this.translate.instant('Last Snapshot'),
+        columnName: 'last-snapshot',
+        getValue: (task) => this.getLastSnapshot(task),
+      }),
+    ], {
+      // Still needed: <ix-table-details-row> renders the hidden columns through the
+      // ix cell components, which read `uniqueRowTag`/`ariaLabels` off the column.
+      ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
+      uniqueRowTag: (row) => this.rowTag(row),
     }),
-    textColumn({
-      title: this.translate.instant('Direction'),
-      propertyName: 'direction',
-    }),
-    textColumn({
-      title: this.translate.instant('Transport'),
-      propertyName: 'transport',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('SSH Connection'),
-      hidden: true,
-      propertyName: 'ssh_credentials',
-      getValue: (task) => this.getSshConnection(task),
-    }),
-    textColumn({
-      title: this.translate.instant('Source Dataset'),
-      propertyName: 'source_datasets',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Target Dataset'),
-      propertyName: 'target_dataset',
-      hidden: true,
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Recursive'),
-      propertyName: 'recursive',
-      hidden: true,
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Auto'),
-      propertyName: 'auto',
-      hidden: true,
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Last Run'),
-      columnName: 'last-run',
-      getValue: (row) => row.state?.datetime?.$date,
-    }),
-    stateButtonColumn({
-      title: this.translate.instant('State'),
-      columnName: 'state',
-      getValue: (row) => row.state.state,
-      cssClass: 'state-button',
-      getJob: (row) => row.job || null,
-    }),
-    // Modelled as yes/no rather than a toggle: the template renders the visible
-    // column as an <ix-table-toggle-cell>, but when the picker hides this column
-    // <ix-table-details-row> renders it through the ix cell components, where a
-    // toggle would be interactive without an `onRowToggle`/`requiredRoles`.
-    // Read-only in the detail row is a small regression from the pre-migration
-    // toggle — see "Migration follow-ups" in TRUENAS_UI_INTEGRATION.md.
-    yesNoColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-    }),
-    textColumn({
-      title: this.translate.instant('Last Snapshot'),
-      columnName: 'last-snapshot',
-      getValue: (task) => this.getLastSnapshot(task),
-    }),
-  ], {
-    // Still needed: <ix-table-details-row> renders the hidden columns through the
-    // ix cell components, which read `uniqueRowTag`/`ariaLabels` off the column.
-    ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
-    uniqueRowTag: (row) => this.rowTag(row),
-  }));
-
-  protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
-
-  protected readonly hiddenColumns = computed<Column<ReplicationTask, ColumnComponent<ReplicationTask>>[]>(
-    () => this.columns().filter((column) => column?.hidden),
-  );
+  });
 
   protected readonly trackByTaskId = (_index: number, row: ReplicationTask): number => row.id;
 
@@ -231,9 +212,9 @@ export class ReplicationListComponent implements OnInit {
     return `replication-task-${row.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}`;
   }
 
-  protected readonly uniqueRowTag = rowTestIdTag<ReplicationTask>((row) => this.rowTag(row));
+  protected readonly uniqueRowTag = this.list.rowTag((row) => this.rowTag(row));
 
-  protected readonly ariaLabel = perRow<ReplicationTask, string>(
+  protected readonly ariaLabel = this.list.perRow(
     (row) => [row.name, this.translate.instant('Replication Task')].join(' '),
   );
 
@@ -241,9 +222,6 @@ export class ReplicationListComponent implements OnInit {
     return detailActionTestId([row.id], action);
   }
 
-  // Plain methods rather than `perRow`: both are a ternary over two properties, where the
-  // WeakMap lookup would cost more than re-deriving. `perRow` is for the derivations that
-  // actually do work — parsing a crontab, composing a translated label, kebab-casing a tag.
   protected getSshConnection(task: ReplicationTask): string {
     return task.ssh_credentials ? task.ssh_credentials.name : this.translate.instant('N/A');
   }
@@ -336,24 +314,6 @@ export class ReplicationListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
-  }
-
-  protected columnsChange(columns: ReturnType<typeof this.columns>): void {
-    this.columns.set([...columns]);
-  }
-
-  private readonly table = viewChild(TnTableComponent<ReplicationTask>);
-
-  /**
-   * tn-table only expands through its chevron; the ix-table this replaced expanded on a
-   * row click too, so drive the expansion from `(rowClick)` to keep that behaviour.
-   */
-  protected onRowClick(row: ReplicationTask): void {
-    this.table()?.toggleRowExpansion(row);
-  }
-
-  protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<ReplicationTask>(event, this.displayedColumns()));
   }
 
   protected downloadKeys(row: ReplicationTask): void {

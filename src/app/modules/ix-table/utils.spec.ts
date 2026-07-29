@@ -1,14 +1,14 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
-import { NEVER, of, Subject } from 'rxjs';
+import { BehaviorSubject, NEVER, of, Subject, map } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
   dataProviderEmptyState, dataProviderLoading, dataProviderRows, detailActionTestId, filterTableRows,
-  mapTnSortToProviderSorting, mapTnSortToTableSort, perRow, rowTestIdTag, toDisplayedColumns,
+  mapTnSortToProviderSorting, mapTnSortToTableSort, tnTableListHost, toDisplayedColumns,
 } from './utils';
 
 describe('dataProviderRows / dataProviderLoading', () => {
@@ -224,46 +224,162 @@ describe('toDisplayedColumns', () => {
   });
 });
 
-describe('perRow', () => {
-  it('derives the value from the row', () => {
-    const label = perRow<{ name: string }, string>((row) => row.name.toUpperCase());
-
-    expect(label({ name: 'tank' })).toBe('TANK');
-  });
-
-  it('derives once per row and reuses the result on later calls', () => {
-    const derive = jest.fn((row: { name: string }) => row.name.toUpperCase());
-    const label = perRow(derive);
-    const row = { name: 'tank' };
-
-    expect(label(row)).toBe('TANK');
-    expect(label(row)).toBe('TANK');
-    expect(derive).toHaveBeenCalledTimes(1);
-  });
-
-  it('keeps a separate result per row', () => {
-    const label = perRow<{ name: string }, string>((row) => row.name.toUpperCase());
-
-    expect(label({ name: 'tank' })).toBe('TANK');
-    expect(label({ name: 'dozer' })).toBe('DOZER');
-  });
-});
-
-describe('rowTestIdTag', () => {
+describe('tnTableListHost', () => {
   interface Row { name: string }
 
-  const tag = rowTestIdTag<Row>((row) => 'replication-task-' + row.name);
+  let langChange$: Subject<LangChangeEvent>;
+  let currentPage$: BehaviorSubject<Row[]>;
+  let setSorting: jest.Mock;
+  let provider: BaseDataProvider<Row>;
 
-  it('kebab-cases the base so the tag resolves the same as the legacy [ixTest] directive', () => {
-    expect(tag({ name: 'My Task' })).toBe('replication-task-my-task');
+  const tank = { name: 'tank' };
+
+  beforeEach(() => {
+    langChange$ = new Subject<LangChangeEvent>();
+    currentPage$ = new BehaviorSubject<Row[]>([tank]);
+    setSorting = jest.fn();
+    provider = {
+      currentPage$,
+      isLoading$: of(false),
+      emptyType$: of(EmptyType.NoPageData),
+      currentPageCount$: currentPage$.pipe(map((rows) => rows.length)),
+      setSorting,
+    } as unknown as BaseDataProvider<Row>;
+
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: TranslateService,
+          useValue: { instant: (key: string) => key, onLangChange: langChange$ },
+        },
+      ],
+    });
   });
 
-  it('splits letter-digit boundaries, which the library kebab does not', () => {
-    expect(tag({ name: 'task1' })).toBe('replication-task-task-1');
+  describe('provider bindings', () => {
+    it('exposes the provider rows, loading and empty state', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { displayedColumns: ['name'] });
+
+        expect(list.rows()).toEqual([tank]);
+        expect(list.isLoading()).toBe(false);
+        expect(list.empty.type()).toBe(EmptyType.NoPageData);
+        expect(list.empty.count()).toBe(1);
+      });
+    });
+
+    it('maps a sort event against the displayed columns and applies it to the provider', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { displayedColumns: ['path', 'name'] });
+        list.onSortChange({ column: 'name', direction: 'desc' });
+
+        expect(setSorting).toHaveBeenCalledWith({
+          propertyName: 'name',
+          direction: SortDirection.Desc,
+          active: 1,
+        });
+      });
+    });
   });
 
-  it('strips the punctuation convertStringToId removes', () => {
-    expect(tag({ name: 'pool/dataset' })).toBe('replication-task-pool-dataset');
+  describe('column picker', () => {
+    const columns = (): Column<Row, ColumnComponent<Row>>[] => ([
+      { propertyName: 'name', title: 'Name' },
+      { propertyName: 'path', title: 'Path', hidden: true },
+    ] as Column<Row, ColumnComponent<Row>>[]);
+
+    it('derives the displayed columns from the visible ones, then the appended ones', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { columns: columns(), appendedColumns: ['actions'] });
+
+        expect(list.displayedColumns()).toEqual(['name', 'actions']);
+        expect(list.hiddenColumns()).toEqual([expect.objectContaining({ propertyName: 'path' })]);
+      });
+    });
+
+    it('re-derives the displayed columns when the picker changes visibility', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { columns: columns() });
+        const next = list.columns().map((column) => ({ ...column, hidden: false }));
+
+        list.columnsChange(next);
+
+        expect(list.displayedColumns()).toEqual(['name', 'path']);
+        expect(list.hiddenColumns()).toEqual([]);
+      });
+    });
+  });
+
+  describe('perRow', () => {
+    it('derives once per row and reuses the result on later calls', () => {
+      TestBed.runInInjectionContext(() => {
+        const derive = jest.fn((row: Row) => row.name.toUpperCase());
+        const label = tnTableListHost<Row>(provider, { displayedColumns: ['name'] }).perRow(derive);
+
+        expect(label(tank)).toBe('TANK');
+        expect(label(tank)).toBe('TANK');
+        expect(derive).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it('keeps a separate result per row', () => {
+      TestBed.runInInjectionContext(() => {
+        const label = tnTableListHost<Row>(provider, { displayedColumns: ['name'] })
+          .perRow((row) => row.name.toUpperCase());
+
+        expect(label(tank)).toBe('TANK');
+        expect(label({ name: 'dozer' })).toBe('DOZER');
+      });
+    });
+
+    it('re-derives after the provider emits a new set of rows', () => {
+      TestBed.runInInjectionContext(() => {
+        const derive = jest.fn((row: Row) => row.name.toUpperCase());
+        const label = tnTableListHost<Row>(provider, { displayedColumns: ['name'] }).perRow(derive);
+        expect(label(tank)).toBe('TANK');
+
+        currentPage$.next([tank]);
+
+        expect(label(tank)).toBe('TANK');
+        expect(derive).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    it('re-derives when the language changes, so a translated label does not freeze', () => {
+      TestBed.runInInjectionContext(() => {
+        const derive = jest.fn((row: Row) => row.name.toUpperCase());
+        const label = tnTableListHost<Row>(provider, { displayedColumns: ['name'] }).perRow(derive);
+        expect(label(tank)).toBe('TANK');
+
+        langChange$.next({ lang: 'fr' } as LangChangeEvent);
+
+        expect(label(tank)).toBe('TANK');
+        expect(derive).toHaveBeenCalledTimes(2);
+      });
+    });
+  });
+
+  describe('rowTag', () => {
+    const makeTag = (): (row: Row) => string => tnTableListHost<Row>(provider, { displayedColumns: ['name'] })
+      .rowTag((row) => 'replication-task-' + row.name);
+
+    it('kebab-cases the base so the tag resolves the same as the legacy [ixTest] directive', () => {
+      TestBed.runInInjectionContext(() => {
+        expect(makeTag()({ name: 'My Task' })).toBe('replication-task-my-task');
+      });
+    });
+
+    it('splits letter-digit boundaries, which the library kebab does not', () => {
+      TestBed.runInInjectionContext(() => {
+        expect(makeTag()({ name: 'task1' })).toBe('replication-task-task-1');
+      });
+    });
+
+    it('strips the punctuation convertStringToId removes', () => {
+      TestBed.runInInjectionContext(() => {
+        expect(makeTag()({ name: 'pool/dataset' })).toBe('replication-task-pool-dataset');
+      });
+    });
   });
 });
 

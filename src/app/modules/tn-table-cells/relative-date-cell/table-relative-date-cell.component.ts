@@ -1,14 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { isValid } from 'date-fns';
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { invalidDate } from 'app/constants/invalid-date';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
+import { translated } from 'app/helpers/translated.helper';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { RelativeDateTickerService } from 'app/modules/dates/services/relative-date-ticker.service';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 
 /**
  * tn-table replacement for the ix-table `relativeDateColumn` cell renderer.
@@ -49,9 +52,20 @@ export class TableRelativeDateCellComponent {
    */
   private readonly tick = toSignal(inject(RelativeDateTickerService).tick$, { initialValue: 0 });
 
+  /**
+   * Date/time format dependency for `tooltip`. `FormatDateTimePipe` re-reads the user's
+   * format preference on this action; it is impure so the templates that use it as a pipe
+   * pick that up on the next pass, but a `computed` calling `transform()` has to take the
+   * dependency itself.
+   */
+  private readonly dateTimeFormat = toSignal(
+    inject(Actions).pipe(ofType(localizationFormSubmitted)),
+    { initialValue: null },
+  );
+
   protected readonly testId = computed(() => [this.title(), this.uniqueRowTag(), 'row-relative-date']);
 
-  protected readonly date = computed<string>(() => {
+  protected readonly date = translated<string>(() => {
     const value = this.value();
     if (!value) {
       return this.translate.instant('N/A');
@@ -70,7 +84,7 @@ export class TableRelativeDateCellComponent {
     () => this.translate.instant(this.date()) === this.translate.instant(invalidDate),
   );
 
-  protected readonly tooltip = computed<string>(() => {
+  protected readonly tooltip = translated<string>(() => {
     const value = this.value();
     if (!value) {
       return this.translate.instant('N/A');
@@ -79,6 +93,10 @@ export class TableRelativeDateCellComponent {
     if (!isValid(value)) {
       return value as string;
     }
+
+    // The formatted timestamps below depend on the user's date/time preference, not only
+    // on `value` — take that dependency explicitly, as `date` does with the clock.
+    this.dateTimeFormat();
 
     const machineTime = this.toMachineTime(value);
     if (!this.hasTimezoneDifference(value, machineTime)) {

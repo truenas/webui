@@ -3,8 +3,11 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 
 /**
  * The `[icon]` / `[iconLibrary]` / `[iconSize]` triplet a `tn-empty` binds.
- * `size` is `undefined` unless the config is `large`, leaving the component on
- * its own size preset.
+ * `size` is `undefined` unless the config is `large`. Binding that `undefined`
+ * straight through is safe rather than an override of the component's own
+ * preset: `tn-empty` forwards `iconSize` to `tn-icon`'s `customSize`, which
+ * resolves as `customSize() || null` and so falls back to the `size`-based
+ * preset.
  */
 export interface EmptyStateIcon {
   name: string | undefined;

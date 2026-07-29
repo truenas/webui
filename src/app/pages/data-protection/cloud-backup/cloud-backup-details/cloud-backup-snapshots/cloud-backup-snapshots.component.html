@@ -1,14 +1,14 @@
 <tn-card class="card" [padContent]="false" [title]="'Snapshots' | translate">
-  @if (!isLoading()) {
+  @if (!list.isLoading()) {
     <tn-table
       class="table"
       [testId]="'table-table'"
-      [dataSource]="rows()"
-      [displayedColumns]="displayedColumns"
+      [dataSource]="list.rows()"
+      [displayedColumns]="list.displayedColumns()"
       [trackBy]="trackBySnapshotId"
-      [emptyMessage]="empty.message()"
-      [emptyIcon]="empty.icon()"
-      (sortChange)="onSortChange($event)"
+      [emptyMessage]="list.empty.message()"
+      [emptyIcon]="list.empty.icon()"
+      (sortChange)="list.onSortChange($event)"
     >
       <ng-container [tnColumnDef]="'time'">
         <ng-template tnHeaderCellDef>{{ 'Snapshot Time' | translate }}</ng-template>
@@ -24,10 +24,11 @@
       <ng-container [tnColumnDef]="'hostname'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Hostname' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span
-            tnTestIdType="text"
-            [tnTestId]="[('Hostname' | translate), uniqueRowTag(row), 'row-text']"
-          >{{ row.hostname }}</span>
+          <ix-table-text-cell
+            [value]="row.hostname"
+            [title]="'Hostname' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+          ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 

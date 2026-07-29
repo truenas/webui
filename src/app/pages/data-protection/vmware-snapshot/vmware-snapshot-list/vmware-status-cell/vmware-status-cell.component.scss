@@ -1,3 +1,4 @@
+@import 'mixins/sr-only';
 @import 'scss-imports/status-pill';
 
 // Shares the pill shape and per-state colours with ix-task-state-cell through the
@@ -6,14 +7,6 @@
   @include status-pill;
 
   .sr-only {
-    border: 0;
-    clip: rect(0, 0, 0, 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    white-space: nowrap;
-    width: 1px;
+    @include sr-only;
   }
 }

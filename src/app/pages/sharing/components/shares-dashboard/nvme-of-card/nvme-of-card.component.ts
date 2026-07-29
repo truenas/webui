@@ -147,8 +147,6 @@ export class NvmeOfCardComponent implements OnInit {
     });
     if (!subsystems.length) {
       dataProvider.setEmptyType(EmptyType.NoPageData);
-    } else {
-      dataProvider.expandedRow = subsystems[0];
     }
 
     return dataProvider;

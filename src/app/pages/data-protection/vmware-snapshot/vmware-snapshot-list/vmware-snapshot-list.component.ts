@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, inject, viewChild, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -11,8 +11,6 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
-  TnTestIdDirective,
-  type TnSortEvent,
 } from '@truenas/ui-components';
 import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -22,13 +20,12 @@ import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import {
-  dataProviderEmptyState, dataProviderLoading, dataProviderRows,
-  detailActionTestId, mapTnSortToTableSort, rowTestIdTag,
-} from 'app/modules/ix-table/utils';
+import { ExpandOnRowClickDirective } from 'app/modules/ix-table/directives/expand-on-row-click.directive';
+import { detailActionTestId, tnTableListHost } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { vmwareSnapshotListElements } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.elements';
@@ -50,9 +47,10 @@ import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-ce
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TnDetailRowDefDirective,
-    TnTestIdDirective,
-    VmwareStatusCellComponent,
     TnTablePagerComponent,
+    ExpandOnRowClickDirective,
+    TableTextCellComponent,
+    VmwareStatusCellComponent,
     TranslateModule,
   ],
 })
@@ -65,7 +63,6 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   protected readonly searchableElements = vmwareSnapshotListElements;
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
-  protected readonly displayedColumns = ['hostname', 'username', 'filesystem', 'datastore', 'state'];
 
   protected readonly searchQuery = signal('');
 
@@ -77,14 +74,14 @@ export class VmwareSnapshotListComponent implements OnInit {
   );
 
   readonly dataProvider = new AsyncDataProvider<VmwareSnapshot>(this.snapshots$);
-  protected readonly rows = dataProviderRows(this.dataProvider);
-  protected readonly isLoading = dataProviderLoading(this.dataProvider);
-  protected readonly empty = dataProviderEmptyState(this.dataProvider);
+
+  protected readonly list = tnTableListHost<VmwareSnapshot>(this.dataProvider, {
+    displayedColumns: ['hostname', 'username', 'filesystem', 'datastore', 'state'],
+  });
 
   protected readonly trackBySnapshotId = (_index: number, row: VmwareSnapshot): number => row.id;
 
-  protected readonly uniqueRowTag = rowTestIdTag<VmwareSnapshot>((row) => 'vmware-snapshot-' + row.hostname);
-
+  protected readonly uniqueRowTag = this.list.rowTag((row) => 'vmware-snapshot-' + row.hostname);
 
   protected detailActionTestId(row: VmwareSnapshot, action: string): string {
     return detailActionTestId([row.hostname, row.filesystem], action);
@@ -100,20 +97,6 @@ export class VmwareSnapshotListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['hostname', 'datastore', 'filesystem', 'username'] });
-  }
-
-  private readonly table = viewChild(TnTableComponent<VmwareSnapshot>);
-
-  /**
-   * tn-table only expands through its chevron; the ix-table this replaced expanded on a
-   * row click too, so drive the expansion from `(rowClick)` to keep that behaviour.
-   */
-  protected onRowClick(row: VmwareSnapshot): void {
-    this.table()?.toggleRowExpansion(row);
-  }
-
-  protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<VmwareSnapshot>(event, this.displayedColumns));
   }
 
   private getSnapshotsData(): void {

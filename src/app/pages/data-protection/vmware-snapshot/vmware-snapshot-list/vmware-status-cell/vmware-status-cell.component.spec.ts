@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TranslateService } from '@ngx-translate/core';
 import { TnTooltipDirective } from '@truenas/ui-components';
 import { VmwareStatusCellComponent, VmwareSnapshotStatus, VmwareState } from './vmware-status-cell.component';
 
@@ -129,6 +130,26 @@ describe('VmwareStatusCellComponent', () => {
       expect(pill()).toHaveClass('state-yellow');
       expect(pill()).toHaveText('Blocked');
       expect(pill()).toHaveText('Blocked due to outbound network restrictions');
+    });
+  });
+
+  // The pill text and tooltip were `| translate` bindings before the migration; as
+  // `translate.instant()` inside a computed they have to keep following a language change.
+  describe('language change', () => {
+    it('re-translates the pill text and tooltip', () => {
+      setState({ state: VmwareSnapshotStatus.Blocked });
+      expect(pill()).toHaveText('Blocked');
+
+      const translate = spectator.inject(TranslateService);
+      translate.setTranslation('fr', {
+        BLOCKED: 'Bloqué',
+        'Blocked due to outbound network restrictions': 'Restrictions réseau',
+      });
+      translate.use('fr');
+      spectator.detectChanges();
+
+      expect(pill()).toHaveText('Bloqué');
+      expect(tooltip()).toBe('Restrictions réseau');
     });
   });
 });

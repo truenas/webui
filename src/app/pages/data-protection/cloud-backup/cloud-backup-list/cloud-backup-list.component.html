@@ -5,7 +5,7 @@
   ></ix-basic-search>
 </div>
 
-@if (!empty.count() && !isLoading()) {
+@if (!list.empty.count() && !list.isLoading()) {
   @if (searchQuery()) {
     <tn-empty
       [icon]="noSearchResultsIcon.name"
@@ -27,23 +27,24 @@
     class="backups"
     [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.tasks"
-    [dataSource]="rows()"
-    [displayedColumns]="displayedColumns"
+    [dataSource]="list.rows()"
+    [displayedColumns]="list.displayedColumns()"
     [trackBy]="trackByBackupId"
-    [loading]="isLoading()"
+    [loading]="list.isLoading()"
     [clickable]="true"
     [activeRow]="activeRow()"
     (rowClick)="onRowClick($event)"
-    (sortChange)="onSortChange($event)"
+    (sortChange)="list.onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'description'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
-          [tnTooltip]="row.description || ''"
-        >{{ row.description }}</span>
+        <ix-table-text-cell
+          [value]="row.description"
+          [title]="'Name' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [tooltip]="row.description || ''"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
@@ -65,10 +66,12 @@
     <ng-container [tnColumnDef]="'snapshot'" [sortable]="true" [width]="'90px'">
       <ng-template tnHeaderCellDef>{{ 'Snapshot' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Snapshot' | translate), uniqueRowTag(row), 'row-yesno']"
-        >{{ row.snapshot | yesNo | translate }}</span>
+        <ix-table-text-cell
+          testIdSuffix="row-yesno"
+          [value]="row.snapshot | yesNo | translate"
+          [title]="'Snapshot' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 

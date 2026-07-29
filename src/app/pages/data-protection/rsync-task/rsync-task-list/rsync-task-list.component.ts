@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, Type, computed, inject, signal, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Type, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -11,9 +11,6 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
-  TnTestIdDirective,
-  TnTooltipDirective,
-  type TnSortEvent,
 } from '@truenas/ui-components';
 import {
   filter, switchMap, tap,
@@ -44,10 +41,7 @@ import {
   yesNoColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import {
-  createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows,
-  mapTnSortToTableSort, perRow, rowTestIdTag, toDisplayedColumns,
-} from 'app/modules/ix-table/utils';
+import { createTable, tnTableListHost } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -60,6 +54,7 @@ import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-ce
 import {
   TableRelativeDateCellComponent,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   TaskStateCellComponent,
@@ -86,11 +81,10 @@ import { TaskService } from 'app/services/task.service';
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
-    TnTestIdDirective,
-    TnTooltipDirective,
     TnTablePagerComponent,
     TableActionsCellComponent,
     TableRelativeDateCellComponent,
+    TableTextCellComponent,
     TaskStateCellComponent,
     ScheduleDescriptionPipe,
     YesNoPipe,
@@ -118,16 +112,10 @@ export class RsyncTaskListComponent implements OnInit {
   private readonly rsyncTasks$ = this.api.call('rsynctask.query');
 
   readonly dataProvider = new AsyncDataProvider<RsyncTask>(this.rsyncTasks$);
-  protected readonly rows = dataProviderRows(this.dataProvider);
-  protected readonly isLoading = dataProviderLoading(this.dataProvider);
-  protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
   // Bound from the shared catalog config rather than inlined in the template, so the
   // translated string has a single source of truth and follows a language change.
   protected readonly emptyConfig = rsyncTaskEmptyConfig;
-
-  // Icon split out of the same config rather than hand-copied into the template, so
-  // the catalog stays the single source of truth for the icon as well as the message.
   protected readonly emptyIcon = emptyConfigIcon(rsyncTaskEmptyConfig);
 
   protected readonly actions: IconActionConfig<RsyncTask>[] = [
@@ -150,96 +138,94 @@ export class RsyncTaskListComponent implements OnInit {
     },
   ];
 
-  // ix-table column model retained purely to drive <ix-table-column-picker>
-  // (visibility + saved prefs); tn-table renders cells from the template and
-  // derives its `displayedColumns` from these via `toDisplayedColumns`.
-  protected readonly columns = signal(createTable<RsyncTask>([
-    textColumn({
-      title: this.translate.instant('Path'),
-      propertyName: 'path',
-    }),
-    textColumn({
-      title: this.translate.instant('Remote Host'),
-      propertyName: 'remotehost',
-    }),
-    textColumn({
-      title: this.translate.instant('Remote SSH Port'),
-      propertyName: 'remoteport',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Remote Module Name'),
-      propertyName: 'remotemodule',
-    }),
-    textColumn({
-      title: this.translate.instant('Remote Path'),
-      propertyName: 'remotepath',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Direction'),
-      propertyName: 'direction',
-    }),
-    scheduleColumn({
-      title: this.translate.instant('Schedule'),
-      propertyName: 'schedule',
-      hidden: true,
-    }),
-    // No `propertyName`: it would collide with the Schedule column above on the
-    // tn-table column name, and sorting on the raw schedule object was never
-    // meaningful. Renders as the derived `frequency` column instead.
-    textColumn({
-      title: this.translate.instant('Frequency'),
-      columnName: 'frequency',
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Next Run'),
-      columnName: 'next-run',
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Last Run'),
-      columnName: 'last-run',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Short Description'),
-      propertyName: 'desc',
-    }),
-    textColumn({
-      title: this.translate.instant('User'),
-      propertyName: 'user',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Delay Updates'),
-      propertyName: 'delayupdates',
-      hidden: true,
-    }),
-    stateButtonColumn({
-      title: this.translate.instant('Status'),
-      columnName: 'status',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-    }),
-  ]));
-
-  // The actions column is appended rather than modelled: it is rendered from the
-  // template by <ix-table-actions-cell>, the picker must never offer it, and a
-  // column entry with no cell component behind it would misdescribe the table.
-  protected readonly displayedColumns = computed<string[]>(() => [...toDisplayedColumns(this.columns()), 'actions']);
+  protected readonly list = tnTableListHost<RsyncTask>(this.dataProvider, {
+    columns: createTable<RsyncTask>([
+      textColumn({
+        title: this.translate.instant('Path'),
+        propertyName: 'path',
+      }),
+      textColumn({
+        title: this.translate.instant('Remote Host'),
+        propertyName: 'remotehost',
+      }),
+      textColumn({
+        title: this.translate.instant('Remote SSH Port'),
+        propertyName: 'remoteport',
+        hidden: true,
+      }),
+      textColumn({
+        title: this.translate.instant('Remote Module Name'),
+        propertyName: 'remotemodule',
+      }),
+      textColumn({
+        title: this.translate.instant('Remote Path'),
+        propertyName: 'remotepath',
+        hidden: true,
+      }),
+      textColumn({
+        title: this.translate.instant('Direction'),
+        propertyName: 'direction',
+      }),
+      scheduleColumn({
+        title: this.translate.instant('Schedule'),
+        propertyName: 'schedule',
+        hidden: true,
+      }),
+      // No `propertyName`: it would collide with the Schedule column above on the
+      // tn-table column name, and sorting on the raw schedule object was never
+      // meaningful. Renders as the derived `frequency` column instead.
+      textColumn({
+        title: this.translate.instant('Frequency'),
+        columnName: 'frequency',
+      }),
+      relativeDateColumn({
+        title: this.translate.instant('Next Run'),
+        columnName: 'next-run',
+      }),
+      relativeDateColumn({
+        title: this.translate.instant('Last Run'),
+        columnName: 'last-run',
+        hidden: true,
+      }),
+      textColumn({
+        title: this.translate.instant('Short Description'),
+        propertyName: 'desc',
+      }),
+      textColumn({
+        title: this.translate.instant('User'),
+        propertyName: 'user',
+      }),
+      yesNoColumn({
+        title: this.translate.instant('Delay Updates'),
+        propertyName: 'delayupdates',
+        hidden: true,
+      }),
+      stateButtonColumn({
+        title: this.translate.instant('Status'),
+        columnName: 'status',
+      }),
+      yesNoColumn({
+        title: this.translate.instant('Enabled'),
+        propertyName: 'enabled',
+      }),
+    ]),
+    // The actions column is appended rather than modelled: it is rendered from the
+    // template by <ix-table-actions-cell>, the picker must never offer it, and a
+    // column entry with no cell component behind it would misdescribe the table.
+    appendedColumns: ['actions'],
+  });
 
   protected readonly trackByTaskId = (_index: number, row: RsyncTask): number => row.id;
 
-  protected readonly uniqueRowTag = rowTestIdTag<RsyncTask>(
+  protected readonly uniqueRowTag = this.list.rowTag(
     (row) => 'rsync-task-' + row.path + '-' + row.remotehost,
   );
 
-  protected readonly ariaLabel = perRow<RsyncTask, string>(
+  protected readonly ariaLabel = this.list.perRow(
     (row) => [row.path, row.remotehost, this.translate.instant('Rsync Task')].join(' '),
   );
 
-  protected readonly getFrequency = perRow<RsyncTask, string>(
+  protected readonly getFrequency = this.list.perRow(
     (row) => this.crontabExplanation.transform(scheduleToCrontab(row.schedule)),
   );
 
@@ -271,14 +257,6 @@ export class RsyncTaskListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['path', 'desc'] });
-  }
-
-  protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<RsyncTask>(event, this.displayedColumns()));
-  }
-
-  protected columnsChange(columns: ReturnType<typeof this.columns>): void {
-    this.columns.set([...columns]);
   }
 
   protected runNow(row: RsyncTask): void {
