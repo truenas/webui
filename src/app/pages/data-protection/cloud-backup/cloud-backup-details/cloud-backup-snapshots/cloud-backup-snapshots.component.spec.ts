@@ -122,7 +122,7 @@ describe('CloudBackupSnapshotsComponent', () => {
   });
 
   it('should show table rows', async () => {
-    expect(await table.getHeaderTexts()).toEqual(['Snapshot Time', 'Hostname', '']);
+    expect(await table.getHeaderTexts()).toEqual(['Snapshot Time', 'Hostname', 'Actions']);
     expect(await table.getAllRowTexts()).toEqual([
       ['1 min. ago', 'recent', ''],
       ['8 min. ago', 'older', ''],

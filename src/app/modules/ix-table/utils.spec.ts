@@ -7,7 +7,7 @@ import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-pr
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
-  dataProviderEmptyState, dataProviderLoading, dataProviderRows, detailActionTestId, filterTableRows,
+  createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows, detailActionTestId, filterTableRows,
   mapTnSortToProviderSorting, mapTnSortToTableSort, tnTableListHost, toDisplayedColumns,
 } from './utils';
 
@@ -186,6 +186,55 @@ describe('filterTableRows', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].dataset).toBe('/dozer/test');
+  });
+});
+
+describe('createTable', () => {
+  interface Row { name: string }
+
+  let consoleError: jest.SpyInstance;
+
+  beforeEach(() => {
+    consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => consoleError.mockRestore());
+
+  it('accepts a columnName-keyed column that carries getValue', () => {
+    createTable<Row>([
+      { title: 'Last Run', columnName: 'last-run', getValue: () => 1 } as Column<Row, ColumnComponent<Row>>,
+    ]);
+
+    expect(consoleError).not.toHaveBeenCalled();
+  });
+
+  it('reports a columnName-keyed column with no getValue, which renders blank in the detail row', () => {
+    createTable<Row>([
+      { title: 'Last Run', columnName: 'last-run' } as Column<Row, ColumnComponent<Row>>,
+    ]);
+
+    expect(consoleError).toHaveBeenCalledWith(expect.stringContaining('"Last Run" ("last-run")'));
+  });
+
+  it('reports more than one column resolving to the "actions" column name', () => {
+    createTable<Row>([
+      { title: 'Actions' } as Column<Row, ColumnComponent<Row>>,
+      { title: 'More' } as Column<Row, ColumnComponent<Row>>,
+    ]);
+
+    expect(consoleError).toHaveBeenCalledWith(
+      expect.stringContaining('more than one column'),
+      ['Actions', 'More'],
+    );
+  });
+
+  it('does not validate the legacy ix-table column model built with a config', () => {
+    createTable<Row>(
+      [{ title: 'Actions' } as Column<Row, ColumnComponent<Row>>, {} as Column<Row, ColumnComponent<Row>>],
+      { uniqueRowTag: (row) => row.name, ariaLabels: (row) => [row.name] },
+    );
+
+    expect(consoleError).not.toHaveBeenCalled();
   });
 });
 

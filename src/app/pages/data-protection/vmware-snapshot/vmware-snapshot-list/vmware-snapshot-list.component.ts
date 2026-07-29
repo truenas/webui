@@ -12,7 +12,6 @@ import {
   TnTableComponent,
   TnTablePagerComponent,
 } from '@truenas/ui-components';
-import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -66,10 +65,7 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   protected readonly searchQuery = signal('');
 
-  private snapshots: VmwareSnapshot[] = [];
-
   private readonly snapshots$ = this.api.call('vmware.query').pipe(
-    tap((snapshots) => this.snapshots = snapshots),
     takeUntilDestroyed(),
   );
 

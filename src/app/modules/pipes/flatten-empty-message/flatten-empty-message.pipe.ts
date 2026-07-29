@@ -20,8 +20,10 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'flattenEmptyMessage',
 })
 export class FlattenEmptyMessagePipe implements PipeTransform {
-  transform(message: string): string {
-    return message
+  // `EmptyConfig.message` is optional, so the pipe has to tolerate an absent one
+  // rather than throw on the first config that omits it.
+  transform(message: string | undefined): string {
+    return (message ?? '')
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();

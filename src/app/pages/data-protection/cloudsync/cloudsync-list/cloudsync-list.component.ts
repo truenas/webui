@@ -220,9 +220,13 @@ export class CloudSyncListComponent implements OnInit {
     return detailActionTestId([row.id], action);
   }
 
-  protected getSchedule(task: CloudSyncTaskUi): string {
-    return task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled');
-  }
+  // Memoized: parsing a schedule into a crontab is the case `perRow` exists for, and
+  // the template asks for it once per row per change-detection pass. Annotated rather
+  // than inferred: the column model above calls it from a `getValue`, so inferring its
+  // type from `this.list` would be circular.
+  protected readonly getSchedule: (task: CloudSyncTaskUi) => string = this.list.perRow(
+    (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
+  );
 
   protected getNextRun(task: CloudSyncTaskUi): string {
     // For disabled tasks, show "Disabled" text; for enabled tasks, the

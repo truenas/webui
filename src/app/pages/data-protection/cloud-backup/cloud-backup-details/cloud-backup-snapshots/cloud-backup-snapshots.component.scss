@@ -1,3 +1,9 @@
+@import 'mixins/sr-only';
+
+.sr-only {
+  @include sr-only;
+}
+
 .spinner-container {
   align-items: center;
   display: flex;

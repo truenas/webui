@@ -1,5 +1,5 @@
 import {
-  computed, inject, isSignal, signal, Signal,
+  computed, inject, isDevMode, isSignal, signal, Signal,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
@@ -31,6 +31,39 @@ export function convertStringToId(inputString: string): string {
     .replace(/^-|-$/g, '');
 }
 
+/**
+ * Dev-mode guard for the column model a migrated tn-table builds. The model no
+ * longer renders the visible cells — the template does — so a missing value
+ * accessor is invisible until a user hides the column and expands a row, where
+ * `<ix-table-details-row>` renders it from the model and gets `''`.
+ *
+ * Two invariants, both of which have already been broken once:
+ * - a column keyed by `columnName` has no `propertyName` to fall back on, so it
+ *   must carry `getValue`;
+ * - at most one column may declare neither, because `toDisplayedColumns` maps
+ *   those to `'actions'` and two of them would silently duplicate a
+ *   `displayedColumns` entry.
+ */
+function assertMigratedColumns<T>(columns: Column<T, ColumnComponent<T>>[]): void {
+  const unnamed = columns.filter((column) => !column.propertyName && !column.columnName);
+  if (unnamed.length > 1) {
+    console.error(
+      'createTable: more than one column declares neither `propertyName` nor `columnName`; '
+      + 'they all resolve to the `actions` column name. Give each a `columnName`.',
+      unnamed.map((column) => column.title),
+    );
+  }
+
+  columns
+    .filter((column) => column.columnName && !column.propertyName && !column.getValue)
+    .forEach((column) => {
+      console.error(
+        `createTable: column "${column.title}" ("${column.columnName}") has no \`propertyName\`, `
+        + 'so it must declare `getValue` — otherwise it renders blank in the detail row once hidden.',
+      );
+    });
+}
+
 export function createTable<T>(
   columns: Column<T, ColumnComponent<T>>[],
   config?: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },
@@ -38,6 +71,9 @@ export function createTable<T>(
   // tn-table renders cells from the template and supplies its own row tags/aria
   // labels, so migrated tables build a column model for the picker without config.
   if (!config) {
+    if (isDevMode()) {
+      assertMigratedColumns(columns);
+    }
     return columns;
   }
   return columns.map((column) => {
@@ -90,7 +126,9 @@ export function mapTnSortToTableSort<T>(
  * derived "Last Run") must declare an explicit `columnName`. Deriving one from
  * `title` is not an option: titles are already translated, so the derived name
  * would stop matching the template's hard-coded `[tnColumnDef]` in every
- * non-English locale. Only a column with neither falls back to `'actions'`.
+ * non-English locale. Only a column with neither falls back to `'actions'`, so
+ * at most one column may declare neither — `createTable` asserts that, along
+ * with the `columnName` ⇒ `getValue` rule the detail row depends on.
  */
 export function toDisplayedColumns<T>(columns: Column<T, ColumnComponent<T>>[]): string[] {
   return columns

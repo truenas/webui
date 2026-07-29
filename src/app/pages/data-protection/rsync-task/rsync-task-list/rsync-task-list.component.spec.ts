@@ -163,7 +163,7 @@ describe('RsyncTaskListComponent', () => {
       'User',
       'Status',
       'Enabled',
-      '',
+      'Actions',
     ];
     const expectedRows = [
       [

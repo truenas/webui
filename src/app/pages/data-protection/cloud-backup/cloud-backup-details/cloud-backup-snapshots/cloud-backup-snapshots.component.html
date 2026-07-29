@@ -33,7 +33,8 @@
       </ng-container>
 
       <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
-        <ng-template tnHeaderCellDef></ng-template>
+        <!-- The actions column has no visible heading, but it still needs an accessible one. -->
+        <ng-template tnHeaderCellDef><span class="sr-only">{{ 'Actions' | translate }}</span></ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-actions-cell
             [actions]="actions"

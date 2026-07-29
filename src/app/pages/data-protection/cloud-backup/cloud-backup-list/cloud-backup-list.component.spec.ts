@@ -127,7 +127,7 @@ describe('CloudBackupListComponent', () => {
   }
 
   it('should show table rows', async () => {
-    expect(await table.getHeaderTexts()).toEqual(['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', '']);
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', 'Actions']);
     expect(await table.getAllRowTexts()).toEqual([
       ['UA', '', 'No', 'Completed', '1 min. ago', ''],
       ['UAH', '', 'No', 'Completed', '1 min. ago', ''],

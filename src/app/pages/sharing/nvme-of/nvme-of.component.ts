@@ -2,11 +2,9 @@ import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent } from '@truenas/ui-components';
-import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -108,14 +106,6 @@ export class NvmeOfComponent implements OnInit {
         }
       }
     });
-
-    this.dataProvider.expandedRow$
-      .pipe(filter((row): row is NvmeOfSubsystemDetails => !!row))
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((row) => {
-        this.selectedSubsystemName = row.name;
-        setSubsystemNameInUrl(this.location, row.name);
-      });
   }
 
   protected onFilter(query: string): void {

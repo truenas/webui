@@ -1,4 +1,4 @@
-import { Directive, inject } from '@angular/core';
+import { DestroyRef, Directive, inject } from '@angular/core';
 import { TnTableComponent } from '@truenas/ui-components';
 
 /**
@@ -20,9 +20,12 @@ import { TnTableComponent } from '@truenas/ui-components';
 export class ExpandOnRowClickDirective<T> {
   constructor() {
     const table = inject<TnTableComponent<T>>(TnTableComponent);
+    const destroyRef = inject(DestroyRef);
 
-    // No explicit teardown: the emitter belongs to the table on this same node, so
-    // the subscription dies with it.
-    table.rowClick.subscribe((row) => table.toggleRowExpansion(row));
+    // Unsubscribed explicitly rather than left to the emitter dying with the table
+    // on this same node — that reasoning only holds while `rowClick` is an
+    // `output()`, and this directive shouldn't depend on which it is.
+    const subscription = table.rowClick.subscribe((row) => table.toggleRowExpansion(row));
+    destroyRef.onDestroy(() => subscription.unsubscribe());
   }
 }

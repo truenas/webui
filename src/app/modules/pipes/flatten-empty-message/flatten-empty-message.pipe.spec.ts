@@ -19,4 +19,8 @@ describe('FlattenEmptyMessagePipe', () => {
   it('leaves a plain message untouched', () => {
     expect(pipe.transform('Nothing to strip here.')).toBe('Nothing to strip here.');
   });
+
+  it('returns an empty string for a config with no message', () => {
+    expect(pipe.transform(undefined)).toBe('');
+  });
 });

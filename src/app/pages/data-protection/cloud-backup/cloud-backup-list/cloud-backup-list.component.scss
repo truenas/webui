@@ -1,7 +1,13 @@
+@import 'mixins/sr-only';
+
 :host {
   height: 100%;
 
   .backups {
     color: var(--fg1);
   }
+}
+
+.sr-only {
+  @include sr-only;
 }

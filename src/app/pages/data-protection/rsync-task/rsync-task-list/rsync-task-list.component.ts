@@ -177,14 +177,17 @@ export class RsyncTaskListComponent implements OnInit {
       textColumn({
         title: this.translate.instant('Frequency'),
         columnName: 'frequency',
+        getValue: (row) => this.getFrequency(row),
       }),
       relativeDateColumn({
         title: this.translate.instant('Next Run'),
         columnName: 'next-run',
+        getValue: (row) => this.getNextRun(row),
       }),
       relativeDateColumn({
         title: this.translate.instant('Last Run'),
         columnName: 'last-run',
+        getValue: (row) => row.job?.time_finished?.$date,
         hidden: true,
       }),
       textColumn({
@@ -203,6 +206,9 @@ export class RsyncTaskListComponent implements OnInit {
       stateButtonColumn({
         title: this.translate.instant('Status'),
         columnName: 'status',
+        getValue: (row) => this.getTaskState(row),
+        getJob: (row) => row.job,
+        cssClass: 'state-button',
       }),
       yesNoColumn({
         title: this.translate.instant('Enabled'),
@@ -225,7 +231,9 @@ export class RsyncTaskListComponent implements OnInit {
     (row) => [row.path, row.remotehost, this.translate.instant('Rsync Task')].join(' '),
   );
 
-  protected readonly getFrequency = this.list.perRow(
+  // Annotated rather than inferred: the column model above calls `getFrequency` from a
+  // `getValue`, so inferring its type from `this.list` would be circular.
+  protected readonly getFrequency: (row: RsyncTask) => string = this.list.perRow(
     (row) => this.crontabExplanation.transform(scheduleToCrontab(row.schedule)),
   );
 
