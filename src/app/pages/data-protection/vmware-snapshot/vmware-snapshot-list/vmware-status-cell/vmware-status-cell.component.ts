@@ -74,9 +74,10 @@ export class VmwareStatusCellComponent {
    * visible word.
    */
   protected readonly explanation = computed<string>(() => {
-    const status = this.state().state;
-    const isExplained = status === VmwareSnapshotStatus.Error || status === VmwareSnapshotStatus.Blocked;
-    return isExplained ? this.tooltip() : '';
+    const tooltip = this.tooltip();
+    // Compared against the visible word rather than gated on the state, so a bare
+    // ERROR (whose tooltip falls back to "Error") doesn't announce "Error, Error".
+    return tooltip === this.stateText() ? '' : tooltip;
   });
 
   protected readonly stateClass = computed<string>(() => {

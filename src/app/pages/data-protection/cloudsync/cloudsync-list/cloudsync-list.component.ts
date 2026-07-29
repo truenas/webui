@@ -26,6 +26,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
+import { translated } from 'app/helpers/translated.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -139,65 +140,82 @@ export class CloudSyncListComponent implements OnInit {
   protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
   protected readonly emptyIcon = emptyConfigIcon(cloudSyncTaskEmptyConfig);
 
+  // One source of truth per column title: the header, the cell (whose test id is built
+  // from it) and the column model all read the same entry, so a rename cannot silently
+  // change a data-test value. `translated` re-runs it on a language change.
+  protected readonly titles = translated(() => ({
+    description: this.translate.instant('Description'),
+    credential: this.translate.instant('Credential'),
+    direction: this.translate.instant('Direction'),
+    transferMode: this.translate.instant('Transfer Mode'),
+    path: this.translate.instant('Path'),
+    schedule: this.translate.instant('Schedule'),
+    frequency: this.translate.instant('Frequency'),
+    nextRun: this.translate.instant('Next Run'),
+    lastRun: this.translate.instant('Last Run'),
+    state: this.translate.instant('State'),
+    enabled: this.translate.instant('Enabled'),
+  }));
+
   protected readonly list = tnTableListHost<CloudSyncTaskUi>(this.dataProvider, {
     columns: createTable<CloudSyncTaskUi>([
       textColumn({
-        title: this.translate.instant('Description'),
+        title: this.titles().description,
         propertyName: 'description',
       }),
       textColumn({
-        title: this.translate.instant('Credential'),
+        title: this.titles().credential,
         columnName: 'credential',
         hidden: true,
         getValue: (task) => task.credentials.name,
       }),
       textColumn({
-        title: this.translate.instant('Direction'),
+        title: this.titles().direction,
         propertyName: 'direction',
         hidden: true,
       }),
       textColumn({
-        title: this.translate.instant('Transfer Mode'),
+        title: this.titles().transferMode,
         propertyName: 'transfer_mode',
         hidden: true,
       }),
       textColumn({
-        title: this.translate.instant('Path'),
+        title: this.titles().path,
         propertyName: 'path',
         hidden: true,
       }),
       textColumn({
-        title: this.translate.instant('Schedule'),
+        title: this.titles().schedule,
         propertyName: 'schedule',
         hidden: true,
         getValue: (task) => this.getSchedule(task),
       }),
       scheduleColumn({
-        title: this.translate.instant('Frequency'),
+        title: this.titles().frequency,
         getValue: (task) => task.schedule,
         propertyName: 'frequency_sort_key',
       }),
       textColumn({
-        title: this.translate.instant('Next Run'),
+        title: this.titles().nextRun,
         hidden: true,
         getValue: (task: CloudSyncTaskUi) => this.getNextRun(task),
         propertyName: 'next_run_sort_key',
       }),
       relativeDateColumn({
-        title: this.translate.instant('Last Run'),
+        title: this.titles().lastRun,
         hidden: true,
         getValue: (task) => task.job?.time_finished?.$date,
         propertyName: 'last_run_sort_key',
       }),
       stateButtonColumn({
-        title: this.translate.instant('State'),
+        title: this.titles().state,
         columnName: 'state',
         getValue: (row) => row.state.state,
         getJob: (row) => row.job,
         cssClass: 'state-button',
       }),
       yesNoColumn({
-        title: this.translate.instant('Enabled'),
+        title: this.titles().enabled,
         propertyName: 'enabled',
       }),
     ], {

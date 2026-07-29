@@ -44,79 +44,79 @@
     (sortChange)="list.onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'description'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().description }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           [value]="row.description"
-          [title]="'Description' | translate"
+          [title]="titles().description"
           [uniqueRowTag]="uniqueRowTag(row)"
           [tooltip]="row.description || ''"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'credential'">
-      <ng-template tnHeaderCellDef>{{ 'Credential' | translate }}</ng-template>
+    <ng-container [tnColumnDef]="'credential'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().credential }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           [value]="row.credentials.name"
-          [title]="'Credential' | translate"
+          [title]="titles().credential"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'direction'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Direction' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().direction }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           [value]="row.direction"
-          [title]="'Direction' | translate"
+          [title]="titles().direction"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'transfer_mode'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Transfer Mode' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().transferMode }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           [value]="row.transfer_mode"
-          [title]="'Transfer Mode' | translate"
+          [title]="titles().transferMode"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'path'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Path' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().path }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           [value]="row.path"
-          [title]="'Path' | translate"
+          [title]="titles().path"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'schedule'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Schedule' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().schedule }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           [value]="getSchedule(row)"
-          [title]="'Schedule' | translate"
+          [title]="titles().schedule"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'frequency_sort_key'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Frequency' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().frequency }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           testIdSuffix="row-schedule"
           [value]="row.schedule | scheduleDescription"
-          [title]="'Frequency' | translate"
+          [title]="titles().frequency"
           [uniqueRowTag]="uniqueRowTag(row)"
           [tooltip]="row.schedule | scheduleDescription"
         ></ix-table-text-cell>
@@ -124,46 +124,46 @@
     </ng-container>
 
     <ng-container [tnColumnDef]="'next_run_sort_key'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Next Run' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().nextRun }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           [value]="getNextRun(row)"
-          [title]="'Next Run' | translate"
+          [title]="titles().nextRun"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'last_run_sort_key'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Last Run' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().lastRun }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-relative-date-cell
           [value]="row.job?.time_finished?.$date"
-          [title]="'Last Run' | translate"
+          [title]="titles().lastRun"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-relative-date-cell>
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'state'" [width]="'120px'">
-      <ng-template tnHeaderCellDef>{{ 'State' | translate }}</ng-template>
+    <ng-container [tnColumnDef]="'state'" [sortable]="true" [width]="'120px'">
+      <ng-template tnHeaderCellDef>{{ titles().state }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-task-state-cell
           [state]="row.state.state"
           [job]="row.job"
-          [testId]="[('State' | translate), uniqueRowTag(row), 'row-state']"
+          [testId]="[titles().state, uniqueRowTag(row), 'row-state']"
           [ariaLabel]="ariaLabel(row)"
         ></ix-task-state-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
-      <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().enabled }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           testIdSuffix="row-yesno"
           [value]="row.enabled | yesNo | translate"
-          [title]="'Enabled' | translate"
+          [title]="titles().enabled"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>

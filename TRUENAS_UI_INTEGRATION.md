@@ -318,7 +318,6 @@ the epic's follow-up list.
 | `tn-table` has no input for a second empty-state line, so the `EmptyConfig.message` ix-table showed under the no-search-results title is dropped | `dataProviderEmptyState` in `ix-table/utils.ts` | library |
 | Replication "Enabled" is read-only Yes/No in the detail row when the picker hides the column (it was an interactive toggle before); a dead toggle would be worse, so the toggle stays in the visible column only | `replication-list.component.ts` | webui |
 | `tn-table` expands a row only through its chevron; the `ix-table` it replaces expanded on a row click too, so migrated lists re-add that from `(rowClick)` | `ExpandOnRowClickDirective` in `ix-table/directives/expand-on-row-click.directive.ts` | library |
-| A column's title is declared two or three times — in the column model, in `tnHeaderCellDef`, and again as the cell's `[title]` (which feeds its test id) — so a rename that misses one silently changes a `data-test` value instead of failing | every picker-driven migrated list (`rsync-task-list`, `cloudsync-list`, `replication-list`, `snapshot-task-list`) | webui |
 
 ### Shared pieces for a migrated list page
 
@@ -331,7 +330,9 @@ re-deriving them per page.
 | `ExpandOnRowClickDirective` (`ixExpandOnRowClick`) | A `viewChild(TnTableComponent)` and a `(rowClick)` handler calling `toggleRowExpansion` |
 | `<ix-table-text-cell>` (`tn-table-cells/text-cell`) | The `<span tnTestIdType="text" [tnTestId]="[…]">` markup for text, yes/no and schedule cells |
 | `translated(derive)` (`helpers/translated.helper.ts`) | A `computed` calling `TranslateService.instant()`, which would otherwise freeze on the first locale |
-| `sr-only` mixin (`assets/styles/mixins/sr-only.scss`) | A hand-rolled visually-hidden block |
+| Global `.sr-only` class (`assets/styles/components/_sr-only.scss`, from the `sr-only` mixin) | A hand-rolled visually-hidden block, or the mixin re-declared per component |
+| `translated(() => ({ … }))` column titles | A title literal repeated in the column model, the `tnHeaderCellDef` and the cell's `[title]` (which feeds its test id) |
+| `{ name, sortBy }` entries in `displayedColumns` | Losing sorting on a column whose `[tnColumnDef]` name matches no row property |
 
 ## Additional Resources
 

@@ -32,36 +32,27 @@ export function convertStringToId(inputString: string): string {
 }
 
 /**
- * Dev-mode guard for the column model a migrated tn-table builds. The model no
- * longer renders the visible cells — the template does — so a missing value
- * accessor is invisible until a user hides the column and expands a row, where
- * `<ix-table-details-row>` renders it from the model and gets `''`.
- *
- * Two invariants, both of which have already been broken once:
- * - a column keyed by `columnName` has no `propertyName` to fall back on, so it
- *   must carry `getValue`;
- * - at most one column may declare neither, because `toDisplayedColumns` maps
- *   those to `'actions'` and two of them would silently duplicate a
- *   `displayedColumns` entry.
+ * Dev-mode guard for a migrated tn-table's column model. The model no longer
+ * renders the visible cells, so a missing `getValue` only shows up in the detail
+ * row and in sorting — both easy to miss.
  */
 function assertMigratedColumns<T>(columns: Column<T, ColumnComponent<T>>[]): void {
   const unnamed = columns.filter((column) => !column.propertyName && !column.columnName);
   if (unnamed.length > 1) {
-    console.error(
-      'createTable: more than one column declares neither `propertyName` nor `columnName`; '
-      + 'they all resolve to the `actions` column name. Give each a `columnName`.',
-      unnamed.map((column) => column.title),
+    throw new Error(
+      'createTable: columns '
+      + `${unnamed.map((column) => JSON.stringify(column.title)).join(', ')} declare neither `
+      + '`propertyName` nor `columnName`, so they all resolve to the `actions` column name.',
     );
   }
 
-  columns
-    .filter((column) => column.columnName && !column.propertyName && !column.getValue)
-    .forEach((column) => {
-      console.error(
-        `createTable: column "${column.title}" ("${column.columnName}") has no \`propertyName\`, `
-        + 'so it must declare `getValue` — otherwise it renders blank in the detail row once hidden.',
-      );
-    });
+  const valueless = columns.find((column) => column.columnName && !column.propertyName && !column.getValue);
+  if (valueless) {
+    throw new Error(
+      `createTable: column "${valueless.title}" ("${valueless.columnName}") has no \`propertyName\`, `
+      + 'so it must declare `getValue` — that is what the detail row renders and what sorting uses.',
+    );
+  }
 }
 
 export function createTable<T>(
@@ -87,15 +78,23 @@ export function createTable<T>(
   });
 }
 
+/** What `BaseDataProvider.sort()` accepts as a `sortBy` accessor. */
+export type RowSortValue<T> = (row: T) => string | number;
+
 /**
  * Translates a tn-table `(sortChange)` event into the `TableSort` shape our
  * data providers expect. `active` is the index of the sorted column within the
  * displayed column list (or `null` when sorting is cleared). Shared so every
  * tn-table migration maps sort state the same way.
+ *
+ * `sortBy` takes precedence over `propertyName` in `BaseDataProvider.sort()`,
+ * and is how a derived column (a state pill, a "Last Run" read off a job) stays
+ * sortable — it has no row property to order by.
  */
 export function mapTnSortToTableSort<T>(
   event: TnSortEvent,
   displayedColumns: string[],
+  sortBy?: RowSortValue<T>,
 ): TableSort<T> {
   let direction: SortDirection | null = null;
   if (event.direction === 'asc') {
@@ -107,48 +106,52 @@ export function mapTnSortToTableSort<T>(
   const columnIndex = displayedColumns.indexOf(event.column);
   return {
     propertyName: direction ? (event.column as keyof T) : null,
+    sortBy: direction ? sortBy : undefined,
     direction,
     active: direction && columnIndex >= 0 ? columnIndex : null,
   };
 }
 
 /**
- * Bridges the ix-table column model driven by `<ix-table-columns-selector>` to
- * the `displayedColumns` list a `tn-table` expects. The selector toggles each
- * column's `hidden` flag (and persists visibility via `columnPreferencesKey`);
- * this maps the still-visible columns, in declaration order, to the
- * `*tnColumnDef` names a tn-table renders. Shared so every column-selectable
- * tn-table migration bridges the two models identically.
+ * Bridges the ix-table column model driven by `<ix-table-column-picker>` to the
+ * `displayedColumns` list a `tn-table` expects, mapping the still-visible
+ * columns in declaration order to the `[tnColumnDef]` names in the template.
  *
- * A column's tn-table name is its `propertyName` — matching the `(sortChange)`
- * convention `mapTnSortToTableSort` relies on, which casts the name back to a
- * property key. A computed column with no `propertyName` (a state pill, a
- * derived "Last Run") must declare an explicit `columnName`. Deriving one from
- * `title` is not an option: titles are already translated, so the derived name
- * would stop matching the template's hard-coded `[tnColumnDef]` in every
- * non-English locale. Only a column with neither falls back to `'actions'`, so
- * at most one column may declare neither — `createTable` asserts that, along
- * with the `columnName` ⇒ `getValue` rule the detail row depends on.
+ * A column's tn-table name is its `propertyName`; a computed column must
+ * declare an explicit `columnName`. Deriving one from `title` is not an option —
+ * titles are translated, so the derived name would stop matching the template's
+ * hard-coded `[tnColumnDef]` in every non-English locale.
  */
 export function toDisplayedColumns<T>(columns: Column<T, ColumnComponent<T>>[]): string[] {
-  return columns
-    .filter((column) => !column.hidden)
-    .map((column) => {
-      if (column.propertyName) {
-        return String(column.propertyName);
-      }
-      return column.columnName || 'actions';
-    });
+  return columns.filter((column) => !column.hidden).map(tnColumnName);
+}
+
+function tnColumnName<T>(column: Column<T, ColumnComponent<T>>): string {
+  if (column.propertyName) {
+    return String(column.propertyName);
+  }
+  return column.columnName || 'actions';
 }
 
 /**
- * Builds the test id for a detail-row action button from the row values that
- * identified it under the legacy `[ixTest]` directive.
- *
- * Pre-splits with lodash `kebabCase`: it breaks letter–digit boundaries
- * ('esxi1' → 'esxi-1') while the library's kebab does not, so the id the
- * library composes matches what `[ixTest]` used to resolve to. Shared so the
- * migrated detail rows can't drift apart on this.
+ * The accessor a data provider should sort a column by. A column keyed by
+ * `columnName` has no row property to order on, so it sorts by the value it
+ * renders — which is what `ix-table` did for every column before the migration.
+ */
+function columnSortBy<T>(column: Column<T, ColumnComponent<T>> | undefined): RowSortValue<T> | undefined {
+  if (column?.sortBy) {
+    return column.sortBy;
+  }
+  if (column?.propertyName) {
+    return undefined;
+  }
+  return column?.getValue as RowSortValue<T> | undefined;
+}
+
+/**
+ * Builds the test id for a detail-row action button. Pre-splits with lodash
+ * `kebabCase`: it breaks letter–digit boundaries ('esxi1' → 'esxi-1') while the
+ * library's kebab does not, so the id matches what `[ixTest]` used to resolve to.
  */
 export function detailActionTestId(parts: (string | number | undefined)[], action: string): string {
   return kebabCase([...parts, action].join('-'));
@@ -164,22 +167,15 @@ function fromProvider<T, R>(
 }
 
 /**
- * Adapts a data provider's paged rows into a signal for binding to a `tn-table`
- * `[dataSource]`. Replaces the `(dataProvider.currentPage$ | async) ?? []` idiom
- * so migrated cards follow the declarative-signal recipe. Accepts the provider
- * directly or as a signal (e.g. an `input.required` provider). Must be called
- * from an injection context (e.g. a component field initializer).
+ * A data provider's paged rows as a signal, for `[dataSource]`. Accepts the
+ * provider directly or as a signal (e.g. an `input.required` provider). Must be
+ * called from an injection context.
  */
 export function dataProviderRows<T>(provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>): Signal<T[]> {
   return toSignal(fromProvider(provider, (instance) => instance.currentPage$), { initialValue: [] as T[] });
 }
 
-/**
- * Adapts a data provider's loading state into a signal for binding to a `tn-table`
- * `[loading]`. Accepts the provider directly or as a signal (e.g. an
- * `input.required` provider). Must be called from an injection context (e.g. a
- * component field initializer).
- */
+/** A data provider's loading state as a signal, for `[loading]`. */
 export function dataProviderLoading<T>(provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>): Signal<boolean> {
   return toSignal(fromProvider(provider, (instance) => instance.isLoading$), { initialValue: false });
 }
@@ -199,16 +195,12 @@ export interface TableEmptyState {
 }
 
 /**
- * Derives a tn-table's empty-state bindings from a data provider. Replaces the
- * `@let emptyType = dataProvider.emptyType$ | async` + `emptyService.…(emptyType)`
- * block each migrated list would otherwise copy into its template, which also
- * keeps those service calls out of the change-detection path. Must be called
- * from an injection context (e.g. a component field initializer).
+ * A tn-table's empty-state bindings, derived from its data provider. Must be
+ * called from an injection context.
  *
- * Note: only `EmptyConfig.title` survives — `tn-table` has no input for the
- * config's `message`, so the second translated line ix-table rendered on the
- * no-search-results state is not shown. Tracked under "Migration follow-ups" in
- * TRUENAS_UI_INTEGRATION.md.
+ * Only `EmptyConfig.title` survives — `tn-table` has no input for the config's
+ * `message`, so the second line ix-table rendered on the no-search-results state
+ * is dropped. Tracked under "Migration follow-ups" in TRUENAS_UI_INTEGRATION.md.
  */
 export function dataProviderEmptyState<T>(
   provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
@@ -254,33 +246,17 @@ export interface TnTableListHost<T extends object> {
   /** For `(sortChange)`. */
   onSortChange(event: TnSortEvent): void;
   /**
-   * Memoizes a per-row derivation. A migrated table calls these from the
-   * template — once per cell, again on every change-detection pass — so a wide
-   * row can ask for the same tag or label a dozen times.
+   * Memoizes a per-row derivation that a template calls once per cell on every
+   * change-detection pass — parsing a crontab, composing a translated label.
    *
-   * The cache is discarded whenever the loaded rows or the active language
-   * change, so a reload, a re-filter, a page change or a locale switch all
-   * re-derive; within one set of rows it is keyed by row identity in a
-   * `WeakMap`. What it cannot see is a row mutated in place without the provider
-   * re-emitting (a job subscription writing `row.state`), so derive from the
-   * row's identity — description, path, dataset, schedule — and not from
-   * live job state. Anything that depends on the clock (a "next run" countdown)
-   * must stay uncached too, or it freezes at its first render.
-   *
-   * Reach for it where the derivation is more than a field read — parsing a
-   * crontab, composing and translating a label, kebab-casing a test-id tag. A
-   * plain method is the right call for a ternary over two properties; the
-   * `WeakMap` lookup would cost more than re-deriving it.
+   * Cached by row identity, discarded when the rows or the language change. It
+   * cannot see a row mutated in place (a job subscription writing `row.state`)
+   * or anything clock-dependent, so derive only from the row's identity.
    */
   perRow<R>(derive: (row: T) => R): (row: T) => R;
   /**
-   * Builds a row's unique test-id tag from the base string that identified it
-   * under the legacy `[ixTest]` directive, memoized through `perRow`.
-   *
-   * Pre-splits with lodash `kebabCase` for the same reason `detailActionTestId`
-   * does: it breaks letter–digit boundaries ('task1' → 'task-1') while the
-   * library's kebab does not, so the tag resolves identically through the legacy
-   * `[ixTest]` directive and the library `[tnTestId]` directive.
+   * A row's unique test-id tag, memoized through `perRow`. Pre-splits with
+   * lodash `kebabCase` for the same reason `detailActionTestId` does.
    */
   rowTag(base: (row: T) => string): (row: T) => string;
 }
@@ -291,10 +267,8 @@ export interface TnTableListHost<T extends object> {
  */
 export interface TnTableListPickerHost<T extends object> extends TnTableListHost<T> {
   /**
-   * ix-table column model retained purely to drive `<ix-table-column-picker>`
-   * (visibility + saved prefs) and the hidden-column list rendered in the detail
-   * row; tn-table renders cells from the template and derives its
-   * `displayedColumns` from these via {@link toDisplayedColumns}.
+   * ix-table column model retained to drive `<ix-table-column-picker>`, the
+   * detail row's hidden columns and sorting; tn-table renders the cells itself.
    */
   readonly columns: Signal<Column<T, ColumnComponent<T>>[]>;
   /** For `<ix-table-details-row [hiddenColumns]>`. */
@@ -303,30 +277,36 @@ export interface TnTableListPickerHost<T extends object> extends TnTableListHost
   columnsChange(columns: Column<T, ColumnComponent<T>>[]): void;
 }
 
+/**
+ * A fixed column that needs an explicit sort accessor: its `[tnColumnDef]` name
+ * matches no row property, so there is nothing for the provider to order by.
+ */
+export interface FixedColumn<T> {
+  name: string;
+  sortBy: RowSortValue<T>;
+}
+
 /** Columns of a table whose column set is fixed. */
-export interface FixedColumnsConfig {
-  displayedColumns: string[];
+export interface FixedColumnsConfig<T> {
+  displayedColumns: (string | FixedColumn<T>)[];
 }
 
 /** Columns of a table whose column set is driven by `<ix-table-column-picker>`. */
 export interface PickerColumnsConfig<T> {
   columns: Column<T, ColumnComponent<T>>[];
   /**
-   * Column names appended after the picker's, for columns rendered from the
-   * template that the picker must never offer — an actions column, say, which
-   * has no cell component behind it and would misdescribe the table if modelled.
+   * Column names appended after the picker's, for columns the picker must never
+   * offer — an actions column, which has no cell component behind it.
    */
   appendedColumns?: string[];
 }
 
 /**
  * Builds the bindings a page-level `tn-table` list needs from its data provider,
- * so a migrated list declares what is specific to it (its columns, its actions,
- * its row tag) and nothing else.
+ * so a migrated list declares only what is specific to it.
  *
- * Must be called from an injection context (e.g. a component field initializer).
- * Accepts the provider directly or as a signal (e.g. an `input.required`
- * provider).
+ * Must be called from an injection context. Accepts the provider directly or as
+ * a signal (e.g. an `input.required` provider).
  *
  * @example
  * protected readonly list = tnTableListHost(this.dataProvider, { columns: [...] });
@@ -334,7 +314,7 @@ export interface PickerColumnsConfig<T> {
  */
 export function tnTableListHost<T extends object>(
   provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
-  config: FixedColumnsConfig,
+  config: FixedColumnsConfig<T>,
 ): TnTableListHost<T>;
 export function tnTableListHost<T extends object>(
   provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
@@ -342,7 +322,7 @@ export function tnTableListHost<T extends object>(
 ): TnTableListPickerHost<T>;
 export function tnTableListHost<T extends object>(
   provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
-  config: FixedColumnsConfig | PickerColumnsConfig<T>,
+  config: FixedColumnsConfig<T> | PickerColumnsConfig<T>,
 ): TnTableListHost<T> | TnTableListPickerHost<T> {
   const rows = dataProviderRows(provider);
   const isLoading = dataProviderLoading(provider);
@@ -350,9 +330,7 @@ export function tnTableListHost<T extends object>(
   const lang = langChangeSignal();
 
   function perRow<R>(derive: (row: T) => R): (row: T) => R {
-    // A fresh cache per (rows, language) rather than one that lives for the
-    // component's lifetime, so invalidation is structural instead of a promise
-    // the caller has to keep.
+    // A fresh cache per (rows, language), so invalidation is structural.
     const cache = computed(() => {
       rows();
       lang();
@@ -376,24 +354,37 @@ export function tnTableListHost<T extends object>(
     rowTag: (tagBase: (row: T) => string) => perRow((row: T) => kebabCase(convertStringToId(tagBase(row)))),
   };
 
-  const withSorting = (displayedColumns: Signal<string[]>): TnTableListHost<T> => ({
+  const withSorting = (
+    displayedColumns: Signal<string[]>,
+    sortByFor: (columnName: string) => RowSortValue<T> | undefined,
+  ): TnTableListHost<T> => ({
     ...base,
     displayedColumns,
     onSortChange: (event: TnSortEvent) => {
       const instance = isSignal(provider) ? provider() : provider;
-      instance.setSorting(mapTnSortToTableSort<T>(event, displayedColumns()));
+      instance.setSorting(mapTnSortToTableSort<T>(event, displayedColumns(), sortByFor(event.column)));
     },
   });
 
   if (!('columns' in config)) {
-    return withSorting(signal(config.displayedColumns).asReadonly());
+    const fixed = config.displayedColumns.map((column) => (
+      typeof column === 'string' ? { name: column, sortBy: undefined } : column
+    ));
+    const sortByName = new Map(fixed.map((column) => [column.name, column.sortBy]));
+    return withSorting(
+      signal(fixed.map((column) => column.name)).asReadonly(),
+      (columnName) => sortByName.get(columnName),
+    );
   }
 
   const columns = signal(config.columns);
   const appendedColumns = config.appendedColumns ?? [];
 
   return {
-    ...withSorting(computed(() => [...toDisplayedColumns(columns()), ...appendedColumns])),
+    ...withSorting(
+      computed(() => [...toDisplayedColumns(columns()), ...appendedColumns]),
+      (columnName) => columnSortBy(columns().find((column) => tnColumnName(column) === columnName)),
+    ),
     columns: columns.asReadonly(),
     hiddenColumns: computed(() => columns().filter((column) => column?.hidden)),
     // The picker hands back the same array it was given with `hidden` flipped, so

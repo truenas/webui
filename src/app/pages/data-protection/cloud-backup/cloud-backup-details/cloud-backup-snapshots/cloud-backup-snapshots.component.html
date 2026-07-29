@@ -10,23 +10,23 @@
       [emptyIcon]="list.empty.icon()"
       (sortChange)="list.onSortChange($event)"
     >
-      <ng-container [tnColumnDef]="'time'">
-        <ng-template tnHeaderCellDef>{{ 'Snapshot Time' | translate }}</ng-template>
+      <ng-container [tnColumnDef]="'time'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ titles().snapshotTime }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-relative-date-cell
             [value]="row.time.$date"
-            [title]="'Snapshot Time' | translate"
+            [title]="titles().snapshotTime"
             [uniqueRowTag]="uniqueRowTag(row)"
           ></ix-table-relative-date-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'hostname'" [sortable]="true">
-        <ng-template tnHeaderCellDef>{{ 'Hostname' | translate }}</ng-template>
+        <ng-template tnHeaderCellDef>{{ titles().hostname }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-text-cell
             [value]="row.hostname"
-            [title]="'Hostname' | translate"
+            [title]="titles().hostname"
             [uniqueRowTag]="uniqueRowTag(row)"
           ></ix-table-text-cell>
         </ng-template>

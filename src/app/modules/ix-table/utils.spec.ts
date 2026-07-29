@@ -192,49 +192,30 @@ describe('filterTableRows', () => {
 describe('createTable', () => {
   interface Row { name: string }
 
-  let consoleError: jest.SpyInstance;
-
-  beforeEach(() => {
-    consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-  });
-
-  afterEach(() => consoleError.mockRestore());
-
   it('accepts a columnName-keyed column that carries getValue', () => {
-    createTable<Row>([
+    expect(() => createTable<Row>([
       { title: 'Last Run', columnName: 'last-run', getValue: () => 1 } as Column<Row, ColumnComponent<Row>>,
-    ]);
-
-    expect(consoleError).not.toHaveBeenCalled();
+    ])).not.toThrow();
   });
 
-  it('reports a columnName-keyed column with no getValue, which renders blank in the detail row', () => {
-    createTable<Row>([
+  it('rejects a columnName-keyed column with no getValue', () => {
+    expect(() => createTable<Row>([
       { title: 'Last Run', columnName: 'last-run' } as Column<Row, ColumnComponent<Row>>,
-    ]);
-
-    expect(consoleError).toHaveBeenCalledWith(expect.stringContaining('"Last Run" ("last-run")'));
+    ])).toThrow('"Last Run" ("last-run")');
   });
 
-  it('reports more than one column resolving to the "actions" column name', () => {
-    createTable<Row>([
+  it('rejects more than one column resolving to the "actions" column name', () => {
+    expect(() => createTable<Row>([
       { title: 'Actions' } as Column<Row, ColumnComponent<Row>>,
       { title: 'More' } as Column<Row, ColumnComponent<Row>>,
-    ]);
-
-    expect(consoleError).toHaveBeenCalledWith(
-      expect.stringContaining('more than one column'),
-      ['Actions', 'More'],
-    );
+    ])).toThrow('"Actions", "More"');
   });
 
   it('does not validate the legacy ix-table column model built with a config', () => {
-    createTable<Row>(
+    expect(() => createTable<Row>(
       [{ title: 'Actions' } as Column<Row, ColumnComponent<Row>>, {} as Column<Row, ColumnComponent<Row>>],
       { uniqueRowTag: (row) => row.name, ariaLabels: (row) => [row.name] },
-    );
-
-    expect(consoleError).not.toHaveBeenCalled();
+    )).not.toThrow();
   });
 });
 
@@ -324,9 +305,20 @@ describe('tnTableListHost', () => {
 
         expect(setSorting).toHaveBeenCalledWith({
           propertyName: 'name',
+          sortBy: undefined,
           direction: SortDirection.Desc,
           active: 1,
         });
+      });
+    });
+
+    it('passes a fixed column\'s explicit sortBy through, for a name matching no row property', () => {
+      TestBed.runInInjectionContext(() => {
+        const sortBy = (row: Row): string => row.name;
+        const list = tnTableListHost<Row>(provider, { displayedColumns: ['name', { name: 'state', sortBy }] });
+        list.onSortChange({ column: 'state', direction: 'asc' });
+
+        expect(setSorting).toHaveBeenCalledWith(expect.objectContaining({ sortBy, active: 1 }));
       });
     });
   });
@@ -355,6 +347,33 @@ describe('tnTableListHost', () => {
 
         expect(list.displayedColumns()).toEqual(['name', 'path']);
         expect(list.hiddenColumns()).toEqual([]);
+      });
+    });
+
+    it('sorts a derived column by its getValue, which is all it has to order on', () => {
+      TestBed.runInInjectionContext(() => {
+        const getValue = (row: Row): string => row.name;
+        const list = tnTableListHost<Row>(provider, {
+          columns: [
+            { propertyName: 'name', title: 'Name' },
+            { columnName: 'state', title: 'State', getValue },
+          ] as Column<Row, ColumnComponent<Row>>[],
+        });
+        list.onSortChange({ column: 'state', direction: 'asc' });
+
+        expect(setSorting).toHaveBeenCalledWith(expect.objectContaining({ sortBy: getValue }));
+      });
+    });
+
+    it('leaves a real-property column to sort by its property', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { columns: columns() });
+        list.onSortChange({ column: 'name', direction: 'asc' });
+
+        expect(setSorting).toHaveBeenCalledWith(expect.objectContaining({
+          propertyName: 'name',
+          sortBy: undefined,
+        }));
       });
     });
   });

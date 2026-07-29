@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, untracked, viewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -101,7 +101,9 @@ export class NvmeOfComponent implements OnInit {
             this.dataProvider.expandedRow = (routeSelectedRow || subsystems[0]);
           }
 
-          this.selectedSubsystemName = this.dataProvider.expandedRow?.name || null;
+          // Read untracked: `expandedRow` is signal-backed, and this effect writes it
+          // just above, so tracking it here would re-run the effect on every expansion.
+          this.selectedSubsystemName = untracked(() => this.dataProvider.expandedRow?.name) || null;
           setSubsystemNameInUrl(this.location, this.selectedSubsystemName);
         }
       }

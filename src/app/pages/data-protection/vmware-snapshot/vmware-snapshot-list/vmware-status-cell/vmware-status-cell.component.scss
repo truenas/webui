@@ -1,12 +1,6 @@
-@import 'mixins/sr-only';
 @import 'scss-imports/status-pill';
 
-// Shares the pill shape and per-state colours with ix-task-state-cell through the
-// mixin; only the screen-reader suffix is specific to this cell.
+// Shares the pill shape and per-state colours with ix-task-state-cell through the mixin.
 .state-button {
   @include status-pill;
-
-  .sr-only {
-    @include sr-only;
-  }
 }

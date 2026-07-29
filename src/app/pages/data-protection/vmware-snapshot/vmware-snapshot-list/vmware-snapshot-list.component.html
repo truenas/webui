@@ -27,51 +27,51 @@
     (sortChange)="list.onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'hostname'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Hostname' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().hostname }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           [value]="row.hostname"
-          [title]="'Hostname' | translate"
+          [title]="titles().hostname"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'username'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Username' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().username }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           [value]="row.username"
-          [title]="'Username' | translate"
+          [title]="titles().username"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'filesystem'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Filesystem' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().filesystem }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           [value]="row.filesystem"
-          [title]="'Filesystem' | translate"
+          [title]="titles().filesystem"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'datastore'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Datastore' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().datastore }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           [value]="row.datastore"
-          [title]="'Datastore' | translate"
+          [title]="titles().datastore"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'state'" [width]="'140px'">
-      <ng-template tnHeaderCellDef>{{ 'State' | translate }}</ng-template>
+    <ng-container [tnColumnDef]="'state'" [sortable]="true" [width]="'140px'">
+      <ng-template tnHeaderCellDef>{{ titles().state }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-vmware-status-cell [state]="row.state"></ix-vmware-status-cell>
       </ng-template>

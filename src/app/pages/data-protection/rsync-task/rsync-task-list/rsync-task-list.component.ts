@@ -23,6 +23,7 @@ import { DisplayableState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
+import { translated } from 'app/helpers/translated.helper';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -138,80 +139,100 @@ export class RsyncTaskListComponent implements OnInit {
     },
   ];
 
+  // One source of truth per column title: the header, the cell (whose test id is built
+  // from it) and the column model all read the same entry, so a rename cannot silently
+  // change a data-test value. `translated` re-runs it on a language change.
+  protected readonly titles = translated(() => ({
+    path: this.translate.instant('Path'),
+    remoteHost: this.translate.instant('Remote Host'),
+    remoteSshPort: this.translate.instant('Remote SSH Port'),
+    remoteModuleName: this.translate.instant('Remote Module Name'),
+    remotePath: this.translate.instant('Remote Path'),
+    direction: this.translate.instant('Direction'),
+    schedule: this.translate.instant('Schedule'),
+    frequency: this.translate.instant('Frequency'),
+    nextRun: this.translate.instant('Next Run'),
+    lastRun: this.translate.instant('Last Run'),
+    shortDescription: this.translate.instant('Short Description'),
+    user: this.translate.instant('User'),
+    delayUpdates: this.translate.instant('Delay Updates'),
+    status: this.translate.instant('Status'),
+    enabled: this.translate.instant('Enabled'),
+  }));
+
   protected readonly list = tnTableListHost<RsyncTask>(this.dataProvider, {
     columns: createTable<RsyncTask>([
       textColumn({
-        title: this.translate.instant('Path'),
+        title: this.titles().path,
         propertyName: 'path',
       }),
       textColumn({
-        title: this.translate.instant('Remote Host'),
+        title: this.titles().remoteHost,
         propertyName: 'remotehost',
       }),
       textColumn({
-        title: this.translate.instant('Remote SSH Port'),
+        title: this.titles().remoteSshPort,
         propertyName: 'remoteport',
         hidden: true,
       }),
       textColumn({
-        title: this.translate.instant('Remote Module Name'),
+        title: this.titles().remoteModuleName,
         propertyName: 'remotemodule',
       }),
       textColumn({
-        title: this.translate.instant('Remote Path'),
+        title: this.titles().remotePath,
         propertyName: 'remotepath',
         hidden: true,
       }),
       textColumn({
-        title: this.translate.instant('Direction'),
+        title: this.titles().direction,
         propertyName: 'direction',
       }),
       scheduleColumn({
-        title: this.translate.instant('Schedule'),
+        title: this.titles().schedule,
         propertyName: 'schedule',
         hidden: true,
       }),
       // No `propertyName`: it would collide with the Schedule column above on the
-      // tn-table column name, and sorting on the raw schedule object was never
-      // meaningful. Renders as the derived `frequency` column instead.
+      // tn-table column name. Renders — and sorts — as the derived `frequency` column.
       textColumn({
-        title: this.translate.instant('Frequency'),
+        title: this.titles().frequency,
         columnName: 'frequency',
         getValue: (row) => this.getFrequency(row),
       }),
       relativeDateColumn({
-        title: this.translate.instant('Next Run'),
+        title: this.titles().nextRun,
         columnName: 'next-run',
         getValue: (row) => this.getNextRun(row),
       }),
       relativeDateColumn({
-        title: this.translate.instant('Last Run'),
+        title: this.titles().lastRun,
         columnName: 'last-run',
         getValue: (row) => row.job?.time_finished?.$date,
         hidden: true,
       }),
       textColumn({
-        title: this.translate.instant('Short Description'),
+        title: this.titles().shortDescription,
         propertyName: 'desc',
       }),
       textColumn({
-        title: this.translate.instant('User'),
+        title: this.titles().user,
         propertyName: 'user',
       }),
       yesNoColumn({
-        title: this.translate.instant('Delay Updates'),
+        title: this.titles().delayUpdates,
         propertyName: 'delayupdates',
         hidden: true,
       }),
       stateButtonColumn({
-        title: this.translate.instant('Status'),
+        title: this.titles().status,
         columnName: 'status',
         getValue: (row) => this.getTaskState(row),
         getJob: (row) => row.job,
         cssClass: 'state-button',
       }),
       yesNoColumn({
-        title: this.translate.instant('Enabled'),
+        title: this.titles().enabled,
         propertyName: 'enabled',
       }),
     ]),

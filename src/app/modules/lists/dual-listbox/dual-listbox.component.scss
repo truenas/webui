@@ -1,4 +1,3 @@
-@import 'mixins/sr-only';
 @import 'scss-imports/variables';
 
 :host {
@@ -162,6 +161,3 @@
   margin-top: 5px;
 }
 
-.sr-only {
-  @include sr-only;
-}

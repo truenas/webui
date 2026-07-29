@@ -23,6 +23,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
+import { translated } from 'app/helpers/translated.helper';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -130,54 +131,72 @@ export class ReplicationListComponent implements OnInit {
   protected readonly emptyConfig = replicationTaskEmptyConfig;
   protected readonly emptyIcon = emptyConfigIcon(replicationTaskEmptyConfig);
 
+  // One source of truth per column title: the header, the cell (whose test id is built
+  // from it) and the column model all read the same entry, so a rename cannot silently
+  // change a data-test value. `translated` re-runs it on a language change.
+  protected readonly titles = translated(() => ({
+    name: this.translate.instant('Name'),
+    direction: this.translate.instant('Direction'),
+    transport: this.translate.instant('Transport'),
+    sshConnection: this.translate.instant('SSH Connection'),
+    sourceDataset: this.translate.instant('Source Dataset'),
+    targetDataset: this.translate.instant('Target Dataset'),
+    recursive: this.translate.instant('Recursive'),
+    auto: this.translate.instant('Auto'),
+    lastRun: this.translate.instant('Last Run'),
+    state: this.translate.instant('State'),
+    enabled: this.translate.instant('Enabled'),
+    lastSnapshot: this.translate.instant('Last Snapshot'),
+  }));
+
   protected readonly list = tnTableListHost<ReplicationTask>(this.dataProvider, {
     columns: createTable<ReplicationTask>([
       textColumn({
-        title: this.translate.instant('Name'),
+        title: this.titles().name,
         propertyName: 'name',
       }),
       textColumn({
-        title: this.translate.instant('Direction'),
+        title: this.titles().direction,
         propertyName: 'direction',
       }),
       textColumn({
-        title: this.translate.instant('Transport'),
+        title: this.titles().transport,
         propertyName: 'transport',
         hidden: true,
       }),
       textColumn({
-        title: this.translate.instant('SSH Connection'),
+        title: this.titles().sshConnection,
         hidden: true,
         propertyName: 'ssh_credentials',
         getValue: (task) => this.getSshConnection(task),
       }),
       textColumn({
-        title: this.translate.instant('Source Dataset'),
+        title: this.titles().sourceDataset,
         propertyName: 'source_datasets',
         hidden: true,
       }),
       textColumn({
-        title: this.translate.instant('Target Dataset'),
+        title: this.titles().targetDataset,
         propertyName: 'target_dataset',
         hidden: true,
       }),
       yesNoColumn({
-        title: this.translate.instant('Recursive'),
+        title: this.titles().recursive,
         propertyName: 'recursive',
         hidden: true,
       }),
       yesNoColumn({
-        title: this.translate.instant('Auto'),
+        title: this.titles().auto,
         propertyName: 'auto',
         hidden: true,
       }),
       relativeDateColumn({
-        title: this.translate.instant('Last Run'),
+        title: this.titles().lastRun,
         columnName: 'last-run',
         getValue: (row) => row.state?.datetime?.$date,
       }),
       stateButtonColumn({
-        title: this.translate.instant('State'),
+        title: this.titles().state,
         columnName: 'state',
         getValue: (row) => row.state.state,
         cssClass: 'state-button',
@@ -190,11 +209,11 @@ export class ReplicationListComponent implements OnInit {
       // Read-only in the detail row is a small regression from the pre-migration
       // toggle — see "Migration follow-ups" in TRUENAS_UI_INTEGRATION.md.
       yesNoColumn({
-        title: this.translate.instant('Enabled'),
+        title: this.titles().enabled,
         propertyName: 'enabled',
       }),
       textColumn({
-        title: this.translate.instant('Last Snapshot'),
+        title: this.titles().lastSnapshot,
         columnName: 'last-snapshot',
         getValue: (task) => this.getLastSnapshot(task),
       }),

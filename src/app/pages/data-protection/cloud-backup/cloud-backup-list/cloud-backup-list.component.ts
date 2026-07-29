@@ -19,6 +19,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
+import { translated } from 'app/helpers/translated.helper';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -91,8 +92,28 @@ export class CloudBackupListComponent {
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = cloudBackupListElements;
 
+  // One source of truth per column title: the header, the cell (whose test id is built
+  // from it) and the column model all read the same entry, so a rename cannot silently
+  // change a data-test value. `translated` re-runs it on a language change.
+  protected readonly titles = translated(() => ({
+    name: this.translate.instant('Name'),
+    enabled: this.translate.instant('Enabled'),
+    snapshot: this.translate.instant('Snapshot'),
+    state: this.translate.instant('State'),
+    lastRun: this.translate.instant('Last Run'),
+  }));
+
   protected readonly list = tnTableListHost<CloudBackup>(this.dataProvider, {
-    displayedColumns: ['description', 'enabled', 'snapshot', 'state', 'last-run', 'actions'],
+    displayedColumns: [
+      'description',
+      'enabled',
+      'snapshot',
+      // Derived from the row's job rather than a property of its own, so they need an
+      // explicit accessor to stay sortable.
+      { name: 'state', sortBy: (row) => row.job?.state ?? '' },
+      { name: 'last-run', sortBy: (row) => row.job?.time_finished?.$date ?? 0 },
+      'actions',
+    ],
   });
 
   // Bound from the shared catalog configs rather than inlined in the template, so the

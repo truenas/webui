@@ -21,6 +21,7 @@ import {
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
+import { translated } from 'app/helpers/translated.helper';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -76,8 +77,17 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
   // and the row/loading/empty signals track whichever provider is current.
   protected readonly dataProvider = signal(new AsyncDataProvider<CloudBackupSnapshot>(EMPTY));
 
+  // One source of truth per column title: the header, the cell (whose test id is built
+  // from it) and the column model all read the same entry, so a rename cannot silently
+  // change a data-test value. `translated` re-runs it on a language change.
+  protected readonly titles = translated(() => ({
+    snapshotTime: this.translate.instant('Snapshot Time'),
+    hostname: this.translate.instant('Hostname'),
+  }));
+
   protected readonly list = tnTableListHost<CloudBackupSnapshot>(this.dataProvider, {
-    displayedColumns: ['time', 'hostname', 'actions'],
+    // `time` is a `{ $date }` wrapper, not a sortable scalar, so it needs an accessor.
+    displayedColumns: [{ name: 'time', sortBy: (row) => row.time.$date }, 'hostname', 'actions'],
   });
 
   protected readonly actions: IconActionConfig<CloudBackupSnapshot>[] = [
@@ -112,6 +122,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       map((snapshots) => [...snapshots].sort((a, b) => b.time.$date - a.time.$date)),
       takeUntilDestroyed(this.destroyRef),
     );
+    this.dataProvider().unsubscribe();
     this.dataProvider.set(new AsyncDataProvider<CloudBackupSnapshot>(cloudBackupSnapshots$));
     this.getCloudBackupSnapshots();
   }

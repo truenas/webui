@@ -15,6 +15,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { translated } from 'app/helpers/translated.helper';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -71,8 +72,26 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   readonly dataProvider = new AsyncDataProvider<VmwareSnapshot>(this.snapshots$);
 
+  // One source of truth per column title: the header, the cell (whose test id is built
+  // from it) and the column model all read the same entry, so a rename cannot silently
+  // change a data-test value. `translated` re-runs it on a language change.
+  protected readonly titles = translated(() => ({
+    hostname: this.translate.instant('Hostname'),
+    username: this.translate.instant('Username'),
+    filesystem: this.translate.instant('Filesystem'),
+    datastore: this.translate.instant('Datastore'),
+    state: this.translate.instant('State'),
+  }));
+
   protected readonly list = tnTableListHost<VmwareSnapshot>(this.dataProvider, {
-    displayedColumns: ['hostname', 'username', 'filesystem', 'datastore', 'state'],
+    displayedColumns: [
+      'hostname',
+      'username',
+      'filesystem',
+      'datastore',
+      // `state` is a nested object, so it needs an accessor to stay sortable.
+      { name: 'state', sortBy: (row) => row.state?.state ?? '' },
+    ],
   });
 
   protected readonly trackBySnapshotId = (_index: number, row: VmwareSnapshot): number => row.id;

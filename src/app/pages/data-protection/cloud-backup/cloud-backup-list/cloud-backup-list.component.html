@@ -37,11 +37,11 @@
     (sortChange)="list.onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'description'" [sortable]="true">
-      <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().name }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           [value]="row.description"
-          [title]="'Name' | translate"
+          [title]="titles().name"
           [uniqueRowTag]="uniqueRowTag(row)"
           [tooltip]="row.description || ''"
         ></ix-table-text-cell>
@@ -49,11 +49,11 @@
     </ng-container>
 
     <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
-      <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().enabled }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-toggle-cell
           #enabledToggle
-          [title]="'Enabled' | translate"
+          [title]="titles().enabled"
           [uniqueRowTag]="uniqueRowTag(row)"
           [ariaLabel]="ariaLabel(row)"
           [checked]="!!row.enabled"
@@ -64,35 +64,35 @@
     </ng-container>
 
     <ng-container [tnColumnDef]="'snapshot'" [sortable]="true" [width]="'90px'">
-      <ng-template tnHeaderCellDef>{{ 'Snapshot' | translate }}</ng-template>
+      <ng-template tnHeaderCellDef>{{ titles().snapshot }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
           testIdSuffix="row-yesno"
           [value]="row.snapshot | yesNo | translate"
-          [title]="'Snapshot' | translate"
+          [title]="titles().snapshot"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'state'" [width]="'120px'">
-      <ng-template tnHeaderCellDef>{{ 'State' | translate }}</ng-template>
+    <ng-container [tnColumnDef]="'state'" [sortable]="true" [width]="'120px'">
+      <ng-template tnHeaderCellDef>{{ titles().state }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-task-state-cell
           [state]="row.job?.state"
           [job]="row.job"
-          [testId]="[('State' | translate), uniqueRowTag(row), 'row-state']"
+          [testId]="[titles().state, uniqueRowTag(row), 'row-state']"
           [ariaLabel]="ariaLabel(row)"
         ></ix-task-state-cell>
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'last-run'">
-      <ng-template tnHeaderCellDef>{{ 'Last Run' | translate }}</ng-template>
+    <ng-container [tnColumnDef]="'last-run'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().lastRun }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-relative-date-cell
           [value]="row.job?.time_finished?.$date"
-          [title]="'Last Run' | translate"
+          [title]="titles().lastRun"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-relative-date-cell>
       </ng-template>

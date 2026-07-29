@@ -51,11 +51,11 @@
       (sortChange)="list.onSortChange($event)"
     >
       <ng-container [tnColumnDef]="'dataset'" [sortable]="true">
-        <ng-template tnHeaderCellDef>{{ 'Pool/Dataset' | translate }}</ng-template>
+        <ng-template tnHeaderCellDef>{{ titles().poolDataset }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-text-cell
             [value]="row.dataset"
-            [title]="'Pool/Dataset' | translate"
+            [title]="titles().poolDataset"
             [uniqueRowTag]="uniqueRowTag(row)"
             [tooltip]="row.dataset || ''"
           ></ix-table-text-cell>
@@ -63,123 +63,123 @@
       </ng-container>
 
       <ng-container [tnColumnDef]="'recursive'" [sortable]="true">
-        <ng-template tnHeaderCellDef>{{ 'Recursive' | translate }}</ng-template>
+        <ng-template tnHeaderCellDef>{{ titles().recursive }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-text-cell
             [value]="row.recursive | yesNo | translate"
-            [title]="'Recursive' | translate"
+            [title]="titles().recursive"
             [uniqueRowTag]="uniqueRowTag(row)"
           ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'naming_schema'" [sortable]="true">
-        <ng-template tnHeaderCellDef>{{ 'Naming Schema' | translate }}</ng-template>
+        <ng-template tnHeaderCellDef>{{ titles().namingSchema }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-text-cell
             [value]="row.naming_schema"
-            [title]="'Naming Schema' | translate"
+            [title]="titles().namingSchema"
             [uniqueRowTag]="uniqueRowTag(row)"
           ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'when'" [sortable]="true">
-        <ng-template tnHeaderCellDef>{{ 'When' | translate }}</ng-template>
+        <ng-template tnHeaderCellDef>{{ titles().when }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-text-cell
             [value]="getActiveHours(row)"
-            [title]="'When' | translate"
+            [title]="titles().when"
             [uniqueRowTag]="uniqueRowTag(row)"
           ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'frequency'">
-        <ng-template tnHeaderCellDef>{{ 'Frequency' | translate }}</ng-template>
+      <ng-container [tnColumnDef]="'frequency'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ titles().frequency }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-text-cell
             testIdSuffix="row-schedule"
             [value]="row.schedule | scheduleDescription"
-            [title]="'Frequency' | translate"
+            [title]="titles().frequency"
             [uniqueRowTag]="uniqueRowTag(row)"
             [tooltip]="row.schedule | scheduleDescription"
           ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'next-run'">
-        <ng-template tnHeaderCellDef>{{ 'Next Run' | translate }}</ng-template>
+      <ng-container [tnColumnDef]="'next-run'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ titles().nextRun }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-relative-date-cell
             [value]="getNextRun(row)"
-            [title]="'Next Run' | translate"
+            [title]="titles().nextRun"
             [uniqueRowTag]="uniqueRowTag(row)"
           ></ix-table-relative-date-cell>
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'last-run'">
-        <ng-template tnHeaderCellDef>{{ 'Last Run' | translate }}</ng-template>
+      <ng-container [tnColumnDef]="'last-run'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ titles().lastRun }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-relative-date-cell
             [value]="row.state?.datetime?.$date"
-            [title]="'Last Run' | translate"
+            [title]="titles().lastRun"
             [uniqueRowTag]="uniqueRowTag(row)"
           ></ix-table-relative-date-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'lifetime_unit'" [sortable]="true">
-        <ng-template tnHeaderCellDef>{{ 'Keep snapshot for' | translate }}</ng-template>
+        <ng-template tnHeaderCellDef>{{ titles().keepSnapshotFor }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-text-cell
             [value]="getLifetime(row)"
-            [title]="'Keep snapshot for' | translate"
+            [title]="titles().keepSnapshotFor"
             [uniqueRowTag]="uniqueRowTag(row)"
           ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'legacy'" [sortable]="true">
-        <ng-template tnHeaderCellDef>{{ 'Legacy' | translate }}</ng-template>
+        <ng-template tnHeaderCellDef>{{ titles().legacy }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-text-cell
             [value]="row.legacy | yesNo | translate"
-            [title]="'Legacy' | translate"
+            [title]="titles().legacy"
             [uniqueRowTag]="uniqueRowTag(row)"
           ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'vmware_sync'" [sortable]="true">
-        <ng-template tnHeaderCellDef>{{ 'VMware Sync' | translate }}</ng-template>
+        <ng-template tnHeaderCellDef>{{ titles().vmwareSync }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-text-cell
             [value]="row.vmware_sync | yesNo | translate"
-            [title]="'VMware Sync' | translate"
+            [title]="titles().vmwareSync"
             [uniqueRowTag]="uniqueRowTag(row)"
           ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
-        <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
+        <ng-template tnHeaderCellDef>{{ titles().enabled }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-table-text-cell
             [value]="row.enabled | yesNo | translate"
-            [title]="'Enabled' | translate"
+            [title]="titles().enabled"
             [uniqueRowTag]="uniqueRowTag(row)"
           ></ix-table-text-cell>
         </ng-template>
       </ng-container>
 
-      <ng-container [tnColumnDef]="'state'" [width]="'120px'">
-        <ng-template tnHeaderCellDef>{{ 'State' | translate }}</ng-template>
+      <ng-container [tnColumnDef]="'state'" [sortable]="true" [width]="'120px'">
+        <ng-template tnHeaderCellDef>{{ titles().state }}</ng-template>
         <ng-template let-row tnCellDef>
           <ix-task-state-cell
             [state]="row.state.state"
-            [testId]="[('State' | translate), uniqueRowTag(row), 'row-state']"
+            [testId]="[titles().state, uniqueRowTag(row), 'row-state']"
             [ariaLabel]="ariaLabel(row)"
           ></ix-task-state-cell>
         </ng-template>

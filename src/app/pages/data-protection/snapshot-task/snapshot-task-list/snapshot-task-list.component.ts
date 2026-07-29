@@ -23,6 +23,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
+import { translated } from 'app/helpers/translated.helper';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -129,68 +130,86 @@ export class SnapshotTaskListComponent implements OnInit {
   protected readonly emptyConfig = snapshotTaskEmptyConfig;
   protected readonly emptyIcon = emptyConfigIcon(snapshotTaskEmptyConfig);
 
+  // One source of truth per column title: the header, the cell (whose test id is built
+  // from it) and the column model all read the same entry, so a rename cannot silently
+  // change a data-test value. `translated` re-runs it on a language change.
+  protected readonly titles = translated(() => ({
+    poolDataset: this.translate.instant('Pool/Dataset'),
+    recursive: this.translate.instant('Recursive'),
+    namingSchema: this.translate.instant('Naming Schema'),
+    when: this.translate.instant('When'),
+    frequency: this.translate.instant('Frequency'),
+    nextRun: this.translate.instant('Next Run'),
+    lastRun: this.translate.instant('Last Run'),
+    keepSnapshotFor: this.translate.instant('Keep snapshot for'),
+    legacy: this.translate.instant('Legacy'),
+    vmwareSync: this.translate.instant('VMware Sync'),
+    enabled: this.translate.instant('Enabled'),
+    state: this.translate.instant('State'),
+  }));
+
   protected readonly list = tnTableListHost<PeriodicSnapshotTaskUi>(this.dataProvider, {
     columns: createTable<PeriodicSnapshotTaskUi>([
       textColumn({
-        title: this.translate.instant('Pool/Dataset'),
+        title: this.titles().poolDataset,
         propertyName: 'dataset',
       }),
       textColumn({
-        title: this.translate.instant('Recursive'),
+        title: this.titles().recursive,
         getValue: (row) => (row.recursive ? this.translate.instant('Yes') : this.translate.instant('No')),
         propertyName: 'recursive',
       }),
       textColumn({
-        title: this.translate.instant('Naming Schema'),
+        title: this.titles().namingSchema,
         propertyName: 'naming_schema',
       }),
       textColumn({
-        title: this.translate.instant('When'),
+        title: this.titles().when,
         propertyName: 'when',
         getValue: (row) => this.activeHours(row),
       }),
       scheduleColumn({
-        title: this.translate.instant('Frequency'),
+        title: this.titles().frequency,
         columnName: 'frequency',
         getValue: (row) => row.schedule,
       }),
       relativeDateColumn({
         hidden: true,
-        title: this.translate.instant('Next Run'),
+        title: this.titles().nextRun,
         columnName: 'next-run',
         getValue: (task) => this.getNextRun(task),
       }),
       relativeDateColumn({
-        title: this.translate.instant('Last Run'),
+        title: this.titles().lastRun,
         columnName: 'last-run',
         hidden: true,
         getValue: (row) => row.state?.datetime?.$date,
       }),
       textColumn({
-        title: this.translate.instant('Keep snapshot for'),
+        title: this.titles().keepSnapshotFor,
         getValue: (row) => this.getLifetime(row),
         propertyName: 'lifetime_unit',
         hidden: true,
       }),
       textColumn({
-        title: this.translate.instant('Legacy'),
+        title: this.titles().legacy,
         hidden: true,
         getValue: (row) => (row.legacy ? this.translate.instant('Yes') : this.translate.instant('No')),
         propertyName: 'legacy',
       }),
       textColumn({
-        title: this.translate.instant('VMware Sync'),
+        title: this.titles().vmwareSync,
         hidden: true,
         getValue: (row) => (row.vmware_sync ? this.translate.instant('Yes') : this.translate.instant('No')),
         propertyName: 'vmware_sync',
       }),
       textColumn({
-        title: this.translate.instant('Enabled'),
+        title: this.titles().enabled,
         propertyName: 'enabled',
         getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
       }),
       stateButtonColumn({
-        title: this.translate.instant('State'),
+        title: this.titles().state,
         columnName: 'state',
         getValue: (row) => row.state.state,
       }),
