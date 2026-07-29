@@ -9,7 +9,7 @@ import {
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  combineLatest, finalize, forkJoin, Observable, of, tap,
+  combineLatest, forkJoin, Observable, of, tap,
 } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -25,22 +25,19 @@ import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
-  IxFormComponent, SubmitResult,
+  FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 /**
  * The form's own value shape, which is NOT `NfsConfig`: `servers_auto` is a UI-only control
  * (mapped from `managed_nfsd` and dropped in {@link ServiceNfsComponent.handleSubmit}).
- * `<ix-form>` infers its generic from the snapshot, so typing it against the API shape would
- * make `FormSubmitEvent` lie.
  */
 type NfsFormValue = ReturnType<ServiceNfsComponent['form']['getRawValue']>;
 
@@ -66,7 +63,6 @@ type NfsFormValue = ReturnType<ServiceNfsComponent['form']['getRawValue']>;
 })
 export class ServiceNfsComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
   private fb = inject(NonNullableFormBuilder);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
@@ -76,18 +72,11 @@ export class ServiceNfsComponent extends IxFormHostForm implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly InputType = InputType;
-  protected readonly dataLoading = signal(false);
-  /**
-   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
-   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
-   */
-  protected readonly loadFailed = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<NfsFormValue> | null>(null);
   protected readonly isAddSpnDisabled = signal(true);
   protected readonly hasNfsStatus = signal(false);
   protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
 
-  protected readonly form = this.fb.group({
+  readonly form = this.fb.group({
     allow_nonroot: [false],
     bindip: [[] as string[]],
     servers_auto: [true],
@@ -139,36 +128,22 @@ export class ServiceNfsComponent extends IxFormHostForm implements OnInit {
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
   ngOnInit(): void {
-    this.dataLoading.set(true);
-    forkJoin([
-      this.loadConfig(),
-      this.checkForRdmaSupport(),
-      this.loadActiveDirectoryState(),
-    ])
-      .pipe(
-        // Ahead of withErrorHandler, which swallows the error before subscribe's error callback.
-        tap({ error: () => this.loadFailed.set(true) }),
-        this.errorHandler.withErrorHandler(),
-        finalize(() => this.dataLoading.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        this.setFieldDependencies();
-        this.initialFormSnapshot.set(this.form.getRawValue());
-      });
+    this.loadFormConfig(
+      forkJoin([this.loadConfig(), this.checkForRdmaSupport(), this.loadActiveDirectoryState()]),
+      () => this.setFieldDependencies(),
+    );
   }
 
-  protected handleSubmit = (): SubmitResult => {
-    const params = this.form.getRawValue();
-
-    if (params.servers_auto) {
-      params.servers = null;
-    }
-
-    delete params.servers_auto;
+  // Reshapes the payload from `allValues` (the wrapper's own `getRawValue()` snapshot) rather than
+  // re-reading the form, so any future `preSubmit` transform is honoured.
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<NfsFormValue>): SubmitResult => {
+    const { servers_auto: serversAuto, ...params } = allValues;
 
     return {
-      request$: this.api.call('nfs.update', [params]),
+      request$: this.api.call('nfs.update', [{
+        ...params,
+        servers: serversAuto ? null : params.servers,
+      }]),
       successMessage: this.translate.instant('Service configuration saved'),
     };
   };

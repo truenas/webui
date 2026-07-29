@@ -117,7 +117,7 @@ export class HostFormComponent extends IxFormHostForm<NvmeOfHost | null> impleme
     };
   }
 
-  protected form = this.formBuilder.group({
+  form = this.formBuilder.group({
     hostnqn: ['', [
       Validators.required,
       this.nqnValidator(),

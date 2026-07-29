@@ -12,6 +12,7 @@ import {
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
+  advancedModeFooterAction,
   FormSidePanelContainerComponent,
   SidePanelFooterAction,
   SidePanelFooterMenu,
@@ -151,20 +152,28 @@ class ActionsTestFormComponent extends SidePanelForm {
   // predicate so we can assert the container re-evaluates `disabled` reactively.
   readonly nextReady = signal(false);
 
-  readonly footerActions: SidePanelFooterAction[] = [
-    {
-      label: 'Back',
-      testId: 'back',
-      onClick: () => backClick(),
-    },
-    {
-      label: 'Next',
-      testId: 'next',
-      color: 'primary',
-      disabled: () => !this.nextReady(),
-      onClick: () => nextClick(),
-    },
-  ];
+  readonly isAdvancedMode = signal(false);
+  // Signal-backed action, the shape `advancedModeFooterAction` produces — asserts the container
+  // re-reads `footerActions` so a label change reaches the rendered button.
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
+
+  get footerActions(): SidePanelFooterAction[] {
+    return [
+      {
+        label: 'Back',
+        testId: 'back',
+        onClick: () => backClick(),
+      },
+      {
+        label: 'Next',
+        testId: 'next',
+        color: 'primary',
+        disabled: () => !this.nextReady(),
+        onClick: () => nextClick(),
+      },
+      ...this.advancedToggle(),
+    ];
+  }
 
   protected onSubmit(): void {
     this.close(true);
@@ -208,6 +217,17 @@ describe('FormSidePanelContainerComponent footer actions', () => {
 
     expect(await backButton.isDisabled()).toBe(false);
     expect(await nextButton.isDisabled()).toBe(true);
+  });
+
+  it('re-renders an action label when the signal behind it flips', async () => {
+    const loader = TnMenuTesting.rootLoader(fixture);
+    const toggle = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
+
+    await toggle.click();
+    fixture.detectChanges();
+
+    expect(await toggle.getLabel()).toBe('Basic Options');
+    expect(getForm().isAdvancedMode()).toBe(true);
   });
 
   it('re-evaluates the reactive disabled predicate and invokes onClick', async () => {

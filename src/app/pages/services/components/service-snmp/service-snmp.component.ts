@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -10,18 +9,15 @@ import { Role } from 'app/enums/role.enum';
 import { helptextServiceSnmp } from 'app/helptext/services/components/service-snmp';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
-  IxFormComponent, SubmitResult,
+  FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
- * The form's own value shape, which is NOT `SnmpConfigUpdate`: the v3 controls are blanked
- * (and `v3_privproto` nulled) for the API in
- * {@link ServiceSnmpComponent.handleSubmit}. `<ix-form>` infers its generic from the snapshot, so
- * typing it against the API shape would make `FormSubmitEvent` lie.
+ * The form's own value shape, which is NOT `SnmpConfigUpdate`: the v3 controls are blanked (and
+ * `v3_privproto` nulled) for the API in {@link ServiceSnmpComponent.handleSubmit}.
  */
 type SnmpFormValue = ReturnType<ServiceSnmpComponent['form']['getRawValue']>;
 
@@ -44,21 +40,11 @@ type SnmpFormValue = ReturnType<ServiceSnmpComponent['form']['getRawValue']>;
 export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
   private validation = inject(IxValidatorsService);
   private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
 
   readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly InputType = InputType;
-
-  protected readonly dataLoading = signal(false);
-  /**
-   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
-   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
-   */
-  protected readonly loadFailed = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<SnmpFormValue> | null>(null);
 
   form = this.fb.group({
     location: [''],
@@ -103,14 +89,13 @@ export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadCurrentSettings();
+    this.loadFormConfig(this.api.call('snmp.config'), (config) => this.form.patchValue(config));
   }
 
-  protected handleSubmit = (): SubmitResult => {
-    // Copy first: `form.value` hands back the FormGroup's own live value object, so assigning to it
-    // writes through to form state (and a retry after a failed submit would re-run over the
-    // already-blanked v3 values).
-    const values = { ...this.form.value };
+  // Built from `allValues` (the wrapper's own `getRawValue()` snapshot) rather than re-reading the
+  // form, so any future `preSubmit` transform is honoured. Copied because it is blanked below.
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<SnmpFormValue>): SubmitResult => {
+    const values = { ...allValues };
     // Clearing the tn-select empty option writes null; the API expects ''.
     values.v3_authtype = values.v3_authtype ?? '';
     if (!values.v3) {
@@ -126,20 +111,4 @@ export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
       successMessage: this.translate.instant('Service configuration saved'),
     };
   };
-
-  private loadCurrentSettings(): void {
-    this.dataLoading.set(true);
-    this.api.call('snmp.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (config) => {
-        this.form.patchValue(config);
-        this.initialFormSnapshot.set(this.form.getRawValue());
-        this.dataLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-        this.dataLoading.set(false);
-        this.loadFailed.set(true);
-      },
-    });
-  }
 }

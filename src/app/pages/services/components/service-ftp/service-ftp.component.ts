@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -19,24 +18,23 @@ import {
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
-  IxFormComponent, SubmitResult,
+  FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import {
+  advancedModeFooterAction, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { ignoreTranslation, translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 /**
- * The form's own value shape, which is NOT `FtpConfigUpdate`: the numeric controls are nullable,
- * `filemask`/`dirmask` hold pre-{@link invertUmask} values and the bandwidth controls are in bytes
- * where the API takes KB (all reshaped in {@link ServiceFtpComponent.handleSubmit}). `<ix-form>`
- * infers its generic from the snapshot, so typing it against the API shape would make
- * `FormSubmitEvent` lie.
+ * The form's own value shape, which is NOT `FtpConfigUpdate`: `filemask`/`dirmask` hold
+ * pre-{@link invertUmask} values and the bandwidth controls are in bytes where the API takes KB
+ * (all reshaped in {@link ServiceFtpComponent.handleSubmit}).
  */
 type FtpFormValue = ReturnType<ServiceFtpComponent['form']['getRawValue']>;
 
@@ -64,7 +62,6 @@ type FtpFormValue = ReturnType<ServiceFtpComponent['form']['getRawValue']>;
 export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
   private systemGeneralService = inject(SystemGeneralService);
   private filesystemService = inject(FilesystemService);
   private translate = inject(TranslateService);
@@ -73,13 +70,6 @@ export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
   readonly requiredRoles = [Role.SharingFtpWrite];
   protected readonly InputType = InputType;
 
-  protected readonly dataLoading = signal(false);
-  /**
-   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
-   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
-   */
-  protected readonly loadFailed = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<FtpFormValue> | null>(null);
   protected readonly isAdvancedMode = signal(false);
 
   form = this.formBuilder.group({
@@ -135,17 +125,11 @@ export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
   readonly isAnonymousLoginAllowed$ = this.form.select((values) => values.onlyanonymous);
   readonly isTlsEnabled$ = this.form.select((values) => values.tls);
 
-  /**
-   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
-   * change detection, so the label flips with {@link isAdvancedMode}.
-   */
+  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
+
   get footerActions(): SidePanelFooterAction[] {
-    // Labels are extraction markers — the panel container pipes them through `translate`.
-    return [{
-      label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
-      testId: 'toggle-advanced-options',
-      onClick: () => this.onToggleAdvancedOptions(),
-    }];
+    return this.advancedToggle();
   }
 
   ngOnInit(): void {
@@ -157,19 +141,17 @@ export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
     });
   }
 
-  protected handleSubmit = (): SubmitResult => {
-    // Read straight off the form: this form disables no controls, so `form.value` is the whole
-    // payload, and the live value object is only spread into `values` below — never mutated — so
-    // no defensive copy is needed (unlike SSH/SNMP/UPS, which delete keys off their snapshot).
-    const formValues = this.form.value;
+  // Reshapes the payload from `allValues` (the wrapper's own `getRawValue()` snapshot) rather than
+  // re-reading the form, so any future `preSubmit` transform is honoured.
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<FtpFormValue>): SubmitResult => {
     const values = {
-      ...formValues,
-      filemask: invertUmask(formValues.filemask),
-      dirmask: invertUmask(formValues.dirmask),
-      localuserbw: this.convertByteToKbyte(Number(formValues.localuserbw)),
-      localuserdlbw: this.convertByteToKbyte(Number(formValues.localuserdlbw)),
-      anonuserbw: this.convertByteToKbyte(Number(formValues.anonuserbw)),
-      anonuserdlbw: this.convertByteToKbyte(Number(formValues.anonuserdlbw)),
+      ...allValues,
+      filemask: invertUmask(allValues.filemask),
+      dirmask: invertUmask(allValues.dirmask),
+      localuserbw: this.convertByteToKbyte(Number(allValues.localuserbw)),
+      localuserdlbw: this.convertByteToKbyte(Number(allValues.localuserdlbw)),
+      anonuserbw: this.convertByteToKbyte(Number(allValues.anonuserbw)),
+      anonuserdlbw: this.convertByteToKbyte(Number(allValues.anonuserdlbw)),
     };
 
     return {
@@ -178,34 +160,18 @@ export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
     };
   };
 
-  private onToggleAdvancedOptions(): void {
-    this.isAdvancedMode.update((isAdvanced) => !isAdvanced);
-  }
-
   private loadConfig(): void {
-    this.dataLoading.set(true);
-    this.api.call('ftp.config')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (config) => {
-          this.form.patchValue({
-            ...config,
-            filemask: invertUmask(config.filemask),
-            dirmask: invertUmask(config.dirmask),
-            localuserbw: this.convertKbyteToByte(config.localuserbw),
-            localuserdlbw: this.convertKbyteToByte(config.localuserdlbw),
-            anonuserbw: this.convertKbyteToByte(config.anonuserbw),
-            anonuserdlbw: this.convertKbyteToByte(config.anonuserdlbw),
-          });
-          this.initialFormSnapshot.set(this.form.getRawValue());
-          this.dataLoading.set(false);
-        },
-        error: (error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-          this.dataLoading.set(false);
-          this.loadFailed.set(true);
-        },
+    this.loadFormConfig(this.api.call('ftp.config'), (config) => {
+      this.form.patchValue({
+        ...config,
+        filemask: invertUmask(config.filemask),
+        dirmask: invertUmask(config.dirmask),
+        localuserbw: this.convertKbyteToByte(config.localuserbw),
+        localuserdlbw: this.convertKbyteToByte(config.localuserdlbw),
+        anonuserbw: this.convertKbyteToByte(config.anonuserbw),
+        anonuserdlbw: this.convertKbyteToByte(config.anonuserdlbw),
       });
+    });
   }
 
   private convertByteToKbyte(bytes: number): number {

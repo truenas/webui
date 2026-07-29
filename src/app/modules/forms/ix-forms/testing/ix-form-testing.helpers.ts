@@ -23,29 +23,3 @@ export function ixFormTestingProviders(): unknown[] {
     }),
   ];
 }
-
-const nestedChangedValuesNotice = '[ix-form] changedValues diffs top-level keys shallowly';
-
-/**
- * `<ix-form>` logs a dev-mode notice for any form holding a nested FormGroup/FormArray, warning
- * that `changedValues` reports the whole subtree as changed. For a form that deliberately builds
- * its payload from `allValues` (or otherwise does not rely on `changedValues`), that notice is
- * expected noise — but `failOnConsole` turns it into a test failure.
- *
- * Call from a `beforeEach` in such a spec to swallow just that message; every other `console.warn`
- * still reaches `failOnConsole`. Restore the returned spy in an `afterEach` — Jest is configured
- * with `clearMocks`, which wipes recorded calls but leaves the implementation in place.
- *
- * Silenced per-spec rather than globally in `setup-jest` so the guard keeps failing tests for
- * every form that has a nested group by accident.
- */
-export function silenceIxFormNestedGroupNotice(): jest.SpyInstance {
-  const originalWarn = console.warn.bind(console) as (...args: unknown[]) => void;
-
-  return jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
-    if (typeof args[0] === 'string' && args[0].startsWith(nestedChangedValuesNotice)) {
-      return;
-    }
-    originalWarn(...args);
-  });
-}

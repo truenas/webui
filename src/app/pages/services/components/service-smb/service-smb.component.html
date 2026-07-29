@@ -52,7 +52,7 @@
     </tn-form-field>
   </tn-form-section>
 
-  @if (!isBasicMode()) {
+  @if (isAdvancedMode()) {
     <tn-form-section [heading]="'Other Options' | translate">
       <tn-form-field
         [label]="'UNIX Charset' | translate"

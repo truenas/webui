@@ -18,15 +18,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-
-/**
- * The form's own value shape, which is NOT `UpsConfigUpdate` (controls are nullable and the
- * mode-specific fields are stripped in {@link ServiceUpsComponent.handleSubmit}). `<ix-form>`
- * infers its generic from the snapshot, so typing it against the API shape would make
- * `FormSubmitEvent` lie.
- */
-type UpsFormValue = ReturnType<ServiceUpsComponent['form']['getRawValue']>;
 
 @Component({
   selector: 'ix-service-ups',
@@ -48,7 +39,6 @@ type UpsFormValue = ReturnType<ServiceUpsComponent['form']['getRawValue']>;
 })
 export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -56,13 +46,6 @@ export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
   readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly InputType = InputType;
 
-  protected readonly dataLoading = signal(false);
-  /**
-   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
-   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
-   */
-  protected readonly loadFailed = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<UpsFormValue> | null>(null);
   protected readonly isMasterMode = signal(true);
 
   form = this.fb.group({
@@ -148,8 +131,7 @@ export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
   readonly shutdownOptions = translateOptions(this.translate, helptextServiceUps.shutdownOptions);
 
   ngOnInit(): void {
-    this.dataLoading.set(true);
-    this.loadConfig();
+    this.loadFormConfig(this.api.call('ups.config'), (config) => this.form.patchValue(config));
     this.form.controls.remotehost.disable();
     this.form.controls.remoteport.disable();
 
@@ -170,34 +152,14 @@ export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
     });
   }
 
-  private loadConfig(): void {
-    this.api.call('ups.config')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (config) => {
-          this.form.patchValue(config);
-          this.initialFormSnapshot.set(this.form.getRawValue());
-          this.dataLoading.set(false);
-        },
-        error: (error: unknown) => {
-          this.dataLoading.set(false);
-          this.loadFailed.set(true);
-          this.errorHandler.showErrorModal(error);
-        },
-      });
-  }
-
+  // The one form here that reads the live form rather than the event's `allValues`: the mode
+  // watcher disables the fields belonging to the other mode, and `form.value` is what drops them
+  // (`allValues` is a `getRawValue()`, disabled controls included). Copied because keys are deleted
+  // below and `form.value` hands back the FormGroup's own live value object.
   protected handleSubmit = (): SubmitResult => {
-    // Copy first: `form.value` hands back the FormGroup's own live value object, so deleting keys
-    // off it writes through to form state. Save can be pressed again after a failed submit, which
-    // would then re-run the reshaping over already-mutated values.
     const params = { ...this.form.value };
 
-    // Belt-and-braces today: `form.value` already omits disabled controls, and the mode watcher in
-    // ngOnInit disables exactly these fields (remotehost/remoteport in master mode, driver in
-    // slave mode), so the deletes are no-ops. They stay because they are what actually pins the
-    // payload to the mode — switching this read to the wrapper's `allValues` (a `getRawValue()`,
-    // disabled controls included) would silently start sending the other mode's fields otherwise.
+    // Belt-and-braces given the disables above, but they are what pins the payload to the mode.
     if (this.isMasterMode()) {
       delete params.remoteport;
       delete params.remotehost;

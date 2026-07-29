@@ -6,9 +6,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import {
-  catchError, EMPTY, Observable, of, throwError,
-} from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
@@ -104,24 +102,11 @@ describe('ServiceNfsComponent', () => {
     await spectator.fixture.whenStable();
   });
 
-  // Guards the pipe order in ngOnInit: `tap({ error })` has to sit AHEAD of `withErrorHandler()`,
-  // which swallows the error. A reorder would silently leave Save enabled on a failed load.
   it('blocks Save when the initial config load fails', () => {
     expect(spectator.component.canSubmit()).toBe(true);
 
-    const errorHandler = spectator.inject(ErrorHandlerService);
-    // `mockAuth()` stubs `withErrorHandler` as a pass-through, which would let a `tap` placed
-    // AFTER it still see the error. Restore the real swallow-and-report behaviour so the ordering
-    // is actually under test.
-    const showErrorModal = jest.spyOn(errorHandler, 'showErrorModal').mockReturnValue(of(true));
-    jest.spyOn(errorHandler, 'withErrorHandler').mockReturnValue(
-      (source$: Observable<unknown>) => source$.pipe(
-        catchError((error: unknown) => {
-          errorHandler.showErrorModal(error);
-          return EMPTY;
-        }),
-      ),
-    );
+    const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
+      .mockReturnValue(of(true));
     jest.spyOn(api, 'call').mockReturnValue(throwError(() => new Error('Failed to load config')));
 
     spectator.component.ngOnInit();

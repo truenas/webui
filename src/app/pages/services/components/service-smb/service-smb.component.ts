@@ -32,10 +32,11 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
-import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import {
+  advancedModeFooterAction, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -47,8 +48,7 @@ interface BindIp {
 /**
  * The form's own value shape, which is deliberately NOT `SmbConfigUpdate`: `bindip` is a
  * FormArray of `{ bindIp }` rows and `spotlight_search` stands in for `search_protocols`
- * (both reshaped in {@link ServiceSmbComponent.handleSubmit}). `<ix-form>` infers its generic
- * from the snapshot, so typing it against the API shape would make `FormSubmitEvent` lie.
+ * (both reshaped in {@link ServiceSmbComponent.handleSubmit}).
  */
 type SmbFormValue = ReturnType<ServiceSmbComponent['form']['getRawValue']>;
 
@@ -75,7 +75,6 @@ type SmbFormValue = ReturnType<ServiceSmbComponent['form']['getRawValue']>;
 })
 export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
@@ -85,13 +84,6 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly dataLoading = signal(false);
-  /**
-   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
-   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
-   */
-  protected readonly loadFailed = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<SmbFormValue> | null>(null);
   protected hasIncompatibleShares = signal(false);
   protected isSmb1Enabled = signal(false);
   protected readonly minimumProtocolOptions = mapToOptions(smbMinProtocolLabels, this.translate);
@@ -145,9 +137,9 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
     });
   }
 
-  protected readonly isBasicMode = signal(true);
+  protected readonly isAdvancedMode = signal(false);
 
-  protected readonly form = this.fb.group({
+  readonly form = this.fb.group({
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
     netbiosalias: [[] as string[], [
       this.validatorsService.customValidator(
@@ -179,17 +171,14 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
 
   readonly requiredRoles = [Role.SharingSmbWrite];
 
-  /**
-   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
-   * change detection, so the label flips with {@link isBasicMode}.
-   */
+  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
+    advanced: T('Advanced Settings'),
+    basic: T('Basic Settings'),
+  });
+
   get footerActions(): SidePanelFooterAction[] {
-    // Labels are extraction markers — the panel container pipes them through `translate`.
-    return [{
-      label: this.isBasicMode() ? T('Advanced Settings') : T('Basic Settings'),
-      testId: 'toggle-advanced-settings',
-      onClick: () => this.onAdvancedSettingsToggled(),
-    }];
+    return this.advancedToggle();
   }
 
   readonly helptext = helptextServiceSmb;
@@ -279,8 +268,6 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
   );
 
   ngOnInit(): void {
-    this.dataLoading.set(true);
-
     // Parity with the former ix-user/group-combobox controls: custom-typed values
     // must exist on the system (empty values pass).
     this.form.controls.guest.addAsyncValidators(this.existenceValidation.validateUserExists());
@@ -298,24 +285,15 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
       },
     });
 
-    this.api.call('smb.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (config) => {
-        const searchProtocolEnabled = config.search_protocols.includes(smbSearchSpotlight);
-        config.bindip.forEach(() => this.addBindIp());
-        this.form.patchValue({
-          ...config,
-          spotlight_search: searchProtocolEnabled,
-          bindip: config.bindip.map((ip) => ({ bindIp: ip })),
-        });
-        this.isSmb1Enabled.set(config.minimum_protocol === SmbMinProtocol.Smb1);
-        this.initialFormSnapshot.set(this.form.getRawValue());
-        this.dataLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.dataLoading.set(false);
-        this.loadFailed.set(true);
-        this.errorHandler.showErrorModal(error);
-      },
+    this.loadFormConfig(this.api.call('smb.config'), (config) => {
+      const searchProtocolEnabled = config.search_protocols.includes(smbSearchSpotlight);
+      config.bindip.forEach(() => this.addBindIp());
+      this.form.patchValue({
+        ...config,
+        spotlight_search: searchProtocolEnabled,
+        bindip: config.bindip.map((ip) => ({ bindIp: ip })),
+      });
+      this.isSmb1Enabled.set(config.minimum_protocol === SmbMinProtocol.Smb1);
     });
   }
 
@@ -327,10 +305,6 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
 
   removeBindIp(index: number): void {
     this.form.controls.bindip.removeAt(index);
-  }
-
-  private onAdvancedSettingsToggled(): void {
-    this.isBasicMode.update((isBasic) => !isBasic);
   }
 
   protected openTruenasConnectModal(): void {

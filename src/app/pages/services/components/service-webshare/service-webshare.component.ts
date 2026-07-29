@@ -1,7 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, computed, effect,
+  ChangeDetectionStrategy, Component, OnInit, inject, computed, effect,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -15,18 +14,12 @@ import { helptextServiceWebshare } from 'app/helptext/services/components/servic
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
-  IxFormComponent, SubmitResult,
+  FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-/**
- * The form's own value shape rather than `WebShareConfigUpdate`: `search` can be disabled (so it
- * only reaches the payload via `getRawValue()`), and the snapshot must track what the controls
- * actually hold. `<ix-form>` infers its generic from the snapshot, so pinning it to the form keeps
- * `FormSubmitEvent` honest as the two shapes drift.
- */
+/** The form's own value shape rather than `WebShareConfigUpdate`, which `search` can drift from. */
 type WebShareFormValue = ReturnType<ServiceWebshareComponent['form']['getRawValue']>;
 
 @Component({
@@ -49,21 +42,11 @@ export class ServiceWebshareComponent extends IxFormHostForm implements OnInit {
   readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
 
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
   private truenasConnectService = inject(TruenasConnectService);
 
-  protected readonly dataLoading = signal(false);
-  /**
-   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
-   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
-   */
-  protected readonly loadFailed = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<WebShareFormValue> | null>(null);
-
-  protected readonly form = this.fb.group({
+  readonly form = this.fb.group({
     search: [false],
     passkey: [WebSharePasskey.Disabled, Validators.required],
   });
@@ -97,31 +80,21 @@ export class ServiceWebshareComponent extends IxFormHostForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.dataLoading.set(true);
-    this.api.call('webshare.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (config: WebShareConfig) => {
-        this.form.patchValue({
-          // `webshare.config` is async, so it can resolve after the guard effect has already
-          // locked the control off. Gate the loaded value too, otherwise a stale `search: true`
-          // from the backend would be restored while Connect is disabled and then submitted.
-          search: config.search && this.isTruenasConnectConfigured(),
-          passkey: config.passkey,
-        });
-        this.initialFormSnapshot.set(this.form.getRawValue());
-        this.dataLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.dataLoading.set(false);
-        this.loadFailed.set(true);
-        this.errorHandler.showErrorModal(error);
-      },
+    this.loadFormConfig(this.api.call('webshare.config'), (config: WebShareConfig) => {
+      this.form.patchValue({
+        // `webshare.config` is async, so it can resolve after the guard effect has already
+        // locked the control off. Gate the loaded value too, otherwise a stale `search: true`
+        // from the backend would be restored while Connect is disabled and then submitted.
+        search: config.search && this.isTruenasConnectConfigured(),
+        passkey: config.passkey,
+      });
     });
   }
 
-  // getRawValue() rather than value: `search` is disabled while TrueNAS Connect is not
-  // configured, and the API still expects it in the payload (as false).
-  protected handleSubmit = (): SubmitResult => ({
-    request$: this.api.call('webshare.update', [this.form.getRawValue()]),
+  // `allValues` is the wrapper's own getRawValue() snapshot, so the `search` control still reaches
+  // the API (as false) while it is disabled by the TrueNAS Connect guard.
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<WebShareFormValue>): SubmitResult => ({
+    request$: this.api.call('webshare.update', [allValues]),
     successMessage: this.translate.instant('Service configuration saved'),
   });
 }

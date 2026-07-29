@@ -1,7 +1,9 @@
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
 import {
-  ChangeDetectionStrategy, Component, ComponentRef, inject, input, model, output, signal, type Signal,
+  ChangeDetectionStrategy, Component, ComponentRef, computed, inject, input, model, output, signal,
+  type Signal, type WritableSignal,
 } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -36,6 +38,32 @@ export interface SidePanelFooterAction {
   /** Re-evaluated each change detection — read signals inside for reactive disabling. */
   disabled?: () => boolean;
   onClick: () => void;
+}
+
+/**
+ * The Advanced/Basic footer toggle that every long form otherwise re-implements: a single secondary
+ * action whose label flips with `isAdvancedMode`, and whose click flips the signal.
+ *
+ * Returned as a `computed` rather than built inside a getter, so the container's per-change-detection
+ * read of `footerActions` hands back the same array until the mode actually changes. Wire it as:
+ *
+ * ```ts
+ * private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
+ * get footerActions(): SidePanelFooterAction[] { return this.advancedToggle(); }
+ * ```
+ *
+ * @param labels override for forms that say "Settings" rather than "Options"; extraction markers,
+ * since the container pipes the label through `translate`.
+ */
+export function advancedModeFooterAction(
+  isAdvancedMode: WritableSignal<boolean>,
+  labels: { advanced: string; basic: string } = { advanced: T('Advanced Options'), basic: T('Basic Options') },
+): Signal<SidePanelFooterAction[]> {
+  return computed(() => [{
+    label: isAdvancedMode() ? labels.basic : labels.advanced,
+    testId: 'toggle-advanced-options',
+    onClick: () => isAdvancedMode.update((isAdvanced) => !isAdvanced),
+  }]);
 }
 
 /** A single action inside a {@link SidePanelFooterMenu}. */

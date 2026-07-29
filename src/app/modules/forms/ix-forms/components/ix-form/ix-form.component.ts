@@ -61,6 +61,8 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
    * need disabled values. Shallow per-key deep-equality; nested groups report as
    * one whole-object entry. Build from `allValues` instead for paired/derived
    * controls, inherit sentinels, or payload reshaping.
+   *
+   * Computed on first access (and cached), so leaving it unread costs nothing.
    */
   changedValues: Partial<T>;
 }
@@ -325,10 +327,20 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
     }
 
     const allValues = this.formGroup().getRawValue() as T;
+    // Diffed on first read and cached, so a handler that builds its payload from `allValues` pays
+    // neither the diff nor the nested-group advisory — which only matters to handlers that actually
+    // consume the diff.
+    let changed: Partial<T> | undefined;
+    const readChangedValues = (): Partial<T> => {
+      changed ??= this.getChangedValues(allValues);
+      return changed;
+    };
     let event: FormSubmitEvent<T> = {
       isEdit: this.isEdit(),
       allValues,
-      changedValues: this.getChangedValues(allValues),
+      get changedValues(): Partial<T> {
+        return readChangedValues();
+      },
     };
 
     const preSubmit = this.preSubmit();
@@ -453,7 +465,9 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * entry: change one inner control and the entire subtree lands in the payload.
    * That silently defeats a "send only what changed" submit, so warn the author
    * to build the payload from `allValues` (or diff the subtree themselves) for
-   * those keys. Fires once per form instance.
+   * those keys. Fires once per form instance, and only from a submit that actually
+   * reads `changedValues` — a form that already builds from `allValues` is doing
+   * the right thing and stays quiet.
    */
   private warnNestedChangedValues(controls: FormGroup['controls']): void {
     if (this.warnedNestedChangedValues) {

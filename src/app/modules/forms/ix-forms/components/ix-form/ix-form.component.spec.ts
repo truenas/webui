@@ -301,25 +301,49 @@ describe('IxFormComponent', () => {
       expect(submitHandlerSpy.mock.calls[0][0].changedValues).not.toHaveProperty('name');
     });
 
-    it('dev-warns once when a top-level control is a nested FormGroup', async () => {
-      const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-      (spectator.component.form as unknown as FormGroup).addControl(
-        'attributes',
-        new FormGroup({ host: new FormControl('') }),
-      );
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-      await saveButton.click();
-
-      // Spy catches other dev warnings too; count only the nested-group one,
-      // which must fire exactly once across both submits.
-      const nestedWarnings = warnSpy.mock.calls.filter(
+    describe('nested-group advisory', () => {
+      // Spy catches other dev warnings too; count only the nested-group one.
+      const countNestedWarnings = (warnSpy: jest.SpyInstance): unknown[][] => warnSpy.mock.calls.filter(
         ([message]) => typeof message === 'string' && message.includes('nested FormGroup/FormArray'),
       );
-      expect(nestedWarnings).toHaveLength(1);
-      expect(nestedWarnings[0][0]).toContain('"attributes"');
-      warnSpy.mockRestore();
+
+      const addNestedControl = (): void => {
+        (spectator.component.form as unknown as FormGroup).addControl(
+          'attributes',
+          new FormGroup({ host: new FormControl('') }),
+        );
+      };
+
+      it('dev-warns once when a submit reading changedValues has a nested FormGroup', async () => {
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        submitHandlerSpy.mockImplementation((event) => {
+          expect(event.changedValues).toBeDefined();
+          return { request$: of(undefined), successMessage: 'Saved!' as TranslatedString };
+        });
+        addNestedControl();
+
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+        await saveButton.click();
+
+        const nestedWarnings = countNestedWarnings(warnSpy);
+        expect(nestedWarnings).toHaveLength(1);
+        expect(nestedWarnings[0][0]).toContain('"attributes"');
+        warnSpy.mockRestore();
+      });
+
+      it('stays quiet when the submit builds its payload from allValues', async () => {
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        addNestedControl();
+
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        // `changedValues` is never read, so the advisory — which only matters to a handler that
+        // relies on the diff — has nothing to warn about.
+        expect(countNestedWarnings(warnSpy)).toHaveLength(0);
+        warnSpy.mockRestore();
+      });
     });
   });
 

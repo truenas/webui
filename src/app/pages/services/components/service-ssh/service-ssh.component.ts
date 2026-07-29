@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -14,19 +13,19 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceSsh } from 'app/helptext/services/components/service-ssh';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
-  IxFormComponent, SubmitResult,
+  FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
-import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import {
+  advancedModeFooterAction, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
  * The form's own value shape, which is NOT `SshConfigUpdate`: `tcpport` and the two SFTP log
  * controls are nullable here, and `sftp_log_level` is coerced to `''` for the API in
- * {@link ServiceSshComponent.handleSubmit}. `<ix-form>` infers its generic from the snapshot, so
- * typing it against the API shape would make `FormSubmitEvent` lie.
+ * {@link ServiceSshComponent.handleSubmit}.
  */
 type SshFormValue = ReturnType<ServiceSshComponent['form']['getRawValue']>;
 
@@ -49,22 +48,13 @@ type SshFormValue = ReturnType<ServiceSshComponent['form']['getRawValue']>;
 })
 export class ServiceSshComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
 
   readonly requiredRoles = [Role.SshWrite];
   protected readonly InputType = InputType;
 
-  protected readonly dataLoading = signal(false);
-  /**
-   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
-   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
-   */
-  protected readonly loadFailed = signal(false);
-  protected readonly initialFormSnapshot = signal<Partial<SshFormValue> | null>(null);
-  protected readonly isBasicMode = signal(true);
+  protected readonly isAdvancedMode = signal(false);
 
   form = this.fb.group({
     tcpport: [null as number | null],
@@ -101,43 +91,24 @@ export class ServiceSshComponent extends IxFormHostForm implements OnInit {
 
   readonly bindInterfaces$ = this.api.call('ssh.bindiface_choices').pipe(choicesToOptions());
 
-  /**
-   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
-   * change detection, so the label flips with {@link isBasicMode}.
-   */
+  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
+    advanced: T('Advanced Settings'),
+    basic: T('Basic Settings'),
+  });
+
   get footerActions(): SidePanelFooterAction[] {
-    // Labels are extraction markers — the panel container pipes them through `translate`.
-    return [{
-      label: this.isBasicMode() ? T('Advanced Settings') : T('Basic Settings'),
-      testId: 'toggle-advanced-options',
-      onClick: () => this.onAdvancedSettingsToggled(),
-    }];
+    return this.advancedToggle();
   }
 
   ngOnInit(): void {
-    this.dataLoading.set(true);
-    this.api.call('ssh.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (config) => {
-        this.form.patchValue(config);
-        this.initialFormSnapshot.set(this.form.getRawValue());
-        this.dataLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.dataLoading.set(false);
-        this.loadFailed.set(true);
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    this.loadFormConfig(this.api.call('ssh.config'), (config) => this.form.patchValue(config));
   }
 
-  private onAdvancedSettingsToggled(): void {
-    this.isBasicMode.update((isBasic) => !isBasic);
-  }
-
-  protected handleSubmit = (): SubmitResult => {
-    // Copy first: `form.value` hands back the FormGroup's own live value object, so assigning to it
-    // writes through to form state.
-    const values = { ...this.form.value };
+  // Built from `allValues` (the wrapper's own `getRawValue()` snapshot) rather than re-reading the
+  // form, so any future `preSubmit` transform is honoured. Copied because it is mutated below.
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<SshFormValue>): SubmitResult => {
+    const values = { ...allValues };
     // Clearing the tn-select empty option writes null; the API expects ''.
     values.sftp_log_level = values.sftp_log_level ?? ('' as SshSftpLogLevel);
 

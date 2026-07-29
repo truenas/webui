@@ -381,7 +381,7 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
     this.updateAuditValidationState();
   }
 
-  protected form = this.formBuilder.group({
+  form = this.formBuilder.group({
     // Common for all share purposes
     purpose: [SmbSharePurpose.DefaultShare as SmbSharePurpose | null],
     name: ['', Validators.required],

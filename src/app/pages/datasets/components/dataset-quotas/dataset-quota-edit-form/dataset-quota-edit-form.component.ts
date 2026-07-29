@@ -109,7 +109,7 @@ export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnI
       : this.translate.instant(helptextQuotas.groups.objectQuota.tooltip);
   }
 
-  protected form = this.formBuilder.group({
+  form = this.formBuilder.group({
     name: [''],
     data_quota: new FormControl(null as number | null),
     obj_quota: new FormControl(null as number | null),

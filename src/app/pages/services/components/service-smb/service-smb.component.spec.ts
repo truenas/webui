@@ -21,9 +21,7 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
-import {
-  ixFormTestingProviders, silenceIxFormNestedGroupNotice,
-} from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -139,13 +137,7 @@ describe('ServiceSmbComponent', () => {
     ],
   });
 
-  // This form's `bindip` FormArray trips the nested-group notice, and `handleSubmit` deliberately
-  // builds its payload from `allValues` — so the warning is expected noise here.
-  let consoleWarnSpy: jest.SpyInstance;
-
   beforeEach(() => {
-    consoleWarnSpy = silenceIxFormNestedGroupNotice();
-
     tncConfigSignal.set({
       status: TruenasConnectStatus.Configured,
     } as TruenasConnectConfig);
@@ -154,10 +146,6 @@ describe('ServiceSmbComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
     store$ = spectator.inject(MockStore);
-  });
-
-  afterEach(() => {
-    consoleWarnSpy.mockRestore();
   });
 
   it('blocks Save when the initial config load fails', () => {
@@ -197,7 +185,7 @@ describe('ServiceSmbComponent', () => {
 
     const [toggleAdvanced] = spectator.component.footerActions;
     expect(toggleAdvanced.label).toBe('Advanced Settings');
-    expect(toggleAdvanced.testId).toBe('toggle-advanced-settings');
+    expect(toggleAdvanced.testId).toBe('toggle-advanced-options');
 
     toggleAdvancedSettings();
 

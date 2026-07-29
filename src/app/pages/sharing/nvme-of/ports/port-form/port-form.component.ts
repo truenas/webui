@@ -73,7 +73,7 @@ export class PortFormComponent extends IxFormHostForm<NvmeOfPort | null> impleme
 
   readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  protected form = this.formBuilder.group({
+  form = this.formBuilder.group({
     addr_trtype: [NvmeOfTransportType.Tcp],
     addr_trsvcid: [null as number | string],
     addr_traddr: ['', Validators.required],

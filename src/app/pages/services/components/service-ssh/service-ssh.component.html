@@ -34,7 +34,7 @@
     </tn-form-field>
   </tn-form-section>
 
-  @if (!isBasicMode()) {
+  @if (isAdvancedMode()) {
     <tn-form-section>
       <tn-form-field
         [label]="'Bind Interfaces' | translate"
