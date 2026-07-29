@@ -92,13 +92,15 @@ export class BootEnvironmentListComponent implements OnInit {
 
   protected readonly displayedColumns = ['id', 'active', 'created', 'used_bytes', 'keep', 'actions'];
 
+  /** `created` renders a formatted date, so it has to sort by the underlying timestamp. */
+  private readonly sortByCreated = (row: BootEnvironment): number => row.created.$date;
+
   /**
-   * Sort accessors for the columns whose cells don't show their raw row value: `created`
-   * renders a formatted date, so it has to sort by the underlying timestamp. Shared by the
+   * Sort accessors for the columns whose cells don't show their raw row value. Shared by the
    * default sort and by `(sortChange)`, so the two can't disagree.
    */
   private readonly sortColumns: Column<BootEnvironment, ColumnComponent<BootEnvironment>>[] = [
-    { propertyName: 'created', sortBy: (row) => row.created.$date },
+    { propertyName: 'created', sortBy: this.sortByCreated },
   ];
 
   protected readonly trackByBootenvId = (_: number, row: BootEnvironment): string => row.id;
@@ -288,10 +290,10 @@ export class BootEnvironmentListComponent implements OnInit {
 
   private setDefaultSort(): void {
     this.dataProvider.setSorting({
-      active: 2,
+      active: this.displayedColumns.indexOf('created'),
       direction: SortDirection.Desc,
       propertyName: 'created',
-      sortBy: this.sortColumns[0].sortBy,
+      sortBy: this.sortByCreated,
     });
   }
 

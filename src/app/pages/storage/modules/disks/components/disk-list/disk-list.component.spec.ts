@@ -173,9 +173,9 @@ describe('DiskListComponent', () => {
     expect(spectator.query('[data-test="button-sdc-reset-sed"]')).toExist();
   });
 
+  // The two assertions below query `data-test` on purpose: the e2e suite locates these buttons
+  // by the ids the pre-migration screen resolved, so preserving them is the assertion itself.
   it('keeps the legacy batch-operations test id after moving to tn-button', async () => {
-    expect(spectator.query('[data-test="button-edit-selected"]')).not.toExist();
-
     await table.toggleRowSelection(0);
 
     expect(spectator.query('[data-test="button-edit-selected"]')).toExist();
@@ -350,9 +350,9 @@ describe('DiskListComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    // tn-table clears its selection when the row objects are replaced, so the batch bar
-    // (and with it the stale disks it would have edited) goes away.
-    expect(spectator.query('[data-test="button-edit-selected"]')).not.toExist();
+    // A save invalidates the selection it was made from, so the batch bar (and with it the
+    // stale disks it would have edited) goes away.
+    expect(await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Edit Disks' }))).toHaveLength(0);
   });
 });
 

@@ -50,6 +50,10 @@ import { LicenseService } from 'app/services/license.service';
  * A disk row with every display-only value resolved once, when the rows are built. The
  * templates bind these fields instead of calling methods, so translation, size formatting
  * and test-id kebab-casing don't re-run for every visible row on every change detection.
+ *
+ * The translated fields are resolved once, so a runtime language switch only reaches them on
+ * the next reload — the same as the column titles above, which every list in the app builds
+ * with `translate.instant` at construction.
  */
 interface DiskRow extends Disk {
   sizeText: string;
@@ -342,6 +346,11 @@ export class DiskListComponent {
       // this gets the updated disk data from the disk edit form (both single and bulk)
       // and emits it over `diskUpdates$`.
       response?.forEach((upd) => this.diskUpdates$.next(upd));
+      // A save invalidates the selection it was made from: the rows are rebuilt, so the
+      // pre-edit data behind it is gone. tn-table also clears its own checkboxes when the
+      // data source is replaced, but don't depend on it emitting `(selectionChange)` for
+      // that — clear here so the batch bar and the checkboxes can't disagree.
+      this.selectedIdentifiers.set(new Set());
       this.dataProvider.load();
     }, this.destroyRef);
   }

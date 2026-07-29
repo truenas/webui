@@ -60,7 +60,9 @@ export function createTable<T>(
  * We diff against the previous set rather than caching a single row reference,
  * so a data reload (which swaps in fresh row objects) can't leave a stale
  * reference behind — the set tracking stays consistent with whatever tn-table
- * currently holds.
+ * currently holds. The one case where "newest" is approximate is such a reload:
+ * every row in the set is then unknown to us, so we keep the set's first member
+ * (insertion order) rather than the most recently opened one.
  *
  * Must be called from an injection context (e.g. a component constructor).
  */

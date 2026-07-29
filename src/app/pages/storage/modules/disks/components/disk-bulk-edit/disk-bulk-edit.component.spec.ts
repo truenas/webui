@@ -134,11 +134,8 @@ describe('DiskBulkEditComponent', () => {
     ]);
   });
 
-  it('opens an error dialog if not all jobs are successful', async () => {
-    const dialogService = spectator.inject(DialogService);
-    const jobSpy = jest.spyOn(api, 'job');
-
-    jobSpy.mockImplementation((job) => {
+  function mockPartialFailure(): void {
+    jest.spyOn(api, 'job').mockImplementation((job) => {
       if (job === 'core.bulk') {
         return of(
           fakeSuccessfulJob([
@@ -152,6 +149,11 @@ describe('DiskBulkEditComponent', () => {
 
       return of(fakeSuccessfulJob(mockJobSuccessResponse));
     });
+  }
+
+  it('opens an error dialog if not all jobs are successful', async () => {
+    const dialogService = spectator.inject(DialogService);
+    mockPartialFailure();
 
     await fillSettings();
     spectator.component.submit();
@@ -160,8 +162,23 @@ describe('DiskBulkEditComponent', () => {
     expect(dialogService.error).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
     // The failure path completes without emitting (EMPTY), so the panel's busy state is
-    // only cleared by <ix-form>'s complete safety net — the form must stay usable.
+    // only cleared by <ix-form>'s complete safety net.
     expect(spectator.component.isBusy()).toBe(false);
+  });
+
+  it('emits only the disks that did succeed when the bulk job partially fails', async () => {
+    const closed = jest.fn();
+    spectator.component.closed.subscribe(closed);
+    mockPartialFailure();
+
+    await fillSettings();
+    spectator.component.submit();
+
+    // core.bulk is not transactional, so the second disk was updated even though the first
+    // failed — the opener has to hear about it to refresh that row.
+    expect(closed).toHaveBeenCalledWith([
+      { identifier: '{serial}VB5a315293-ea077d3d', advpowermgmt: '64', hddstandby: '10' },
+    ]);
   });
 
   it('handles validation errors on exception', async () => {

@@ -9,6 +9,11 @@
         }}
       </div>
 
+      <!--
+        These were anchors before the migration and are buttons now (they act, they don't
+        navigate to a URL), but keep the `link-` test-id prefix: the e2e suite locates them by
+        the resolved ids, so renaming has to happen there in the same change.
+      -->
       <button
         *ixHasRole="requiredRoles"
         class="link-action"

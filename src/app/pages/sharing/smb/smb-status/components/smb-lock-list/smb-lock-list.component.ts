@@ -88,6 +88,9 @@ export class SmbLockListComponent implements OnInit {
       getValue: (row) => {
         return this.translate.instant('{n, plural, =0 {No open files} one {# open file} other {# open files}}', { n: Object.keys(row.opens).length });
       },
+      // Sort by the count, not by the pluralized text — otherwise "10 open files" sorts
+      // before "2 open files".
+      sortBy: (row) => Object.keys(row.opens).length,
     }),
     textColumn({
       title: this.translate.instant('Num Pending Deletes'),

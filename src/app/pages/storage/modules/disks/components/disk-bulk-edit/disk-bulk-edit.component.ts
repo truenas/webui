@@ -90,15 +90,22 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | nul
         filter((job) => job.state === JobState.Success),
         take(1),
         switchMap((job) => {
-          // core.bulk reports per-disk failures in its result rather than failing the job,
-          // so surface the first one here and complete without emitting: no success
-          // snackbar, and the form stays open so the user can retry.
+          // core.bulk reports per-disk failures in its result rather than failing the job, so
+          // surface the first one here and complete without emitting — no success snackbar.
           const failure = job.result.find((result) => result.error !== null);
           if (failure) {
             this.dialogService.error({
               title: this.translate.instant(helptextDisks.errorDialogTitle),
               message: failure.error,
             });
+            // core.bulk is not transactional: the disks that reported no error were already
+            // updated on the backend. Close with just those so the opener reconciles the rows
+            // that really changed and reloads — otherwise the list keeps showing pre-edit values
+            // for disks that did change. An all-failed bulk closes with an empty list, which
+            // still reloads, which is what the pre-migration form closed with in either case.
+            this.closed.emit(this.toResponse(
+              req.filter((_, index) => job.result[index]?.error === null),
+            ));
             return EMPTY;
           }
           return of(req);
@@ -106,7 +113,7 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | nul
       ),
       successMessage: successText,
       onSuccess: () => {
-        this.submittedResponse = req.map(([identifier, diskUpdate]) => ({ identifier, ...diskUpdate }));
+        this.submittedResponse = this.toResponse(req);
       },
     };
   };
@@ -146,6 +153,10 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | nul
 
     this.form.patchValue({ ...setForm });
     this.form.controls.disknames.disable();
+  }
+
+  private toResponse(entries: [id: string, update: DiskUpdate][]): DiskFormResponse {
+    return entries.map(([identifier, diskUpdate]) => ({ identifier, ...diskUpdate }));
   }
 
   private prepareDataSubmit(): [id: string, update: DiskUpdate][] {

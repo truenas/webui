@@ -134,36 +134,36 @@ describe('ReportComponent', () => {
       }).not.toThrow();
     });
 
-    it('should resize chart when window resize event occurs', async () => {
-      spectator.component.ngOnInit();
+    // Fake timers rather than a real sleep: under load the 100ms debounce plus the tick
+    // resizeChart waits could outlast a real-time wait, leaving the render to land in the
+    // next test's mock instead of this one's.
+    it('should resize chart when window resize event occurs', () => {
+      jest.useFakeTimers();
       spectator.component.isReady = true;
 
       // Trigger window resize event
-      const resizeEvent = new Event('resize');
-      global.dispatchEvent(resizeEvent);
+      global.dispatchEvent(new Event('resize'));
 
-      // Wait for debounce
-      await new Promise<void>((resolve): void => {
-        setTimeout(() => resolve(), 150);
-      });
+      // Run the debounce and the tick resizeChart waits before rendering
+      jest.advanceTimersByTime(150);
 
       expect(mockLineChart.render).toHaveBeenCalledWith(true);
+
+      jest.useRealTimers();
     });
 
-    it('should not resize chart before component is ready', async () => {
-      spectator.component.ngOnInit();
+    it('should not resize chart before component is ready', () => {
+      jest.useFakeTimers();
       spectator.component.isReady = false;
 
       // Trigger window resize event
-      const resizeEvent = new Event('resize');
-      global.dispatchEvent(resizeEvent);
+      global.dispatchEvent(new Event('resize'));
 
-      // Wait for debounce
-      await new Promise<void>((resolve): void => {
-        setTimeout(() => resolve(), 150);
-      });
+      jest.advanceTimersByTime(150);
 
       expect(mockLineChart.render).not.toHaveBeenCalled();
+
+      jest.useRealTimers();
     });
 
     it('should resize chart when menu state changes', () => {
