@@ -303,6 +303,21 @@ See the full list in: `node_modules/@truenas/ui-components/assets/tn-icons/sprit
 - **Type-safe**: Full TypeScript support with proper types
 - **Accessible**: Built with WCAG accessibility standards in mind
 
+## Migration follow-ups
+
+Gaps found while migrating pages to `tn-*` (Epic NAS-141021) that are deliberately
+carried rather than fixed in the migrating PR. Library items belong in
+[webui-components](https://github.com/truenas/webui-components); webui items belong on
+the epic's follow-up list.
+
+| Gap | Where it shows up | Owner |
+| --- | --- | --- |
+| No multi-colour status pill primitive | `status-pill` mixin in `src/assets/styles/scss-imports/status-pill.scss`, used by `ix-task-state-cell` and `ix-vmware-status-cell` | library |
+| `TnMenuTriggerDirective` sets no `aria-haspopup`/`aria-expanded`, and its open state is private with no `exportAs` | `table-actions-cell.component.html` menu trigger | library |
+| `tn-empty`'s `[title]`/`[description]` are text-only, so an `EmptyConfig.message` written as HTML has to be flattened at runtime | `FlattenEmptyMessagePipe` | library |
+| `tn-table` has no input for a second empty-state line, so the `EmptyConfig.message` ix-table showed under the no-search-results title is dropped | `dataProviderEmptyState` in `ix-table/utils.ts` | library |
+| Replication "Enabled" is read-only Yes/No in the detail row when the picker hides the column (it was an interactive toggle before); a dead toggle would be worse, so the toggle stays in the visible column only | `replication-list.component.ts` | webui |
+
 ## Additional Resources
 
 - [npm package](https://www.npmjs.com/package/@truenas/ui-components)

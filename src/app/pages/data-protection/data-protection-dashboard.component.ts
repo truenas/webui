@@ -8,6 +8,7 @@ import { dataProtectionEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -49,6 +50,10 @@ export class DataProtectionDashboardComponent {
   // every locale. The message carries the `<br>` markup ix-empty rendered as HTML, and
   // tn-empty's [description] is a text input, so the template flattens it after translating.
   protected readonly emptyConfig = dataProtectionEmptyConfig;
+
+  // Icon split out of the same config rather than hand-copied into the template, so
+  // the catalog stays the single source of truth for the icon as well as the message.
+  protected readonly emptyIcon = emptyConfigIcon(dataProtectionEmptyConfig);
 
   protected createPool(): void {
     this.router.navigate(['/storage', 'create']);

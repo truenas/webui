@@ -25,6 +25,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -134,6 +135,10 @@ export class SnapshotTaskListComponent implements OnInit {
   // Bound from the shared catalog config rather than inlined in the template, so the
   // translated string has a single source of truth and follows a language change.
   protected readonly emptyConfig = snapshotTaskEmptyConfig;
+
+  // Icon split out of the same config rather than hand-copied into the template, so
+  // the catalog stays the single source of truth for the icon as well as the message.
+  protected readonly emptyIcon = emptyConfigIcon(snapshotTaskEmptyConfig);
 
   // ix-table column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs) and the hidden-column list rendered in the detail
@@ -247,6 +252,9 @@ export class SnapshotTaskListComponent implements OnInit {
     return this.translate.instant('Disabled');
   }
 
+  // A plain method rather than `perRow`: interpolating two properties is cheaper than the
+  // WeakMap lookup. `perRow` is for the derivations that actually do work — `getActiveHours`
+  // above parses a crontab and translates a label.
   protected getLifetime(row: PeriodicSnapshotTaskUi): string {
     return `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase();
   }

@@ -27,6 +27,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
@@ -145,6 +146,10 @@ export class CloudSyncListComponent implements OnInit {
   // translated string has a single source of truth and follows a language change.
   protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
 
+  // Icon split out of the same config rather than hand-copied into the template, so
+  // the catalog stays the single source of truth for the icon as well as the message.
+  protected readonly emptyIcon = emptyConfigIcon(cloudSyncTaskEmptyConfig);
+
   // ix-table column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs) and the hidden-column list rendered in the detail
   // row; tn-table renders cells from the template and derives its
@@ -234,6 +239,9 @@ export class CloudSyncListComponent implements OnInit {
     return detailActionTestId([row.id], action);
   }
 
+  // Plain methods rather than `perRow`: both are a ternary over two properties, where the
+  // WeakMap lookup would cost more than re-deriving. `perRow` is for the derivations that
+  // actually do work — parsing a crontab, composing a translated label, kebab-casing a tag.
   protected getSchedule(task: CloudSyncTaskUi): string {
     return task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled');
   }

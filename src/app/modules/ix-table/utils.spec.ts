@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { TranslateService } from '@ngx-translate/core';
-import { NEVER, of } from 'rxjs';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { NEVER, of, Subject } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -286,10 +286,22 @@ describe('detailActionTestId', () => {
 });
 
 describe('dataProviderEmptyState', () => {
+  let langChange$: Subject<LangChangeEvent>;
+  let translated: (key: string) => string;
+
   beforeEach(() => {
+    langChange$ = new Subject<LangChangeEvent>();
+    translated = (key: string) => key;
+
     TestBed.configureTestingModule({
       providers: [
-        { provide: TranslateService, useValue: { instant: (key: string) => key } },
+        {
+          provide: TranslateService,
+          useValue: {
+            instant: (key: string) => translated(key),
+            onLangChange: langChange$,
+          },
+        },
       ],
     });
   });
@@ -320,6 +332,18 @@ describe('dataProviderEmptyState', () => {
       expect(empty.count()).toBe(3);
       expect(empty.message()).toBe('No records have been added yet');
       expect(empty.icon()).toBe('mdi-format-list-text');
+    });
+  });
+
+  it('re-translates the message when the language changes', () => {
+    TestBed.runInInjectionContext(() => {
+      const empty = dataProviderEmptyState(makeProvider(EmptyType.NoSearchResults, 0));
+      expect(empty.message()).toBe('No Search Results.');
+
+      translated = () => 'Aucun résultat.';
+      langChange$.next({ lang: 'fr' } as LangChangeEvent);
+
+      expect(empty.message()).toBe('Aucun résultat.');
     });
   });
 

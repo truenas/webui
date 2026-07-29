@@ -1,0 +1,27 @@
+// Multi-colour status pill used by the migrated table state cells
+// (`ix-task-state-cell`, `ix-vmware-status-cell`). @truenas/ui-components has no
+// multi-colour pill primitive, so the shape and the per-state colours live here
+// rather than being copied into each cell's stylesheet. Apply it to the element
+// that also carries a `state-*` colour class.
+//
+// See "Migration follow-ups" in TRUENAS_UI_INTEGRATION.md — this goes away once
+// the library ships a status pill.
+@mixin status-pill {
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid currentColor;
+  border-radius: 25px;
+  display: inline-flex;
+  font-weight: 700;
+  height: 30px;
+  line-height: initial;
+  padding: 0 8px;
+  white-space: nowrap;
+
+  &.state-primary { color: var(--primary); }
+  &.state-red { color: var(--red); }
+  &.state-blue { color: var(--blue); }
+  &.state-green { color: var(--green); }
+  &.state-orange { color: var(--orange); }
+  &.state-yellow { color: var(--yellow); }
+}

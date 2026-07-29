@@ -8,17 +8,17 @@
 @if (!empty.count() && !isLoading()) {
   @if (searchQuery()) {
     <tn-empty
-      icon="magnify-scan"
-      iconLibrary="mdi"
-      iconSize="56px"
+      [icon]="noSearchResultsIcon.name"
+      [iconLibrary]="noSearchResultsIcon.library"
+      [iconSize]="noSearchResultsIcon.size"
       [title]="noSearchResultsConfig.title | translate"
       [description]="noSearchResultsConfig.message | translate"
     ></tn-empty>
   } @else {
     <tn-empty
-      icon="true-cloud"
-      iconLibrary="custom"
-      iconSize="56px"
+      [icon]="emptyIcon.name"
+      [iconLibrary]="emptyIcon.library"
+      [iconSize]="emptyIcon.size"
       [title]="emptyConfig.message | translate | flattenEmptyMessage"
     ></tn-empty>
   }

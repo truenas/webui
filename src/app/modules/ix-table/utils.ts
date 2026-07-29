@@ -124,6 +124,18 @@ export function detailActionTestId(parts: (string | number | undefined)[], actio
  * Only for derivations of the row and nothing else — a test-id tag, an aria
  * label, a parsed crontab. Anything that also depends on the clock (a "next run"
  * countdown) must stay uncached or it will freeze at its first render.
+ *
+ * Derive only from fields that never change on a live row object. Rows are not
+ * always replaced on update — a job subscription may mutate the row in place
+ * (see `cloud-backup-list.updateRowJob()`, `cloudsync-list.setupJobSubscriptions()`),
+ * and the cache is keyed on that same object, so a derivation reading a field
+ * those updates touch (a state label, a progress string) would freeze at its
+ * first value. Identity fields (description, path, dataset, schedule) are safe.
+ *
+ * Reach for it where the derivation is more than a field read — parsing a
+ * crontab, composing and translating a label, kebab-casing a test-id tag. A
+ * plain method is the right call for a ternary over two properties; the WeakMap
+ * lookup would cost more than re-deriving it.
  */
 export function perRow<T extends object, R>(derive: (row: T) => R): (row: T) => R {
   const cache = new WeakMap<T, R>();
@@ -202,7 +214,8 @@ export interface TableEmptyState {
  *
  * Note: only `EmptyConfig.title` survives — `tn-table` has no input for the
  * config's `message`, so the second translated line ix-table rendered on the
- * no-search-results state is not shown. Tracked for the epic.
+ * no-search-results state is not shown. Tracked under "Migration follow-ups" in
+ * TRUENAS_UI_INTEGRATION.md.
  */
 export function dataProviderEmptyState<T>(
   provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
@@ -214,9 +227,14 @@ export function dataProviderEmptyState<T>(
     initialValue: EmptyType.Loading,
   });
 
+  // Keyed into `message` below so it re-translates on a language change, the way the
+  // `| translate` bindings around it do — `instant()` alone would freeze the first locale.
+  const lang = toSignal(translate.onLangChange, { initialValue: null });
+
   return {
     type,
     message: computed(() => {
+      lang();
       // `defaultEmptyConfig` always resolves to a config (it has a `default:` branch),
       // but `title` is optional on EmptyConfig.
       const title = emptyService.defaultEmptyConfig(type()).title;

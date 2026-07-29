@@ -25,13 +25,13 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { DisplayableState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { TaskState } from 'app/enums/task-state.enum';
+import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   scheduleColumn,
@@ -126,6 +126,10 @@ export class RsyncTaskListComponent implements OnInit {
   // translated string has a single source of truth and follows a language change.
   protected readonly emptyConfig = rsyncTaskEmptyConfig;
 
+  // Icon split out of the same config rather than hand-copied into the template, so
+  // the catalog stays the single source of truth for the icon as well as the message.
+  protected readonly emptyIcon = emptyConfigIcon(rsyncTaskEmptyConfig);
+
   protected readonly actions: IconActionConfig<RsyncTask>[] = [
     {
       iconName: tnIconMarker('play-circle', 'mdi'),
@@ -218,14 +222,12 @@ export class RsyncTaskListComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
-    // No options on purpose: the actions are rendered from the template by
-    // <ix-table-actions-cell>. This entry exists only so `toDisplayedColumns` still emits
-    // the trailing `actions` name the template's [tnColumnDef] expects. Having no `title`
-    // also keeps the picker from offering it.
-    actionsWithMenuColumn({}),
   ]));
 
-  protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));
+  // The actions column is appended rather than modelled: it is rendered from the
+  // template by <ix-table-actions-cell>, the picker must never offer it, and a
+  // column entry with no cell component behind it would misdescribe the table.
+  protected readonly displayedColumns = computed<string[]>(() => [...toDisplayedColumns(this.columns()), 'actions']);
 
   protected readonly trackByTaskId = (_index: number, row: RsyncTask): number => row.id;
 

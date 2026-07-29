@@ -3,9 +3,9 @@
 @if (pools() === 0) {
   <div class="empty-state">
     <tn-empty
-      icon="security"
-      iconLibrary="material"
-      iconSize="56px"
+      [icon]="emptyIcon.name"
+      [iconLibrary]="emptyIcon.library"
+      [iconSize]="emptyIcon.size"
       [title]="emptyConfig.title | translate"
       [description]="emptyConfig.message | translate | flattenEmptyMessage"
     ></tn-empty>

@@ -22,9 +22,9 @@
 
 @if (empty.type() === EmptyType.NoPageData && !empty.count()) {
   <tn-empty
-    icon="cloud-outline"
-    iconLibrary="mdi"
-    iconSize="56px"
+    [icon]="emptyIcon.name"
+    [iconLibrary]="emptyIcon.library"
+    [iconSize]="emptyIcon.size"
     [title]="emptyConfig.message | translate | flattenEmptyMessage"
   ></tn-empty>
 } @else {

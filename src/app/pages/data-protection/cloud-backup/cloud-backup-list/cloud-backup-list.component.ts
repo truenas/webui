@@ -20,10 +20,12 @@ import { cloudBackupTaskEmptyConfig, noSearchResultsConfig } from 'app/constants
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
@@ -84,6 +86,7 @@ export class CloudBackupListComponent {
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
+  private emptyService = inject(EmptyService);
 
   readonly dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
   readonly cloudBackups = input<CloudBackup[]>([]);
@@ -104,6 +107,18 @@ export class CloudBackupListComponent {
   // shows an empty state and takes no `[emptyMessage]`/`[emptyIcon]`.
   protected readonly emptyConfig = cloudBackupTaskEmptyConfig;
   protected readonly noSearchResultsConfig = noSearchResultsConfig;
+
+  // Icons split out of the same configs rather than hand-copied into the template, so
+  // the catalog stays the single source of truth for the icon as well as the message.
+  // The no-search-results config carries no icon of its own — that state's icon belongs
+  // to the empty *type*, so it comes from the type mapping. Keyed on the config's own
+  // type rather than the provider's: this branch renders whenever a search matched
+  // nothing, including on a list that was empty to begin with.
+  protected readonly emptyIcon = emptyConfigIcon(cloudBackupTaskEmptyConfig);
+  protected readonly noSearchResultsIcon = emptyConfigIcon(
+    noSearchResultsConfig,
+    this.emptyService.iconForType(noSearchResultsConfig.type),
+  );
 
   protected readonly displayedColumns = ['description', 'enabled', 'snapshot', 'state', 'last-run', 'actions'];
 

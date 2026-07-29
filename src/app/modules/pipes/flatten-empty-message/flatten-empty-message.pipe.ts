@@ -1,8 +1,13 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 
 /**
  * Flattens an `EmptyConfig.message` to plain text for `tn-empty`'s text inputs.
+ *
+ * Those messages were written for `<ix-empty>`, which rendered them as HTML, so
+ * several carry `<br>`/`<p>` markup. `tn-empty`'s `[title]`/`[description]` are
+ * text inputs, so a migrated empty state has to strip the markup — at runtime,
+ * off the translated string, rather than by re-wording the catalog key, which
+ * would mint a new key and drop every existing translation.
  *
  * Chain it after `translate` so the catalog key stays the source of truth and the result
  * follows a language change:
@@ -16,6 +21,9 @@ import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 })
 export class FlattenEmptyMessagePipe implements PipeTransform {
   transform(message: string): string {
-    return flattenEmptyConfigMessage(message);
+    return message
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 }

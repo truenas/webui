@@ -24,6 +24,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -136,6 +137,10 @@ export class ReplicationListComponent implements OnInit {
   // translated string has a single source of truth and follows a language change.
   protected readonly emptyConfig = replicationTaskEmptyConfig;
 
+  // Icon split out of the same config rather than hand-copied into the template, so
+  // the catalog stays the single source of truth for the icon as well as the message.
+  protected readonly emptyIcon = emptyConfigIcon(replicationTaskEmptyConfig);
+
   // ix-table column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs) and the hidden-column list rendered in the detail
   // row; tn-table renders cells from the template and derives its
@@ -196,6 +201,8 @@ export class ReplicationListComponent implements OnInit {
     // column as an <ix-table-toggle-cell>, but when the picker hides this column
     // <ix-table-details-row> renders it through the ix cell components, where a
     // toggle would be interactive without an `onRowToggle`/`requiredRoles`.
+    // Read-only in the detail row is a small regression from the pre-migration
+    // toggle — see "Migration follow-ups" in TRUENAS_UI_INTEGRATION.md.
     yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
@@ -234,6 +241,9 @@ export class ReplicationListComponent implements OnInit {
     return detailActionTestId([row.id], action);
   }
 
+  // Plain methods rather than `perRow`: both are a ternary over two properties, where the
+  // WeakMap lookup would cost more than re-deriving. `perRow` is for the derivations that
+  // actually do work — parsing a crontab, composing a translated label, kebab-casing a tag.
   protected getSshConnection(task: ReplicationTask): string {
     return task.ssh_credentials ? task.ssh_credentials.name : this.translate.instant('N/A');
   }
