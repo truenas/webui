@@ -31,11 +31,10 @@
 }
 
 @if (!currentPageCount() && !isLoading()) {
-  @let emptyConfig = emptyService.defaultEmptyConfig(emptyType());
   <tn-empty
-    [icon]="emptyService.iconForType(emptyType())"
-    [title]="emptyConfig.title | translate"
-    [description]="emptyConfig.message ? (emptyConfig.message | translate) : undefined"
+    [icon]="emptyIcon()"
+    [title]="emptyConfig().title | translate"
+    [description]="emptyConfig().message ? (emptyConfig().message | translate) : undefined"
     [actionText]="emptyActionText()"
     (onAction)="onEmptyAction()"
   ></tn-empty>
@@ -66,7 +65,7 @@
 
     <ng-container [tnColumnDef]="'size'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Disk Size' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ diskSize(row) }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.sizeText }}</ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'pool'" [sortable]="true">
@@ -101,17 +100,17 @@
 
     <ng-container [tnColumnDef]="'hddstandby'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'HDD Standby' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ hddStandbyValue(row) }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.hddStandbyText }}</ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'advpowermgmt'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Adv. Power Management' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ advPowerManagementValue(row) }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.advPowerManagementText }}</ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'sed_status'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Self-Encrypting Drive (SED)' | translate }}</ng-template>
-      <ng-template let-row tnCellDef>{{ sedStatus(row) }}</ng-template>
+      <ng-template let-row tnCellDef>{{ row.sedStatusText }}</ng-template>
     </ng-container>
 
     <ng-template let-disk tnDetailRowDef>
@@ -119,7 +118,7 @@
         <div class="table-details-row-actions">
           <tn-button
             icon="mdi-pencil"
-            [testId]="[diskTag(disk), 'edit']"
+            [testId]="[disk.tag, 'edit']"
             [label]="'Edit' | translate"
             (onClick)="edit([disk])"
           ></tn-button>
@@ -128,7 +127,7 @@
             <tn-button
               *ixRequiresRoles="requiredRoles"
               icon="mdi-delete-sweep"
-              [testId]="[diskTag(disk), 'wipe']"
+              [testId]="[disk.tag, 'wipe']"
               [label]="'Wipe' | translate"
               (onClick)="wipe(disk)"
             ></tn-button>
@@ -138,7 +137,7 @@
             <tn-button
               *ixRequiresRoles="requiredRoles"
               icon="mdi-lock-open-variant"
-              [testId]="[diskTag(disk), 'unlock']"
+              [testId]="[disk.tag, 'unlock']"
               [label]="'Unlock' | translate"
               (onClick)="unlock(disk)"
             ></tn-button>
@@ -146,7 +145,7 @@
             <tn-button
               *ixRequiresRoles="requiredRoles"
               icon="mdi-restart"
-              [testId]="[diskTag(disk), 'reset-sed']"
+              [testId]="[disk.tag, 'reset-sed']"
               [label]="'SED Reset' | translate"
               (onClick)="resetSed(disk)"
             ></tn-button>

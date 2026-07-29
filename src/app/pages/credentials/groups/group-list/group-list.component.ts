@@ -21,6 +21,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { restrictToSingleExpandedRow } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -74,31 +75,10 @@ export class GroupListComponent implements OnInit {
   protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
   protected readonly trackById = (_: number, row: Group): number => row.id;
 
-  // tn-table allows multiple rows expanded at once and exposes no single-expand input or
-  // row-expand output to hook into, so we restore the single-expand behavior of the previous
-  // ix-table here: whenever a second row opens (via row click or the expand chevron) we collapse
-  // back to just the newly-opened one. We diff against the previous set rather than caching a
-  // single row reference, so a data reload (which swaps in fresh row objects) can't leave a stale
-  // reference behind — the set tracking stays consistent with whatever tn-table currently holds.
-  private previousExpandedRows = new Set<unknown>();
   private defaultSortReflected = false;
 
   constructor() {
-    effect(() => {
-      const table = this.table();
-      if (!table) {
-        return;
-      }
-      const expanded = table.expandedRows();
-      if (expanded.size <= 1) {
-        this.previousExpandedRows = new Set(expanded);
-        return;
-      }
-      const newest = [...expanded].find((row) => !this.previousExpandedRows.has(row));
-      const collapsed = newest ? new Set<unknown>([newest]) : new Set<unknown>();
-      this.previousExpandedRows = collapsed;
-      table.expandedRows.set(collapsed);
-    });
+    restrictToSingleExpandedRow(this.table);
 
     // The data provider sorts the rows, but tn-table tracks its own sort-arrow state, so reflect
     // the default sort in the header indicator once the table view is available.

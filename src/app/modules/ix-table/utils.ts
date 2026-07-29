@@ -1,6 +1,6 @@
-import { isSignal, Signal } from '@angular/core';
+import { effect, isSignal, Signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { type TnSortEvent } from '@truenas/ui-components';
+import { TnTableComponent, type TnSortEvent } from '@truenas/ui-components';
 import { get } from 'lodash-es';
 import { Observable, switchMap } from 'rxjs';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
@@ -46,14 +46,56 @@ export function createTable<T>(
 }
 
 /**
+ * Restores the single-expanded-row behavior of the previous ix-table on a
+ * `tn-table`, which allows several rows open at once and exposes no
+ * single-expand input or row-expand output to hook into: whenever a second row
+ * opens (via row click or the expand chevron) we collapse back to just the
+ * newly-opened one.
+ *
+ * We diff against the previous set rather than caching a single row reference,
+ * so a data reload (which swaps in fresh row objects) can't leave a stale
+ * reference behind — the set tracking stays consistent with whatever tn-table
+ * currently holds.
+ *
+ * Must be called from an injection context (e.g. a component constructor).
+ */
+export function restrictToSingleExpandedRow<T>(table: Signal<TnTableComponent<T> | undefined>): void {
+  let previousExpandedRows = new Set<unknown>();
+
+  effect(() => {
+    const instance = table();
+    if (!instance) {
+      return;
+    }
+    const expanded = instance.expandedRows();
+    if (expanded.size <= 1) {
+      previousExpandedRows = new Set(expanded);
+      return;
+    }
+    const newest = [...expanded].find((row) => !previousExpandedRows.has(row));
+    const collapsed = newest ? new Set<unknown>([newest]) : new Set<unknown>();
+    previousExpandedRows = collapsed;
+    instance.expandedRows.set(collapsed);
+  });
+}
+
+/**
  * Translates a tn-table `(sortChange)` event into the `TableSort` shape our
  * data providers expect. `active` is the index of the sorted column within the
  * displayed column list (or `null` when sorting is cleared). Shared so every
  * tn-table migration maps sort state the same way.
+ *
+ * Pass `columns` (the ix-table column model a table still keeps for its picker)
+ * to preserve the sort *semantics* of the previous ix-table head, which sorted
+ * by a column's `sortBy` or, failing that, by its rendered `getValue` rather
+ * than by the raw row property. Without it, sorting falls back to the raw value
+ * at `propertyName` — fine for plain columns, but a silent behavior change for
+ * any column whose cell shows a derived or translated value.
  */
 export function mapTnSortToTableSort<T>(
   event: TnSortEvent,
   displayedColumns: string[],
+  columns?: Column<T, ColumnComponent<T>>[],
 ): TableSort<T> {
   let direction: SortDirection | null = null;
   if (event.direction === 'asc') {
@@ -62,9 +104,14 @@ export function mapTnSortToTableSort<T>(
     direction = SortDirection.Desc;
   }
 
+  const sortedColumn = direction
+    ? columns?.find((column) => String(column.propertyName) === event.column)
+    : undefined;
+
   const columnIndex = displayedColumns.indexOf(event.column);
   return {
     propertyName: direction ? (event.column as keyof T) : null,
+    sortBy: (sortedColumn?.sortBy || sortedColumn?.getValue) as ((row: T) => string | number) | undefined,
     direction,
     active: direction && columnIndex >= 0 ? columnIndex : null,
   };

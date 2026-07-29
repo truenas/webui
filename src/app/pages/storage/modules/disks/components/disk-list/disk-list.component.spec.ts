@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnDialog, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SedStatus } from 'app/enums/sed-status.enum';
@@ -281,6 +281,49 @@ describe('DiskListComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('disk.query', expect.anything());
     expect(api.call).toHaveBeenCalledWith('disk.details');
+  });
+
+  it('reconciles the edited row immediately, without waiting for the reload', async () => {
+    const api = spectator.inject(ApiService);
+    const formPanel = spectator.inject(FormSidePanelService);
+
+    const mockUpd: DiskFormResponse = [{ identifier: 'identifier1', pool: 'new-pool' }];
+    jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.success(mockUpd));
+
+    await table.toggleRowExpansion(0);
+
+    // Against a real middleware the reload takes 5-10s; keep it pending so the optimistic
+    // update the save performs is what the table shows.
+    (api.call as jest.Mock).mockReturnValue(NEVER);
+
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
+    await editButton.click();
+
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    const rows = await table.getAllRowTexts();
+    expect(rows[0]).toEqual(['sda', 'serial1', '40 GiB', 'new-pool', 'Unsupported']);
+  });
+
+  it('drops a selection the save invalidated instead of reusing pre-edit rows', async () => {
+    const formPanel = spectator.inject(FormSidePanelService);
+    jest.spyOn(formPanel, 'open').mockReturnValue(
+      SlideInResult.success([{ identifier: 'identifier1', pool: 'new-pool' }] as DiskFormResponse),
+    );
+
+    await table.toggleRowSelection(0);
+    await table.toggleRowSelection(1);
+
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit Disks' }));
+    await editButton.click();
+
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    // tn-table clears its selection when the row objects are replaced, so the batch bar
+    // (and with it the stale disks it would have edited) goes away.
+    expect(spectator.query('[data-test="button-edit-selected"]')).not.toExist();
   });
 });
 

@@ -159,6 +159,9 @@ describe('DiskBulkEditComponent', () => {
     expect(api.job).toHaveBeenCalledWith('core.bulk', expect.anything());
     expect(dialogService.error).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+    // The failure path completes without emitting (EMPTY), so the panel's busy state is
+    // only cleared by <ix-form>'s complete safety net — the form must stay usable.
+    expect(spectator.component.isBusy()).toBe(false);
   });
 
   it('handles validation errors on exception', async () => {

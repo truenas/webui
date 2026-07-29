@@ -25,10 +25,12 @@
   overflow-y: auto;
 }
 
+// Sized to its content instead of a fixed 25%: the side panel is much narrower than the
+// old dialog, and a quarter of it leaves ~120px for an icon plus a disk name.
 .disk-item {
-  display: flex;
-  width: 25%;
   align-items: center;
+  display: flex;
+  flex: 0 0 auto;
   gap: 8px;
   padding: 10px 14px;
 }

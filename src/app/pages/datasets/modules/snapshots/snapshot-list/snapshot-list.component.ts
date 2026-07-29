@@ -1,6 +1,6 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit,
-  computed, effect, inject, signal, viewChild,
+  computed, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -35,6 +35,7 @@ import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provi
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
+import { restrictToSingleExpandedRow } from 'app/modules/ix-table/utils';
 import { getMachineTime, LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -130,12 +131,6 @@ export class SnapshotListComponent implements OnInit {
 
   protected readonly trackBySnapshotId = (_: number, row: ZfsSnapshot): string => row.name;
 
-  // tn-table allows multiple rows expanded at once and exposes no single-expand input, so we
-  // restore the previous ix-table single-expand behavior: whenever a second row opens we collapse
-  // back to just the newly-opened one. Diff against the previous set (rather than caching a single
-  // reference) so a data reload swapping in fresh row objects can't leave a stale reference behind.
-  private previousExpandedRows = new Set<unknown>();
-
   private readonly sortByMap: Record<string, (row: ZfsSnapshot) => number> = {
     used: (row) => getFiniteNumber(row?.properties?.used?.parsed) ?? 0,
     created: (row) => getSnapshotCreationMs(row) ?? 0,
@@ -173,21 +168,7 @@ export class SnapshotListComponent implements OnInit {
   constructor() {
     this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
 
-    effect(() => {
-      const table = this.table();
-      if (!table) {
-        return;
-      }
-      const expanded = table.expandedRows();
-      if (expanded.size <= 1) {
-        this.previousExpandedRows = new Set(expanded);
-        return;
-      }
-      const newest = [...expanded].find((row) => !this.previousExpandedRows.has(row));
-      const collapsed = newest ? new Set<unknown>([newest]) : new Set<unknown>();
-      this.previousExpandedRows = collapsed;
-      table.expandedRows.set(collapsed);
-    });
+    restrictToSingleExpandedRow(this.table);
 
     this.showExtraColumnsControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))

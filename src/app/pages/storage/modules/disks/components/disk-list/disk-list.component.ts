@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -29,7 +29,8 @@ import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-t
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
-  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, restrictToSingleExpandedRow,
+  toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -44,6 +45,24 @@ import {
 import { UnlockSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/unlock-sed-dialog/unlock-sed-dialog.component';
 import { DiskWipeDialog } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 import { LicenseService } from 'app/services/license.service';
+
+/**
+ * A disk row with every display-only value resolved once, when the rows are built. The
+ * templates bind these fields instead of calling methods, so translation, size formatting
+ * and test-id kebab-casing don't re-run for every visible row on every change detection.
+ */
+interface DiskRow extends Disk {
+  sizeText: string;
+  sedStatusText: string;
+  hddStandbyText: string;
+  advPowerManagementText: string;
+  /**
+   * Test-id fragment for the row's action buttons. Pre-split with lodash `kebabCase` — it
+   * breaks letter–digit boundaries (`nvme0n1` → `nvme-0-n-1`) while the library's test-id
+   * kebab does not, so passing the raw name would silently rename every NVMe row's ids.
+   */
+  tag: string;
+}
 
 @Component({
   selector: 'ix-disk-list',
@@ -88,7 +107,7 @@ export class DiskListComponent {
   // both the SED column's default visibility and the disk.query `extra` args read it.
   private readonly hasSed = toSignal(this.licenseService.hasSed$, { initialValue: false });
 
-  private disks: Disk[] = [];
+  private disks: DiskRow[] = [];
   private unusedDisks: DetailsDisk[] = [];
 
   private readonly disks$ = defer(() => {
@@ -111,21 +130,21 @@ export class DiskListComponent {
     ]).pipe(
       map(([unusedDisks, disks]) => {
         this.unusedDisks = unusedDisks;
-        this.disks = disks.map((disk) => ({
-          ...disk,
-          pool: this.getPoolColumn(disk),
-        }));
+        this.disks = disks.map((disk) => this.toRow(disk));
         return this.disks;
       }),
     );
   });
 
-  protected readonly dataProvider = new AsyncDataProvider<Disk>(this.disks$);
+  protected readonly dataProvider = new AsyncDataProvider<DiskRow>(this.disks$);
 
   protected readonly rows = dataProviderRows(this.dataProvider);
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$, { initialValue: 0 });
   protected readonly emptyType = toSignal(this.dataProvider.emptyType$, { initialValue: EmptyType.Loading });
+
+  protected readonly emptyConfig = computed(() => this.emptyService.defaultEmptyConfig(this.emptyType()));
+  protected readonly emptyIcon = computed(() => this.emptyService.iconForType(this.emptyType()));
 
   // `tn-empty` renders its action whenever `actionText` is set, so keep the previous behavior of
   // only offering one for the no-results and error states — the other states had no button.
@@ -140,17 +159,20 @@ export class DiskListComponent {
     }
   });
 
-  private readonly table = viewChild(TnTableComponent<Disk>);
-  protected readonly selectedDisks = signal<Disk[]>([]);
+  private readonly table = viewChild(TnTableComponent<DiskRow>);
 
-  // tn-table allows several rows open at once and exposes no single-expand input, so restore
-  // the previous ix-table behavior: whenever a second row opens, collapse back to that one.
-  private previousExpandedRows = new Set<unknown>();
+  // Held by identifier rather than by row reference: a save rebuilds every row object, and
+  // selection derived from the current rows can't hand a batch action pre-edit data.
+  private readonly selectedIdentifiers = signal<ReadonlySet<string>>(new Set());
+
+  protected readonly selectedDisks = computed(
+    () => this.rows().filter((disk) => this.selectedIdentifiers().has(disk.identifier)),
+  );
 
   // The ix-table column model is retained purely as picker metadata (visibility + saved
   // preferences) and to drive the hidden-column readout inside the expanded detail row;
   // tn-table renders its own cells from the templates below.
-  protected readonly columns = signal(createTable<Disk>([
+  protected readonly columns = signal(createTable<DiskRow>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
@@ -162,7 +184,9 @@ export class DiskListComponent {
     textColumn({
       title: this.translate.instant('Disk Size'),
       propertyName: 'size',
-      getValue: (disk) => buildNormalizedFileSize(disk.size),
+      getValue: (disk) => disk.sizeText,
+      // Sort by the raw byte count, not by the formatted "5 GiB" text.
+      sortBy: (disk) => disk.size,
     }),
     textColumn({
       title: this.translate.instant('Pool'),
@@ -196,13 +220,13 @@ export class DiskListComponent {
     textColumn({
       title: this.translate.instant('HDD Standby'),
       propertyName: 'hddstandby',
-      getValue: (row) => this.hddStandbyValue(row),
+      getValue: (row) => row.hddStandbyText,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Adv. Power Management'),
       propertyName: 'advpowermgmt',
-      getValue: (row) => this.advPowerManagementValue(row),
+      getValue: (row) => row.advPowerManagementText,
       hidden: true,
     }),
     sedStatusColumn({
@@ -219,28 +243,14 @@ export class DiskListComponent {
 
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
 
-  protected readonly hiddenColumns = computed<Column<Disk, ColumnComponent<Disk>>[]>(
+  protected readonly hiddenColumns = computed<Column<DiskRow, ColumnComponent<DiskRow>>[]>(
     () => this.columns().filter((column) => column?.hidden),
   );
 
-  protected readonly trackByIdentifier = (_: number, row: Disk): string => row.identifier;
+  protected readonly trackByIdentifier = (_: number, row: DiskRow): string => row.identifier;
 
   constructor() {
-    effect(() => {
-      const table = this.table();
-      if (!table) {
-        return;
-      }
-      const expanded = table.expandedRows();
-      if (expanded.size <= 1) {
-        this.previousExpandedRows = new Set(expanded);
-        return;
-      }
-      const newest = [...expanded].find((row) => !this.previousExpandedRows.has(row));
-      const collapsed = newest ? new Set<unknown>([newest]) : new Set<unknown>();
-      this.previousExpandedRows = collapsed;
-      table.expandedRows.set(collapsed);
-    });
+    restrictToSingleExpandedRow(this.table);
 
     this.dataProvider.load();
 
@@ -251,7 +261,8 @@ export class DiskListComponent {
       // and update it to match the new params.
       this.disks = this.disks.map((disk) => {
         if (disk.identifier === diskUpdate.identifier) {
-          return { ...disk, ...diskUpdate };
+          // Rebuild the row so its display-only fields reflect the edited values too.
+          return this.toRow({ ...disk, ...diskUpdate });
         }
 
         return disk;
@@ -265,52 +276,21 @@ export class DiskListComponent {
     });
   }
 
-  protected hddStandbyValue(row: Disk): string {
-    if (row.hddstandby === DiskStandby.AlwaysOn) {
-      return this.translate.instant('Always On');
-    }
-
-    return row.hddstandby;
+  protected onSelectionChange(disks: DiskRow[]): void {
+    this.selectedIdentifiers.set(new Set(disks.map((disk) => disk.identifier)));
   }
 
-  protected advPowerManagementValue(row: Disk): string {
-    if (row.advpowermgmt === DiskPowerLevel.Disabled) {
-      return this.translate.instant('Disabled');
-    }
-
-    return row.advpowermgmt;
-  }
-
-  protected diskSize(row: Disk): string {
-    return buildNormalizedFileSize(row.size);
-  }
-
-  protected sedStatus(row: Disk): string {
-    return this.translate.instant(sedStatusLabel(row));
-  }
-
-  /**
-   * Pre-splits the disk name with lodash `kebabCase` — it breaks letter–digit boundaries
-   * (`nvme0n1` → `nvme-0-n-1`) while the library's test-id kebab does not, so passing the
-   * raw name would silently rename every NVMe row's action test ids.
-   */
-  protected diskTag(row: Disk): string {
-    return kebabCase(row.name);
-  }
-
-  protected onSelectionChange(disks: Disk[]): void {
-    this.selectedDisks.set(disks);
-  }
-
-  protected onRowClick(row: Disk): void {
+  protected onRowClick(row: DiskRow): void {
     this.table()?.toggleRowExpansion(row);
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<Disk>(event, this.displayedColumns()));
+    // Pass the column model so the derived columns keep sorting by their displayed
+    // text (and Disk Size by its raw byte count), the way ix-table's head did.
+    this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns(), this.columns()));
   }
 
-  protected onColumnsChange(columns: Column<Disk, ColumnComponent<Disk>>[]): void {
+  protected onColumnsChange(columns: Column<DiskRow, ColumnComponent<DiskRow>>[]): void {
     this.columns.set([...columns]);
   }
 
@@ -382,6 +362,22 @@ export class DiskListComponent {
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.disks, query, columnKeys: ['name', 'pool', 'serial', 'size'] });
+  }
+
+  private toRow(disk: Disk): DiskRow {
+    return {
+      ...disk,
+      pool: this.getPoolColumn(disk),
+      sizeText: buildNormalizedFileSize(disk.size),
+      sedStatusText: this.translate.instant(sedStatusLabel(disk)),
+      hddStandbyText: disk.hddstandby === DiskStandby.AlwaysOn
+        ? this.translate.instant('Always On')
+        : disk.hddstandby,
+      advPowerManagementText: disk.advpowermgmt === DiskPowerLevel.Disabled
+        ? this.translate.instant('Disabled')
+        : disk.advpowermgmt,
+      tag: kebabCase(disk.name),
+    };
   }
 
   private getPoolColumn(diskToCheck: Disk): string {

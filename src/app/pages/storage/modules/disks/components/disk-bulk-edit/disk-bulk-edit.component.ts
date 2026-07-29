@@ -4,7 +4,7 @@ import {
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnSelectComponent, type TnSelectOption,
+  TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
@@ -21,7 +21,9 @@ import {
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
+import {
+  advPowerManagementOptionTestId, DiskFormResponse,
+} from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 
 @Component({
   selector: 'ix-disk-bulk-edit',
@@ -66,12 +68,7 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | nul
     helptextDisks.advancedPowerManagementOptions,
   );
 
-  /**
-   * `tn-select` derives an option's test id from a primitive `value` before falling back to the
-   * label, which would collapse `option-advpowermgmt-level-127-…` down to `option-advpowermgmt-127`.
-   * The legacy `ix-select` ids were label-derived, so pin the extractor to keep them byte-stable.
-   */
-  protected readonly optionLabelTestId = (option: TnSelectOption<DiskPowerLevel>): string => option.label;
+  protected readonly optionLabelTestId = advPowerManagementOptionTestId;
 
   // Captured on a successful save so the panel host can hand the updated disks back to its
   // opener: `<ix-form>` emits a bare `true` in the side-panel host, dropping the payload.
@@ -126,8 +123,6 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | nul
     };
     const hddStandby: DiskStandby[] = [];
     const advPowerMgt: DiskPowerLevel[] = [];
-
-    this.diskIds = [];
 
     selectedDisks.forEach((disk) => {
       this.diskIds.push(disk.identifier);

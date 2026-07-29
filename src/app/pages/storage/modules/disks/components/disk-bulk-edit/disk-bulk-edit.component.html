@@ -37,10 +37,14 @@
   </tn-form-section>
 
   <tn-form-section [heading]="helptextBulkEdit.label | translate">
+    <!--
+      Neither select is required here: an empty value is meaningful in a bulk edit — it is how
+      the form reports that the selected disks disagree, and how the user leaves a setting
+      unchanged (blank values are stripped from the update payload).
+    -->
     <tn-form-field
       [label]="'HDD Standby' | translate"
       [tooltip]="helptext.standbyTooltip | translate"
-      [required]="true"
     >
       <tn-select
         formControlName="hddstandby"
@@ -48,10 +52,7 @@
       ></tn-select>
     </tn-form-field>
 
-    <tn-form-field
-      [label]="'Advanced Power Management' | translate"
-      [required]="true"
-    >
+    <tn-form-field [label]="'Advanced Power Management' | translate">
       <tn-select
         formControlName="advpowermgmt"
         [options]="advpowermgmtOptions"

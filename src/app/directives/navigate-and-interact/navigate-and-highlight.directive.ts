@@ -1,12 +1,16 @@
 import { Directive, input, inject } from '@angular/core';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 
+/**
+ * Navigates to a route and highlights an element there. Reacts to `click` only, so the host
+ * element must be natively activatable (a `<button>` or a real link) — that way keyboard
+ * activation comes from the platform instead of hand-rolled key handlers, and putting the
+ * directive on a `<button>` can't fire twice for a single Enter press.
+ */
 @Directive({
   selector: '[ixNavigateAndHighlight]',
   host: {
     '(click)': 'onClick()',
-    '(keydown.enter)': 'onClick()',
-    '(keydown.space)': 'onSpace($event)',
   },
 })
 export class NavigateAndHighlightDirective {
@@ -26,14 +30,5 @@ export class NavigateAndHighlightDirective {
     this.navigateAndHighlight.navigateAndHighlight(this.navigateRoute(), this.navigateHash(), {
       inset: this.navigateInset(),
     });
-  }
-
-  /**
-   * Hosts are usually anchors without an `href`, so the browser gives them no keyboard
-   * activation of their own. Space would otherwise scroll the page instead of navigating.
-   */
-  onSpace(event: Event): void {
-    event.preventDefault();
-    this.onClick();
   }
 }

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, inject, input } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -24,6 +24,14 @@ import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 export type DiskFormResponse = (DiskUpdate & { identifier: string })[];
+
+/**
+ * `tn-select` derives an option's test id from a primitive `value` before falling back to the
+ * label, which would collapse `option-advpowermgmt-level-127-…` down to `option-advpowermgmt-127`.
+ * The legacy `ix-select` ids were label-derived, so pin the extractor to keep them byte-stable.
+ * Shared with the bulk-edit form, which renders the same option list.
+ */
+export const advPowerManagementOptionTestId = (option: TnSelectOption<DiskPowerLevel>): string => option.label;
 
 interface DiskFormValues {
   name: string;
@@ -67,8 +75,10 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse | null> i
     name: [''],
     serial: [''],
     description: [''],
-    hddstandby: [null as DiskStandby | null],
-    advpowermgmt: [null as DiskPowerLevel | null],
+    // Both are marked required in the template and a disk always has a value for them,
+    // so back the asterisk with a validator instead of leaving Save always enabled.
+    hddstandby: [null as DiskStandby | null, Validators.required],
+    advpowermgmt: [null as DiskPowerLevel | null, Validators.required],
     passwd: [''],
     clear_pw: [false],
   });
@@ -80,12 +90,7 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse | null> i
     helptextDisks.advancedPowerManagementOptions,
   );
 
-  /**
-   * `tn-select` derives an option's test id from a primitive `value` before falling back to the
-   * label, which would collapse `option-advpowermgmt-level-127-…` down to `option-advpowermgmt-127`.
-   * The legacy `ix-select` ids were label-derived, so pin the extractor to keep them byte-stable.
-   */
-  protected readonly optionLabelTestId = (option: TnSelectOption<DiskPowerLevel>): string => option.label;
+  protected readonly optionLabelTestId = advPowerManagementOptionTestId;
 
   private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly showSedSection = computed(() => {
