@@ -4,7 +4,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -43,12 +43,28 @@ export class VirtualMachineDetailsRowComponent {
   private errorHandler = inject(ErrorHandlerService);
   private vmService = inject(VmService);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   readonly vm = input.required<VirtualMachine>();
 
   protected readonly requiredReadRoles = [Role.VmRead];
   protected readonly requiredRoles = [Role.VmWrite];
-  protected readonly resetTooltip = helptextVmList.reset_button.tooltip;
+
+  private readonly hardResetWarning = this.translate.instant(helptextVmList.hardResetWarning);
+  protected readonly resetTooltip = this.translate.instant(
+    helptextVmList.reset_button.tooltip,
+    { warning: this.hardResetWarning },
+  );
+
+  /**
+   * The Reset button sits next to Restart and the two sound alike, so the accessible name spells
+   * out that this one is a hard reset. The tooltip alone is not enough: it is only exposed via
+   * `aria-describedby` on the rendered overlay, which many screen readers skip or announce late.
+   */
+  protected readonly resetAriaLabel = this.translate.instant(
+    helptextVmList.reset_button.ariaLabel,
+    { warning: this.hardResetWarning },
+  );
 
   readonly vmStateInfo = computed(() => {
     const state = this.vm().status.state;

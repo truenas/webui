@@ -142,7 +142,10 @@ export class VmService {
   doReset(vm: VirtualMachine): Observable<boolean> {
     return this.dialogService.confirm({
       title: this.translate.instant(helptextVmList.reset_dialog.title),
-      message: this.translate.instant(helptextVmList.reset_dialog.message, { vmName: vm.name }),
+      message: this.translate.instant(helptextVmList.reset_dialog.message, {
+        vmName: vm.name,
+        warning: this.translate.instant(helptextVmList.hardResetWarning),
+      }),
       buttonText: this.translate.instant(helptextVmList.reset_dialog.buttonMessage),
       buttonColor: 'warn',
     })

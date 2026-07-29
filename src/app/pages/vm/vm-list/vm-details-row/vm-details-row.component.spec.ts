@@ -179,6 +179,13 @@ describe('VirtualMachineDetailsRowComponent', () => {
     expect(spectator.inject(VmService).doReset).toHaveBeenCalledWith(virtualMachine);
   });
 
+  it('spells out the hard reset in the accessible name of the Reset button', async () => {
+    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: /Reset/ }));
+    const ariaLabel = await (await resetButton.host()).getAttribute('aria-label');
+
+    expect(ariaLabel).toContain('hard reset');
+  });
+
   it('should call service to open display', async () => {
     const openDisplayButton = await loader.getHarness(MatButtonHarness.with({ text: /Display/ }));
     await openDisplayButton.click();

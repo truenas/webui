@@ -136,7 +136,9 @@ describe('VmService', () => {
 
     const wasReset = await firstValueFrom(spectator.service.doReset(vm));
 
-    expect(dialogService.confirm).toHaveBeenCalled();
+    expect(dialogService.confirm).toHaveBeenCalledWith(expect.objectContaining({
+      message: expect.stringContaining('The guest OS is not shut down cleanly'),
+    }));
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.reset', [1]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('VM vm has been reset.');
     expect(wasReset).toBe(true);

@@ -111,6 +111,7 @@ describe('ReportComponent', () => {
 
   describe('resize functionality', () => {
     beforeEach(() => {
+      jest.useFakeTimers();
       spectator = createComponent({
         props: {
           report: {
@@ -139,7 +140,6 @@ describe('ReportComponent', () => {
     });
 
     it('should resize chart when window resize event occurs', () => {
-      jest.useFakeTimers();
       spectator.component.isReady = true;
 
       // Trigger window resize event
@@ -152,7 +152,6 @@ describe('ReportComponent', () => {
     });
 
     it('should not resize chart before component is ready', () => {
-      jest.useFakeTimers();
       spectator.component.isReady = false;
 
       // Trigger window resize event
@@ -165,8 +164,6 @@ describe('ReportComponent', () => {
     });
 
     it('should resize chart when menu state changes', () => {
-      jest.useFakeTimers();
-
       // Mock the line chart first
       Object.defineProperty(spectator.component, 'lineChart', {
         value: jest.fn(() => mockLineChart),
@@ -182,8 +179,6 @@ describe('ReportComponent', () => {
       jest.runAllTimers();
 
       expect(mockLineChart.render).toHaveBeenCalledWith(true);
-
-      jest.useRealTimers();
     });
 
     it('should handle resize when line chart is not available', () => {

@@ -1,6 +1,15 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
+/**
+ * Single source of truth for the hard-reset warning. Composed into the button tooltip, its
+ * accessible name and the confirmation dialog via a `{warning}` placeholder, so translators
+ * only handle the sentence once and the three cannot drift apart.
+ */
+const hardResetWarning = T('The guest OS is not shut down cleanly, which may result in data loss or filesystem corruption.');
+
 export const helptextVmList = {
+  hardResetWarning,
+
   memory_dialog: {
     title: T('ERROR: Not Enough Memory'),
     message: T('The VM could not start because the current configuration could potentially\
@@ -21,15 +30,14 @@ export const helptextVmList = {
   },
 
   reset_button: {
-    tooltip: T('Hard reset. The guest OS is not shut down cleanly, which may result in data loss or filesystem\
- corruption.'),
+    tooltip: T('Hard reset. {warning}'),
+    ariaLabel: T('Reset (hard reset). {warning}'),
   },
 
   reset_dialog: {
     title: T('Reset Virtual Machine'),
-    message: T('Resetting {vmName} is the equivalent of pressing the reset button on a physical machine. The guest OS\
- will not be shut down cleanly, which may result in data loss or filesystem corruption. Are you sure you want to\
- continue?'),
+    message: T('Resetting {vmName} is the equivalent of pressing the reset button on a physical machine. {warning} Are\
+ you sure you want to continue?'),
     buttonMessage: T('Reset'),
     successMessage: T('VM {vmName} has been reset.'),
   },

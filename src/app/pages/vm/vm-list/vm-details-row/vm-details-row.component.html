@@ -24,8 +24,8 @@
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
-    [attr.aria-label]="'Reset' | translate"
-    [tnTooltip]="resetTooltip | translate"
+    [attr.aria-label]="resetAriaLabel"
+    [tnTooltip]="resetTooltip"
     [ixTest]="['reset', vm().id]"
     (click)="doReset()"
   >
