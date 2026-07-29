@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -179,6 +179,13 @@ export class DiskListComponent {
 
   private readonly table = viewChild(TnTableComponent<DiskRow>);
 
+  // The data provider keeps its sorting, but tn-table tracks its own sort-arrow state — and the
+  // table is destroyed whenever the list empties out, since the empty state replaces it in the
+  // template. Searching down to zero results and clearing the search again therefore builds a
+  // fresh table whose header shows no arrow over rows that are still sorted. Remember the last
+  // sort and reflect it into whichever table instance is currently mounted.
+  private readonly activeSort = signal<TnSortEvent | null>(null);
+
   // Held by identifier rather than by row reference: a save rebuilds every row object, and
   // selection derived from the current rows can't hand a batch action pre-edit data.
   //
@@ -256,6 +263,8 @@ export class DiskListComponent {
     sedStatusColumn({
       title: this.translate.instant('Self-Encrypting Drive (SED)'),
       propertyName: 'sed_status',
+      // Sort by the translated status the cell renders, not by the raw SedStatus enum.
+      sortBy: (row) => row.sedStatusText,
       hidden: !this.hasSed(),
     }),
   ], {
@@ -275,6 +284,16 @@ export class DiskListComponent {
 
   constructor() {
     restrictToSingleExpandedRow(this.table);
+
+    effect(() => {
+      const table = this.table();
+      const sort = this.activeSort();
+      if (!table || !sort) {
+        return;
+      }
+      table.sortColumn.set(sort.column);
+      table.sortDirection.set(sort.direction);
+    });
 
     this.dataProvider.load();
 
@@ -309,6 +328,7 @@ export class DiskListComponent {
   }
 
   protected onSortChange(event: TnSortEvent): void {
+    this.activeSort.set(event);
     // Pass the column model so the derived columns keep sorting by their displayed
     // text (and Disk Size by its raw byte count), the way ix-table's head did.
     this.dataProvider.setSorting(mapTnSortToTableSort(event, {

@@ -127,6 +127,12 @@ describe('ReportComponent', () => {
       });
     });
 
+    // Here rather than at the end of each test body: a failing expectation would otherwise
+    // leak fake timers into the rest of the file.
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
     it('should initialize viewport change detection on init', () => {
       // Simply verify that ngOnInit completes without errors
       expect(() => {
@@ -148,8 +154,6 @@ describe('ReportComponent', () => {
       jest.advanceTimersByTime(150);
 
       expect(mockLineChart.render).toHaveBeenCalledWith(true);
-
-      jest.useRealTimers();
     });
 
     it('should not resize chart before component is ready', () => {
@@ -162,8 +166,6 @@ describe('ReportComponent', () => {
       jest.advanceTimersByTime(150);
 
       expect(mockLineChart.render).not.toHaveBeenCalled();
-
-      jest.useRealTimers();
     });
 
     it('should resize chart when menu state changes', () => {
@@ -184,8 +186,6 @@ describe('ReportComponent', () => {
       jest.runAllTimers();
 
       expect(mockLineChart.render).toHaveBeenCalledWith(true);
-
-      jest.useRealTimers();
     });
 
     it('should handle resize when line chart is not available', () => {

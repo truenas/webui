@@ -3,6 +3,7 @@
   [isEditMode]="true"
   [requiredRoles]="requiredRoles"
   [submitHandler]="handleSubmit"
+  [suppressSuccessSnackbar]="true"
   (closed)="onFormClosed()"
 >
   <tn-form-section [heading]="helptextBulkEdit.title | translate">

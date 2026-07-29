@@ -6,8 +6,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { EMPTY, of } from 'rxjs';
-import { filter, switchMap, take } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -19,6 +18,7 @@ import {
   IxFormHostForm,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -45,6 +45,7 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | nul
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
 
   /** The disks being edited, supplied by the `<tn-side-panel>` host before `ngOnInit`. */
   readonly disksToEdit = input.required<Disk[]>();
@@ -72,6 +73,8 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | nul
 
   // Captured on a successful save so the panel host can hand the updated disks back to its
   // opener: `<ix-form>` emits a bare `true` in the side-panel host, dropping the payload.
+  // A partial failure resolves through this same path (with the subset that was applied), so
+  // `onFormClosed` is the only place `closed` is ever emitted from.
   private submittedResponse: DiskFormResponse | null = null;
 
   ngOnInit(): void {
@@ -89,31 +92,38 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | nul
       request$: this.api.job('core.bulk', ['disk.update', req]).pipe(
         filter((job) => job.state === JobState.Success),
         take(1),
-        switchMap((job) => {
+        map((job) => {
           // core.bulk reports per-disk failures in its result rather than failing the job, so
-          // surface the first one here and complete without emitting — no success snackbar.
+          // surface the first one here and resolve with only the disks that were applied.
           const failure = job.result.find((result) => result.error !== null);
-          if (failure) {
-            this.dialogService.error({
-              title: this.translate.instant(helptextDisks.errorDialogTitle),
-              message: failure.error,
-            });
-            // core.bulk is not transactional: the disks that reported no error were already
-            // updated on the backend. Close with just those so the opener reconciles the rows
-            // that really changed and reloads — otherwise the list keeps showing pre-edit values
-            // for disks that did change. An all-failed bulk closes with an empty list, which
-            // still reloads, which is what the pre-migration form closed with in either case.
-            this.closed.emit(this.toResponse(
-              req.filter((_, index) => job.result[index]?.error === null),
-            ));
-            return EMPTY;
+          if (!failure) {
+            return req;
           }
-          return of(req);
+
+          this.dialogService.error({
+            title: this.translate.instant(helptextDisks.errorDialogTitle),
+            message: failure.error,
+          });
+          // core.bulk is not transactional: the disks that reported no error were already
+          // updated on the backend. Close with just those so the opener reconciles the rows
+          // that really changed and reloads — otherwise the list keeps showing pre-edit values
+          // for disks that did change. An all-failed bulk closes with an empty list, which
+          // still reloads, which is what the pre-migration form closed with in either case.
+          return req.filter((_, index) => job.result[index]?.error === null);
         }),
       ),
+      // `<ix-form>`'s own snackbar is suppressed in the template and raised below instead: a
+      // partially failed bulk still resolves successfully, but it has already reported itself
+      // through an error dialog, and a "Successfully saved" toast beside that dialog would be a
+      // lie. It can't be a bound `[suppressSuccessSnackbar]` signal — an `input()` only updates
+      // on the next change detection, while `<ix-form>` reads it synchronously on emission.
       successMessage: successText,
-      onSuccess: () => {
-        this.submittedResponse = this.toResponse(req);
+      onSuccess: (result) => {
+        const saved = result as [id: string, update: DiskUpdate][];
+        this.submittedResponse = this.toResponse(saved);
+        if (saved.length === req.length) {
+          this.snackbar.success(successText);
+        }
       },
     };
   };

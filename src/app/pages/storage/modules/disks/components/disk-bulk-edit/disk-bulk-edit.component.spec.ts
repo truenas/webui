@@ -160,9 +160,9 @@ describe('DiskBulkEditComponent', () => {
 
     expect(api.job).toHaveBeenCalledWith('core.bulk', expect.anything());
     expect(dialogService.error).toHaveBeenCalled();
+    // The partial failure resolves through the success path (so the panel closes and the
+    // opener reloads), but the "Successfully saved" snackbar is withheld beside the dialog.
     expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
-    // The failure path completes without emitting (EMPTY), so the panel's busy state is
-    // only cleared by <ix-form>'s complete safety net.
     expect(spectator.component.isBusy()).toBe(false);
   });
 
@@ -179,6 +179,20 @@ describe('DiskBulkEditComponent', () => {
     expect(closed).toHaveBeenCalledWith([
       { identifier: '{serial}VB5a315293-ea077d3d', advpowermgmt: '64', hddstandby: '10' },
     ]);
+    // Full and partial saves share one close path, so the opener can never see two emissions.
+    expect(closed).toHaveBeenCalledTimes(1);
+  });
+
+  it('exposes the host contract the side panel Save is bound to', async () => {
+    // The panel footer owns Save and drives it through these, so cover them here — the spec
+    // itself submits via `submit()` for the same reason.
+    expect(spectator.component.canSubmit()).toBe(true);
+    expect(spectator.component.hasUnsavedChanges()).toBe(false);
+
+    await fillSettings();
+
+    expect(spectator.component.canSubmit()).toBe(true);
+    expect(spectator.component.hasUnsavedChanges()).toBe(true);
   });
 
   it('handles validation errors on exception', async () => {

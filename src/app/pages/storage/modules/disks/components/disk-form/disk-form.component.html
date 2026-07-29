@@ -56,10 +56,16 @@
         [label]="'SED Password' | translate"
         [tooltip]="helptext.passwordTooltip | translate"
       >
+        <!--
+          `showPasswordToggle` is opt-in on tn-input, but the legacy ix-input rendered the
+          reveal button unconditionally for password fields — keep it so a mistyped SED
+          password can still be checked.
+        -->
         <tn-input
           formControlName="passwd"
           [testId]="'passwd'"
           [inputType]="InputType.Password"
+          [showPasswordToggle]="true"
         ></tn-input>
       </tn-form-field>
 

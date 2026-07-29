@@ -185,6 +185,18 @@ describe('DiskFormComponent', () => {
       expect(await sedPassword.getValue()).toBe('');
     });
 
+    it('lets the user reveal the SED password they typed', async () => {
+      const sedPassword = await getInput('passwd');
+      await sedPassword.setValue('sedPassword');
+
+      expect(await sedPassword.hasPasswordToggle()).toBe(true);
+      expect(await sedPassword.isPasswordRevealed()).toBe(false);
+
+      await sedPassword.togglePasswordVisibility();
+
+      expect(await sedPassword.isPasswordRevealed()).toBe(true);
+    });
+
     it('sets disk settings when form is opened', async () => {
       expect(await (await getInput('name')).getValue()).toBe('sdc');
       expect(await (await getInput('passwd')).getValue()).toBe('');

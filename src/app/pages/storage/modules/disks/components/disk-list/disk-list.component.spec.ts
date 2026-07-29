@@ -74,6 +74,10 @@ describe('DiskListComponent', () => {
       type: 'SSD',
       devname: 'sdb',
       pool: null,
+      // A disk that reports a status but doesn't support SED still renders as "Unsupported" —
+      // which is exactly where the raw column value and the displayed text diverge.
+      sed: false,
+      sed_status: SedStatus.Failed,
     },
     {
       identifier: 'identifier3',
@@ -316,6 +320,41 @@ describe('DiskListComponent', () => {
     await table.clickSortHeader('size');
 
     expect((await table.getAllRowTexts()).map((row) => row[2])).toEqual(['40 GiB', '5 GiB', '5 GiB']);
+  });
+
+  it('sorts the SED column by the status text it shows, not by the raw enum', async () => {
+    await table.clickSortHeader('sed_status');
+
+    // Sorting by the raw `sed_status` would lead with sdb (FAILED), even though the cell
+    // shows it as "Unsupported" like sda, which has no raw value at all.
+    expect((await table.getAllRowTexts()).map((row) => [row[0], row[4]])).toEqual([
+      ['sdc', 'Locked'],
+      ['sda', 'Unsupported'],
+      ['sdb', 'Unsupported'],
+    ]);
+
+    await table.clickSortHeader('sed_status');
+
+    expect((await table.getAllRowTexts()).map((row) => row[4]))
+      .toEqual(['Unsupported', 'Unsupported', 'Locked']);
+  });
+
+  it('keeps the sort indicator after the list empties out and comes back', async () => {
+    await table.clickSortHeader('size');
+
+    expect(await table.getSortDirection('size')).toBe('ascending');
+
+    // Searching down to no results destroys the table; clearing the search builds a new one,
+    // which starts with no arrow of its own even though the rows are still sorted.
+    await (await loader.getHarness(BasicSearchHarness)).setValue('nonexistent-disk');
+    spectator.detectChanges();
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Reset' }))).click();
+    spectator.detectChanges();
+
+    const rebuiltTable = await loader.getHarness(TnTableHarness);
+
+    expect((await rebuiltTable.getAllRowTexts()).map((row) => row[2])).toEqual(['5 GiB', '5 GiB', '40 GiB']);
+    expect(await rebuiltTable.getSortDirection('size')).toBe('ascending');
   });
 
   it('replaces the table with a no-results empty state, whose action resets the search', async () => {
