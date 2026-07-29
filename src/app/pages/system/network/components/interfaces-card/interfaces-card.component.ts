@@ -141,10 +141,7 @@ export class InterfacesCardComponent implements OnInit {
   // custom key because none map to a plain NetworkInterface property (name folds in the
   // description, ip_addresses/mac live on nested structures).
   protected onSortChange(event: TnSortEvent): void {
-    const base = mapTnSortToTableSort<NetworkInterface>(event, {
-      displayedColumns: this.displayedColumns,
-      columns: null,
-    });
+    const base = mapTnSortToTableSort<NetworkInterface>(event, this.displayedColumns);
     this.dataProvider.setSorting({
       ...base,
       sortBy: base.direction ? this.sortByForColumn(event.column) : undefined,

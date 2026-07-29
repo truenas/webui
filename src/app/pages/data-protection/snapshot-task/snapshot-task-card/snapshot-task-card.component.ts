@@ -129,10 +129,7 @@ export class SnapshotTaskCardComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<PeriodicSnapshotTaskUi>(event, {
-      displayedColumns: this.displayedColumns,
-      columns: null,
-    }));
+    this.dataProvider.setSorting(mapTnSortToTableSort<PeriodicSnapshotTaskUi>(event, this.displayedColumns));
   }
 
   private setDefaultSort(): void {

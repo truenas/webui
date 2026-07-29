@@ -185,10 +185,7 @@ export class NfsCardComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<NfsShare>(event, {
-      displayedColumns: this.displayedColumns(),
-      columns: null,
-    }));
+    this.dataProvider.setSorting(mapTnSortToTableSort<NfsShare>(event, this.displayedColumns()));
   }
 
   ngOnInit(): void {

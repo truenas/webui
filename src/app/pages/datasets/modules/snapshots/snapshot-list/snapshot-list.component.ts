@@ -302,11 +302,9 @@ export class SnapshotListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<ZfsSnapshot>(event, {
-      displayedColumns: this.displayedColumns(),
-      columns: null,
-      sortAccessors: this.sortAccessors,
-    }));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort<ZfsSnapshot>(event, this.displayedColumns(), { sortAccessors: this.sortAccessors }),
+    );
   }
 
   protected onListFiltered(query: string): void {

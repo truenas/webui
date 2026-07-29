@@ -5,6 +5,11 @@
 
   .title {
     padding: 16px 28px 8px;
+
+    .selection-count {
+      color: var(--fg2);
+      margin-left: 8px;
+    }
   }
 
   .actions {

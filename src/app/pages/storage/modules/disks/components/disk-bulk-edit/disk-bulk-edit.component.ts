@@ -99,9 +99,11 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> impl
         // still reloads, matching what the pre-migration form closed with either way.
         map((job) => req.filter((_, index) => job.result[index]?.error === null)),
       ),
-      // The success toast is raised here (the template suppresses `<ix-form>`'s own) only when
-      // every disk was applied: a partial failure still resolves successfully, but it has already
-      // reported itself through the error dialog, and "Successfully saved" beside that would lie.
+      // Raised from `onSuccess` instead (the template suppresses `<ix-form>`'s own snackbar), and
+      // only when every disk was applied: a partial failure still resolves successfully, but it
+      // has already reported itself through the error dialog, and "Successfully saved" beside
+      // that dialog would lie.
+      successMessage: null,
       onSuccess: (result) => {
         if ((result as unknown[]).length === req.length) {
           this.snackbar.success(successText);
@@ -139,8 +141,10 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> impl
     const hddStandby: DiskStandby[] = [];
     const advPowerMgt: DiskPowerLevel[] = [];
 
+    // Assigned, not appended to: a second call would otherwise submit each disk twice.
+    this.diskIds = selectedDisks.map((disk) => disk.identifier);
+
     selectedDisks.forEach((disk) => {
-      this.diskIds.push(disk.identifier);
       setForm.disknames.push(disk.name);
       hddStandby.push(disk.hddstandby);
       advPowerMgt.push(disk.advpowermgmt);

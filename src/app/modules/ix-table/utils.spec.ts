@@ -1,13 +1,13 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { TnTableComponent } from '@truenas/ui-components';
+import { TnSortEvent, TnTableComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
   dataProviderLoading, dataProviderRows, filterTableRows, mapTnSortToProviderSorting,
-  mapTnSortToTableSort, restrictToSingleExpandedRow, toDisplayedColumns,
+  mapTnSortToTableSort, reflectSortIntoTable, restrictToSingleExpandedRow, toDisplayedColumns,
 } from './utils';
 
 describe('dataProviderRows / dataProviderLoading', () => {
@@ -74,7 +74,7 @@ describe('mapTnSortToTableSort', () => {
   const displayedColumns = ['name', 'path', 'enabled', 'actions'];
 
   it('maps an ascending sort to propertyName + direction + column index', () => {
-    expect(mapTnSortToTableSort({ column: 'path', direction: 'asc' }, { displayedColumns, columns: null })).toEqual({
+    expect(mapTnSortToTableSort({ column: 'path', direction: 'asc' }, displayedColumns)).toEqual({
       propertyName: 'path',
       direction: SortDirection.Asc,
       active: 1,
@@ -82,7 +82,7 @@ describe('mapTnSortToTableSort', () => {
   });
 
   it('maps a descending sort to propertyName + direction + column index', () => {
-    expect(mapTnSortToTableSort({ column: 'enabled', direction: 'desc' }, { displayedColumns, columns: null })).toEqual({
+    expect(mapTnSortToTableSort({ column: 'enabled', direction: 'desc' }, displayedColumns)).toEqual({
       propertyName: 'enabled',
       direction: SortDirection.Desc,
       active: 2,
@@ -90,7 +90,7 @@ describe('mapTnSortToTableSort', () => {
   });
 
   it('clears sorting when the direction is empty', () => {
-    expect(mapTnSortToTableSort({ column: 'name', direction: '' }, { displayedColumns, columns: null })).toEqual({
+    expect(mapTnSortToTableSort({ column: 'name', direction: '' }, displayedColumns)).toEqual({
       propertyName: null,
       direction: null,
       active: null,
@@ -98,7 +98,7 @@ describe('mapTnSortToTableSort', () => {
   });
 
   it('leaves active null when the sorted column is not displayed', () => {
-    expect(mapTnSortToTableSort({ column: 'comment', direction: 'asc' }, { displayedColumns, columns: null })).toEqual({
+    expect(mapTnSortToTableSort({ column: 'comment', direction: 'asc' }, displayedColumns)).toEqual({
       propertyName: 'comment',
       direction: SortDirection.Asc,
       active: null,
@@ -119,7 +119,8 @@ describe('mapTnSortToTableSort', () => {
     it('prefers the column sortBy over its getValue', () => {
       const sorting = mapTnSortToTableSort<Row>(
         { column: 'size', direction: 'asc' },
-        { displayedColumns: columns, columns: [sizeColumn] },
+        columns,
+        { columns: [sizeColumn] },
       );
 
       expect(sorting.sortBy?.(row)).toBe(1024);
@@ -133,7 +134,8 @@ describe('mapTnSortToTableSort', () => {
 
       const sorting = mapTnSortToTableSort<Row>(
         { column: 'size', direction: 'asc' },
-        { displayedColumns: columns, columns: [derivedColumn] },
+        columns,
+        { columns: [derivedColumn] },
       );
 
       expect(sorting.sortBy?.(row)).toBe('1024 bytes');
@@ -144,19 +146,22 @@ describe('mapTnSortToTableSort', () => {
 
       expect(mapTnSortToTableSort<Row>(
         { column: 'name', direction: 'asc' },
-        { displayedColumns: columns, columns: [plainColumn, sizeColumn] },
+        columns,
+        { columns: [plainColumn, sizeColumn] },
       ).sortBy).toBeUndefined();
 
       expect(mapTnSortToTableSort<Row>(
         { column: 'size', direction: '' },
-        { displayedColumns: columns, columns: [sizeColumn] },
+        columns,
+        { columns: [sizeColumn] },
       ).sortBy).toBeUndefined();
     });
 
     it('leaves sortBy undefined when the sorted column is absent from a partial column list', () => {
       const sorting = mapTnSortToTableSort<Row>(
         { column: 'name', direction: 'asc' },
-        { displayedColumns: columns, columns: [sizeColumn] },
+        columns,
+        { columns: [sizeColumn] },
       );
 
       expect(sorting.sortBy).toBeUndefined();
@@ -165,20 +170,54 @@ describe('mapTnSortToTableSort', () => {
     it('takes a bare accessor for a table with no column model to pass', () => {
       const sorting = mapTnSortToTableSort<Row>(
         { column: 'size', direction: 'asc' },
-        { displayedColumns: columns, columns: null, sortAccessors: { size: (item) => item.size } },
+        columns,
+        { sortAccessors: { size: (item) => item.size } },
       );
 
       expect(sorting.sortBy?.(row)).toBe(1024);
     });
 
+    it('warns once when an accessor resolves to something lodash sortBy cannot order', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation();
+      const arrayColumn = {
+        propertyName: 'size',
+        // A cell rendering a list: `getValue` is typed `unknown`, so nothing but this guard
+        // stands between it and an arbitrary row order.
+        getValue: () => ['a', 'b'],
+      } as unknown as Column<Row, ColumnComponent<Row>>;
+
+      const sorting = mapTnSortToTableSort<Row>(
+        { column: 'size', direction: 'asc' },
+        columns,
+        { columns: [arrayColumn] },
+      );
+      sorting.sortBy?.(row);
+      sorting.sortBy?.(row);
+
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('column "size" resolved to a array'));
+      warn.mockRestore();
+    });
+
+    it('passes a primitive accessor through untouched', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation();
+
+      const sorting = mapTnSortToTableSort<Row>(
+        { column: 'size', direction: 'asc' },
+        columns,
+        { columns: [sizeColumn] },
+      );
+
+      expect(sorting.sortBy?.(row)).toBe(1024);
+      expect(warn).not.toHaveBeenCalled();
+      warn.mockRestore();
+    });
+
     it('prefers an explicit accessor over the one derived from the column model', () => {
       const sorting = mapTnSortToTableSort<Row>(
         { column: 'size', direction: 'asc' },
-        {
-          displayedColumns: columns,
-          columns: [sizeColumn],
-          sortAccessors: { size: () => 'override' },
-        },
+        columns,
+        { columns: [sizeColumn], sortAccessors: { size: () => 'override' } },
       );
 
       expect(sorting.sortBy?.(row)).toBe('override');
@@ -189,12 +228,14 @@ describe('mapTnSortToTableSort', () => {
 
       expect(mapTnSortToTableSort<Row>(
         { column: 'name', direction: 'asc' },
-        { displayedColumns: columns, columns: null, sortAccessors },
+        columns,
+        { sortAccessors },
       ).sortBy).toBeUndefined();
 
       expect(mapTnSortToTableSort<Row>(
         { column: 'size', direction: '' },
-        { displayedColumns: columns, columns: null, sortAccessors },
+        columns,
+        { sortAccessors },
       ).sortBy).toBeUndefined();
     });
   });
@@ -268,6 +309,46 @@ describe('restrictToSingleExpandedRow', () => {
     TestBed.tick();
 
     expect([...rebuilt.expandedRows()]).toEqual(['a']);
+  });
+});
+
+describe('reflectSortIntoTable', () => {
+  function newTable(): TnTableComponent<string> {
+    return {
+      sortColumn: signal(''),
+      sortDirection: signal('' as TnSortEvent['direction']),
+    } as TnTableComponent<string>;
+  }
+
+  it('reflects the remembered sort into a table mounted after it was set', () => {
+    // The list empties out (tn-empty replaces the table), then fills again: the data provider
+    // kept its sorting, so the fresh header has to show the arrow again.
+    const table = signal<TnTableComponent<string> | undefined>(undefined);
+    const sort = signal<TnSortEvent | null>({ column: 'name', direction: 'desc' });
+    TestBed.runInInjectionContext(() => reflectSortIntoTable(table, sort));
+    TestBed.tick();
+
+    const mounted = newTable();
+    table.set(mounted);
+    TestBed.tick();
+
+    expect(mounted.sortColumn()).toBe('name');
+    expect(mounted.sortDirection()).toBe('desc');
+  });
+
+  it('leaves a table alone until a sort is remembered', () => {
+    const mounted = newTable();
+    const sort = signal<TnSortEvent | null>(null);
+    TestBed.runInInjectionContext(() => reflectSortIntoTable(signal(mounted), sort));
+    TestBed.tick();
+
+    expect(mounted.sortColumn()).toBe('');
+
+    sort.set({ column: 'size', direction: 'asc' });
+    TestBed.tick();
+
+    expect(mounted.sortColumn()).toBe('size');
+    expect(mounted.sortDirection()).toBe('asc');
   });
 });
 

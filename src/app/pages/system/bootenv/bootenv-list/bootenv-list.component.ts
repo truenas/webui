@@ -30,7 +30,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import { mapTnSortToTableSort, reflectSortIntoTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -105,6 +105,14 @@ export class BootEnvironmentListComponent implements OnInit {
   protected readonly trackByBootenvId = (_: number, row: BootEnvironment): string => row.id;
 
   private readonly tnTable = viewChild(TnTableComponent);
+
+  // Seeded with the default sort `setDefaultSort` applies to the data provider, so the header
+  // arrow shows it from the start and survives a table rebuild; see `reflectSortIntoTable`.
+  private readonly activeSort = signal<TnSortEvent | null>({ column: 'created', direction: 'desc' });
+
+  constructor() {
+    reflectSortIntoTable(this.tnTable, this.activeSort);
+  }
 
   protected readonly selectedBootenvs = signal<BootEnvironment[]>([]);
 
@@ -281,11 +289,10 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort(event, {
-      displayedColumns: this.displayedColumns,
-      columns: null,
-      sortAccessors: this.sortAccessors,
-    }));
+    this.activeSort.set(event);
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort(event, this.displayedColumns, { sortAccessors: this.sortAccessors }),
+    );
   }
 
   private setDefaultSort(): void {

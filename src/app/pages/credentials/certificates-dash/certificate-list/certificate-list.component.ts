@@ -98,10 +98,7 @@ export class CertificateListComponent {
   protected readonly trackBy = (_: number, row: Certificate): number => row.id;
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<Certificate>(event, {
-      displayedColumns: this.displayedColumns,
-      columns: null,
-    }));
+    this.dataProvider.setSorting(mapTnSortToTableSort<Certificate>(event, this.displayedColumns));
   }
 
   protected readonly actions: IconActionConfig<Certificate>[] = [

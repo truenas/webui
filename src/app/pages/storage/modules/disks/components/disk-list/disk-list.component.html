@@ -18,6 +18,17 @@
   >
     <div class="title">
       <strong>{{ 'Batch Operations' | translate }}</strong>
+      <!--
+        Spell out the count: tn-table clears its selection whenever the page or the search
+        changes, so a selection only ever covers the rows on screen. Naming the number makes
+        that visible instead of leaving the user to assume earlier pages are still included.
+      -->
+      <span class="selection-count">
+        {{
+          '{ n, plural, one {# disk selected} other {# disks selected} }'
+            | translate: { n: selectedDisks().length }
+        }}
+      </span>
     </div>
     <div class="actions">
       <tn-button

@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal, viewChild, effect,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { select, Store } from '@ngrx/store';
@@ -21,7 +21,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { restrictToSingleExpandedRow } from 'app/modules/ix-table/utils';
+import { reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -75,22 +75,13 @@ export class GroupListComponent implements OnInit {
   protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
   protected readonly trackById = (_: number, row: Group): number => row.id;
 
-  private defaultSortReflected = false;
+  // Seeded with the default sort `setDefaultSort` applies to the data provider, so the header
+  // arrow shows it from the start and survives a table rebuild; see `reflectSortIntoTable`.
+  private readonly activeSort = signal<TnSortEvent | null>({ column: 'gid', direction: 'asc' });
 
   constructor() {
     restrictToSingleExpandedRow(this.table);
-
-    // The data provider sorts the rows, but tn-table tracks its own sort-arrow state, so reflect
-    // the default sort in the header indicator once the table view is available.
-    effect(() => {
-      const table = this.table();
-      if (!table || this.defaultSortReflected) {
-        return;
-      }
-      this.defaultSortReflected = true;
-      table.sortColumn.set('gid');
-      table.sortDirection.set('asc');
-    });
+    reflectSortIntoTable(this.table, this.activeSort);
   }
 
   protected hideBuiltinGroups = true;
@@ -134,6 +125,7 @@ export class GroupListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
+    this.activeSort.set(event);
     const direction = event.direction === '' ? null : (event.direction as SortDirection);
     this.dataProvider.setSorting({
       propertyName: direction ? (event.column as keyof Group) : null,

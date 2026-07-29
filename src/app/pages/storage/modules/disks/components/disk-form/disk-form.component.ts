@@ -97,9 +97,14 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implemen
    * arrived with a value, though: requiring one that came back empty would leave Save
    * permanently disabled — blocking an edit to the description, say — on a field the user
    * never touched and got no explanation about.
+   *
+   * Plain fields, not computeds: the asterisk and the validator are two halves of one decision,
+   * so they are resolved together in `ngOnInit` (the panel sets `diskToEdit` once, before it)
+   * rather than leaving the marker reactive and the validator imperative — a pair with two
+   * reactivity models drifts the moment the input becomes re-settable.
    */
-  protected readonly isHddStandbyRequired = computed(() => Boolean(this.diskToEdit()?.hddstandby));
-  protected readonly isAdvPowerManagementRequired = computed(() => Boolean(this.diskToEdit()?.advpowermgmt));
+  protected isHddStandbyRequired = false;
+  protected isAdvPowerManagementRequired = false;
 
   private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly showSedSection = computed(() => {
@@ -108,10 +113,15 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implemen
   });
 
   ngOnInit(): void {
-    if (this.isHddStandbyRequired()) {
+    const disk = this.diskToEdit();
+
+    this.isHddStandbyRequired = Boolean(disk?.hddstandby);
+    if (this.isHddStandbyRequired) {
       this.form.controls.hddstandby.addValidators(Validators.required);
     }
-    if (this.isAdvPowerManagementRequired()) {
+
+    this.isAdvPowerManagementRequired = Boolean(disk?.advpowermgmt);
+    if (this.isAdvPowerManagementRequired) {
       this.form.controls.advpowermgmt.addValidators(Validators.required);
     }
 

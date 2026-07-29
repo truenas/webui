@@ -1314,9 +1314,9 @@ describe('IxFormComponent', () => {
       expect(closedSpy).toHaveBeenCalledWith({ saved: apiResult });
     });
 
-    it('skips the snackbar without a successMessage, and warns that the save is silent', () => {
+    it('skips the snackbar for a null successMessage, and warns that the save is silent', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation();
-      submitHandlerSpy.mockReturnValue({ request$: of({ id: 1 }) });
+      submitHandlerSpy.mockReturnValue({ request$: of({ id: 1 }), successMessage: null });
 
       const sidePanelSpectator = createSidePanelComponent({
         providers: [{ provide: ixFormMinSubmitFeedbackMs, useValue: 0 }],
@@ -1324,13 +1324,13 @@ describe('IxFormComponent', () => {
       sidePanelSpectator.component.ixForm().submit();
 
       expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('no successMessage'));
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('null successMessage'));
       warn.mockRestore();
     });
 
-    it('stays silent without a successMessage when the snackbar is suppressed', () => {
+    it('stays silent for a null successMessage when the snackbar is suppressed', () => {
       const warn = jest.spyOn(console, 'warn').mockImplementation();
-      submitHandlerSpy.mockReturnValue({ request$: of({ id: 1 }) });
+      submitHandlerSpy.mockReturnValue({ request$: of({ id: 1 }), successMessage: null });
 
       const sidePanelSpectator = createSidePanelComponent({
         providers: [{ provide: ixFormMinSubmitFeedbackMs, useValue: 0 }],

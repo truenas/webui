@@ -239,6 +239,18 @@ describe('DiskListComponent', () => {
     });
   });
 
+  it('names how many disks the batch bar is acting on', async () => {
+    // The selection only ever covers the rows on screen (tn-table clears it when the page or
+    // search changes), so the count has to be visible rather than assumed.
+    await table.toggleRowSelection(0);
+
+    expect(spectator.query('.batch-actions-toolbar .title').textContent).toContain('1 disk selected');
+
+    await table.toggleRowSelection(1);
+
+    expect(spectator.query('.batch-actions-toolbar .title').textContent).toContain('2 disks selected');
+  });
+
   it('opens bulk edit form when multiple disks are selected and Edit is pressed', async () => {
     await table.toggleRowSelection(0);
     await table.toggleRowSelection(1);

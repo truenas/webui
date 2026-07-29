@@ -181,10 +181,7 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<DatasetQuota>(event, {
-      displayedColumns: this.displayedColumns,
-      columns: null,
-    }));
+    this.dataProvider.setSorting(mapTnSortToTableSort<DatasetQuota>(event, this.displayedColumns));
   }
 
   private getRemoveQuotaPayload(quotas: DatasetQuota[]): SetDatasetQuota[] {

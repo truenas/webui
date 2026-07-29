@@ -1,6 +1,8 @@
-import { effect, isSignal, Signal } from '@angular/core';
+import {
+  effect, isDevMode, isSignal, Signal,
+} from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { TnTableComponent, type TnSortEvent } from '@truenas/ui-components';
+import type { TnSortEvent, TnTableComponent } from '@truenas/ui-components';
 import { get } from 'lodash-es';
 import { Observable, switchMap } from 'rxjs';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
@@ -87,45 +89,71 @@ export function restrictToSingleExpandedRow<T>(table: Signal<TnTableComponent<T>
   });
 }
 
-export interface TnSortMapping<T> {
-  /**
-   * The list bound to the table's `[displayedColumns]`. `active` is resolved as the
-   * sorted column's index within it.
-   */
-  displayedColumns: string[];
+/**
+ * TEMP (NAS-141021): keeps the sort arrow on whichever `tn-table` instance is currently mounted.
+ * The data provider holds the sorting, but tn-table tracks its own header state and is destroyed
+ * and rebuilt whenever the list empties out (the empty state replaces it in the template) — so
+ * searching down to zero results and back leaves a fresh header with no arrow over rows that are
+ * still sorted. Reflect the last `(sortChange)` into each new instance until the library grows a
+ * two-way sort input to bind instead.
+ *
+ * Must be called from an injection context (e.g. a component constructor).
+ */
+export function reflectSortIntoTable<T>(
+  table: Signal<TnTableComponent<T> | undefined>,
+  sort: Signal<TnSortEvent | null>,
+): void {
+  effect(() => {
+    const instance = table();
+    const activeSort = sort();
+    if (!instance || !activeSort) {
+      return;
+    }
+    instance.sortColumn.set(activeSort.column);
+    instance.sortDirection.set(activeSort.direction);
+  });
+}
 
+/**
+ * Optional sort *semantics* for a table whose cells don't all show their raw row value. Restores
+ * what the previous ix-table head did: sort by a column's `sortBy` or, failing that, by its
+ * rendered `getValue`, so a derived, formatted or translated cell keeps sorting by what the user
+ * sees. Omit entirely when every column sorts correctly by its raw value at `propertyName`.
+ */
+export interface TnSortAccessors<T> {
   /**
-   * Carries the sort *semantics* of the previous ix-table head, which sorted by a column's
-   * `sortBy` or, failing that, by its rendered `getValue` rather than by the raw row property —
-   * so a column showing a derived, formatted or translated value keeps sorting by what the user
-   * sees. Pass the column model the table already keeps for its picker; a column missing from
-   * it sorts by its raw value at `propertyName`.
-   *
-   * Required (rather than optional) so every table has to answer the question once: pass `null`
-   * when every column sorts correctly by its raw value (or when {@link sortAccessors} covers the
-   * ones that don't).
+   * The column model the table already keeps for its picker. A column missing from it sorts by
+   * its raw value.
    *
    * A sortable column listed here must resolve to a primitive: its `getValue` is typed `unknown`
    * and goes straight to lodash `sortBy`, so a column rendering an array or object would sort by
-   * something meaningless. Give it an explicit `sortBy` (which wins over `getValue`) instead.
+   * something meaningless. Give it an explicit `sortBy` (which wins over `getValue`) instead —
+   * {@link mapTnSortToTableSort} asserts this in dev mode.
    */
-  columns: Column<T, ColumnComponent<T>>[] | null;
+  columns?: Column<T, ColumnComponent<T>>[];
 
   /**
-   * Sort accessors keyed by tn-table column name, for tables that have no ix-table column model
-   * to hand over (nothing drives a column picker) or whose accessor isn't expressible as one.
-   * Preferred over hand-writing partial `Column` literals just to carry a `sortBy`. Takes
-   * precedence over {@link columns} for a column present in both.
+   * Accessors keyed by tn-table column name, for tables with no ix-table column model to hand
+   * over (nothing drives a column picker) or whose accessor isn't expressible as one. Preferred
+   * over hand-writing partial `Column` literals just to carry a `sortBy`. Takes precedence over
+   * {@link columns} for a column present in both.
    */
   sortAccessors?: Record<string, (row: T) => string | number>;
 }
 
 /**
- * Translates a tn-table `(sortChange)` event into the `TableSort` shape our
- * data providers expect. Shared so every tn-table migration maps sort state the
- * same way. See {@link TnSortMapping} for what the two lists are for.
+ * Translates a tn-table `(sortChange)` event into the `TableSort` shape our data providers
+ * expect. Shared so every tn-table migration maps sort state the same way.
+ *
+ * @param displayedColumns the list bound to the table's `[displayedColumns]`; `active` is
+ *   resolved as the sorted column's index within it.
+ * @param accessors see {@link TnSortAccessors} — only for tables with derived cells.
  */
-export function mapTnSortToTableSort<T>(event: TnSortEvent, mapping: TnSortMapping<T>): TableSort<T> {
+export function mapTnSortToTableSort<T>(
+  event: TnSortEvent,
+  displayedColumns: string[],
+  accessors?: TnSortAccessors<T>,
+): TableSort<T> {
   let direction: SortDirection | null = null;
   if (event.direction === 'asc') {
     direction = SortDirection.Asc;
@@ -134,17 +162,43 @@ export function mapTnSortToTableSort<T>(event: TnSortEvent, mapping: TnSortMappi
   }
 
   const sortedColumn = direction
-    ? mapping.columns?.find((column) => String(column.propertyName) === event.column)
+    ? accessors?.columns?.find((column) => String(column.propertyName) === event.column)
     : undefined;
   const columnAccessor = (sortedColumn?.sortBy || sortedColumn?.getValue) as
     ((row: T) => string | number) | undefined;
+  const sortBy = direction ? (accessors?.sortAccessors?.[event.column] ?? columnAccessor) : undefined;
 
-  const columnIndex = mapping.displayedColumns.indexOf(event.column);
+  const columnIndex = displayedColumns.indexOf(event.column);
   return {
     propertyName: direction ? (event.column as keyof T) : null,
-    sortBy: direction ? (mapping.sortAccessors?.[event.column] ?? columnAccessor) : undefined,
+    sortBy: sortBy && isDevMode() ? assertPrimitiveAccessor(sortBy, event.column) : sortBy,
     direction,
     active: direction && columnIndex >= 0 ? columnIndex : null,
+  };
+}
+
+/**
+ * Dev-only wrapper enforcing what {@link TnSortAccessors.columns} can only document: a `getValue`
+ * is typed `unknown`, so a column rendering an array or an object hands that straight to lodash
+ * `sortBy` and the rows come back in an arbitrary order with nothing to see. Warn on the first
+ * non-primitive instead, naming the column to fix.
+ */
+function assertPrimitiveAccessor<T>(
+  accessor: (row: T) => string | number,
+  column: string,
+): (row: T) => string | number {
+  let warned = false;
+  return (row: T) => {
+    const value = accessor(row);
+    if (!warned && value != null && typeof value !== 'string' && typeof value !== 'number') {
+      warned = true;
+      console.warn(
+        `[mapTnSortToTableSort] the sort accessor for column "${column}" resolved to a `
+        + `${Array.isArray(value) ? 'array' : typeof value}, which lodash sortBy can't order — the rows will come `
+        + 'back in an arbitrary order. Give the column an explicit `sortBy` returning a string or number.',
+      );
+    }
+    return value;
   };
 }
 

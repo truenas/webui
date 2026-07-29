@@ -73,11 +73,12 @@ export interface SubmitResult<R = boolean> {
   request$: Observable<unknown>;
 
   /**
-   * Success snackbar text. Optional only because a form may raise its own snackbar (or
-   * deliberately raise none) under `[suppressSuccessSnackbar]`; omitting it without that input
-   * set means a silent save and is warned about in dev mode.
+   * Success snackbar text. Required, but nullable: pass `null` — visibly, at the callsite — for a
+   * form that raises its own snackbar (or deliberately raises none) under
+   * `[suppressSuccessSnackbar]`. A `null` without that input set is a silent save, and warns in
+   * dev mode.
    */
-  successMessage?: TranslatedString;
+  successMessage: TranslatedString | null;
 
   /** Runs after success, before close (store/navigation fire pre-animation). */
   onSuccess?: (result: unknown) => void;
@@ -385,8 +386,8 @@ export class IxFormComponent<T extends object = Record<string, unknown>, R = boo
             this.snackbar.success(successMessage);
           } else if (isDevMode()) {
             console.warn(
-              '[ix-form] submitHandler returned no successMessage and suppressSuccessSnackbar is not set, '
-              + 'so this save gives the user no confirmation. Provide a successMessage, or set '
+              '[ix-form] submitHandler returned a null successMessage and suppressSuccessSnackbar is not '
+              + 'set, so this save gives the user no confirmation. Provide a successMessage, or set '
               + '[suppressSuccessSnackbar] if the form reports success some other way.',
             );
           }

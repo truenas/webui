@@ -182,10 +182,7 @@ export class NvmeOfCardComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider().setSorting(mapTnSortToTableSort<NvmeOfSubsystemDetails>(event, {
-      displayedColumns: this.displayedColumns,
-      columns: null,
-    }));
+    this.dataProvider().setSorting(mapTnSortToTableSort<NvmeOfSubsystemDetails>(event, this.displayedColumns));
   }
 
   ngOnInit(): void {

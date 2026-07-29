@@ -88,10 +88,7 @@ export abstract class JobTaskCardBase<T extends TaskWithJob> implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<T>(event, {
-      displayedColumns: this.displayedColumns,
-      columns: null,
-    }));
+    this.dataProvider.setSorting(mapTnSortToTableSort<T>(event, this.displayedColumns));
   }
 
   /** Re-run the query and repopulate the data provider. */

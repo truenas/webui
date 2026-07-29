@@ -155,10 +155,7 @@ export class InitiatorListComponent implements OnInit {
 
   protected onSortChange(event: TnSortEvent): void {
     this.dataProvider.setSorting(
-      mapTnSortToTableSort<IscsiInitiatorGroup>(event, {
-        displayedColumns: this.displayedColumns(),
-        columns: this.columns(),
-      }),
+      mapTnSortToTableSort<IscsiInitiatorGroup>(event, this.displayedColumns(), { columns: this.columns() }),
     );
   }
 

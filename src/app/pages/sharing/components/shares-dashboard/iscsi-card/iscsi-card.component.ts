@@ -197,10 +197,7 @@ export class IscsiCardComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<IscsiTarget>(event, {
-      displayedColumns: this.displayedColumns(),
-      columns: null,
-    }));
+    this.dataProvider.setSorting(mapTnSortToTableSort<IscsiTarget>(event, this.displayedColumns()));
   }
 
   ngOnInit(): void {

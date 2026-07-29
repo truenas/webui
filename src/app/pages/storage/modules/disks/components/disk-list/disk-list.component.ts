@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -29,8 +29,8 @@ import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-t
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
-  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, restrictToSingleExpandedRow,
-  toDisplayedColumns,
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, reflectSortIntoTable,
+  restrictToSingleExpandedRow, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -170,11 +170,7 @@ export class DiskListComponent {
 
   private readonly table = viewChild(TnTableComponent<DiskRow>);
 
-  // The data provider keeps its sorting, but tn-table tracks its own sort-arrow state — and the
-  // table is destroyed whenever the list empties out, since the empty state replaces it in the
-  // template. Searching down to zero results and clearing the search again therefore builds a
-  // fresh table whose header shows no arrow over rows that are still sorted. Remember the last
-  // sort and reflect it into whichever table instance is currently mounted.
+  // Remembered so the header arrow survives a table rebuild; see `reflectSortIntoTable`.
   private readonly activeSort = signal<TnSortEvent | null>(null);
 
   // By identifier, not row reference: a save rebuilds every row object.
@@ -272,16 +268,7 @@ export class DiskListComponent {
 
   constructor() {
     restrictToSingleExpandedRow(this.table);
-
-    effect(() => {
-      const table = this.table();
-      const sort = this.activeSort();
-      if (!table || !sort) {
-        return;
-      }
-      table.sortColumn.set(sort.column);
-      table.sortDirection.set(sort.direction);
-    });
+    reflectSortIntoTable(this.table, this.activeSort);
 
     this.dataProvider.load();
 
@@ -329,10 +316,7 @@ export class DiskListComponent {
     this.activeSort.set(event);
     // Pass the column model so the derived columns keep sorting by their displayed
     // text (and Disk Size by its raw byte count), the way ix-table's head did.
-    this.dataProvider.setSorting(mapTnSortToTableSort(event, {
-      displayedColumns: this.displayedColumns(),
-      columns: this.columns(),
-    }));
+    this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns(), { columns: this.columns() }));
   }
 
   protected onColumnsChange(columns: Column<DiskRow, ColumnComponent<DiskRow>>[]): void {

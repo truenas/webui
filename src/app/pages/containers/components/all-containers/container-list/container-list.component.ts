@@ -1,6 +1,6 @@
 import {
   Component, ChangeDetectionStrategy,
-  computed, effect, inject,
+  computed, inject,
   output,
   signal,
   viewChild,
@@ -31,6 +31,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { reflectSortIntoTable } from 'app/modules/ix-table/utils';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -109,6 +110,12 @@ export class ContainerListComponent {
 
   protected readonly table = viewChild(TnTableComponent);
 
+  /** The store's sort in the shape `reflectSortIntoTable` reflects into the tn-table header. */
+  private readonly headerSort = computed<TnSortEvent>(() => ({
+    column: this.sort().active,
+    direction: this.sort().direction,
+  }));
+
   protected readonly displayedColumns = ['name', 'status', 'autostart', 'cpu', 'ram', 'io', 'controls'];
   protected readonly trackByContainerId = (_: number, container: Container): number => container.id;
 
@@ -136,15 +143,8 @@ export class ContainerListComponent {
   }, { equal: sameContainers });
 
   constructor() {
-    // tn-table owns its header sort indicator internally (sortColumn/sortDirection are not inputs),
-    // so mirror the store's sort state onto the table to reflect the default and any programmatic sort.
-    // TODO: replace with a template binding once @truenas/ui-components exposes sort state as inputs.
-    effect(() => {
-      const sort = this.sort();
-      const table = this.table();
-      table?.sortColumn.set(sort.active);
-      table?.sortDirection.set(sort.direction);
-    });
+    // Mirrors the store's sort state (the default and any programmatic sort) onto the header.
+    reflectSortIntoTable(this.table, this.headerSort);
 
     toObservable(this.containerId).pipe(
       distinctUntilChanged(),

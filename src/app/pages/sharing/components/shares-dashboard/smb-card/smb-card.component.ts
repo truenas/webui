@@ -216,10 +216,7 @@ export class SmbCardComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<SmbShare>(event, {
-      displayedColumns: this.displayedColumns(),
-      columns: null,
-    }));
+    this.dataProvider.setSorting(mapTnSortToTableSort<SmbShare>(event, this.displayedColumns()));
   }
 
   ngOnInit(): void {
