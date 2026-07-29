@@ -57,14 +57,19 @@ describe('TerminalFontSizeComponent', () => {
   });
 
   // The accessible name has to land on the inner <button>, not the tn-icon-button host —
-  // the host is not what receives focus. TnIconButtonHarness exposes no aria-label getter.
-  it('gives both font size buttons an accessible name', () => {
-    const buttons = spectator.queryAll('tn-icon-button button');
+  // the host is not what receives focus. TnIconButtonHarness exposes no aria-label getter,
+  // so this reaches into the library template; anchor on the icon so button order can't
+  // turn a template reshuffle into a false a11y failure.
+  function accessibleNameOf(iconName: string): string | null | undefined {
+    return spectator.query(`tn-icon-button[name="${iconName}"] button`)?.getAttribute('aria-label');
+  }
 
-    expect(buttons.map((button) => button.getAttribute('aria-label'))).toEqual([
-      'Decrease font size',
-      'Increase font size',
-    ]);
+  it('gives the decrease font size button an accessible name', () => {
+    expect(accessibleNameOf('minus')).toBe('Decrease font size');
+  });
+
+  it('gives the increase font size button an accessible name', () => {
+    expect(accessibleNameOf('plus')).toBe('Increase font size');
   });
 
   it('does not go below min font size', async () => {
