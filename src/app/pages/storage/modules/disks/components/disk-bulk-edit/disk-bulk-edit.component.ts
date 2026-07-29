@@ -6,7 +6,9 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { filter, map, take } from 'rxjs/operators';
+import {
+  filter, map, take, tap,
+} from 'rxjs/operators';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -92,31 +94,35 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | nul
       request$: this.api.job('core.bulk', ['disk.update', req]).pipe(
         filter((job) => job.state === JobState.Success),
         take(1),
-        map((job) => {
-          // core.bulk reports per-disk failures in its result rather than failing the job, so
-          // surface the first one here and resolve with only the disks that were applied.
+        // core.bulk reports per-disk failures in its result rather than failing the job, so
+        // surface the first one here. Reporting is a side effect, so it stays in `tap` and out
+        // of the `map` below, which only reshapes the payload.
+        tap((job) => {
           const failure = job.result.find((result) => result.error !== null);
-          if (!failure) {
-            return req;
+          if (failure) {
+            this.dialogService.error({
+              title: this.translate.instant(helptextDisks.errorDialogTitle),
+              message: failure.error,
+            });
           }
-
-          this.dialogService.error({
-            title: this.translate.instant(helptextDisks.errorDialogTitle),
-            message: failure.error,
-          });
-          // core.bulk is not transactional: the disks that reported no error were already
-          // updated on the backend. Close with just those so the opener reconciles the rows
-          // that really changed and reloads — otherwise the list keeps showing pre-edit values
-          // for disks that did change. An all-failed bulk closes with an empty list, which
-          // still reloads, which is what the pre-migration form closed with in either case.
-          return req.filter((_, index) => job.result[index]?.error === null);
         }),
+        // core.bulk is not transactional: the disks that reported no error were already
+        // updated on the backend. Resolve with just those so the opener reconciles the rows
+        // that really changed and reloads — otherwise the list keeps showing pre-edit values
+        // for disks that did change. An all-failed bulk resolves with an empty list, which
+        // still reloads, which is what the pre-migration form closed with in either case.
+        map((job) => (
+          job.result.some((result) => result.error !== null)
+            ? req.filter((_, index) => job.result[index]?.error === null)
+            : req
+        )),
       ),
-      // `<ix-form>`'s own snackbar is suppressed in the template and raised below instead: a
-      // partially failed bulk still resolves successfully, but it has already reported itself
-      // through an error dialog, and a "Successfully saved" toast beside that dialog would be a
-      // lie. It can't be a bound `[suppressSuccessSnackbar]` signal — an `input()` only updates
-      // on the next change detection, while `<ix-form>` reads it synchronously on emission.
+      // `<ix-form>`'s own snackbar is suppressed unconditionally (`[suppressSuccessSnackbar]`
+      // in the template) and raised from `onSuccess` below instead, only when every disk was
+      // applied: a partially failed bulk still resolves successfully, but it has already
+      // reported itself through an error dialog, and a "Successfully saved" toast beside that
+      // dialog would be a lie. `successMessage` is therefore never read by `<ix-form>` — it is
+      // here only because `SubmitResult` requires it.
       successMessage: successText,
       onSuccess: (result) => {
         const saved = result as [id: string, update: DiskUpdate][];

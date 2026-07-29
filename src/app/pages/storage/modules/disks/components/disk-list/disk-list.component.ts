@@ -48,8 +48,8 @@ import { LicenseService } from 'app/services/license.service';
 
 /**
  * A disk row with every display-only value resolved once, when the rows are built. The
- * templates bind these fields instead of calling methods, so translation, size formatting
- * and test-id kebab-casing don't re-run for every visible row on every change detection.
+ * templates bind these fields instead of calling methods, so translation and size formatting
+ * don't re-run for every visible row on every change detection.
  *
  * The translated fields are resolved once, so a runtime language switch only reaches them on
  * the next reload — the same as the column titles above, which every list in the app builds
@@ -60,12 +60,6 @@ interface DiskRow extends Disk {
   sedStatusText: string;
   hddStandbyText: string;
   advPowerManagementText: string;
-  /**
-   * Test-id fragment for the row's action buttons. Pre-split with lodash `kebabCase` — it
-   * breaks letter–digit boundaries (`nvme0n1` → `nvme-0-n-1`) while the library's test-id
-   * kebab does not, so passing the raw name would silently rename every NVMe row's ids.
-   */
-  tag: string;
 }
 
 /**
@@ -76,7 +70,7 @@ interface DiskRow extends Disk {
  */
 function toDisk(row: DiskRow): Disk {
   const {
-    sizeText, sedStatusText, hddStandbyText, advPowerManagementText, tag, ...disk
+    sizeText, sedStatusText, hddStandbyText, advPowerManagementText, ...disk
   } = row;
   return disk;
 }
@@ -323,6 +317,21 @@ export class DiskListComponent {
     this.selectedIdentifiers.set(new Set(disks.map((disk) => disk.identifier)));
   }
 
+  /**
+   * Test-id fragment for a row's action buttons. Split with lodash `kebabCase` rather than
+   * handed to the library's test-id kebab, which doesn't break letter–digit boundaries
+   * (`nvme0n1` → `nvme-0-n-1` vs `nvme0n1`) — passing the raw name would silently rename every
+   * NVMe row's ids out from under the e2e locators.
+   *
+   * A method rather than a field on {@link DiskRow}: it is a test-id concern, not row data, and
+   * keeping it out of the row keeps `toDisk` from having to strip it again. Only the expanded
+   * detail row renders these buttons (and only one row expands at a time), so re-running
+   * `kebabCase` per change detection costs nothing.
+   */
+  protected testIdTag(row: DiskRow): string {
+    return kebabCase(row.name);
+  }
+
   protected onRowClick(row: DiskRow): void {
     this.table()?.toggleRowExpansion(row);
   }
@@ -429,7 +438,6 @@ export class DiskListComponent {
       advPowerManagementText: disk.advpowermgmt === DiskPowerLevel.Disabled
         ? this.translate.instant('Disabled')
         : disk.advpowermgmt,
-      tag: kebabCase(disk.name),
     };
   }
 

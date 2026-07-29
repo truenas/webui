@@ -79,8 +79,11 @@ export function restrictToSingleExpandedRow<T>(table: Signal<TnTableComponent<T>
       previousExpandedRows = new Set(expanded);
       return;
     }
-    const newest = [...expanded].find((row) => !previousExpandedRows.has(row));
-    const collapsed = newest ? new Set<unknown>([newest]) : new Set<unknown>();
+    // `previousExpandedRows` holds at most one row and this branch only runs with two or more
+    // expanded, so there is always at least one row we haven't seen — fall back to the first
+    // member (insertion order) only to keep the type non-optional.
+    const newest = [...expanded].find((row) => !previousExpandedRows.has(row)) ?? [...expanded][0];
+    const collapsed = new Set<unknown>([newest]);
     previousExpandedRows = collapsed;
     instance.expandedRows.set(collapsed);
   });
@@ -103,6 +106,12 @@ export interface TnSortMapping<T> {
    *
    * Required (rather than optional) so every table has to answer the question once:
    * pass `null` when every column sorts correctly by its raw value.
+   *
+   * A sortable column listed here must resolve to a primitive: its `getValue` is used as the
+   * lodash `sortBy` key and is typed as `unknown`, so a column rendering an array or an object
+   * would hand that straight to `sortBy` and sort by something meaningless. Give such a column
+   * an explicit `sortBy` (which wins over `getValue`), or leave it out of this list to sort by
+   * its raw value at `propertyName`.
    */
   columns: Column<T, ColumnComponent<T>>[] | null;
 }

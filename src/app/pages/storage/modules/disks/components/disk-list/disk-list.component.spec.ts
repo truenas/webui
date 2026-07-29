@@ -6,6 +6,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnDialog, TnEmptyHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { NEVER, of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SedStatus } from 'app/enums/sed-status.enum';
@@ -175,6 +176,21 @@ describe('DiskListComponent', () => {
     expect(spectator.query('[data-test="button-sdc-edit"]')).toExist();
     expect(spectator.query('[data-test="button-sdc-unlock"]')).toExist();
     expect(spectator.query('[data-test="button-sdc-reset-sed"]')).toExist();
+  });
+
+  it('keeps splitting letter-digit boundaries in row-action test ids, as lodash kebab-case did', async () => {
+    spectator.inject(MockApiService).mockCall(
+      'disk.query',
+      [{ ...fakeDisks[0], name: 'nvme0n1', devname: 'nvme0n1' }] as Disk[],
+    );
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(TnTableHarness);
+
+    await table.toggleRowExpansion(0);
+
+    // Handing the raw name to the library's test-id kebab would resolve `button-nvme0n1-edit`.
+    expect(spectator.query('[data-test="button-nvme-0-n-1-edit"]')).toExist();
   });
 
   // The two assertions below query `data-test` on purpose: the e2e suite locates these buttons

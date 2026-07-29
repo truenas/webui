@@ -391,6 +391,13 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * success isn't read as a cancel). Side-panel host: emits {@link closed} so the
    * host tears down its panel; the payload isn't forwarded (the host reloads from
    * its own source / the submit's `onSuccess` already updated any store).
+   *
+   * TODO: forward `payload` through {@link closed} (it is already computed here, and
+   * `SubmitResult.closeWith` exists to shape it) so a side-panel host can just bind
+   * `(closed)`. Forms whose opener needs the saved record currently work around this by
+   * capturing it in `onSuccess` and re-emitting from their own `closed` handler — see
+   * `DiskFormComponent` and `DiskBulkEditComponent`. Every future migration that needs a
+   * payload back will copy that, so widen the output rather than let it spread.
    */
   private finishClose(payload: unknown): void {
     if (!this.slideInRef) {

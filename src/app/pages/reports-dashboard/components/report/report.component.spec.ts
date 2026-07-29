@@ -127,12 +127,6 @@ describe('ReportComponent', () => {
       });
     });
 
-    // Here rather than at the end of each test body: a failing expectation would otherwise
-    // leak fake timers into the rest of the file.
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
     it('should initialize viewport change detection on init', () => {
       // Simply verify that ngOnInit completes without errors
       expect(() => {
@@ -140,30 +134,34 @@ describe('ReportComponent', () => {
       }).not.toThrow();
     });
 
-    // Fake timers rather than a real sleep: under load the 100ms debounce plus the tick
-    // resizeChart waits could outlast a real-time wait, leaving the render to land in the
-    // next test's mock instead of this one's.
-    it('should resize chart when window resize event occurs', () => {
-      jest.useFakeTimers();
+    it('should resize chart when window resize event occurs', async () => {
+      spectator.component.ngOnInit();
       spectator.component.isReady = true;
 
       // Trigger window resize event
-      global.dispatchEvent(new Event('resize'));
+      const resizeEvent = new Event('resize');
+      global.dispatchEvent(resizeEvent);
 
-      // Run the debounce and the tick resizeChart waits before rendering
-      jest.advanceTimersByTime(150);
+      // Wait for debounce
+      await new Promise<void>((resolve): void => {
+        setTimeout(() => resolve(), 150);
+      });
 
       expect(mockLineChart.render).toHaveBeenCalledWith(true);
     });
 
-    it('should not resize chart before component is ready', () => {
-      jest.useFakeTimers();
+    it('should not resize chart before component is ready', async () => {
+      spectator.component.ngOnInit();
       spectator.component.isReady = false;
 
       // Trigger window resize event
-      global.dispatchEvent(new Event('resize'));
+      const resizeEvent = new Event('resize');
+      global.dispatchEvent(resizeEvent);
 
-      jest.advanceTimersByTime(150);
+      // Wait for debounce
+      await new Promise<void>((resolve): void => {
+        setTimeout(() => resolve(), 150);
+      });
 
       expect(mockLineChart.render).not.toHaveBeenCalled();
     });
@@ -186,6 +184,8 @@ describe('ReportComponent', () => {
       jest.runAllTimers();
 
       expect(mockLineChart.render).toHaveBeenCalledWith(true);
+
+      jest.useRealTimers();
     });
 
     it('should handle resize when line chart is not available', () => {

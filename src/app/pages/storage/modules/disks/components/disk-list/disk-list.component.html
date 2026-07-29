@@ -117,7 +117,7 @@
         <div class="table-details-row-actions">
           <tn-button
             icon="mdi-pencil"
-            [testId]="[disk.tag, 'edit']"
+            [testId]="[testIdTag(disk), 'edit']"
             [label]="'Edit' | translate"
             (onClick)="edit([disk])"
           ></tn-button>
@@ -126,7 +126,7 @@
             <tn-button
               *ixRequiresRoles="requiredRoles"
               icon="mdi-delete-sweep"
-              [testId]="[disk.tag, 'wipe']"
+              [testId]="[testIdTag(disk), 'wipe']"
               [label]="'Wipe' | translate"
               (onClick)="wipe(disk)"
             ></tn-button>
@@ -136,7 +136,7 @@
             <tn-button
               *ixRequiresRoles="requiredRoles"
               icon="mdi-lock-open-variant"
-              [testId]="[disk.tag, 'unlock']"
+              [testId]="[testIdTag(disk), 'unlock']"
               [label]="'Unlock' | translate"
               (onClick)="unlock(disk)"
             ></tn-button>
@@ -144,7 +144,7 @@
             <tn-button
               *ixRequiresRoles="requiredRoles"
               icon="mdi-restart"
-              [testId]="[disk.tag, 'reset-sed']"
+              [testId]="[testIdTag(disk), 'reset-sed']"
               [label]="'SED Reset' | translate"
               (onClick)="resetSed(disk)"
             ></tn-button>
