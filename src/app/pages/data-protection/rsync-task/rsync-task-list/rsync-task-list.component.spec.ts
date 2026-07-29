@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+  TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSelectHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -199,16 +199,14 @@ describe('RsyncTaskListComponent', () => {
   });
 
   // `Frequency` has no propertyName, so it only reaches tn-table through the explicit
-  // `columnName` -> `[tnColumnDef]` pairing. Hiding it proves the column-picker model and
-  // `toDisplayedColumns` still agree for a computed column.
+  // `columnName` -> `[tnColumnDef]` pairing. Deselecting it in the picker proves the
+  // picker model and `toDisplayedColumns` still agree for a computed column.
   it('hides a computed column in the table when the column picker deselects it', async () => {
     expect(await table.getHeaderTexts()).toContain('Frequency');
 
-    spectator.component.columnsChange(
-      spectator.component.columns().map((column) => (
-        column.title === 'Frequency' ? { ...column, hidden: true } : column
-      )),
-    );
+    const picker = await loader.getHarness(TnSelectHarness.with({ ancestor: 'ix-table-column-picker' }));
+    await picker.open();
+    await picker.selectOption('Frequency');
     spectator.detectChanges();
 
     expect(await table.getHeaderTexts()).not.toContain('Frequency');

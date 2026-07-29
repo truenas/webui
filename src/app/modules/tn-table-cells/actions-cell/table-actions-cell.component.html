@@ -1,12 +1,10 @@
 <!-- Swallow clicks so an action (or opening the menu) never also triggers the
   row click of a `[clickable]` tn-table — e.g. deselecting a master-detail row.
-  Keydown too: tn-table's row handler calls preventDefault() on Enter/Space
-  without checking the event target, which would cancel the button's own
-  activation and toggle the row instead. -->
+  Enter/Space too, for the same reason; see `stopRowActivationKeys`. -->
 <div
   class="actions"
   (click)="$event.stopPropagation()"
-  (keydown)="$event.stopPropagation()"
+  (keydown)="stopRowActivationKeys($event)"
 >
   @if (mode() === 'inline' || visibleActions().length === 1) {
     @for (action of visibleActions(); track action) {

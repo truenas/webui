@@ -16,11 +16,10 @@ import {
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
-import { cloudBackupTaskEmptyConfig } from 'app/constants/empty-configs';
+import { cloudBackupTaskEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -32,6 +31,7 @@ import {
   dataProviderEmptyState, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, perRow, rowTestIdTag,
 } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -70,6 +70,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TableToggleCellComponent,
     TaskStateCellComponent,
     YesNoPipe,
+    FlattenEmptyMessagePipe,
     TranslateModule,
   ],
 })
@@ -96,11 +97,13 @@ export class CloudBackupListComponent {
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
-  // Bound from the shared catalog config rather than inlined in the template, so the
-  // translated string has a single source of truth.
-  protected readonly emptyMessage = flattenEmptyConfigMessage(
-    this.translate.instant(cloudBackupTaskEmptyConfig.message),
-  );
+  // Bound from the shared catalog configs rather than inlined in the template, so the
+  // translated strings have a single source of truth and follow a language change.
+  // Unlike the other migrated lists, both empty branches are rendered above the table
+  // (the page-level `@if` covers search and no-data alike), so the table itself never
+  // shows an empty state and takes no `[emptyMessage]`/`[emptyIcon]`.
+  protected readonly emptyConfig = cloudBackupTaskEmptyConfig;
+  protected readonly noSearchResultsConfig = noSearchResultsConfig;
 
   protected readonly displayedColumns = ['description', 'enabled', 'snapshot', 'state', 'last-run', 'actions'];
 

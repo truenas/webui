@@ -12,6 +12,18 @@
   padding: 0 8px;
   white-space: nowrap;
 
+  .sr-only {
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+
   &.state-primary { color: var(--primary); }
   &.state-red { color: var(--red); }
   &.state-green { color: var(--green); }

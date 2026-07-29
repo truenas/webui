@@ -18,6 +18,10 @@ describe('VmwareStatusCellComponent', () => {
     return spectator.query('.state-button')!;
   }
 
+  function screenReaderOnlyText(): string {
+    return spectator.query('.sr-only')?.textContent?.trim() ?? '';
+  }
+
   function tooltip(): string {
     // Read the tooltip through the directive rather than the component's own
     // protected signal — the directive is what the user actually sees.
@@ -41,23 +45,26 @@ describe('VmwareStatusCellComponent', () => {
       expect(pill()).toHaveClass('state-button');
     });
 
-    it('folds the state into the accessible name so status is not colour-only', () => {
-      spectator.setInput('rowLabel', 'esxi-host-1 VMware Snapshot');
-      spectator.detectChanges();
-
-      // Same wording as the visible pill text, so the accessible name and the label match.
+    // The state word carries the status for anyone who can't use the colour, so it has to
+    // stay real text in the accessibility tree rather than being replaced by an aria-label.
+    it('states the status as text, with no aria-label overriding it', () => {
       expect(pill()).toHaveText('Success');
-      expect(pill()).toHaveAttribute('aria-label', 'esxi-host-1 VMware Snapshot, Success');
+      expect(pill()).not.toHaveAttribute('aria-label');
+      expect(pill()).not.toHaveAttribute('role');
+      expect(screenReaderOnlyText()).toBe('');
     });
 
-    it('appends the explanation to the accessible name for states that only tooltip it', () => {
-      spectator.setInput('rowLabel', 'esxi-host-1 VMware Snapshot');
+    it('appends the explanation for states that carry it only in the (unreachable) tooltip', () => {
       setState({ state: VmwareSnapshotStatus.Error, error: 'Connection timeout' });
 
-      expect(pill()).toHaveAttribute(
-        'aria-label',
-        'esxi-host-1 VMware Snapshot, Error, Connection timeout',
-      );
+      expect(pill()).toHaveText('Error , Connection timeout');
+      expect(screenReaderOnlyText()).toBe(', Connection timeout');
+    });
+
+    it('appends nothing for states whose tooltip only repeats the visible word', () => {
+      setState({ state: VmwareSnapshotStatus.Pending });
+
+      expect(screenReaderOnlyText()).toBe('');
     });
   });
 
@@ -113,6 +120,7 @@ describe('VmwareStatusCellComponent', () => {
 
       expect(pill()).toHaveClass('state-red');
       expect(pill()).toHaveText('Error');
+      expect(pill()).toHaveText('Some error');
     });
 
     it('should apply state-yellow class and Blocked text for BLOCKED state', () => {
@@ -120,6 +128,7 @@ describe('VmwareStatusCellComponent', () => {
 
       expect(pill()).toHaveClass('state-yellow');
       expect(pill()).toHaveText('Blocked');
+      expect(pill()).toHaveText('Blocked due to outbound network restrictions');
     });
   });
 });

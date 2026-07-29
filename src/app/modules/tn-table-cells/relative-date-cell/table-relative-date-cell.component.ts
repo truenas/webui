@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { isValid } from 'date-fns';
@@ -6,6 +7,7 @@ import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { invalidDate } from 'app/constants/invalid-date';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
+import { RelativeDateTickerService } from 'app/modules/dates/services/relative-date-ticker.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 
 /**
@@ -38,6 +40,15 @@ export class TableRelativeDateCellComponent {
 
   private readonly browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+  /**
+   * Clock dependency for `date`. The value is a fixed timestamp — a finished job's
+   * `time_finished` never changes — and `tn-table` reuses this cell across reloads via
+   * `trackBy`, so a `computed` keyed on `value()` alone would resolve once and leave the
+   * cell reading "1 min. ago" forever. Reading the shared ticker re-derives it as time
+   * passes, which the `ix-cell-relative-date` this replaces only managed on a refetch.
+   */
+  private readonly tick = toSignal(inject(RelativeDateTickerService).tick$, { initialValue: 0 });
+
   protected readonly testId = computed(() => [this.title(), this.uniqueRowTag(), 'row-relative-date']);
 
   protected readonly date = computed<string>(() => {
@@ -47,6 +58,8 @@ export class TableRelativeDateCellComponent {
     }
 
     if (isValid(value)) {
+      // Depends on *now*, not just on `value` — take the clock dependency explicitly.
+      this.tick();
       return formatDistanceToNowShortened(value as number);
     }
 

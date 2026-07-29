@@ -4,7 +4,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnDialog, TnSlideToggleHarness, TnTableHarness,
+  TnButtonHarness, TnDialog, TnSelectHarness, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -283,11 +283,9 @@ describe('ReplicationListComponent', () => {
   // hide it, and <ix-table-details-row> then renders it through the ix cell components — where
   // a toggle would have no `onRowToggle`/`requiredRoles`. It has to fall back to plain yes/no.
   it('renders the hidden Enabled column as text, not a toggle, in the detail row', async () => {
-    spectator.component.columnsChange(
-      spectator.component.columns().map((column) => (
-        column.title === 'Enabled' ? { ...column, hidden: true } : column
-      )),
-    );
+    const picker = await loader.getHarness(TnSelectHarness.with({ ancestor: 'ix-table-column-picker' }));
+    await picker.open();
+    await picker.selectOption('Enabled');
     spectator.detectChanges();
 
     expect(await table.getHeaderTexts()).not.toContain('Enabled');

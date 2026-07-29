@@ -27,7 +27,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
@@ -53,6 +52,7 @@ import {
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -100,6 +100,7 @@ import { AppState } from 'app/store';
     TaskStateCellComponent,
     ScheduleDescriptionPipe,
     YesNoPipe,
+    FlattenEmptyMessagePipe,
     TranslateModule,
   ],
 })
@@ -141,10 +142,8 @@ export class CloudSyncListComponent implements OnInit {
   protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
   // Bound from the shared catalog config rather than inlined in the template, so the
-  // translated string has a single source of truth.
-  protected readonly emptyMessage = flattenEmptyConfigMessage(
-    this.translate.instant(cloudSyncTaskEmptyConfig.message),
-  );
+  // translated string has a single source of truth and follows a language change.
+  protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
 
   // ix-table column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs) and the hidden-column list rendered in the detail

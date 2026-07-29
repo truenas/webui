@@ -1,12 +1,14 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { NEVER, of } from 'rxjs';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
-  dataProviderLoading, dataProviderRows, filterTableRows, mapTnSortToProviderSorting,
-  mapTnSortToTableSort, perRow, rowTestIdTag, toDisplayedColumns,
+  dataProviderEmptyState, dataProviderLoading, dataProviderRows, detailActionTestId, filterTableRows,
+  mapTnSortToProviderSorting, mapTnSortToTableSort, perRow, rowTestIdTag, toDisplayedColumns,
 } from './utils';
 
 describe('dataProviderRows / dataProviderLoading', () => {
@@ -262,5 +264,74 @@ describe('rowTestIdTag', () => {
 
   it('strips the punctuation convertStringToId removes', () => {
     expect(tag({ name: 'pool/dataset' })).toBe('replication-task-pool-dataset');
+  });
+});
+
+describe('detailActionTestId', () => {
+  it('kebab-cases the row parts and the action into one id', () => {
+    expect(detailActionTestId(['esxi-host', '/mnt/tank'], 'delete')).toBe('esxi-host-mnt-tank-delete');
+  });
+
+  it('splits letter-digit boundaries, which the library kebab does not', () => {
+    expect(detailActionTestId(['esxi1'], 'edit')).toBe('esxi-1-edit');
+  });
+
+  it('accepts numeric row parts', () => {
+    expect(detailActionTestId([12], 'run_now')).toBe('12-run-now');
+  });
+
+  it('drops undefined parts rather than rendering them', () => {
+    expect(detailActionTestId(['task', undefined], 'edit')).toBe('task-edit');
+  });
+});
+
+describe('dataProviderEmptyState', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: TranslateService, useValue: { instant: (key: string) => key } },
+      ],
+    });
+  });
+
+  const makeProvider = (
+    emptyType: EmptyType,
+    count: number,
+  ): BaseDataProvider<string> => ({
+    emptyType$: of(emptyType),
+    currentPageCount$: of(count),
+  } as unknown as BaseDataProvider<string>);
+
+  it('exposes the type, row count, translated title and icon for the current empty state', () => {
+    TestBed.runInInjectionContext(() => {
+      const empty = dataProviderEmptyState(makeProvider(EmptyType.NoSearchResults, 0));
+
+      expect(empty.type()).toBe(EmptyType.NoSearchResults);
+      expect(empty.count()).toBe(0);
+      expect(empty.message()).toBe('No Search Results.');
+      expect(empty.icon()).toBe('mdi-magnify-scan');
+    });
+  });
+
+  it('falls back to the no-items config for a state with no dedicated one', () => {
+    TestBed.runInInjectionContext(() => {
+      const empty = dataProviderEmptyState(makeProvider(EmptyType.NoPageData, 3));
+
+      expect(empty.count()).toBe(3);
+      expect(empty.message()).toBe('No records have been added yet');
+      expect(empty.icon()).toBe('mdi-format-list-text');
+    });
+  });
+
+  it('reports a loading state before the provider emits', () => {
+    TestBed.runInInjectionContext(() => {
+      const empty = dataProviderEmptyState({
+        emptyType$: NEVER,
+        currentPageCount$: NEVER,
+      } as unknown as BaseDataProvider<string>);
+
+      expect(empty.type()).toBe(EmptyType.Loading);
+      expect(empty.count()).toBe(0);
+    });
   });
 });

@@ -217,7 +217,9 @@ export function dataProviderEmptyState<T>(
   return {
     type,
     message: computed(() => {
-      const title = emptyService.defaultEmptyConfig(type())?.title;
+      // `defaultEmptyConfig` always resolves to a config (it has a `default:` branch),
+      // but `title` is optional on EmptyConfig.
+      const title = emptyService.defaultEmptyConfig(type()).title;
       return title ? translate.instant(title) : '';
     }),
     icon: computed(() => emptyService.iconForType(type())),

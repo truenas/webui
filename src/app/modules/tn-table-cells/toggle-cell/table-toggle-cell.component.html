@@ -7,5 +7,5 @@
   [ariaLabel]="(checked() ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + ariaLabel()"
   (change)="toggled.emit($event)"
   (click)="$event.stopPropagation()"
-  (keydown)="$event.stopPropagation()"
+  (keydown)="stopRowActivationKeys($event)"
 ></tn-slide-toggle>

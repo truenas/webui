@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TnSlideToggleComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { stopRowActivationKeys } from 'app/modules/tn-table-cells/stop-row-activation-keys';
 
 /**
  * tn-table replacement for the ix-table `toggleColumn` cell renderer, built on
@@ -41,6 +42,8 @@ export class TableToggleCellComponent {
   readonly requiredRoles = input<Role[]>([]);
 
   readonly toggled = output<boolean>();
+
+  protected readonly stopRowActivationKeys = stopRowActivationKeys;
 
   protected readonly testId = computed(() => [this.title(), this.uniqueRowTag(), 'row-toggle']);
 

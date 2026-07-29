@@ -25,7 +25,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -50,6 +49,7 @@ import {
 } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -96,6 +96,7 @@ import { TaskService } from 'app/services/task.service';
     TaskStateCellComponent,
     ScheduleDescriptionPipe,
     YesNoPipe,
+    FlattenEmptyMessagePipe,
     TranslateModule,
   ],
 })
@@ -130,12 +131,9 @@ export class SnapshotTaskListComponent implements OnInit {
   protected readonly empty = dataProviderEmptyState(this.dataProvider);
   protected readonly EmptyType = EmptyType;
 
-  // Bound from the shared catalog config rather than inlined in the template: the
-  // catalog key is the `<p>`-wrapped markup and is already translated in every
-  // locale, so re-wording it here would mint a new key and lose those translations.
-  protected readonly emptyMessage = flattenEmptyConfigMessage(
-    this.translate.instant(snapshotTaskEmptyConfig.message),
-  );
+  // Bound from the shared catalog config rather than inlined in the template, so the
+  // translated string has a single source of truth and follows a language change.
+  protected readonly emptyConfig = snapshotTaskEmptyConfig;
 
   // ix-table column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs) and the hidden-column list rendered in the detail

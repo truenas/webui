@@ -6,8 +6,8 @@
       icon="security"
       iconLibrary="material"
       iconSize="56px"
-      [title]="emptyTitle | translate"
-      [description]="emptyDescription"
+      [title]="emptyConfig.title | translate"
+      [description]="emptyConfig.message | translate | flattenEmptyMessage"
     ></tn-empty>
 
     <!-- Hosted outside tn-empty: its [actionText] button exposes no testId input,

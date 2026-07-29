@@ -24,7 +24,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -46,6 +45,7 @@ import {
 } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -97,6 +97,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TableToggleCellComponent,
     TaskStateCellComponent,
     YesNoPipe,
+    FlattenEmptyMessagePipe,
     TranslateModule,
   ],
 })
@@ -132,10 +133,8 @@ export class ReplicationListComponent implements OnInit {
   protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
   // Bound from the shared catalog config rather than inlined in the template, so the
-  // translated string has a single source of truth.
-  protected readonly emptyMessage = flattenEmptyConfigMessage(
-    this.translate.instant(replicationTaskEmptyConfig.message),
-  );
+  // translated string has a single source of truth and follows a language change.
+  protected readonly emptyConfig = replicationTaskEmptyConfig;
 
   // ix-table column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs) and the hidden-column list rendered in the detail

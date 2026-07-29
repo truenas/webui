@@ -36,10 +36,11 @@ export class VmwareStatusCellComponent {
   private titleCase = inject(TitleCasePipe);
 
   readonly state = input.required<VmwareState>();
-  /** Row description the state is folded into, so status isn't conveyed by colour alone. */
-  readonly rowLabel = input<string>('');
 
-  /** Rendered as the pill's text and reused in its accessible name, so the two can't diverge. */
+  /**
+   * The pill's visible text, and the whole of its accessible name for the states that need
+   * no explanation — so status is never conveyed by colour alone.
+   */
   protected readonly stateText = computed<string>(
     () => this.titleCase.transform(this.translate.instant(this.state().state)),
   );
@@ -63,14 +64,15 @@ export class VmwareStatusCellComponent {
     return this.translate.instant('Success');
   });
 
-  protected readonly ariaLabel = computed<string>(() => {
+  /**
+   * The tooltip text for the states whose tooltip says more than the pill does, so it can be
+   * appended for screen readers. Empty for the rest, where the tooltip only repeats the
+   * visible word.
+   */
+  protected readonly explanation = computed<string>(() => {
     const status = this.state().state;
-    // ERROR/BLOCKED carry their explanation only in the tooltip, which is unreachable
-    // on a non-focusable element — fold it into the accessible name instead.
     const isExplained = status === VmwareSnapshotStatus.Error || status === VmwareSnapshotStatus.Blocked;
-    return [this.rowLabel(), this.stateText(), isExplained ? this.tooltip() : '']
-      .filter(Boolean)
-      .join(', ');
+    return isExplained ? this.tooltip() : '';
   });
 
   protected readonly stateClass = computed<string>(() => {

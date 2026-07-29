@@ -11,15 +11,15 @@
       icon="magnify-scan"
       iconLibrary="mdi"
       iconSize="56px"
-      [title]="'No Search Results.' | translate"
-      [description]="'No matching results found' | translate"
+      [title]="noSearchResultsConfig.title | translate"
+      [description]="noSearchResultsConfig.message | translate"
     ></tn-empty>
   } @else {
     <tn-empty
       icon="true-cloud"
       iconLibrary="custom"
       iconSize="56px"
-      [title]="emptyMessage"
+      [title]="emptyConfig.message | translate | flattenEmptyMessage"
     ></tn-empty>
   }
 } @else {
@@ -33,8 +33,6 @@
     [loading]="isLoading()"
     [clickable]="true"
     [activeRow]="activeRow()"
-    [emptyMessage]="empty.message()"
-    [emptyIcon]="empty.icon()"
     (rowClick)="onRowClick($event)"
     (sortChange)="onSortChange($event)"
   >

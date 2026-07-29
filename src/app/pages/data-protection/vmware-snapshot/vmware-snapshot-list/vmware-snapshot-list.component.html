@@ -69,10 +69,7 @@
     <ng-container [tnColumnDef]="'state'" [width]="'140px'">
       <ng-template tnHeaderCellDef>{{ 'State' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <ix-vmware-status-cell
-          [state]="row.state"
-          [rowLabel]="ariaLabel(row)"
-        ></ix-vmware-status-cell>
+        <ix-vmware-status-cell [state]="row.state"></ix-vmware-status-cell>
       </ng-template>
     </ng-container>
 

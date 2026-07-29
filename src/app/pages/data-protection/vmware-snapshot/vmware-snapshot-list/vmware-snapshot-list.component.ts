@@ -24,7 +24,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import {
   dataProviderEmptyState, dataProviderLoading, dataProviderRows,
-  detailActionTestId, mapTnSortToTableSort, perRow, rowTestIdTag,
+  detailActionTestId, mapTnSortToTableSort, rowTestIdTag,
 } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -85,9 +85,6 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   protected readonly uniqueRowTag = rowTestIdTag<VmwareSnapshot>((row) => 'vmware-snapshot-' + row.hostname);
 
-  protected readonly ariaLabel = perRow<VmwareSnapshot, string>(
-    (row) => [row.hostname, this.translate.instant('VMware Snapshot')].join(' '),
-  );
 
   protected detailActionTestId(row: VmwareSnapshot, action: string): string {
     return detailActionTestId([row.hostname, row.filesystem], action);

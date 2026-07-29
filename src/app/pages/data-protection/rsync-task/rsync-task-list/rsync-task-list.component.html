@@ -25,7 +25,7 @@
     icon="desktop-classic"
     iconLibrary="mdi"
     iconSize="56px"
-    [title]="emptyMessage"
+    [title]="emptyConfig.message | translate | flattenEmptyMessage"
   ></tn-empty>
 } @else {
   <tn-table

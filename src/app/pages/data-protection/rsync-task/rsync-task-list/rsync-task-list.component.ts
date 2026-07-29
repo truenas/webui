@@ -25,7 +25,6 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { DisplayableState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { TaskState } from 'app/enums/task-state.enum';
-import { flattenEmptyConfigMessage } from 'app/helpers/empty-config.helper';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -50,6 +49,7 @@ import {
   mapTnSortToTableSort, perRow, rowTestIdTag, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -94,6 +94,7 @@ import { TaskService } from 'app/services/task.service';
     TaskStateCellComponent,
     ScheduleDescriptionPipe,
     YesNoPipe,
+    FlattenEmptyMessagePipe,
     TranslateModule,
   ],
 })
@@ -122,10 +123,8 @@ export class RsyncTaskListComponent implements OnInit {
   protected readonly empty = dataProviderEmptyState(this.dataProvider);
 
   // Bound from the shared catalog config rather than inlined in the template, so the
-  // translated string has a single source of truth.
-  protected readonly emptyMessage = flattenEmptyConfigMessage(
-    this.translate.instant(rsyncTaskEmptyConfig.message),
-  );
+  // translated string has a single source of truth and follows a language change.
+  protected readonly emptyConfig = rsyncTaskEmptyConfig;
 
   protected readonly actions: IconActionConfig<RsyncTask>[] = [
     {
@@ -219,6 +218,10 @@ export class RsyncTaskListComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
+    // No options on purpose: the actions are rendered from the template by
+    // <ix-table-actions-cell>. This entry exists only so `toDisplayedColumns` still emits
+    // the trailing `actions` name the template's [tnColumnDef] expects. Having no `title`
+    // also keeps the picker from offering it.
     actionsWithMenuColumn({}),
   ]));
 
