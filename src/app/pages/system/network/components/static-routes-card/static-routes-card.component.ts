@@ -109,7 +109,10 @@ export class StaticRoutesCardComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<StaticRoute>(event, this.displayedColumns, null));
+    this.dataProvider.setSorting(mapTnSortToTableSort<StaticRoute>(event, {
+      displayedColumns: this.displayedColumns,
+      columns: null,
+    }));
   }
 
   ngOnInit(): void {

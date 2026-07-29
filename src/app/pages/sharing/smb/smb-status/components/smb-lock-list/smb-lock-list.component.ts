@@ -143,6 +143,9 @@ export class SmbLockListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<SmbLockInfo>(event, this.displayedColumns(), this.columns()));
+    this.dataProvider.setSorting(mapTnSortToTableSort<SmbLockInfo>(event, {
+      displayedColumns: this.displayedColumns(),
+      columns: this.columns(),
+    }));
   }
 }

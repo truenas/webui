@@ -50,7 +50,10 @@ export class UserListComponent {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider().setSorting(mapTnSortToTableSort<User>(event, this.displayedColumns, null));
+    this.dataProvider().setSorting(mapTnSortToTableSort<User>(event, {
+      displayedColumns: this.displayedColumns,
+      columns: null,
+    }));
   }
 
   constructor() {

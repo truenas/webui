@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnDialog, TnTableHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnEmptyHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { NEVER, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -11,6 +11,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
+import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 import {
   IxTableDetailsRowComponent,
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
@@ -304,6 +305,34 @@ describe('DiskListComponent', () => {
 
     const rows = await table.getAllRowTexts();
     expect(rows[0]).toEqual(['sda', 'serial1', '40 GiB', 'new-pool', 'Unsupported']);
+  });
+
+  it('sorts Disk Size by the raw byte count, not by the formatted text', async () => {
+    await table.clickSortHeader('size');
+
+    // '40 GiB' sorts before '5 GiB' as text; ascending by bytes puts the 5 GiB disks first.
+    expect((await table.getAllRowTexts()).map((row) => row[2])).toEqual(['5 GiB', '5 GiB', '40 GiB']);
+
+    await table.clickSortHeader('size');
+
+    expect((await table.getAllRowTexts()).map((row) => row[2])).toEqual(['40 GiB', '5 GiB', '5 GiB']);
+  });
+
+  it('replaces the table with a no-results empty state, whose action resets the search', async () => {
+    const search = await loader.getHarness(BasicSearchHarness);
+    await search.setValue('nonexistent-disk');
+    spectator.detectChanges();
+
+    const empty = await loader.getHarness(TnEmptyHarness);
+
+    expect(await empty.getTitle()).toBe('No Search Results.');
+    expect(await loader.getAllHarnesses(TnTableHarness)).toHaveLength(0);
+
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Reset' }))).click();
+    spectator.detectChanges();
+
+    expect(await loader.getAllHarnesses(TnEmptyHarness)).toHaveLength(0);
+    expect(await (await loader.getHarness(TnTableHarness)).getRowCount()).toBe(3);
   });
 
   it('drops a selection the save invalidated instead of reusing pre-edit rows', async () => {

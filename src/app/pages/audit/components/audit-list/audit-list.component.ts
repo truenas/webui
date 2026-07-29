@@ -92,7 +92,10 @@ export class AuditListComponent {
   protected readonly trackByAuditId = (_index: number, row: AuditEntry): string => row.audit_id;
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider().setSorting(mapTnSortToTableSort<AuditEntry>(event, this.displayedColumns, null));
+    this.dataProvider().setSorting(mapTnSortToTableSort<AuditEntry>(event, {
+      displayedColumns: this.displayedColumns,
+      columns: null,
+    }));
   }
 
   protected onRowClick(row: AuditEntry): void {

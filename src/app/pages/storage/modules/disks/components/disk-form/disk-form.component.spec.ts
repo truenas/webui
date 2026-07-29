@@ -134,6 +134,30 @@ describe('DiskFormComponent', () => {
     });
   });
 
+  describe('disk without power management values', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: { diskToEdit: { ...dataDisk, hddstandby: null, advpowermgmt: null } as unknown as Disk },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('does not require them, so an edit to another field can still be saved', async () => {
+      await (await getInput('description')).setValue('New disk description');
+
+      // Requiring a value the disk never had would leave the panel Save permanently disabled.
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
+        advpowermgmt: null,
+        description: 'New disk description',
+        hddstandby: null,
+      }]);
+    });
+  });
+
   describe('enterprise', () => {
     beforeEach(() => {
       store$.overrideSelector(selectIsEnterprise, true);

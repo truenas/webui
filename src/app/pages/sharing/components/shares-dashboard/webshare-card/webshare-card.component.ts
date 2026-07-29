@@ -202,7 +202,10 @@ export class WebShareCardComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<WebShareTableRow>(event, this.displayedColumns, null));
+    this.dataProvider.setSorting(mapTnSortToTableSort<WebShareTableRow>(event, {
+      displayedColumns: this.displayedColumns,
+      columns: null,
+    }));
   }
 
   ngOnInit(): void {

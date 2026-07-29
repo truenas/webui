@@ -113,7 +113,10 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<InitShutdownScript>(event, this.displayedColumns, null));
+    this.dataProvider.setSorting(mapTnSortToTableSort<InitShutdownScript>(event, {
+      displayedColumns: this.displayedColumns,
+      columns: null,
+    }));
   }
 
   ngOnInit(): void {

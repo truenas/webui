@@ -136,7 +136,10 @@ export class AlertServiceListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<AlertService>(event, this.displayedColumns, null));
+    this.dataProvider.setSorting(mapTnSortToTableSort<AlertService>(event, {
+      displayedColumns: this.displayedColumns,
+      columns: null,
+    }));
   }
 
   private setDefaultSort(): void {

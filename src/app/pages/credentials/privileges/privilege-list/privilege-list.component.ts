@@ -131,7 +131,10 @@ export class PrivilegeListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<Privilege>(event, this.displayedColumns, null));
+    this.dataProvider.setSorting(mapTnSortToTableSort<Privilege>(event, {
+      displayedColumns: this.displayedColumns,
+      columns: null,
+    }));
   }
 
   searchQuery: SearchQuery<Privilege>;

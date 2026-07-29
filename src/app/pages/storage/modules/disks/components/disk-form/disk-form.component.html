@@ -30,7 +30,7 @@
     <tn-form-field
       [label]="'HDD Standby' | translate"
       [tooltip]="helptext.standbyTooltip | translate"
-      [required]="true"
+      [required]="isHddStandbyRequired()"
     >
       <tn-select
         formControlName="hddstandby"
@@ -40,7 +40,7 @@
 
     <tn-form-field
       [label]="'Advanced Power Management' | translate"
-      [required]="true"
+      [required]="isAdvPowerManagementRequired()"
     >
       <tn-select
         formControlName="advpowermgmt"

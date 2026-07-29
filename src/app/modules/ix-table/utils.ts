@@ -46,11 +46,16 @@ export function createTable<T>(
 }
 
 /**
- * Restores the single-expanded-row behavior of the previous ix-table on a
- * `tn-table`, which allows several rows open at once and exposes no
+ * TEMP (NAS-141021): restores the single-expanded-row behavior of the previous
+ * ix-table on a `tn-table`, which allows several rows open at once and exposes no
  * single-expand input or row-expand output to hook into: whenever a second row
  * opens (via row click or the expand chevron) we collapse back to just the
  * newly-opened one.
+ *
+ * This reads and writes a library-owned signal (`expandedRows`) from an effect and
+ * relies on it converging after the extra row is pruned. Once
+ * `@truenas/ui-components` grows a `[singleExpand]` input (or a `(rowExpand)`
+ * output we can intercept), drop this helper and bind that instead.
  *
  * We diff against the previous set rather than caching a single row reference,
  * so a data reload (which swaps in fresh row objects) can't leave a stale
@@ -79,26 +84,33 @@ export function restrictToSingleExpandedRow<T>(table: Signal<TnTableComponent<T>
   });
 }
 
+export interface TnSortMapping<T> {
+  /**
+   * The list bound to the table's `[displayedColumns]`. `active` is resolved as the
+   * sorted column's index within it.
+   */
+  displayedColumns: string[];
+
+  /**
+   * Carries the sort *semantics* of the previous ix-table head, which sorted by a
+   * column's `sortBy` or, failing that, by its rendered `getValue` rather than by the
+   * raw row property — so a column showing a derived, formatted or translated value
+   * keeps sorting by what the user sees. Pass the column model the table already keeps
+   * for its picker, or a partial list naming only the columns that need an accessor;
+   * a column missing from the list simply sorts by its raw value at `propertyName`.
+   *
+   * Required (rather than optional) so every table has to answer the question once:
+   * pass `null` when every column sorts correctly by its raw value.
+   */
+  columns: Column<T, ColumnComponent<T>>[] | null;
+}
+
 /**
  * Translates a tn-table `(sortChange)` event into the `TableSort` shape our
- * data providers expect. `active` is the index of the sorted column within the
- * displayed column list (or `null` when sorting is cleared). Shared so every
- * tn-table migration maps sort state the same way.
- *
- * `columns` carries the sort *semantics* of the previous ix-table head, which
- * sorted by a column's `sortBy` or, failing that, by its rendered `getValue`
- * rather than by the raw row property — so a column showing a derived,
- * formatted or translated value keeps sorting by what the user sees. Pass the
- * column model the table already keeps for its picker, or a partial list naming
- * only the columns that need an accessor. It is a required argument (rather
- * than optional) so every table has to answer the question once: pass `null`
- * when every column sorts correctly by its raw value at `propertyName`.
+ * data providers expect. Shared so every tn-table migration maps sort state the
+ * same way. See {@link TnSortMapping} for what the two lists are for.
  */
-export function mapTnSortToTableSort<T>(
-  event: TnSortEvent,
-  displayedColumns: string[],
-  columns: Column<T, ColumnComponent<T>>[] | null,
-): TableSort<T> {
+export function mapTnSortToTableSort<T>(event: TnSortEvent, mapping: TnSortMapping<T>): TableSort<T> {
   let direction: SortDirection | null = null;
   if (event.direction === 'asc') {
     direction = SortDirection.Asc;
@@ -107,10 +119,10 @@ export function mapTnSortToTableSort<T>(
   }
 
   const sortedColumn = direction
-    ? columns?.find((column) => String(column.propertyName) === event.column)
+    ? mapping.columns?.find((column) => String(column.propertyName) === event.column)
     : undefined;
 
-  const columnIndex = displayedColumns.indexOf(event.column);
+  const columnIndex = mapping.displayedColumns.indexOf(event.column);
   return {
     propertyName: direction ? (event.column as keyof T) : null,
     sortBy: (sortedColumn?.sortBy || sortedColumn?.getValue) as ((row: T) => string | number) | undefined,

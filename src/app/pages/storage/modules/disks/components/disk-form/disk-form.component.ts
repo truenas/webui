@@ -75,10 +75,9 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse | null> i
     name: [''],
     serial: [''],
     description: [''],
-    // Both are marked required in the template and a disk always has a value for them,
-    // so back the asterisk with a validator instead of leaving Save always enabled.
-    hddstandby: [null as DiskStandby | null, Validators.required],
-    advpowermgmt: [null as DiskPowerLevel | null, Validators.required],
+    // `Validators.required` is added in `ngOnInit`, per field — see `isHddStandbyRequired`.
+    hddstandby: [null as DiskStandby | null],
+    advpowermgmt: [null as DiskPowerLevel | null],
     passwd: [''],
     clear_pw: [false],
   });
@@ -92,6 +91,16 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse | null> i
 
   protected readonly optionLabelTestId = advPowerManagementOptionTestId;
 
+  /**
+   * A disk normally always has a power-management value, so the field is marked required and
+   * backed by a validator rather than leaving Save always enabled. Only when the disk actually
+   * arrived with a value, though: requiring one that came back empty would leave Save
+   * permanently disabled — blocking an edit to the description, say — on a field the user
+   * never touched and got no explanation about.
+   */
+  protected readonly isHddStandbyRequired = computed(() => Boolean(this.diskToEdit()?.hddstandby));
+  protected readonly isAdvPowerManagementRequired = computed(() => Boolean(this.diskToEdit()?.advpowermgmt));
+
   private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly showSedSection = computed(() => {
     const disk = this.diskToEdit();
@@ -103,6 +112,13 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse | null> i
   private submittedResponse: DiskFormResponse | null = null;
 
   ngOnInit(): void {
+    if (this.isHddStandbyRequired()) {
+      this.form.controls.hddstandby.addValidators(Validators.required);
+    }
+    if (this.isAdvPowerManagementRequired()) {
+      this.form.controls.advpowermgmt.addValidators(Validators.required);
+    }
+
     if (this.showSedSection()) {
       this.clearPasswordField();
     }

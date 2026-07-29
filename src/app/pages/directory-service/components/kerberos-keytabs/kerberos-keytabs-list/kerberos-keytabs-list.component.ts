@@ -158,7 +158,10 @@ export class KerberosKeytabsListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<KerberosKeytab>(event, this.displayedColumns, null));
+    this.dataProvider.setSorting(mapTnSortToTableSort<KerberosKeytab>(event, {
+      displayedColumns: this.displayedColumns,
+      columns: null,
+    }));
   }
 
   getKerberosKeytabs(): void {

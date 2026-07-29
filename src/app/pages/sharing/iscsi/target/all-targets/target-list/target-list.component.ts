@@ -133,7 +133,10 @@ export class TargetListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider().setSorting(mapTnSortToTableSort<IscsiTarget>(event, this.displayedColumns(), null));
+    this.dataProvider().setSorting(mapTnSortToTableSort<IscsiTarget>(event, {
+      displayedColumns: this.displayedColumns(),
+      columns: null,
+    }));
   }
 
   protected doAdd(): void {

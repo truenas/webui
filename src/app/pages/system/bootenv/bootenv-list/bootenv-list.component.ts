@@ -280,7 +280,10 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns, this.sortColumns));
+    this.dataProvider.setSorting(mapTnSortToTableSort(event, {
+      displayedColumns: this.displayedColumns,
+      columns: this.sortColumns,
+    }));
   }
 
   private setDefaultSort(): void {

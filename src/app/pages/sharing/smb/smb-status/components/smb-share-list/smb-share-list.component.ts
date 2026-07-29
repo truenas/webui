@@ -124,6 +124,9 @@ export class SmbShareListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<SmbShareInfo>(event, this.displayedColumns(), this.columns()));
+    this.dataProvider.setSorting(mapTnSortToTableSort<SmbShareInfo>(event, {
+      displayedColumns: this.displayedColumns(),
+      columns: this.columns(),
+    }));
   }
 }

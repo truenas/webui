@@ -64,6 +64,19 @@ interface DiskRow extends Disk {
   tag: string;
 }
 
+/**
+ * Drops the display-only fields again at the boundary with the edit forms, which type
+ * their input as `Disk` — the pre-migration screen stripped its own UI-only row state
+ * (`selected`) here for the same reason. `pool` stays as the display text the row was
+ * built with, as it was before the migration.
+ */
+function toDisk(row: DiskRow): Disk {
+  const {
+    sizeText, sedStatusText, hddStandbyText, advPowerManagementText, tag, ...disk
+  } = row;
+  return disk;
+}
+
 @Component({
   selector: 'ix-disk-list',
   templateUrl: './disk-list.component.html',
@@ -103,9 +116,10 @@ export class DiskListComponent {
 
   protected readonly searchQuery = signal('');
 
-  // `hasSed$` is a store selector, so this resolves synchronously at field init —
-  // both the SED column's default visibility and the disk.query `extra` args read it.
-  private readonly hasSed = toSignal(this.licenseService.hasSed$, { initialValue: false });
+  // `hasSed$` is a store selector, so this resolves synchronously at field init — both the
+  // SED column's default visibility and the disk.query `extra` args read it. `requireSync`
+  // makes that a hard error rather than two silent omissions if it ever becomes async.
+  private readonly hasSed = toSignal(this.licenseService.hasSed$, { requireSync: true });
 
   private disks: DiskRow[] = [];
   private unusedDisks: DetailsDisk[] = [];
@@ -293,7 +307,10 @@ export class DiskListComponent {
   protected onSortChange(event: TnSortEvent): void {
     // Pass the column model so the derived columns keep sorting by their displayed
     // text (and Disk Size by its raw byte count), the way ix-table's head did.
-    this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns(), this.columns()));
+    this.dataProvider.setSorting(mapTnSortToTableSort(event, {
+      displayedColumns: this.displayedColumns(),
+      columns: this.columns(),
+    }));
   }
 
   protected onColumnsChange(columns: Column<DiskRow, ColumnComponent<DiskRow>>[]): void {
@@ -309,7 +326,8 @@ export class DiskListComponent {
     this.dataProvider.load();
   }
 
-  protected edit(disks: Disk[]): void {
+  protected edit(rows: DiskRow[]): void {
+    const disks = rows.map((row) => toDisk(row));
     const result$ = disks.length > 1
       ? this.formPanel.open<DiskFormResponse | null>(DiskBulkEditComponent, {
           title: this.translate.instant('Bulk Edit Disks'),

@@ -74,7 +74,7 @@ describe('mapTnSortToTableSort', () => {
   const displayedColumns = ['name', 'path', 'enabled', 'actions'];
 
   it('maps an ascending sort to propertyName + direction + column index', () => {
-    expect(mapTnSortToTableSort({ column: 'path', direction: 'asc' }, displayedColumns, null)).toEqual({
+    expect(mapTnSortToTableSort({ column: 'path', direction: 'asc' }, { displayedColumns, columns: null })).toEqual({
       propertyName: 'path',
       direction: SortDirection.Asc,
       active: 1,
@@ -82,7 +82,7 @@ describe('mapTnSortToTableSort', () => {
   });
 
   it('maps a descending sort to propertyName + direction + column index', () => {
-    expect(mapTnSortToTableSort({ column: 'enabled', direction: 'desc' }, displayedColumns, null)).toEqual({
+    expect(mapTnSortToTableSort({ column: 'enabled', direction: 'desc' }, { displayedColumns, columns: null })).toEqual({
       propertyName: 'enabled',
       direction: SortDirection.Desc,
       active: 2,
@@ -90,7 +90,7 @@ describe('mapTnSortToTableSort', () => {
   });
 
   it('clears sorting when the direction is empty', () => {
-    expect(mapTnSortToTableSort({ column: 'name', direction: '' }, displayedColumns, null)).toEqual({
+    expect(mapTnSortToTableSort({ column: 'name', direction: '' }, { displayedColumns, columns: null })).toEqual({
       propertyName: null,
       direction: null,
       active: null,
@@ -98,7 +98,7 @@ describe('mapTnSortToTableSort', () => {
   });
 
   it('leaves active null when the sorted column is not displayed', () => {
-    expect(mapTnSortToTableSort({ column: 'comment', direction: 'asc' }, displayedColumns, null)).toEqual({
+    expect(mapTnSortToTableSort({ column: 'comment', direction: 'asc' }, { displayedColumns, columns: null })).toEqual({
       propertyName: 'comment',
       direction: SortDirection.Asc,
       active: null,
@@ -109,6 +109,7 @@ describe('mapTnSortToTableSort', () => {
     interface Row { name: string; size: number }
 
     const row: Row = { name: 'sda', size: 1024 };
+    const columns = ['name', 'size'];
     const sizeColumn = {
       propertyName: 'size',
       getValue: (item: Row) => `${item.size} bytes`,
@@ -116,7 +117,10 @@ describe('mapTnSortToTableSort', () => {
     } as Column<Row, ColumnComponent<Row>>;
 
     it('prefers the column sortBy over its getValue', () => {
-      const sorting = mapTnSortToTableSort<Row>({ column: 'size', direction: 'asc' }, ['name', 'size'], [sizeColumn]);
+      const sorting = mapTnSortToTableSort<Row>(
+        { column: 'size', direction: 'asc' },
+        { displayedColumns: columns, columns: [sizeColumn] },
+      );
 
       expect(sorting.sortBy?.(row)).toBe(1024);
     });
@@ -127,7 +131,10 @@ describe('mapTnSortToTableSort', () => {
         getValue: (item: Row) => `${item.size} bytes`,
       } as Column<Row, ColumnComponent<Row>>;
 
-      const sorting = mapTnSortToTableSort<Row>({ column: 'size', direction: 'asc' }, ['name', 'size'], [derivedColumn]);
+      const sorting = mapTnSortToTableSort<Row>(
+        { column: 'size', direction: 'asc' },
+        { displayedColumns: columns, columns: [derivedColumn] },
+      );
 
       expect(sorting.sortBy?.(row)).toBe('1024 bytes');
     });
@@ -137,15 +144,22 @@ describe('mapTnSortToTableSort', () => {
 
       expect(mapTnSortToTableSort<Row>(
         { column: 'name', direction: 'asc' },
-        ['name', 'size'],
-        [plainColumn, sizeColumn],
+        { displayedColumns: columns, columns: [plainColumn, sizeColumn] },
       ).sortBy).toBeUndefined();
 
       expect(mapTnSortToTableSort<Row>(
         { column: 'size', direction: '' },
-        ['name', 'size'],
-        [sizeColumn],
+        { displayedColumns: columns, columns: [sizeColumn] },
       ).sortBy).toBeUndefined();
+    });
+
+    it('leaves sortBy undefined when the sorted column is absent from a partial column list', () => {
+      const sorting = mapTnSortToTableSort<Row>(
+        { column: 'name', direction: 'asc' },
+        { displayedColumns: columns, columns: [sizeColumn] },
+      );
+
+      expect(sorting.sortBy).toBeUndefined();
     });
   });
 });
