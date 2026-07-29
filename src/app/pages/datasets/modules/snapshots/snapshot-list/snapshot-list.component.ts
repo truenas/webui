@@ -34,8 +34,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
-import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
-import { restrictToSingleExpandedRow } from 'app/modules/ix-table/utils';
+import { mapTnSortToTableSort, restrictToSingleExpandedRow } from 'app/modules/ix-table/utils';
 import { getMachineTime, LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -131,7 +130,11 @@ export class SnapshotListComponent implements OnInit {
 
   protected readonly trackBySnapshotId = (_: number, row: ZfsSnapshot): string => row.name;
 
-  private readonly sortByMap: Record<string, (row: ZfsSnapshot) => number> = {
+  /**
+   * `used`/`created`/`referenced` are display-only columns whose values live under `properties`,
+   * so they can't sort by the raw row value at their column name.
+   */
+  private readonly sortAccessors: Record<string, (row: ZfsSnapshot) => number> = {
     used: (row) => getFiniteNumber(row?.properties?.used?.parsed) ?? 0,
     created: (row) => getSnapshotCreationMs(row) ?? 0,
     referenced: (row) => getFiniteNumber(row?.properties?.referenced?.parsed) ?? 0,
@@ -299,20 +302,11 @@ export class SnapshotListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    const direction = event.direction === '' ? null : (event.direction as SortDirection);
-    // `dataset`/`snapshot_name` are real ZfsSnapshot keys the data provider can sort on
-    // directly. `used`/`created`/`referenced` are display-only columns whose values live
-    // under `properties`, so the cast is nominal for those — the sortByMap override below
-    // supplies the actual accessor and `propertyName` is never read for them.
-    const sorting: TableSort<ZfsSnapshot> = {
-      propertyName: direction ? (event.column as keyof ZfsSnapshot) : null,
-      direction,
-      active: null,
-    };
-    if (direction && this.sortByMap[event.column]) {
-      sorting.sortBy = this.sortByMap[event.column];
-    }
-    this.dataProvider.setSorting(sorting);
+    this.dataProvider.setSorting(mapTnSortToTableSort<ZfsSnapshot>(event, {
+      displayedColumns: this.displayedColumns(),
+      columns: null,
+      sortAccessors: this.sortAccessors,
+    }));
   }
 
   protected onListFiltered(query: string): void {

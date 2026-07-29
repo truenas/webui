@@ -159,11 +159,33 @@ describe('DiskBulkEditComponent', () => {
     spectator.component.submit();
 
     expect(api.job).toHaveBeenCalledWith('core.bulk', expect.anything());
-    expect(dialogService.error).toHaveBeenCalled();
+    expect(dialogService.error).toHaveBeenCalledWith([
+      { title: expect.any(String), message: 'mock error' },
+    ]);
     // The partial failure resolves through the success path (so the panel closes and the
     // opener reloads), but the "Successfully saved" snackbar is withheld beside the dialog.
     expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
     expect(spectator.component.isBusy()).toBe(false);
+  });
+
+  it('reports every distinct failure reason in one dialog', async () => {
+    const dialogService = spectator.inject(DialogService);
+    jest.spyOn(api, 'job').mockReturnValue(of(fakeSuccessfulJob([
+      { error: 'disk is busy', result: false },
+      { error: 'disk is gone', result: false },
+      { error: 'disk is busy', result: false },
+    ])));
+
+    await fillSettings();
+    spectator.component.submit();
+
+    // One dialog for the whole bulk (a dialog per failed disk was a storm), but every distinct
+    // reason survives — reporting only the first would hide the second disk's failure entirely.
+    expect(dialogService.error).toHaveBeenCalledTimes(1);
+    expect(dialogService.error).toHaveBeenCalledWith([
+      { title: expect.any(String), message: 'disk is busy' },
+      { title: expect.any(String), message: 'disk is gone' },
+    ]);
   });
 
   it('emits only the disks that did succeed when the bulk job partially fails', async () => {

@@ -58,7 +58,7 @@ interface DiskFormValues {
     TranslateModule,
   ],
 })
-export class DiskFormComponent extends IxFormHostForm<DiskFormResponse | null> implements OnInit {
+export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -107,10 +107,6 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse | null> i
     return this.isEnterprise() || (!!disk?.passwd && disk.passwd !== '');
   });
 
-  // Captured on a successful save so the panel host can hand the updated disk back to its
-  // opener: `<ix-form>` emits a bare `true` in the side-panel host, dropping the payload.
-  private submittedResponse: DiskFormResponse | null = null;
-
   ngOnInit(): void {
     if (this.isHddStandbyRequired()) {
       this.form.controls.hddstandby.addValidators(Validators.required);
@@ -124,22 +120,17 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse | null> i
     }
   }
 
-  protected readonly handleSubmit = (event: FormSubmitEvent<DiskFormValues>): SubmitResult => {
+  protected readonly handleSubmit = (event: FormSubmitEvent<DiskFormValues>): SubmitResult<DiskFormResponse> => {
     const diskId = this.diskToEdit().identifier;
     const valuesDiskUpdate = this.prepareUpdate(event.allValues);
 
     return {
       request$: this.api.call('disk.update', [diskId, valuesDiskUpdate]),
       successMessage: this.translate.instant('Disk settings successfully saved.'),
-      onSuccess: () => {
-        this.submittedResponse = [{ identifier: diskId, ...valuesDiskUpdate }];
-      },
+      // The panel host forwards this to its opener, which reconciles the edited row.
+      closeWith: () => [{ identifier: diskId, ...valuesDiskUpdate }],
     };
   };
-
-  protected onFormClosed(): void {
-    this.closed.emit(this.submittedResponse);
-  }
 
   private clearPasswordField(): void {
     this.form.controls.clear_pw.valueChanges

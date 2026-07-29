@@ -3,7 +3,7 @@
   [editData]="diskToEdit()"
   [requiredRoles]="requiredRoles"
   [submitHandler]="handleSubmit"
-  (closed)="onFormClosed()"
+  (closed)="closed.emit($event)"
 >
   <tn-form-section [heading]="helptext.generalTitle | translate">
     <tn-form-field [label]="'Name' | translate">

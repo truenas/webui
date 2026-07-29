@@ -47,13 +47,10 @@ import { DiskWipeDialog } from 'app/pages/storage/modules/disks/components/disk-
 import { LicenseService } from 'app/services/license.service';
 
 /**
- * A disk row with every display-only value resolved once, when the rows are built. The
- * templates bind these fields instead of calling methods, so translation and size formatting
- * don't re-run for every visible row on every change detection.
- *
- * The translated fields are resolved once, so a runtime language switch only reaches them on
- * the next reload — the same as the column titles above, which every list in the app builds
- * with `translate.instant` at construction.
+ * A disk row with every display-only value resolved once, when the rows are built, so
+ * translation and size formatting don't re-run per row per change detection. A runtime language
+ * switch therefore reaches these only on the next reload — as it does the column titles, which
+ * every list in the app builds with `translate.instant` at construction.
  */
 interface DiskRow extends Disk {
   sizeText: string;
@@ -180,14 +177,11 @@ export class DiskListComponent {
   // sort and reflect it into whichever table instance is currently mounted.
   private readonly activeSort = signal<TnSortEvent | null>(null);
 
-  // Held by identifier rather than by row reference: a save rebuilds every row object, and
-  // selection derived from the current rows can't hand a batch action pre-edit data.
+  // By identifier, not row reference: a save rebuilds every row object.
   //
-  // Deliberate behavior change from the pre-migration screen, which tracked a `selected` flag on
-  // its full internal list and so kept a page-1 selection alive while you paged or searched.
-  // tn-table clears its own selection whenever `[dataSource]` changes, so a selection now covers
-  // only the rows currently on screen — batch-editing rows you can no longer see was confusing,
-  // and the checkboxes and the batch bar now always agree on what is selected.
+  // Behavior change: the pre-migration screen kept a page-1 selection alive while you paged or
+  // searched, but tn-table clears its own selection whenever `[dataSource]` changes, so a
+  // selection now covers only the rows on screen and the checkboxes and batch bar always agree.
   private readonly selectedIdentifiers = signal<ReadonlySet<string>>(new Set());
 
   protected readonly selectedDisks = computed(
@@ -318,15 +312,10 @@ export class DiskListComponent {
   }
 
   /**
-   * Test-id fragment for a row's action buttons. Split with lodash `kebabCase` rather than
-   * handed to the library's test-id kebab, which doesn't break letter–digit boundaries
-   * (`nvme0n1` → `nvme-0-n-1` vs `nvme0n1`) — passing the raw name would silently rename every
-   * NVMe row's ids out from under the e2e locators.
-   *
-   * A method rather than a field on {@link DiskRow}: it is a test-id concern, not row data, and
-   * keeping it out of the row keeps `toDisk` from having to strip it again. Only the expanded
-   * detail row renders these buttons (and only one row expands at a time), so re-running
-   * `kebabCase` per change detection costs nothing.
+   * Test-id fragment for a row's action buttons. Split with lodash `kebabCase`, not the library's
+   * test-id kebab, which doesn't break letter–digit boundaries (`nvme0n1` → `nvme-0-n-1`) and
+   * would silently rename every NVMe row's ids out from under the e2e locators. A method rather
+   * than a {@link DiskRow} field so `toDisk` doesn't have to strip a test-id concern back off.
    */
   protected testIdTag(row: DiskRow): string {
     return kebabCase(row.name);
@@ -362,11 +351,11 @@ export class DiskListComponent {
   protected edit(rows: DiskRow[]): void {
     const disks = rows.map((row) => toDisk(row));
     const result$ = disks.length > 1
-      ? this.formPanel.open<DiskFormResponse | null>(DiskBulkEditComponent, {
+      ? this.formPanel.open<DiskFormResponse>(DiskBulkEditComponent, {
           title: this.translate.instant('Bulk Edit Disks'),
           inputs: { disksToEdit: disks },
         })
-      : this.formPanel.open<DiskFormResponse | null>(DiskFormComponent, {
+      : this.formPanel.open<DiskFormResponse>(DiskFormComponent, {
           title: this.translate.instant('Edit Disk'),
           inputs: { diskToEdit: disks[0] },
         });
@@ -374,7 +363,7 @@ export class DiskListComponent {
     result$.onSuccess((response) => {
       // this gets the updated disk data from the disk edit form (both single and bulk)
       // and emits it over `diskUpdates$`.
-      response?.forEach((upd) => this.diskUpdates$.next(upd));
+      response.forEach((upd) => this.diskUpdates$.next(upd));
       // A save invalidates the selection it was made from: the rows are rebuilt, so the
       // pre-edit data behind it is gone. tn-table also clears its own checkboxes when the
       // data source is replaced, but don't depend on it emitting `(selectionChange)` for

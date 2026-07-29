@@ -161,12 +161,52 @@ describe('mapTnSortToTableSort', () => {
 
       expect(sorting.sortBy).toBeUndefined();
     });
+
+    it('takes a bare accessor for a table with no column model to pass', () => {
+      const sorting = mapTnSortToTableSort<Row>(
+        { column: 'size', direction: 'asc' },
+        { displayedColumns: columns, columns: null, sortAccessors: { size: (item) => item.size } },
+      );
+
+      expect(sorting.sortBy?.(row)).toBe(1024);
+    });
+
+    it('prefers an explicit accessor over the one derived from the column model', () => {
+      const sorting = mapTnSortToTableSort<Row>(
+        { column: 'size', direction: 'asc' },
+        {
+          displayedColumns: columns,
+          columns: [sizeColumn],
+          sortAccessors: { size: () => 'override' },
+        },
+      );
+
+      expect(sorting.sortBy?.(row)).toBe('override');
+    });
+
+    it('ignores accessors for other columns, and when sorting is cleared', () => {
+      const sortAccessors = { size: (item: Row) => item.size };
+
+      expect(mapTnSortToTableSort<Row>(
+        { column: 'name', direction: 'asc' },
+        { displayedColumns: columns, columns: null, sortAccessors },
+      ).sortBy).toBeUndefined();
+
+      expect(mapTnSortToTableSort<Row>(
+        { column: 'size', direction: '' },
+        { displayedColumns: columns, columns: null, sortAccessors },
+      ).sortBy).toBeUndefined();
+    });
   });
 });
 
 describe('restrictToSingleExpandedRow', () => {
+  function newTable(): TnTableComponent<string> {
+    return { expandedRows: signal(new Set<unknown>()) } as TnTableComponent<string>;
+  }
+
   function setUpTable(): TnTableComponent<string> {
-    const table = { expandedRows: signal(new Set<unknown>()) } as TnTableComponent<string>;
+    const table = newTable();
     TestBed.runInInjectionContext(() => restrictToSingleExpandedRow(signal(table)));
     TestBed.tick();
     return table;
@@ -206,6 +246,28 @@ describe('restrictToSingleExpandedRow', () => {
     TestBed.tick();
 
     expect([...table.expandedRows()]).toEqual([reloadedA]);
+  });
+
+  it('forgets the previous table instance, so a rebuilt table starts clean', () => {
+    // The table is destroyed and rebuilt whenever the list empties out (search down to no
+    // results and back), and rows the dead instance held must not pick the survivor.
+    const tableSignal = signal(newTable());
+    TestBed.runInInjectionContext(() => restrictToSingleExpandedRow(tableSignal));
+    TestBed.tick();
+
+    tableSignal().expandedRows.set(new Set(['a']));
+    TestBed.tick();
+
+    const rebuilt = newTable();
+    tableSignal.set(rebuilt);
+    TestBed.tick();
+
+    // 'a' would have been treated as already-seen (and so pruned in favor of 'b') had the
+    // tracking survived the swap.
+    rebuilt.expandedRows.set(new Set(['a', 'b']));
+    TestBed.tick();
+
+    expect([...rebuilt.expandedRows()]).toEqual(['a']);
   });
 });
 

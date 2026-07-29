@@ -4,7 +4,7 @@
   [requiredRoles]="requiredRoles"
   [submitHandler]="handleSubmit"
   [suppressSuccessSnackbar]="true"
-  (closed)="onFormClosed()"
+  (closed)="closed.emit($event)"
 >
   <tn-form-section [heading]="helptextBulkEdit.title | translate">
     <div>

@@ -14,6 +14,7 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
+import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
@@ -42,7 +43,7 @@ import {
     TranslateModule,
   ],
 })
-export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | null> implements OnInit {
+export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
@@ -73,17 +74,11 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | nul
 
   protected readonly optionLabelTestId = advPowerManagementOptionTestId;
 
-  // Captured on a successful save so the panel host can hand the updated disks back to its
-  // opener: `<ix-form>` emits a bare `true` in the side-panel host, dropping the payload.
-  // A partial failure resolves through this same path (with the subset that was applied), so
-  // `onFormClosed` is the only place `closed` is ever emitted from.
-  private submittedResponse: DiskFormResponse | null = null;
-
   ngOnInit(): void {
     this.setFormDiskBulk(this.disksToEdit());
   }
 
-  protected readonly handleSubmit = (): SubmitResult => {
+  protected readonly handleSubmit = (): SubmitResult<DiskFormResponse> => {
     const req = this.prepareDataSubmit();
     const successText = this.translate.instant(
       'Successfully saved {n, plural, one {Disk} other {Disks}} settings.',
@@ -94,48 +89,45 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse | nul
       request$: this.api.job('core.bulk', ['disk.update', req]).pipe(
         filter((job) => job.state === JobState.Success),
         take(1),
-        // core.bulk reports per-disk failures in its result rather than failing the job, so
-        // surface the first one here. Reporting is a side effect, so it stays in `tap` and out
-        // of the `map` below, which only reshapes the payload.
-        tap((job) => {
-          const failure = job.result.find((result) => result.error !== null);
-          if (failure) {
-            this.dialogService.error({
-              title: this.translate.instant(helptextDisks.errorDialogTitle),
-              message: failure.error,
-            });
-          }
-        }),
-        // core.bulk is not transactional: the disks that reported no error were already
-        // updated on the backend. Resolve with just those so the opener reconciles the rows
-        // that really changed and reloads — otherwise the list keeps showing pre-edit values
-        // for disks that did change. An all-failed bulk resolves with an empty list, which
-        // still reloads, which is what the pre-migration form closed with in either case.
-        map((job) => (
-          job.result.some((result) => result.error !== null)
-            ? req.filter((_, index) => job.result[index]?.error === null)
-            : req
-        )),
+        // core.bulk reports per-disk failures in its result rather than failing the job. Report
+        // every distinct reason in one dialog — a disk-per-dialog storm was unusable, but so is
+        // showing only the first of three different failures.
+        tap((job) => this.reportFailures(job.result)),
+        // core.bulk is not transactional: the disks that reported no error were already updated
+        // on the backend, so resolve with just those — otherwise the list keeps showing pre-edit
+        // values for disks that did change. An all-failed bulk resolves with an empty list, which
+        // still reloads, matching what the pre-migration form closed with either way.
+        map((job) => req.filter((_, index) => job.result[index]?.error === null)),
       ),
-      // `<ix-form>`'s own snackbar is suppressed unconditionally (`[suppressSuccessSnackbar]`
-      // in the template) and raised from `onSuccess` below instead, only when every disk was
-      // applied: a partially failed bulk still resolves successfully, but it has already
-      // reported itself through an error dialog, and a "Successfully saved" toast beside that
-      // dialog would be a lie. `successMessage` is therefore never read by `<ix-form>` — it is
-      // here only because `SubmitResult` requires it.
-      successMessage: successText,
+      // The success toast is raised here (the template suppresses `<ix-form>`'s own) only when
+      // every disk was applied: a partial failure still resolves successfully, but it has already
+      // reported itself through the error dialog, and "Successfully saved" beside that would lie.
       onSuccess: (result) => {
-        const saved = result as [id: string, update: DiskUpdate][];
-        this.submittedResponse = this.toResponse(saved);
-        if (saved.length === req.length) {
+        if ((result as unknown[]).length === req.length) {
           this.snackbar.success(successText);
         }
       },
+      // The panel host forwards this to its opener, which reconciles the rows that changed.
+      closeWith: (result) => this.toResponse(result as [id: string, update: DiskUpdate][]),
     };
   };
 
-  protected onFormClosed(): void {
-    this.closed.emit(this.submittedResponse);
+  /**
+   * One dialog for the whole bulk, listing each distinct reason: a dialog per failed disk was a
+   * storm, but three disks failing three different ways must not collapse to whichever came first.
+   * `dialogService.error` renders a single report as the plain error dialog and several as one
+   * multi-error dialog, so a lone failure looks exactly as it did before.
+   */
+  private reportFailures(results: CoreBulkResponse[]): void {
+    const messages = [...new Set(
+      results.map((result) => result.error).filter((error): error is string => error !== null),
+    )];
+    if (!messages.length) {
+      return;
+    }
+
+    const title = this.translate.instant(helptextDisks.errorDialogTitle);
+    this.dialogService.error(messages.map((message) => ({ title, message })));
   }
 
   private setFormDiskBulk(selectedDisks: Disk[]): void {

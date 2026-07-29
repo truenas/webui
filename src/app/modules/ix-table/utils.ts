@@ -46,31 +46,29 @@ export function createTable<T>(
 }
 
 /**
- * TEMP (NAS-141021): restores the single-expanded-row behavior of the previous
- * ix-table on a `tn-table`, which allows several rows open at once and exposes no
- * single-expand input or row-expand output to hook into: whenever a second row
- * opens (via row click or the expand chevron) we collapse back to just the
- * newly-opened one.
+ * TEMP (NAS-141021): restores ix-table's single-expanded-row behavior on a `tn-table`, which
+ * allows several rows open at once and exposes no single-expand input or row-expand output to
+ * hook into — so we prune the library-owned `expandedRows` signal from an effect instead. Drop
+ * this and bind the input once `@truenas/ui-components` grows a `[singleExpand]`.
  *
- * This reads and writes a library-owned signal (`expandedRows`) from an effect and
- * relies on it converging after the extra row is pruned. Once
- * `@truenas/ui-components` grows a `[singleExpand]` input (or a `(rowExpand)`
- * output we can intercept), drop this helper and bind that instead.
- *
- * We diff against the previous set rather than caching a single row reference,
- * so a data reload (which swaps in fresh row objects) can't leave a stale
- * reference behind — the set tracking stays consistent with whatever tn-table
- * currently holds. The one case where "newest" is approximate is such a reload:
- * every row in the set is then unknown to us, so we keep the set's first member
- * (insertion order) rather than the most recently opened one.
+ * Tracking is by diff against the previous set (not a cached row reference) so a data reload,
+ * which swaps in fresh row objects, can't leave a stale reference behind. After such a reload
+ * no row is recognized, and "newest" falls back to insertion order.
  *
  * Must be called from an injection context (e.g. a component constructor).
  */
 export function restrictToSingleExpandedRow<T>(table: Signal<TnTableComponent<T> | undefined>): void {
+  let trackedTable: TnTableComponent<T> | undefined;
   let previousExpandedRows = new Set<unknown>();
 
   effect(() => {
     const instance = table();
+    if (instance !== trackedTable) {
+      // The table is destroyed and rebuilt whenever the list empties out (the empty state replaces
+      // it in the template), so rows from the dead instance must not decide what the new one keeps.
+      trackedTable = instance;
+      previousExpandedRows = new Set();
+    }
     if (!instance) {
       return;
     }
@@ -80,8 +78,8 @@ export function restrictToSingleExpandedRow<T>(table: Signal<TnTableComponent<T>
       return;
     }
     // `previousExpandedRows` holds at most one row and this branch only runs with two or more
-    // expanded, so there is always at least one row we haven't seen — fall back to the first
-    // member (insertion order) only to keep the type non-optional.
+    // expanded, so there is always at least one row we haven't seen — the fallback only keeps
+    // the type non-optional.
     const newest = [...expanded].find((row) => !previousExpandedRows.has(row)) ?? [...expanded][0];
     const collapsed = new Set<unknown>([newest]);
     previousExpandedRows = collapsed;
@@ -97,23 +95,29 @@ export interface TnSortMapping<T> {
   displayedColumns: string[];
 
   /**
-   * Carries the sort *semantics* of the previous ix-table head, which sorted by a
-   * column's `sortBy` or, failing that, by its rendered `getValue` rather than by the
-   * raw row property — so a column showing a derived, formatted or translated value
-   * keeps sorting by what the user sees. Pass the column model the table already keeps
-   * for its picker, or a partial list naming only the columns that need an accessor;
-   * a column missing from the list simply sorts by its raw value at `propertyName`.
+   * Carries the sort *semantics* of the previous ix-table head, which sorted by a column's
+   * `sortBy` or, failing that, by its rendered `getValue` rather than by the raw row property —
+   * so a column showing a derived, formatted or translated value keeps sorting by what the user
+   * sees. Pass the column model the table already keeps for its picker; a column missing from
+   * it sorts by its raw value at `propertyName`.
    *
-   * Required (rather than optional) so every table has to answer the question once:
-   * pass `null` when every column sorts correctly by its raw value.
+   * Required (rather than optional) so every table has to answer the question once: pass `null`
+   * when every column sorts correctly by its raw value (or when {@link sortAccessors} covers the
+   * ones that don't).
    *
-   * A sortable column listed here must resolve to a primitive: its `getValue` is used as the
-   * lodash `sortBy` key and is typed as `unknown`, so a column rendering an array or an object
-   * would hand that straight to `sortBy` and sort by something meaningless. Give such a column
-   * an explicit `sortBy` (which wins over `getValue`), or leave it out of this list to sort by
-   * its raw value at `propertyName`.
+   * A sortable column listed here must resolve to a primitive: its `getValue` is typed `unknown`
+   * and goes straight to lodash `sortBy`, so a column rendering an array or object would sort by
+   * something meaningless. Give it an explicit `sortBy` (which wins over `getValue`) instead.
    */
   columns: Column<T, ColumnComponent<T>>[] | null;
+
+  /**
+   * Sort accessors keyed by tn-table column name, for tables that have no ix-table column model
+   * to hand over (nothing drives a column picker) or whose accessor isn't expressible as one.
+   * Preferred over hand-writing partial `Column` literals just to carry a `sortBy`. Takes
+   * precedence over {@link columns} for a column present in both.
+   */
+  sortAccessors?: Record<string, (row: T) => string | number>;
 }
 
 /**
@@ -132,11 +136,13 @@ export function mapTnSortToTableSort<T>(event: TnSortEvent, mapping: TnSortMappi
   const sortedColumn = direction
     ? mapping.columns?.find((column) => String(column.propertyName) === event.column)
     : undefined;
+  const columnAccessor = (sortedColumn?.sortBy || sortedColumn?.getValue) as
+    ((row: T) => string | number) | undefined;
 
   const columnIndex = mapping.displayedColumns.indexOf(event.column);
   return {
     propertyName: direction ? (event.column as keyof T) : null,
-    sortBy: (sortedColumn?.sortBy || sortedColumn?.getValue) as ((row: T) => string | number) | undefined,
+    sortBy: direction ? (mapping.sortAccessors?.[event.column] ?? columnAccessor) : undefined,
     direction,
     active: direction && columnIndex >= 0 ? columnIndex : null,
   };

@@ -30,7 +30,6 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -96,12 +95,12 @@ export class BootEnvironmentListComponent implements OnInit {
   private readonly sortByCreated = (row: BootEnvironment): number => row.created.$date;
 
   /**
-   * Sort accessors for the columns whose cells don't show their raw row value. Shared by the
-   * default sort and by `(sortChange)`, so the two can't disagree.
+   * Accessors for the columns whose cells don't show their raw row value. Shared by the default
+   * sort and by `(sortChange)`, so the two can't disagree.
    */
-  private readonly sortColumns: Column<BootEnvironment, ColumnComponent<BootEnvironment>>[] = [
-    { propertyName: 'created', sortBy: this.sortByCreated },
-  ];
+  private readonly sortAccessors: Record<string, (row: BootEnvironment) => string | number> = {
+    created: this.sortByCreated,
+  };
 
   protected readonly trackByBootenvId = (_: number, row: BootEnvironment): string => row.id;
 
@@ -284,7 +283,8 @@ export class BootEnvironmentListComponent implements OnInit {
   protected onSortChange(event: TnSortEvent): void {
     this.dataProvider.setSorting(mapTnSortToTableSort(event, {
       displayedColumns: this.displayedColumns,
-      columns: this.sortColumns,
+      columns: null,
+      sortAccessors: this.sortAccessors,
     }));
   }
 
