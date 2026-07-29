@@ -141,12 +141,12 @@ export class VmService {
    */
   doReset(vm: VirtualMachine): Observable<boolean> {
     return this.dialogService.confirm({
-      title: this.translate.instant(helptextVmList.reset_dialog.title),
-      message: this.translate.instant(helptextVmList.reset_dialog.message, {
+      title: this.translate.instant(helptextVmList.resetDialog.title),
+      message: this.translate.instant(helptextVmList.resetDialog.message, {
         vmName: vm.name,
         warning: this.translate.instant(helptextVmList.hardResetWarning),
       }),
-      buttonText: this.translate.instant(helptextVmList.reset_dialog.buttonMessage),
+      buttonText: this.translate.instant(helptextVmList.resetDialog.buttonMessage),
       buttonColor: 'warn',
     })
       .pipe(
@@ -160,7 +160,7 @@ export class VmService {
             this.loader.withLoader(),
             take(1),
             tap(() => this.snackbar.success(
-              this.translate.instant(helptextVmList.reset_dialog.successMessage, { vmName: vm.name }),
+              this.translate.instant(helptextVmList.resetDialog.successMessage, { vmName: vm.name }),
             )),
             map(() => true),
             catchError((error: unknown) => {

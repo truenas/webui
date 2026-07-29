@@ -133,10 +133,9 @@ describe('ReportComponent', () => {
     });
 
     it('should initialize viewport change detection on init', () => {
-      // Simply verify that ngOnInit completes without errors
-      expect(() => {
-        spectator.component.ngOnInit();
-      }).not.toThrow();
+      // Spectator already ran ngOnInit; calling it again would subscribe to resize twice.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((spectator.component as any).resizeSubscription).toBeDefined();
     });
 
     it('should resize chart when window resize event occurs', () => {
@@ -164,13 +163,6 @@ describe('ReportComponent', () => {
     });
 
     it('should resize chart when menu state changes', () => {
-      // Mock the line chart first
-      Object.defineProperty(spectator.component, 'lineChart', {
-        value: jest.fn(() => mockLineChart),
-        configurable: true,
-      });
-      spectator.component.ngOnInit();
-
       // Trigger resize manually - need to use setTimeout like the actual code
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (spectator.component as any).resizeChart();
@@ -194,7 +186,6 @@ describe('ReportComponent', () => {
     });
 
     it('should unsubscribe from resize events on destroy', () => {
-      spectator.component.ngOnInit();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const subscription = (spectator.component as any).resizeSubscription;
 

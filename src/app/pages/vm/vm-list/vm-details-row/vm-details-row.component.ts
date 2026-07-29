@@ -50,21 +50,17 @@ export class VirtualMachineDetailsRowComponent {
   protected readonly requiredReadRoles = [Role.VmRead];
   protected readonly requiredRoles = [Role.VmWrite];
 
-  private readonly hardResetWarning = this.translate.instant(helptextVmList.hardResetWarning);
   protected readonly resetTooltip = this.translate.instant(
-    helptextVmList.reset_button.tooltip,
-    { warning: this.hardResetWarning },
+    helptextVmList.resetButton.tooltip,
+    { warning: this.translate.instant(helptextVmList.hardResetWarning) },
   );
 
   /**
    * The Reset button sits next to Restart and the two sound alike, so the accessible name spells
-   * out that this one is a hard reset. The tooltip alone is not enough: it is only exposed via
-   * `aria-describedby` on the rendered overlay, which many screen readers skip or announce late.
+   * out that this one is a hard reset. The consequences stay out of the name — the tooltip carries
+   * them as a description and the confirmation dialog repeats them where the user has to act.
    */
-  protected readonly resetAriaLabel = this.translate.instant(
-    helptextVmList.reset_button.ariaLabel,
-    { warning: this.hardResetWarning },
-  );
+  protected readonly resetAriaLabel = this.translate.instant(helptextVmList.resetButton.ariaLabel);
 
   readonly vmStateInfo = computed(() => {
     const state = this.vm().status.state;

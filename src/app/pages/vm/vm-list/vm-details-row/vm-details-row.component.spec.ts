@@ -184,6 +184,8 @@ describe('VirtualMachineDetailsRowComponent', () => {
     const ariaLabel = await (await resetButton.host()).getAttribute('aria-label');
 
     expect(ariaLabel).toContain('hard reset');
+    // The consequences belong in the tooltip and the confirmation dialog, not in the name.
+    expect(ariaLabel).not.toContain('data loss');
   });
 
   it('should call service to open display', async () => {
