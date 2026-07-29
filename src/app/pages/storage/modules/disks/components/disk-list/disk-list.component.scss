@@ -1,3 +1,24 @@
+// TEMP: tn-table-pager hardcodes a fully-boxed, square-cornered footer on its host
+// (`border: 1px solid var(--tn-lines)`, no radius) with no input to disable it, and
+// tn-table rounds all four of its own corners. Square the table's bottom edge and
+// give the pager just a top divider plus matching bottom corners so the two read as
+// one block. Remove once @truenas/ui-components exposes a table+pager flush mode
+// (library follow-up owed under Epic NAS-141021).
+:host ::ng-deep {
+  tn-table .tn-table__table {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  tn-table-pager {
+    border: none;
+    border-top: 1px solid var(--tn-lines);
+    // Matches .tn-table__table's own 4px radius.
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+}
+
 .table-hidden-columns {
   margin: 12px 0;
 
