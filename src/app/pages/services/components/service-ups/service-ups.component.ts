@@ -57,6 +57,11 @@ export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
   protected readonly InputType = InputType;
 
   protected readonly dataLoading = signal(false);
+  /**
+   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
+   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
+   */
+  protected readonly loadFailed = signal(false);
   protected readonly initialFormSnapshot = signal<Partial<UpsFormValue> | null>(null);
   protected readonly isMasterMode = signal(true);
 
@@ -176,13 +181,17 @@ export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
         },
         error: (error: unknown) => {
           this.dataLoading.set(false);
+          this.loadFailed.set(true);
           this.errorHandler.showErrorModal(error);
         },
       });
   }
 
   protected handleSubmit = (): SubmitResult => {
-    const params = this.form.value;
+    // Copy first: `form.value` hands back the FormGroup's own live value object, so deleting keys
+    // off it writes through to form state. Save can be pressed again after a failed submit, which
+    // would then re-run the reshaping over already-mutated values.
+    const params = { ...this.form.value };
 
     if (this.isMasterMode()) {
       delete params.remoteport;

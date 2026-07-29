@@ -77,6 +77,11 @@ export class ServiceNfsComponent extends IxFormHostForm implements OnInit {
 
   protected readonly InputType = InputType;
   protected readonly dataLoading = signal(false);
+  /**
+   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
+   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
+   */
+  protected readonly loadFailed = signal(false);
   protected readonly initialFormSnapshot = signal<Partial<NfsFormValue> | null>(null);
   protected readonly isAddSpnDisabled = signal(true);
   protected readonly hasNfsStatus = signal(false);
@@ -141,6 +146,8 @@ export class ServiceNfsComponent extends IxFormHostForm implements OnInit {
       this.loadActiveDirectoryState(),
     ])
       .pipe(
+        // Ahead of withErrorHandler, which swallows the error before subscribe's error callback.
+        tap({ error: () => this.loadFailed.set(true) }),
         this.errorHandler.withErrorHandler(),
         finalize(() => this.dataLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),

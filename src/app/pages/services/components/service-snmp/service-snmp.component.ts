@@ -53,6 +53,11 @@ export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
   protected readonly InputType = InputType;
 
   protected readonly dataLoading = signal(false);
+  /**
+   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
+   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
+   */
+  protected readonly loadFailed = signal(false);
   protected readonly initialFormSnapshot = signal<Partial<SnmpFormValue> | null>(null);
 
   form = this.fb.group({
@@ -102,7 +107,10 @@ export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
   }
 
   protected handleSubmit = (): SubmitResult => {
-    const values = this.form.value;
+    // Copy first: `form.value` hands back the FormGroup's own live value object, so assigning to it
+    // writes through to form state (and a retry after a failed submit would re-run over the
+    // already-blanked v3 values).
+    const values = { ...this.form.value };
     // Clearing the tn-select empty option writes null; the API expects ''.
     values.v3_authtype = values.v3_authtype ?? '';
     if (!values.v3) {
@@ -130,6 +138,7 @@ export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
         this.dataLoading.set(false);
+        this.loadFailed.set(true);
       },
     });
   }

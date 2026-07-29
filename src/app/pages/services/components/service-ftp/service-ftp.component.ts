@@ -74,6 +74,11 @@ export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
   protected readonly InputType = InputType;
 
   protected readonly dataLoading = signal(false);
+  /**
+   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
+   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
+   */
+  protected readonly loadFailed = signal(false);
   protected readonly initialFormSnapshot = signal<Partial<FtpFormValue> | null>(null);
   protected readonly isAdvancedMode = signal(false);
 
@@ -153,14 +158,15 @@ export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
   }
 
   protected handleSubmit = (): SubmitResult => {
+    const formValues = this.form.value;
     const values = {
-      ...this.form.value,
-      filemask: invertUmask(this.form.value.filemask),
-      dirmask: invertUmask(this.form.value.dirmask),
-      localuserbw: this.convertByteToKbyte(Number(this.form.value.localuserbw)),
-      localuserdlbw: this.convertByteToKbyte(Number(this.form.value.localuserdlbw)),
-      anonuserbw: this.convertByteToKbyte(Number(this.form.value.anonuserbw)),
-      anonuserdlbw: this.convertByteToKbyte(Number(this.form.value.anonuserdlbw)),
+      ...formValues,
+      filemask: invertUmask(formValues.filemask),
+      dirmask: invertUmask(formValues.dirmask),
+      localuserbw: this.convertByteToKbyte(Number(formValues.localuserbw)),
+      localuserdlbw: this.convertByteToKbyte(Number(formValues.localuserdlbw)),
+      anonuserbw: this.convertByteToKbyte(Number(formValues.anonuserbw)),
+      anonuserdlbw: this.convertByteToKbyte(Number(formValues.anonuserdlbw)),
     };
 
     return {
@@ -194,6 +200,7 @@ export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
         error: (error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.dataLoading.set(false);
+          this.loadFailed.set(true);
         },
       });
   }

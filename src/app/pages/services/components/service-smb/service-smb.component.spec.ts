@@ -136,7 +136,25 @@ describe('ServiceSmbComponent', () => {
     ],
   });
 
+  /**
+   * `<ix-form>` logs a dev-mode notice for any form holding a nested FormGroup/FormArray, warning
+   * that `changedValues` reports the whole subtree as changed. This form's `bindip` FormArray is
+   * exactly that case, and `handleSubmit` deliberately builds its payload from `allValues` — so the
+   * notice is expected noise here. Silenced locally rather than in `setup-jest` so the guard keeps
+   * failing tests for every other form. Every other message still reaches `failOnConsole`.
+   */
+  const nestedChangedValuesNotice = '[ix-form] changedValues diffs top-level keys shallowly';
+  let consoleWarnSpy: jest.SpyInstance;
+
   beforeEach(() => {
+    const originalWarn = console.warn.bind(console) as (...args: unknown[]) => void;
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
+      if (typeof args[0] === 'string' && args[0].startsWith(nestedChangedValuesNotice)) {
+        return;
+      }
+      originalWarn(...args);
+    });
+
     tncConfigSignal.set({
       status: TruenasConnectStatus.Configured,
     } as TruenasConnectConfig);
@@ -145,6 +163,10 @@ describe('ServiceSmbComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
     store$ = spectator.inject(MockStore);
+  });
+
+  afterEach(() => {
+    consoleWarnSpy.mockRestore();
   });
 
   it('loads and shows current settings for Smb service when form is opened', async () => {

@@ -56,6 +56,11 @@ export class ServiceWebshareComponent extends IxFormHostForm implements OnInit {
   private truenasConnectService = inject(TruenasConnectService);
 
   protected readonly dataLoading = signal(false);
+  /**
+   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
+   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
+   */
+  protected readonly loadFailed = signal(false);
   protected readonly initialFormSnapshot = signal<Partial<WebShareFormValue> | null>(null);
 
   protected readonly form = this.fb.group({
@@ -107,6 +112,7 @@ export class ServiceWebshareComponent extends IxFormHostForm implements OnInit {
       },
       error: (error: unknown) => {
         this.dataLoading.set(false);
+        this.loadFailed.set(true);
         this.errorHandler.showErrorModal(error);
       },
     });

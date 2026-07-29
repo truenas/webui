@@ -96,14 +96,51 @@ describe('ServiceWebshareComponent', () => {
     expect(closeSpy).toHaveBeenCalledWith(true);
   });
 
+  // The host reads both: `isBusy()` drives the panel's progress bar, `isSubmitting()` flips its Save
+  // to "Saving…". A slow config load must trip only the former, or Save reads as saving on open.
+  it('reports isBusy() but not isSubmitting() while the config loads, and both while saving', () => {
+    const config$ = new Subject<WebShareConfig>();
+    const update$ = new Subject<WebShareConfig>();
+    const api = spectator.inject(ApiService);
+    jest.spyOn(api, 'call').mockImplementation((method) => {
+      return method === 'webshare.config' ? config$ : update$;
+    });
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    expect(spectator.component.isBusy()).toBe(true);
+    expect(spectator.component.isSubmitting()).toBe(false);
+
+    config$.next(mockWebShareConfig);
+    spectator.detectChanges();
+
+    expect(spectator.component.isBusy()).toBe(false);
+    expect(spectator.component.isSubmitting()).toBe(false);
+
+    spectator.component.submit();
+
+    expect(spectator.component.isBusy()).toBe(true);
+    expect(spectator.component.isSubmitting()).toBe(true);
+
+    update$.next(mockWebShareConfig);
+    update$.complete();
+
+    expect(spectator.component.isBusy()).toBe(false);
+    expect(spectator.component.isSubmitting()).toBe(false);
+  });
+
   it('handles error when loading config fails', () => {
     const api = spectator.inject(ApiService);
     const errorHandler = spectator.inject(ErrorHandlerService);
     jest.spyOn(api, 'call').mockReturnValue(throwError(() => new Error('Failed to load config')));
 
     spectator.component.ngOnInit();
+    spectator.detectChanges();
 
     expect(errorHandler.showErrorModal).toHaveBeenCalled();
+    // The form is left on defaults the user never saw, so Save must stay blocked.
+    expect(spectator.component.canSubmit()).toBe(false);
   });
 
   it('handles error when saving config fails', () => {

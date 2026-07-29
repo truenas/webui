@@ -25,7 +25,7 @@ import { SmbConfigUpdate, smbSearchSpotlight } from 'app/interfaces/smb-config.i
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
-  IxFormComponent, SubmitResult,
+  FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
@@ -86,6 +86,11 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly dataLoading = signal(false);
+  /**
+   * A failed config load leaves the form on untouched defaults the user never saw. Fed to
+   * `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's) can't submit them.
+   */
+  protected readonly loadFailed = signal(false);
   protected readonly initialFormSnapshot = signal<Partial<SmbFormValue> | null>(null);
   protected hasIncompatibleShares = signal(false);
   protected isSmb1Enabled = signal(false);
@@ -308,6 +313,7 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
       },
       error: (error: unknown) => {
         this.dataLoading.set(false);
+        this.loadFailed.set(true);
         this.errorHandler.showErrorModal(error);
       },
     });
@@ -339,12 +345,15 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
     this.openTruenasConnectModal();
   }
 
-  protected handleSubmit = (): SubmitResult => {
-    const { spotlight_search: spotlightSearch, ...formValues } = this.form.getRawValue();
+  // Reshapes the payload from `allValues` (the wrapper's own `getRawValue()` snapshot) rather than
+  // re-reading the form, so any future `preSubmit` transform is honoured and disabled controls —
+  // `spotlight_search` / `stateful_failover` — still reach the API.
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<SmbFormValue>): SubmitResult => {
+    const { spotlight_search: spotlightSearch, bindip, ...formValues } = allValues;
     const values: SmbConfigUpdate = {
       ...formValues,
       search_protocols: spotlightSearch ? [smbSearchSpotlight] : [],
-      bindip: this.form.getRawValue().bindip.map((value) => value.bindIp),
+      bindip: bindip.map((value) => value.bindIp),
     };
 
     return {
