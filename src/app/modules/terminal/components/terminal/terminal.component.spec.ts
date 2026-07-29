@@ -482,7 +482,6 @@ describe('TerminalComponent reconnect button', () => {
 
     expect(await getReconnectButton()).not.toBeNull();
     expect(spectator.fixture.nativeElement).toHaveText('Connection lost. Click Reconnect to restore the session.');
-    expect(spectator.query('[data-test="button-reconnect"]')).not.toBeNull();
   });
 
   it('requests a fresh token when the reconnect button is clicked', async () => {
