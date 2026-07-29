@@ -10,9 +10,10 @@
 .calendar {
   width: 100%;
 
-  // TEMP (NAS-141021): tn-calendar paints popup chrome — a drop shadow and its own
-  // padding — on its element selector, so inside this panel it reads as a raised card.
-  // Drop this block once the library moves the popup chrome onto a wrapper.
+  // TEMP: tn-calendar bakes popup chrome — a drop shadow and its own padding — into its
+  // :host, which is right for the dropdown in advanced-search and wrong for an inline
+  // panel like this one. Drop this block once the library moves that chrome onto a
+  // wrapper; until then two call sites are working around the same assumption.
   //
   // The calendar's own `background` is deliberately left alone: the library colours a
   // marked day relative to that surface, and against this panel's background instead the
@@ -35,7 +36,6 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
-  margin-right: -5px;
 }
 
 .crontab-explanation {
@@ -49,8 +49,9 @@
   flex-direction: column;
   margin-top: 10px;
 
+  // Matches .preview-header's horizontal padding so this line sits under the crontab text.
   .timezone-message {
-    margin-left: 14px;
+    margin-left: 12px;
   }
 
   .schedule-example-section {

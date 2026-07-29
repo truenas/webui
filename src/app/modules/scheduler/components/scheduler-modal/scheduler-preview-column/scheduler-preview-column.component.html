@@ -16,7 +16,7 @@
 <div class="calendar">
   <tn-calendar
     [markedDates]="markedDates()"
-    (activeDateChange)="activeDate.set($event)"
+    (activeDateChange)="onActiveDateChange($event)"
   ></tn-calendar>
 </div>
 
