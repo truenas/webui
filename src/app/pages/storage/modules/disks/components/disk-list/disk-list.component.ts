@@ -163,6 +163,12 @@ export class DiskListComponent {
 
   // Held by identifier rather than by row reference: a save rebuilds every row object, and
   // selection derived from the current rows can't hand a batch action pre-edit data.
+  //
+  // Deliberate behavior change from the pre-migration screen, which tracked a `selected` flag on
+  // its full internal list and so kept a page-1 selection alive while you paged or searched.
+  // tn-table clears its own selection whenever `[dataSource]` changes, so a selection now covers
+  // only the rows currently on screen — batch-editing rows you can no longer see was confusing,
+  // and the checkboxes and the batch bar now always agree on what is selected.
   private readonly selectedIdentifiers = signal<ReadonlySet<string>>(new Set());
 
   protected readonly selectedDisks = computed(

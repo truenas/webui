@@ -104,7 +104,7 @@ export class UserApiKeysComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<ApiKey>(event, this.displayedColumns));
+    this.dataProvider.setSorting(mapTnSortToTableSort<ApiKey>(event, this.displayedColumns, null));
   }
 
   private readonly apiKeys$ = this.api.call('api_key.query').pipe(shareReplay({ bufferSize: 1, refCount: true }));

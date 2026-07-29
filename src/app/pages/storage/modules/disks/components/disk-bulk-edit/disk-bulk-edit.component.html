@@ -7,7 +7,11 @@
 >
   <tn-form-section [heading]="helptextBulkEdit.title | translate">
     <div>
-      <label class="disk-list-label">
+      <!--
+        A <div>, not a <label>: there is no form control to label here — the list below is a
+        read-only readout, and it carries its own accessible name via role="list" + aria-label.
+      -->
+      <div class="disk-list-label">
         {{ "Disks to be edited:" | translate }}
         <tn-icon
           class="tooltip-icon"
@@ -15,7 +19,7 @@
           library="mdi"
           [tooltip]="disksTooltip"
         ></tn-icon>
-      </label>
+      </div>
       <div
         class="disk-list"
         role="list"

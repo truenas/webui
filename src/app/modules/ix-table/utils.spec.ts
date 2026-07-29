@@ -1,12 +1,13 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { TnTableComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
   dataProviderLoading, dataProviderRows, filterTableRows, mapTnSortToProviderSorting,
-  mapTnSortToTableSort, toDisplayedColumns,
+  mapTnSortToTableSort, restrictToSingleExpandedRow, toDisplayedColumns,
 } from './utils';
 
 describe('dataProviderRows / dataProviderLoading', () => {
@@ -73,7 +74,7 @@ describe('mapTnSortToTableSort', () => {
   const displayedColumns = ['name', 'path', 'enabled', 'actions'];
 
   it('maps an ascending sort to propertyName + direction + column index', () => {
-    expect(mapTnSortToTableSort({ column: 'path', direction: 'asc' }, displayedColumns)).toEqual({
+    expect(mapTnSortToTableSort({ column: 'path', direction: 'asc' }, displayedColumns, null)).toEqual({
       propertyName: 'path',
       direction: SortDirection.Asc,
       active: 1,
@@ -81,7 +82,7 @@ describe('mapTnSortToTableSort', () => {
   });
 
   it('maps a descending sort to propertyName + direction + column index', () => {
-    expect(mapTnSortToTableSort({ column: 'enabled', direction: 'desc' }, displayedColumns)).toEqual({
+    expect(mapTnSortToTableSort({ column: 'enabled', direction: 'desc' }, displayedColumns, null)).toEqual({
       propertyName: 'enabled',
       direction: SortDirection.Desc,
       active: 2,
@@ -89,7 +90,7 @@ describe('mapTnSortToTableSort', () => {
   });
 
   it('clears sorting when the direction is empty', () => {
-    expect(mapTnSortToTableSort({ column: 'name', direction: '' }, displayedColumns)).toEqual({
+    expect(mapTnSortToTableSort({ column: 'name', direction: '' }, displayedColumns, null)).toEqual({
       propertyName: null,
       direction: null,
       active: null,
@@ -97,11 +98,100 @@ describe('mapTnSortToTableSort', () => {
   });
 
   it('leaves active null when the sorted column is not displayed', () => {
-    expect(mapTnSortToTableSort({ column: 'comment', direction: 'asc' }, displayedColumns)).toEqual({
+    expect(mapTnSortToTableSort({ column: 'comment', direction: 'asc' }, displayedColumns, null)).toEqual({
       propertyName: 'comment',
       direction: SortDirection.Asc,
       active: null,
     });
+  });
+
+  describe('sort accessors from the column model', () => {
+    interface Row { name: string; size: number }
+
+    const row: Row = { name: 'sda', size: 1024 };
+    const sizeColumn = {
+      propertyName: 'size',
+      getValue: (item: Row) => `${item.size} bytes`,
+      sortBy: (item: Row) => item.size,
+    } as Column<Row, ColumnComponent<Row>>;
+
+    it('prefers the column sortBy over its getValue', () => {
+      const sorting = mapTnSortToTableSort<Row>({ column: 'size', direction: 'asc' }, ['name', 'size'], [sizeColumn]);
+
+      expect(sorting.sortBy?.(row)).toBe(1024);
+    });
+
+    it('falls back to the column getValue, so a derived cell sorts by what it displays', () => {
+      const derivedColumn = {
+        propertyName: 'size',
+        getValue: (item: Row) => `${item.size} bytes`,
+      } as Column<Row, ColumnComponent<Row>>;
+
+      const sorting = mapTnSortToTableSort<Row>({ column: 'size', direction: 'asc' }, ['name', 'size'], [derivedColumn]);
+
+      expect(sorting.sortBy?.(row)).toBe('1024 bytes');
+    });
+
+    it('leaves sortBy undefined for a column with neither, and when sorting is cleared', () => {
+      const plainColumn = { propertyName: 'name' } as Column<Row, ColumnComponent<Row>>;
+
+      expect(mapTnSortToTableSort<Row>(
+        { column: 'name', direction: 'asc' },
+        ['name', 'size'],
+        [plainColumn, sizeColumn],
+      ).sortBy).toBeUndefined();
+
+      expect(mapTnSortToTableSort<Row>(
+        { column: 'size', direction: '' },
+        ['name', 'size'],
+        [sizeColumn],
+      ).sortBy).toBeUndefined();
+    });
+  });
+});
+
+describe('restrictToSingleExpandedRow', () => {
+  function setUpTable(): TnTableComponent<string> {
+    const table = { expandedRows: signal(new Set<unknown>()) } as TnTableComponent<string>;
+    TestBed.runInInjectionContext(() => restrictToSingleExpandedRow(signal(table)));
+    TestBed.tick();
+    return table;
+  }
+
+  it('leaves a single expanded row alone', () => {
+    const table = setUpTable();
+
+    table.expandedRows.set(new Set(['a']));
+    TestBed.tick();
+
+    expect([...table.expandedRows()]).toEqual(['a']);
+  });
+
+  it('collapses back to the newly opened row when a second one opens', () => {
+    const table = setUpTable();
+
+    table.expandedRows.set(new Set(['a']));
+    TestBed.tick();
+    table.expandedRows.set(new Set(['a', 'b']));
+    TestBed.tick();
+
+    expect([...table.expandedRows()]).toEqual(['b']);
+  });
+
+  it('keeps at most one row expanded when a reload swaps in fresh row objects', () => {
+    const table = setUpTable();
+    const rowA = { id: 'a' };
+
+    table.expandedRows.set(new Set([rowA]));
+    TestBed.tick();
+
+    // A reload replaces every row object; the previously expanded reference is gone.
+    const reloadedA = { id: 'a' };
+    const reloadedB = { id: 'b' };
+    table.expandedRows.set(new Set([reloadedA, reloadedB]));
+    TestBed.tick();
+
+    expect([...table.expandedRows()]).toEqual([reloadedA]);
   });
 });
 

@@ -30,6 +30,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -90,6 +91,15 @@ export class BootEnvironmentListComponent implements OnInit {
   protected readonly searchQuery = signal('');
 
   protected readonly displayedColumns = ['id', 'active', 'created', 'used_bytes', 'keep', 'actions'];
+
+  /**
+   * Sort accessors for the columns whose cells don't show their raw row value: `created`
+   * renders a formatted date, so it has to sort by the underlying timestamp. Shared by the
+   * default sort and by `(sortChange)`, so the two can't disagree.
+   */
+  private readonly sortColumns: Column<BootEnvironment, ColumnComponent<BootEnvironment>>[] = [
+    { propertyName: 'created', sortBy: (row) => row.created.$date },
+  ];
 
   protected readonly trackByBootenvId = (_: number, row: BootEnvironment): string => row.id;
 
@@ -270,11 +280,7 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    const sorting = mapTnSortToTableSort<BootEnvironment>(event, this.displayedColumns);
-    if (sorting.propertyName === 'created') {
-      sorting.sortBy = (row) => row.created.$date;
-    }
-    this.dataProvider.setSorting(sorting);
+    this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns, this.sortColumns));
   }
 
   private setDefaultSort(): void {
@@ -282,7 +288,7 @@ export class BootEnvironmentListComponent implements OnInit {
       active: 2,
       direction: SortDirection.Desc,
       propertyName: 'created',
-      sortBy: (row) => row.created.$date,
+      sortBy: this.sortColumns[0].sortBy,
     });
   }
 

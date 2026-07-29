@@ -158,7 +158,7 @@ export class TunableListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<Tunable>(event, this.displayedColumns));
+    this.dataProvider.setSorting(mapTnSortToTableSort<Tunable>(event, this.displayedColumns, null));
   }
 
   protected setDefaultSort(): void {

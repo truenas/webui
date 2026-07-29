@@ -85,17 +85,19 @@ export function restrictToSingleExpandedRow<T>(table: Signal<TnTableComponent<T>
  * displayed column list (or `null` when sorting is cleared). Shared so every
  * tn-table migration maps sort state the same way.
  *
- * Pass `columns` (the ix-table column model a table still keeps for its picker)
- * to preserve the sort *semantics* of the previous ix-table head, which sorted
- * by a column's `sortBy` or, failing that, by its rendered `getValue` rather
- * than by the raw row property. Without it, sorting falls back to the raw value
- * at `propertyName` — fine for plain columns, but a silent behavior change for
- * any column whose cell shows a derived or translated value.
+ * `columns` carries the sort *semantics* of the previous ix-table head, which
+ * sorted by a column's `sortBy` or, failing that, by its rendered `getValue`
+ * rather than by the raw row property — so a column showing a derived,
+ * formatted or translated value keeps sorting by what the user sees. Pass the
+ * column model the table already keeps for its picker, or a partial list naming
+ * only the columns that need an accessor. It is a required argument (rather
+ * than optional) so every table has to answer the question once: pass `null`
+ * when every column sorts correctly by its raw value at `propertyName`.
  */
 export function mapTnSortToTableSort<T>(
   event: TnSortEvent,
   displayedColumns: string[],
-  columns?: Column<T, ColumnComponent<T>>[],
+  columns: Column<T, ColumnComponent<T>>[] | null,
 ): TableSort<T> {
   let direction: SortDirection | null = null;
   if (event.direction === 'asc') {

@@ -184,5 +184,23 @@ describe('DiskFormComponent', () => {
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
+
+    it('sends an empty password when \'Clear SED Password\' is checked', async () => {
+      await (await getInput('passwd')).setValue('123456');
+
+      const clearPassword = await loader.getHarness(TnCheckboxHarness.with({ label: 'Clear SED Password' }));
+      await clearPassword.check();
+
+      spectator.component.submit();
+
+      // `clear_pw` is a UI-only control: it must reach the API as an empty `passwd`
+      // (and never as a field of its own).
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
+        advpowermgmt: '127',
+        description: 'Some disk description',
+        hddstandby: '10',
+        passwd: '',
+      }]);
+    });
   });
 });

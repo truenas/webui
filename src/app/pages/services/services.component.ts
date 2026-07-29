@@ -139,7 +139,7 @@ export class ServicesComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<ServiceRow>(event, this.displayedColumns));
+    this.dataProvider.setSorting(mapTnSortToTableSort<ServiceRow>(event, this.displayedColumns, null));
   }
 
   protected openConfig(service: Service): void {

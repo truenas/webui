@@ -164,7 +164,7 @@ export class AuthorizedAccessListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<IscsiAuthAccess>(event, this.displayedColumns()));
+    this.dataProvider.setSorting(mapTnSortToTableSort<IscsiAuthAccess>(event, this.displayedColumns(), this.columns()));
   }
 
   protected onListFiltered(query: string): void {

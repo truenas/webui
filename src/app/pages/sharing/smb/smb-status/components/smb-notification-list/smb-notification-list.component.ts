@@ -114,6 +114,8 @@ export class SmbNotificationListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<SmbNotificationInfo>(event, this.displayedColumns()));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort<SmbNotificationInfo>(event, this.displayedColumns(), this.columns()),
+    );
   }
 }

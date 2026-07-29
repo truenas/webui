@@ -221,11 +221,13 @@ export class NfsSessionListComponent implements OnInit {
   }
 
   protected onNfs3SortChange(event: TnSortEvent): void {
-    this.nfs3DataProvider.setSorting(mapTnSortToTableSort<Nfs3Session>(event, this.nfs3DisplayedColumns()));
+    this.nfs3DataProvider.setSorting(
+      mapTnSortToTableSort<Nfs3Session>(event, this.nfs3DisplayedColumns(), this.nfs3Columns()),
+    );
   }
 
   protected onNfs4SortChange(event: TnSortEvent): void {
-    this.nfs4DataProvider.setSorting(mapTnSortToTableSort<Nfs4Session['info']>(event, this.nfs4DisplayedColumns()));
+    this.nfs4DataProvider.setSorting(mapTnSortToTableSort<Nfs4Session['info']>(event, this.nfs4DisplayedColumns(), this.nfs4Columns()));
   }
 
   private filterNfs3Data(): void {

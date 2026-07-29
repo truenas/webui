@@ -148,7 +148,7 @@ export class KerberosRealmsListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<KerberosRealmRow>(event, this.displayedColumns));
+    this.dataProvider.setSorting(mapTnSortToTableSort<KerberosRealmRow>(event, this.displayedColumns, null));
   }
 
   getKerberosRealms(): void {
