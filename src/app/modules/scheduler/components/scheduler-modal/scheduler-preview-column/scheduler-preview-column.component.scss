@@ -10,13 +10,17 @@
 .calendar {
   width: 100%;
 
-  ::ng-deep .mat-calendar-table {
-    width: 100%;
-  }
-
-  ::ng-deep .highlighted-date {
-    background: var(--bg1);
-    border-radius: 50%;
+  // TEMP (NAS-141021): tn-calendar carries popup chrome — card background, border,
+  // shadow, 24px padding and a 380px min-width — on its element selector. Inline in this
+  // 400px column that reads as a raised card inside a panel and overflows horizontally.
+  // Drop this block once the library moves the popup chrome onto a wrapper.
+  tn-calendar {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    min-width: 0;
+    padding: 0;
   }
 }
 

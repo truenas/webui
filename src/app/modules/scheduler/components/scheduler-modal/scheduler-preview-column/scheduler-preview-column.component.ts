@@ -1,13 +1,10 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnChanges, OnInit, output, Signal, viewChild,
+  ChangeDetectionStrategy, Component, computed, input, output, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnCalendarComponent, TnIconButtonComponent } from '@truenas/ui-components';
 import {
-  getDate, isBefore,
-  startOfMonth, differenceInCalendarMonths,
+  isBefore, startOfMonth, differenceInCalendarMonths,
 } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
@@ -21,15 +18,13 @@ import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-expl
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconButtonComponent,
-    MatCalendar,
+    TnCalendarComponent,
     SchedulerDateExamplesComponent,
     TranslateModule,
     CrontabExplanationPipe,
   ],
 })
-export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
-  private destroyRef = inject(DestroyRef);
-
+export class SchedulerPreviewColumnComponent {
   readonly crontab = input.required<string>();
   readonly timezone = input.required<string>();
 
@@ -38,76 +33,56 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
   readonly closeRequested = output();
 
+  /** The month currently on screen. The calendar owns navigation; this mirrors it. */
+  protected readonly activeDate = signal<Date>(new Date());
+
+  protected readonly isPastMonth = computed(() => isBefore(this.activeDate(), startOfMonth(new Date())));
+
   /**
-   * 1 for 1st day of the month, etc.
+   * Where the preview starts counting from: right now while the current month is on
+   * screen, otherwise the first of whichever month is being viewed.
    */
-  highlightedCalendarDays = new Set<number>();
-
-  cronPreview: CronSchedulePreview | null;
-
-  readonly calendar: Signal<MatCalendar<Date>> = viewChild.required('calendar', { read: MatCalendar });
-
-  get startDate(): Date {
-    if (!this.calendar().activeDate || differenceInCalendarMonths(this.calendar().activeDate, new Date()) < 1) {
+  protected readonly startDate = computed(() => {
+    const activeDate = this.activeDate();
+    if (differenceInCalendarMonths(activeDate, new Date()) < 1) {
       return toZonedTime(new Date(), this.timezone());
     }
 
-    return startOfMonth(this.calendar().activeDate);
-  }
+    return startOfMonth(activeDate);
+  });
 
-  get isPastMonth(): boolean {
-    return isBefore(this.calendar().activeDate, startOfMonth(new Date()));
-  }
-
-  ngOnChanges(): void {
-    this.updatePreviewDates();
-    this.refreshCalendar();
-  }
-
-  ngOnInit(): void {
-    this.calendar().stateChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.onCalendarUpdated());
-  }
-
-  getSelectedDateClass: MatCalendarCellClassFunction<Date> = (dateInCalendar): string => {
-    const dayNumber = getDate(dateInCalendar);
-    if (this.highlightedCalendarDays.has(dayNumber)) {
-      return 'highlighted-date';
-    }
-
-    return '';
-  };
-
-  private onCalendarUpdated(): void {
-    this.updatePreviewDates();
-  }
-
-  private updatePreviewDates(): void {
-    if (this.isPastMonth) {
-      this.cronPreview = null;
-      this.highlightedCalendarDays = new Set();
-      return;
+  protected readonly cronPreview = computed<CronSchedulePreview | null>(() => {
+    if (this.isPastMonth()) {
+      return null;
     }
 
     try {
-      this.cronPreview = new CronSchedulePreview({
+      return new CronSchedulePreview({
         crontab: this.crontab(),
         startTime: this.startTime(),
         endTime: this.endTime(),
       });
-
-      this.highlightedCalendarDays = this.cronPreview.getNextDaysInMonthWithRuns(this.startDate);
     } catch (error: unknown) {
       console.error(error);
+      return null;
     }
-  }
+  });
 
-  private refreshCalendar(): void {
-    if (!this.calendar().monthView) {
-      return;
+  /** The days of the month on screen that the task is scheduled to run on. */
+  protected readonly markedDates = computed<Date[]>(() => {
+    const cronPreview = this.cronPreview();
+    if (!cronPreview) {
+      return [];
     }
 
-    this.calendar().updateTodaysDate();
-  }
+    const startDate = this.startDate();
+
+    try {
+      return [...cronPreview.getNextDaysInMonthWithRuns(startDate)]
+        .map((day) => new Date(startDate.getFullYear(), startDate.getMonth(), day));
+    } catch (error: unknown) {
+      console.error(error);
+      return [];
+    }
+  });
 }
