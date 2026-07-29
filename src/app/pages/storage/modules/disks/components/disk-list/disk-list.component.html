@@ -21,7 +21,6 @@
     </div>
     <div class="actions">
       <tn-button
-        variant="outline"
         [testId]="'edit-selected'"
         [icon]="editIcon"
         [label]="editSelectedLabel()"
@@ -127,7 +126,6 @@
 
       <div class="table-details-row-actions">
         <tn-button
-          variant="outline"
           [testId]="[disk.name, 'edit']"
           [icon]="editIcon"
           [label]="'Edit' | translate"
@@ -137,7 +135,6 @@
         @if (isUnusedDisk(disk)) {
           <tn-button
             *ixRequiresRoles="requiredRoles"
-            variant="outline"
             [testId]="[disk.name, 'wipe']"
             [icon]="wipeIcon"
             [label]="'Wipe' | translate"
@@ -148,7 +145,6 @@
         @if (isSedLocked(disk)) {
           <tn-button
             *ixRequiresRoles="requiredRoles"
-            variant="outline"
             [testId]="[disk.name, 'unlock']"
             [icon]="unlockIcon"
             [label]="'Unlock' | translate"
@@ -157,7 +153,6 @@
 
           <tn-button
             *ixRequiresRoles="requiredRoles"
-            variant="outline"
             [testId]="[disk.name, 'reset-sed']"
             [icon]="resetSedIcon"
             [label]="'SED Reset' | translate"
