@@ -93,8 +93,7 @@ describe('PoolsDashboardComponent', () => {
   });
 
   it('renders the header navigations as links under their legacy link-* test ids', () => {
-    // tn-button's anchor arm hard-codes `tnTestIdType="button"`, so these ids are pinned on the
-    // host rather than passed through `[testId]` — see the note in the template.
+    // Ids are host-pinned, not passed through `[testId]` — see the note in the template.
     expect(spectator.query('[data-test="link-disks"] a')).toHaveAttribute('href', '/storage/disks');
     expect(spectator.query('[data-test="link-create-pool"] a')).toHaveAttribute('href', '/storage/create');
   });

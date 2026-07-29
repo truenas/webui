@@ -3,7 +3,7 @@ import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-i
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective, TnDialog,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
   TnTestIdDirective,
 } from '@truenas/ui-components';
 import { filter, map, shareReplay, switchMap } from 'rxjs/operators';
@@ -31,9 +31,6 @@ import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-po
 import {
   ActivePoolScanComponent,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/active-pool-scan/active-pool-scan.component';
-import {
-  AutotrimDialog,
-} from 'app/pages/storage/components/dashboard-pool/storage-health-card/autotrim-dialog/autotrim-dialog.component';
 import {
   DeduplicationStatsComponent,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/deduplication-stats/deduplication-stats.component';
@@ -81,7 +78,6 @@ export class StorageHealthCardComponent {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
-  private tnDialog = inject(TnDialog);
   private store = inject(PoolsDashboardStore);
   private formPanel = inject(FormSidePanelService);
   private router = inject(Router);
@@ -160,14 +156,6 @@ export class StorageHealthCardComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
-  }
-
-  protected onEditAutotrim(): void {
-    this.tnDialog
-      .open(AutotrimDialog, { data: this.pool() })
-      .closed
-      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.store.loadDashboard());
   }
 
   protected onConfigureScrub(): void {

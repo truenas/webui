@@ -83,9 +83,10 @@ export class ScrubFormComponent extends SidePanelForm implements OnInit {
     }
   }
 
-  setTaskForEdit(editingTask: ScrubTask): void {
+  private setTaskForEdit(editingTask: ScrubTask): void {
     this.form.patchValue({
-      ...this.existingTask,
+      threshold: editingTask.threshold,
+      enabled: editingTask.enabled,
       schedule: scheduleToCrontab(editingTask.schedule),
     });
   }

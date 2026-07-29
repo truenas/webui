@@ -5,11 +5,7 @@
   </h3>
 
   <ng-template tnCardFooterActions>
-    <!--
-      Test id pinned on the host with `tnTestIdType="link"` instead of `[testId]`: `tn-button`'s
-      anchor arm hard-codes `tnTestIdType="button"`, which would rename the legacy `link-view-disks`
-      to `button-view-disks`. The rendered element is a real `<a routerLink>` either way.
-    -->
+    <!-- Host-pinned to keep the legacy `link-view-disks` id — see the playbook's upstream-defects table. -->
     <tn-button
       tnTestIdType="link"
       [tnTestId]="'view-disks'"

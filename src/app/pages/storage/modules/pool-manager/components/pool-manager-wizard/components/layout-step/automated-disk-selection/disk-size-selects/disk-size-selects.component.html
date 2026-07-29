@@ -3,7 +3,7 @@
     <tn-select
       formControlName="sizeAndType"
       [testId]="['size-and-type', type()]"
-      [options]="(diskSizeAndTypeOptions$ | async) ?? []"
+      [options]="diskSizeAndTypeOptions()"
       [compareWith]="compareSizeAndTypeWith"
       [placeholder]="tnSelectLabels.placeholder | translate"
       [noOptionsLabel]="tnSelectLabels.noOptions | translate"

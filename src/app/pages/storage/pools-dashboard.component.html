@@ -7,12 +7,7 @@
     (onClick)="onImportPool()"
   ></tn-button>
 
-  <!--
-    Test id is pinned on the host with `tnTestIdType="link"` rather than passed through
-    `[testId]`: this is a pure navigation, and `tn-button`'s anchor arm hard-codes
-    `tnTestIdType="button"`, so `[testId]` would rename the legacy `link-disks` to
-    `button-disks`. The rendered element is a real `<a routerLink>` either way.
-  -->
+  <!-- Host-pinned to keep the legacy `link-disks` id — see the playbook's upstream-defects table. -->
   <tn-button
     tnTestIdType="link"
     [tnTestId]="'disks'"
@@ -31,7 +26,7 @@
   }
 
   @if (!hasNoPools() && !arePoolsLoading()) {
-    <!-- Host-pinned `link-create-pool` — see the note on the Disks button above. -->
+    <!-- Host-pinned `link-create-pool`, as is the empty-state button below. -->
     <tn-button
       *ixRequiresRoles="requiredRoles"
       color="primary"
@@ -71,11 +66,13 @@
         Rendered outside tn-empty rather than through its `actionText` input: the action button
         tn-empty renders internally carries no test id, and the input exposes no way to set one.
       -->
+      <!-- Host-pinned `link-create-pool`, same id as the header button. -->
       <tn-button
         *ixRequiresRoles="requiredRoles"
         color="primary"
         variant="outline"
-        [testId]="'create-pool'"
+        tnTestIdType="link"
+        [tnTestId]="'create-pool'"
         [routerLink]="['/storage', 'create']"
         [label]="'Create Pool' | translate"
       ></tn-button>

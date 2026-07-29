@@ -30,9 +30,9 @@
         @for (exception of form.controls.exceptions.controls; track $index) {
           <div class="exception-item" role="listitem" [formGroupName]="$index">
             <!--
-              Every control here renders once per exception row, so each id and label carries the
-              1-based row position — without it the repeated rows resolve to the same data-test
-              (a Playwright strict-mode violation) and to three identically-named remove buttons.
+              Ids and labels carry the 1-based row position: without it the repeated rows resolve
+              to the same data-test (a Playwright strict-mode violation) and to identically-named
+              remove buttons.
             -->
             <tn-icon-button
               class="remove-button"
@@ -64,11 +64,8 @@
       </div>
 
       <!--
-        `type="button"` is spelled out on every non-submit button inside this `(ngSubmit)` form.
-        `tn-button` already defaults to `button`, but the default is the library's to change and
-        `onSubmit()` fires a real `disk.sed_unlock` with no client-side gate, so the intent is
-        pinned here rather than inherited. (`tn-icon-button` hard-codes `type="button"` and
-        exposes no input, so the per-row remove button needs nothing.)
+        `type="button"` is spelled out on every non-submit button in this form rather than
+        inherited from tn-button's default: submitting fires a real `disk.sed_unlock`.
       -->
       <tn-button
         class="add-exception-button"

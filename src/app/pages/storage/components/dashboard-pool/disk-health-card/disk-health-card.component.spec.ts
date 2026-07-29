@@ -72,8 +72,7 @@ describe('DiskHealthCardComponent', () => {
     const manageDisksButton = await loader.getHarness(TnButtonHarness.with({ label: 'View Disks' }));
 
     expect(await manageDisksButton.getHref()).toBe('/storage/disks');
-    // tn-button's anchor arm hard-codes `tnTestIdType="button"`, so the id is pinned on the
-    // host rather than passed through `[testId]` — see the note in the template.
+    // Id is host-pinned, not passed through `[testId]` — see the note in the template.
     expect(spectator.query('[data-test="link-view-disks"]')).toExist();
   });
 

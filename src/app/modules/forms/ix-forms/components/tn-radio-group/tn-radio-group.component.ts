@@ -73,13 +73,8 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
 
   /**
    * Base for the native `name` shared by every option's `<input type="radio">`, which is what
-   * makes the browser treat them as one group for arrow-key navigation.
-   *
-   * Need not be unique: the native `name` scope is the whole document, so two groups sharing one
-   * — the same call site repeated in a list, or a step reused per vdev type — would fuse into a
-   * single native group and break arrow-key navigation between them. {@link nativeName} appends
-   * a per-instance discriminator so that can't happen. The name is never surfaced to the user
-   * (it isn't a test id and isn't part of the accessible name), so nothing is lost by mangling it.
+   * makes the browser treat them as one group for arrow-key navigation. Need not be unique —
+   * {@link nativeName} appends a per-instance discriminator.
    */
   readonly name = input.required<string>();
 
@@ -90,16 +85,16 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
   readonly testId = input<string[]>([]);
 
   /**
-   * `null` rather than `''` when there is no name to render: Angular only drops an attribute
-   * binding for `null`/`undefined`, so an empty string would emit `aria-label=""` — a group that
-   * looks named to a DOM check while being unnamed to a screen reader. Omitting the attribute
-   * leaves the missing name visible to an axe/a11y-lint pass.
+   * `null`, not `''`, when there is no name: Angular only drops an attribute binding for
+   * `null`/`undefined`, and an emitted `aria-label=""` would hide the missing name from an
+   * axe/a11y-lint pass while still being unnamed to a screen reader.
    */
   protected readonly resolvedAriaLabel = computed(() => this.ariaLabel() || this.formField?.label() || null);
 
   /**
-   * {@link name} plus a per-instance discriminator, so two groups built from the same call site
-   * never share a native `name` — see {@link name}.
+   * {@link name} plus a per-instance discriminator. The native `name` scope is the whole document,
+   * so two groups sharing one — the same call site repeated in a list — would fuse into a single
+   * native group and break arrow-key navigation between them. The name is never user-visible.
    */
   protected readonly nativeName = computed(() => `${this.name()}-${this.instanceId}`);
 
@@ -181,13 +176,10 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
   }
 
   writeValue(value: unknown): void {
-    // Reference equality on purpose. With object- or array-valued options this never matches, so
-    // such a group rebuilds its radios on every model write, including no-op ones — wasteful but
-    // correct. A deep-equality fallback would not be: `tn-radio` decides its own `checked` by
-    // comparing its `[value]` to the control value, and the comparison it uses is not ours to
-    // assume, so skipping a rebuild for a structurally-equal-but-distinct object risks leaving
-    // the group rendered with nothing checked. Give such a group stable option identities (hoist
-    // the `options` array) rather than loosening this.
+    // Reference equality on purpose — do not loosen it to a deep compare. `tn-radio` decides its
+    // own `checked` by a comparison we don't control, so skipping the rebuild for a
+    // structurally-equal-but-distinct object risks rendering the group with nothing checked.
+    // Object-valued options should hoist their `options` array for stable identities instead.
     if (this.renderedValue === value) {
       return;
     }

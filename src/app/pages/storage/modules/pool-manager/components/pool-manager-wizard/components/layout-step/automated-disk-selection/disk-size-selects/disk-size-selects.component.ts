@@ -1,11 +1,10 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCheckboxComponent, TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
-import { merge, of } from 'rxjs';
+import { merge } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
@@ -25,7 +24,6 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
   templateUrl: './disk-size-selects.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,
     TnSelectComponent,
@@ -47,7 +45,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
 
   readonly disksSelected = output<DetailsDisk[]>();
 
-  protected diskSizeAndTypeOptions$ = of<SelectOption<SizeAndType>[]>([]);
+  protected diskSizeAndTypeOptions = signal<SelectOption<SizeAndType>[]>([]);
 
   protected sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
   protected compareSizeAndTypeWith = isEqual;
@@ -140,7 +138,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
 
     const nextOptions = [...hddOptions, ...ssdOptions].sort((a, b) => a.value.size - b.value.size);
 
-    this.diskSizeAndTypeOptions$ = of(nextOptions);
+    this.diskSizeAndTypeOptions.set(nextOptions);
 
     if (!nextOptions.some((option) => isEqual(option.value, this.form.controls.sizeAndType.value))) {
       // Unconditional (not `setValueIfNotSame`): the emission is load-bearing. It pushes

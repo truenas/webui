@@ -29,7 +29,7 @@
     <form
       class="ix-form-container"
       [formGroup]="form"
-      (submit)="onSubmit()"
+      (ngSubmit)="onSubmit()"
     >
       <tn-form-section [heading]="helptext.selectPool | translate">
         <tn-form-field
