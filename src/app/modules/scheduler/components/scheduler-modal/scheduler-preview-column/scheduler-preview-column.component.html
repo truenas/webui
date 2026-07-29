@@ -17,9 +17,10 @@
 </section>
 
 <div class="calendar">
-  <!-- TEMP (NAS-141021): held on mat-calendar — tn-calendar (0.2.4) has no [dateClass]
-       equivalent to mark scheduled days. Migrate once the library exposes it. -->
-  <mat-calendar #calendar [dateClass]="getSelectedDateClass"></mat-calendar>
+  <tn-calendar
+    [markedDates]="markedDates()"
+    (activeDateChange)="activeDate.set($event)"
+  ></tn-calendar>
 </div>
 
 <div class="schedule-list">
@@ -27,11 +28,12 @@
     <strong>{{ 'System Time Zone:' | translate }}</strong> {{ timezone() }}
   </div>
 
-  @if (cronPreview && !isPastMonth) {
+  <!-- cronPreview is null for a past month, so it doubles as the "nothing to preview" guard. -->
+  @if (cronPreview(); as preview) {
     <ix-scheduler-date-examples
       class="schedule-example-section"
-      [cronPreview]="cronPreview"
-      [startDate]="startDate"
+      [cronPreview]="preview"
+      [startDate]="startDate()"
     ></ix-scheduler-date-examples>
   }
 </div>

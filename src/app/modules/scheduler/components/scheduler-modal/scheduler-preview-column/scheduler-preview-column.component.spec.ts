@@ -1,8 +1,7 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatCalendar } from '@angular/material/datepicker';
-import { MatCalendarHarness } from '@angular/material/datepicker/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnCalendarHarness } from '@truenas/ui-components';
 import { parse } from 'date-fns';
 import { MockComponent } from 'ng-mocks';
 import { LanguageService } from 'app/modules/language/language.service';
@@ -18,9 +17,6 @@ describe('SchedulerPreviewColumnComponent', () => {
 
   const createComponent = createComponentFactory({
     component: SchedulerPreviewColumnComponent,
-    imports: [
-      MatCalendar,
-    ],
     declarations: [
       MockComponent(SchedulerDateExamplesComponent),
       CrontabExplanationPipe,
@@ -54,8 +50,8 @@ describe('SchedulerPreviewColumnComponent', () => {
   });
 
   async function getHighlightedCalendarDays(): Promise<string[]> {
-    const calendar = await loader.getHarness(MatCalendarHarness);
-    const highlightedCells = await calendar.getCells({ selector: '.highlighted-date' });
+    const calendar = await loader.getHarness(TnCalendarHarness);
+    const highlightedCells = await calendar.getCells({ marked: true });
     return parallel(() => highlightedCells.map((cell) => cell.getText()));
   }
 
@@ -86,7 +82,7 @@ describe('SchedulerPreviewColumnComponent', () => {
   });
 
   it('shows calendar for next month with dates highlighted when next arrow is pressed', async () => {
-    const calendar = await loader.getHarness(MatCalendarHarness);
+    const calendar = await loader.getHarness(TnCalendarHarness);
     await calendar.next();
 
     const highlightedDays = await getHighlightedCalendarDays();
@@ -97,7 +93,7 @@ describe('SchedulerPreviewColumnComponent', () => {
   });
 
   it('updates SchedulerDateExamplesComponent when next month is selected', async () => {
-    const calendar = await loader.getHarness(MatCalendarHarness);
+    const calendar = await loader.getHarness(TnCalendarHarness);
     await calendar.next();
 
     const examplesComponent = spectator.query(SchedulerDateExamplesComponent)!;
@@ -105,7 +101,7 @@ describe('SchedulerPreviewColumnComponent', () => {
   });
 
   it('does not show any dates when user goes in the past', async () => {
-    const calendar = await loader.getHarness(MatCalendarHarness);
+    const calendar = await loader.getHarness(TnCalendarHarness);
     await calendar.previous();
 
     const examplesComponent = spectator.query(SchedulerDateExamplesComponent);
