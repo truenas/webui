@@ -1,14 +1,11 @@
-/* eslint-disable max-classes-per-file */
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal, WritableSignal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import {
-  EMPTY, of, Subject, throwError,
+  defer, EMPTY, NEVER, Observable, of, Subject, throwError,
 } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -23,394 +20,42 @@ import { ShellService } from 'app/services/shell.service';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
-// Loading the real @xterm/xterm module touches a canvas at import time, which jsdom logs as
-// "not implemented" and jest-fail-on-console turns into a failure. The terminal is never
-// instantiated in these tests, so a lightweight stub is enough.
-jest.mock('@xterm/xterm', () => ({ Terminal: jest.fn() }));
-
-// Mock the terminal logic from TerminalComponent
-class TestTerminalReconnectLogic {
-  shellConnected = signal(false);
-  connectionId = signal<string>(undefined);
-  isReconnecting = signal(false);
-  hasAttemptedAutoReconnect = false;
-  private autoReconnectEnabled = true;
-  token: string;
-  authService: AuthService;
-  shellService: ShellService;
-
-  conf = (): TerminalConfiguration => ({
-    connectionData: { container_id: 1, use_console: false },
-  });
-
-  constructor(
-    authServiceParam: AuthService,
-    shellServiceParam: ShellService,
-  ) {
-    this.authService = authServiceParam;
-    this.shellService = shellServiceParam;
-
-    this.shellService.shellConnected$.subscribe((event: ShellConnectedEvent) => {
-      this.shellConnected.set(event.connected);
-      this.connectionId.set(event.id);
-
-      if (event.connected) {
-        this.isReconnecting.set(false);
-        this.hasAttemptedAutoReconnect = false;
-      } else {
-        // Connection lost or failed
-        this.isReconnecting.set(false);
-
-        // Start immediate automatic reconnection for all shells (only once)
-        if (this.autoReconnectEnabled && !this.hasAttemptedAutoReconnect) {
-          this.hasAttemptedAutoReconnect = true;
-          this.performAutoReconnect();
-        }
-      }
-    });
-  }
-
-  reconnect(): void {
-    this.isReconnecting.set(true);
-
-    this.authService.getOneTimeToken().pipe(
-      take(1),
-      tap((token) => {
-        this.token = token;
-        this.shellService.connect(this.token, this.conf().connectionData);
-      }),
-    ).subscribe({
-      error: () => {
-        this.isReconnecting.set(false);
-      },
-    });
-  }
-
-  private performAutoReconnect(): void {
-    if (!this.autoReconnectEnabled || this.shellConnected() || this.isReconnecting()) {
-      return;
-    }
-
-    this.isReconnecting.set(true);
-
-    this.authService.getOneTimeToken().pipe(
-      take(1),
-      tap((token) => {
-        this.token = token;
-        this.shellService.connect(this.token, this.conf().connectionData);
-      }),
-    ).subscribe({
-      error: () => {
-        this.isReconnecting.set(false);
-      },
-    });
-  }
-
-  isInstanceShell(): boolean {
-    const data = this.conf().connectionData;
-    return ('container_id' in data && 'use_console' in data);
-  }
-}
-
-// Create a simplified test for the reconnect functionality without the DOM dependencies
-describe('TerminalComponent Reconnect Logic', () => {
-  let authService: jest.Mocked<AuthService>;
-  let shellService: jest.Mocked<ShellService>;
-  let shellConnected$: Subject<ShellConnectedEvent>;
-
-  beforeEach(() => {
-    shellConnected$ = new Subject<ShellConnectedEvent>();
-
-    authService = {
-      getOneTimeToken: jest.fn(() => of('fresh-token')),
-    } as unknown as jest.Mocked<AuthService>;
-
-    shellService = {
-      connect: jest.fn(),
-      disconnectIfSessionActive: jest.fn(),
-      shellConnected$: shellConnected$.asObservable(),
-    } as unknown as jest.Mocked<ShellService>;
-  });
-
-  afterEach(() => {
-    shellConnected$.complete();
-  });
-
-  describe('reconnect functionality', () => {
-    it('should get fresh token and attempt reconnection', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-
-      logic.reconnect();
-
-      expect(logic.isReconnecting()).toBe(true);
-      expect(authService.getOneTimeToken).toHaveBeenCalled();
-      expect(shellService.connect).toHaveBeenCalledWith('fresh-token', {
-        container_id: 1,
-        use_console: false,
-      });
-    });
-
-    it('should handle token retrieval errors', () => {
-      authService.getOneTimeToken.mockReturnValue(throwError(() => new Error('Token failed')));
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-
-      logic.reconnect();
-
-      expect(logic.isReconnecting()).toBe(false);
-    });
-
-    it('should reset loading state on successful connection', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-      logic.isReconnecting.set(true);
-
-      shellConnected$.next({ connected: true, id: 'test-connection' });
-
-      expect(logic.shellConnected()).toBe(true);
-      expect(logic.connectionId()).toBe('test-connection');
-      expect(logic.isReconnecting()).toBe(false);
-      expect(logic.hasAttemptedAutoReconnect).toBe(false);
-    });
-
-    it('should trigger auto-reconnection on connection failure', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-
-      shellConnected$.next({ connected: false });
-
-      expect(logic.shellConnected()).toBe(false);
-      expect(logic.isReconnecting()).toBe(true); // Auto-reconnection started
-      expect(logic.hasAttemptedAutoReconnect).toBe(true);
-      expect(authService.getOneTimeToken).toHaveBeenCalled();
-    });
-
-    it('should update token when reconnecting', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-      logic.token = 'old-token';
-
-      logic.reconnect();
-
-      expect(logic.token).toBe('fresh-token');
-    });
-  });
-
-  describe('auto-reconnection functionality', () => {
-    it('should automatically attempt reconnection when connection is lost', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-
-      // Simulate connection loss
-      shellConnected$.next({ connected: false });
-
-      expect(logic.hasAttemptedAutoReconnect).toBe(true);
-      expect(logic.isReconnecting()).toBe(true);
-      expect(authService.getOneTimeToken).toHaveBeenCalledTimes(1);
-      expect(shellService.connect).toHaveBeenCalledWith('fresh-token', {
-        container_id: 1,
-        use_console: false,
-      });
-    });
-
-    it('should only attempt auto-reconnection once per connection loss', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-
-      // First connection loss
-      shellConnected$.next({ connected: false });
-      expect(authService.getOneTimeToken).toHaveBeenCalledTimes(1);
-
-      // Second connection loss event (should not trigger another auto-reconnect)
-      shellConnected$.next({ connected: false });
-      expect(authService.getOneTimeToken).toHaveBeenCalledTimes(1); // Still only called once
-      expect(logic.hasAttemptedAutoReconnect).toBe(true);
-    });
-
-    it('should handle auto-reconnection failure gracefully', () => {
-      authService.getOneTimeToken.mockReturnValue(throwError(() => new Error('Auto-reconnect failed')));
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-
-      // Simulate connection loss
-      shellConnected$.next({ connected: false });
-
-      expect(logic.isReconnecting()).toBe(false);
-      expect(logic.hasAttemptedAutoReconnect).toBe(true);
-    });
-
-    it('should reset auto-reconnection flag on successful connection', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-      logic.hasAttemptedAutoReconnect = true;
-
-      // Simulate successful reconnection
-      shellConnected$.next({ connected: true, id: 'test-connection' });
-
-      expect(logic.hasAttemptedAutoReconnect).toBe(false);
-    });
-
-    it('should work for instance shells', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-
-      expect(logic.isInstanceShell()).toBe(true);
-
-      // Auto-reconnection should work regardless of shell type
-      shellConnected$.next({ connected: false });
-      expect(logic.isReconnecting()).toBe(true);
-    });
-
-    it('should work for non-instance shells', () => {
-      // Create logic with non-instance shell configuration
-      const nonInstanceLogic = new class extends TestTerminalReconnectLogic {
-        override conf = (): TerminalConfiguration => ({
-          connectionData: {},
-        });
-      }(authService, shellService);
-
-      expect(nonInstanceLogic.isInstanceShell()).toBe(false);
-
-      // Auto-reconnection should work for all shell types
-      shellConnected$.next({ connected: false });
-      expect(nonInstanceLogic.isReconnecting()).toBe(true);
-    });
-  });
-
-  describe('shell connection state management', () => {
-    it('should handle connection events properly', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-
-      // Test connection
-      shellConnected$.next({ connected: true, id: 'conn-123' });
-      expect(logic.shellConnected()).toBe(true);
-      expect(logic.connectionId()).toBe('conn-123');
-
-      // Test disconnection
-      shellConnected$.next({ connected: false });
-      expect(logic.shellConnected()).toBe(false);
-    });
-
-    it('should reset reconnecting state on successful connection', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-      logic.isReconnecting.set(true);
-
-      // Successful connection should reset the loading state
-      shellConnected$.next({ connected: true, id: 'test' });
-      expect(logic.isReconnecting()).toBe(false);
-    });
-
-    it('should start auto-reconnection on connection loss', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-      logic.isReconnecting.set(false);
-
-      // Connection loss should start auto-reconnection
-      shellConnected$.next({ connected: false });
-      expect(logic.isReconnecting()).toBe(true); // Auto-reconnection started
-    });
-  });
-
-  describe('connection state management', () => {
-    it('should show overlay when shell is not connected', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-
-      // Shell starts as not connected
-      expect(logic.shellConnected()).toBe(false);
-      // Template will show overlay when !shellConnected()
-    });
-
-    it('should hide overlay when shell is connected', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-
-      shellConnected$.next({ connected: true, id: 'test-connection' });
-
-      expect(logic.shellConnected()).toBe(true);
-      // Template will hide overlay when shellConnected() is true
-    });
-
-    it('should maintain connection state properly', () => {
-      const logic = new TestTerminalReconnectLogic(authService, shellService);
-
-      // Connect
-      shellConnected$.next({ connected: true, id: 'test-connection' });
-      expect(logic.shellConnected()).toBe(true);
-
-      // Disconnect
-      shellConnected$.next({ connected: false });
-      expect(logic.shellConnected()).toBe(false);
-    });
-  });
-});
-
-describe('TerminalComponent access control', () => {
+// The real @xterm modules touch a canvas at import time, which jsdom logs as "not implemented".
+// These stubs are deliberately wide enough for the component's real connect path to run end to
+// end — initializeTerminal() constructs the terminal and loads addons — so the reconnect tests
+// below drive production code instead of a re-implementation of it.
+jest.mock('@xterm/xterm', () => ({
+  Terminal: jest.fn(() => ({
+    loadAddon: jest.fn(),
+    open: jest.fn(),
+    clear: jest.fn(),
+    focus: jest.fn(),
+    options: {},
+  })),
+}));
+
+jest.mock('@xterm/addon-fit', () => ({
+  FitAddon: jest.fn(() => ({
+    fit: jest.fn(),
+    proposeDimensions: jest.fn(() => ({ cols: 80, rows: 20 })),
+  })),
+}));
+
+// Deliberately never settles. The font callback only draws the terminal, which is out of scope
+// here, and resolving it would run drawTerminal() in a microtask after the test has finished.
+jest.mock('fontfaceobserver', () => jest.fn(() => ({
+  load: () => new Promise(() => {}),
+})));
+
+describe('TerminalComponent', () => {
   let spectator: Spectator<TerminalComponent>;
+  let loader: HarnessLoader;
   let shellService: ShellService;
-  let loader: HarnessLoader;
-  let getOneTimeToken: jest.Mock;
+  let shellConnected$: Subject<ShellConnectedEvent>;
+  let getOneTimeToken: jest.Mock<Observable<string>>;
 
-  const accessDeniedText = helptextGlobal.webShellAccessDenied;
-
-  const getLockIcon = (): Promise<TnIconHarness | null> => loader.getHarnessOrNull(TnIconHarness.with({ name: 'lock' }));
-
-  const createComponent = createComponentFactory({
-    component: TerminalComponent,
-    componentProviders: [
-      mockProvider(ShellService, {
-        connect: jest.fn(),
-        disconnectIfSessionActive: jest.fn(),
-        shellConnected$: new Subject<ShellConnectedEvent>().asObservable(),
-      }),
-    ],
-    providers: [
-      mockApi(),
-      provideMockStore(),
-      mockAuth(),
-    ],
-  });
-
-  function setupComponent(
-    conf: TerminalConfiguration,
-    options: { webShell?: boolean } = {},
-  ): void {
-    const { webShell = true } = options;
-
-    spectator = createComponent({
-      props: { conf },
-      detectChanges: false,
-    });
-
-    const authService = spectator.inject(MockAuthService);
-    authService.setUser({
-      privilege: {
-        roles: { $set: [Role.FullAdmin] },
-        web_shell: webShell,
-      },
-    } as LoggedInUser);
-    // Prevent terminal/websocket initialization in tests. getOneTimeToken is the first call
-    // startShell() makes, so it doubles as a probe for whether the connect path ran.
-    getOneTimeToken = jest.fn(() => EMPTY);
-    (authService as unknown as AuthService).getOneTimeToken = getOneTimeToken;
-
-    spectator.detectChanges();
-    shellService = spectator.inject(ShellService, true);
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  }
-
-  it('shows a restricted-access warning when the user lacks the web_shell privilege', async () => {
-    setupComponent({ connectionData: {} }, { webShell: false });
-
-    expect(await getLockIcon()).not.toBeNull();
-    expect(spectator.fixture.nativeElement).toHaveText(accessDeniedText);
-    expect(shellService.connect).not.toHaveBeenCalled();
-    expect(getOneTimeToken).not.toHaveBeenCalled();
-  });
-
-  it('proceeds to connect when the user has the web_shell privilege', async () => {
-    setupComponent({ connectionData: { container_id: 1, use_console: false } }, { webShell: true });
-
-    expect(await getLockIcon()).toBeNull();
-    expect(getOneTimeToken).toHaveBeenCalled();
-  });
-});
-
-describe('TerminalComponent reconnect button', () => {
-  let spectator: Spectator<TerminalComponent>;
-  let loader: HarnessLoader;
-  let getOneTimeToken: jest.Mock;
-
-  const getReconnectButton = (): Promise<TnButtonHarness | null> => {
-    return loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Reconnect' }));
+  const instanceShellConf: TerminalConfiguration = {
+    connectionData: { container_id: 1, use_console: false },
   };
 
   const createComponent = createComponentFactory({
@@ -419,7 +64,9 @@ describe('TerminalComponent reconnect button', () => {
       mockProvider(ShellService, {
         connect: jest.fn(),
         disconnectIfSessionActive: jest.fn(),
-        shellConnected$: new Subject<ShellConnectedEvent>().asObservable(),
+        // defer() so each test's fresh Subject is resolved at subscribe time — the factory
+        // itself is only evaluated once, so a plain Subject would leak between tests.
+        shellConnected$: defer(() => shellConnected$),
       }),
     ],
     providers: [
@@ -431,66 +78,200 @@ describe('TerminalComponent reconnect button', () => {
     ],
   });
 
-  function setupDisconnectedTerminal(): void {
-    spectator = createComponent({
-      props: { conf: { connectionData: {} } },
-      detectChanges: false,
-    });
+  beforeEach(() => {
+    shellConnected$ = new Subject<ShellConnectedEvent>();
+  });
+
+  afterEach(() => {
+    shellConnected$.complete();
+  });
+
+  function setupTerminal(options: {
+    conf?: TerminalConfiguration;
+    webShell?: boolean;
+    initialToken?: Observable<string>;
+  } = {}): void {
+    const {
+      conf = { connectionData: {} },
+      webShell = true,
+      initialToken = of('initial-token'),
+    } = options;
+
+    spectator = createComponent({ props: { conf }, detectChanges: false });
+
+    // mockProvider builds its jest.fn()s once per factory, so they carry call history across
+    // tests. Clear before the component runs, so the initial connect below still registers.
+    shellService = spectator.inject(ShellService, true);
+    jest.mocked(shellService.connect).mockClear();
 
     const authService = spectator.inject(MockAuthService);
     authService.setUser({
       privilege: {
         roles: { $set: [Role.FullAdmin] },
-        web_shell: true,
+        web_shell: webShell,
       },
     } as LoggedInUser);
-    // Returning EMPTY keeps the shell/terminal from initializing, so the component stays
-    // in the disconnected state the reconnect overlay is built for.
-    getOneTimeToken = jest.fn(() => EMPTY);
+
+    // getOneTimeToken is the first call startShell() makes, so it doubles as a probe for
+    // whether the connect path ran at all.
+    getOneTimeToken = jest.fn(() => initialToken);
     (authService as unknown as AuthService).getOneTimeToken = getOneTimeToken;
 
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
-  // The manual Reconnect button is only offered once the single automatic retry has been
-  // spent; before that the overlay shows a spinner instead. Mirrors the runtime sequence —
-  // the automatic retry starts, then fails — so the signal write marks the OnPush view dirty.
-  function exhaustAutoReconnect(): void {
-    const internals = spectator.component as unknown as {
-      hasAttemptedAutoReconnect: boolean;
-      isReconnecting: WritableSignal<boolean>;
-    };
-
-    internals.hasAttemptedAutoReconnect = true;
-    internals.isReconnecting.set(true);
-    spectator.detectChanges();
-
-    internals.isReconnecting.set(false);
+  /**
+   * Drives the real connection-lost sequence: the shell drops, the component spends its single
+   * automatic retry, and that retry fails to get a token. This is the only state in which the
+   * manual Reconnect button is offered.
+   */
+  function loseConnectionAndFailAutoReconnect(): void {
+    getOneTimeToken.mockReturnValue(throwError(() => new Error('Token request failed')));
+    shellConnected$.next({ connected: false });
     spectator.detectChanges();
   }
 
-  it('does not offer a reconnect button before the automatic retry is spent', async () => {
-    setupDisconnectedTerminal();
+  const getReconnectButton = (): Promise<TnButtonHarness | null> => (
+    loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Reconnect' }))
+  );
 
-    expect(await getReconnectButton()).toBeNull();
+  const getLockIcon = (): Promise<TnIconHarness | null> => (
+    loader.getHarnessOrNull(TnIconHarness.with({ name: 'lock' }))
+  );
+
+  describe('access control', () => {
+    it('shows a restricted-access warning when the user lacks the web_shell privilege', async () => {
+      setupTerminal({ webShell: false });
+
+      expect(await getLockIcon()).not.toBeNull();
+      expect(spectator.fixture.nativeElement).toHaveText(helptextGlobal.webShellAccessDenied);
+      expect(shellService.connect).not.toHaveBeenCalled();
+      expect(getOneTimeToken).not.toHaveBeenCalled();
+    });
+
+    it('connects the shell when the user has the web_shell privilege', async () => {
+      setupTerminal({ conf: instanceShellConf });
+
+      expect(await getLockIcon()).toBeNull();
+      expect(getOneTimeToken).toHaveBeenCalledTimes(1);
+      expect(shellService.connect).toHaveBeenCalledWith('initial-token', instanceShellConf.connectionData);
+    });
   });
 
-  it('offers a reconnect button once the automatic retry is spent', async () => {
-    setupDisconnectedTerminal();
-    exhaustAutoReconnect();
+  describe('connection state', () => {
+    it('shows a spinner while the shell is connecting', async () => {
+      setupTerminal();
 
-    expect(await getReconnectButton()).not.toBeNull();
-    expect(spectator.fixture.nativeElement).toHaveText('Connection lost. Click Reconnect to restore the session.');
+      expect(spectator.fixture.nativeElement).toHaveText('Connecting...');
+      expect(await getReconnectButton()).toBeNull();
+    });
+
+    it('names the instance shell while connecting to one', () => {
+      setupTerminal({ conf: instanceShellConf });
+
+      expect(spectator.fixture.nativeElement).toHaveText('Connecting to instance shell...');
+    });
+
+    it('clears the busy overlay once the shell connects', async () => {
+      setupTerminal();
+
+      shellConnected$.next({ connected: true, id: 'conn-123' });
+      spectator.detectChanges();
+
+      expect(spectator.fixture.nativeElement).not.toHaveText('Connecting...');
+      expect(await getReconnectButton()).toBeNull();
+    });
   });
 
-  it('requests a fresh token when the reconnect button is clicked', async () => {
-    setupDisconnectedTerminal();
-    exhaustAutoReconnect();
-    expect(getOneTimeToken).toHaveBeenCalledTimes(1);
+  describe('automatic reconnect', () => {
+    it('retries the connection by itself when the shell drops', () => {
+      setupTerminal();
+      getOneTimeToken.mockReturnValue(of('retry-token'));
 
-    await (await getReconnectButton())?.click();
+      shellConnected$.next({ connected: false });
 
-    expect(getOneTimeToken).toHaveBeenCalledTimes(2);
+      expect(getOneTimeToken).toHaveBeenCalledTimes(2);
+      expect(shellService.connect).toHaveBeenLastCalledWith('retry-token', {});
+    });
+
+    it('retries only once per connection loss', () => {
+      setupTerminal();
+      getOneTimeToken.mockReturnValue(throwError(() => new Error('Token request failed')));
+
+      shellConnected$.next({ connected: false });
+      expect(getOneTimeToken).toHaveBeenCalledTimes(2);
+
+      shellConnected$.next({ connected: false });
+      expect(getOneTimeToken).toHaveBeenCalledTimes(2);
+    });
+
+    it('is available again after the shell has reconnected', () => {
+      setupTerminal();
+      getOneTimeToken.mockReturnValue(throwError(() => new Error('Token request failed')));
+
+      shellConnected$.next({ connected: false });
+      expect(getOneTimeToken).toHaveBeenCalledTimes(2);
+
+      shellConnected$.next({ connected: true, id: 'conn-123' });
+      spectator.detectChanges();
+
+      shellConnected$.next({ connected: false });
+      expect(getOneTimeToken).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe('manual reconnect', () => {
+    it('does not offer a reconnect button while the automatic retry is still in flight', async () => {
+      setupTerminal();
+      getOneTimeToken.mockReturnValue(EMPTY);
+
+      shellConnected$.next({ connected: false });
+      spectator.detectChanges();
+
+      expect(await getReconnectButton()).toBeNull();
+      expect(spectator.fixture.nativeElement).toHaveText('Connecting...');
+    });
+
+    it('offers a reconnect button once the automatic retry has failed', async () => {
+      setupTerminal();
+      loseConnectionAndFailAutoReconnect();
+
+      expect(await getReconnectButton()).not.toBeNull();
+      expect(spectator.fixture.nativeElement).toHaveText('Connection lost. Click Reconnect to restore the session.');
+    });
+
+    it('requests a fresh token and reconnects when the button is clicked', async () => {
+      setupTerminal();
+      loseConnectionAndFailAutoReconnect();
+      getOneTimeToken.mockReturnValue(of('fresh-token'));
+
+      await (await getReconnectButton())?.click();
+
+      expect(getOneTimeToken).toHaveBeenCalledTimes(3);
+      expect(shellService.connect).toHaveBeenLastCalledWith('fresh-token', {});
+    });
+
+    it('falls back to the busy spinner while the manual reconnect is in flight', async () => {
+      setupTerminal();
+      loseConnectionAndFailAutoReconnect();
+      getOneTimeToken.mockReturnValue(NEVER);
+
+      await (await getReconnectButton())?.click();
+      spectator.detectChanges();
+
+      expect(spectator.fixture.nativeElement).toHaveText('Connecting...');
+      expect(await getReconnectButton()).toBeNull();
+    });
+
+    it('keeps offering the reconnect button when the manual reconnect fails', async () => {
+      setupTerminal();
+      loseConnectionAndFailAutoReconnect();
+
+      await (await getReconnectButton())?.click();
+      spectator.detectChanges();
+
+      expect(await getReconnectButton()).not.toBeNull();
+    });
   });
 });
