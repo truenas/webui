@@ -92,6 +92,13 @@ describe('PoolsDashboardComponent', () => {
     expect(spectator.inject(SharingTierService).invalidate).toHaveBeenCalled();
   });
 
+  it('renders the header navigations as links under their legacy link-* test ids', () => {
+    // tn-button's anchor arm hard-codes `tnTestIdType="button"`, so these ids are pinned on the
+    // host rather than passed through `[testId]` — see the note in the template.
+    expect(spectator.query('[data-test="link-disks"] a')).toHaveAttribute('href', '/storage/disks');
+    expect(spectator.query('[data-test="link-create-pool"] a')).toHaveAttribute('href', '/storage/create');
+  });
+
   it('shows the pool list and hides the empty state when pools exist', async () => {
     expect(spectator.queryAll('ix-dashboard-pool')).toHaveLength(1);
     expect(await loader.getHarnessOrNull(TnEmptyHarness)).toBeNull();

@@ -4,7 +4,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent, TnSpinnerComponent,
 } from '@truenas/ui-components';
 import {
   Observable, forkJoin, last, map, of, switchMap,
@@ -34,9 +34,11 @@ type ImportStep = 'loading' | 'locked-sed' | 'unlock-sed' | 'import';
 @Component({
   selector: 'ix-import-pool',
   templateUrl: './import-pool.component.html',
+  styleUrls: ['./import-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    TnSpinnerComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnSelectComponent,

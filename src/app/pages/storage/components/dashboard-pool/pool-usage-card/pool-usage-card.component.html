@@ -5,8 +5,15 @@
   </h3>
 
   <ng-template tnCardFooterActions>
+    <!--
+      Test id pinned on the host with `tnTestIdType="link"` instead of `[testId]`: `tn-button`'s
+      anchor arm hard-codes `tnTestIdType="button"`, which would rename the legacy
+      `link-<pool>-view-datasets` to `button-<pool>-view-datasets`. The rendered element is a real
+      `<a routerLink>` either way.
+    -->
     <tn-button
-      [testId]="[poolState().name, 'view-datasets']"
+      tnTestIdType="link"
+      [tnTestId]="[poolState().name, 'view-datasets']"
       [routerLink]="['/', 'datasets', poolState().name]"
       [label]="'View Datasets' | translate"
     ></tn-button>

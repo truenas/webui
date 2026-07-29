@@ -68,10 +68,13 @@ describe('DiskHealthCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows a button that links to the disks page', async () => {
+  it('links to the disks page under its legacy link-* test id', async () => {
     const manageDisksButton = await loader.getHarness(TnButtonHarness.with({ label: 'View Disks' }));
 
     expect(await manageDisksButton.getHref()).toBe('/storage/disks');
+    // tn-button's anchor arm hard-codes `tnTestIdType="button"`, so the id is pinned on the
+    // host rather than passed through `[testId]` — see the note in the template.
+    expect(spectator.query('[data-test="link-view-disks"]')).toExist();
   });
 
   describe('Temperatures', () => {

@@ -7,8 +7,15 @@
     (onClick)="onImportPool()"
   ></tn-button>
 
+  <!--
+    Test id is pinned on the host with `tnTestIdType="link"` rather than passed through
+    `[testId]`: this is a pure navigation, and `tn-button`'s anchor arm hard-codes
+    `tnTestIdType="button"`, so `[testId]` would rename the legacy `link-disks` to
+    `button-disks`. The rendered element is a real `<a routerLink>` either way.
+  -->
   <tn-button
-    [testId]="'disks'"
+    tnTestIdType="link"
+    [tnTestId]="'disks'"
     [routerLink]="['/storage', 'disks']"
     [label]="'Disks' | translate"
   ></tn-button>
@@ -24,10 +31,12 @@
   }
 
   @if (!hasNoPools() && !arePoolsLoading()) {
+    <!-- Host-pinned `link-create-pool` — see the note on the Disks button above. -->
     <tn-button
       *ixRequiresRoles="requiredRoles"
       color="primary"
-      [testId]="'create-pool'"
+      tnTestIdType="link"
+      [tnTestId]="'create-pool'"
       [ixUiSearch]="searchableElements.elements.createPool"
       [routerLink]="['/storage', 'create']"
       [label]="'Create Pool' | translate"

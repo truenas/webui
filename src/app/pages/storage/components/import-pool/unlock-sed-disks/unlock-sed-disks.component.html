@@ -63,9 +63,17 @@
         }
       </div>
 
+      <!--
+        `type="button"` is spelled out on every non-submit button inside this `(ngSubmit)` form.
+        `tn-button` already defaults to `button`, but the default is the library's to change and
+        `onSubmit()` fires a real `disk.sed_unlock` with no client-side gate, so the intent is
+        pinned here rather than inherited. (`tn-icon-button` hard-codes `type="button"` and
+        exposes no input, so the per-row remove button needs nothing.)
+      -->
       <tn-button
         class="add-exception-button"
         icon="mdi-plus"
+        type="button"
         [testId]="'add-exception'"
         [disabled]="availableDisksForException().length === 0"
         [label]="'Add Disk Exception' | translate"
@@ -75,6 +83,7 @@
 
     <ix-form-actions>
       <tn-button
+        type="button"
         [testId]="'skip'"
         [label]="'Skip' | translate"
         (onClick)="onSkip()"

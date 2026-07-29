@@ -144,6 +144,30 @@ describe('DiskSizeSelectsComponent', () => {
     expect(spectator.component.disksSelected.emit).toHaveBeenCalledWith([singleDisk]);
   });
 
+  it('re-emits an unchanged null selection to the store when the inventory changes', () => {
+    // Nothing is picked, so the value is null before and after — but the store still has to hear
+    // about it: it regenerates this category's vdevs from the rebuilt disk map, and a skipped
+    // "no-op" emission leaves it matching against stale disk objects. This pins the contract the
+    // unconditional `setValue(null)` in `updateOptions()` exists for.
+    const store = spectator.inject(PoolManagerStore);
+    (store.setTopologyCategoryDiskSizes as jest.Mock).mockClear();
+
+    spectator.setInput('inventory', [
+      { type: DiskType.Hdd, size: 10 * GiB, name: 'disk1' },
+      { type: DiskType.Hdd, size: 10 * GiB, name: 'disk2' },
+      { type: DiskType.Ssd, size: 20 * GiB, name: 'disk4' },
+    ] as DetailsDisk[]);
+
+    expect(store.setTopologyCategoryDiskSizes).toHaveBeenCalledWith(
+      VDevType.Spare,
+      {
+        diskSize: null,
+        diskType: null,
+        treatDiskSizeAsMinimum: false,
+      },
+    );
+  });
+
   it('resets to default values when store emits a reset event', async () => {
     await diskSizeSelect.selectOption('10 GiB (HDD)');
     let minimumCheckbox = await loader.getHarness(TnCheckboxHarness.with({ selector: '[formControlName="treatDiskSizeAsMinimum"]' }));

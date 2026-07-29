@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnEmptyComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnEmptyComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -33,6 +33,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     RequiresRolesDirective,
     RouterLink,
     TnButtonComponent,
+    TnTestIdDirective,
     UiSearchDirective,
     DashboardPoolComponent,
     TnEmptyComponent,

@@ -5,8 +5,14 @@
   </h3>
 
   <ng-template tnCardFooterActions>
+    <!--
+      Test id pinned on the host with `tnTestIdType="link"` instead of `[testId]`: `tn-button`'s
+      anchor arm hard-codes `tnTestIdType="button"`, which would rename the legacy `link-view-disks`
+      to `button-view-disks`. The rendered element is a real `<a routerLink>` either way.
+    -->
     <tn-button
-      [testId]="'view-disks'"
+      tnTestIdType="link"
+      [tnTestId]="'view-disks'"
       [routerLink]="['/storage', 'disks']"
       [label]="'View Disks' | translate"
     ></tn-button>

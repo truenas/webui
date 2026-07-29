@@ -1,4 +1,15 @@
 @switch (currentStep()) {
+  @case ('loading') {
+    <!--
+      The step the panel opens on: `disk.details` + `system.advanced.sed_global_password`, then the
+      `pool.import_find` job — several seconds of work. Without this case the `@switch` matched
+      nothing and the panel body rendered empty for the whole round trip.
+    -->
+    <div class="loading-step" role="status">
+      <tn-spinner mode="indeterminate" [diameter]="40"></tn-spinner>
+      <p class="loading-message">{{ 'Searching for pools available for import...' | translate }}</p>
+    </div>
+  }
   @case ('locked-sed') {
     <ix-locked-sed-disks
       [lockedDisks]="lockedSedDisks()"

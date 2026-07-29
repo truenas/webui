@@ -136,7 +136,7 @@ the ticket and document it in the PR.
 | `<button mat-raised-button>` | `<tn-button variant="filled">` | |
 | `<button mat-stroked-button>` | `<tn-button variant="outline">` | |
 | `<button mat-flat-button>` | `<tn-button variant="filled" color="default">` | |
-| `<a mat-button [routerLink]>` | `<tn-button [routerLink]>` | `tn-button` renders a real `<a routerLink>` in anchor mode (`[routerLink]`/`[href]`), so middle-click "open in new tab" and right-click "copy link" are preserved — verified in 0.3.26. ⚠ The test-id prefix still shifts (`link-*` → `button-*`): the anchor arm hard-codes `tnTestIdType="button"`, and `composeTestId` only skips a prefix the base already starts with, so a legacy `link-*` value cannot be pinned through the `testId` input. See "Test IDs." |
+| `<a mat-button [routerLink]>` | `<tn-button [routerLink]>` | `tn-button` renders a real `<a routerLink>` in anchor mode (`[routerLink]`/`[href]`), so middle-click "open in new tab" and right-click "copy link" are preserved — verified in 0.3.26. ⚠ The test-id prefix still shifts (`link-*` → `button-*`): the anchor arm hard-codes `tnTestIdType="button"`, and `composeTestId` only skips a prefix the base already starts with, so a legacy `link-*` value cannot be pinned through the `testId` input. Drop `[testId]` and put `tnTestIdType="link" [tnTestId]="…"` on the `<tn-button>` **host** instead — the inner anchor then emits no id and the host carries the legacy value verbatim (`pools-dashboard`, `disk-health-card`, `pool-usage-card` do this). See "Test IDs." |
 | `<button mat-icon-button>` | `<tn-icon-button>` | ⚠ Bare icon-only buttons MUST have `[ariaLabel]` — no accessible name otherwise. |
 | `<button mat-fab>` / `<button mat-mini-fab>` | *(no equivalent — hold)* | No FAB component. Rework to a primary action button or surface to lead. |
 | `<mat-button-toggle-group>` / `<mat-button-toggle>` | `<tn-button-toggle-group>` / `<tn-button-toggle>` | See **Recipe 7**. ⚠ No `[label]` input — must provide `[ariaLabel]` or `[ariaLabelledby]`. ⚠ Per-option test IDs are not auto-synthesized; set `[testId]` per `<tn-button-toggle>`. |
@@ -752,8 +752,21 @@ type, changing the type changes the resolved value even when the base is identic
   that render an `<a>`. There is no escape hatch through the component: passing
   `testId="link-foo"` yields `button-link-foo`, because `composeTestId`'s idempotent guard only
   skips a prefix the base *already* starts with. So if a legacy `link-*` selector is referenced
-  anywhere, either keep a typeless host element and put `[tnTestId]` on it, or coordinate the
-  rename with whoever owns the e2e selectors.
+  anywhere, **pin it on the `<tn-button>` host** — drop `[testId]` and add
+  `tnTestIdType="link" [tnTestId]="'foo'"` to the host element:
+
+  ```html
+  <tn-button tnTestIdType="link" [tnTestId]="'disks'" [routerLink]="['/storage', 'disks']" …>
+  ```
+
+  `TnTestIdDirective` matches any element, so the host resolves to `link-disks`, and with no
+  `testId` input the inner `<a>` composes an empty id and `writeTestId` *removes* the attribute —
+  exactly one `data-test` in the DOM, identical to what `<a mat-button ixTest="disks">` produced.
+  This keeps the button's appearance and the library's anchor semantics; do **not** hand-roll an
+  `<a>` styled like a button (the `.storybook-button` classes are encapsulated inside
+  `TnButtonComponent` and can't be reused from a consumer). Established in `pools-dashboard`,
+  `disk-health-card`, `pool-usage-card`. Prefer this over coordinating a rename with whoever owns
+  the e2e selectors.
 - `<button mat-menu-item [ixTest]="'foo'">` resolved to `button-foo`, and `<tn-menu-item
   [testId]="'foo'">` also resolves to `button-foo` — the `menu-item` prefix this playbook
   previously documented is not what the library emits. `tn-menu-panel` renders every item

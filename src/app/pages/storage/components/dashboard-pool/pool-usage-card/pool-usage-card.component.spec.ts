@@ -167,10 +167,13 @@ describe('PoolUsageCardComponent', () => {
     expect(href).toBe('/reportsdashboard/disk?disks=sda&disks=sdb');
   });
 
-  it('links to the pool datasets page', async () => {
+  it('links to the pool datasets page under its legacy link-* test id', async () => {
     const link = await loader.getHarness(TnButtonHarness.with({ label: 'View Datasets' }));
 
     expect(await link.getHref()).toBe('/datasets/bingo');
+    // tn-button's anchor arm hard-codes `tnTestIdType="button"`, so the id is pinned on the
+    // host rather than passed through `[testId]` — see the note in the template.
+    expect(spectator.query('[data-test="link-bingo-view-datasets"]')).toExist();
   });
 
   it('does not show tier breakdown when tiering is disabled', () => {

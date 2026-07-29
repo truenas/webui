@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -138,6 +138,36 @@ describe('ImportPoolComponent', () => {
     }));
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', '/mnt/pewl', 'unlock']);
+  });
+
+  describe('while the initial lookup is in flight', () => {
+    const createLoadingComponent = createComponentFactory({
+      component: ImportPoolComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockApi([
+          mockJob('pool.import_find', fakeSuccessfulJob(mockPools)),
+        ]),
+        // `disk.details` never settles, so the component stays on the step it opens on.
+        mockProvider(ApiService, {
+          call: jest.fn((method: string) => (
+            method === 'disk.details' ? NEVER : of('existingpassword')
+          )),
+          job: jest.fn(() => of(fakeSuccessfulJob(mockPools))),
+        }),
+        mockProvider(DialogService),
+        mockAuth(),
+        mockProvider(Router),
+      ],
+    });
+
+    it('shows a spinner and a message rather than an empty panel', () => {
+      const loadingSpectator = createLoadingComponent();
+
+      expect(loadingSpectator.query('tn-spinner')).toExist();
+      expect(loadingSpectator.fixture.nativeElement.textContent)
+        .toContain('Searching for pools available for import...');
+    });
   });
 
   describe('with locked SED disks', () => {
