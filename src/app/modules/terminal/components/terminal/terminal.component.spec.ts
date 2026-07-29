@@ -80,10 +80,6 @@ describe('TerminalComponent', () => {
 
   beforeEach(() => {
     shellConnected$ = new Subject<ShellConnectedEvent>();
-    // mockProvider builds its jest.fn()s once per factory, so they carry call history across
-    // tests. getOneTimeToken is re-assigned per test in setupTerminal(), so clearing here is
-    // enough to keep every assertion below scoped to its own test.
-    jest.clearAllMocks();
   });
 
   afterEach(() => {
