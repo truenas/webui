@@ -41,7 +41,7 @@ describe('UserLastActionComponent', () => {
     }]);
     expect(spectator.query('ngx-skeleton-loader')).toBeNull();
     expect(spectator.query('.label')).toHaveText('Last Action:');
-    expect(spectator.query('.value')).toHaveText('Login');
+    expect(spectator.query('.value')).toHaveText('LOGIN');
     expect(spectator.query(IxDateComponent, { parentSelector: '.value' }).date).toBe(1749822469 * 1000);
   }));
 

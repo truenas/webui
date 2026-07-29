@@ -1,20 +1,16 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -30,14 +26,13 @@ export interface ReplaceDiskDialogData {
   styleUrls: ['./replace-disk-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     UnusedDiskSelectComponent,
-    IxCheckboxComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -46,9 +41,9 @@ export class ReplaceDiskDialog {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<ReplaceDiskDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, ReplaceDiskDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);
-  data = inject<ReplaceDiskDialogData>(MAT_DIALOG_DATA);
+  data = inject<ReplaceDiskDialogData>(DIALOG_DATA);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);

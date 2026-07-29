@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import { Observable } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
@@ -13,7 +13,6 @@ import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { saveDebugElement } from 'app/pages/system/general-settings/support/save-debug-button/save-debug-button.elements';
 import { DownloadService } from 'app/services/download.service';
@@ -26,8 +25,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './save-debug-button.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     UiSearchDirective,
     TranslateModule,
   ],

@@ -1,31 +1,34 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Subscription, merge, of, startWith,
+  InputType,
+  TnAutocompleteComponent,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnSelectComponent,
+  TnSelectOption,
+} from '@truenas/ui-components';
+import {
+  Subscription, merge, startWith,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
-import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { translateOptions } from 'app/modules/translate/translate.helper';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
@@ -40,21 +43,19 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
-    IxComboboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
+    TnInputComponent,
+    TnAutocompleteComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
-export class PreferencesFormComponent implements OnInit {
+export class PreferencesFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
@@ -65,11 +66,10 @@ export class PreferencesFormComponent implements OnInit {
   private sysGeneralService = inject(SystemGeneralService);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   private previewSubscription: Subscription;
 
-  protected form = this.fb.nonNullable.group({
+  protected readonly form = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     syncThemeWithOS: [false],
     lightTheme: [''],
@@ -89,34 +89,42 @@ export class PreferencesFormComponent implements OnInit {
     { initialValue: false },
   );
 
-  protected lightThemeOptions = of(
+  protected readonly InputType = InputType;
+
+  // tn-select renders labels verbatim, so pre-translate them (the old ix-select piped
+  // every option label through translate at render).
+  protected lightThemeOptions: TnSelectOption[] = translateOptions(
+    this.translate,
     this.themeService.allThemes
       .filter((theme) => !this.themeService.isDarkTheme(theme.name))
       .map((theme) => ({ label: theme.label, value: theme.name })),
   );
 
-  protected darkThemeOptions = of(
+  protected darkThemeOptions: TnSelectOption[] = translateOptions(
+    this.translate,
     this.themeService.allThemes
       .filter((theme) => this.themeService.isDarkTheme(theme.name))
       .map((theme) => ({ label: theme.label, value: theme.name })),
   );
 
-  protected themeOptions = of(
+  protected themeOptions: TnSelectOption[] = translateOptions(
+    this.translate,
     this.themeService.allThemes.map((theme) => ({ label: theme.label, value: theme.name })),
   );
 
-  protected languageProvider = new SimpleAsyncComboboxProvider(
+  protected languageOptions = toSignal(
     this.sysGeneralService.languageOptions(true),
+    { initialValue: [] as Option[] },
   );
 
-  protected dateFormatOptions = of<Option[]>([]);
-  protected timeFormatOptions = of<Option[]>([]);
+  protected dateFormatOptions = signal<TnSelectOption[]>([]);
+  protected timeFormatOptions = signal<TnSelectOption[]>([]);
+
+  /** Submission is synchronous (store dispatches only), so there is no loading state. */
+  readonly canSubmit = this.trackCanSubmit(signal(false));
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-
+    super();
     this.setupThemePreview();
   }
 
@@ -185,12 +193,12 @@ export class PreferencesFormComponent implements OnInit {
     this.langService.setLanguage(values.language);
 
     this.snackbar.success(this.translate.instant('Preferences saved'));
-    this.slideInRef.close({ response: true });
+    this.close(true);
   }
 
   private setTimeOptions(tz: string): void {
-    this.dateFormatOptions = of(this.localeService.getDateFormatOptions(tz));
-    this.timeFormatOptions = of(this.localeService.getTimeFormatOptions(tz));
+    this.dateFormatOptions.set(this.localeService.getDateFormatOptions(tz));
+    this.timeFormatOptions.set(this.localeService.getTimeFormatOptions(tz));
   }
 
   private getOsTheme(light: string, dark: string): string {

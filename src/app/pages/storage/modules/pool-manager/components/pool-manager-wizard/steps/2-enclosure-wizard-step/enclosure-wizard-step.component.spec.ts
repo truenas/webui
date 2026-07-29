@@ -1,8 +1,8 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnStepperComponent } from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { DispersalStrategy, EnclosureWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
@@ -20,7 +20,7 @@ describe('EnclosureWizardStepComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(PoolManagerStore, {
         startOver$,
         enclosures$: of([{

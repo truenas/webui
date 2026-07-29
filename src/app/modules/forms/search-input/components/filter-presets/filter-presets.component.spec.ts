@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnChipHarness } from '@truenas/ui-components';
 import { FilterPreset, QueryFilters } from 'app/interfaces/query-api.interface';
 import { FilterPresetsComponent } from './filter-presets.component';
 
@@ -40,30 +40,30 @@ describe('FilterPresetsComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('renders all visible preset buttons', async () => {
-    const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    const texts = await Promise.all(buttons.map((btn) => btn.getText()));
+  it('renders all visible preset chips', async () => {
+    const chips = await loader.getAllHarnesses(TnChipHarness);
+    const labels = await Promise.all(chips.map((chip) => chip.getLabel()));
 
-    expect(texts).toContain('+ Has API Access');
-    expect(texts).toContain('+ Has SSH Access');
+    expect(labels).toContain('+ Has API Access');
+    expect(labels).toContain('+ Has SSH Access');
   });
 
-  it('does not render a button if it was already selected', async () => {
+  it('does not render a chip if it was already selected', async () => {
     spectator.setInput('selectedPresetLabels', new Set(['Has SSH Access']));
     spectator.detectChanges();
 
-    const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    const texts = await Promise.all(buttons.map((btn) => btn.getText()));
+    const chips = await loader.getAllHarnesses(TnChipHarness);
+    const labels = await Promise.all(chips.map((chip) => chip.getLabel()));
 
-    expect(texts).toContain('+ Has API Access');
-    expect(texts).not.toContain('+ Has SSH Access');
+    expect(labels).toContain('+ Has API Access');
+    expect(labels).not.toContain('+ Has SSH Access');
   });
 
   it('emits filtersChanged when a preset is selected', async () => {
     const emitSpy = jest.spyOn(spectator.component.filtersChanged, 'emit');
 
-    const apiBtn = await loader.getHarness(MatButtonHarness.with({ text: '+ Has API Access' }));
-    await apiBtn.click();
+    const apiChip = await loader.getHarness(TnChipHarness.with({ label: '+ Has API Access' }));
+    await apiChip.click();
 
     expect(emitSpy).toHaveBeenCalledWith({
       filters: [[['api_key', '!=', null]]],

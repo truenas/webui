@@ -1,11 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatStepperHarness } from '@angular/material/stepper/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnDialog, TnStepperHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, Subject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -58,7 +56,7 @@ import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.sel
 describe('PoolManagerWizardComponent', () => {
   let spectator: Spectator<PoolManagerWizardComponent>;
   let loader: HarnessLoader;
-  let wizard: MatStepperHarness;
+  let wizard: TnStepperHarness;
   let store: PoolManagerStore;
 
   const startOver$ = new Subject<void>();
@@ -96,11 +94,11 @@ describe('PoolManagerWizardComponent', () => {
   } as PoolManagerState;
   const state$ = new BehaviorSubject(state);
   const createdPool = {} as Pool;
+  const existingPool$ = new BehaviorSubject<Pool | null>(null);
 
   const createComponent = createComponentFactory({
     component: PoolManagerWizardComponent,
     imports: [
-      MatStepperModule,
       FakeProgressBarComponent,
       MockComponents(
         GeneralWizardStepComponent,
@@ -125,6 +123,7 @@ describe('PoolManagerWizardComponent', () => {
       mockApi([
         mockCall('pool.query', []),
         mockJob('pool.create', fakeSuccessfulJob(createdPool)),
+        mockJob('pool.update', fakeSuccessfulJob(createdPool)),
       ]),
       mockProvider(ActivatedRoute, {
         params: of({}),
@@ -136,9 +135,9 @@ describe('PoolManagerWizardComponent', () => {
           afterClosed: () => of(fakeSuccessfulJob(createdPool)),
         })),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(undefined),
+          closed: of(undefined),
         })),
       }),
       provideMockStore({
@@ -150,7 +149,7 @@ describe('PoolManagerWizardComponent', () => {
         ],
       }),
       mockProvider(AddVdevsStore, {
-        pool$: of(null),
+        pool$: existingPool$,
         isLoading$: of(false),
       }),
       mockProvider(Router),
@@ -165,7 +164,7 @@ describe('PoolManagerWizardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    wizard = await loader.getHarness(MatStepperHarness);
+    wizard = await loader.getHarness(TnStepperHarness);
     store = spectator.inject(PoolManagerStore, true);
   });
 
@@ -174,8 +173,9 @@ describe('PoolManagerWizardComponent', () => {
   });
 
   it('always shows steps: General, Data, Log, Spare, Cache, Special, Review', async () => {
-    const steps = await wizard.getSteps();
-    const stepLabels = await Promise.all(steps.map((step) => step.getLabel()));
+    // tn-stepper renders only the active step's content, so step presence is
+    // asserted via the step labels rather than querying every step component.
+    const stepLabels = await wizard.getStepLabels();
     expect(stepLabels).toEqual([
       'General Info',
       'Data',
@@ -189,19 +189,13 @@ describe('PoolManagerWizardComponent', () => {
 
     expect(spectator.query(GeneralWizardStepComponent)).toExist();
     expect(spectator.query(EnclosureWizardStepComponent)).not.toExist();
-    expect(spectator.query(DataWizardStepComponent)).toExist();
-    expect(spectator.query(LogWizardStepComponent)).toExist();
-    expect(spectator.query(SpareWizardStepComponent)).toExist();
-    expect(spectator.query(CacheWizardStepComponent)).toExist();
-    expect(spectator.query(MetadataWizardStepComponent)).toExist();
-    expect(spectator.query(DedupWizardStepComponent)).toExist();
   });
 
   it('shows an extra Enclosure Options step for enterprise systems with multiple enclosures', async () => {
     hasMultipleEnclosuresInAllowedDisks$.next(true);
+    spectator.detectChanges();
 
-    const steps = await wizard.getSteps();
-    const stepLabels = await Promise.all(steps.map((step) => step.getLabel()));
+    const stepLabels = await wizard.getStepLabels();
     expect(stepLabels).toEqual([
       'General Info',
       'Enclosure Options',
@@ -213,12 +207,14 @@ describe('PoolManagerWizardComponent', () => {
       'Dedup (Optional)',
       'Review',
     ]);
+
+    await wizard.selectStep(1);
     expect(spectator.query(EnclosureWizardStepComponent)).toExist();
   });
 
   describe('creating a pool', () => {
     it('creates a pool using store topology last step emits createPool event', async () => {
-      await wizard.selectStep({ label: 'Review' });
+      await wizard.selectStep((await wizard.getStepLabels()).indexOf('Review'));
 
       spectator.query(ReviewWizardStepComponent)!.createPool.emit();
 
@@ -256,13 +252,55 @@ describe('PoolManagerWizardComponent', () => {
         encryptionType: EncryptionType.Software,
       });
 
-      await wizard.selectStep({ label: 'Review' });
+      await wizard.selectStep((await wizard.getStepLabels()).indexOf('Review'));
       spectator.query(ReviewWizardStepComponent)!.createPool.emit();
 
-      expect(spectator.inject(MatDialog, true).open).toHaveBeenCalledWith(DownloadKeyDialog, {
+      expect(spectator.inject(TnDialog, true).open).toHaveBeenCalledWith(DownloadKeyDialog, {
         disableClose: true,
         data: createdPool,
       });
+    });
+
+    it('adds force_topology to the payload when forceTopology is set in the store', async () => {
+      state$.next({ ...state, forceTopology: true });
+
+      await wizard.selectStep((await wizard.getStepLabels()).indexOf('Review'));
+      spectator.query(ReviewWizardStepComponent)!.createPool.emit();
+
+      expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.create', [
+        expect.objectContaining({ force_topology: true }),
+      ]);
+
+      state$.next(state);
+    });
+  });
+
+  describe('updating an existing pool', () => {
+    const existingPool = { id: 42 } as Pool;
+
+    beforeEach(async () => {
+      existingPool$.next(existingPool);
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      wizard = await loader.getHarness(TnStepperHarness);
+    });
+
+    afterEach(() => {
+      existingPool$.next(null);
+    });
+
+    it('adds force_topology to the pool.update payload when forceTopology is set in the store', async () => {
+      state$.next({ ...state, forceTopology: true });
+
+      await wizard.selectStep((await wizard.getStepLabels()).indexOf('Review'));
+      spectator.query(ReviewWizardStepComponent)!.createPool.emit();
+
+      expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.update', [
+        existingPool.id,
+        expect.objectContaining({ force_topology: true }),
+      ]);
+
+      state$.next(state);
     });
   });
 });

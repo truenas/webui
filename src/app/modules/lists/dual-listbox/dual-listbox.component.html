@@ -3,7 +3,7 @@
     <p>{{ sourceName() }}</p>
 
     <div class="record-picker">
-      <mat-list
+      <tn-list
         #availableDropList="cdkDropList"
         cdkDropList
         id="available-list"
@@ -14,7 +14,7 @@
         (cdkDropListDropped)="onDrop($event)"
       >
         @for (item of availableList().items; track trackByKey($index, item); let idx = $index) {
-          <mat-list-item
+          <tn-list-item
             cdkDrag
             tabindex="0"
             [ngClass]="{ selected: isItemSelected(availableList(), idx) }"
@@ -22,79 +22,71 @@
             (keydown)="onItemKeydown('available', idx, $event)"
           >
             @if (listItemIcon(); as icon) {
-              <tn-icon style="margin-right: 4px" [name]="icon"></tn-icon>
+              <tn-icon tnListIcon [name]="icon"></tn-icon>
             }
 
             <label>{{ getDisplayValue(item) }}</label>
-          </mat-list-item>
+          </tn-list-item>
         }
-      </mat-list>
+      </tn-list>
     </div>
   </div>
 
   <div class="button-box">
-    <button
-      mat-icon-button
-      type="button"
-      color="primary"
-      ixTest="move-selected-right"
-      matTooltipPosition="right"
-      [attr.aria-label]="'Move selected items to the right side list' | translate"
-      [matTooltip]="'Move selected items to the right side list' | translate"
+    <tn-icon-button
+      name="chevron-right"
+      library="mdi"
+      color="var(--primary)"
+      tooltipPosition="right"
+      testId="move-selected-right"
+      [ariaLabel]="'Move selected items to the right side list' | translate"
+      [tooltip]="'Move selected items to the right side list' | translate"
       [disabled]="!hasAvailableSelection()"
-      (click)="moveSelectedRight()"
-    >
-      <tn-icon name="chevron-right" library="mdi"></tn-icon>
-    </button>
+      (onClick)="moveSelectedRight()"
+    ></tn-icon-button>
 
-    <button
-      mat-icon-button
-      type="button"
-      color="primary"
-      ixTest="move-all-right"
-      matTooltipPosition="right"
+    <tn-icon-button
+      name="chevron-double-right"
+      library="mdi"
+      color="var(--primary)"
+      tooltipPosition="right"
+      testId="move-all-right"
+      [ariaLabel]="'Move all items to the right side list' | translate"
+      [tooltip]="'Move all items to the right side list' | translate"
       [disabled]="!canMoveAllRight()"
-      [attr.aria-label]="'Move all items to the right side list' | translate"
-      [matTooltip]="'Move all items to the right side list' | translate"
-      (click)="moveAllRight()"
-    >
-      <tn-icon name="chevron-double-right" library="mdi"></tn-icon>
-    </button>
+      (onClick)="moveAllRight()"
+    ></tn-icon-button>
 
-    <button
-      mat-icon-button
-      type="button"
-      color="primary"
-      ixTest="move-selected-left"
-      matTooltipPosition="right"
-      [attr.aria-label]="'Move selected items to the left side list' | translate"
-      [matTooltip]="'Move selected items to the left side list' | translate"
+    <tn-icon-button
+      name="chevron-left"
+      library="mdi"
+      color="var(--primary)"
+      tooltipPosition="right"
+      testId="move-selected-left"
+      [ariaLabel]="'Move selected items to the left side list' | translate"
+      [tooltip]="'Move selected items to the left side list' | translate"
       [disabled]="!hasSelectedSelection()"
-      (click)="moveSelectedLeft()"
-    >
-      <tn-icon name="chevron-left" library="mdi"></tn-icon>
-    </button>
+      (onClick)="moveSelectedLeft()"
+    ></tn-icon-button>
 
-    <button
-      mat-icon-button
-      type="button"
-      color="primary"
-      ixTest="move-all-left"
-      matTooltipPosition="right"
-      [attr.aria-label]="'Move all items to the left side list' | translate"
-      [matTooltip]="'Move all items to the left side list' | translate"
+    <tn-icon-button
+      name="chevron-double-left"
+      library="mdi"
+      color="var(--primary)"
+      tooltipPosition="right"
+      testId="move-all-left"
+      [ariaLabel]="'Move all items to the left side list' | translate"
+      [tooltip]="'Move all items to the left side list' | translate"
       [disabled]="!canMoveAllLeft()"
-      (click)="moveAllLeft()"
-    >
-      <tn-icon name="chevron-double-left" library="mdi"></tn-icon>
-    </button>
+      (onClick)="moveAllLeft()"
+    ></tn-icon-button>
   </div>
 
   <div class="listbox">
     <p>{{ targetName() }}</p>
 
     <div class="record-picker">
-      <mat-list
+      <tn-list
         #selectedDropList="cdkDropList"
         cdkDropList
         id="selected-list"
@@ -105,7 +97,7 @@
         (cdkDropListDropped)="onDrop($event)"
       >
         @for (item of selectedList().items; track trackByKey($index, item); let idx = $index) {
-          <mat-list-item
+          <tn-list-item
             cdkDrag
             tabindex="0"
             [ngClass]="{ selected: isItemSelected(selectedList(), idx) }"
@@ -113,13 +105,13 @@
             (keydown)="onItemKeydown('selected', idx, $event)"
           >
             @if (listItemIcon(); as icon) {
-              <tn-icon style="margin-right: 4px" [name]="icon"></tn-icon>
+              <tn-icon tnListIcon [name]="icon"></tn-icon>
             }
 
             <label>{{ getDisplayValue(item) }}</label>
-          </mat-list-item>
+          </tn-list-item>
         }
-      </mat-list>
+      </tn-list>
     </div>
   </div>
 </div>

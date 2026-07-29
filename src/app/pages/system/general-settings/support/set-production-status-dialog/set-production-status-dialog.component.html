@@ -1,27 +1,19 @@
-<h1 matDialogTitle>{{ 'Update Production Status' | translate }}</h1>
-
-<div mat-dialog-content>
+<tn-dialog-shell testId="set-production-status" [title]="'Update Production Status' | translate">
+<div>
   <p>{{ 'Set production status as active' | translate }}</p>
 
-  <ix-checkbox
-    [formControl]="sendInitialDebugCheckbox"
-    [label]="'Send initial debug' | translate"
-  ></ix-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      testId="send-initial-debug"
+      [formControl]="sendInitialDebugCheckbox"
+      [label]="'Send initial debug' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 </div>
 
-<ix-form-actions mat-dialog-actions class="form-actions">
-  <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-    {{ 'Cancel' | translate }}
-  </button>
+<ix-form-actions tnDialogAction class="form-actions">
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close()"></tn-button>
 
-  <button
-    *ixRequiresRoles="requiredRoles"
-    mat-button
-    type="submit"
-    color="primary"
-    ixTest="proceed"
-    (click)="onSubmit()"
-  >
-    {{ 'Proceed' | translate }}
-  </button>
+  <tn-button *ixRequiresRoles="requiredRoles" color="primary" testId="proceed" [label]="'Proceed' | translate" (onClick)="onSubmit()"></tn-button>
 </ix-form-actions>
+</tn-dialog-shell>

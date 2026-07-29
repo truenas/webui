@@ -32,13 +32,13 @@
           </span>
 
           <span class="host-actions">
-            <button
-              mat-icon-button
-              [ixTest]="['remove-host-association', host.hostnqn]"
+            <tn-icon-button
+              name="close"
+              library="mdi"
+              [ariaLabel]="'Remove host' | translate"
+              [testId]="['remove-host-association', host.hostnqn]"
               (click)="onRemoveHost(host)"
-            >
-              <tn-icon class="icon" name="close" library="mdi"></tn-icon>
-            </button>
+            ></tn-icon-button>
           </span>
         </span>
       </li>

@@ -1,13 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
+  TnButtonHarness,
+  TnDialog,
   TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
-import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -22,13 +22,16 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import {
+  ServiceActionsMenuService,
+} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -69,12 +72,6 @@ describe('NfsCardComponent', () => {
 
   const commonImports = [IxTablePagerShowMoreComponent];
 
-  const commonDeclarations = [
-    MockComponents(
-      ServiceStateButtonComponent,
-    ),
-  ];
-
   const commonProviders = [
     mockAuth(),
     mockProvider(DialogService, {
@@ -82,15 +79,18 @@ describe('NfsCardComponent', () => {
       confirmDelete: jest.fn(() => of(undefined)),
     }),
     mockProvider(SlideInRef, slideInRef),
-    mockProvider(MatDialog, {
+    mockProvider(TnDialog, {
       open: jest.fn(() => ({
-        afterClosed: () => of(true),
+        closed: of(true),
       })),
     }),
     mockProvider(LoaderService, {
       withLoader: jest.fn(() => (source$: unknown) => source$),
     }),
     mockProvider(SlideIn, {
+      open: jest.fn(() => SlideInResult.empty()),
+    }),
+    mockProvider(FormSidePanelService, {
       open: jest.fn(() => SlideInResult.empty()),
     }),
     mockProvider(SnackbarService),
@@ -117,7 +117,6 @@ describe('NfsCardComponent', () => {
   const createComponent = createComponentFactory({
     component: NfsCardComponent,
     imports: commonImports,
-    declarations: commonDeclarations,
     providers: [
       ...commonProviders,
       mockApi([
@@ -151,12 +150,34 @@ describe('NfsCardComponent', () => {
       ]);
     });
 
+    it('opens the NFS form when the projected Add button is clicked', async () => {
+      const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+      await addButton.click();
+
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(NfsFormComponent, {
+        title: 'Add NFS Share',
+        inputs: { nfsShareData: { existingNfsShare: undefined } },
+      });
+    });
+
+    it('toggles the NFS service when the projected header toggle is changed', async () => {
+      const toggleState = jest.spyOn(spectator.inject(ServiceActionsMenuService), 'toggleServiceState')
+        .mockImplementation(() => {});
+      const toggle = await loader.getHarness(
+        TnSlideToggleHarness.with({ ancestor: '.tn-card__header-right' }),
+      );
+      await toggle.toggle();
+
+      expect(toggleState).toHaveBeenCalledWith(expect.objectContaining({ service: ServiceName.Nfs }));
+    });
+
     it('shows form to edit an existing NFS Share when Edit button is pressed', async () => {
       const menu = await openRowMenu();
       await menu.clickItem({ label: /^Edit$/ });
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NfsFormComponent, {
-        data: { existingNfsShare: expect.objectContaining(nfsShares[0]) },
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(NfsFormComponent, {
+        title: 'Edit NFS Share',
+        inputs: { nfsShareData: { existingNfsShare: expect.objectContaining(nfsShares[0]) } },
       });
     });
 
@@ -191,7 +212,6 @@ describe('NfsCardComponent', () => {
     const createExportedComponent = createComponentFactory({
       component: NfsCardComponent,
       imports: commonImports,
-      declarations: commonDeclarations,
       providers: [
         ...commonProviders,
         mockApi([
@@ -222,7 +242,6 @@ describe('NfsCardComponent', () => {
     const createLockedComponent = createComponentFactory({
       component: NfsCardComponent,
       imports: commonImports,
-      declarations: commonDeclarations,
       providers: [
         ...commonProviders,
         mockApi([

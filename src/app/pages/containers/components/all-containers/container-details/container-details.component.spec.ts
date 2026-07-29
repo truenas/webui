@@ -1,6 +1,6 @@
-import { Type } from '@angular/core';
+import { signal, Type } from '@angular/core';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MockComponents } from 'ng-mocks';
+import { MockComponents, MockInstance } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import {
   ContainerDetailsComponent,
@@ -43,6 +43,10 @@ describe('ContainerDetailsComponent', () => {
   });
 
   beforeEach(() => {
+    // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
+    // ng-mocks does not initialize signal-based viewChild queries on mocked components.
+    MockInstance(ContainerFilesystemDevicesComponent, 'configForm', signal(undefined));
+
     spectator = createComponent({
       props: {
         container: fakeContainer({

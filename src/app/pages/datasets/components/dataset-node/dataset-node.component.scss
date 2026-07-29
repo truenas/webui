@@ -15,7 +15,13 @@
   background-color: var(--bg2);
   display: grid;
   grid-gap: 8px;
-  grid-template-columns: auto 125px 125px 125px 125px;
+  // Fixed value columns (must match .tree-header exactly so the header labels stay
+  // aligned over the columns). Kept narrow — the values (sizes, "Unencrypted", usage
+  // icons) never need more than ~80px — so the row fits the tree column without forcing
+  // a horizontal scrollbar when the details panel is open. The name column (auto) still
+  // grows and the tree scrolls only when the content genuinely can't fit (very long
+  // names / deep nesting).
+  grid-template-columns: auto 100px 100px 100px 100px;
   min-width: fit-content;
   width: 100%;
 
@@ -59,8 +65,8 @@
 }
 
 // TODO: Fragile (at least with css selectors)
-:host-context(ix-tree-node:hover),
-:host-context(ix-tree-node.selected),
+:host-context(tn-tree-node:hover),
+:host-context(tn-tree-node.selected),
 :host-context(.dataset-nested-tree-root-node:hover),
 :host-context(.dataset-nested-tree-root-node.selected) {
   .tree-node-grid {

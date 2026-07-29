@@ -1,34 +1,34 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, signal, inject, input,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
-import { MatDivider } from '@angular/material/divider';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  InputType,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnRadioComponent,
+} from '@truenas/ui-components';
 import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiQueryParams, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import {
+  SidePanelFooterMenu,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
@@ -42,25 +42,17 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './ipmi-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxRadioGroupComponent,
-    MatDivider,
-    IxCheckboxComponent,
-    IxInputComponent,
-    MatCardActions,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    TnIconComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnRadioComponent,
+    TnCheckboxComponent,
+    TnInputComponent,
     TranslateModule,
-    MatProgressSpinner,
   ],
 })
-export class IpmiFormComponent implements OnInit {
+export class IpmiFormComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private redirect = inject(RedirectService);
@@ -71,10 +63,13 @@ export class IpmiFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
-  slideInRef = inject<SlideInRef<number, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.IpmiWrite];
+  /** IPMI channel id to edit, supplied by the `<tn-side-panel>` host (`FormSidePanelService.open`). */
+  readonly editIpmiId = input<number | undefined>(undefined);
+
+  readonly requiredRoles = [Role.IpmiWrite];
+  protected readonly InputType = InputType;
 
   isManageButtonDisabled = false;
   remoteControllerOptions: Observable<RadioOption[]>;
@@ -85,7 +80,7 @@ export class IpmiFormComponent implements OnInit {
   protected isFlashingLoading = signal(false);
 
   queryParams: IpmiQueryParams;
-  protected ipmiId: number;
+  protected ipmiId: number | undefined;
 
   readonly helptext = helptextIpmi;
 
@@ -107,14 +102,33 @@ export class IpmiFormComponent implements OnInit {
 
   vlanEnabled = toSignal(this.form.controls.vlan_id_enable.valueChanges);
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.ipmiId = this.slideInRef.getData();
-  }
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
+
+  /** Secondary actions rendered in the side-panel footer's overflow (three-dots) menu. */
+  readonly footerMenu = computed<SidePanelFooterMenu>(() => ({
+    label: T('IPMI Actions'),
+    testId: 'ipmi-actions',
+    items: [
+      {
+        label: T('Manage'),
+        testId: 'manage-ipmi',
+        disabled: () => this.isManageButtonDisabled || this.isLoading(),
+        onClick: () => this.openManageWindow(),
+      },
+      {
+        label: this.isFlashing() ? T('Stop Flashing') : T('Flash Identify Light'),
+        testId: 'toggle-identify-light',
+        requiredRoles: this.requiredRoles,
+        icon: 'lightbulb-on-outline',
+        iconLibrary: 'mdi',
+        disabled: () => this.isFlashingLoading(),
+        onClick: () => this.toggleFlashing(),
+      },
+    ],
+  }));
 
   ngOnInit(): void {
+    this.ipmiId = this.editIpmiId();
     this.setFormRelations();
     this.loadFormData();
 
@@ -250,7 +264,7 @@ export class IpmiFormComponent implements OnInit {
       });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     const updateParams: IpmiUpdate = {
@@ -275,7 +289,7 @@ export class IpmiFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true });
+          this.close(true);
           this.snackbar.success(
             this.translate.instant('Successfully saved IPMI settings.'),
           );

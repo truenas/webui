@@ -19,7 +19,10 @@
 }
 
 .with-inherit-field {
-  align-items: center;
+  // Align the "Inherit" checkbox with the input on the left. The input field carries a label
+  // above it, the checkbox field does not — aligning to the bottom of the row lines the checkbox
+  // up with the input box regardless of the label's height.
+  align-items: flex-end;
   column-gap: 15px;
   display: flex;
   flex-direction: row;
@@ -28,7 +31,7 @@
     flex: 1;
   }
 
-  ix-checkbox {
-    margin-top: 25px;
+  .inherit-field {
+    margin-bottom: 8px;
   }
 }

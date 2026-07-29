@@ -8,6 +8,9 @@ import {
 } from '@angular/forms';
 import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+} from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
@@ -65,6 +68,9 @@ interface AllTrustedDomainsIdmapFieldsInterface {
     IxListComponent,
     IxListItemComponent,
     TranslateModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
   ],
 })
 export class TrustedDomainsConfigComponent implements OnInit {

@@ -1,9 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, input, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnButtonComponent, TnFormFieldComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
@@ -11,12 +13,10 @@ import { helptextTopbar } from 'app/helptext/topbar';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -26,15 +26,18 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
-    TestDirective,
     AsyncPipe,
   ],
 })
 export class ChangePasswordFormComponent {
+  /** When false, the form omits its inline submit button so a parent (e.g. a dialog footer) can provide it. */
+  readonly showActions = input(true);
+
   private translate = inject(TranslateService);
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
@@ -45,6 +48,8 @@ export class ChangePasswordFormComponent {
   private destroyRef = inject(DestroyRef);
 
   readonly passwordUpdated = output();
+
+  protected readonly InputType = InputType;
 
   form = this.fb.nonNullable.group({
     old_password: [''],

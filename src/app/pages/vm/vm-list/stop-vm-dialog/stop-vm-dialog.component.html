@@ -1,29 +1,27 @@
-<h1 mat-dialog-title>{{ 'Stop {vmName}?' | translate: { vmName: vm.name } }}</h1>
-<div mat-dialog-content>
-  <ix-checkbox
-    [formControl]="forceAfterTimeoutCheckbox"
-    [label]="'Force Stop After Timeout' | translate"
-    [tooltip]="helptext.stop_dialog.forceTooltip | translate"
-  ></ix-checkbox>
+<tn-dialog-shell testId="stop-vm" [title]="'Stop {vmName}?' | translate: { vmName: vm.name }">
+<div>
+  <tn-form-field [tooltip]="helptext.stop_dialog.forceTooltip | translate">
+    <tn-checkbox
+      testId="force-after-timeout"
+      [formControl]="forceAfterTimeoutCheckbox"
+      [label]="'Force Stop After Timeout' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 </div>
 
-<mat-dialog-actions>
-  <ix-form-actions>
-    <button
-      mat-button
-      ixTest="cancel"
-      [matDialogClose]="false"
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="primary"
-      ixTest="stop-vm"
-      (click)="onStop()"
-    >
-      {{ 'Stop' | translate }}
-    </button>
-  </ix-form-actions>
-</mat-dialog-actions>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    testId="stop-vm"
+    [label]="'Stop' | translate"
+    (onClick)="onStop()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

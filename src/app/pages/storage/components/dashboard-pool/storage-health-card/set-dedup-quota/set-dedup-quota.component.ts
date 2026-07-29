@@ -1,23 +1,21 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  InputType,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { Pool, UpdatePool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -38,27 +36,27 @@ export const quotaTypeLabels = new Map<QuotaType, string>([
   templateUrl: './set-dedup-quota.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnDialogShellComponent,
+    AsyncPipe,
     FormActionsComponent,
-    MatButton,
-    MatDialogTitle,
+    TnButtonComponent,
     ReactiveFormsModule,
-    TestDirective,
     TranslateModule,
-    MatDialogClose,
-    IxSelectComponent,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
   ],
 })
 export class SetDedupQuotaComponent {
+  protected readonly InputType = InputType;
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private dialog = inject(DialogService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  private dialogRef = inject<MatDialogRef<SetDedupQuotaComponent>>(MatDialogRef);
-  protected formatter = inject(IxFormatterService);
-  protected pool = inject<Pool>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<unknown, SetDedupQuotaComponent>>(DialogRef);
+  protected pool = inject<Pool>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected form = this.formBuilder.group({

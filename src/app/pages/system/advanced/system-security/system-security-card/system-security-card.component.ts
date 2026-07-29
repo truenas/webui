@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { TranslateModule } from '@ngx-translate/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject,
+} from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+} from '@truenas/ui-components';
 import {
   Subject, shareReplay, startWith, switchMap,
 } from 'rxjs';
@@ -12,29 +13,23 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { systemSecurityCardElements } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.elements';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 
 @Component({
   selector: 'ix-system-security-card',
-  styleUrls: ['../../../general-settings/common-settings-card.scss'],
+  styleUrls: ['./system-security-card.component.scss'],
   templateUrl: './system-security-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     WithLoadingStateDirective,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
+    TnButtonComponent,
     TranslateModule,
     UiSearchDirective,
   ],
@@ -42,12 +37,14 @@ import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-se
 export class SystemSecurityCardComponent {
   protected readonly searchableElements = systemSecurityCardElements;
 
-  private slideIn = inject(SlideIn);
   private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
+
   readonly systemSecurityConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.api.call('system.security.config').pipe(toLoadingState())),
@@ -59,9 +56,8 @@ export class SystemSecurityCardComponent {
 
   protected readonly rulesetLabels = passwordComplexityRulesetLabels;
 
-  openSystemSecuritySettings(config: SystemSecurityConfig): void {
-    this.slideIn.open(SystemSecurityFormComponent, { data: config }).onSuccess(() => {
-      this.reloadConfig$.next();
-    }, this.destroyRef);
+  onConfigure(): void {
+    this.formPanel.open(SystemSecurityFormComponent, { title: this.translate.instant('System Security') })
+      .onSuccess(() => this.reloadConfig$.next(), this.destroyRef);
   }
 }

@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
-import { roleNames } from 'app/enums/role.enum';
+import { formatRoleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 
 @Component({
@@ -17,8 +17,6 @@ export class UserAccessCellComponent {
   readonly user = input.required<User>();
 
   protected readonly roles = computed<string>(() => {
-    return this.user().roles
-      .map((role) => this.translate.instant(roleNames.get(role) || role))
-      .join(', ');
+    return formatRoleNames(this.user().roles, (key) => this.translate.instant(key));
   });
 }

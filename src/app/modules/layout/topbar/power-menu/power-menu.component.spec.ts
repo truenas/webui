@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnSpriteLoaderService } from '@truenas/ui-components';
+import {
+  TnDialog, TnIconButtonHarness, TnMenuHarness, TnSpriteLoaderService,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -14,7 +14,7 @@ import { RebootOrShutdownDialog } from 'app/modules/layout/topbar/reboot-or-shut
 describe('PowerMenuComponent', () => {
   let spectator: Spectator<PowerMenuComponent>;
   let loader: HarnessLoader;
-  let menu: MatMenuHarness;
+  let menu: TnMenuHarness;
   const createComponent = createComponentFactory({
     component: PowerMenuComponent,
     providers: [
@@ -25,9 +25,9 @@ describe('PowerMenuComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(Router),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of('reason')),
+          closed: of('reason'),
         })),
       }),
       mockProvider(TnSpriteLoaderService, {
@@ -43,15 +43,15 @@ describe('PowerMenuComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    menu = await loader.getHarness(MatMenuHarness);
-    await menu.open();
+    const trigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'power' }));
+    await trigger.click();
+    menu = await TestbedHarnessEnvironment.documentRootLoader(spectator.fixture).getHarness(TnMenuHarness);
   });
 
   it('has a Restart menu item that restarts system after confirmation', async () => {
-    const restart = await menu.getItems({ text: /Restart$/ });
-    await restart[0].click();
+    await menu.clickItem({ label: 'Restart' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialog, {
       width: '430px',
     });
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/restart'], {
@@ -61,10 +61,9 @@ describe('PowerMenuComponent', () => {
   });
 
   it('has a Shutdown menu item that shuts down system after confirmation', async () => {
-    const shutdown = await menu.getItems({ text: /Shut Down$/ });
-    await shutdown[0].click();
+    await menu.clickItem({ label: 'Shut Down' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(RebootOrShutdownDialog, {
       width: '430px',
       data: true,
     });

@@ -1,5 +1,5 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChangePasswordDialog } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
@@ -14,7 +14,7 @@ describe('ChangePasswordDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockAuth(),
     ],
   });

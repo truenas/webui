@@ -1,14 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
@@ -45,6 +45,20 @@ describe('SnapshotAddFormComponent', () => {
     ],
   });
 
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const clickSave = async (): Promise<void> => {
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+  };
+
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -52,28 +66,21 @@ describe('SnapshotAddFormComponent', () => {
   });
 
   it('presets name with current date and time', async () => {
-    const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
-    const defaultName = await nameInput.getValue();
+    const defaultName = await (await getInput('name')).getValue();
 
     // Use regex to avoid flaky test when minute boundary is crossed during test execution
     expect(defaultName).toMatch(/^manual-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}$/);
   });
 
   it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Dataset: 'APPS',
-      Name: 'test-snapshot-name',
-    });
+    await (await getSelect('dataset')).selectOption('APPS');
+    await (await getInput('name')).setValue('test-snapshot-name');
 
     expect(api.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', false]);
 
-    await form.fillForm({
-      'VMWare Sync': true,
-    });
+    await (await getCheckbox('vmware_sync')).check();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    await clickSave();
 
     expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
       {
@@ -86,18 +93,14 @@ describe('SnapshotAddFormComponent', () => {
   });
 
   it('checks when form is submitted with naming schema', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Dataset: 'APPS',
-      Name: null,
-      Recursive: true,
-      'Naming Schema': '%Y %H %d %M %m',
-    });
+    await (await getSelect('dataset')).selectOption('APPS');
+    spectator.component.form.controls.name.setValue('');
+    await (await getCheckbox('recursive')).check();
+    await (await getSelect('naming_schema')).selectOption('%Y %H %d %M %m');
 
     expect(api.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', true]);
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    await clickSave();
 
     expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
       {
@@ -110,15 +113,11 @@ describe('SnapshotAddFormComponent', () => {
   });
 
   it('should raise error when name and naming schema has values', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Dataset: 'APPS',
-      Name: 'snapshot-name',
-      'Naming Schema': '%Y %H %d %M %m',
-    });
+    await (await getSelect('dataset')).selectOption('APPS');
+    await (await getInput('name')).setValue('snapshot-name');
+    await (await getSelect('naming_schema')).selectOption('%Y %H %d %M %m');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    await clickSave();
 
     expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create');
   });
@@ -126,11 +125,10 @@ describe('SnapshotAddFormComponent', () => {
   it('re-checks for VMs in dataset when recursive checkbox is toggled or dataset changed', async () => {
     jest.clearAllMocks();
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ Dataset: 'POOL' });
-    await form.fillForm({ Recursive: true });
-    await form.fillForm({ Dataset: 'APPS' });
-    await form.fillForm({ Recursive: false });
+    await (await getSelect('dataset')).selectOption('POOL');
+    await (await getCheckbox('recursive')).check();
+    await (await getSelect('dataset')).selectOption('APPS');
+    await (await getCheckbox('recursive')).uncheck();
 
     expect(api.call).toHaveBeenNthCalledWith(1, 'vmware.dataset_has_vms', ['POOL', false]);
     expect(api.call).toHaveBeenNthCalledWith(2, 'vmware.dataset_has_vms', ['POOL', true]);

@@ -1,14 +1,9 @@
-import { NgTemplateOutlet, UpperCasePipe } from '@angular/common';
+import { UpperCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, output, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions,
-} from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent, TnDialog, type TnCardAction, type TnMenuItem } from '@truenas/ui-components';
 import { filter, switchMap, tap } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VDevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
@@ -16,10 +11,10 @@ import { Disk } from 'app/interfaces/disk.interface';
 import {
   isTopologyDisk, VDevItem, VDev,
 } from 'app/interfaces/storage.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ExtendDialog, ExtendDialogParams,
@@ -38,15 +33,7 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   styleUrls: ['./zfs-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
-    MatCardActions,
-    NgTemplateOutlet,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnCardComponent,
     TranslateModule,
     UpperCasePipe,
   ],
@@ -56,10 +43,11 @@ export class ZfsInfoCardComponent {
   private loader = inject(LoaderService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private vDevsStore = inject(VDevsStore);
   private snackbar = inject(SnackbarService);
+  private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
   readonly topologyItem = input.required<VDevItem>();
@@ -136,6 +124,62 @@ export class ZfsInfoCardComponent {
       && ![VDevType.Spare, VDevType.Cache].includes(this.topologyCategory());
   });
 
+  private readonly hasPoolWriteRole = toSignal(
+    this.authService.hasRole([Role.PoolWrite]),
+    { initialValue: false },
+  );
+
+  // Extend is the primary footer action. Disks gate on canExtendDisk(); mirrors always offer it;
+  // RAIDZ uses the dedicated RAIDZ-extend flow. All gated on PoolWrite (was *ixRequiresRoles).
+  protected readonly extendAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasPoolWriteRole()) {
+      return undefined;
+    }
+    if (this.isRaidz()) {
+      return { label: this.translate.instant('Extend'), testId: 'extend', handler: () => this.onRaidzExtend() };
+    }
+    if (this.isMirror() || (this.isDisk() && this.canExtendDisk())) {
+      return { label: this.translate.instant('Extend'), testId: 'extend', handler: () => this.onExtend() };
+    }
+    return undefined;
+  });
+
+  // Remove is the secondary footer action for disks and mirrors (RAIDZ has no remove).
+  protected readonly removeAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasPoolWriteRole()) {
+      return undefined;
+    }
+    if ((this.isDisk() && this.canRemoveDisk()) || (this.isMirror() && this.canRemoveVdev())) {
+      return { label: this.translate.instant('Remove'), testId: 'remove', handler: () => this.onRemove() };
+    }
+    return undefined;
+  });
+
+  // Less-common disk state actions live in the card's kebab menu. Online/Offline are mutually
+  // exclusive by current status, so at most one of them appears.
+  protected readonly actionsMenu = computed<TnMenuItem[] | undefined>(() => {
+    if (!this.hasPoolWriteRole() || !this.isDisk()) {
+      return undefined;
+    }
+    const items: TnMenuItem[] = [];
+    if (this.canDetachDisk()) {
+      items.push({
+        id: 'detach', label: this.translate.instant('Detach'), testId: 'detach', action: () => this.onDetach(),
+      });
+    }
+    if (this.canOfflineDisk()) {
+      items.push({
+        id: 'offline', label: this.translate.instant('Offline'), testId: 'offline', action: () => this.onOffline(),
+      });
+    }
+    if (this.canOnlineDisk()) {
+      items.push({
+        id: 'online', label: this.translate.instant('Online'), testId: 'online', action: () => this.onOnline(),
+      });
+    }
+    return items.length ? items : undefined;
+  });
+
   onOffline(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Offline Disk'),
@@ -178,6 +222,7 @@ export class ZfsInfoCardComponent {
       title: this.translate.instant('Detach Disk'),
       message: this.translate.instant('Detach disk {name}?', { name: this.disk()?.devname || this.topologyItem().guid }),
       buttonText: this.translate.instant('Detach'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => {
@@ -199,6 +244,7 @@ export class ZfsInfoCardComponent {
         { name: this.isDisk() ? this.disk()?.devname || this.topologyItem().guid : this.topologyItem().name },
       ),
       buttonText: this.translate.instant('Remove'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => {
@@ -218,13 +264,13 @@ export class ZfsInfoCardComponent {
   }
 
   onExtend(): void {
-    this.matDialog.open(ExtendDialog, {
+    this.tnDialog.open(ExtendDialog, {
       data: {
         poolId: this.poolId(),
         targetVdevGuid: this.topologyItem().guid,
       } as ExtendDialogParams,
     })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),
@@ -235,13 +281,13 @@ export class ZfsInfoCardComponent {
   }
 
   onRaidzExtend(): void {
-    this.matDialog.open(RaidzExtendDialog, {
+    this.tnDialog.open(RaidzExtendDialog, {
       data: {
         poolId: this.poolId(),
         vdev: this.topologyItem() as VDev,
       } as RaidzExtendDialogParams,
     })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),

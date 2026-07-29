@@ -3,10 +3,10 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, OnInit, inpu
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardActions } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnDialog } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   Observable, of, EMPTY,
@@ -58,7 +58,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   authService = inject(AuthService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
-  protected matDialog = inject(MatDialog);
+  protected tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private window = inject<Window>(WINDOW);

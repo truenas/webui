@@ -1,17 +1,16 @@
 import {
   ChangeDetectionStrategy, Component, computed, input, output,
 } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnChipComponent } from '@truenas/ui-components';
 import { FilterPreset, QueryFilters } from 'app/interfaces/query-api.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-filter-presets',
   templateUrl: './filter-presets.component.html',
   styleUrls: ['./filter-presets.component.scss'],
   standalone: true,
-  imports: [TranslateModule, MatButtonModule, TestDirective],
+  imports: [TranslateModule, TnChipComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterPresetsComponent<T> {

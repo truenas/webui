@@ -1,6 +1,6 @@
 :host {
   display: block;
-  width: 400px;
+  width: 520px;
 
   .loading {
     align-items: center;
@@ -9,26 +9,25 @@
   }
 }
 
+.radio-option {
+  margin-bottom: 8px;
+
+  .radio-option-hint {
+    color: var(--fg2);
+    font-size: 12px;
+    margin: 0 0 0 32px;
+  }
+}
+
 .form-buttons {
   display: flex;
-  flex: 1;
-  flex-direction: row-reverse;
-
-  a,
-  button {
-    margin-left: 10px;
-  }
+  gap: 8px;
 }
 
 .form-actions {
   align-items: center;
   display: flex;
   flex-wrap: nowrap;
-  justify-content: space-between;
-  padding-top: 16px;
-  margin-top: 12px;
-
-  ix-checkbox {
-    margin: 0;
-  }
+  gap: 8px;
+  justify-content: flex-end;
 }

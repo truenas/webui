@@ -2,12 +2,11 @@ import {
   FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnFormSectionComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
 import { IxDynamicFormItemComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
 import { IxDynamicFormComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 
 const dynamicForm = new FormGroup({});
 const dynamicSection = [
@@ -23,11 +22,8 @@ describe('IxDynamicFormComponent', () => {
     component: IxDynamicFormComponent,
     imports: [
       ReactiveFormsModule,
-      NgxPopperjsContentComponent,
-      NgxPopperjsLooseDirective,
-      NgxPopperjsDirective,
       MockComponent(IxDynamicFormItemComponent),
-      MockComponent(IxFieldsetComponent),
+      MockComponent(TnFormSectionComponent),
     ],
   });
 
@@ -39,7 +35,7 @@ describe('IxDynamicFormComponent', () => {
 
   describe('Component rendering', () => {
     it('renders a correct number of sections', () => {
-      expect(spectator.queryAll('ix-fieldset')).toHaveLength(dynamicSection.length);
+      expect(spectator.queryAll('tn-form-section')).toHaveLength(dynamicSection.length);
     });
 
     it('renders a correct number of dynamic form', () => {

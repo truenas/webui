@@ -1,6 +1,5 @@
-<h1 mat-dialog-title>{{ 'Delete Target "{name}"' | translate:{ name: target.name } }}</h1>
-
-<div mat-dialog-content>
+<tn-dialog-shell testId="delete-target" [title]="title">
+<div>
   @if (warningMessage()) {
     <p [innerHTML]="warningMessage()"></p>
   }
@@ -15,35 +14,37 @@
 
   <form [formGroup]="form">
     @if (targetExtents().length > 0) {
-      <ix-checkbox
-        formControlName="delete_extents"
-        [label]="'Delete {n} associated {n, plural, one {extent} other {extents}}' | translate: { n: targetExtents().length }"
-      ></ix-checkbox>
+      <tn-form-field>
+        <tn-checkbox
+          formControlName="delete_extents"
+          testId="delete-extents"
+          [label]="'Delete {n} associated {n, plural, one {extent} other {extents}}' | translate: { n: targetExtents().length }"
+        ></tn-checkbox>
+      </tn-form-field>
     }
-    <ix-checkbox
-      formControlName="force"
-      [label]="'Force Delete' | translate"
-    ></ix-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="force"
+        testId="force"
+        [label]="'Force Delete' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   </form>
 </div>
-<mat-dialog-actions>
-  <ix-form-actions>
-    <button
-      mat-button
-      ixTest="cancel"
-      [matDialogClose]="false"
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="warn"
-      ixTest="delete"
-      [disabled]="form.invalid"
-      (click)="onDelete()"
-    >
-      {{ 'Delete' | translate }}
-    </button>
-  </ix-form-actions>
-</mat-dialog-actions>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="warn"
+    testId="delete"
+    [label]="'Delete' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onDelete()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

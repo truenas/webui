@@ -1,14 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import {
-  MatStep, MatStepLabel, MatStepper, MatStepperNext, MatStepperPrevious,
-} from '@angular/material/stepper';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent,
+  TnStepComponent, TnStepperComponent, TnStepperNextDirective, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
 import {
   catchError,
   finalize, forkJoin, map, Observable, of, switchMap,
@@ -17,23 +15,17 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import {
   CreateNvmeOfNamespace, NvmeOfHost, NvmeOfPort, NvmeOfSubsystem,
 } from 'app/interfaces/nvme-of.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
-import { SubsystemPartiallyCreatedDialogComponent } from 'app/modules/dialog/components/subsystem-partially-created-dialog/subsystem-partially-created-dialog.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import {
-  UseIconsInStepperComponent,
-} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddSubsystemHostsComponent,
@@ -57,20 +49,16 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   templateUrl: './add-subsystem.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     TranslateModule,
-    MatCard,
     ReactiveFormsModule,
-    MatStep,
-    MatStepLabel,
-    MatStepper,
-    UseIconsInStepperComponent,
-    MatButton,
-    MatStepperNext,
-    TestDirective,
-    IxInputComponent,
-    MatStepperPrevious,
-    IxCheckboxComponent,
+    TnStepperComponent,
+    TnStepComponent,
+    TnButtonComponent,
+    TnStepperNextDirective,
+    TnStepperPreviousDirective,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
     AddSubsystemHostsComponent,
     AddSubsystemNamespacesComponent,
     RequiresRolesDirective,
@@ -80,25 +68,31 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     EditableComponent,
   ],
 })
-export class AddSubsystemComponent {
+export class AddSubsystemComponent implements SidePanelHostCloseable<NvmeOfSubsystem> {
   private formBuilder = inject(FormBuilder);
-  slideInRef = inject<SlideInRef<void, NvmeOfSubsystem>>(SlideInRef);
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private nvmeOfService = inject(NvmeOfService);
   private store$ = inject<Store<AppState>>(Store);
-  private matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);
 
   protected isLoading = signal(false);
   requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
+  /** Emitted to a `tn-side-panel` host with the created subsystem on save. */
+  readonly closed = output<NvmeOfSubsystem>();
+
+  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
+  }
+
+  /** The footerless `<tn-side-panel>` host shows its progress bar while this is true. */
+  isBusy(): boolean {
+    return this.isLoading();
   }
 
   protected form = this.formBuilder.group({
@@ -113,6 +107,9 @@ export class AddSubsystemComponent {
   });
 
   protected readonly helptext = helptextNvmeOf;
+
+  // Drives the stepper's "finished step" pencil icon (replaces mat's [stepControl]).
+  protected readonly whatToShareCompleted = stepCompletedSignal(this.form.controls.name);
 
   protected onSubmit(): void {
     this.isLoading.set(true);
@@ -129,16 +126,14 @@ export class AddSubsystemComponent {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(({ subsystem, relatedErrors }) => {
       if (subsystem && relatedErrors?.length > 0) {
-        this.matDialog.open(SubsystemPartiallyCreatedDialogComponent, {
-          data: {
-            subsystem,
-            relatedErrors,
-          },
-        });
+        this.dialogService.subsystemPartiallyCreated({
+          subsystem,
+          relatedErrors,
+        }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
       }
 
       this.snackbar.success(this.translate.instant('New subsystem added'));
-      this.slideInRef.close({ response: subsystem });
+      this.closed.emit(subsystem);
     });
   }
 

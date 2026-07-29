@@ -1,8 +1,7 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnStepperComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
@@ -41,7 +40,7 @@ describe('SpareWizardStepComponent', () => {
       MockComponent(LayoutStepComponent),
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(PoolManagerStore, {
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
         resetStep: jest.fn(),
@@ -64,14 +63,14 @@ describe('SpareWizardStepComponent', () => {
   });
 
   it('resets step when Reset Step button is clicked', async () => {
-    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset Step' }));
+    const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Reset Step' }));
     await resetButton.click();
     expect(spectator.inject(PoolManagerStore).resetStep).toHaveBeenCalledWith(VDevType.Spare);
   });
 
   it('emits goToLastStep when Save And Go To Review button is clicked', async () => {
     jest.spyOn(spectator.component.goToLastStep, 'emit');
-    const reviewButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save And Go To Review' }));
+    const reviewButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save And Go To Review' }));
     await reviewButton.click();
     expect(spectator.component.goToLastStep.emit).toHaveBeenCalled();
   });

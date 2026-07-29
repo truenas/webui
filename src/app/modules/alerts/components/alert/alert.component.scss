@@ -59,7 +59,10 @@
 
 .expand-collapse-button {
   background-color: var(--alt-bg1);
+  border: none;
+  color: var(--fg1);
   cursor: pointer;
+  font-family: inherit;
   display: flex;
   font-size: 0.8rem;
   font-weight: normal;
@@ -165,8 +168,12 @@
 
   .context-help-toggle {
     align-items: center;
+    background: transparent;
+    border: none;
     color: var(--fg1);
+    cursor: pointer;
     display: flex;
+    font-family: inherit;
     font-size: 0.8rem;
     gap: 4px;
     justify-content: flex-start;
@@ -229,6 +236,7 @@
     cursor: pointer;
     display: flex;
     flex: 0 0 auto;
+    font-family: inherit;
     font-size: 0.75rem;
     gap: 4px;
     justify-content: center;
@@ -277,19 +285,12 @@
   top: 4px;
   transition: opacity 0.2s ease, color 0.2s ease;
 
-  tn-icon {
-    height: 18px;
-    width: 18px;
-  }
-
   &:hover {
     color: var(--fg1);
     opacity: 1;
   }
 
-  &:focus-visible {
+  &:focus-within {
     opacity: 1;
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
   }
 }

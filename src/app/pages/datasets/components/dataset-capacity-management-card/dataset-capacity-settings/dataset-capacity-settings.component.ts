@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent,
+} from '@truenas/ui-components';
 import { GiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -12,16 +13,11 @@ import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
@@ -33,34 +29,37 @@ import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/d
   imports: [
     ModalHeaderComponent,
     RequiresRolesDirective,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
     TranslateModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
   ],
 })
-export class DatasetCapacitySettingsComponent implements OnInit {
+export class DatasetCapacitySettingsComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
-  formatter = inject(IxFormatterService);
   private errorHandler = inject(FormErrorHandlerService);
   private snackbarService = inject(SnackbarService);
   private translate = inject(TranslateService);
   private validators = inject(IxValidatorsService);
-  slideInRef = inject<SlideInRef<DatasetDetails | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly InputType = InputType;
 
   readonly isLoading = signal(false);
   readonly defaultQuotaWarning = 80;
   readonly defaultQuotaCritical = 95;
+
+  /**
+   * Dataset to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
+   * carry data). Unused in the legacy SlideIn host (which supplies it via `slideInRef.getData()`).
+   */
+  readonly datasetToEdit = input<DatasetDetails | undefined>(undefined);
 
   form = this.formBuilder.group({
     refquota: [null as number | null, this.validators.withMessage(
@@ -97,6 +96,8 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     reservation: [null as number | null],
   });
 
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
+
   protected dataset: DatasetDetails | undefined;
 
   readonly helptext = helptextDatasetForm;
@@ -110,16 +111,14 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   } as const;
 
   constructor() {
-    const slideInRef = this.slideInRef;
-
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.dataset = slideInRef.getData();
+    super();
     this.setFormRelations();
   }
 
   ngOnInit(): void {
+    this.dataset = this.slideInRef
+      ? this.slideInRef.getData() as DatasetDetails | undefined
+      : this.datasetToEdit();
     if (this.dataset) {
       this.setDatasetForEdit(this.dataset);
     }
@@ -166,7 +165,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     this.form.patchValue(this.oldValues);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
     const payload = this.getChangedFormValues();
 
@@ -178,7 +177,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
           this.snackbarService.success(
             this.translate.instant('Dataset settings updated.'),
           );
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.errorHandler.handleValidationErrors(error, this.form);

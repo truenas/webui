@@ -4,7 +4,8 @@ import { Group } from 'app/interfaces/group.interface';
 export interface Privilege {
   id: number;
   name: string;
-  builtin_name: string;
+  /** Null for custom (non-builtin) privileges; a role name for builtin ones. */
+  builtin_name: Role | null;
   local_groups: Group[];
   ds_groups: Group[];
   web_shell: boolean;

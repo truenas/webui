@@ -1,11 +1,13 @@
+import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent, InputType,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { SomeProviderAttributes } from 'app/interfaces/cloudsync-credential.interface';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
   BaseProviderFormComponent,
@@ -16,14 +18,18 @@ import {
   templateUrl: './webdav-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
     ReactiveFormsModule,
-    IxInputComponent,
-    IxSelectComponent,
     TranslateModule,
+    AsyncPipe,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
   ],
 })
 export class WebdavProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
+  protected readonly InputType = InputType;
+
   formatter = inject(IxFormatterService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
@@ -55,6 +61,15 @@ export class WebdavProviderFormComponent extends BaseProviderFormComponent imple
       value: 'OTHER',
     },
   ]);
+
+  override getSubmitAttributes(): SomeProviderAttributes {
+    const attributes = super.getSubmitAttributes();
+    const url = attributes.url;
+    return {
+      ...attributes,
+      ...(typeof url === 'string' ? { url: this.formatter.stringAsUrlParsing(url) } : {}),
+    };
+  }
 
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {

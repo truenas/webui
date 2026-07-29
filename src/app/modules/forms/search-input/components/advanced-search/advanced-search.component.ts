@@ -1,9 +1,6 @@
 import { InteractivityChecker } from '@angular/cdk/a11y';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnInit, output, signal, Signal, viewChild, inject } from '@angular/core';
-import { MatCard } from '@angular/material/card';
-import { MatCalendar } from '@angular/material/datepicker';
-import { MatTooltip } from '@angular/material/tooltip';
 import {
   autocompletion, closeBrackets, closeCompletion, CompletionContext, completionStatus, startCompletion,
 } from '@codemirror/autocomplete';
@@ -15,7 +12,9 @@ import {
   EditorView, keymap, placeholder,
 } from '@codemirror/view';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnCalendarComponent, TnCardComponent, TnIconComponent, TnTestIdDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { format } from 'date-fns';
 import { FilterPreset, QueryFilters } from 'app/interfaces/query-api.interface';
 import { FilterPresetsComponent } from 'app/modules/forms/search-input/components/filter-presets/filter-presets.component';
@@ -24,7 +23,6 @@ import { QueryParserService } from 'app/modules/forms/search-input/services/quer
 import { QueryParsingError } from 'app/modules/forms/search-input/services/query-parser/query-parsing-result.interface';
 import { QueryToApiService } from 'app/modules/forms/search-input/services/query-to-api/query-to-api.service';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 const setDiagnostics = StateEffect.define<Diagnostic[] | null>();
 
@@ -52,11 +50,11 @@ const focusableSelector = [
   styleUrls: ['./advanced-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatTooltip,
+    TnTooltipDirective,
     TnIconComponent,
-    MatCard,
-    MatCalendar,
-    TestDirective,
+    TnCardComponent,
+    TnCalendarComponent,
+    TnTestIdDirective,
     TranslateModule,
     AsyncPipe,
     FilterPresetsComponent,
@@ -192,8 +190,8 @@ export class AdvancedSearchComponent<T> implements OnInit {
     this.showDatePicker$.next(false);
   }
 
-  dateSelected(value: string): void {
-    this.appendEditorContents(`"${format(new Date(value), 'yyyy-MM-dd')}" `);
+  dateSelected(value: Date): void {
+    this.appendEditorContents(`"${format(value, 'yyyy-MM-dd')}" `);
     this.focusInput();
     this.hideDatePicker();
   }

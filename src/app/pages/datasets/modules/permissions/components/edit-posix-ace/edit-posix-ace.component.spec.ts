@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
@@ -67,24 +68,29 @@ describe('EditPosixAceComponent', () => {
   });
 
   it('shows current ace values from ace input', async () => {
-    const values = await form.getValues();
+    const whoSelect = await loader.getHarness(TnSelectHarness);
+    expect(await whoSelect.getDisplayText()).toBe('Group');
 
-    expect(values).toEqual({
-      Who: 'Group',
-      Group: 'wheel',
-      Permissions: [
-        'Read',
-        'Execute',
-      ],
-      Default: true,
-    });
+    const groupCombobox = await form.getControl('Group') as IxComboboxHarness;
+    expect(await groupCombobox.getValue()).toBe('wheel');
+
+    const readCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Read' }));
+    const writeCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Write' }));
+    const executeCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Execute' }));
+    expect(await readCheckbox.isChecked()).toBe(true);
+    expect(await writeCheckbox.isChecked()).toBe(false);
+    expect(await executeCheckbox.isChecked()).toBe(true);
+
+    const defaultCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Default' }));
+    expect(await defaultCheckbox.isChecked()).toBe(true);
   });
 
   it('updates value in store when form is updated', async () => {
-    await form.fillForm({
-      Who: 'Mask',
-      Permissions: ['Read'],
-    });
+    const whoSelect = await loader.getHarness(TnSelectHarness);
+    await whoSelect.selectOption(/^Mask$/);
+
+    const executeCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Execute' }));
+    await executeCheckbox.uncheck();
 
     expect(spectator.inject(DatasetAclEditorStore).updateSelectedAce).toHaveBeenLastCalledWith({
       tag: PosixAclTag.Mask,
@@ -100,19 +106,11 @@ describe('EditPosixAceComponent', () => {
 
   describe('group ace', () => {
     it('shows group combobox when Who is group', async () => {
-      await form.fillForm({
-        Who: 'Group',
-      });
-
       const groupSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
       expect(groupSelect).toExist();
     });
 
     it('allows custom values in Group combobox', async () => {
-      await form.fillForm({
-        Who: 'Group',
-      });
-
       const userCombobox = await form.getControl('Group') as IxComboboxHarness;
       await userCombobox.writeCustomValue('AD\\domain users');
 
@@ -125,18 +123,16 @@ describe('EditPosixAceComponent', () => {
 
   describe('user ace', () => {
     it('shows user combobox when Who is user', async () => {
-      await form.fillForm({
-        Who: 'User',
-      });
+      const whoSelect = await loader.getHarness(TnSelectHarness);
+      await whoSelect.selectOption(/^User$/);
 
       const userSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
       expect(userSelect).toExist();
     });
 
     it('allows custom values in User combobox', async () => {
-      await form.fillForm({
-        Who: 'User',
-      });
+      const whoSelect = await loader.getHarness(TnSelectHarness);
+      await whoSelect.selectOption(/^User$/);
 
       const userCombobox = await form.getControl('User') as IxComboboxHarness;
       await userCombobox.writeCustomValue('AD\\administrator');

@@ -1,25 +1,25 @@
-<h1 mat-dialog-title>{{ title | translate }}</h1>
-<mat-dialog-content class="resilver-progress-dialog">
-  @if (state !== PoolScanState.Finished) {
-    <div>
-      <mat-progress-bar
-        class="example-margin"
-        color="primary"
-        mode="indeterminate"
-        [value]="progressTotalPercent"
-      ></mat-progress-bar>
-      <label> {{ progressTotalPercent | number: '1.2-2' }}% </label>
-    </div>
-  }
-  <div>{{ description | translate }}{{ diskName }}</div>
-  <div>{{ statusLabel | translate }}{{ state }}</div>
-</mat-dialog-content>
-<div mat-dialog-actions>
-  <button
-    mat-button
-    mat-dialog-close="close"
-    ixTest="close"
-  >
-    {{ 'Close' | translate }}
-  </button>
-</div>
+<tn-dialog-shell testId="resilver-progress" [title]="title | translate">
+  <div class="resilver-progress-dialog">
+    @if (state !== PoolScanState.Finished) {
+      <div>
+        <tn-progress-bar
+          class="example-margin"
+          mode="indeterminate"
+          [value]="progressTotalPercent"
+        ></tn-progress-bar>
+        <label> {{ progressTotalPercent | number: '1.2-2' }}% </label>
+      </div>
+    }
+    <div>{{ description | translate }}{{ diskName }}</div>
+    <div>{{ statusLabel | translate }}{{ state }}</div>
+  </div>
+
+  <div tnDialogAction>
+    <tn-button
+      variant="outline"
+      testId="close"
+      [label]="'Close' | translate"
+      (onClick)="dialogRef.close('close')"
+    ></tn-button>
+  </div>
+</tn-dialog-shell>

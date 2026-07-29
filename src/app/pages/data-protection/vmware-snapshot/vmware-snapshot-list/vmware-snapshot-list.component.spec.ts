@@ -8,7 +8,7 @@ import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
@@ -41,7 +41,7 @@ describe('VmwareSnapshotListComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
@@ -66,7 +66,10 @@ describe('VmwareSnapshotListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(VmwareSnapshotFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      VmwareSnapshotFormComponent,
+      { title: 'Add VM Snapshot' },
+    );
   });
 
   it('opens form to edit a VMware snapshot when Edit button is pressed', async () => {
@@ -75,9 +78,9 @@ describe('VmwareSnapshotListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       VmwareSnapshotFormComponent,
-      { data: vmwareSnapshots[0] },
+      { title: 'Edit VM Snapshot', inputs: { snapshotToEdit: vmwareSnapshots[0] } },
     );
   });
 

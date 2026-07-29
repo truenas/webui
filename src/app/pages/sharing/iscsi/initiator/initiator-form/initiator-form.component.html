@@ -1,89 +1,88 @@
-<mat-card class="form-card" [ixUiSearch]="searchableElements.elements.addInitiator">
+<tn-card class="form-card" [ixUiSearch]="searchableElements.elements.addInitiator">
   @if (isFormLoading()) {
-    <mat-progress-bar
+    <tn-progress-bar
       mode="indeterminate"
-    ></mat-progress-bar>
+    ></tn-progress-bar>
   }
   <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-    <mat-card-content>
-      <div class="card-content">
-        <div class="header-container">
-          <ix-checkbox
+    <div class="card-content">
+      <div class="header-container">
+        <tn-form-field>
+          <tn-checkbox
             formControlName="all"
             [label]="helptext.initiator.allowAllLabel | translate"
-          ></ix-checkbox>
-          @if (!isAllowAll) {
-            <div class="add-container">
-              <ix-input
-                formControlName="new_initiator"
-                [label]="helptext.initiator.addIqnLabel | translate"
-                [tooltip]="helptext.initiator.initiatorsTooltip | translate"
-                (keydown.enter)="$event.preventDefault(); onAddInitiator()"
-              ></ix-input>
-              <button
-                mat-flat-button
-                ixTest="add-initiator"
-                type="button"
-                [disabled]="isFormLoading()"
-                (click)="onAddInitiator()"
-              >
-                <tn-icon name="plus" library="mdi"></tn-icon>
-              </button>
-            </div>
-          }
-        </div>
-
+          ></tn-checkbox>
+        </tn-form-field>
         @if (!isAllowAll) {
-          <ix-dual-listbox
-            class="padding-16"
-            display="name"
-            key="id"
-            height="55vh"
-            [sourceName]="'Connected Initiators' | translate"
-            [targetName]="'Allowed Initiators' | translate"
-            [source]="allInitiators()"
-            [(destination)]="selectedInitiators"
-          ></ix-dual-listbox>
-
-          <button
-            mat-flat-button
-            type="button"
-            class="refresh-button"
-            ixTest="refresh"
-            [disabled]="isFormLoading()"
-            (click)="getConnectedInitiators()"
-          >
-            <tn-icon name="refresh" library="mdi"></tn-icon>
-            {{ 'Refresh' | translate }}
-          </button>
+          <div class="add-container">
+            <tn-form-field
+              [label]="helptext.initiator.addIqnLabel | translate"
+              [tooltip]="helptext.initiator.initiatorsTooltip | translate"
+            >
+              <tn-input
+                formControlName="new_initiator"
+                (keydown.enter)="$event.preventDefault(); onAddInitiator()"
+              ></tn-input>
+            </tn-form-field>
+            <tn-icon-button
+              name="plus"
+              library="mdi"
+              [testId]="'add-initiator'"
+              [ariaLabel]="'Add Initiator' | translate"
+              [disabled]="isFormLoading()"
+              (onClick)="onAddInitiator()"
+            ></tn-icon-button>
+          </div>
         }
-
-        <ix-input
-          formControlName="comment"
-          [label]="helptext.initiator.descriptionLabel | translate"
-        ></ix-input>
       </div>
-    </mat-card-content>
 
-    <mat-card-actions>
-      <button
+      @if (!isAllowAll) {
+        <ix-dual-listbox
+          class="padding-16"
+          display="name"
+          key="id"
+          height="55vh"
+          [sourceName]="'Connected Initiators' | translate"
+          [targetName]="'Allowed Initiators' | translate"
+          [source]="allInitiators()"
+          [(destination)]="selectedInitiators"
+        ></ix-dual-listbox>
+
+        <tn-button
+          type="button"
+          variant="filled"
+          color="default"
+          class="refresh-button"
+          icon="mdi-refresh"
+          [testId]="'refresh'"
+          [label]="'Refresh' | translate"
+          [disabled]="isFormLoading()"
+          (onClick)="getConnectedInitiators()"
+        ></tn-button>
+      }
+
+      <tn-form-field [label]="helptext.initiator.descriptionLabel | translate">
+        <tn-input
+          formControlName="comment"
+        ></tn-input>
+      </tn-form-field>
+    </div>
+
+    <div class="form-actions">
+      <tn-button
         *ixRequiresRoles="requiredRoles"
-        mat-button
-        color="primary"
-        ixTest="save"
         type="submit"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
         [disabled]="isFormLoading() || form.invalid"
-      >
-        {{ 'Save' | translate }}
-      </button>
-      <button
-        mat-button
-        ixTest="cancel"
+      ></tn-button>
+      <tn-button
         type="button"
-        (click)="onCancel()"
-      >
-        {{ 'Cancel' | translate }}
-      </button>
-    </mat-card-actions>
+        [testId]="'cancel'"
+        [label]="'Cancel' | translate"
+        (onClick)="onCancel()"
+      ></tn-button>
+    </div>
   </form>
-</mat-card>
+</tn-card>

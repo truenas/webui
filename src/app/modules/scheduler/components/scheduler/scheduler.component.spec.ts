@@ -1,14 +1,11 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSelectHarness } from '@angular/material/select/testing';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   createHostFactory, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
-import { MockPipe } from 'ng-mocks';
+import { TnDialog, TnFormFieldHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { SchedulerModalComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
@@ -21,17 +18,16 @@ describe('SchedulerComponent', () => {
     component: SchedulerComponent,
     imports: [
       ReactiveFormsModule,
-      FormsModule,
     ],
     providers: [
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of('0 2 */4 * 0'),
+          closed: of('0 2 */4 * 0'),
         })),
       }),
     ],
-    declarations: [
-      MockPipe(CrontabExplanationPipe),
+    componentProviders: [
+      { provide: CrontabExplanationPipe, useValue: { transform: (crontab: string) => crontab } },
     ],
   });
 
@@ -56,55 +52,51 @@ describe('SchedulerComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('renders a label and passes properties to it', () => {
+  it('renders a label and passes properties to it', async () => {
     spectator.setHostInput('label', 'Apply To Groups');
     spectator.setHostInput('required', true);
     spectator.setHostInput('tooltip', 'Enter the location of the system.');
 
-    const label = spectator.query(IxLabelComponent)!;
-    expect(label).toExist();
-    expect(label.label()).toBe('Apply To Groups');
-    expect(label.required()).toBe(true);
-    expect(label.tooltip()).toBe('Enter the location of the system.');
+    const field = await loader.getHarness(TnFormFieldHarness);
+    expect(await field.getLabel()).toBe('Apply To Groups');
+    expect(await field.isRequired()).toBe(true);
+    expect(await field.getTooltip()).toBe('Enter the location of the system.');
   });
 
   it('shows a list of presets and a custom option', async () => {
-    const select = await loader.getHarness(MatSelectHarness);
+    const select = await loader.getHarness(TnSelectHarness);
     await select.open();
-    const options = await select.getOptions();
-    const optionLabels = await parallel(() => options.map((option) => option.getText()));
+    const optionLabels = await select.getOptions();
     expect(optionLabels).toEqual([
       'Hourly At the start of each hour',
       'Daily At 00:00 (12:00 AM)',
       'Weekly On Sundays at 00:00 (12:00 AM)',
       'Monthly On the first day of the month at 00:00 (12:00 AM)',
-      'Create   Custom schedule',
+      'Create Custom schedule',
     ]);
   });
 
   it('shows current form group value in the select', async () => {
     control.setValue('0 * * * *');
-
-    const select = await loader.getHarness(MatSelectHarness);
-    const currentValue = await select.getValueText();
     spectator.detectChanges();
-    expect(currentValue).toBe('Hourly At the start of each hour');
+
+    const select = await loader.getHarness(TnSelectHarness);
+    expect(await select.getDisplayText()).toBe('Hourly At the start of each hour');
   });
 
   it('writes values to form group when preset is selected from the dropdown', async () => {
-    const select = await loader.getHarness(MatSelectHarness);
-    await select.open();
-    await select.clickOptions({ text: 'Daily At 00:00 (12:00 AM)' });
+    const select = await loader.getHarness(TnSelectHarness);
+    await select.selectOption('Daily At 00:00 (12:00 AM)');
     expect(control.value).toBe('0 0 * * *');
   });
 
   it('shows Scheduler modal when custom option is selected', async () => {
-    const select = await loader.getHarness(MatSelectHarness);
-    await select.open();
-    await select.clickOptions({ text: 'Create   Custom schedule' });
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+    const select = await loader.getHarness(TnSelectHarness);
+    await select.selectOption('Create Custom schedule');
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
       SchedulerModalComponent,
       {
+        width: '760px',
         data: expect.objectContaining({
           crontab: undefined,
           hideMinutes: false,
@@ -114,10 +106,25 @@ describe('SchedulerComponent', () => {
   });
 
   it('writes crontab provided in Scheduler modal when it is closed', async () => {
-    const select = await loader.getHarness(MatSelectHarness);
-    await select.open();
-    await select.clickOptions({ text: 'Create   Custom schedule' });
+    const select = await loader.getHarness(TnSelectHarness);
+    await select.selectOption('Create Custom schedule');
 
     expect(control.value).toBe('0 2 */4 * 0');
+  });
+
+  it('opens the custom dialog pre-filled with the current custom crontab when editing', async () => {
+    control.setValue('30 1 * * *');
+    spectator.detectChanges();
+
+    const select = await loader.getHarness(TnSelectHarness);
+    await select.selectOption('Create Custom schedule');
+
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
+      SchedulerModalComponent,
+      {
+        width: '760px',
+        data: expect.objectContaining({ crontab: '30 1 * * *' }),
+      },
+    );
   });
 });

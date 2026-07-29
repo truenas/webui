@@ -1,12 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatCardModule } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconButtonHarness, TnDialog } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -23,9 +19,6 @@ describe('AssociatedExtentsCardComponent', () => {
   const createComponent = createComponentFactory({
     component: AssociatedExtentsCardComponent,
     imports: [
-      MatCardModule,
-      MatButtonModule,
-      TnIconComponent,
       TranslateModule.forRoot(),
       NgxSkeletonLoaderModule,
     ],
@@ -43,9 +36,9 @@ describe('AssociatedExtentsCardComponent', () => {
         ])),
         deleteTargetExtent: jest.fn(() => of(null)),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(DialogService, {
@@ -77,10 +70,10 @@ describe('AssociatedExtentsCardComponent', () => {
   });
 
   it('opens associate target dialog when "Associate" button is clicked', async () => {
-    const matDialog = spectator.inject(MatDialog);
-    const spy = jest.spyOn(matDialog, 'open');
+    const tnDialog = spectator.inject(TnDialog);
+    const spy = jest.spyOn(tnDialog, 'open');
 
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Associate' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Associate' }));
     await button.click();
 
     expect(spy).toHaveBeenCalledWith(AssociatedTargetFormComponent, {
@@ -105,9 +98,7 @@ describe('AssociatedExtentsCardComponent', () => {
     const confirmSpy = jest.spyOn(dialogService, 'confirm');
     const deleteSpy = jest.spyOn(iscsiService, 'deleteTargetExtent');
 
-    const button = await loader.getHarness(MatButtonHarness.with({
-      selector: '[aria-label="Remove extent association"]',
-    }));
+    const button = await loader.getHarness(TnIconButtonHarness.with({ name: 'link-off' }));
     await button.click();
 
     expect(confirmSpy).toHaveBeenCalled();

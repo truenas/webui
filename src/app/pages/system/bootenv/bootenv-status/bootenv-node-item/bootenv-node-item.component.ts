@@ -1,10 +1,15 @@
 import { TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output, computed, inject } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnIconButtonComponent,
+  TnIconComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
+  TnTooltipDirective,
+  tnIconMarker,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
@@ -13,7 +18,6 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
 
 @Component({
@@ -23,14 +27,12 @@ import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/booten
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
+    TnIconButtonComponent,
     TnTooltipDirective,
-    MatTooltip,
-    MatIconButton,
-    TestDirective,
-    MatMenuTrigger,
-    MatMenu,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     RequiresRolesDirective,
-    MatMenuItem,
     TranslateModule,
     TitleCasePipe,
   ],
@@ -45,6 +47,12 @@ export class BootenvNodeItemComponent {
   readonly invokeAction = output<BootPoolActionEvent>();
 
   protected readonly requiredRoles = [Role.BootEnvWrite];
+
+  // Marked so the sprite extraction tool bundles them (it does not scan
+  // tn-menu-item icon attributes).
+  protected readonly replaceIcon = tnIconMarker('file-replace', 'mdi');
+  protected readonly attachIcon = tnIconMarker('attachment-plus', 'mdi');
+  protected readonly detachIcon = tnIconMarker('attachment-minus', 'mdi');
 
   protected readonly topologyItem = computed(() => this.node() as VDevItem);
 
@@ -86,21 +94,21 @@ export class BootenvNodeItemComponent {
     return this.translate.instant('{n, plural, =0 {No Errors} one {# Error} other {# Errors}}', { n: errors });
   });
 
-  detach(): void {
+  protected detach(): void {
     this.invokeAction.emit({
       action: BootPoolActionType.Detach,
       node: this.topologyItem(),
     });
   }
 
-  attach(): void {
+  protected attach(): void {
     this.invokeAction.emit({
       action: BootPoolActionType.Attach,
       node: this.topologyItem(),
     });
   }
 
-  replace(): void {
+  protected replace(): void {
     this.invokeAction.emit({
       action: BootPoolActionType.Replace,
       node: this.topologyItem(),

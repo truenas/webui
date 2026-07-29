@@ -3,7 +3,7 @@
 :host {
   display: flex;
   flex-direction: column;
-  height: 80vh;
+  max-height: 80vh;
   min-width: 450px;
 
   @media (max-width: $breakpoint-tablet) {

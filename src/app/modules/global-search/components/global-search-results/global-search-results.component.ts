@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, OnChanges, output, TrackByFunction, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { findIndex, isEqual } from 'lodash-es';
+import { stripQueryAndFragment } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -14,7 +13,6 @@ import { processHierarchy } from 'app/modules/global-search/helpers/process-hier
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-global-search-results',
@@ -22,10 +20,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./global-search-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    TestDirective,
+    TnTestIdDirective,
     TnIconComponent,
-    MatButton,
     TranslateModule,
   ],
 })
@@ -97,8 +93,9 @@ export class GlobalSearchResultsComponent implements OnChanges {
       // exact. `createUrlTree` without `relativeTo` resolves from
       // `routerState.snapshot.root`, so even if a non-absolute route ever
       // sneaks in it serialises from root rather than the active route.
-      const targetPath = this.router.serializeUrl(this.router.createUrlTree(navigateTo))
-        .split('?')[0].split('#')[0];
+      const targetPath = stripQueryAndFragment(
+        this.router.serializeUrl(this.router.createUrlTree(navigateTo)),
+      );
 
       // Skip navigation when we're already on the target page — even same-URL
       // `router.navigate` calls fire `NavigationSkipped` events that
@@ -108,7 +105,7 @@ export class GlobalSearchResultsComponent implements OnChanges {
       // we'd treat sibling pages such as `/credentials/users/api-keys` as a
       // descendant of `/credentials/users` and skip the navigation the user
       // actually asked for.
-      const currentPath = this.router.url.split('?')[0].split('#')[0];
+      const currentPath = stripQueryAndFragment(this.router.url);
       const onTargetPath = currentPath === targetPath
         || (hasWildcard && currentPath.startsWith(`${targetPath}/`));
       if (!onTargetPath) {

@@ -1,5 +1,5 @@
-<mat-card class="card">
-  <mat-card-content class="card-content">
+<tn-card class="card" [padContent]="false">
+  <div class="card-content">
     <div class="header">
       <h3>{{ label() | translate }}</h3>
     </div>
@@ -19,5 +19,5 @@
         <div class="sub-text">{{ sub | translate }}</div>
       }
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>

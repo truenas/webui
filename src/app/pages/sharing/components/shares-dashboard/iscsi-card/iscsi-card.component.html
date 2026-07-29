@@ -1,20 +1,20 @@
 <tn-card
   padding="small"
+  [padContent]="false"
   [headerStatus]="serviceStatus()"
-  [headerControl]="serviceControl()"
   [headerMenu]="serviceMenu()"
   [headerMenuTriggerTestId]="headerMenuTriggerTestId()"
-  [primaryAction]="wizardAction()"
 >
   <a
     tnCardHeader
     class="card-title-link"
-    [ixTest]="['iscsi-share', 'open-in-new']"
+    tnTestIdType="link"
+    [tnTestId]="['iscsi-share', 'open-in-new']"
     [ixUiSearch]="searchableElements.elements.wizard"
     [routerLink]="['/sharing', 'iscsi', 'targets']"
     [tnTooltip]="'Open iSCSI list in full page' | translate"
   >
-    <h3 class="card-title">
+    <h3 class="tn-card__title">
       @if (hasFibreChannel()) {
         {{ 'Block (iSCSI/FC) Shares Targets' | translate }}
       } @else {
@@ -30,26 +30,51 @@
     </h3>
   </a>
 
-  @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
+  <ng-template tnCardHeaderActions>
+    @if (service(); as service) {
+      <tn-slide-toggle
+        *ixRequiresRoles="requiredRoles"
+        [checked]="actionsMenu.isServiceRunning(service)"
+        [testId]="actionsMenu.serviceControlTestId(service)"
+        [ariaLabel]="'Toggle service' | translate"
+        (change)="actionsMenu.toggleServiceState(service)"
+      ></tn-slide-toggle>
+    }
+  </ng-template>
+
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      variant="filled"
+      testId="iscsi-share-wizard"
+      [label]="'Wizard' | translate"
+      (onClick)="openForm(undefined, true)"
+    ></tn-button>
+  </ng-template>
+
+  @if (!rows().length && !isLoading()) {
     <tn-empty
       icon="iscsi-share"
       iconLibrary="custom"
+      iconSize="56px"
       [title]="'Raw block storage over the network, appearing as a local disk on the client. Ideal for virtual machines or applications that require direct disk-level access.' | translate"
     ></tn-empty>
   } @else {
     <tn-table
       class="table"
-      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [dataSource]="rows()"
       [displayedColumns]="displayedColumns()"
       [trackBy]="trackByIscsiId"
-      [loading]="!!(dataProvider.isLoading$ | async)"
+      [loading]="isLoading()"
       (sortChange)="onSortChange($event)"
     >
       <ng-container [tnColumnDef]="'name'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Target Name' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Target Name' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Target Name' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.name ? (row.name | translate) : ''"
           >{{ row.name }}</span>
         </ng-template>
@@ -59,7 +84,8 @@
         <ng-template tnHeaderCellDef>{{ 'Target Alias' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           <span
-            [ixTest]="[('Target Alias' | translate), uniqueRowTag(row), 'row-text']"
+            tnTestIdType="text"
+            [tnTestId]="[('Target Alias' | translate), uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.alias ? (row.alias | translate) : ''"
           >{{ row.alias }}</span>
         </ng-template>
@@ -69,19 +95,23 @@
         <ng-template tnHeaderCellDef>{{ 'Mode' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
           @let mode = getModeValue(row);
-          <span [ixTest]="[('Mode' | translate), uniqueRowTag(row), 'row-text']" [tnTooltip]="mode">{{ mode }}</span>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Mode' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTooltip]="mode"
+          >{{ mode }}</span>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
         <ng-template tnHeaderCellDef></ng-template>
         <ng-template let-row tnCellDef>
-          <ix-share-actions-cell
+          <ix-table-actions-cell
             [actions]="actions"
             [row]="row"
             [uniqueRowTag]="uniqueRowTag(row)"
             [ariaLabel]="ariaLabel(row)"
-          ></ix-share-actions-cell>
+          ></ix-table-actions-cell>
         </ng-template>
       </ng-container>
     </tn-table>
@@ -94,23 +124,3 @@
     [routerLink]="['/sharing', 'iscsi', 'targets']"
   ></ix-table-pager-show-more>
 </tn-card>
-
-<tn-side-panel
-  [title]="'iSCSI Global Configuration' | translate"
-  [closeGuard]="closeConfigGuard"
-  [(open)]="configOpen"
->
-  @if (configOpen()) {
-    <ix-global-target-configuration (closed)="onConfigClosed()"></ix-global-target-configuration>
-  }
-  @if (configForm(); as form) {
-    <tn-button
-      tnSidePanelAction
-      color="primary"
-      [ixTest]="'save'"
-      [label]="'Save' | translate"
-      [disabled]="!form.canSubmit()"
-      (onClick)="form.submit()"
-    ></tn-button>
-  }
-</tn-side-panel>

@@ -6,33 +6,26 @@
 <div class="tree-wrapper" [ixUiSearch]="searchableElements.elements.bootStatus">
   <div class="tree-inner">
     @if (poolInstance && poolInstance.scan) {
-      <mat-accordion>
-        <mat-expansion-panel class="mat-elevation-z0">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <strong>{{ poolInstance.scan.function }}</strong>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <mat-list>
-            <mat-list-item>
-              {{ 'Status' | translate }}:
-              {{ poolInstance.scan.pause !== null ? 'PAUSED' : poolInstance.scan.state ? poolInstance.scan.state : ('None requested' | translate) }}
-            </mat-list-item>
-            @if (poolInstance.scan.errors !== null) {
-              <mat-list-item>
-                {{ 'Errors' | translate }}:
-                {{ poolInstance.scan.errors }}
-              </mat-list-item>
-            }
-            @if (poolInstance.scan.start_time?.$date) {
-              <mat-list-item>
-                {{ 'Date' | translate }}:
-                {{ poolInstance.scan.start_time.$date | formatDateTime }}
-              </mat-list-item>
-            }
-          </mat-list>
-        </mat-expansion-panel>
-      </mat-accordion>
+      <tn-expansion-panel [title]="poolInstance.scan.function">
+        <tn-list>
+          <tn-list-item>
+            {{ 'Status' | translate }}:
+            {{ poolInstance.scan.pause !== null ? 'PAUSED' : poolInstance.scan.state ? poolInstance.scan.state : ('None requested' | translate) }}
+          </tn-list-item>
+          @if (poolInstance.scan.errors !== null) {
+            <tn-list-item>
+              {{ 'Errors' | translate }}:
+              {{ poolInstance.scan.errors }}
+            </tn-list-item>
+          }
+          @if (poolInstance.scan.start_time?.$date) {
+            <tn-list-item>
+              {{ 'Date' | translate }}:
+              {{ poolInstance.scan.start_time.$date | formatDateTime }}
+            </tn-list-item>
+          }
+        </tn-list>
+      </tn-expansion-panel>
     }
 
     @if (dataSource) {
@@ -47,56 +40,35 @@
         <div>{{ 'Errors' | translate }}</div>
       </div>
 
-      <ix-tree-view
+      <tn-tree
         class="tree"
-        [ixDataSource]="dataSource"
-        [ixTreeControl]="treeControl"
+        [dataSource]="dataSource"
+        [treeControl]="treeControl"
       >
-      <ix-tree-node
-        *treeNodeDef="let topologyItem; dataSource: dataSource"
-        [treeNodeDefDataSource]="dataSource"
-      >
-        <span class="spacer" treeNodeToggle></span>
-        <ix-bootenv-node-item
-          [node]="topologyItem"
-          [poolInstance]="poolInstance"
-          [oneDisk]="oneDisk"
-          (invokeAction)="doAction($event)"
-        ></ix-bootenv-node-item>
-      </ix-tree-node>
-
-      <ix-nested-tree-node
-        *treeNodeDef="let topologyItem; dataSource: dataSource; when: hasNestedChild"
-        [treeNodeDefDataSource]="dataSource"
-      >
-        <div class="nested-tree-root-node">
-          <button
-            mat-icon-button
-            treeNodeToggle
-            [ixTest]="['toggle-row', topologyItem.guid]"
-            [attr.aria-label]="'Toggle {row}' | translate: { row: topologyItem.guid }"
-            (click)="$event.preventDefault()"
-          >
-            @if (treeControl.isExpanded(topologyItem)) {
-              <tn-icon name="chevron-down" library="mdi"></tn-icon>
-            }
-            @if (!treeControl.isExpanded(topologyItem)) {
-              <tn-icon name="chevron-right" library="mdi"></tn-icon>
-            }
-          </button>
+        <tn-nested-tree-node *cdkTreeNodeDef="let topologyItem">
           <ix-bootenv-node-item
             [node]="topologyItem"
             [poolInstance]="poolInstance"
             [oneDisk]="oneDisk"
             (invokeAction)="doAction($event)"
           ></ix-bootenv-node-item>
-        </div>
+        </tn-nested-tree-node>
 
-        @if (treeControl.isExpanded(topologyItem)) {
-          <ng-container treeNodeOutlet></ng-container>
-        }
-      </ix-nested-tree-node>
-      </ix-tree-view>
+        <tn-nested-tree-node
+          *cdkTreeNodeDef="let topologyItem; when: hasNestedChild"
+          [toggleAriaLabel]="'Toggle {row}' | translate: { row: topologyItem.guid }"
+          [toggleTestId]="['toggle-row', topologyItem.guid]"
+        >
+          <ix-bootenv-node-item
+            [node]="topologyItem"
+            [poolInstance]="poolInstance"
+            [oneDisk]="oneDisk"
+            (invokeAction)="doAction($event)"
+          ></ix-bootenv-node-item>
+
+          <ng-container slot="children" tnTreeNodeOutlet></ng-container>
+        </tn-nested-tree-node>
+      </tn-tree>
     }
   </div>
 </div>

@@ -1,14 +1,5 @@
 :host {
   display: block;
   width: 100%;
-
-  ix-form-actions {
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 15px !important;
-
-    button {
-      margin: 0 !important;
-    }
-  }
+  max-width: 560px;
 }

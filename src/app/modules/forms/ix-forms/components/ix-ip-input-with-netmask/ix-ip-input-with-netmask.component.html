@@ -10,10 +10,10 @@
 <div class="input-container" [class.disabled]="isDisabled">
   <input
     #addressInput
-    type=""
-    matInput
+    type="text"
+    tnTestIdType="input"
     [required]="required()"
-    [ixTest]="controlDirective.name"
+    [tnTestId]="controlDirective.name"
     [disabled]="isDisabled"
     [value]="address"
     [attr.aria-label]="label()"
@@ -21,18 +21,14 @@
     (blur)="onTouched()"
   />
   <div class="slash">/</div>
-  <mat-select
+  <tn-select
     class="select"
-    ixTest="netmasks"
-    [value]="netmask"
-    (selectionChange)="onNetmaskChange($event)"
-  >
-    @for (option of netmaskOptions; track option.label) {
-      <mat-option [value]="option.value" [ixTest]="['netmask', option.label]">
-        {{ option.label | translate }}
-      </mat-option>
-    }
-  </mat-select>
+    testId="netmasks"
+    [options]="netmaskOptions"
+    [ngModel]="netmask"
+    [ngModelOptions]="{ standalone: true }"
+    (ngModelChange)="onNetmaskChange($event)"
+  ></tn-select>
 </div>
 
 @if (hint()) {

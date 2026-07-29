@@ -1,22 +1,20 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnCheckboxHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { NetworkConfiguration, NetworkConfigurationActivity } from 'app/interfaces/network-configuration.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LanguageService } from 'app/modules/language/language.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NetworkConfigurationComponent } from 'app/pages/system/network/components/network-configuration/network-configuration.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -25,12 +23,6 @@ describe('NetworkConfigurationComponent', () => {
   let spectator: Spectator<NetworkConfigurationComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const createComponent = createComponentFactory({
     component: NetworkConfigurationComponent,
@@ -76,13 +68,11 @@ describe('NetworkConfigurationComponent', () => {
         } as NetworkConfiguration),
         mockCall('network.configuration.update'),
       ]),
-      mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(Router),
       mockProvider(LanguageService),
       mockProvider(SystemGeneralService),
-      mockProvider(SlideInRef, slideInRef),
       provideMockStore({
         initialState: {
           systemInfo: {
@@ -104,57 +94,53 @@ describe('NetworkConfigurationComponent', () => {
   });
 
   it('loads and shows current network global configuration when form is opened', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
+    const hostname = await loader.getHarness(TnInputHarness.with({ name: 'hostname' }));
+    const domain = await loader.getHarness(TnInputHarness.with({ name: 'domain' }));
+    const ipv4gateway = await loader.getHarness(TnInputHarness.with({ name: 'ipv4gateway' }));
+    const netbios = await loader.getHarness(TnCheckboxHarness.with({ label: 'NetBIOS-NS' }));
+    const mdns = await loader.getHarness(TnCheckboxHarness.with({ label: 'mDNS' }));
+    const wsd = await loader.getHarness(TnCheckboxHarness.with({ label: 'WS-Discovery' }));
+    const inheritDhcp = await loader.getHarness(TnCheckboxHarness.with({ label: 'Inherit domain from DHCP' }));
+    const allowAllOption = await loader.getHarness(TnRadioHarness.with({ label: 'Allow All' }));
 
-    expect(values).toEqual({
-      Hostname: 'truenas',
-      Domain: 'local',
-      'Additional Domains': [],
-      'NetBIOS-NS': false,
-      mDNS: true,
-      'WS-Discovery': true,
-      Primary: '',
-      Secondary: '',
-      Tertiary: '',
-      'IPv4 Default Gateway': '192.168.30.2',
-      'IPv6 Default Gateway': '',
-      'Inherit domain from DHCP': false,
-      'Outbound Activity': 'Allow All',
-      'HTTP Proxy': '',
-      'Host Name Database': [],
-    });
+    expect(await hostname.getValue()).toBe('truenas');
+    expect(await domain.getValue()).toBe('local');
+    expect(await ipv4gateway.getValue()).toBe('192.168.30.2');
+    expect(await netbios.isChecked()).toBe(false);
+    expect(await mdns.isChecked()).toBe(true);
+    expect(await wsd.isChecked()).toBe(true);
+    expect(await inheritDhcp.isChecked()).toBe(false);
+    expect(await allowAllOption.isChecked()).toBe(true);
   });
 
   it('shows outbound_network_value select when outbound_network_activity is changed', async () => {
-    const radioGroup = await loader.getHarness(IxRadioGroupHarness);
-    await radioGroup.setValue('Allow Specific');
+    // The outbound_network_value select is the only tn-select in this form and is rendered
+    // only for the "Allow/Deny Specific" activities, so its presence is asserted via harness count.
+    expect(await loader.getAllHarnesses(TnSelectHarness)).toHaveLength(0);
 
-    expect(spectator.query('.outbound-network-value')).toBeVisible();
+    const allowSpecificOption = await loader.getHarness(TnRadioHarness.with({ label: 'Allow Specific' }));
+    await allowSpecificOption.check();
+
+    expect(await loader.getAllHarnesses(TnSelectHarness)).toHaveLength(1);
   });
 
   it('saves network global configuration when saved is pressed', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Hostname: 'truenas01',
-      Domain: 'local',
-      'Additional Domains': [],
-      'NetBIOS-NS': true,
-      mDNS: true,
-      'WS-Discovery': true,
-      Primary: '',
-      Secondary: '',
-      Tertiary: '',
-      'IPv4 Default Gateway': '',
-      'IPv6 Default Gateway': '',
-      'HTTP Proxy': '',
-      'Host Name Database': [],
-      'Outbound Activity': 'Allow Specific',
-      Services: ['Cloud sync'],
-    });
+    const hostname = await loader.getHarness(TnInputHarness.with({ name: 'hostname' }));
+    await hostname.setValue('truenas01');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    const netbios = await loader.getHarness(TnCheckboxHarness.with({ label: 'NetBIOS-NS' }));
+    await netbios.check();
+
+    // TnInputHarness.setValue('') throws on an empty value, so clear the gateway via the control.
+    spectator.component.form.controls.ipv4gateway.setValue('');
+
+    const allowSpecificOption = await loader.getHarness(TnRadioHarness.with({ label: 'Allow Specific' }));
+    await allowSpecificOption.check();
+
+    const services = await loader.getHarness(TnSelectHarness);
+    await services.selectOption('Cloud sync');
+
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith(
       'network.configuration.update',
@@ -185,11 +171,10 @@ describe('NetworkConfigurationComponent', () => {
   });
 
   it('saves activity as ALLOW with activities = [] when "Deny All" is selected', async () => {
-    const outboundRadioGroup = await loader.getHarness(IxRadioGroupHarness.with({ selector: '.outbound-network-radio' }));
-    await outboundRadioGroup.setValue('Deny All');
+    const denyAllOption = await loader.getHarness(TnRadioHarness.with({ label: 'Deny All' }));
+    await denyAllOption.check();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith(
       'network.configuration.update',

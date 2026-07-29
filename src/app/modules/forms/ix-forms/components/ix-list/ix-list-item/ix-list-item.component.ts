@@ -2,10 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component, input, output,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 
 @Component({
   selector: 'ix-list-item',
@@ -13,10 +11,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./ix-list-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconButton,
-    TnIconComponent,
+    TnIconButtonComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class IxListItemComponent {

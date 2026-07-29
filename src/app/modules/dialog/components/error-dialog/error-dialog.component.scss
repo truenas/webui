@@ -1,14 +1,36 @@
+@import 'scss-imports/variables';
+
 $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
 
 :host {
   display: block;
   min-width: 300px;
+  max-width: 560px;
+
+  // Give the dialog a comfortable width on tablet+ so short errors don't render
+  // in a cramped, narrow box. The 300px base keeps it from overflowing phones.
+  @media (min-width: $breakpoint-tablet) {
+    min-width: 480px;
+  }
+
+  // The empty shell header is collapsed globally via the
+  // `ix-error-dialog .tn-dialog__header` rule in _tn-styles.scss — the
+  // component-scoped ::ng-deep did not pierce into tn-dialog-shell reliably.
 }
 
-.mat-mdc-dialog-actions {
-  display: block;
-  min-height: unset;
-  text-align: right;
+.err-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.err-title-row {
+  align-items: center;
+  display: flex;
+  font-size: 20px;
+  font-weight: 600;
+  gap: 8px;
+  margin: 0;
 }
 
 .details-panel {
@@ -109,6 +131,13 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
 
 .err-title {
   align-items: center;
+}
+
+.more-info {
+  align-items: center;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 6px;
 }
 
 .err-message-wrapper {

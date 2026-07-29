@@ -1,10 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatTooltip } from '@angular/material/tooltip';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonHarness, TnCardComponent, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -15,7 +13,7 @@ import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interfac
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -80,7 +78,7 @@ function createTestComponent(
         mockCall('user.update'),
         mockCall('user.unset_2fa_secret'),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DownloadService, {
@@ -105,7 +103,7 @@ describe('UserAccessCardComponent', () => {
   });
 
   it('should render user access card', () => {
-    expect(spectator.query('h3')).toHaveText('Access');
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Access');
   });
 
   it('contains last action component', () => {
@@ -164,7 +162,7 @@ describe('UserAccessCardComponent', () => {
   });
 
   it('clears two-factor authentication when Clear Two-Factor Authentication is clicked', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Two-Factor Authentication' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Clear Two-Factor Authentication' }));
     await button.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
@@ -173,7 +171,7 @@ describe('UserAccessCardComponent', () => {
   });
 
   it('should open lock user when button Lock User is clicked', async () => {
-    const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock User' }));
+    const lockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Lock User' }));
     await lockButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
@@ -186,7 +184,7 @@ describe('UserAccessCardComponent', () => {
   it('should unlock user when Unlock is clicked', async () => {
     spectator.setInput('user', { ...mockUser, locked: true });
 
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock User' }));
+    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock User' }));
     await unlockButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
@@ -199,45 +197,45 @@ describe('UserAccessCardComponent', () => {
   it('should not show Lock User button if this is a built-in user (other than root)', async () => {
     spectator.setInput('user', { ...mockUser, builtin: true, username: 'testuser' });
 
-    const lockButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Lock User' }));
+    const lockButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Lock User' }));
     expect(lockButton).toBeNull();
 
     // Check root
     spectator.setInput('user', { ...mockUser, builtin: true, username: 'root' });
-    const rootLockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock User' }));
+    const rootLockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Lock User' }));
     expect(rootLockButton).toBeTruthy();
   });
 
   it('should show disabled Lock User button with tooltip for directory service users', async () => {
     spectator.setInput('user', { ...mockUser, local: false });
 
-    const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock User' }));
+    const lockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Lock User' }));
     expect(await lockButton.isDisabled()).toBe(true);
 
-    const tooltips = spectator.queryAll(MatTooltip);
-    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    const tooltips = spectator.queryAll(TnTooltipDirective);
+    const tooltip = tooltips.find((tip) => String(tip.message) === 'This user is managed by a directory service and cannot be modified.');
     expect(tooltip).toBeTruthy();
   });
 
   it('should show disabled Unlock User button with tooltip for directory service users', async () => {
     spectator.setInput('user', { ...mockUser, local: false, locked: true });
 
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock User' }));
+    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock User' }));
     expect(await unlockButton.isDisabled()).toBe(true);
 
-    const tooltips = spectator.queryAll(MatTooltip);
-    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    const tooltips = spectator.queryAll(TnTooltipDirective);
+    const tooltip = tooltips.find((tip) => String(tip.message) === 'This user is managed by a directory service and cannot be modified.');
     expect(tooltip).toBeTruthy();
   });
 
   it('should show disabled Clear Two-Factor Authentication button with tooltip for directory service users', async () => {
     spectator.setInput('user', { ...mockUser, local: false, twofactor_auth_configured: true });
 
-    const clearTfaButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Two-Factor Authentication' }));
+    const clearTfaButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clear Two-Factor Authentication' }));
     expect(await clearTfaButton.isDisabled()).toBe(true);
 
-    const tooltips = spectator.queryAll(MatTooltip);
-    const tooltip = tooltips.find((tip) => tip.message === 'This user is managed by a directory service and cannot be modified.');
+    const tooltips = spectator.queryAll(TnTooltipDirective);
+    const tooltip = tooltips.find((tip) => String(tip.message) === 'This user is managed by a directory service and cannot be modified.');
     expect(tooltip).toBeTruthy();
   });
 
@@ -261,9 +259,10 @@ describe('UserAccessCardComponent', () => {
 
       spectator.click(spectator.query(byText('Add API Key')));
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
-        data: {
-          username: mockUser.username,
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
+        title: 'Add API Key',
+        inputs: {
+          presetUsername: mockUser.username,
         },
       });
     });
@@ -348,7 +347,7 @@ describe('UserAccessCardComponent', () => {
           mockCall('user.update'),
           mockCall('user.unset_2fa_secret'),
         ]),
-        mockProvider(SlideIn, {
+        mockProvider(FormSidePanelService, {
           open: jest.fn(() => SlideInResult.empty()),
         }),
         mockProvider(DownloadService, {

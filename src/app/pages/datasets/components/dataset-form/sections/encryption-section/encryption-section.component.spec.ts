@@ -1,15 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
-import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
 import {
   EncryptionSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/encryption-section/encryption-section.component';
@@ -17,7 +13,6 @@ import {
 describe('EncryptionSectionComponent', () => {
   let spectator: Spectator<EncryptionSectionComponent>;
   let loader: HarnessLoader;
-  let form: IxFieldsetHarness;
   const keyEncryptedDataset = {
     encrypted: true,
     key_format: {
@@ -34,6 +29,16 @@ describe('EncryptionSectionComponent', () => {
     },
   } as Dataset;
 
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
   const createComponent = createComponentFactory({
     component: EncryptionSectionComponent,
     imports: [
@@ -46,14 +51,10 @@ describe('EncryptionSectionComponent', () => {
           'AES-128-GCM': 'AES-128-GCM',
         }),
       ]),
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-        warn: jest.fn(() => of(true)),
-      }),
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         parent: {
@@ -64,22 +65,24 @@ describe('EncryptionSectionComponent', () => {
     });
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFieldsetHarness);
   });
 
   describe('inheriting encryption', () => {
     it('shows label explaining encryption status of the parent', async () => {
-      expect(await form.getLabels()).toEqual(['Inherit (non-encrypted)']);
+      const inherit = await getCheckbox('inherit_encryption');
+      expect(await inherit.getLabelText()).toBe('Inherit (non-encrypted)');
 
       spectator.setInput('parent', keyEncryptedDataset);
-      expect(await form.getLabels()).toEqual(['Inherit (encrypted)']);
+      expect(await inherit.getLabelText()).toBe('Inherit (encrypted)');
     });
 
     it('does not show other encryption fields when Inherit is true', async () => {
-      const controls = await form.getControlHarnesses();
-      expect(controls).toHaveLength(1);
-      expect(controls[0]).toBeInstanceOf(IxCheckboxHarness);
-      expect(await controls[0].getLabelText()).toBe('Inherit (non-encrypted)');
+      const checkboxes = await loader.getAllHarnesses(TnCheckboxHarness);
+      expect(checkboxes).toHaveLength(1);
+      expect(await checkboxes[0].getLabelText()).toBe('Inherit (non-encrypted)');
+
+      const selects = await loader.getAllHarnesses(TnSelectHarness);
+      expect(selects).toHaveLength(0);
     });
   });
 
@@ -87,97 +90,71 @@ describe('EncryptionSectionComponent', () => {
     it('defaults to parent\'s algorithm', async () => {
       spectator.setInput('parent', keyEncryptedDataset);
 
-      await form.fillForm({
-        'Inherit (encrypted)': false,
-      });
+      await (await getCheckbox('inherit_encryption')).uncheck();
 
-      expect(await form.getValues()).toEqual(expect.objectContaining({
-        Algorithm: 'AES-128-GCM',
-      }));
+      const algorithm = await getSelect('algorithm');
+      expect(await algorithm.getDisplayText()).toBe('AES-128-GCM');
     });
 
     it('shows Encryption Type select when parent is key encrypted', async () => {
       spectator.setInput('parent', keyEncryptedDataset);
 
-      await form.fillForm({
-        'Inherit (encrypted)': false,
-      });
+      await (await getCheckbox('inherit_encryption')).uncheck();
 
-      expect(await form.getValues()).toEqual(expect.objectContaining({
-        'Encryption Type': 'Key',
-      }));
+      const encryptionType = await getSelect('encryption_type');
+      expect(await encryptionType.getDisplayText()).toBe('Key');
     });
 
     it('does not show Encryption Type select when parent is passphrase encrypted', async () => {
       spectator.setInput('parent', passphraseEncryptedDataset);
 
-      await form.fillForm({
-        'Inherit (encrypted)': false,
-      });
+      await (await getCheckbox('inherit_encryption')).uncheck();
 
-      expect(await form.getLabels()).not.toContain('Encryption Type');
+      const encryptionTypeSelects = await loader.getAllHarnesses(
+        TnSelectHarness.with({ selector: '[formControlName="encryption_type"]' }),
+      );
+      expect(encryptionTypeSelects).toHaveLength(0);
     });
 
     it('shows a warning when parent is encrypted, but user is unchecking Encryption checkbox', async () => {
       spectator.setInput('parent', keyEncryptedDataset);
 
-      await form.fillForm({
-        'Inherit (encrypted)': false,
-      });
+      await (await getCheckbox('inherit_encryption')).uncheck();
 
-      const encryptionFc = await form.getControl('Encryption');
-      const isEncryptionDisabled = await encryptionFc.isDisabled();
-      expect(isEncryptionDisabled).toBe(true);
+      const encryption = await getCheckbox('encryption');
+      expect(await encryption.isDisabled()).toBe(true);
     });
   });
 
   describe('key encryption', () => {
     it('shows Key specific fields when Key encryption is used', async () => {
-      await form.fillForm({
-        'Inherit (non-encrypted)': false,
-      });
+      await (await getCheckbox('inherit_encryption')).uncheck();
 
-      expect(await form.getValues()).toEqual({
-        'Inherit (non-encrypted)': false,
-        Encryption: true,
-        'Generate Key': true,
-        'Encryption Type': 'Key',
-        Algorithm: 'AES-256-GCM',
-      });
+      expect(await (await getCheckbox('encryption')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('generate_key')).isChecked()).toBe(true);
+      expect(await (await getSelect('encryption_type')).getDisplayText()).toBe('Key');
+      expect(await (await getSelect('algorithm')).getDisplayText()).toBe('AES-256-GCM');
     });
 
     it('shows Key field when Generate Key checkbox is unticked', async () => {
-      await form.fillForm(
-        {
-          'Inherit (non-encrypted)': false,
-          'Generate Key': false,
-        },
-      );
+      await (await getCheckbox('inherit_encryption')).uncheck();
+      await (await getCheckbox('generate_key')).uncheck();
 
-      const keyControl = await form.getControl('Key');
-      expect(keyControl).toExist();
-      expect(keyControl).toBeInstanceOf(IxTextareaHarness);
+      const keyInput = await getInput('key');
+      expect(keyInput).toBeTruthy();
+      expect(await keyInput.getValue()).toBe('');
     });
   });
 
   describe('passphrase encryption', () => {
     it('shows Passphrase specific fields when Passphrase encryption is used', async () => {
-      await form.fillForm(
-        {
-          'Inherit (non-encrypted)': false,
-          'Encryption Type': 'Passphrase',
-        },
-      );
+      await (await getCheckbox('inherit_encryption')).uncheck();
+      await (await getSelect('encryption_type')).selectOption('Passphrase');
 
-      expect(await form.getValues()).toEqual({
-        'Inherit (non-encrypted)': false,
-        Encryption: true,
-        'Encryption Type': 'Passphrase',
-        'Confirm Passphrase': '',
-        Passphrase: '',
-        pbkdf2iters: '1300000',
-        Algorithm: 'AES-256-GCM',
-      });
+      expect(await (await getInput('passphrase')).getValue()).toBe('');
+      expect(await (await getInput('confirm_passphrase')).getValue()).toBe('');
+      expect(await (await getInput('pbkdf2iters')).getValue()).toBe('1300000');
+      expect(await (await getSelect('algorithm')).getDisplayText()).toBe('AES-256-GCM');
     });
   });
 });

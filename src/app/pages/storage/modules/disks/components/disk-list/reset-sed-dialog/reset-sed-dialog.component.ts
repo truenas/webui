@@ -1,16 +1,15 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnIconComponent,
+  TnInputComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -22,12 +21,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./reset-sed-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
+    TnDialogShellComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     ReactiveFormsModule,
-    IxInputComponent,
-    IxCheckboxComponent,
+    TnCheckboxComponent,
     TnIconComponent,
     FormActionsComponent,
     TnButtonComponent,
@@ -42,9 +40,9 @@ export class ResetSedDialog {
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
-  protected dialogRef = inject<MatDialogRef<ResetSedDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, ResetSedDialog>>(DialogRef);
   private destroyRef = inject(DestroyRef);
-  protected data = inject<{ diskName: string }>(MAT_DIALOG_DATA);
+  protected data = inject<{ diskName: string }>(DIALOG_DATA);
 
   protected readonly Role = Role;
 

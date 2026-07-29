@@ -1,27 +1,28 @@
-<h1 matDialogTitle>
-  {{ 'Change Number Of Virtual Ports' | translate }}
-</h1>
+<tn-dialog-shell testId="virtual-ports-number" [title]="'Change Number Of Virtual Ports' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="submit()">
-  <ix-input
-    formControlName="virtualPorts"
-    type="number"
-    [required]="true"
-    [label]="'Virtual Ports' | translate"
-  ></ix-input>
-
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" matDialogClose>
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <button
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="delete"
-      [disabled]="form.invalid"
-    >
-      {{ 'Change' | translate }}
-    </button>
-  </ix-form-actions>
+  <tn-form-field [label]="'Virtual Ports' | translate">
+    <tn-input
+      testId="virtual-ports"
+      formControlName="virtualPorts"
+      [inputType]="InputType.Number"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
+
+  <tn-button
+    color="primary"
+    testId="delete"
+    [label]="'Change' | translate"
+    [disabled]="form.invalid"
+    (onClick)="submit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

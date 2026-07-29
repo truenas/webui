@@ -1,11 +1,12 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import {
   byTextContent, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnDialog, TnStepperComponent,
+} from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -32,6 +33,7 @@ import {
   PoolManagerState,
   PoolManagerStore,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('ReviewWizardStepComponent', () => {
   let spectator: Spectator<ReviewWizardStepComponent>;
@@ -65,6 +67,7 @@ describe('ReviewWizardStepComponent', () => {
     },
   } as PoolManagerState;
   const state$ = new BehaviorSubject(state);
+  const forceTopology$ = new BehaviorSubject(false);
 
   const createComponent = createComponentFactory({
     component: ReviewWizardStepComponent,
@@ -74,7 +77,7 @@ describe('ReviewWizardStepComponent', () => {
       TopologyCategoryDescriptionPipe,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -83,9 +86,15 @@ describe('ReviewWizardStepComponent', () => {
       }),
       mockProvider(PoolManagerStore, {
         state$,
+        forceTopology$,
         totalUsableCapacity$: of(2 * GiB),
       }),
-      mockProvider(MatDialog),
+      mockProvider(TnDialog),
+      provideMockStore({
+        selectors: [
+          { selector: selectIsEnterprise, value: false },
+        ],
+      }),
       mockAuth(),
     ],
   });
@@ -102,17 +111,17 @@ describe('ReviewWizardStepComponent', () => {
 
     it('emits (createPool) when Create Pool is pressed', async () => {
       jest.spyOn(spectator.component.createPool, 'emit');
-      const createPool = await loader.getHarness(MatButtonHarness.with({ text: 'Create Pool' }));
+      const createPool = await loader.getHarness(TnButtonHarness.with({ label: 'Create Pool' }));
       await createPool.click();
 
       expect(spectator.component.createPool.emit).toHaveBeenCalled();
     });
 
     it('opens an Inspect VDEVs dialog when corresponding button is pressed', async () => {
-      const inspectButton = await loader.getHarness(MatButtonHarness.with({ text: 'Inspect VDEVs' }));
+      const inspectButton = await loader.getHarness(TnButtonHarness.with({ label: 'Inspect VDEVs' }));
       await inspectButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(InspectVdevsDialog, {
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(InspectVdevsDialog, {
         data: {
           topology: state.topology,
           enclosures: state.enclosures,
@@ -215,7 +224,7 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('handles start over logic', async () => {
-      const startOver = await loader.getHarness(MatButtonHarness.with({ text: 'Start Over' }));
+      const startOver = await loader.getHarness(TnButtonHarness.with({ label: 'Start Over' }));
       await startOver.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -226,11 +235,11 @@ describe('ReviewWizardStepComponent', () => {
       expect(store.startOver).toHaveBeenCalled();
     });
 
-    it('shows Start Over button when updating an existing pool', () => {
+    it('shows Start Over button when updating an existing pool', async () => {
       spectator.setInput('isAddingVdevs', true);
       spectator.detectChanges();
 
-      const startOverButton = spectator.query('button[ixTest="start-over"]');
+      const startOverButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Start Over' }));
       expect(startOverButton).toBeTruthy();
     });
   });
@@ -241,6 +250,7 @@ describe('ReviewWizardStepComponent', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             state$,
+            forceTopology$,
             totalUsableCapacity$: of(2 * GiB),
           }),
           mockProvider(PoolManagerValidationService, {
@@ -273,8 +283,52 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('disables pool creation button once there are errors', async () => {
-      const createPool = await loader.getHarness(MatButtonHarness.with({ text: 'Create Pool' }));
-      expect(createPool.isDisabled).toBeTruthy();
+      const createPool = await loader.getHarness(TnButtonHarness.with({ label: 'Create Pool' }));
+      expect(await createPool.isDisabled()).toBe(true);
+    });
+  });
+
+  describe('force topology (Community Edition)', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    afterEach(() => {
+      forceTopology$.next(false);
+    });
+
+    it('shows the Force checkbox on non-Enterprise systems', async () => {
+      const checkbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Force' }));
+      expect(checkbox).not.toBeNull();
+    });
+
+    it('updates the store when the Force checkbox is toggled', async () => {
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force' }));
+      await checkbox.check();
+
+      expect(spectator.inject(PoolManagerStore).setForceTopology).toHaveBeenLastCalledWith(true);
+    });
+
+    it('unchecks the Force checkbox when the store resets forceTopology (e.g. Start Over)', async () => {
+      forceTopology$.next(true);
+      spectator.detectChanges();
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force' }));
+      expect(await checkbox.isChecked()).toBe(true);
+
+      forceTopology$.next(false);
+      spectator.detectChanges();
+      expect(await checkbox.isChecked()).toBe(false);
+    });
+
+    it('hides the Force checkbox on Enterprise systems', async () => {
+      const store$ = spectator.inject(MockStore);
+      store$.overrideSelector(selectIsEnterprise, true);
+      store$.refreshState();
+      spectator.detectChanges();
+
+      const checkbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Force' }));
+      expect(checkbox).toBeNull();
     });
   });
 });

@@ -1,16 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NetworkConfigurationComponent } from 'app/pages/system/network/components/network-configuration/network-configuration.component';
@@ -52,7 +52,7 @@ describe('NetworkConfigurationCardComponent', () => {
           nameservers: ['8.8.8.8', '8.8.4.4', '8.8.1.1'],
         } as NetworkSummary),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
@@ -70,9 +70,11 @@ describe('NetworkConfigurationCardComponent', () => {
     expect(api.call).toHaveBeenCalledWith('network.configuration.config');
   });
 
+  // White-box reads of tn-list-item: @truenas/ui-components ships no list harness yet
+  // (NAS-141021). Swap to a TnListHarness once it lands.
   it('shows nameservers assigned via settings', () => {
     const dnsServersSection = spectator.query(byText('DNS Servers'))!.parentElement!;
-    const dnsServerItems = dnsServersSection.querySelectorAll('mat-list-item');
+    const dnsServerItems = dnsServersSection.querySelectorAll('tn-list-item');
 
     expect(dnsServerItems).toHaveLength(3);
     expect(dnsServerItems[0]).toHaveText('Primary');
@@ -83,7 +85,7 @@ describe('NetworkConfigurationCardComponent', () => {
 
   it('separately shows nameservers obtained via DHCP and not settings', () => {
     const dnsServersSection = spectator.query(byText('DNS Servers'))!.parentElement!;
-    const dnsServerItems = dnsServersSection.querySelectorAll('mat-list-item');
+    const dnsServerItems = dnsServersSection.querySelectorAll('tn-list-item');
 
     expect(dnsServerItems).toHaveLength(3);
     expect(dnsServerItems[2]).toHaveText('Nameserver (DHCP)');
@@ -107,7 +109,7 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('shows config details', () => {
-    const detailsList = spectator.queryAll('.details-list mat-list-item');
+    const detailsList = spectator.queryAll('.details-list tn-list-item');
 
     const detailsItems = detailsList.reduce((items, element) => {
       const label = element.querySelector('.label')!.textContent!;
@@ -145,11 +147,14 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('opens settings form when Settings button is clicked', async () => {
-    const slideInRef = spectator.inject(SlideIn);
+    const formPanel = spectator.inject(FormSidePanelService);
 
-    const settingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
+    const settingsButton = await loader.getHarness(TnButtonHarness.with({ label: 'Settings' }));
     await settingsButton.click();
 
-    expect(slideInRef.open).toHaveBeenCalledWith(NetworkConfigurationComponent, { wide: true });
+    expect(formPanel.open).toHaveBeenCalledWith(NetworkConfigurationComponent, {
+      title: 'Edit Global Configuration',
+      wide: true,
+    });
   });
 });

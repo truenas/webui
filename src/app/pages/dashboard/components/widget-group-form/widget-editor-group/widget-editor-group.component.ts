@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 
@@ -20,7 +20,7 @@ import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-grou
   templateUrl: './widget-editor-group.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestDirective,
+    TnTestIdDirective,
     WidgetErrorComponent,
     NgComponentOutlet,
     TranslateModule,

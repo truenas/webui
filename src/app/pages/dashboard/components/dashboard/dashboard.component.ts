@@ -1,26 +1,24 @@
 import {
   CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray,
 } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, OnInit, computed, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, HostListener, OnInit, computed, signal, inject,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnEmptyComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AnimateOutDirective } from 'app/directives/animate-out/animate-out.directive';
 import { DisableFocusableElementsDirective } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { EmptyType } from 'app/enums/empty-type.enum';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
@@ -40,16 +38,15 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
+    TnEmptyComponent,
+    TnTooltipDirective,
     UiSearchDirective,
     NgxSkeletonLoaderModule,
     WidgetGroupControlsComponent,
     DisableFocusableElementsDirective,
     WidgetGroupComponent,
-    EmptyComponent,
     TranslateModule,
-    MatTooltip,
     CdkDrag,
     CdkDropList,
     AnimateOutDirective,
@@ -61,8 +58,8 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
 })
 export class DashboardComponent implements OnInit {
   private dashboardStore = inject(DashboardStore);
-  private slideIn = inject(SlideIn);
   private errorHandler = inject(ErrorHandlerService);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
@@ -82,13 +79,8 @@ export class DashboardComponent implements OnInit {
     return !isEqual(this.renderedGroups(), getDefaultWidgets(this.isHaLicensed()));
   });
 
-  emptyDashboardConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    icon: tnIconMarker('view-dashboard', 'mdi'),
-    title: this.translate.instant('Your dashboard is currently empty!'),
-    message: this.translate.instant('Start adding cards to personalize it. Click on the "Configure" button to enter edit mode.'),
-  };
+  /** Tracks whether the card-editor side panel is open so the page-level Escape handler yields to it. */
+  protected editorOpen = signal(false);
 
   ngOnInit(): void {
     performance.mark('Dashboard Start');
@@ -103,27 +95,44 @@ export class DashboardComponent implements OnInit {
 
   @HostListener('document:keydown.escape')
   protected onCancelConfigure(): void {
+    if (this.editorOpen()) {
+      // The card editor side panel owns Escape while it is open.
+      return;
+    }
     this.isEditing.set(false);
     this.renderedGroups.set(this.savedGroups() || []);
   }
 
   protected onAddGroup(): void {
-    this.slideIn
-      .open(WidgetGroupFormComponent, { wide: true })
-      .onSuccess((newGroup) => {
-        this.renderedGroups.update((groups) => [...groups, newGroup]);
-      }, this.destroyRef);
+    this.openEditor(undefined, null);
   }
 
   protected onEditGroup(i: number): void {
-    const editedGroup = this.renderedGroups()[i];
-    this.slideIn
-      .open(WidgetGroupFormComponent, { wide: true, data: editedGroup })
-      .onSuccess((updatedGroup) => {
-        this.renderedGroups.update((groups) => {
-          return groups.map((group, index) => (index === i ? updatedGroup : group));
-        });
-      }, this.destroyRef);
+    this.openEditor(this.renderedGroups()[i], i);
+  }
+
+  /**
+   * Opens the card editor in a shared side panel via {@link FormSidePanelService} (rather than a
+   * per-page `<tn-side-panel>`). On save the editor hands back the edited group, which we merge
+   * into the in-memory layout at `index` (or append when adding a new group).
+   */
+  private openEditor(group: WidgetGroup | undefined, index: number | null): void {
+    this.editorOpen.set(true);
+    const editor$ = this.formPanel.open<WidgetGroup>(WidgetGroupFormComponent, {
+      title: this.translate.instant('Card Editor'),
+      wide: true,
+      testId: 'widget-group-editor',
+      inputs: { initialGroup: group },
+    });
+    editor$.onSuccess((updatedGroup) => {
+      this.renderedGroups.update((groups) => {
+        if (index === null) {
+          return [...groups, updatedGroup];
+        }
+        return groups.map((existing, i) => (i === index ? updatedGroup : existing));
+      });
+    }, this.destroyRef);
+    editor$.onClose(() => this.editorOpen.set(false), this.destroyRef);
   }
 
   protected onMoveGroup(index: number, direction: 1 | -1): void {

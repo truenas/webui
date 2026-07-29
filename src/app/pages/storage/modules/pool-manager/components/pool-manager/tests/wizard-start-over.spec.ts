@@ -153,7 +153,10 @@ describe('PoolManagerComponent – start over functionality', () => {
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Enclosure Options');
     const enclosureOptions = await (await wizard.getActiveStep()).getHarness(IxRadioGroupHarness);
     await enclosureOptions.setValue('Limit Pool To A Single Enclosure');
-    await wizard.clickNext();
+    // "Limit to a single enclosure" makes the enclosure control required, so the
+    // step's own "Next" is disabled with no enclosures to pick. The non-linear
+    // stepper still allows jumping to the next step by clicking its header.
+    await wizard.goToStep('Data');
 
     // DATA step activated
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Data');

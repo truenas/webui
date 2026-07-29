@@ -1,16 +1,15 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnDialogHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ManageUnusedDiskDialog } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
 import {
@@ -30,7 +29,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
     providers: [
       mockAuth(),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           pools: [
             { id: 1, name: 'DEV' },
@@ -43,7 +42,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
           ] as DetailsDisk[],
         } as ManageUnusedDiskDialogResource,
       },
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -58,13 +57,14 @@ describe('ManageUnusedDiskDialogComponent', () => {
     const radioButtonGrp = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Add Disks To:' }));
     await radioButtonGrp.setValue('Existing Pool');
 
-    const poolSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Pool' }));
-    const options = await poolSelect.getOptionLabels();
+    const poolSelect = await loader.getHarness(TnSelectHarness);
+    const options = await poolSelect.getOptions();
     expect(options).toEqual(['DEV', 'TEST']);
   });
 
-  it('shows a title', () => {
-    expect(spectator.query('.mat-mdc-dialog-title')).toHaveText('Add To Pool');
+  it('shows a title', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('Add To Pool');
   });
 
   it('shows the list of Unassigned Disks', () => {
@@ -77,10 +77,10 @@ describe('ManageUnusedDiskDialogComponent', () => {
       'Add Disks To:': 'New Pool',
     });
 
-    const addDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disks' }));
+    const addDisksButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Disks' }));
     await addDisksButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 'create']);
   });
 
@@ -88,14 +88,16 @@ describe('ManageUnusedDiskDialogComponent', () => {
     await form.fillForm(
       {
         'Add Disks To:': 'Existing Pool',
-        'Existing Pool': 'TEST',
       },
     );
 
-    const addDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disks' }));
+    const poolSelect = await loader.getHarness(TnSelectHarness);
+    await poolSelect.selectOption(/TEST/);
+
+    const addDisksButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Disks' }));
     await addDisksButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 2, 'add-vdevs']);
   });
 });

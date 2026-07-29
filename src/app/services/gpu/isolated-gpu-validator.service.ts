@@ -38,19 +38,20 @@ export class IsolatedGpuValidatorService {
   private makeErrorMessage(): Observable<ValidationErrors> {
     return this.gpuService.getIsolatedGpus().pipe(
       map((isolatedGpus) => {
-        let errorMessage = this.translate.instant('At least 1 GPU is required by the host for its functions.');
+        // Plain text only — the message is rendered as text (tn-form-field subscript), not HTML.
+        const messageParts = [
+          this.translate.instant('At least 1 GPU is required by the host for its functions.'),
+        ];
 
         if (isolatedGpus.length) {
-          const gpuListItems = isolatedGpus.map((gpu, index) => `${index + 1}. ${gpu.description}`);
-          const listItems = '<li>' + gpuListItems.join('</li><li>') + '</li>';
-          errorMessage += this.translate.instant(
-            '<p>Currently following GPU(s) have been isolated:<ol>{gpus}</ol></p>',
-            { gpus: listItems },
-          );
+          messageParts.push(this.translate.instant(
+            'Currently isolated GPU(s): {gpus}.',
+            { gpus: isolatedGpus.map((gpu) => gpu.description).join(', ') },
+          ));
         }
 
-        errorMessage += `<p>${this.translate.instant('With your selection, no GPU is available for the host to consume.')}</p>`;
-        return this.validatorsService.makeErrorMessage('gpus', errorMessage);
+        messageParts.push(this.translate.instant('With your selection, no GPU is available for the host to consume.'));
+        return this.validatorsService.makeErrorMessage('gpus', messageParts.join(' '));
       }),
     );
   }

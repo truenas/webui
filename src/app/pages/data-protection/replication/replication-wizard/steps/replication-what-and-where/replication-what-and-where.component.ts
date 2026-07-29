@@ -1,13 +1,18 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, output, inject,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperNext } from '@angular/material/stepper';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnRadioComponent, TnSelectComponent, TnStepperNextDirective,
+} from '@truenas/ui-components';
 import { format } from 'date-fns';
 import {
-  debounceTime, map, merge, Observable, of, switchMap,
+  debounceTime, map, merge, Observable, of, startWith, switchMap,
 } from 'rxjs';
 import { emptyRootNode, datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -27,23 +32,20 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { namingSchemaValidator } from 'app/modules/forms/ix-forms/validators/naming-schema-validation/naming-schema-validation';
 import { regexValidator } from 'app/modules/forms/ix-forms/validators/regex-validation/regex-validation';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -59,18 +61,20 @@ import { ReplicationService } from 'app/services/replication.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService, KeychainCredentialService],
   imports: [
+    TnFormSectionComponent,
+    AsyncPipe,
     ReactiveFormsModule,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
+    TnRadioComponent,
+    TnInputComponent,
     SshCredentialsSelectComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
-    IxCheckboxComponent,
-    IxRadioGroupComponent,
-    IxInputComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperNext,
-    TestDirective,
+    TnButtonComponent,
+    TnStepperNextDirective,
     TranslateModule,
   ],
 })
@@ -87,7 +91,10 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   private cdr = inject(ChangeDetectorRef);
   private errorParser = inject(ErrorParserService);
   private errorHandler = inject(ErrorHandlerService);
-  slideInRef = inject<SlideInRef<ReplicationTask, ReplicationTask>>(SlideInRef);
+  // Optional: the wizard is hosted in the `<tn-side-panel>` form panel (no SlideInRef); "Advanced
+  // Options" swaps via {@link formPanel} there.
+  slideInRef = inject<SlideInRef<ReplicationTask, ReplicationTask>>(SlideInRef, { optional: true });
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   readonly customRetentionVisibleChange = output<boolean>();
@@ -101,6 +108,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   protected sourceDatasetsRootNodes: ExplorerNodeData[] = [];
 
   readonly helptext = helptextReplicationWizard;
+  protected readonly InputType = InputType;
   readonly mntPath = mntPath;
   readonly defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
   sshCredentials: KeychainSshCredentials[] = [];
@@ -142,6 +150,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       ),
     ],
   });
+
+  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  readonly completed = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
+    { initialValue: this.form.valid },
+  );
 
   existReplicationOptions$: Observable<Option[]>;
 
@@ -194,7 +208,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
+    this.slideInRef?.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
   }
@@ -426,7 +440,11 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.slideInRef.swap?.(ReplicationFormComponent, { wide: true });
+    // Panel host: swap the wizard out for the advanced form in place.
+    this.formPanel.swap(ReplicationFormComponent as unknown as Type<SidePanelForm>, {
+      title: this.translate.instant('Add Replication Task'),
+      wide: true,
+    });
   }
 
   getSnapshots(): void {

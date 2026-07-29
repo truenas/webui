@@ -1,17 +1,14 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import {
-  MatCard, MatCardTitle, MatCardContent, MatCardActions,
-} from '@angular/material/card';
-import { MatProgressBar } from '@angular/material/progress-bar';
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, computed,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
-import { forkJoin, Observable } from 'rxjs';
+import {
+  TnCardAction, TnCardComponent, TnCardHeaderDirective, TnProgressBarComponent, tnIconMarker,
+} from '@truenas/ui-components';
+import { forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -19,7 +16,6 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -30,17 +26,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     DualListBoxComponent,
-    MatCard,
-    MatProgressBar,
-    MatCardTitle,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnProgressBarComponent,
     ReadOnlyComponent,
-    MatCardContent,
-    MatCardActions,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class GroupMembersComponent implements OnInit {
@@ -61,9 +51,28 @@ export class GroupMembersComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly group = signal<Group | null>(null);
 
-  get hasRequiredRoles(): Observable<boolean> {
-    return this.authService.hasRole(this.requiredRoles);
-  }
+  protected readonly hasAccountWrite = toSignal(
+    this.authService.hasRole(this.requiredRoles),
+    { initialValue: false },
+  );
+
+  protected readonly primaryAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasAccountWrite()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Save'),
+      handler: () => this.onSubmit(),
+      disabled: this.isLoading(),
+      testId: 'save',
+    };
+  });
+
+  protected readonly secondaryAction = computed<TnCardAction>(() => ({
+    label: this.translate.instant('Cancel'),
+    handler: () => this.onCancel(),
+    testId: 'cancel',
+  }));
 
   ngOnInit(): void {
     this.isLoading.set(true);
@@ -104,11 +113,11 @@ export class GroupMembersComponent implements OnInit {
     });
   }
 
-  onCancel(): void {
+  protected onCancel(): void {
     this.router.navigate(['/', 'credentials', 'groups']);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     const userIds = this.selectedMembers.map((user) => user.id);

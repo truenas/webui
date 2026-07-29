@@ -6,12 +6,16 @@ import {
   Validators,
 } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  InputType,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+} from '@truenas/ui-components';
 import { IdmapBackend } from 'app/enums/directory-services.enum';
 import { helptextIpa } from 'app/helptext/directory-service/ipa';
 import { IpaConfig, IpaSmbDomain } from 'app/interfaces/ipa-config.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { DirectoryServiceValidationService } from 'app/pages/directory-service/components/directory-services-form/services/directory-service-validation.service';
 import { hasDeepNonNullValue } from 'app/pages/directory-service/components/directory-services-form/utils';
 
@@ -21,10 +25,11 @@ import { hasDeepNonNullValue } from 'app/pages/directory-service/components/dire
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
     TranslateModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
   ],
   standalone: true,
 })
@@ -34,6 +39,7 @@ export class IpaConfigComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly helptext = helptextIpa;
+  protected readonly InputType = InputType;
 
   private readonly SMB_RANGE_MIN = 1000;
   private readonly SMB_RANGE_MAX = 2147000000;

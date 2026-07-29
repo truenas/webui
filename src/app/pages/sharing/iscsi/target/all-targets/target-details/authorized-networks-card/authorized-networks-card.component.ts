@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 
 @Component({
@@ -11,11 +9,8 @@ import { IscsiTarget } from 'app/interfaces/iscsi.interface';
   templateUrl: './authorized-networks-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
     TranslateModule,
-    MatCardContent,
   ],
 })
 export class AuthorizedNetworksCardComponent {

@@ -1,109 +1,144 @@
 @if (advancedMode()) {
-  <ix-fieldset [title]="'Other Options' | translate" [formGroup]="form">
-    <ix-input
-      formControlName="comments"
-      [label]="'Comments' | translate"
-    ></ix-input>
+  <tn-form-section [heading]="'Other Options' | translate" [formGroup]="form">
+    <tn-form-field [label]="'Comments' | translate">
+      <tn-input formControlName="comments"></tn-input>
+    </tn-form-field>
 
-    <ix-select
-      formControlName="sync"
-      [required]="true"
-      [options]="syncOptions$"
+    <tn-form-field
       [label]="'Sync' | translate"
       [tooltip]="helptext.syncTooltip | translate"
-    ></ix-select>
-
-    <ix-select
-      formControlName="compression"
       [required]="true"
-      [options]="compressionOptions$"
+    >
+      <tn-select
+        formControlName="sync"
+        [options]="(syncOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+
+    <tn-form-field
       [label]="'Compression Level' | translate"
       [tooltip]="helptext.compressionTooltip | translate"
-    ></ix-select>
-
-    <ix-select
-      formControlName="atime"
       [required]="true"
-      [options]="atimeOptions$"
+    >
+      <tn-select
+        formControlName="compression"
+        [options]="(compressionOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+
+    <tn-form-field
       [label]="'Enable Atime' | translate"
       [tooltip]="helptext.atimeTooltip | translate"
-    ></ix-select>
+      [required]="true"
+    >
+      <tn-select
+        formControlName="atime"
+        [options]="(atimeOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-    @if (hasDeduplication) {
-      <ix-select
-        formControlName="deduplication"
+    @if (hasDeduplication()) {
+      <tn-form-field
         [label]="'ZFS Deduplication' | translate"
-        [required]="true"
-        [options]="deduplicationOptions$"
         [tooltip]="helptext.deduplicationTooltip | translate"
-      ></ix-select>
+        [required]="true"
+      >
+        <tn-select
+          formControlName="deduplication"
+          [options]="(deduplicationOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
     }
 
-    <ix-select
-      formControlName="casesensitivity"
+    <tn-form-field
       [label]="'Case Sensitivity' | translate"
-      [required]="true"
-      [options]="caseSensitivityOptions$"
       [tooltip]="helptext.caseSensitivityTooltip | translate"
-    ></ix-select>
-
-    <ix-select
-      formControlName="checksum"
       [required]="true"
-      [options]="checksumOptions$"
+    >
+      <tn-select
+        formControlName="casesensitivity"
+        [options]="(caseSensitivityOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+
+    <tn-form-field
       [label]="'Checksum' | translate"
-    ></ix-select>
+      [required]="true"
+    >
+      <tn-select
+        formControlName="checksum"
+        [options]="(checksumOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
     @if (hasChecksumWarning) {
       <ix-warning [message]="helptext.deduplicationChecksumInlineWarning"></ix-warning>
     }
 
-    <ix-select
-      formControlName="readonly"
+    <tn-form-field
       [label]="'Read-only' | translate"
       [required]="true"
-      [options]="readonlyOptions$"
-    ></ix-select>
+    >
+      <tn-select
+        formControlName="readonly"
+        [options]="(readonlyOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-    <ix-select
-      formControlName="exec"
+    <tn-form-field
       [label]="'Exec' | translate"
-      [required]="true"
-      [options]="execOptions$"
       [tooltip]="helptext.execTooltip | translate"
-    ></ix-select>
+      [required]="true"
+    >
+      <tn-select
+        formControlName="exec"
+        [options]="(execOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-    <ix-select
-      formControlName="snapdir"
+    <tn-form-field
       [label]="'Snapshot Directory' | translate"
-      [required]="true"
       [tooltip]="helptext.snapdirTooltip | translate"
-      [options]="snapdirOptions$"
-    ></ix-select>
+      [required]="true"
+    >
+      <tn-select
+        formControlName="snapdir"
+        [options]="(snapdirOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-    <ix-select
-      formControlName="snapdev"
+    <tn-form-field
       [label]="'Snapdev' | translate"
-      [required]="true"
       [tooltip]="helptext.snapdevTooltip | translate"
-      [options]="snapdevOptions$"
-    ></ix-select>
+      [required]="true"
+    >
+      <tn-select
+        formControlName="snapdev"
+        [options]="(snapdevOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-    <ix-select
-      formControlName="copies"
+    <tn-form-field
       [label]="'Copies' | translate"
-      [required]="true"
       [tooltip]="helptext.copiesTooltip | translate"
-      [options]="copiesOptions$"
-    ></ix-select>
-
-    <ix-select
-      formControlName="recordsize"
-      [label]="'Record Size' | translate"
       [required]="true"
-      [options]="recordsizeOptions$"
+    >
+      <tn-select
+        formControlName="copies"
+        [options]="(copiesOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Record Size' | translate"
       [tooltip]="helptext.recordsizeTooltip | translate"
-    ></ix-select>
+      [required]="true"
+    >
+      <tn-select
+        formControlName="recordsize"
+        [options]="(recordsizeOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
     @if (hasRecordsizeWarning) {
       <div class="recordsize-warning">
@@ -111,40 +146,51 @@
       </div>
     }
 
-    <ix-select
-      formControlName="acltype"
+    <tn-form-field
       [label]="'ACL Type' | translate"
       [required]="true"
-      [options]="aclTypeOptions$"
-    ></ix-select>
+    >
+      <tn-select
+        formControlName="acltype"
+        [options]="(aclTypeOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-    <ix-select
-      formControlName="aclmode"
+    <tn-form-field
       [label]="'ACL Mode' | translate"
-      [required]="true"
       [tooltip]="helptext.aclmodeTooltip | translate"
-      [options]="aclModeOptions$"
-    ></ix-select>
+      [required]="true"
+    >
+      <tn-select
+        formControlName="aclmode"
+        [options]="(aclModeOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
     @if (!tierEnabled()) {
-      <ix-select
-        formControlName="special_small_block_size"
+      <tn-form-field
         [label]="'Use Metadata (Special) VDEVs' | translate"
         [tooltip]="helptext.useSpecialVdevsTooltip | translate"
-        [options]="specialSmallBlockSizeOptions$"
         [required]="true"
-      ></ix-select>
+      >
+        <tn-select
+          formControlName="special_small_block_size"
+          [options]="(specialSmallBlockSizeOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
 
       @if (form.value.special_small_block_size === OnOff.On) {
-        <ix-input
-          formControlName="special_small_block_size_custom"
+        <tn-form-field
           [label]="'Threshold' | translate"
           [tooltip]="helptext.specialSmallBlocksCustomTooltip | translate"
           [required]="true"
-          [parse]="formatter.memorySizeParsing"
-          [format]="formatter.memorySizeFormatting"
-        ></ix-input>
+        >
+          <tn-input
+            formControlName="special_small_block_size_custom"
+            [inputType]="InputType.Size"
+          ></tn-input>
+        </tn-form-field>
       }
     }
-  </ix-fieldset>
+  </tn-form-section>
 }

@@ -11,7 +11,7 @@
 
   @if (isLoading()) {
     <div>
-      <mat-spinner [diameter]="40"></mat-spinner>
+      <tn-spinner [diameter]="40"></tn-spinner>
     </div>
   }
 
@@ -27,16 +27,14 @@
       <ng-content></ng-content>
 
       @if (conf().button && !conf().compact) {
-        <button
+        <tn-button
           *ixRequiresRoles="requiredRoles()"
-          mat-button
           class="empty-action"
           color="primary"
-          [ixTest]="conf().button?.label"
-          (click)="doAction()"
-        >
-          {{ conf().button.label | translate }}
-        </button>
+          [testId]="conf().button?.label"
+          [label]="conf().button.label | translate"
+          (onClick)="doAction()"
+        ></tn-button>
       }
     </div>
   }

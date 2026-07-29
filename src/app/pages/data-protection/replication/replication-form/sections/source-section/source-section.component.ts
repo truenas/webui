@@ -1,6 +1,11 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnChipInputComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnRadioComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
@@ -9,15 +14,9 @@ import { SnapshotNamingOption, snapshotNamingOptionNames } from 'app/enums/snaps
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -36,16 +35,19 @@ import { TaskService } from 'app/services/task.service';
     PropertiesOverrideValidatorService,
   ],
   imports: [
-    IxFieldsetComponent,
+    AsyncPipe,
     ReactiveFormsModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
+    TnChipInputComponent,
+    TnSelectComponent,
+    TnInputComponent,
+    TnRadioComponent,
+    // ix-explorer / ix-scheduler have no tn-* equivalent yet.
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
-    IxCheckboxComponent,
-    IxChipsComponent,
-    IxSelectComponent,
     SchedulerComponent,
-    IxRadioGroupComponent,
-    IxInputComponent,
     TranslateModule,
   ],
 })

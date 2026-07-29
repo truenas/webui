@@ -1,22 +1,19 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VmDevice, VmDeviceDelete, VmDiskDevice } from 'app/interfaces/vm-device.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -28,23 +25,21 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
-    MatDialogContent,
-    IxCheckboxComponent,
-    IxInputComponent,
-    MatDialogActions,
-    MatButton,
-    TestDirective,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
 })
 export class DeviceDeleteModalComponent implements OnInit {
   private loader = inject(LoaderService);
-  device = inject<VmDevice>(MAT_DIALOG_DATA);
+  device = inject<VmDevice>(DIALOG_DATA);
   private fb = inject(FormBuilder);
-  private dialogRef = inject<MatDialogRef<DeviceDeleteModalComponent>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<unknown, DeviceDeleteModalComponent>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
@@ -92,7 +87,7 @@ export class DeviceDeleteModalComponent implements OnInit {
 
     this.form.updateValueAndValidity();
 
-    this.zvolConfirmLabelText = this.translate.instant('Enter <strong>{zvolName}</strong> below to confirm.', { zvolName });
+    this.zvolConfirmLabelText = this.translate.instant('Enter **{zvolName}** below to confirm.', { zvolName });
   }
 
   ngOnInit(): void {

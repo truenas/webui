@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnDialog, TnMenuHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -20,8 +19,14 @@ import {
 describe('ManageConfigurationMenuComponent', () => {
   let spectator: Spectator<ManageConfigurationMenuComponent>;
   let loader: HarnessLoader;
-  let menu: MatMenuHarness;
+  let rootLoader: HarnessLoader;
   const isSysAdmin$ = new BehaviorSubject(true);
+
+  async function openMenu(): Promise<TnMenuHarness> {
+    const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Manage Configuration' }));
+    await trigger.click();
+    return rootLoader.getHarness(TnMenuHarness);
+  }
   const createComponent = createComponentFactory({
     component: ManageConfigurationMenuComponent,
     providers: [
@@ -36,36 +41,36 @@ describe('ManageConfigurationMenuComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    menu = await loader.getHarness(MatMenuHarness);
+    rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
   });
 
   it('opens SaveConfigDialogComponent when Download File is pressed', async () => {
-    const matDialog = spectator.inject(MatDialog);
-    jest.spyOn(matDialog, 'open').mockImplementation();
+    const tnDialog = spectator.inject(TnDialog);
+    jest.spyOn(tnDialog, 'open').mockImplementation();
 
-    await menu.open();
-    await menu.clickItem({ text: 'Download File' });
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Download File' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(SaveConfigDialog);
+    expect(tnDialog.open).toHaveBeenCalledWith(SaveConfigDialog);
   });
 
   it('opens UploadConfigDialogComponent when Upload File is pressed', async () => {
-    const matDialog = spectator.inject(MatDialog);
-    jest.spyOn(matDialog, 'open').mockImplementation();
+    const tnDialog = spectator.inject(TnDialog);
+    jest.spyOn(tnDialog, 'open').mockImplementation();
 
-    await menu.open();
-    await menu.clickItem({ text: 'Upload File' });
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Upload File' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(UploadConfigDialog);
+    expect(tnDialog.open).toHaveBeenCalledWith(UploadConfigDialog);
   });
 
   describe('if logged user is a system administrator', () => {
     it('redirects to reset config page with confirmation when Reset to Defaults is pressed', async () => {
-      await menu.open();
-      await menu.clickItem({ text: 'Reset to Defaults' });
+      const menu = await openMenu();
+      await menu.clickItem({ label: 'Reset to Defaults' });
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/config-reset'], { skipLocationChange: true });
@@ -75,9 +80,8 @@ describe('ManageConfigurationMenuComponent', () => {
   it('does not show Reset to Defaults menu item if logged in user is not a system administrator', async () => {
     isSysAdmin$.next(false);
 
-    await menu.open();
-    const resetToDefaults = await menu.getItems({ text: 'Reset to Defaults' });
+    const menu = await openMenu();
 
-    expect(resetToDefaults).toHaveLength(0);
+    expect(await menu.getItemLabels()).not.toContain('Reset to Defaults');
   });
 });

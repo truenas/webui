@@ -1,16 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnCardAction, TnCardComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container, ContainerDevice, ContainerFilesystemDevice } from 'app/interfaces/container.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   ContainerFilesystemDeviceFormComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-filesystem-devices/container-filesystem-device-form/container-filesystem-device-form.component';
@@ -25,28 +22,39 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   styleUrls: ['./container-filesystem-devices.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
     NgxSkeletonLoaderModule,
-    TestDirective,
     TranslateModule,
     DeviceActionsMenuComponent,
-    RequiresRolesDirective,
   ],
 })
 export class ContainerFilesystemDevicesComponent {
   protected readonly requiredRoles = [Role.ContainerDeviceWrite];
 
-  private destroyRef = inject(DestroyRef);
-  private slideIn = inject(SlideIn);
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
   private translate = inject(TranslateService);
+  private authService = inject(AuthService);
+  private formPanel = inject(FormSidePanelService);
+  private destroyRef = inject(DestroyRef);
 
   readonly container = input.required<Container>();
+
+  private hasDeviceWriteRole = toSignal(
+    this.authService.hasRole(this.requiredRoles),
+    { initialValue: false },
+  );
+
+  protected readonly addAction = computed<TnCardAction | undefined>(() => {
+    if (!this.hasDeviceWriteRole()) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Add'),
+      testId: 'add-disk',
+      handler: () => this.addDisk(),
+    };
+  });
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
   protected readonly isContainerRunning = computed(() => {
@@ -61,19 +69,26 @@ export class ContainerFilesystemDevicesComponent {
   });
 
   protected addDisk(): void {
-    this.openDiskForm();
+    this.openForm(undefined);
   }
 
   protected editDisk(disk: ContainerFilesystemDevice): void {
-    this.openDiskForm(disk);
+    this.openForm(disk);
   }
 
   protected getDeviceDescription(device: ContainerDevice): string {
     return getDeviceDescription(this.translate, device);
   }
 
-  private openDiskForm(disk?: ContainerFilesystemDevice): void {
-    this.slideIn.open(ContainerFilesystemDeviceFormComponent, { data: { disk, container: this.container() } })
-      .onSuccess(() => this.devicesStore.reload(), this.destroyRef);
+  private openForm(disk: ContainerFilesystemDevice | undefined): void {
+    this.formPanel.open(ContainerFilesystemDeviceFormComponent, {
+      title: disk
+        ? this.translate.instant('Edit Disk')
+        : this.translate.instant('Add Disk'),
+      inputs: {
+        disk,
+        container: this.container(),
+      },
+    }).onSuccess(() => this.devicesStore.reload(), this.destroyRef);
   }
 }

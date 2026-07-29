@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { InferInputSignals } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -26,9 +25,9 @@ describe('ZfsEncryptionCardComponent', () => {
   const createComponent = createComponentFactory({
     component: ZfsEncryptionCardComponent,
     providers: [
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(DatasetTreeStore, {
@@ -85,11 +84,11 @@ describe('ZfsEncryptionCardComponent', () => {
       'Type:': ' Key ',
     });
 
-    const buttons = await loader.getAllHarnesses(MatButtonHarness);
+    const buttons = await loader.getAllHarnesses(TnButtonHarness);
     expect(buttons).toHaveLength(3);
-    expect(await buttons[0].getText()).toBe('Edit');
-    expect(await buttons[1].getText()).toBe('Export Key');
-    expect(await buttons[2].getText()).toBe('Lock');
+    expect(await buttons[0].getLabel()).toBe('Edit');
+    expect(await buttons[1].getLabel()).toBe('Export Key');
+    expect(await buttons[2].getLabel()).toBe('Lock');
     expect(await buttons[2].isDisabled()).toBeTruthy();
   });
 
@@ -103,10 +102,10 @@ describe('ZfsEncryptionCardComponent', () => {
       'Type:': ' Passphrase ',
     });
 
-    const buttons = await loader.getAllHarnesses(MatButtonHarness);
+    const buttons = await loader.getAllHarnesses(TnButtonHarness);
     expect(buttons).toHaveLength(2);
-    expect(await buttons[0].getText()).toBe('Edit');
-    expect(await buttons[1].getText()).toBe('Lock');
+    expect(await buttons[0].getLabel()).toBe('Edit');
+    expect(await buttons[1].getLabel()).toBe('Lock');
   });
 
   it('shows correct card state for password encrypted locked root', async () => {
@@ -124,9 +123,9 @@ describe('ZfsEncryptionCardComponent', () => {
       'Type:': ' Passphrase ',
     });
 
-    const buttons = await loader.getAllHarnesses(MatButtonHarness);
+    const buttons = await loader.getAllHarnesses(TnButtonHarness);
     expect(buttons).toHaveLength(1);
-    expect(await buttons[0].getText()).toBe('Unlock');
+    expect(await buttons[0].getLabel()).toBe('Unlock');
   });
 
   it('shows correct card state for dataset locked via parent', async () => {
@@ -145,7 +144,7 @@ describe('ZfsEncryptionCardComponent', () => {
       'Type:': ' Passphrase ',
     });
 
-    const buttons = await loader.getAllHarnesses(MatButtonHarness);
+    const buttons = await loader.getAllHarnesses(TnButtonHarness);
     expect(buttons).toHaveLength(0);
 
     const goToLink = spectator.query('a');
@@ -162,7 +161,7 @@ describe('ZfsEncryptionCardComponent', () => {
       parentDataset: lockedParent,
     });
 
-    const buttons = await loader.getAllHarnesses(MatButtonHarness);
+    const buttons = await loader.getAllHarnesses(TnButtonHarness);
     expect(buttons).toHaveLength(0);
   });
 
@@ -174,10 +173,9 @@ describe('ZfsEncryptionCardComponent', () => {
       },
     });
 
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
-    const unlockHref = await (await unlockButton.host()).getAttribute('href');
+    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
 
-    expect(unlockHref).toBe('/datasets/pool%2Fdataset/unlock');
+    expect(await unlockButton.getHref()).toBe('/datasets/pool%2Fdataset/unlock');
   });
 
   it('opens encryption options dialog when Edit button is pressed and reloads dataset tree when it is closed', async () => {
@@ -186,10 +184,10 @@ describe('ZfsEncryptionCardComponent', () => {
       parentDataset: lockedParent,
     });
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(EncryptionOptionsDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(EncryptionOptionsDialog, {
       data: {
         dataset: keyEncryptedRoot,
         parent: lockedParent,
@@ -203,10 +201,10 @@ describe('ZfsEncryptionCardComponent', () => {
       dataset: passwordEncryptedRoot,
     });
 
-    const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock' }));
+    const lockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Lock' }));
     await lockButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(LockDatasetDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(LockDatasetDialog, {
       data: passwordEncryptedRoot,
     });
     expect(spectator.inject(DatasetTreeStore).datasetUpdated).toHaveBeenCalled();
@@ -217,10 +215,10 @@ describe('ZfsEncryptionCardComponent', () => {
       dataset: keyEncryptedRoot,
     });
 
-    const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export Key' }));
+    const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export Key' }));
     await exportButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ExportDatasetKeyDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ExportDatasetKeyDialog, {
       data: keyEncryptedRoot,
     });
   });

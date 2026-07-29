@@ -4,10 +4,10 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import {
   FormControl, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatTooltip } from '@angular/material/tooltip';
 import {
   createHostFactory, SpectatorHost,
 } from '@ngneat/spectator/jest';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { Observable, of, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
@@ -105,11 +105,11 @@ describe('IxSelectComponent', () => {
       const opt$ = options$.pipe(delay(100));
       spectator.setHostInput({ options: opt$ });
 
-      expect(spectator.query('mat-progress-spinner')).toBeVisible();
+      expect(spectator.query('tn-spinner')).toBeVisible();
       tick(100);
       spectator.detectChanges();
 
-      expect(spectator.query('mat-progress-spinner')).not.toBeVisible();
+      expect(spectator.query('tn-spinner')).not.toBeVisible();
     }));
 
     it('shows a list of options', async () => {
@@ -199,7 +199,7 @@ describe('IxSelectComponent', () => {
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
 
-      const tooltips = spectator.queryAll(MatTooltip);
+      const tooltips = spectator.queryAll(TnTooltipDirective);
       expect(tooltips).toHaveLength(1);
       expect(tooltips[0].disabled).toBe(false);
 

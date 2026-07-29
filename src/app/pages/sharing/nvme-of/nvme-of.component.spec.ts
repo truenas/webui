@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -10,7 +10,7 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import {
   NvmeOfHost, NvmeOfPort, NvmeOfSubsystemDetails,
 } from 'app/interfaces/nvme-of.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   NvmeOfConfigurationComponent,
@@ -46,9 +46,9 @@ describe('NvmeOfComponent', () => {
       mockApi([
         mockCall('tn_connect.config'),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => {
-          return SlideInResult.success({ id: 1 });
+          return SlideInResult.success({ name: 'test-subsystem' });
         }),
       }),
       mockAuth(),
@@ -82,10 +82,13 @@ describe('NvmeOfComponent', () => {
   });
 
   it('opens Global Configuration form when corresponding button is pressed', async () => {
-    const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Configuration' }));
+    const configurationButton = await loader.getHarness(TnButtonHarness.with({ label: 'Global Configuration' }));
     await configurationButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvmeOfConfigurationComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      NvmeOfConfigurationComponent,
+      { title: 'NVMe-oF Global Configuration' },
+    );
   });
 
   it('shows a table with subsystems', () => {
@@ -94,7 +97,7 @@ describe('NvmeOfComponent', () => {
   });
 
   it('initializes store when added', async () => {
-    const addSubsystemButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Subsystem' }));
+    const addSubsystemButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Subsystem' }));
     expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalledTimes(1);
     await addSubsystemButton.click();
     expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalledTimes(2);

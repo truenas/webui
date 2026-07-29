@@ -1,11 +1,17 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
-import { combineLatest, of } from 'rxjs';
+import {
+  TnAutocompleteComponent, TnButtonComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import {
+  BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, of, shareReplay, switchMap, tap,
+} from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -18,24 +24,19 @@ import { helptextServiceSmb } from 'app/helptext/services/components/service-smb
 import { SmbConfigUpdate, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { UserService } from 'app/services/user.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -49,21 +50,21 @@ interface BindIp {
   styleUrls: ['./service-smb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ModalHeaderComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxChipsComponent,
-    IxCheckboxComponent,
-    IxSelectComponent,
-    IxUserComboboxComponent,
-    IxGroupComboboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
+    TnAutocompleteComponent,
+    TnChipInputComponent,
     IxListComponent,
     IxListItemComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     TnButtonComponent,
-    TestDirective,
     TranslateModule,
   ],
 })
@@ -76,13 +77,15 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
   private validatorsService = inject(IxValidatorsService);
   private snackbar = inject(SnackbarService);
   private truenasConnectService = inject(TruenasConnectService);
+  private userService = inject(UserService);
+  private existenceValidation = inject(UserGroupExistenceValidationService);
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
 
   readonly isFormLoading = signal(false);
   protected hasIncompatibleShares = signal(false);
   protected isSmb1Enabled = signal(false);
-  protected readonly minimumProtocolOptions$ = of(mapToOptions(smbMinProtocolLabels, this.translate));
+  protected readonly minimumProtocolOptions = mapToOptions(smbMinProtocolLabels, this.translate);
 
   protected isEnterprise = toSignal(this.store$.select(selectIsEnterprise), { initialValue: false });
   protected isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed), { initialValue: false });
@@ -209,10 +212,60 @@ export class ServiceSmbComponent extends SidePanelForm implements OnInit {
     }),
   );
 
-  readonly encryptionOptions$ = of(mapToOptions(smbEncryptionLabels, this.translate));
+  readonly encryptionOptions = mapToOptions(smbEncryptionLabels, this.translate);
+
+  // Server-searched option streams for the Guest Account / Administrators Group
+  // autocompletes. switchMap cancels in-flight queries on new input; catchError
+  // keeps one failed DS query from killing the stream for the rest of the form's
+  // life — the dropdown shows "Options cannot be loaded" via [noResultsText],
+  // the same in-panel signal the old ix-combobox rendered.
+  protected readonly usersFetchFailed = signal(false);
+  protected readonly usersLoading = signal(false);
+  protected readonly userSearch$ = new BehaviorSubject('');
+  protected readonly userOptions$ = this.userSearch$.pipe(
+    debounceTime(defaultDebounceTimeMs),
+    distinctUntilChanged(),
+    tap(() => this.usersLoading.set(true)),
+    switchMap((query) => this.userService.userQueryDsCache(query).pipe(
+      tap(() => this.usersFetchFailed.set(false)),
+      catchError((error: unknown) => {
+        console.error('User autocomplete fetch failed:', error);
+        this.usersFetchFailed.set(true);
+        return of([]);
+      }),
+    )),
+    map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
+    tap(() => this.usersLoading.set(false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  protected readonly groupsFetchFailed = signal(false);
+  protected readonly groupsLoading = signal(false);
+  protected readonly groupSearch$ = new BehaviorSubject('');
+  protected readonly groupOptions$ = this.groupSearch$.pipe(
+    debounceTime(defaultDebounceTimeMs),
+    distinctUntilChanged(),
+    tap(() => this.groupsLoading.set(true)),
+    switchMap((query) => this.userService.groupQueryDsCache(query).pipe(
+      tap(() => this.groupsFetchFailed.set(false)),
+      catchError((error: unknown) => {
+        console.error('Group autocomplete fetch failed:', error);
+        this.groupsFetchFailed.set(true);
+        return of([]);
+      }),
+    )),
+    map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
+    tap(() => this.groupsLoading.set(false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   ngOnInit(): void {
     this.isFormLoading.set(true);
+
+    // Parity with the former ix-user/group-combobox controls: custom-typed values
+    // must exist on the system (empty values pass).
+    this.form.controls.guest.addAsyncValidators(this.existenceValidation.validateUserExists());
+    this.form.controls.admin_group.addAsyncValidators(this.existenceValidation.validateGroupExists());
 
     this.form.controls.minimum_protocol.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))

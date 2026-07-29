@@ -1,10 +1,11 @@
-.model-row {
-  display: flex;
+.row-with-action {
   align-items: center;
+  display: flex;
+  width: 100%;
+}
 
-  .production-toggle {
-    margin-left: auto;
-  }
+.production-toggle {
+  margin-left: auto;
 }
 
 .proactive-status {
@@ -16,12 +17,8 @@
   }
 }
 
-.fingerprint-row {
+.fingerprint-actions {
   align-items: center;
-
-  .fingerprint-actions {
-    align-items: center;
-    display: flex;
-    gap: 4px;
-  }
+  display: flex;
+  gap: 4px;
 }

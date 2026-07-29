@@ -3,16 +3,13 @@ import {
   ChangeDetectionStrategy,
   viewChild,
 } from '@angular/core';
-import { MatAnchor, MatButton } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { App } from 'app/interfaces/app.interface';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/docker-status/docker-status.component';
@@ -27,13 +24,10 @@ import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-
     TranslateModule,
     PageHeaderComponent,
     DockerStatusComponent,
-    MatButton,
-    RequiresRolesDirective,
-    TestDirective,
+    TnButtonComponent,
     TnIconComponent,
+    RequiresRolesDirective,
     AppSettingsButtonComponent,
-    RouterLink,
-    MatAnchor,
     AppDetailsPanelComponent,
     MasterDetailViewComponent,
     InstalledAppsListComponent,

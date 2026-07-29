@@ -1,39 +1,106 @@
-<mat-card>
-  <mat-toolbar-row>
-    <h3>{{ 'Sessions' | translate }}</h3>
+<tn-card [padContent]="false">
+  <h3 tnCardHeader class="tn-card__title">{{ 'Sessions' | translate }}</h3>
 
-    <div class="actions action-icon">
+  <ng-template tnCardHeaderActions>
+    <div class="actions">
       <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
 
-      <ix-table-columns-selector
+      <ix-table-column-picker
+        [columns]="columns()"
         [columnPreferencesKey]="'smbSessionList'"
-        [columns]="columns"
-        (columnsChange)="columnsChange($event)"
-      ></ix-table-columns-selector>
+        (columnsChange)="onColumnsChange($event)"
+      ></ix-table-column-picker>
 
-      <button mat-button color="primary" ixTest="refresh-data" (click)="loadData()">
-        {{ 'Refresh' | translate }}
-      </button>
+      <tn-button
+        color="primary"
+        [testId]="'refresh-data'"
+        [label]="'Refresh' | translate"
+        (onClick)="loadData()"
+      ></tn-button>
     </div>
-  </mat-toolbar-row>
-  <mat-card-content>
-    <ix-table
-      class="table"
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-    >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(dataProvider.isLoading$ | async)"
-      ></tbody>
-    </ix-table>
-    <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
-  </mat-card-content>
-</mat-card>
+  </ng-template>
+
+  @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
+  <tn-table
+    class="table"
+    [testId]="'table-table'"
+    [dataSource]="rows()"
+    [displayedColumns]="displayedColumns()"
+    [trackBy]="trackBySession"
+    [loading]="isLoading()"
+    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyIcon]="emptyConf?.icon ?? ''"
+    (sortChange)="onSortChange($event)"
+  >
+    <ng-container [tnColumnDef]="'session_id'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Session ID' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span tnTestIdType="text" [tnTestId]="[('Session ID' | translate), uniqueRowTag(row), 'row-text']">{{ row.session_id }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'hostname'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Hostname' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span tnTestIdType="text" [tnTestId]="[('Hostname' | translate), uniqueRowTag(row), 'row-text']">{{ row.hostname }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'remote_machine'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Remote machine' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span tnTestIdType="text" [tnTestId]="[('Remote machine' | translate), uniqueRowTag(row), 'row-text']">{{ row.remote_machine }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'username'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Username' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span tnTestIdType="text" [tnTestId]="[('Username' | translate), uniqueRowTag(row), 'row-text']">{{ row.username }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'groupname'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Groupname' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span tnTestIdType="text" [tnTestId]="[('Groupname' | translate), uniqueRowTag(row), 'row-text']">{{ row.groupname }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'uid'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'UID' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span tnTestIdType="text" [tnTestId]="[('UID' | translate), uniqueRowTag(row), 'row-text']">{{ row.uid }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'gid'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'GID' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span tnTestIdType="text" [tnTestId]="[('GID' | translate), uniqueRowTag(row), 'row-text']">{{ row.gid }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'session_dialect'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Session dialect' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span tnTestIdType="text" [tnTestId]="[('Session dialect' | translate), uniqueRowTag(row), 'row-text']">{{ row.session_dialect }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'encryption'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Encryption' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span tnTestIdType="text" [tnTestId]="[('Encryption' | translate), uniqueRowTag(row), 'row-text']">{{ row.encryption.cipher }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'signing'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Signing' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span tnTestIdType="text" [tnTestId]="[('Signing' | translate), uniqueRowTag(row), 'row-text']">{{ row.signing.cipher }}</span>
+      </ng-template>
+    </ng-container>
+  </tn-table>
+  <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+</tn-card>

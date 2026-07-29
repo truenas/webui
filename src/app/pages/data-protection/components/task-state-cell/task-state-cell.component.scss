@@ -1,0 +1,21 @@
+.state-button {
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid currentColor;
+  border-radius: 25px;
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: 700;
+  gap: 4px;
+  height: 30px;
+  line-height: initial;
+  padding: 0 8px;
+  white-space: nowrap;
+
+  &.state-primary { color: var(--primary); }
+  &.state-red { color: var(--red); }
+  &.state-blue { color: var(--blue); }
+  &.state-green { color: var(--green); }
+  &.state-orange { color: var(--orange); }
+  &.state-yellow { color: var(--yellow); }
+}

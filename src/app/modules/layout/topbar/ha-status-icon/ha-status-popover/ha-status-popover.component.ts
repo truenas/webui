@@ -1,5 +1,5 @@
+import { DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { failoverDisabledReasonLabels } from 'app/enums/failover-disabled-reason.enum';
@@ -17,7 +17,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   ],
 })
 export class HaStatusPopoverComponent {
-  failoverDisabledReasons = inject(MAT_DIALOG_DATA);
+  failoverDisabledReasons = inject(DIALOG_DATA);
 
   protected readonly disabledReasonExplanations = failoverDisabledReasonLabels;
 }

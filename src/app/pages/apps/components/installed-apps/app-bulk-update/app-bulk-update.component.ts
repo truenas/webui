@@ -1,19 +1,16 @@
-import { KeyValue, KeyValuePipe } from '@angular/common';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe, KeyValue, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, signal, TrackByFunction,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
-import {
-  MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
-} from '@angular/material/expansion';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnExpansionPanelComponent, TnFormFieldComponent,
+  TnIconComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -25,12 +22,11 @@ import { Role } from 'app/enums/role.enum';
 import { App, AppUpgradeParams } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { extractAppVersion, formatVersionWithRevision, resolveAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
@@ -42,23 +38,21 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./app-bulk-update.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     TranslateModule,
-    MatDialogTitle,
-    MatAccordion,
-    MatDialogClose,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
+    TnExpansionPanelComponent,
     FakeProgressBarComponent,
-    MatExpansionPanelTitle,
     BulkListItemComponent,
     TnIconComponent,
     ImgFallbackModule,
     KeyValuePipe,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     RequiresRolesDirective,
-    TestDirective,
-    MatButton,
+    TnButtonComponent,
+    FormActionsComponent,
     NgxSkeletonLoaderModule,
   ],
 })
@@ -66,11 +60,11 @@ export class AppBulkUpdateComponent {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<AppBulkUpdateComponent>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, AppBulkUpdateComponent>>(DialogRef);
   private appService = inject(ApplicationsService);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
-  private apps = inject<App[]>(MAT_DIALOG_DATA);
+  private apps = inject<App[]>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   readonly expandedItems = signal<string[]>([]);
@@ -215,7 +209,7 @@ export class AppBulkUpdateComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.dialogRef.close();
+        this.dialogRef.close(true);
         this.snackbar.success(
           this.translate.instant('Updating Apps. Please check on the progress in Task Manager.'),
         );

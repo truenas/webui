@@ -1,16 +1,12 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogActions, MatDialogClose,
-  MatDialogContent, MatDialogTitle,
-} from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-subsystem-port-or-host-delete-dialog',
@@ -18,23 +14,19 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnDialogShellComponent,
     TranslateModule,
     ReactiveFormsModule,
     FormActionsComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
-    MatDialogClose,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
   ],
 })
 export class SubsystemPortOrHostDeleteDialogComponent {
-  private dialogRef = inject<MatDialogRef<SubsystemPortOrHostDeleteDialogComponent>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, SubsystemPortOrHostDeleteDialogComponent>>(DialogRef);
   private translate = inject(TranslateService);
 
-  protected readonly data = inject<PortOrHostDeleteDialogData>(MAT_DIALOG_DATA);
+  protected readonly data = inject<PortOrHostDeleteDialogData>(DIALOG_DATA);
   protected readonly requiredRoles: Role[] = [Role.SharingNvmeTargetWrite];
   protected readonly type = this.data.type === PortOrHostDeleteType.Host
     ? this.translate.instant('Host')

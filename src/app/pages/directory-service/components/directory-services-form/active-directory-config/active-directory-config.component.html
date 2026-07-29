@@ -1,37 +1,62 @@
 <form class="ix-form-container" [formGroup]="form">
-  <ix-fieldset [title]="'Active Directory Configuration' | translate">
-    <ix-input
-      formControlName="hostname"
+  <tn-form-section [heading]="'Active Directory Configuration' | translate">
+    <tn-form-field
       [label]="'TrueNAS Hostname' | translate"
-      [required]="true"
       [tooltip]="helptext.hostnameTooltip | translate"
-    ></ix-input>
-
-    <ix-input
-      formControlName="domain"
-      [label]="'Domain Name' | translate"
       [required]="true"
-      [tooltip]="helptext.domainNameTooltip | translate"
-    ></ix-input>
+    >
+      <tn-input
+        name="hostname"
+        testId="hostname"
+        formControlName="hostname"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="site"
+    <tn-form-field
+      [label]="'Domain Name' | translate"
+      [tooltip]="helptext.domainNameTooltip | translate"
+      [required]="true"
+    >
+      <tn-input
+        name="domain"
+        testId="domain"
+        formControlName="domain"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
       [label]="'Site Name' | translate"
       [tooltip]="helptext.siteTooltip | translate"
-    ></ix-input>
+    >
+      <tn-input
+        name="site"
+        testId="site"
+        formControlName="site"
+      ></tn-input>
+    </tn-form-field>
 
-    <ix-input
-      formControlName="computer_account_ou"
+    <tn-form-field
       [label]="'Computer Account OU' | translate"
       [tooltip]="helptext.computerAccountOuTooltip | translate"
-    ></ix-input>
-    <ix-checkbox
-      formControlName="use_default_domain"
-      [label]="'Use Default Domain' | translate"
-      [tooltip]="helptext.defaultDomainsTooltip | translate"
-    ></ix-checkbox>
-  </ix-fieldset>
-  
+    >
+      <tn-input
+        name="computer_account_ou"
+        testId="computer_account_ou"
+        formControlName="computer_account_ou"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="helptext.defaultDomainsTooltip | translate">
+      <tn-checkbox
+        formControlName="use_default_domain"
+        testId="use_default_domain"
+        [label]="'Use Default Domain' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
+
   <ix-trusted-domains-config
     [enableTrustedDomains]="form.controls.enable_trusted_domains.value"
     [trustedDomains]="form.controls.trusted_domains.value"

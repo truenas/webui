@@ -1,23 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  InputType,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { dockerHubRegistry, DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -27,38 +23,34 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './docker-registry-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
     TranslateModule,
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
-    MatButton,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TestDirective,
+    TnFormFieldComponent,
+    TnFormSectionComponent,
+    TnInputComponent,
+    TnSelectComponent,
   ],
 })
-export class DockerRegistryFormComponent implements OnInit {
+export class DockerRegistryFormComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
-  slideInRef = inject<SlideInRef<{
-    isLoggedInToDockerHub?: boolean;
-    registry?: DockerRegistry;
-  } | undefined, boolean>>(SlideInRef);
-
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
   private urlValidationService = inject(UrlValidationService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.AppsWrite];
+  /** Provided by the `<tn-side-panel>` host. */
+  readonly registry = input<DockerRegistry | undefined>(undefined);
+  readonly isLoggedInToDockerHub = input(false);
+
+  readonly requiredRoles = [Role.AppsWrite];
+  protected readonly InputType = InputType;
 
   protected existingDockerRegistry: DockerRegistry | undefined;
-  protected isLoggedInToDockerHub = false;
-  protected isFormLoading = signal(false);
+  /** Resolved from the input; read by the template. */
+  protected loggedInToDockerHub = false;
+  readonly isFormLoading = signal(false);
   protected readonly dockerHubRegistry = ignoreTranslation(dockerHubRegistry);
 
   protected registriesOptions$ = of([
@@ -66,7 +58,7 @@ export class DockerRegistryFormComponent implements OnInit {
     { label: this.translate.instant('Other Registry'), value: '' },
   ]);
 
-  form = this.fb.group({
+  protected readonly form = this.fb.group({
     registry: [dockerHubRegistry],
     name: ['', Validators.required],
     username: ['', Validators.required],
@@ -77,26 +69,17 @@ export class DockerRegistryFormComponent implements OnInit {
     }],
   });
 
-  get title(): string {
-    return this.existingDockerRegistry
-      ? this.translate.instant('Edit Docker Registry')
-      : this.translate.instant('Create Docker Registry');
-  }
-
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-
-    this.existingDockerRegistry = this.slideInRef.getData()?.registry;
-    this.isLoggedInToDockerHub = Boolean(this.slideInRef.getData()?.isLoggedInToDockerHub);
-
-    if (!this.isLoggedInToDockerHub && !this.existingDockerRegistry) {
-      this.setNameForDockerHub();
-    }
-  }
+  /** Public signal hosts can read to disable a Save action while invalid or loading. */
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   ngOnInit(): void {
+    this.existingDockerRegistry = this.registry();
+    this.loggedInToDockerHub = this.isLoggedInToDockerHub();
+
+    if (!this.loggedInToDockerHub && !this.existingDockerRegistry) {
+      this.setNameForDockerHub();
+    }
+
     if (this.existingDockerRegistry) {
       this.setRegistryForEdit();
     }
@@ -113,6 +96,10 @@ export class DockerRegistryFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (!this.canSubmit()) {
+      return;
+    }
+
     const payload = this.getPayload();
 
     let request$: Observable<DockerRegistryPayload>;
@@ -129,7 +116,7 @@ export class DockerRegistryFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
-          this.slideInRef.close({ response: true });
+          this.close(true);
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

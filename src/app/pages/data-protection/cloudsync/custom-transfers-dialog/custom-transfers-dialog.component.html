@@ -1,29 +1,29 @@
-<h1 matDialogTitle>
-  {{ 'Custom Transfers' | translate }}
-</h1>
+<tn-dialog-shell testId="custom-transfers" [title]="'Custom Transfers' | translate">
 <form class="ix-form-container">
-  <ix-input
-    type="number"
-    [formControl]="transfers"
-    [label]="helptext.transfersLabel | translate"
-    [tooltip]="helptext.transfersTooltip | translate"
-    [required]="true"
-  ></ix-input>
+  <tn-form-field [label]="helptext.transfersLabel | translate" [tooltip]="helptext.transfersTooltip | translate">
+    <tn-input
+      testId="transfers"
+      [inputType]="InputType.Number"
+      [formControl]="transfers"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-form-actions>
-    <button mat-button type="button" matDialogClose ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
+  </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
 
-    <button
-      mat-button
-      color="primary"
-      type="button"
-      ixTest="save"
-      [disabled]="transfers.invalid"
-      (click)="onSave()"
-    >
-      {{ 'Save' | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+  <tn-button
+    color="primary"
+    testId="save"
+    [label]="'Save' | translate"
+    [disabled]="transfers.invalid"
+    (onClick)="onSave()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

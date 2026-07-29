@@ -16,9 +16,8 @@ import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autoc
 import { MatOption } from '@angular/material/core';
 import { MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnSpinnerComponent } from '@truenas/ui-components';
 import {
   EMPTY,
   fromEvent,
@@ -36,7 +35,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { UserPickerProvider } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker-provider';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -52,7 +51,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxLabelComponent,
     MatInput,
     MatAutocompleteTrigger,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     TnIconComponent,
     MatAutocomplete,
     MatOption,
@@ -80,7 +79,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
 
   readonly provider = input.required<UserPickerProvider>();
   readonly translate = inject(TranslateService);
-  private readonly slideIn = inject(SlideIn);
+  private readonly formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   private comboboxProviderHandler = computed(() => {
@@ -360,7 +359,12 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),
       switchMap(() => {
-        const result$ = this.slideIn.open(UserFormComponent, { wide: true });
+        // UserFormComponent closes with the created User (it's a `SidePanelForm<User>`), which
+        // this picker selects as the new entry. The form is hosted in a tn-side-panel.
+        const result$ = this.formPanel.open(UserFormComponent, {
+          wide: true,
+          title: this.translate.instant('Add User'),
+        });
         return merge(
           result$.success$.pipe(
             tap((newUser) => {

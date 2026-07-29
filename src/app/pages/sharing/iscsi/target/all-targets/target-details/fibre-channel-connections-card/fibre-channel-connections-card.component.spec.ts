@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnCardComponent } from '@truenas/ui-components';
 import { FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { FibreChannelConnectionsCardComponent } from './fibre-channel-connections-card.component';
 
@@ -45,21 +46,23 @@ describe('FibreChannelConnectionsCardComponent', () => {
 
   it('shows fibre channel connections heading', () => {
     setupTest(connections);
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Fibre Channel Connections');
+    // White-box: no TnCardHarness in @truenas/ui-components yet.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Fibre Channel Connections');
   });
 
   it('shows connections', () => {
     setupTest(connections);
 
-    const content = spectator.queryAll('mat-card-content p');
+    const content = spectator.queryAll('tn-card p');
     expect(content).toHaveLength(1);
     expect(content[0]).toHaveText('naa.210034800d75aec4 (Active Controller)');
   });
 
-  it('checks no connections message when empty connections', () => {
+  it('checks no connections message renders exactly once when empty connections', () => {
     setupTest([]);
-    expect(spectator.query('p')).toHaveText('No connections');
+    const messages = spectator.queryAll('tn-card p');
+    expect(messages).toHaveLength(1);
+    expect(messages[0]).toHaveText('No connections');
   });
 
   it('checks no connections message when have attached fc and no sessions', () => {

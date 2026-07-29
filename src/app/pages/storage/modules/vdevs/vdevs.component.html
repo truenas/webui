@@ -1,14 +1,12 @@
 @let pool = poolId();
 <ix-page-header [pageTitle]="pageTitle">
-  <a
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
     color="primary"
-    ixTest="add-vdev"
+    [testId]="'add-vdev'"
+    [label]="'Add VDEV' | translate"
     [routerLink]="['/storage', pool, 'add-vdevs']"
-  >
-    {{ 'Add VDEV' | translate }}
-  </a>
+  ></tn-button>
 </ix-page-header>
 
 @if (pool) {

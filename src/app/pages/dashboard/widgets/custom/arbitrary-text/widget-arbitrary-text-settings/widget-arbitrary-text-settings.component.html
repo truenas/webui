@@ -1,19 +1,23 @@
 <form [formGroup]="form">
-  <ix-input
-    class="half-width"
-    formControlName="widgetTitle"
-    [label]="'Card Title' | translate"
-    [required]="true"
-  />
-  <ix-input
-    class="half-width"
-    formControlName="widgetText"
-    [label]="'Card Text' | translate"
-    [required]="true"
-  />
-  <ix-input
-    class="half-width"
-    formControlName="widgetSubText"
-    [label]="'Card Subtext' | translate"
-  />
+  <tn-form-field class="half-width" [label]="'Card Title' | translate" [required]="true">
+    <tn-input
+      formControlName="widgetTitle"
+      [testId]="'widget-title'"
+      [ariaLabel]="'Card Title' | translate"
+    ></tn-input>
+  </tn-form-field>
+  <tn-form-field class="half-width" [label]="'Card Text' | translate" [required]="true">
+    <tn-input
+      formControlName="widgetText"
+      [testId]="'widget-text'"
+      [ariaLabel]="'Card Text' | translate"
+    ></tn-input>
+  </tn-form-field>
+  <tn-form-field class="half-width" [label]="'Card Subtext' | translate">
+    <tn-input
+      formControlName="widgetSubText"
+      [testId]="'widget-sub-text'"
+      [ariaLabel]="'Card Subtext' | translate"
+    ></tn-input>
+  </tn-form-field>
 </form>

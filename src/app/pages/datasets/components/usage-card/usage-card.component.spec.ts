@@ -7,7 +7,7 @@ import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { UsageCardComponent } from 'app/pages/datasets/components/usage-card/usage-card.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -40,7 +40,7 @@ describe('UsageCardComponent', () => {
           status: TruenasConnectStatus.Configured,
         } as TruenasConnectConfig),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(LicenseService, {
@@ -197,13 +197,15 @@ describe('UsageCardComponent', () => {
     const createNfsShareLink = spectator.queryAll('.details-item .action')[1] as HTMLAnchorElement;
 
     createSmbShareLink.click();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SmbFormComponent, {
-      data: { defaultSmbShare: { path: '/mnt/pool/ds' } },
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(SmbFormComponent, {
+      title: 'Add SMB Share',
+      inputs: { smbShareData: { defaultSmbShare: { path: '/mnt/pool/ds' } } },
     });
 
     createNfsShareLink.click();
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NfsFormComponent, {
-      data: { defaultNfsShare: { path: '/mnt/pool/ds' } },
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(NfsFormComponent, {
+      title: 'Add NFS Share',
+      inputs: { nfsShareData: { defaultNfsShare: { path: '/mnt/pool/ds' } } },
     });
   });
 
@@ -285,13 +287,16 @@ describe('UsageCardComponent', () => {
       const createWebShareLink = spectator.queryAll('.details-item .action')[2] as HTMLAnchorElement;
       createWebShareLink.click();
 
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
         expect.anything(),
         {
-          data: {
-            isNew: true,
-            name: 'mydata',
-            path: '/mnt/pool/mydata',
+          title: 'Add WebShare',
+          inputs: {
+            webShareData: {
+              isNew: true,
+              name: 'mydata',
+              path: '/mnt/pool/mydata',
+            },
           },
         },
       );

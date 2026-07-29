@@ -2,18 +2,16 @@ import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import type { TnCardControl, TnCardHeaderStatus, TnMenuItem } from '@truenas/ui-components';
+import type { TnCardHeaderStatus, TnMenuItem } from '@truenas/ui-components';
 import { kebabCase } from 'lodash-es';
-import { Observable, of } from 'rxjs';
 import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -32,12 +30,11 @@ export class ServiceActionsMenuService {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private router = inject(Router);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private urlOptions = inject(UrlOptionsService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
-  private unsavedChanges = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
   /**
@@ -138,10 +135,10 @@ export class ServiceActionsMenuService {
    * Compose the card-header menu with the `Config Service` item replaced by a
    * card-local action (so the card can open the config form inside its own
    * `tn-side-panel` viewChild rather than the global slide-in). The service
-   * on/off toggle is intentionally NOT included here — cards expose it as a
-   * `tn-card` header control via {@link buildServiceControl}. The remaining
-   * items (sessions, logs) are sourced from the shared builders so test IDs and
-   * labels stay identical across cards.
+   * on/off toggle is intentionally NOT included here — cards project it as a
+   * `tn-slide-toggle` header action (see {@link isServiceRunning} /
+   * {@link toggleServiceState}). The remaining items (sessions, logs) are sourced
+   * from the shared builders so test IDs and labels stay identical across cards.
    */
   buildServiceCardMenu(
     service: Service | undefined,
@@ -165,35 +162,24 @@ export class ServiceActionsMenuService {
   }
 
   /**
-   * Service on/off control for a card header (`tn-card` `[headerControl]`),
-   * exposing start/stop without opening the card menu. Returns `undefined` when
-   * there's no service or the user lacks the control role (so the toggle is
-   * hidden, matching the old menu item's role gating). The label is empty — the
-   * adjacent colored status badge is the visual indicator — and `tn-slide-toggle`
-   * still announces an accessible name. Toggling flips the current state via the
-   * same `changeServiceState` path the menu item used.
+   * Card-header service on/off helpers. Each card projects the toggle as a
+   * `tn-slide-toggle` inside a `<ng-template tnCardHeaderActions>` wrapped in
+   * `*ixRequiresRoles`, so read-only admins see it disabled with the standard
+   * missing-permissions tooltip rather than the control vanishing. These helpers
+   * keep the checked state, test ID, and toggle handler identical across all five
+   * service cards (the label is empty — the adjacent colored status badge is the
+   * visual indicator — and `tn-slide-toggle` still announces an accessible name).
    */
-  buildServiceControl(service: Service | undefined, hasControlRole: boolean): TnCardControl | undefined {
-    if (!service || !hasControlRole) {
-      return undefined;
-    }
-    return {
-      label: '',
-      checked: service.state === ServiceStatus.Running,
-      testId: `service-${kebabCase(service.service)}`,
-      handler: () => this.changeServiceState(service),
-    };
+  isServiceRunning(service: Service): boolean {
+    return service.state === ServiceStatus.Running;
   }
 
-  /**
-   * Build a `tn-side-panel` `[closeGuard]` that reproduces the legacy slide-in host's
-   * unsaved-changes confirmation. When `isDirty()` is true it prompts before allowing
-   * the panel to close (× button, backdrop, or Escape); otherwise it closes immediately.
-   * Cards hosting a config form in a side panel pass this so dismissing with unsaved
-   * edits no longer silently discards them — parity with the old `requireConfirmationWhen`.
-   */
-  buildUnsavedChangesGuard(isDirty: () => boolean): () => Observable<boolean> {
-    return () => (isDirty() ? this.unsavedChanges.showConfirmDialog() : of(true));
+  serviceControlTestId(service: Service): string {
+    return `service-${kebabCase(service.service)}`;
+  }
+
+  toggleServiceState(service: Service): void {
+    this.changeServiceState(service);
   }
 
   private titleCase(value: string): string {
@@ -227,19 +213,23 @@ export class ServiceActionsMenuService {
   private configureService(service: Service): void {
     switch (service.service) {
       case ServiceName.NvmeOf:
-        this.slideIn.open(NvmeOfConfigurationComponent);
+        this.formPanel.open(NvmeOfConfigurationComponent, {
+          title: this.translate.instant('NVMe-oF Global Configuration'),
+        });
         break;
       case ServiceName.Iscsi:
-        this.slideIn.open(GlobalTargetConfigurationComponent);
+        this.formPanel.open(GlobalTargetConfigurationComponent, {
+          title: this.translate.instant('iSCSI Global Configuration'),
+        });
         break;
       case ServiceName.Nfs:
-        this.slideIn.open(ServiceNfsComponent, { wide: true });
+        this.formPanel.open(ServiceNfsComponent, { title: serviceNames.get(ServiceName.Nfs), wide: true });
         break;
       case ServiceName.Cifs:
-        this.slideIn.open(ServiceSmbComponent);
+        this.formPanel.open(ServiceSmbComponent, { title: serviceNames.get(ServiceName.Cifs) });
         break;
       case ServiceName.WebShare:
-        this.slideIn.open(ServiceWebshareComponent);
+        this.formPanel.open(ServiceWebshareComponent, { title: serviceNames.get(ServiceName.WebShare) });
         break;
       default:
         break;

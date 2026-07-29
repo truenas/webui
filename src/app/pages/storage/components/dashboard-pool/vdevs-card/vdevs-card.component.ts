@@ -5,7 +5,6 @@ import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -78,7 +77,6 @@ export type EmptyDiskObject = Record<
     MatButton,
     TestDirective,
     MatCardContent,
-    MatTooltip,
     TnIconComponent,
     TnTooltipDirective,
     TranslateModule,
@@ -168,9 +166,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
       this.topologyState.dedup,
     ];
 
-    const emptyCount = nonDataVdevs.filter((vdevType) => !vdevType.assigned).length;
-
-    return emptyCount >= 3;
+    return nonDataVdevs.every((vdevType) => !vdevType.assigned);
   });
 
   get isDraidLayoutDataVdevs(): boolean {

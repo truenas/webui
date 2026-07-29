@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -193,7 +193,7 @@ describe('PermissionsCardComponent', () => {
 
   describe('edit button', () => {
     it('shows a button to edit permissions when dataset can be edited', async () => {
-      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
       await editButton.click();
 
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', 'testpool/dataset', 'permissions', 'edit']);
@@ -205,7 +205,7 @@ describe('PermissionsCardComponent', () => {
         name: 'testpool',
       } as DatasetDetails);
 
-      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
       expect(await editButton.isDisabled()).toBe(true);
     });
 
@@ -215,7 +215,7 @@ describe('PermissionsCardComponent', () => {
         locked: true,
       } as DatasetDetails);
 
-      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
       expect(await editButton.isDisabled()).toBe(true);
     });
 
@@ -230,7 +230,7 @@ describe('PermissionsCardComponent', () => {
         },
       } as DatasetDetails);
 
-      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
       expect(await editButton.isDisabled()).toBe(true);
     });
   });

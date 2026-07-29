@@ -1,26 +1,23 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  InputType,
+  TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnFormFieldComponent,
+  TnFormSectionComponent, TnIconComponent, TnInputComponent, TnProgressBarComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
+import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { kmipElements } from 'app/pages/credentials/kmip/kmip.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -34,20 +31,19 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   styleUrls: ['./kmip.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
     UiSearchDirective,
-    MatProgressBar,
-    MatCardContent,
-    IxFieldsetComponent,
+    TnProgressBarComponent,
+    TnFormSectionComponent,
     TnIconComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     ReactiveFormsModule,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     WithManageCertificatesLinkComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
     TranslateModule,
   ],
 })
@@ -67,7 +63,7 @@ export class KmipComponent implements OnInit {
   protected isLoading = signal(false);
   protected readonly searchableElements = kmipElements;
 
-  form = this.formBuilder.group({
+  protected readonly form = this.formBuilder.group({
     server: [''],
     port: [null as number | null],
     certificate: [null as number | null],
@@ -80,9 +76,13 @@ export class KmipComponent implements OnInit {
   });
 
   protected readonly requiredRoles = [Role.KmipWrite];
+  protected readonly InputType = InputType;
 
-  readonly helptext = helptextSystemKmip;
-  readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
+  protected readonly helptext = helptextSystemKmip;
+  protected readonly certificates = toSignal(
+    this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions()),
+    { initialValue: [] as Option<number>[] },
+  );
 
   protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));

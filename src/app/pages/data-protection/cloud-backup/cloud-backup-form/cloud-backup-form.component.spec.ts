@@ -4,7 +4,9 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnSpriteLoaderService } from '@truenas/ui-components';
+import {
+  TnBannerHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness, TnSpriteLoaderService,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,7 +17,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -109,7 +114,11 @@ describe('CloudBackupFormComponent', () => {
           CloudsyncTransferSetting.FastStorage,
         ]),
       ]),
+      ...ixFormTestingProviders(),
+      // ix-cloud-credentials-select's "Add new" directive opens a SlideIn and reads its result;
+      // override the bare SlideIn mock from ixFormTestingProviders() to supply `open`.
       mockProvider(SlideIn, {
+        openSlideIns: jest.fn(() => 1),
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(CloudCredentialService, {
@@ -129,26 +138,35 @@ describe('CloudBackupFormComponent', () => {
     ],
   });
 
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
   describe('adds a new cloud backup', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
+    it('shows an info banner with getting started guidance', async () => {
+      const banner = await loader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain('Getting Started with TrueCloud Backup');
+    });
+
     it('disables absolute paths when snapshot is enabled and resets to false', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Use Absolute Paths': true,
-      });
+      await (await getCheckbox('absolute_paths')).check();
+      await (await getCheckbox('snapshot')).check();
 
-      await form.fillForm({
-        'Use Snapshot': true,
-      });
-
-      const useAbsolutePathsControl = await form.getControl('Use Absolute Paths');
+      const useAbsolutePathsControl = await getCheckbox('absolute_paths');
 
       expect(await useAbsolutePathsControl.isDisabled()).toBe(true);
-      expect(await useAbsolutePathsControl.getValue()).toBe(false);
+      expect(await useAbsolutePathsControl.isChecked()).toBe(false);
     });
 
     it('does not call getBuckets when credentials value is ADD_NEW', fakeAsync(() => {
@@ -162,19 +180,21 @@ describe('CloudBackupFormComponent', () => {
     }));
 
     it('adds a new cloud backup task and creates a new bucket', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
+      await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="credentials"]' }))).selectOption('Storj (Storj)');
+
+      const ixForm = await loader.getHarness(IxFormHarness);
+      await ixForm.fillForm({
         'Source Path': '/mnt/my pool 2',
         'Cache Path': '/mnt/path',
-        Name: 'Cloud Backup Task With New Bucket',
-        Password: 'qwerty',
-        Credentials: 'Storj (Storj)',
-        'Keep Last': 5,
-        'Rate Limit': 1000,
         Folder: '/',
-        Bucket: 'Add new',
-        'New Bucket Name': 'brand-new-bucket',
       });
+
+      await (await getInput('description')).setValue('Cloud Backup Task With New Bucket');
+      await (await getInput('password')).setValue('qwerty');
+      await (await getInput('keep_last')).setValue('5');
+      await (await getInput('rate_limit')).setValue('1000');
+      await (await getSelect('bucket')).selectOption('Add new');
+      await (await getInput('bucket_input')).setValue('brand-new-bucket');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -209,23 +229,24 @@ describe('CloudBackupFormComponent', () => {
     });
 
     it('adds a new cloud backup task when new form is saved', async () => {
-      const form = await loader.getHarness(IxFormHarness);
+      await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="credentials"]' }))).selectOption('Storj (Storj)');
 
-      await form.fillForm({
+      const ixForm = await loader.getHarness(IxFormHarness);
+      await ixForm.fillForm({
         'Source Path': '/mnt/my pool 2',
-        Name: 'New Cloud Backup Task',
-        Password: 'qwerty',
-        Credentials: 'Storj (Storj)',
-        'Keep Last': 3,
-        'Rate Limit': 500,
         Folder: '/',
-        Enabled: false,
-        Bucket: 'bucket1',
-        'Use Snapshot': false,
-        'Use Absolute Paths': true,
-        Exclude: ['/test'],
-        'Transfer Setting': 'Fast Storage',
       });
+
+      await (await getInput('description')).setValue('New Cloud Backup Task');
+      await (await getInput('password')).setValue('qwerty');
+      await (await getInput('keep_last')).setValue('3');
+      await (await getInput('rate_limit')).setValue('500');
+      await (await getCheckbox('enabled')).uncheck();
+      await (await getSelect('bucket')).selectOption('bucket1');
+      await (await getCheckbox('snapshot')).uncheck();
+      await (await getCheckbox('absolute_paths')).check();
+      await (await loader.getHarness(TnChipInputHarness.with({ selector: '[formControlName="exclude"]' }))).addChip('/test');
+      await (await getSelect('transfer_setting')).selectOption('Fast Storage');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -274,41 +295,33 @@ describe('CloudBackupFormComponent', () => {
     });
 
     it('shows values for an existing cloud backup task when it is open for edit', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      expect(await form.getValues()).toEqual({
-        Bucket: '',
-        'Cache Path': '',
-        Credentials: 'Storj (Storj)',
-        Enabled: true,
-        Exclude: [],
-        Name: 'sdf',
-        Folder: '/My Folder',
-        'Keep Last': '2',
-        'Rate Limit': '',
-        Password: '1234',
-        'Post-script': '',
-        'Pre-script': '',
-        Schedule: 'Weekly On Sundays at 00:00 (12:00 AM)',
-        'Source Path': '/mnt/my pool',
-        'Use Snapshot': false,
-        'Use Absolute Paths': true,
-        'Transfer Setting': 'Performance',
-      });
+      expect(await (await getInput('description')).getValue()).toBe('sdf');
+      expect(await (await getInput('password')).getValue()).toBe('1234');
+      expect(await (await getInput('keep_last')).getValue()).toBe('2');
+      expect(await (await getInput('rate_limit')).getValue()).toBe('');
+      expect(await (await getInput('pre_script')).getValue()).toBe('');
+      expect(await (await getInput('post_script')).getValue()).toBe('');
+      expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('snapshot')).isChecked()).toBe(false);
+      expect(await (await getSelect('transfer_setting')).getDisplayText()).toBe('Performance');
+
+      const sourcePath = await loader.getHarness(IxExplorerHarness.with({ label: 'Source Path' }));
+      expect(await sourcePath.getValue()).toBe('/mnt/my pool');
     });
 
     it('saves updated cloud backup task when form opened for edit is saved', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        Name: 'Edited description',
-        Password: 'qwerty123',
-        Bucket: 'bucket1',
+      const ixForm = await loader.getHarness(IxFormHarness);
+      await ixForm.fillForm({
         'Source Path': '/mnt/path1',
       });
 
-      const useAbsolutePathsControl = await form.getControl('Use Absolute Paths');
+      await (await getInput('description')).setValue('Edited description');
+      await (await getInput('password')).setValue('qwerty123');
+      await (await getSelect('bucket')).selectOption('bucket1');
 
+      const useAbsolutePathsControl = await getCheckbox('absolute_paths');
       expect(await useAbsolutePathsControl.isDisabled()).toBe(true);
-      expect(await useAbsolutePathsControl.getValue()).toBe(true);
+      expect(await useAbsolutePathsControl.isChecked()).toBe(true);
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -342,6 +355,33 @@ describe('CloudBackupFormComponent', () => {
         transfer_setting: CloudsyncTransferSetting.Performance,
       }]);
       expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+    });
+  });
+
+  describe('side panel host (no SlideInRef)', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          { provide: SlideInRef, useValue: null },
+          // Skip the min submit-feedback hold so the synchronous-close assertions below hold.
+          { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
+        ],
+        props: {
+          backupToEdit: existingTask,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('emits closed and updates when saved via the host submit() entry point', async () => {
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+
+      await (await getSelect('bucket')).selectOption('bucket1');
+
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.update', [1, expect.anything()]);
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 });

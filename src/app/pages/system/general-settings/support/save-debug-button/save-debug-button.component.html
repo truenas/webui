@@ -1,8 +1,6 @@
-<button
-  mat-button
-  ixTest="save-debug"
+<tn-button
   [ixUiSearch]="searchableElement.elements.saveDebug"
-  (click)="onSaveDebugClicked()"
->
-  {{ 'Save Debug' | translate }}
-</button>
+  [testId]="'save-debug'"
+  [label]="'Save Debug' | translate"
+  (onClick)="onSaveDebugClicked()"
+></tn-button>

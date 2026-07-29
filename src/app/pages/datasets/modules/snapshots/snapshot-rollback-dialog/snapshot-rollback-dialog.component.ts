@@ -1,32 +1,28 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Component, ChangeDetectionStrategy, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatAnchor, MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnBannerComponent } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import {
+  TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
+  TnDialogShellComponent, TnRadioComponent, TnSpinnerComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { AppState } from 'app/store';
 
 @Component({
   selector: 'ix-snapshot-rollback-dialog',
@@ -34,23 +30,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./snapshot-rollback-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
-    MatDialogContent,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxRadioGroupComponent,
-    IxCheckboxComponent,
-    MatButton,
+    TnRadioComponent,
+    TnCheckboxComponent, TnFormFieldComponent,
+    TnButtonComponent,
     FormatDateTimePipe,
     RequiresRolesDirective,
-    TestDirective,
-    MatDialogClose,
-    FormActionsComponent,
-    RouterLink,
-    MatDialogActions,
-    MatAnchor,
     TnBannerComponent,
   ],
 })
@@ -61,11 +49,13 @@ export class SnapshotRollbackDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private localeService = inject(LocaleService);
-  private dialogRef = inject(MatDialogRef<SnapshotRollbackDialog>);
-  // `MAT_DIALOG_DATA` is whatever the caller passed to `dialog.open(...)` and
+  private router = inject(Router);
+  private store$ = inject<Store<AppState>>(Store);
+  protected dialogRef = inject(DialogRef);
+  // `DIALOG_DATA` is whatever the caller passed to `dialog.open(...)` and
   // can be missing if invoked without data; type it honestly and guard in
   // `ngOnInit` before touching any of its properties.
-  protected readonly snapshot = inject<ZfsSnapshot | undefined>(MAT_DIALOG_DATA);
+  protected readonly snapshot = inject<ZfsSnapshot | undefined>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
@@ -86,23 +76,26 @@ export class SnapshotRollbackDialog implements OnInit {
     fcName: 'recursive',
     tooltip: helptextSnapshots.stopRollbackTooltip,
     label: helptextSnapshots.stopRollbackLabel,
-    options: of([
+    // tn-radio has no per-option tooltip, so the per-option safety guidance is
+    // surfaced as a hint line under each radio (see template) — dropping it would
+    // remove exactly the guidance users need before a destructive rollback.
+    options: [
       {
         value: '',
         label: helptextSnapshots.rollbackDatasetLabel,
-        tooltip: helptextSnapshots.rollbackDatasetTooltip,
+        hint: helptextSnapshots.rollbackDatasetTooltip,
       },
       {
         value: RollbackRecursiveType.Recursive,
         label: helptextSnapshots.rollbackRecursiveLabel,
-        tooltip: helptextSnapshots.rollbackRecursiveTooltip,
+        hint: helptextSnapshots.rollbackRecursiveTooltip,
       },
       {
         value: RollbackRecursiveType.RecursiveClones,
         label: helptextSnapshots.rollbackRecursiveClonesLabel,
-        tooltip: helptextSnapshots.rollbackRecursiveClonesTooltip,
+        hint: helptextSnapshots.rollbackRecursiveClonesTooltip,
       },
-    ]),
+    ],
   };
 
   readonly force = {
@@ -200,10 +193,21 @@ export class SnapshotRollbackDialog implements OnInit {
     ).subscribe({
       next: () => {
         this.wasDatasetRolledBack.set(true);
+        // Rollback destroys every snapshot newer than the target at the ZFS
+        // level, but that destruction doesn't emit `Removed` events on the
+        // `pool.snapshot.query` collection subscription — so the list keeps
+        // showing stale rows whose every action then fails with "snapshot not
+        // found". Force a full reload so the list reflects true backend state.
+        this.store$.dispatch(snapshotPageEntered());
       },
       error: (error: unknown) => {
         this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });
+  }
+
+  goToStorage(): void {
+    this.dialogRef.close();
+    this.router.navigate(['/storage']);
   }
 }

@@ -1,8 +1,6 @@
-<h1 mat-dialog-title>
-  {{ 'Delete' | translate }} {{ type }}
-</h1>
+<tn-dialog-shell testId="subsystem-port-ot-host-delete" [title]="('Delete' | translate) + ' ' + type">
 
-<div mat-dialog-content>
+<div>
   <p class="message">
     {{
       'Are you sure you want to delete {type}: {name}?' | translate: { type, name: data.name }
@@ -21,17 +19,8 @@
   }
 </div>
 
-<ix-form-actions mat-dialog-actions class="form-actions">
-  <button mat-button ixTest="cancel" [matDialogClose]="{ confirmed: false }">
-    {{ 'Cancel' | translate }}
-  </button>
-  <button
-    *ixRequiresRoles="requiredRoles"
-    mat-button
-    color="warn"
-    ixTest="delete"
-    (click)="delete()"
-  >
-    {{ data.subsystemsInUse?.length > 0 ? ('Delete Anyway' | translate) : ('Delete' | translate) }}
-  </button>
+<ix-form-actions tnDialogAction class="form-actions">
+  <tn-button variant="outline" testId="cancel" [label]="'Cancel' | translate" (onClick)="dialogRef.close({ confirmed: false })"></tn-button>
+  <tn-button *ixRequiresRoles="requiredRoles" color="warn" testId="delete" [label]="data.subsystemsInUse?.length > 0 ? ('Delete Anyway' | translate) : ('Delete' | translate)" (onClick)="delete()"></tn-button>
 </ix-form-actions>
+</tn-dialog-shell>

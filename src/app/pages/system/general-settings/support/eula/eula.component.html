@@ -1,22 +1,21 @@
-<mat-card id="eula-card" [ixUiSearch]="searchableElements.elements.eula">
+<tn-card id="eula-card" [ixUiSearch]="searchableElements.elements.eula">
   <div id="eula">
     <h2>{{ 'End User License Agreement - TrueNAS' | translate }}</h2>
     <div [innerHTML]="eula"></div>
   </div>
   @if (eula) {
     <div>
-      <mat-divider></mat-divider>
-      <mat-card-actions id="button-row">
-        <button
+      <tn-divider></tn-divider>
+      <div id="button-row">
+        <tn-button
           id="back-to-support-button"
-          mat-flat-button
+          variant="filled"
           color="primary"
-          ixTest="back-to-support"
+          [testId]="'back-to-support'"
           [routerLink]="['/system/general']"
-        >
-          {{ 'Back to Support' | translate }}
-        </button>
-      </mat-card-actions>
+          [label]="'Back to Support' | translate"
+        ></tn-button>
+      </div>
     </div>
   }
-</mat-card>
+</tn-card>

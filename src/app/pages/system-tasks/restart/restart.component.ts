@@ -2,12 +2,12 @@ import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -37,7 +37,7 @@ export class RestartComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private errorHandler = inject(ErrorHandlerService);
   protected loader = inject(LoaderService);
-  protected matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
   private location = inject(Location);
   private wsStatus = inject(WebSocketStatusService);
   private store$ = inject<Store<AppState>>(Store);
@@ -53,7 +53,7 @@ export class RestartComponent implements OnInit {
     // Replace URL so that we don't restart again if page is refreshed.
     this.location.replaceState('/signin');
 
-    this.matDialog.closeAll();
+    this.dialogService.closeAllDialogs();
     this.api.job('system.reboot', [reason]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       error: (error: unknown) => { // error on restart
         this.errorHandler.showErrorModal(error)

@@ -1,76 +1,66 @@
 <div class="report" ngClass.xs="double-height xs">
   <div class="card-container">
-    <mat-card class="card" [class.loading]="!isReady">
-      @if (isReady) {
-        <mat-toolbar-row class="mat-card-toolbar toolbar">
-          <mat-card-title class="title">
-            <h3 class="mat-card-title-text">{{ reportTitle | translate }}</h3>
-          </mat-card-title>
-          <!-- Controls/Tools -->
-          <div class="line-chart-tools-wrapper">
-            @if (localControls() && !report().errorConf) {
-              <div class="line-chart-tools">
-                <div class="steps-group" aria-label="Steps">
-                  <button
-                    mat-button
-                    [disabled]="stepBackDisabled"
-                    [matTooltip]="'Step Back' | translate"
-                    [matTooltipShowDelay]="1000"
-                    [ixTest]="['steps', 'back']"
-                    (click)="stepBack()"
-                  >
-                    <tn-icon name="rewind" library="mdi"></tn-icon>
-                  </button>
-                  <button
-                    mat-button
-                    [disabled]="stepForwardDisabled"
-                    [matTooltip]="'Step Forward' | translate"
-                    [matTooltipShowDelay]="1000"
-                    [ixTest]="['steps', 'forward']"
-                    (click)="stepForward()"
-                  >
-                    <tn-icon name="fast-forward" library="mdi"></tn-icon>
-                  </button>
-                </div>
-
-                <div class="zoom-group" aria-label="Zoom Level">
-                  <button
-                    mat-button
-                    [disabled]="zoomLevelIndex === zoomLevelMin"
-                    [matTooltip]="'Zoom Out' | translate"
-                    [ixTest]="['zoom', 'out']"
-                    (click)="timeZoomOut()"
-                    ><tn-icon name="magnify-minus" library="mdi"></tn-icon>
-                  </button>
-
-                  <button
-                    mat-button
-                    [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled && !customZoom"
-                    [matTooltip]="'Reset Zoom' | translate"
-                    [ixTest]="['zoom', 'reset']"
-                    (click)="timeZoomReset()"
-                  >
-                    {{ currentZoomLevel | mapValue: zoomLevelLabels | translate }}
-                  </button>
-
-                  <button
-                    mat-button
-                    [disabled]="zoomLevelIndex === zoomLevelMax"
-                    [matTooltip]="'Zoom In' | translate"
-                    [ixTest]="['zoom', 'in']"
-                    (click)="timeZoomIn()"
-                    >
-                      <tn-icon name="magnify-plus" library="mdi"></tn-icon>
-                  </button>
-                  </div>
-                </div>
-              }
+    <tn-card class="card" [class.loading]="!isReady" [bordered]="!isReady" [padContent]="false">
+      <div class="toolbar" tnCardHeader>
+        <h3 class="tn-card__title">{{ reportTitle | translate }}</h3>
+        <!-- Controls/Tools -->
+        @if (localControls() && !report().errorConf) {
+          <div class="line-chart-tools">
+            <div class="steps-group" aria-label="Steps">
+              <tn-icon-button
+                name="rewind"
+                library="mdi"
+                [disabled]="stepBackDisabled"
+                [tooltip]="'Step Back' | translate"
+                [ariaLabel]="'Step Back' | translate"
+                [testId]="['steps', 'back']"
+                (onClick)="stepBack()"
+              ></tn-icon-button>
+              <tn-icon-button
+                name="fast-forward"
+                library="mdi"
+                [disabled]="stepForwardDisabled"
+                [tooltip]="'Step Forward' | translate"
+                [ariaLabel]="'Step Forward' | translate"
+                [testId]="['steps', 'forward']"
+                (onClick)="stepForward()"
+              ></tn-icon-button>
             </div>
-          </mat-toolbar-row>
-        }
 
+            <div class="zoom-group" aria-label="Zoom Level">
+              <tn-icon-button
+                name="magnify-minus"
+                library="mdi"
+                [disabled]="zoomLevelIndex === zoomLevelMin"
+                [tooltip]="'Zoom Out' | translate"
+                [ariaLabel]="'Zoom Out' | translate"
+                [testId]="['zoom', 'out']"
+                (onClick)="timeZoomOut()"
+              ></tn-icon-button>
+
+              <tn-button
+                [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled && !customZoom"
+                [tnTooltip]="'Reset Zoom' | translate"
+                [label]="currentZoomLevel | mapValue: zoomLevelLabels | translate"
+                [testId]="['zoom', 'reset']"
+                (onClick)="timeZoomReset()"
+              ></tn-button>
+
+              <tn-icon-button
+                name="magnify-plus"
+                library="mdi"
+                [disabled]="zoomLevelIndex === zoomLevelMax"
+                [tooltip]="'Zoom In' | translate"
+                [ariaLabel]="'Zoom In' | translate"
+                [testId]="['zoom', 'in']"
+                (onClick)="timeZoomIn()"
+              ></tn-icon-button>
+            </div>
+          </div>
+        }
+      </div>
       @if (isReady && !report().errorConf) {
-        <mat-card-content class="card-content">
+        <div class="card-content">
           <div class="chart-wrapper-outer">
             <div class="chart-wrapper">
               <ix-linechart
@@ -123,9 +113,9 @@
 
             @if (report() && data?.legend) {
               <div class="legend-group-wrapper">
-                <table class="legend-table" [ixTest]="['reports-table', report().title]">
+                <table class="legend-table" tnTestIdType="table" [tnTestId]="['reports-table', report().title]">
                   <!-- Table Header-->
-                  <tr class="legend-group header" ixTest="table-header">
+                  <tr class="legend-group header" tnTestIdType="row" [tnTestId]="'table-header'">
                     <th class="legend-label">
                       <strong>{{ 'Key' | translate }}</strong>
                     </th>
@@ -139,7 +129,7 @@
                   </tr>
                   <!-- Table Rows -->
                   @for (legendItem of data.legend; track legendItem; let i = $index) {
-                    <tr class="legend-group" [ixTest]="legendItem">
+                    <tr class="legend-group" tnTestIdType="row" [tnTestId]="legendItem">
                       <td class="legend-label">
                         <!--Legend Label-->
                         @if (chartColors && legendItem) {
@@ -177,14 +167,36 @@
               </h4>
             }
           </section>
-        </mat-card-content>
+        </div>
       }
 
       @if (isReady && report()?.errorConf) {
-        <mat-card-content>
-          <ix-empty [conf]="report().errorConf"></ix-empty>
-        </mat-card-content>
+        <div class="card-content">
+          <!--
+               errorConf.title is necessarily translated since its type is `TranslatedString`
+               so there's no reason to translate it here
+          -->
+          <tn-empty
+            icon="alert-octagon"
+            iconLibrary="mdi"
+            iconSize="56px"
+            [title]="report().errorConf.title"
+            [description]="report().errorConf.message"
+          ></tn-empty>
+        </div>
       }
-    </mat-card>
+
+      @if (!isReady) {
+        <div class="card-content">
+          <tn-empty
+            class="loading-indicator"
+            icon="truenas-logo-mark"
+            iconLibrary="custom"
+            iconSize="128px"
+            [title]="'Fetching realtime data...' | translate"
+          ></tn-empty>
+        </div>
+      }
+    </tn-card>
   </div>
 </div>

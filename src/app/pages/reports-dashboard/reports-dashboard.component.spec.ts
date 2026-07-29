@@ -1,3 +1,4 @@
+import { ActivatedRoute } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -53,11 +54,9 @@ describe('ReportsDashboardComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-  });
-
   it('separates disk and other reports', () => {
+    spectator = createComponent();
+
     const fakeReports = [
       {
         identifiers: [],
@@ -82,27 +81,34 @@ describe('ReportsDashboardComponent', () => {
       },
     ] as Report[];
 
-    expect(spectator.component.allReports).toEqual(fakeReports);
-    expect(spectator.component.diskReports).toEqual([fakeReports[2]]);
-    expect(spectator.component.otherReports).toEqual([fakeReports[0], fakeReports[1]]);
+    expect(spectator.component.allReports()).toEqual(fakeReports);
+    expect(spectator.component.diskReports()).toEqual([fakeReports[2]]);
+    expect(spectator.component.otherReports()).toEqual([fakeReports[0], fakeReports[1]]);
   });
 
   describe('buildDiskReport', () => {
     it('rebuilds disk reports', () => {
-      spectator.component.updateActiveTab(fakeTabs[2]);
-      expect(spectator.component.activeReports).toHaveLength(2);
+      spectator = createComponent({
+        providers: [
+          mockProvider(ActivatedRoute, {
+            snapshot: { url: [{ path: 'disk' }] },
+          }),
+        ],
+      });
+
+      expect(spectator.component.activeReports()).toHaveLength(2);
 
       spectator.component.buildDiskReport({
         devices: ['sda'],
         metrics: [ReportingGraphName.Disk],
       });
-      expect(spectator.component.visibleReports).toEqual([0]);
+      expect(spectator.component.visibleReports()).toEqual([0]);
 
       spectator.component.buildDiskReport({
         devices: ['sdb'],
         metrics: [ReportingGraphName.Disk],
       });
-      expect(spectator.component.visibleReports).toEqual([1]);
+      expect(spectator.component.visibleReports()).toEqual([1]);
     });
   });
 });

@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -13,12 +11,8 @@ import { IscsiService } from 'app/services/iscsi.service';
   templateUrl: './iscsi-groups-card.component.html',
   styleUrls: ['./iscsi-groups-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
+    TnCardComponent,
     TranslateModule,
   ],
 })

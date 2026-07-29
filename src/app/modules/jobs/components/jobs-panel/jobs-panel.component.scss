@@ -1,20 +1,5 @@
 $component-header: 50px;
 
-:host {
-  .mat-mdc-dialog-actions {
-    padding: 14px 24px;
-
-    button {
-      display: flex;
-      margin: 0 auto;
-    }
-  }
-
-  mat-dialog-content {
-    padding-top: 0;
-  }
-}
-
 .jobs-header {
   align-items: baseline;
   background: var(--bg2);

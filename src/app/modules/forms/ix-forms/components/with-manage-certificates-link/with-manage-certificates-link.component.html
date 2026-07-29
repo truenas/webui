@@ -2,7 +2,8 @@
   <div class="link-wrapper">
     <a
       class="link"
-      ixTest="manage-certificates"
+      tnTestIdType="text"
+      [tnTestId]="'manage-certificates'"
       [routerLink]="['/', 'credentials', 'certificates']"
     >
       {{ 'Manage Certificates' | translate }}

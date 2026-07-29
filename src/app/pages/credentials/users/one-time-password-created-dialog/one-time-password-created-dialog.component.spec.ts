@@ -1,10 +1,9 @@
 import { Clipboard } from '@angular/cdk/clipboard';
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 
@@ -15,8 +14,9 @@ describe('OneTimePasswordCreatedDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: OneTimePasswordCreatedDialog,
     providers: [
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: 'some-one-time-password',
       },
       mockProvider(SnackbarService),
@@ -35,12 +35,12 @@ describe('OneTimePasswordCreatedDialogComponent', () => {
     expect(spectator.query('p')).toHaveText('Success! One-Time Password has been created.');
     expect(spectator.query('p strong')).toHaveText('This is the only time the password is shown.');
 
-    const textArea = await loader.getHarness(IxTextareaHarness.with({ label: 'One-Time Password' }));
+    const textArea = await loader.getHarness(TnInputHarness);
     expect(await textArea.getValue()).toBe('some-one-time-password');
   });
 
   it('copies password to clipboard when Copy button is pressed', async () => {
-    const copyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Copy to Clipboard' }));
+    const copyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Copy to Clipboard' }));
     await copyButton.click();
 
     expect(spectator.inject(Clipboard).copy).toHaveBeenCalledWith('some-one-time-password');

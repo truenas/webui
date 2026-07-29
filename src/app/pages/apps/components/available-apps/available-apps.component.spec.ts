@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatInputHarness } from '@angular/material/input/testing';
 import {
   Spectator, mockProvider, createComponentFactory,
 } from '@ngneat/spectator/jest';
+import { TnInputHarness } from '@truenas/ui-components';
 import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent, MockDeclaration } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -38,7 +38,7 @@ const appsResponse = [{
 describe('Finding app', () => {
   let spectator: Spectator<AvailableAppsComponent>;
   let loader: HarnessLoader;
-  let searchInput: MatInputHarness;
+  let searchInput: TnInputHarness;
 
   const createComponent = createComponentFactory({
     component: AvailableAppsComponent,
@@ -61,6 +61,7 @@ describe('Finding app', () => {
       mockProvider(AppsStore, {
         isLoading$: of(false),
         availableApps$: of([]),
+        appsCategories$: of([]),
       }),
       mockProvider(AppsFilterStore, {
         isFilterApplied$: of(false),
@@ -77,7 +78,7 @@ describe('Finding app', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    searchInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Search' }));
+    searchInput = await loader.getHarness(TnInputHarness.with({ placeholder: 'Search' }));
   });
 
   it('find app', async () => {

@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -11,7 +11,6 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DockerConfig } from 'app/interfaces/docker-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
 import {
   IxIpInputWithNetmaskComponent,
@@ -19,7 +18,6 @@ import {
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -69,12 +67,6 @@ describe('AppsSettingsComponent', () => {
     dataset: 'test-dataset',
   } as DockerConfig;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: AppsSettingsComponent,
     imports: [
@@ -101,7 +93,6 @@ describe('AppsSettingsComponent', () => {
           afterClosed: () => of(null),
         })),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(FormErrorHandlerService),
       mockAuth(),
       mockProvider(DockerStore, {
@@ -143,8 +134,7 @@ describe('AppsSettingsComponent', () => {
       'Preferred Trains': ['stable', 'community'],
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('catalog.update', [
       { preferred_trains: ['stable', 'community'] },
@@ -156,10 +146,14 @@ describe('AppsSettingsComponent', () => {
     const values = await form.getValues();
 
     expect(values).toMatchObject({
-      'Check for docker image updates': false,
       Base: '172.17.0.0/12',
       Size: '12',
     });
+
+    const imageUpdatesCheckbox = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Check for docker image updates' }),
+    );
+    expect(await imageUpdatesCheckbox.isChecked()).toBe(false);
 
     const mirrorList = await loader.getHarness(IxListHarness.with({ label: 'Registry Mirrors' }));
     const mirrorItems = await mirrorList.getListItems();
@@ -186,15 +180,15 @@ describe('AppsSettingsComponent', () => {
   });
 
   it('shows nvidia checkbox when nvidia GPU is present', async () => {
-    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }));
+    const nvidiaCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }));
     expect(nvidiaCheckbox).toBeTruthy();
   });
 
   it('updates docker settings when form is edited', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Check for docker image updates': true,
-    });
+    const imageUpdatesCheckbox = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Check for docker image updates' }),
+    );
+    await imageUpdatesCheckbox.check();
 
     const addressPoolList = await loader.getHarness(IxListHarness.with({ label: 'Address Pools' }));
 
@@ -219,8 +213,7 @@ describe('AppsSettingsComponent', () => {
       Insecure: true,
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('docker.update', [{
       enable_image_updates: true,
@@ -239,13 +232,12 @@ describe('AppsSettingsComponent', () => {
   });
 
   it('submits nvidia as true when user enables the nvidia checkbox', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Enable NVIDIA GPU Support': true,
-    });
+    const nvidiaCheckbox = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }),
+    );
+    await nvidiaCheckbox.check();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.update', [{ nvidia: true }]);
   });
@@ -255,19 +247,11 @@ describe('AppsSettingsComponent - nvidia drivers installed without GPU', () => {
   let spectator: Spectator<AppsSettingsComponent>;
   let loader: HarnessLoader;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: AppsSettingsComponent,
     imports: [ReactiveFormsModule, IxIpInputWithNetmaskComponent],
     providers: [
       ...getNvidiaProviders({ nvidia: true }, false),
-
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -278,7 +262,7 @@ describe('AppsSettingsComponent - nvidia drivers installed without GPU', () => {
   });
 
   it('shows nvidia checkbox when nvidia drivers are installed even if GPU is absent', async () => {
-    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }));
+    const nvidiaCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }));
     expect(nvidiaCheckbox).toBeTruthy();
   });
 });
@@ -287,19 +271,11 @@ describe('AppsSettingsComponent - no nvidia GPU and no drivers', () => {
   let spectator: Spectator<AppsSettingsComponent>;
   let loader: HarnessLoader;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: AppsSettingsComponent,
     imports: [ReactiveFormsModule, IxIpInputWithNetmaskComponent],
     providers: [
       ...getNvidiaProviders({ nvidia: false }, false),
-
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -310,7 +286,7 @@ describe('AppsSettingsComponent - no nvidia GPU and no drivers', () => {
   });
 
   it('hides nvidia checkbox when no GPU is present and no drivers are installed', async () => {
-    const nvidiaCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }));
+    const nvidiaCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Enable NVIDIA GPU Support' }));
     expect(nvidiaCheckbox).toBeNull();
   });
 });

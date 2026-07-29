@@ -1,10 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { IsHaDirective } from 'app/directives/is-ha/is-ha.directive';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
@@ -15,11 +13,8 @@ import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
   templateUrl: './fibre-channel-port-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
     TranslateModule,
-    MatCardContent,
     NgxSkeletonLoaderModule,
     IsHaDirective,
   ],

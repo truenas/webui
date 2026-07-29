@@ -1,7 +1,8 @@
 @import 'mixins/cards';
 
+@include tn-detail-card();
+
 .card {
-  @include details-card();
   margin: 0;
 
   .details-item .label {

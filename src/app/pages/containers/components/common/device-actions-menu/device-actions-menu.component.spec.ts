@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -12,10 +12,13 @@ import {
 } from 'app/interfaces/container.interface';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  ContainerFilesystemDeviceFormComponent,
+} from 'app/pages/containers/components/all-containers/container-details/container-filesystem-devices/container-filesystem-device-form/container-filesystem-device-form.component';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/containers/components/common/device-actions-menu/device-actions-menu.component';
@@ -38,7 +41,7 @@ describe('DeviceActionsMenuComponent', () => {
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success(false)),
       }),
       mockProvider(ErrorHandlerService, {
@@ -75,12 +78,16 @@ describe('DeviceActionsMenuComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
+  async function openMenu(): Promise<TnMenuHarness> {
+    const trigger = await loader.getHarness(TnIconButtonHarness);
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   describe('delete', () => {
     it('deletes a device with confirmation and reloads the store when Delete item is selected', async () => {
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-
-      await menu.clickItem({ text: 'Delete' });
+      const menu = await openMenu();
+      await menu.clickItem({ label: 'Delete' });
 
       expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
         title: 'Delete Item',
@@ -95,12 +102,10 @@ describe('DeviceActionsMenuComponent', () => {
 
   describe('edit', () => {
     it('emits an edit event for non-storage devices when the Edit item is selected', async () => {
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-
       jest.spyOn(spectator.component.edit, 'emit');
 
-      await menu.clickItem({ text: 'Edit' });
+      const menu = await openMenu();
+      await menu.clickItem({ label: 'Edit' });
 
       expect(spectator.component.edit.emit).toHaveBeenCalled();
     });
@@ -113,25 +118,24 @@ describe('DeviceActionsMenuComponent', () => {
         target: '/data',
       } as ContainerDevice);
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
+      const menu = await openMenu();
+      await menu.clickItem({ label: 'Edit' });
 
-      jest.spyOn(spectator.inject(SlideIn), 'open');
-
-      await menu.clickItem({ text: 'Edit' });
-
-      // Verify that the SlideIn service was called to open the form
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalled();
+      // Verify that the form was opened in a side panel via FormSidePanelService.
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+        ContainerFilesystemDeviceFormComponent,
+        expect.objectContaining({
+          inputs: expect.objectContaining({ disk: expect.objectContaining({ id: 456 }) }),
+        }),
+      );
     });
 
     it('does not show the Edit item when showEdit is false', async () => {
       spectator.setInput('showEdit', false);
 
-      const menu = await loader.getHarness(MatMenuHarness);
-      await menu.open();
-
-      const items = await menu.getItems({ text: 'Edit' });
-      expect(items).toHaveLength(0);
+      const menu = await openMenu();
+      const items = await menu.getItemLabels();
+      expect(items).not.toContain('Edit');
     });
   });
 });

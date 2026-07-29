@@ -1,63 +1,54 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
-  [title]="title | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <tn-form-section>
+    @if (!loggedInToDockerHub && !existingDockerRegistry) {
+      <tn-form-field [label]="'URI' | translate">
+        <tn-select
+          testId="registry"
+          formControlName="registry"
+          [options]="(registriesOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
+    }
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        @if (!isLoggedInToDockerHub && !existingDockerRegistry) {
-          <ix-select
-            formControlName="registry"
-            [label]="'URI' | translate"
-            [options]="registriesOptions$"
-            [hideEmpty]="true"
-          ></ix-select>
-        }
-
-        @if (existingDockerRegistry || isLoggedInToDockerHub || !form.controls.registry.value) {
-          <ix-input
-            formControlName="uri"
-            [label]="'URI' | translate"
-            [placeholder]="dockerHubRegistry"
-            [required]="true"
-          ></ix-input>
-
-          <ix-input
-            formControlName="name"
-            [label]="'Name' | translate"
-            [required]="true"
-          ></ix-input>
-        }
-
-        <ix-input
-          formControlName="username"
-          [label]="'Username' | translate"
+    @if (existingDockerRegistry || loggedInToDockerHub || !form.controls.registry.value) {
+      <tn-form-field [label]="'URI' | translate" [required]="true">
+        <tn-input
+          name="uri"
+          testId="uri"
+          formControlName="uri"
           [required]="true"
-        ></ix-input>
+          [placeholder]="dockerHubRegistry"
+        ></tn-input>
+      </tn-form-field>
 
-        <ix-input
-          formControlName="password"
-          type="password"
-          [label]="'Password' | translate"
+      <tn-form-field [label]="'Name' | translate" [required]="true">
+        <tn-input
+          name="name"
+          testId="name"
+          formControlName="name"
           [required]="true"
-        ></ix-input>
-      </ix-fieldset>
+        ></tn-input>
+      </tn-form-field>
+    }
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isFormLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+    <tn-form-field [label]="'Username' | translate" [required]="true">
+      <tn-input
+        name="username"
+        testId="username"
+        formControlName="username"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field [label]="'Password' | translate" [required]="true">
+      <tn-input
+        name="password"
+        testId="password"
+        formControlName="password"
+        [inputType]="InputType.Password"
+        [required]="true"
+        [showPasswordToggle]="true"
+      ></tn-input>
+    </tn-form-field>
+  </tn-form-section>
+</form>

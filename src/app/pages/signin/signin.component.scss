@@ -46,8 +46,6 @@ tn-card {
 }
 
 ix-disconnected-message {
-  // Replaces the legacy mat-card's 18px bottom inset on the disconnected card.
-  display: block;
   padding-bottom: 18px;
 }
 

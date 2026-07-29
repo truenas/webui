@@ -2,14 +2,17 @@
   @if (section.type === 'markdown') {
     <markdown [data]="section.content || ''"></markdown>
   } @else if (section.type === 'tabs' && section.tabs) {
-    <mat-tab-group>
+    <tn-tabs>
       @for (tab of section.tabs; track tab.label) {
-        <mat-tab [label]="tab.label">
+        <tn-tab [label]="tab.label"></tn-tab>
+      }
+      @for (tab of section.tabs; track tab.label) {
+        <tn-tab-panel [label]="tab.label">
           <div class="tab-content">
             <markdown [data]="tab.content"></markdown>
           </div>
-        </mat-tab>
+        </tn-tab-panel>
       }
-    </mat-tab-group>
+    </tn-tabs>
   }
 }

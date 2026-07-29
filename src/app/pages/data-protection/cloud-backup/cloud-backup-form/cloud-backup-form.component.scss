@@ -1,20 +1,10 @@
 @import 'scss-imports/variables';
+@import 'mixins/forms';
+
+@include tn-form-fieldsets-columns();
 
 tn-banner {
   display: block;
-  margin-top: 16px;
-}
-
-.fieldsets {
-  display: flex;
-  flex-wrap: wrap;
-
-  .fieldset {
-    width: 50%;
-
-    @media (max-width: $breakpoint-tablet) {
-      padding-bottom: 0;
-      width: 100%;
-    }
-  }
+  // Space the intro banner from the form sections below it (panel padding handles the top).
+  margin-bottom: 24px;
 }

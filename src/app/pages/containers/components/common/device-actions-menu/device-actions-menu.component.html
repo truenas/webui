@@ -1,39 +1,17 @@
 <div *ixRequiresRoles="requiredRoles">
-  <div
-    class="button-wrapper"
-    [matTooltip]="!canManage() && manageRestrictedExplanation() ? manageRestrictedExplanation()! : ''"
-    [matTooltipDisabled]="canManage() || !manageRestrictedExplanation()"
-  >
-    <button
-      mat-icon-button
-      type="button"
-      [ixTest]="['actions-for', deviceDescription()]"
-      [matMenuTriggerFor]="menu"
+  <div class="button-wrapper">
+    <tn-icon-button
+      name="dots-vertical"
+      library="mdi"
+      [testId]="['actions-for', deviceDescription()]"
+      [tnMenuTriggerFor]="menu"
       [disabled]="!canManage()"
       [class.disabled]="!canManage()"
       [attr.tabindex]="!canManage() ? -1 : 0"
-      [matTooltip]="canManage() ? ('Actions for {device}' | translate: { device: deviceDescription() }) : ''"
-      [attr.aria-label]="'Actions for {device}' | translate: { device: deviceDescription() }"
-    >
-      <tn-icon name="dots-vertical" library="mdi"></tn-icon>
-    </button>
+      [ariaLabel]="'Actions for {device}' | translate: { device: deviceDescription() }"
+      [tooltip]="manageRestrictedExplanation() ?? undefined"
+    ></tn-icon-button>
   </div>
 </div>
 
-<mat-menu #menu="matMenu">
-  @if (showEdit()) {
-    <button
-      mat-menu-item
-      type="button"
-      [ixTest]="['edit', deviceDescription()]"
-      (click)="editPressed()"
-    >{{ 'Edit' | translate }}</button>
-  }
-
-  <button
-    mat-menu-item
-    type="button"
-    [ixTest]="['delete', deviceDescription()]"
-    (click)="deletePressed()"
-  >{{ 'Delete' | translate }}</button>
-</mat-menu>
+<tn-menu #menu [items]="menuItems()"></tn-menu>

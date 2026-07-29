@@ -1,20 +1,31 @@
-<h1 matDialogTitle>{{ helptext.title | translate }}</h1>
+<tn-dialog-shell testId="save-config" [title]="helptext.title | translate">
 <form class="ix-form-container" (submit)="$event.preventDefault(); onSubmit()">
   <div [innerHtml]="helptext.message | translate"></div>
 
-  <ix-checkbox
-    [formControl]="exportSeedCheckbox"
-    [label]="'Export Password Secret Seed' | translate"
-  ></ix-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      testId="export-seed"
+      [formControl]="exportSeedCheckbox"
+      [label]="'Export Password Secret Seed' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
   <div [innerHtml]="helptext.warning | translate"></div>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-      {{ helptext.cancelButton | translate }}
-    </button>
-    <button *ixRequiresRoles="requiredRoles" mat-button type="submit" color="primary" ixTest="save">
-      {{ helptext.saveButton | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+  </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="helptext.cancelButton | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    testId="save"
+    [label]="helptext.saveButton | translate"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

@@ -1,13 +1,11 @@
 import { PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatGridList, MatGridTile } from '@angular/material/grid-list';
-import { MatTooltip } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnIconButtonComponent, TnIconComponent, TnTestIdDirective, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -19,7 +17,6 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { isTopologyDisk } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -34,16 +31,12 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FormatDateTimePipe, PercentPipe],
   imports: [
-    MatCard,
-    MatCardContent,
-    MatIconButton,
-    TestDirective,
-    MatTooltip,
+    TnCardComponent,
+    TnIconButtonComponent,
+    TnTestIdDirective,
     RouterLink,
     TnIconComponent,
     TnTooltipDirective,
-    MatGridList,
-    MatGridTile,
     RequiresRolesDirective,
     NgxSkeletonLoaderModule,
     TranslateModule,
@@ -51,6 +44,7 @@ import {
   ],
 })
 export class WidgetStorageComponent {
+  private router = inject(Router);
   private resources = inject(WidgetResourcesService);
   private translate = inject(TranslateService);
   private formatDateTimePipe = inject(FormatDateTimePipe);
@@ -328,5 +322,9 @@ export class WidgetStorageComponent {
     }
 
     return this.translate.instant('Unknown');
+  }
+
+  protected goToReports(): void {
+    this.router.navigate(['/reportsdashboard', 'disk']);
   }
 }

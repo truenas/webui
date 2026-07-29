@@ -1,12 +1,13 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-service/alert-services/base-alert-service-form';
 
@@ -15,12 +16,15 @@ const disabledValue = 'disabled';
 @Component({
   selector: 'ix-snmp-trap-service',
   templateUrl: './snmp-trap-service.component.html',
+  styleUrls: ['../alert-service-form.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxInputComponent,
-    IxCheckboxComponent,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
     TranslateModule,
   ],
 })
@@ -28,6 +32,8 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private validators = inject(IxValidatorsService);
+
+  protected readonly InputType = InputType;
 
   form = this.formBuilder.nonNullable.group({
     host: ['', Validators.required],

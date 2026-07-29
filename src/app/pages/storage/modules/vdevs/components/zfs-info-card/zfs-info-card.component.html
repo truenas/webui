@@ -1,85 +1,29 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>{{ 'ZFS Info' | translate }}</h3>
-  </mat-card-header>
-  <mat-card-content>
-    <div>
-      @if (topologyParentItem()?.name) {
-        <div class="details-item">
-          <div class="label">{{ 'Parent' | translate }}:</div>
-          <div class="value">{{ topologyParentItem()?.name | uppercase }}</div>
-        </div>
-      }
+<tn-card
+  padding="small"
+  [title]="'ZFS Info' | translate"
+  [primaryAction]="extendAction()"
+  [secondaryAction]="removeAction()"
+  [headerMenu]="actionsMenu()"
+  [headerMenuTriggerTestId]="'zfs-actions'"
+>
+  <div>
+    @if (topologyParentItem()?.name) {
       <div class="details-item">
-        <div class="label">{{ 'Read Errors' | translate }}:</div>
-        <div class="value">{{ topologyItem().stats?.read_errors }}</div>
+        <div class="label">{{ 'Parent' | translate }}:</div>
+        <div class="value">{{ topologyParentItem()?.name | uppercase }}</div>
       </div>
-      <div class="details-item">
-        <div class="label">{{ 'Write Errors' | translate }}:</div>
-        <div class="value">{{ topologyItem().stats?.write_errors }}</div>
-      </div>
-      <div class="details-item">
-        <div class="label">{{ 'Checksum Errors' | translate }}:</div>
-        <div class="value">{{ topologyItem().stats?.checksum_errors }}</div>
-      </div>
+    }
+    <div class="details-item">
+      <div class="label">{{ 'Read Errors' | translate }}:</div>
+      <div class="value">{{ topologyItem().stats?.read_errors }}</div>
     </div>
-  </mat-card-content>
-  @if (isDisk()) {
-    <mat-card-actions>
-      @if (canExtendDisk()) {
-        <ng-container [ngTemplateOutlet]="extend"></ng-container>
-      }
-      @if (canRemoveDisk()) {
-        <ng-container [ngTemplateOutlet]="remove"></ng-container>
-      }
-      <ng-container *ixRequiresRoles="[Role.PoolWrite]">
-        @if (canDetachDisk()) {
-          <button mat-button ixTest="detach" (click)="onDetach()">
-            {{ 'Detach' | translate }}
-          </button>
-        }
-      </ng-container>
-      <ng-container *ixRequiresRoles="[Role.PoolWrite]">
-        @if (canOfflineDisk()) {
-          <button mat-button ixTest="offline" (click)="onOffline()">
-            {{ 'Offline' | translate }}
-          </button>
-        }
-      </ng-container>
-      <ng-container *ixRequiresRoles="[Role.PoolWrite]">
-        @if (canOnlineDisk()) {
-          <button mat-button ixTest="online" (click)="onOnline()">
-            {{ 'Online' | translate }}
-          </button>
-        }
-      </ng-container>
-    </mat-card-actions>
-  }
-  @if (isMirror()) {
-    <mat-card-actions>
-      <ng-container [ngTemplateOutlet]="extend"></ng-container>
-      @if (canRemoveVdev()) {
-        <ng-container [ngTemplateOutlet]="remove"></ng-container>
-      }
-    </mat-card-actions>
-  }
-  @if (isRaidz()) {
-    <mat-card-actions>
-      <button *ixRequiresRoles="[Role.PoolWrite]" mat-button ixTest="extend" (click)="onRaidzExtend()">
-        {{ 'Extend' | translate }}
-      </button>
-    </mat-card-actions>
-  }
-</mat-card>
-
-<ng-template #extend>
-  <button *ixRequiresRoles="[Role.PoolWrite]" mat-button ixTest="extend" (click)="onExtend()">
-    {{ 'Extend' | translate }}
-  </button>
-</ng-template>
-
-<ng-template #remove>
-  <button *ixRequiresRoles="[Role.PoolWrite]" mat-button ixTest="remove" (click)="onRemove()">
-    {{ 'Remove' | translate }}
-  </button>
-</ng-template>
+    <div class="details-item">
+      <div class="label">{{ 'Write Errors' | translate }}:</div>
+      <div class="value">{{ topologyItem().stats?.write_errors }}</div>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Checksum Errors' | translate }}:</div>
+      <div class="value">{{ topologyItem().stats?.checksum_errors }}</div>
+    </div>
+  </div>
+</tn-card>

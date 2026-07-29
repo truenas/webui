@@ -1,14 +1,13 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { tnIconMarker, TnIconComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker, TnButtonComponent, TnCardComponent, TnIconComponent,
+  TnListComponent, TnListItemComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, map,
@@ -21,7 +20,6 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
@@ -42,16 +40,14 @@ import {
   styleUrls: ['../common/widget-sys-info.scss', './widget-sys-info-passive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
+    TnButtonComponent,
+    TnListComponent,
+    TnListItemComponent,
+    TnTooltipDirective,
     TnIconComponent,
     ProductImageComponent,
-    MatButton,
-    TestDirective,
     RequiresRolesDirective,
-    MatTooltip,
-    MatList,
-    MatListItem,
     NgxSkeletonLoaderModule,
     CopyButtonComponent,
     TranslateModule,

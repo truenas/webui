@@ -1,14 +1,11 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -19,23 +16,19 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./export-all-keys-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
-    MatDialogContent,
     FormActionsComponent,
-    MatDialogActions,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
   ],
 })
 export class ExportAllKeysDialog {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
-  private dialogRef = inject<MatDialogRef<ExportAllKeysDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef>(DialogRef);
   private download = inject(DownloadService);
-  dataset = inject<Dataset>(MAT_DIALOG_DATA);
+  dataset = inject<Dataset>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
 

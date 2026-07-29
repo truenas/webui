@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { TnFormFieldComponent, TnInputComponent } from '@truenas/ui-components';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
@@ -16,7 +16,8 @@ import { WidgetArbitraryTextSettings } from 'app/pages/dashboard/widgets/custom/
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     TranslateModule,
   ],
 })

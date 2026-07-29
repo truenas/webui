@@ -1,14 +1,15 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnInputHarness } from '@truenas/ui-components';
 import {
   MegaProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/mega-provider-form/mega-provider-form.component';
 
 describe('MegaProviderFormComponent', () => {
   let spectator: Spectator<MegaProviderFormComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: MegaProviderFormComponent,
     imports: [
@@ -16,9 +17,13 @@ describe('MegaProviderFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
@@ -27,18 +32,13 @@ describe('MegaProviderFormComponent', () => {
       pass: 'wordpass',
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
-      Username: 'samantha',
-      Password: 'wordpass',
-    });
+    expect(await (await getInput('user')).getValue()).toBe('samantha');
+    expect(await (await getInput('pass')).getValue()).toBe('wordpass');
   });
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
-    await form.fillForm({
-      Username: 'samantha2',
-      Password: '12345678',
-    });
+    await (await getInput('user')).setValue('samantha2');
+    await (await getInput('pass')).setValue('12345678');
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toEqual({

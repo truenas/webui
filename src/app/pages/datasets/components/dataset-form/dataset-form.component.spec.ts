@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
@@ -137,13 +137,13 @@ describe('DatasetFormComponent', () => {
       expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(false);
       expect(spectator.query(QuotasSectionComponent)).not.toExist();
 
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
 
       expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(true);
       expect(spectator.query(QuotasSectionComponent)).toExist();
 
-      const basicButton = await loader.getHarness(MatButtonHarness.with({ text: 'Basic Options' }));
+      const basicButton = await loader.getHarness(TnButtonHarness.with({ label: 'Basic Options' }));
       await basicButton.click();
 
       expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(false);
@@ -178,7 +178,7 @@ describe('DatasetFormComponent', () => {
 
     it('creates new SMB and NFS when new form is submitted', async () => {
       jest.spyOn(spectator.inject(Store), 'dispatch');
-      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submit = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submit.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
@@ -201,7 +201,7 @@ describe('DatasetFormComponent', () => {
     it('sets purpose to MultiProtocolShare on SMB create when Multiprotocol preset is selected', async () => {
       nameAndOptionsForm.controls.share_type.setValue(DatasetPreset.Multiprotocol);
 
-      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submit = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submit.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
@@ -218,7 +218,7 @@ describe('DatasetFormComponent', () => {
       datasetPresetForm.controls.create_nfs.setValue(false);
 
       jest.spyOn(spectator.inject(Store), 'dispatch');
-      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submit = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submit.click();
 
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.smb.create', [{
@@ -239,7 +239,7 @@ describe('DatasetFormComponent', () => {
     });
 
     it('creates a new dataset when new form is submitted', async () => {
-      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submit = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submit.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
@@ -250,10 +250,10 @@ describe('DatasetFormComponent', () => {
     });
 
     it('creates a new dataset in advanced mode when new form is submitted', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
 
-      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submit = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submit.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
@@ -265,7 +265,7 @@ describe('DatasetFormComponent', () => {
     });
 
     it('checks if parent has ACL and offers to go to ACL editor if it does', async () => {
-      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submit = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submit.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/parent']);
@@ -289,7 +289,7 @@ describe('DatasetFormComponent', () => {
     });
 
     it('updates an existing child dataset when edit form is submitted', async () => {
-      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submit = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submit.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent/child', {
@@ -310,7 +310,7 @@ describe('DatasetFormComponent', () => {
     });
 
     it('updates an existing root dataset when edit form is submitted', async () => {
-      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submit = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submit.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent', {

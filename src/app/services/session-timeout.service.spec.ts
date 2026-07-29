@@ -1,5 +1,4 @@
 import { fakeAsync, tick } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -9,7 +8,6 @@ import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { SessionExpiringDialog } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
@@ -19,9 +17,9 @@ import { SessionTimeoutService } from './session-timeout.service';
 
 describe('SessionTimeoutService', () => {
   let spectator: SpectatorService<SessionTimeoutService>;
-  const afterClosed$ = new BehaviorSubject<boolean>(true);
+  const closed$ = new BehaviorSubject<boolean>(true);
   const mockDialogRef = {
-    afterClosed: () => afterClosed$,
+    closed: closed$,
     close: jest.fn(),
   };
 
@@ -39,10 +37,6 @@ describe('SessionTimeoutService', () => {
           value: { lifetime: 300 },
         }],
       }),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockDialogRef),
-        afterOpened: of(),
-      }),
       mockProvider(TokenLastUsedService),
       mockProvider(WebSocketStatusService, {
         setReconnectAllowed: jest.fn(),
@@ -50,6 +44,8 @@ describe('SessionTimeoutService', () => {
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         closeAllDialogs: jest.fn(),
+        sessionExpiring: jest.fn(() => mockDialogRef),
+        afterOpened$: of(),
       }),
       mockProvider(Router),
       mockProvider(AuthService, {
@@ -111,7 +107,7 @@ describe('SessionTimeoutService', () => {
     spectator.service.pause();
 
     tick(300 * 1000);
-    expect(spectator.inject(MatDialog).open).not.toHaveBeenCalled();
+    expect(spectator.inject(DialogService).sessionExpiring).not.toHaveBeenCalled();
   }));
 
   it('resumes session timeout and shows expiration dialog', fakeAsync(() => {
@@ -121,13 +117,10 @@ describe('SessionTimeoutService', () => {
     spectator.service.start();
 
     tick(300 * 1000);
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SessionExpiringDialog, {
-      data: {
-        buttonText: 'Extend session',
-        message: expect.any(String),
-        title: 'Logout',
-      },
-      disableClose: true,
+    expect(spectator.inject(DialogService).sessionExpiring).toHaveBeenCalledWith({
+      buttonText: 'Extend session',
+      message: expect.any(String),
+      title: 'Logout',
     });
   }));
 
@@ -159,7 +152,7 @@ describe('SessionTimeoutService', () => {
 
   it('resets inactivity timer when user activity is detected', fakeAsync(() => {
     const window = spectator.inject<Window>(WINDOW);
-    const matDialog = spectator.inject(MatDialog);
+    const dialogService = spectator.inject(DialogService);
 
     spectator.service.start();
     tick(0);
@@ -178,23 +171,23 @@ describe('SessionTimeoutService', () => {
 
     // Wait another 200 seconds — should NOT have timed out (timer was reset)
     tick(200 * 1000);
-    expect(matDialog.open).not.toHaveBeenCalled();
+    expect(dialogService.sessionExpiring).not.toHaveBeenCalled();
 
     // Wait the remaining 100 seconds — now it should show the warning
     tick(100 * 1000);
-    expect(matDialog.open).toHaveBeenCalledWith(SessionExpiringDialog, expect.any(Object));
+    expect(dialogService.sessionExpiring).toHaveBeenCalled();
   }));
 
   it('does not reset timer on mouse activity while warning dialog is open', fakeAsync(() => {
     const window = spectator.inject<Window>(WINDOW);
-    const matDialog = spectator.inject(MatDialog);
+    const dialogService = spectator.inject(DialogService);
 
-    const dialogAfterClosed$ = new Subject<boolean>();
+    const dialogClosed$ = new Subject<boolean>();
     const dialogCloseSpy = jest.fn();
-    jest.spyOn(matDialog, 'open').mockReturnValue({
-      afterClosed: () => dialogAfterClosed$,
+    jest.spyOn(dialogService, 'sessionExpiring').mockReturnValue({
+      closed: dialogClosed$,
       close: dialogCloseSpy,
-    } as unknown as ReturnType<typeof matDialog.open>);
+    } as unknown as ReturnType<typeof dialogService.sessionExpiring>);
 
     spectator.service.start();
     tick(0);
@@ -207,7 +200,7 @@ describe('SessionTimeoutService', () => {
 
     // Wait for the timeout to fire and show the warning dialog
     tick(300 * 1000);
-    expect(matDialog.open).toHaveBeenCalled();
+    expect(dialogService.sessionExpiring).toHaveBeenCalled();
 
     // Simulate mouse activity while dialog is open
     activityHandler();
@@ -221,75 +214,75 @@ describe('SessionTimeoutService', () => {
   }));
 
   it('expires session after warning dialog timeout elapses', fakeAsync(() => {
-    const matDialog = spectator.inject(MatDialog);
+    const dialogService = spectator.inject(DialogService);
     const authService = spectator.inject(AuthService);
     jest.spyOn(authService, 'logout').mockReturnValue(of(undefined));
 
-    const dialogAfterClosed$ = new Subject<boolean>();
-    jest.spyOn(matDialog, 'open').mockReturnValue({
-      afterClosed: () => dialogAfterClosed$,
+    const dialogClosed$ = new Subject<boolean>();
+    jest.spyOn(dialogService, 'sessionExpiring').mockReturnValue({
+      closed: dialogClosed$,
       close: jest.fn(),
-    } as unknown as ReturnType<typeof matDialog.open>);
+    } as unknown as ReturnType<typeof dialogService.sessionExpiring>);
 
     spectator.service.start();
     tick(0);
 
     // Wait for warning dialog to appear
     tick(300 * 1000);
-    expect(matDialog.open).toHaveBeenCalled();
+    expect(dialogService.sessionExpiring).toHaveBeenCalled();
 
     // Wait for the 30-second warning period to elapse without user action
     tick(30 * 1000);
 
     expect(authService.clearAuthToken).toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/signin']);
-    expect(spectator.inject(DialogService).closeAllDialogs).toHaveBeenCalled();
+    expect(dialogService.closeAllDialogs).toHaveBeenCalled();
   }));
 
   it('extends session when user clicks Extend in warning dialog', fakeAsync(() => {
-    const matDialog = spectator.inject(MatDialog);
+    const dialogService = spectator.inject(DialogService);
 
-    const dialogAfterClosed$ = new Subject<boolean>();
-    jest.spyOn(matDialog, 'open').mockReturnValue({
-      afterClosed: () => dialogAfterClosed$,
+    const dialogClosed$ = new Subject<boolean>();
+    jest.spyOn(dialogService, 'sessionExpiring').mockReturnValue({
+      closed: dialogClosed$,
       close: jest.fn(),
-    } as unknown as ReturnType<typeof matDialog.open>);
+    } as unknown as ReturnType<typeof dialogService.sessionExpiring>);
 
     spectator.service.start();
     tick(0);
 
     // Wait for warning dialog to appear
     tick(300 * 1000);
-    expect(matDialog.open).toHaveBeenCalledTimes(1);
+    expect(dialogService.sessionExpiring).toHaveBeenCalledTimes(1);
 
     // User clicks "Extend session"
-    dialogAfterClosed$.next(true);
+    dialogClosed$.next(true);
     tick(0);
 
     // Timer should restart — wait full lifetime again and expect a second warning
     tick(300 * 1000);
-    expect(matDialog.open).toHaveBeenCalledTimes(2);
+    expect(dialogService.sessionExpiring).toHaveBeenCalledTimes(2);
 
     spectator.service.stop();
   }));
 
   it('closes warning dialog and resets timer when preferences change during warning', fakeAsync(() => {
-    const matDialog = spectator.inject(MatDialog);
+    const dialogService = spectator.inject(DialogService);
     const store$ = spectator.inject(MockStore);
 
-    const dialogAfterClosed$ = new Subject<boolean>();
+    const dialogClosed$ = new Subject<boolean>();
     const dialogCloseSpy = jest.fn();
-    jest.spyOn(matDialog, 'open').mockReturnValue({
-      afterClosed: () => dialogAfterClosed$,
+    jest.spyOn(dialogService, 'sessionExpiring').mockReturnValue({
+      closed: dialogClosed$,
       close: dialogCloseSpy,
-    } as unknown as ReturnType<typeof matDialog.open>);
+    } as unknown as ReturnType<typeof dialogService.sessionExpiring>);
 
     spectator.service.start();
     tick(0);
 
     // Wait for warning dialog to appear
     tick(300 * 1000);
-    expect(matDialog.open).toHaveBeenCalled();
+    expect(dialogService.sessionExpiring).toHaveBeenCalled();
 
     // Change preferences while warning dialog is open
     store$.overrideSelector(selectPreferences, { lifetime: 600 } as Preferences);

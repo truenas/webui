@@ -34,6 +34,17 @@
     .detail-content > * {
       @include detail-flex-column;
     }
+
+    // The master list is wrapped in a tn-card; its inner wrapper and content
+    // slot must carry the flex column chain so the projected table fills the
+    // card height and its own sticky-header/scroll regions keep working.
+    // TEMP (NAS-141021): tn-card exposes no supported content-height/fill API,
+    // so we reach into its internal `.tn-card__content` class. Replace with a
+    // library-supported API once available — a rename upstream breaks this.
+    .table-container > div,
+    .table-container .tn-card__content {
+      @include detail-flex-column;
+    }
   }
 }
 

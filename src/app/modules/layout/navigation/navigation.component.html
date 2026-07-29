@@ -1,14 +1,10 @@
-<mat-nav-list
-  role="navigation"
-  [attr.aria-label]="'Main menu' | translate"
->
-  @for (item of menuItems; track item; let i = $index) {
-    <div>
+<nav [attr.aria-label]="'Main menu' | translate">
+  <ul class="nav-list" role="list">
+    @for (item of menuItems; track item; let i = $index) {
       @if (!item.isVisible$ || (item.isVisible$ | async)) {
         <!-- links and submenus -->
-        <mat-list-item
+        <li
           class="sidebar-list-item sidenav-link"
-          role="listitem"
           [routerLinkActive]="item.type === MenuItemType.Link ? 'highlighted' : ''"
           [id]="'nav-' + i"
           [class.has-submenu]="item.type === MenuItemType.SlideOut"
@@ -17,11 +13,12 @@
           @if (item.type === MenuItemType.Link) {
             @let badgeCount = getBadgeCount(item);
             <a
-              matTooltipPosition="right"
-              [ixTest]="getItemName(item)"
+              tnTooltipPosition="right"
+              tnTestIdType="link"
+              [tnTestId]="getItemName(item)"
               [routerLink]="getRouterLink(item.state)"
               [name]="getItemName(item)"
-              [matTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
+              [tnTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
               (click)="closeMenu()"
             >
               <tn-icon size="lg" [name]="item.icon"></tn-icon>
@@ -33,7 +30,7 @@
                     [class.critical]="getBadgeType(item) === AlertBadgeType.Critical"
                     [class.warning]="getBadgeType(item) === AlertBadgeType.Warning"
                     [class.info]="getBadgeType(item) === AlertBadgeType.Info"
-                    [matTooltip]="getBadgeTooltip(item) | translate"
+                    [tnTooltip]="getBadgeTooltip(item) | translate"
                     [attr.aria-label]="getBadgeTooltip(item) | translate"
                   >
                     <tn-icon size="sm" [name]="getBadgeIcon(item)"></tn-icon>
@@ -46,12 +43,13 @@
             <a
               tabindex="0"
               role="button"
-              matTooltipPosition="right"
-              [ixTest]="getItemName(item)"
+              tnTooltipPosition="right"
+              tnTestIdType="link"
+              [tnTestId]="getItemName(item)"
               [name]="getItemName(item)"
               [attr.aria-expanded]="isMenuExpanded(item.state)"
               [attr.aria-label]="(item.name | translate) + ' submenu'"
-              [matTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
+              [tnTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
               (click)="toggleMenu(item.state, item.sub || [])"
               (keydown.enter)="toggleMenu(item.state, item.sub || [])"
               (keydown.space)="$event.preventDefault(); toggleMenu(item.state, item.sub || [])"
@@ -65,7 +63,7 @@
                     [class.critical]="getBadgeType(item) === AlertBadgeType.Critical"
                     [class.warning]="getBadgeType(item) === AlertBadgeType.Warning"
                     [class.info]="getBadgeType(item) === AlertBadgeType.Info"
-                    [matTooltip]="getBadgeTooltip(item) | translate"
+                    [tnTooltip]="getBadgeTooltip(item) | translate"
                     [attr.aria-label]="getBadgeTooltip(item) | translate"
                   >
                     <tn-icon size="sm" [name]="getBadgeIcon(item)"></tn-icon>
@@ -75,8 +73,8 @@
               <tn-icon class="menu-caret" name="chevron-right" library="mdi" size="lg"></tn-icon>
             </a>
           }
-        </mat-list-item>
+        </li>
       }
-    </div>
-  }
-</mat-nav-list>
+    }
+  </ul>
+</nav>

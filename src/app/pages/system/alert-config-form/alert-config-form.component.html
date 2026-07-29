@@ -1,69 +1,75 @@
-<mat-card class="form-card">
+<tn-card class="form-card" [title]="'Category' | translate">
+  <ng-template tnCardHeaderActions>
+    @if (categories.length) {
+      <tn-button
+        icon="mdi-menu-down"
+        iconPosition="right"
+        [testId]="'categories'"
+        [label]="selectedCategory?.title ? (selectedCategory.title | translate) : ''"
+        [tnMenuTriggerFor]="categoriesMenu"
+      ></tn-button>
+      <tn-menu #categoriesMenu>
+        @for (category of categories; track category.id) {
+          <tn-menu-item
+            [testId]="'category-' + category.id"
+            [label]="category.title | translate"
+            (itemClick)="onCategoryChanged(category)"
+          ></tn-menu-item>
+        }
+      </tn-menu>
+    }
+  </ng-template>
+
   @if (isFormLoading()) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <tn-progress-bar mode="indeterminate"></tn-progress-bar>
   }
 
   @if (!isFormLoading() && !categories.length) {
-    <ix-empty [conf]="noResponseConfig"></ix-empty>
+    <tn-empty icon="alert-circle" iconLibrary="mdi" [title]="'Cannot retrieve response' | translate"></tn-empty>
   }
 
-  @if (categories.length) {
-    <div class="mat-title">
-      @if (selectedCategory) {
-        <h3> {{ 'Category' | translate }}: </h3>
-      }
-      <div class="categories">
-        <button mat-button ixTest="categories" [matMenuTriggerFor]="categoriesMenu">
-          {{ selectedCategory?.title ? (selectedCategory.title | translate) : '' }}
-          <tn-icon name="menu-down" library="mdi" class="menu-caret"></tn-icon>
-        </button>
-        <mat-menu #categoriesMenu="matMenu">
-          @for (category of categories; track category.id; let i = $index) {
-            <button
-              mat-menu-item
-              [ixTest]="['category', category.id]"
-              (click)="onCategoryChanged(category)"
-              >
-              <span>{{ category.title | translate }}</span>
-            </button>
-          }
-        </mat-menu>
-      </div>
-    </div>
-    @if (selectedCategory) {
-      <form (submit)="onSubmit()">
-        @for (cls of selectedCategory.classes; track cls.id) {
-          <div class="class-row" [formGroup]="form.controls[cls.id]">
-            <span class="class-label">{{ cls.title | translate }}</span>
-            <ix-select
+  @if (categories.length && selectedCategory) {
+    <form (submit)="onSubmit()">
+      @for (cls of selectedCategory.classes; track cls.id) {
+        <div class="class-row" [formGroup]="form.controls[cls.id]">
+          <span class="class-label">{{ cls.title | translate }}</span>
+          <tn-form-field
+            [label]="'Set Warning Level' | translate"
+            [tooltip]="helptext.levelTooltip | translate"
+            [required]="true"
+          >
+            <tn-select
               formControlName="level"
-              [ixTestOverride]="[cls.title, 'level']"
-              [label]="'Set Warning Level' | translate"
-              [required]="true"
-              [tooltip]="helptext.levelTooltip | translate"
-              [options]="levelOptions$"
-            ></ix-select>
-            <ix-select
+              [testId]="[cls.title, 'level']"
+              [options]="(levelOptions$ | async) ?? []"
+            ></tn-select>
+          </tn-form-field>
+          <tn-form-field
+            [label]="'Set Frequency' | translate"
+            [tooltip]="helptext.policyTooltip | translate"
+            [required]="true"
+          >
+            <tn-select
               formControlName="policy"
-              [ixTestOverride]="[cls.title, 'policy']"
-              [label]="'Set Frequency' | translate"
-              [required]="true"
-              [tooltip]="helptext.policyTooltip | translate"
-              [options]="policyOptions$"
-            ></ix-select>
-          </div>
-        }
-        <div class="form-actions">
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            type="submit"
-            color="primary"
-            ixTest="save"
-            [disabled]="form.invalid || isFormLoading() || !selectedCategory"
-          >{{ 'Save' | translate }}</button>
+              [testId]="[cls.title, 'policy']"
+              [options]="(policyOptions$ | async) ?? []"
+            ></tn-select>
+          </tn-form-field>
         </div>
-      </form>
-    }
+      }
+    </form>
   }
-</mat-card>
+
+  <ng-template tnCardFooterActions>
+    @if (categories.length && selectedCategory) {
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="form.invalid || isFormLoading() || !selectedCategory"
+        (onClick)="onSubmit()"
+      ></tn-button>
+    }
+  </ng-template>
+</tn-card>

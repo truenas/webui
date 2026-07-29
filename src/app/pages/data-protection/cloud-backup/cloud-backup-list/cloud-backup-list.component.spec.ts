@@ -17,7 +17,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -81,7 +81,7 @@ describe('CloudBackupListComponent', () => {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SnackbarService),
@@ -134,11 +134,12 @@ describe('CloudBackupListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Edit' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
       {
+        title: 'Edit TrueCloud Backup Task',
         wide: true,
-        data: cloudBackups[0],
+        inputs: { backupToEdit: cloudBackups[0] },
       },
     );
   });

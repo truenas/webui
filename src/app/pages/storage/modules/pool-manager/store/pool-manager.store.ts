@@ -1,9 +1,9 @@
 import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ValidationErrors } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
+import { TnDialog } from '@truenas/ui-components';
 import { differenceBy, isEqual, without } from 'lodash-es';
 import {
   combineLatest,
@@ -76,6 +76,8 @@ export interface PoolManagerState {
   enclosureSettings: PoolManagerEnclosureSettings;
   topology: PoolManagerTopology;
   categorySequence: VDevType[];
+  // Community Edition only: bypasses topology policy checks. Never set on Enterprise.
+  forceTopology: boolean;
 }
 
 type TopologyCategoryUpdate = Partial<Omit<PoolManagerTopologyCategory, 'vdevs' | 'hasCustomDiskSelection'>>;
@@ -129,6 +131,8 @@ export const initialState: PoolManagerState = {
     VDevType.Special,
     VDevType.Dedup,
   ],
+
+  forceTopology: false,
 };
 
 @Injectable()
@@ -137,7 +141,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private generateVdevs = inject(GenerateVdevsService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
 
   readonly startOver$ = new Subject<void>();
@@ -153,6 +157,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly topology$ = this.select((state) => state.topology);
   readonly diskSettings$ = this.select((state) => state.diskSettings);
   readonly enclosureSettings$ = this.select((state) => state.enclosureSettings);
+  readonly forceTopology$ = this.select((state) => state.forceTopology);
   readonly totalUsableCapacity$ = this.select(
     this.topology$,
     (topology) => categoryCapacity(topology[VDevType.Data]),
@@ -324,6 +329,10 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.resetTopologyIfNotEnoughDisks();
   }
 
+  setForceTopology(forceTopology: boolean): void {
+    this.patchState({ forceTopology });
+  }
+
   setEnclosureOptions(enclosureOptions: PoolManagerEnclosureSettings): void {
     this.patchState({
       enclosureSettings: enclosureOptions,
@@ -435,7 +444,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         const usedDisks = topologyCategoryToDisks(state.topology[type]);
         const inventory = differenceBy(inventoryForStep, usedDisks, (disk: DetailsDisk) => disk.devname);
         const isVdevsLimitedToOne = type === VDevType.Spare || type === VDevType.Cache || type === VDevType.Log;
-        return this.matDialog.open(ManualDiskSelectionComponent, {
+        return this.tnDialog.open(ManualDiskSelectionComponent, {
           data: {
             inventory,
             layout: state.topology[type].layout,
@@ -445,7 +454,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
             isSedEncryption: state.encryptionType === EncryptionType.Sed,
           } as ManualDiskSelectionParams,
           panelClass: 'manual-selection-dialog',
-        }).afterClosed();
+        }).closed;
       }),
       filter(Boolean),
       tap((customVdevs: DetailsDisk[][]) => {

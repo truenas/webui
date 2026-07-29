@@ -1,47 +1,29 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnInit, signal, inject,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, map, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import {
+  TnCheckboxComponent, TnDateInputComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
+import { filter, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxDatepickerComponent } from 'app/modules/forms/ix-forms/components/ix-date-picker/ix-date-picker.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { UserPickerProvider } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker-provider';
 import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
-
-export interface ApiKeyParams {
-  /**
-   * Username of the user for whom the API key is being created or edited.
-   */
-  username?: string;
-
-  /**
-   * Whether the form is being used to edit an existing API key.
-   */
-  editingKey?: ApiKey;
-}
 
 @Component({
   selector: 'ix-api-key-form',
@@ -49,31 +31,29 @@ export interface ApiKeyParams {
   styleUrls: ['./api-key-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormActionsComponent,
-    IxCheckboxComponent,
-    IxDatepickerComponent,
-    IxFieldsetComponent,
-    IxInputComponent,
-    MatButton,
-    MatCard,
-    MatCardContent,
-    ModalHeaderComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnDateInputComponent,
     ReactiveFormsModule,
-    RequiresRolesDirective,
-    TestDirective,
     TranslateModule,
     IxUserPickerComponent,
   ],
 })
-export class ApiKeyFormComponent implements OnInit {
+export class ApiKeyFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(NonNullableFormBuilder);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(FormErrorHandlerService);
   private authService = inject(AuthService);
-  slideInRef = inject<SlideInRef<ApiKeyParams | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
+
+  /** API key being edited; absent when adding. Supplied by the `<tn-side-panel>` host. */
+  readonly editingKey = input<ApiKey | undefined>(undefined);
+  /** Pre-selected username (e.g. opened from a user's access card). */
+  readonly presetUsername = input<string | undefined>(undefined);
 
   protected readonly minDateToday = new Date();
   protected readonly editingRow = signal<ApiKey | undefined>(undefined);
@@ -117,15 +97,11 @@ export class ApiKeyFormComponent implements OnInit {
     [], { select: ['name'], order_by: ['name'] },
   ]).pipe(map((keys) => keys.map((key) => key.name)));
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  /** Drives the host-owned Save action (`<tn-side-panel>` footer). */
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   ngOnInit(): void {
-    const data = this.slideInRef.getData();
-    const { editingKey, username } = data || {};
+    const editingKey = this.editingKey();
 
     if (editingKey) {
       this.editingRow.set(editingKey);
@@ -140,8 +116,9 @@ export class ApiKeyFormComponent implements OnInit {
     } else {
       this.addForbiddenNamesValidator();
 
-      if (username) {
-        this.form.patchValue({ username });
+      const presetUsername = this.presetUsername();
+      if (presetUsername) {
+        this.form.patchValue({ username: presetUsername });
       } else {
         this.setCurrentUsername();
       }
@@ -149,7 +126,7 @@ export class ApiKeyFormComponent implements OnInit {
     this.handleNonExpiringChanges();
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
     const {
       name, username, reset, nonExpiring,
@@ -170,10 +147,10 @@ export class ApiKeyFormComponent implements OnInit {
       .subscribe({
         next: ({ key }) => {
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true });
+          this.close(true);
 
           if (key) {
-            this.matDialog.open(KeyCreatedDialog, { data: key });
+            this.tnDialog.open(KeyCreatedDialog, { data: key });
           }
         },
         error: (error: unknown) => {

@@ -53,20 +53,14 @@
       </div>
 
       @if (isUpdateAvailable()) {
-        <button
+        <tn-button
           *ixRequiresRoles="requiredRoles"
-          mat-button
           color="primary"
-          ixTest="install-updates"
-          [disabled]="isUpdateInProgress$ | async"
-          (click)="onInstallUpdatePressed()"
-        >
-          @if (isUpdateInProgress$ | async) {
-            {{ 'Installing Update...' | translate }}
-          } @else {
-            {{ 'Install Update' | translate }}
-          }
-        </button>
+          [testId]="'install-updates'"
+          [label]="isUpdateInProgress() ? ('Installing Update...' | translate) : ('Install Update' | translate)"
+          [disabled]="isUpdateInProgress()"
+          (onClick)="onInstallUpdatePressed()"
+        ></tn-button>
       }
 
       @if (isSystemUpToDate()) {
@@ -101,7 +95,7 @@
           <a
             class="release-notes-link"
             target="_blank"
-            ixTest="view-release-notes"
+            tnTestIdType="link" [tnTestId]="'view-release-notes'"
             [href]="newVersion()?.release_notes_url"
             [ixUiSearch]="searchableElements.elements.releaseNotes"
           >
@@ -130,22 +124,20 @@
         <div>
           <h4>{{ 'Manual Update' | translate }}</h4>
           <a
-            ixTest="download-truenas"
-            target="_blank"
+            tnTestIdType="link" target="_blank"
+            [tnTestId]="'download-truenas'"
             [attr.href]="manualUpdateUrl()"
           >
             {{ 'See the manual image installation guide' | translate }}
           </a>
         </div>
 
-        <button
+        <tn-button
           *ixRequiresRoles="requiredRoles"
-          mat-button
-          ixTest="install-manual-update"
-          (click)="manualUpdate()"
-        >
-          {{ 'Install' | translate }}
-        </button>
+          [testId]="'install-manual-update'"
+          [label]="'Install' | translate"
+          (onClick)="manualUpdate()"
+        ></tn-button>
       </div>
     </div>
   </div>

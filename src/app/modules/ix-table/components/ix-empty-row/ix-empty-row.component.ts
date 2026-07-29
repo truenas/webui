@@ -1,9 +1,8 @@
 import { TemplatePortal, CdkPortalOutlet } from '@angular/cdk/portal';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, input, TemplateRef, ViewContainerRef, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
+import { TnIconComponent, TnSpinnerComponent, tnIconMarker } from '@truenas/ui-components';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -16,7 +15,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CdkPortalOutlet,
-    MatProgressSpinner,
+    TnSpinnerComponent,
     TnIconComponent,
     MatButton,
     TranslateModule,

@@ -1,8 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { SubsystemPortOrHostDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-port-ot-host-delete-dialog/subsystem-port-ot-host-delete-dialog.component';
@@ -16,7 +16,7 @@ describe('SubsystemPortOrHostDeleteDialogComponent', () => {
     providers: [
       mockAuth(),
       {
-        provide: MatDialogRef,
+        provide: DialogRef,
         useValue: { close: jest.fn() },
       },
     ],
@@ -27,7 +27,7 @@ describe('SubsystemPortOrHostDeleteDialogComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               name: 'nvme1',
               type: PortOrHostDeleteType.Port,
@@ -44,10 +44,10 @@ describe('SubsystemPortOrHostDeleteDialogComponent', () => {
     });
 
     it('closes with force: false when confirmed', async () => {
-      const button = await loader.getHarness(MatButtonHarness.with({ text: /Delete/i }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: /Delete/i }));
       await button.click();
 
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
         confirmed: true,
         force: false,
       });
@@ -59,7 +59,7 @@ describe('SubsystemPortOrHostDeleteDialogComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               name: 'nvme1',
               type: PortOrHostDeleteType.Port,
@@ -77,10 +77,10 @@ describe('SubsystemPortOrHostDeleteDialogComponent', () => {
     });
 
     it('closes with force: true when confirmed', async () => {
-      const button = await loader.getHarness(MatButtonHarness.with({ text: /Delete Anyway/i }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: /Delete Anyway/i }));
       await button.click();
 
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
         confirmed: true,
         force: true,
       });

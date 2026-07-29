@@ -2,8 +2,10 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, D
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import {
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
+import { SomeProviderAttributes } from 'app/interfaces/cloudsync-credential.interface';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
   BaseProviderFormComponent,
@@ -14,10 +16,11 @@ import {
   templateUrl: './http-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
     ReactiveFormsModule,
-    IxInputComponent,
     TranslateModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
   ],
 })
 export class HttpProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
@@ -29,6 +32,14 @@ export class HttpProviderFormComponent extends BaseProviderFormComponent impleme
   form = this.formBuilder.group({
     url: ['', Validators.required],
   });
+
+  override getSubmitAttributes(): SomeProviderAttributes {
+    const attributes = super.getSubmitAttributes();
+    return {
+      ...attributes,
+      url: this.formatter.stringAsUrlParsing(this.form.controls.url.value ?? ''),
+    };
+  }
 
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {

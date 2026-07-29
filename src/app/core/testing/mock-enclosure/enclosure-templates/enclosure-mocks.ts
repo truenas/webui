@@ -23,7 +23,7 @@ import {
   mockR40,
   mockR50, mockR50B, mockR50Bm, mockR60,
 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-r-series';
-import { mockV140, mockV160 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-v-series';
+import { mockV140, mockV160, mockV260, mockV280 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-v-series';
 import { mockX10, mockX20 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-x-series';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 
@@ -61,6 +61,8 @@ export const enclosureMocks: DashboardEnclosure[] = [
 
   mockV140,
   mockV160,
+  mockV260,
+  mockV280,
 
   mockX10,
   mockX20,

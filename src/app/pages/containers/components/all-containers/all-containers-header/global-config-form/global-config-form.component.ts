@@ -1,27 +1,26 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, of,
+  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import {
+  finalize,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import {
   ModalHeaderComponent,
 } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -33,31 +32,29 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     FormActionsComponent,
     ModalHeaderComponent,
-    MatButton,
-    MatCard,
-    MatCardContent,
+    TnButtonComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     ReactiveFormsModule,
     RequiresRolesDirective,
-    TestDirective,
     TranslateModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    AsyncPipe,
     IxIpInputWithNetmaskComponent,
   ],
 })
-export class GlobalConfigFormComponent implements OnInit {
+export class GlobalConfigFormComponent extends SidePanelForm implements OnInit {
   private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  slideInRef = inject<SlideInRef<ContainerGlobalConfig, boolean>>(SlideInRef);
 
   // LXC role is required for global container configuration (lxc.update, lxc.config)
   protected readonly requiredRoles = [Role.LxcConfigWrite];
-  protected isLoading = signal(false);
-  protected currentConfig = signal<ContainerGlobalConfig>(this.slideInRef.getData());
+  protected isFormLoading = signal(false);
+  protected currentConfig = signal<ContainerGlobalConfig | null>(null);
   protected readonly autoBridge = '[AUTO]';
 
   protected readonly form = this.formBuilder.nonNullable.group({
@@ -68,6 +65,8 @@ export class GlobalConfigFormComponent implements OnInit {
   }, {
     validators: [],
   });
+
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   /**
    * Wrapper for IP/CIDR validator that properly handles null values.
@@ -119,14 +118,8 @@ export class GlobalConfigFormComponent implements OnInit {
     return this.form.controls.bridge.value === this.autoBridge;
   }
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
-
   ngOnInit(): void {
-    this.isLoading.set(true);
+    this.isFormLoading.set(true);
 
     // Update network field validators when bridge changes
     this.form.controls.bridge.valueChanges.pipe(
@@ -157,7 +150,7 @@ export class GlobalConfigFormComponent implements OnInit {
     // Fetch fresh config from API to ensure we have the latest values
     this.api.call('lxc.config').pipe(
       this.errorHandler.withErrorHandler(),
-      finalize(() => this.isLoading.set(false)),
+      finalize(() => this.isFormLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {
       this.currentConfig.set(config);
@@ -200,8 +193,8 @@ export class GlobalConfigFormComponent implements OnInit {
     this.form.updateValueAndValidity({ emitEvent: false });
   }
 
-  onSubmit(): void {
-    this.isLoading.set(true);
+  protected onSubmit(): void {
+    this.isFormLoading.set(true);
 
     const controls = this.form.controls;
     const values: ContainerGlobalConfig = {
@@ -216,14 +209,12 @@ export class GlobalConfigFormComponent implements OnInit {
     this.api.call('lxc.update', [values])
       .pipe(
         this.errorHandler.withErrorHandler(),
-        finalize(() => this.isLoading.set(false)),
+        finalize(() => this.isFormLoading.set(false)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Container settings updated'));
-        this.slideInRef.close({
-          response: true,
-        });
+        this.close(true);
       });
   }
 }

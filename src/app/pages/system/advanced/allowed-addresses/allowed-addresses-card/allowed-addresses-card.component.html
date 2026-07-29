@@ -1,44 +1,50 @@
-<mat-card [ixUiSearch]="searchableElements.elements.allowedIpAddresses">
-  <mat-toolbar-row>
-    <h3 class="card-title">
-      {{ 'Allowed IP Addresses' | translate }}
+<tn-card
+  padding="small"
+  [ixUiSearch]="searchableElements.elements.allowedIpAddresses"
+  [title]="'Allowed IP Addresses' | translate"
+  [titleTooltip]="'IP addresses and networks that are allowed to use API and UI. If this list is empty, then all IP addresses are allowed to use API and UI.' | translate"
+>
 
-      <ix-tooltip
-        class="tooltip"
-        [header]="'Allowed IP Addresses' | translate"
-        [message]="'IP addresses and networks that are allowed to use API and UI. If this list is empty, then all IP addresses are allowed to use API and UI.' | translate"
-      ></ix-tooltip>
-    </h3>
+  @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
+    <tn-empty
+      [title]="(emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async).title) | translate"
+    ></tn-empty>
+  } @else {
+    <tn-table
+      class="table"
+      [dataSource]="(dataProvider.currentPage$ | async) ?? []"
+      [displayedColumns]="displayedColumns"
+      [trackBy]="trackByAddress"
+      [loading]="!!((dataProvider.isLoading$ | async) || isDeleting())"
+    >
+      <ng-container [tnColumnDef]="'address'">
+        <ng-template tnHeaderCellDef>{{ 'Address' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>{{ row.address }}</ng-template>
+      </ng-container>
 
-    <div class="actions action-icon">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['configure', 'ip-address']"
-        [disabled]="(dataProvider.isLoading$ | async) || isDeleting()"
-        [ixUiSearch]="searchableElements.elements.configure"
-        (click)="onConfigure()"
-      >
-        {{ 'Configure' | translate }}
-      </button>
-    </div>
-  </mat-toolbar-row>
+      <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+        <ng-template tnHeaderCellDef></ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-actions-cell
+            [actions]="actions"
+            [row]="row"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row)"
+          ></ix-table-actions-cell>
+        </ng-template>
+      </ng-container>
+    </tn-table>
+  }
 
-  <ix-table
-    class="table"
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-  >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!((dataProvider.isLoading$ | async) || isDeleting())"
-    ></tbody>
-  </ix-table>
-</mat-card>
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="['configure', 'ip-address']"
+      [disabled]="!!((dataProvider.isLoading$ | async) || isDeleting())"
+      [ixUiSearch]="searchableElements.elements.configure"
+      [label]="'Configure' | translate"
+      (onClick)="onConfigure()"
+    ></tn-button>
+  </ng-template>
+</tn-card>

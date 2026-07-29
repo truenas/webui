@@ -1,5 +1,5 @@
 :host ::ng-deep {
-  ix-checkbox {
+  tn-checkbox {
     font-size: 13px;
     padding-bottom: 3px;
   }
@@ -57,4 +57,18 @@
   .spinner {
     margin: 23px auto 0;
   }
+
+  tn-slider.font-size-slider {
+    display: inline-block;
+    width: 100px;
+    height: 24px;
+    margin: 0 8px;
+    vertical-align: middle;
+  }
+}
+
+.font-size-control {
+  align-items: center;
+  display: flex;
+  gap: 8px;
 }

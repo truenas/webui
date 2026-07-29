@@ -1,23 +1,22 @@
-<h1 matDialogTitle>{{ 'Keys for {id} datasets' | translate: { id: '\'' + dataset.id + '\'' } }}</h1>
-
-<mat-dialog-content>
-  <p>
+<tn-dialog-shell testId="export-all-keys" [title]="'Keys for {id} datasets' | translate: { id: '\'' + dataset.id + '\'' }">
+<p>
     {{ 'WARNING: Keys for all nested datasets with encryption applied will be downloaded.' | translate }}
   </p>
-</mat-dialog-content>
 
-<ix-form-actions matDialogActions>
-  <button mat-button type="button" ixTest="close" [matDialogClose]="false">
-    {{ 'Close' | translate }}
-  </button>
 
-  <button
-    mat-button
-    type="submit"
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="close"
+    [label]="'Close' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+
+  <tn-button
     color="primary"
-    ixTest="download-keys"
-    (click)="onDownload()"
-  >
-    {{ 'Download Keys' | translate }}
-  </button>
+    testId="download-keys"
+    [label]="'Download Keys' | translate"
+    (onClick)="onDownload()"
+  ></tn-button>
 </ix-form-actions>
+</tn-dialog-shell>

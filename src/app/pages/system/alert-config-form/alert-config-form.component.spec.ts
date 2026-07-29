@@ -1,5 +1,8 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnMenuHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
@@ -13,6 +16,8 @@ import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/ale
 
 describe('AlertConfigFormComponent', () => {
   let spectator: Spectator<AlertConfigFormComponent>;
+  let loader: HarnessLoader;
+  let rootLoader: HarnessLoader;
   let api: ApiService;
   const createComponent = createComponentFactory({
     component: AlertConfigFormComponent,
@@ -84,37 +89,57 @@ describe('AlertConfigFormComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
     api = spectator.inject(ApiService);
   });
 
-  // TODO: Does not interact with the form as a user.
-  it('loads current config and shows values in the form', () => {
+  it('loads current config and shows values in the form', async () => {
     expect(api.call).toHaveBeenCalledWith('alert.list_categories');
     expect(api.call).toHaveBeenCalledWith('alertclasses.config');
-    expect(spectator.component.form.value).toEqual({
-      [AlertClassName.AppUpdate]: { level: AlertLevel.Error, policy: AlertPolicy.Never },
-      [AlertClassName.ApplicationsConfigurationFailed]: { level: AlertLevel.Warning, policy: AlertPolicy.Immediately },
-      [AlertClassName.CertificateExpired]: { level: AlertLevel.Critical, policy: AlertPolicy.Immediately },
-      [AlertClassName.CertificateIsExpiring]: { level: AlertLevel.Error, policy: AlertPolicy.Immediately },
-    });
+
+    // First category (Applications) is selected by default; its two classes render level/policy selects.
+    const [appUpdateLevel, appUpdatePolicy, appFailedLevel, appFailedPolicy] = await loader
+      .getAllHarnesses(TnSelectHarness);
+    expect(await appUpdateLevel.getDisplayText()).toBe(AlertLevel.Error);
+    expect(await appUpdatePolicy.getDisplayText()).toBe(AlertPolicy.Never);
+    expect(await appFailedLevel.getDisplayText()).toBe(AlertLevel.Warning);
+    expect(await appFailedPolicy.getDisplayText()).toBe(AlertPolicy.Immediately);
   });
 
-  it('saves updated config', () => {
-    spectator.component.form.patchValue({
-      [AlertClassName.AppUpdate]: { level: AlertLevel.Info, policy: AlertPolicy.Immediately },
-      [AlertClassName.ApplicationsConfigurationFailed]: { level: AlertLevel.Notice },
-      [AlertClassName.CertificateExpired]: { policy: AlertPolicy.Never },
-      [AlertClassName.CertificateIsExpiring]: { policy: AlertPolicy.Hourly },
-    });
+  it('saves updated config', async () => {
+    const [appUpdateLevel, appUpdatePolicy, appFailedLevel] = await loader.getAllHarnesses(TnSelectHarness);
+    await appUpdateLevel.selectOption(AlertLevel.Info);
+    await appUpdatePolicy.selectOption(AlertPolicy.Immediately);
+    await appFailedLevel.selectOption(AlertLevel.Notice);
 
-    spectator.component.onSubmit();
+    // Switch to the Certificates category to edit its classes within the same form.
+    const categoriesTrigger = await loader.getHarness(TnButtonHarness.with({ label: 'Applications' }));
+    await categoriesTrigger.click();
+    const categoriesMenu = await rootLoader.getHarness(TnMenuHarness);
+    await categoriesMenu.clickItem({ label: 'Certificates' });
 
-    expect(api.call).toHaveBeenNthCalledWith(4, 'alertclasses.update', [{
+    const [, certExpiredPolicy, , certExpiringPolicy] = await loader.getAllHarnesses(TnSelectHarness);
+    await certExpiredPolicy.selectOption(AlertPolicy.Never);
+    await certExpiringPolicy.selectOption(AlertPolicy.Hourly);
+
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+
+    expect(api.call).toHaveBeenCalledWith('alertclasses.update', [{
       classes: {
         [AlertClassName.ApplicationsConfigurationFailed]: { level: AlertLevel.Notice },
         [AlertClassName.CertificateExpired]: { policy: AlertPolicy.Never },
         [AlertClassName.CertificateIsExpiring]: { level: AlertLevel.Error, policy: AlertPolicy.Hourly },
       },
     }]);
+  });
+
+  it('disables Save button while form is loading', async () => {
+    spectator.component.isFormLoading.set(true);
+    spectator.detectChanges();
+
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    expect(await saveButton.isDisabled()).toBe(true);
   });
 });

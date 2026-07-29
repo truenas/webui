@@ -1,6 +1,9 @@
+.card {
+  display: block;
+  height: 100%;
+}
+
 .wrapper {
-  background-color: var(--bg2);
-  border: 1px solid var(--lines);
   color: var(--fg2);
   height: 100%;
   padding-left: 15px;
@@ -14,7 +17,8 @@
   }
 
   h3 {
-    padding: 16px 0 0;
+    font-size: 20px;
+    padding: 12px 0 6px;
     width: 100%;
   }
 }

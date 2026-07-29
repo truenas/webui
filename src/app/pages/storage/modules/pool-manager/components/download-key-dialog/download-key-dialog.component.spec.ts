@@ -1,8 +1,8 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -19,6 +19,7 @@ describe('DownloadKeyDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: DownloadKeyDialog,
     providers: [
+      mockProvider(DialogRef),
       mockProvider(LoaderService, {
         open: jest.fn(),
         close: jest.fn(),
@@ -27,7 +28,7 @@ describe('DownloadKeyDialogComponent', () => {
         error: jest.fn(),
       }),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {
           id: 1,
           name: 'my-pool',
@@ -49,7 +50,7 @@ describe('DownloadKeyDialogComponent', () => {
     });
 
     it('downloads an encryption key successfully and enables Done button', async () => {
-      const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Encryption Key' }));
+      const downloadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Download Encryption Key' }));
       await downloadButton.click();
 
       expect(spectator.inject(DownloadService).coreDownload).toHaveBeenCalledWith({
@@ -59,12 +60,12 @@ describe('DownloadKeyDialogComponent', () => {
         mimeType: 'application/json',
       });
 
-      const doneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Done' }));
+      const doneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Done' }));
       expect(await doneButton.isDisabled()).toBe(false);
     });
 
     it('shows loader when download starts and closes when download completes', async () => {
-      const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Encryption Key' }));
+      const downloadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Download Encryption Key' }));
       await downloadButton.click();
 
       expect(spectator.inject(LoaderService).open).toHaveBeenCalled();
@@ -85,13 +86,13 @@ describe('DownloadKeyDialogComponent', () => {
     });
 
     it('displays an error dialog and closes loader on download error and enables Done button', async () => {
-      const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Encryption Key' }));
+      const downloadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Download Encryption Key' }));
       await downloadButton.click();
 
       expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
       expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
 
-      const doneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Done' }));
+      const doneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Done' }));
       expect(await doneButton.isDisabled()).toBe(false);
     });
   });

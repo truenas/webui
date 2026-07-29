@@ -1,3 +1,57 @@
 :host {
   display: block;
 }
+
+.columns-trigger {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+
+  // TEMP (NAS-141021): tn-button has no trailing-icon slot, so reserve room on
+  // the button for the dropdown caret positioned below. Drop once the library
+  // exposes a trailing-icon affordance on tn-button.
+  ::ng-deep tn-button button {
+    padding-right: 36px;
+  }
+}
+
+.columns-trigger__caret {
+  pointer-events: none;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.columns-menu {
+  background: var(--bg2);
+  border: 1px solid var(--lines);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 20%);
+  margin-top: 4px;
+  min-width: 200px;
+  padding: 8px 0;
+}
+
+.columns-menu__item {
+  align-items: center;
+  background: none;
+  border: 0;
+  color: var(--fg1);
+  cursor: pointer;
+  display: flex;
+  font-size: 14px;
+  gap: 8px;
+  padding: 8px 16px;
+  text-align: left;
+  width: 100%;
+
+  &:hover:not(:disabled) {
+    background: var(--hover-bg);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+}

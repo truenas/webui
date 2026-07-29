@@ -3,32 +3,29 @@
 
   @if (hasUpdates) {
     <div class="global-update">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        ixTest="update-all"
-        class="update-all-button"
-        (click)="onBulkUpdate(true)"
-      >
-        <tn-icon class="has-updates-icon" name="alert-circle" library="mdi"></tn-icon>
-        <span>
-          {{ 'Update All' | translate }}
-          @if (appsUpdateAvailable) {
-            ({{ appsUpdateAvailable }})
-          }
-        </span>
-      </button>
+      <span class="update-all-button-wrapper">
+        <tn-icon class="has-updates-icon" name="alert-circle" library="mdi" aria-hidden="true"></tn-icon>
+        <tn-button
+          *ixRequiresRoles="requiredRoles"
+          class="update-all-button"
+          testId="update-all"
+          [label]="appsUpdateAvailable
+            ? (('Update All' | translate) + ' (' + appsUpdateAvailable + ')')
+            : ('Update All' | translate)"
+          (onClick)="onBulkUpdate(true)"
+        ></tn-button>
+      </span>
     </div>
   }
 
   <ix-app-settings-button></ix-app-settings-button>
-  <a
-    mat-button
+  <tn-button
     color="primary"
-    ixTest="discover-apps"
     class="discover-apps-button"
+    testId="discover-apps"
+    [label]="'Discover Apps' | translate"
     [routerLink]="['/apps', 'available']"
-  >{{ 'Discover Apps' | translate }}</a>
+  ></tn-button>
 </ix-page-header>
 
 <ix-master-detail-view

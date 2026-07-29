@@ -1,18 +1,17 @@
-import { NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatError } from '@angular/material/form-field';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiAuthMethod, IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { createFormArraySnapshot } from 'app/helpers/form-array-snapshot.helper';
@@ -20,20 +19,16 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -55,40 +50,36 @@ import { LicenseService } from 'app/services/license.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgTemplateOutlet,
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
-    MatError,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     IxListComponent,
     IxListItemComponent,
     IxIpInputWithNetmaskComponent,
-    IxSelectComponent,
-    FormActionsComponent,
     FcPortItemControlsComponent,
     FcMpioInfoBannerComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
     IxRadioGroupComponent,
     TranslateOptionsPipe,
+    AsyncPipe,
   ],
 })
-export class TargetFormComponent implements OnInit {
+export class TargetFormComponent extends IxFormHostForm implements OnInit {
   protected iscsiService = inject(IscsiService);
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
-  private errorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
   private fcService = inject(FibreChannelService);
   private license = inject(LicenseService);
   private targetNameValidationService = inject(TargetNameValidationService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<IscsiTarget | undefined, IscsiTarget>>(SlideInRef);
+
+  /** Edit data supplied by the `<tn-side-panel>` host. */
+  readonly targetData = input<IscsiTarget | undefined>(undefined);
 
   get isNew(): boolean {
     return !this.editingTarget;
@@ -105,12 +96,6 @@ export class TargetFormComponent implements OnInit {
   get showGroupsControls(): boolean {
     const mode = this.form.value.mode;
     return mode === IscsiTargetMode.Iscsi || mode === IscsiTargetMode.Both;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add ISCSI Target')
-      : this.translate.instant('Edit ISCSI Target');
   }
 
   hasFibreChannel = toSignal(this.license.hasFibreChannel$);
@@ -161,7 +146,6 @@ export class TargetFormComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  protected isLoading = signal(false);
   protected editingTarget: IscsiTarget | undefined = undefined;
   protected fcHosts = signal<{ id: number; alias: string }[]>([]);
   protected availableFcPorts = signal<string[]>([]);
@@ -190,21 +174,19 @@ export class TargetFormComponent implements OnInit {
   // Computed signal for current port values (used in edit mode)
   protected currentPorts = computed(() => this.fcPortsSnapshot().map((form) => form.port).filter(Boolean) as string[]);
 
-  constructor() {
-    const slideInRef = this.slideInRef;
+  /** Extra Save gate (FC port validity + pending async name validation) ORed into `<ix-form>`. */
+  protected isSaveBlocked(): boolean {
+    return (this.showPortControls && !this.areFcPortsValid()) || this.isAsyncValidatorPending;
+  }
 
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-
-    this.editingTarget = slideInRef.getData();
+  ngOnInit(): void {
+    // Edit data arrives via the `targetData` input from the side-panel host.
+    this.editingTarget = this.targetData();
 
     this.form.controls.name.setAsyncValidators(
       [this.targetNameValidationService.validateTargetName(String(this.editingTarget?.name))],
     );
-  }
 
-  ngOnInit(): void {
     // Load FC hosts for validation
     this.api.call('fc.fc_host.query').pipe(
       takeUntilDestroyed(this.destroyRef),
@@ -237,7 +219,7 @@ export class TargetFormComponent implements OnInit {
     });
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const { fcPorts, ...values } = this.form.getRawValue();
 
     // Clear groups array if mode is FC (groups are not applicable in FC mode)
@@ -245,15 +227,9 @@ export class TargetFormComponent implements OnInit {
       values.groups = [];
     }
 
-    this.isLoading.set(true);
-    let request$: Observable<IscsiTarget>;
-    if (this.editingTarget) {
-      request$ = this.api.call('iscsi.target.update', [this.editingTarget.id, values]);
-    } else {
-      request$ = this.api.call('iscsi.target.create', [values]);
-    }
-
-    request$.pipe(
+    const request$: Observable<IscsiTarget> = (this.editingTarget
+      ? this.api.call('iscsi.target.update', [this.editingTarget.id, values])
+      : this.api.call('iscsi.target.create', [values])).pipe(
       switchMap((target) => {
         if (!this.showPortControls) {
           return of(target);
@@ -265,18 +241,18 @@ export class TargetFormComponent implements OnInit {
           fcPortValues,
         ).pipe(map(() => target));
       }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (response) => {
-        this.isLoading.set(false);
-        this.slideInRef.close({ response });
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    );
+
+    return {
+      request$,
+      successMessage: this.isNew
+        ? this.translate.instant('Target added')
+        : this.translate.instant('Target updated'),
+      // The side-panel host doesn't forward the created/updated record, so broadcast it
+      // through the shared service — `all-targets` expands and reloads on the refresh tick.
+      onSuccess: (target: unknown) => this.iscsiService.refreshData(target as IscsiTarget),
+    };
+  };
 
   protected addGroup(): void {
     this.form.controls.groups.push(

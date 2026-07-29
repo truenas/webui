@@ -33,6 +33,8 @@ export const rSeries = [
 export const vSeries = [
   EnclosureModel.V140,
   EnclosureModel.V160,
+  EnclosureModel.V260,
+  EnclosureModel.V280,
 ];
 
 export const fSeries = [

@@ -34,7 +34,7 @@ describe('IxDynamicWizardComponent', () => {
 
   describe('Component rendering', () => {
     it('renders a correct number of sections', () => {
-      expect(spectator.queryAll('ix-fieldset')).toHaveLength(dynamicSection.length);
+      expect(spectator.queryAll('tn-form-section')).toHaveLength(dynamicSection.length);
     });
 
     it('renders a correct number of dynamic form', () => {

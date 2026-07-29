@@ -1,19 +1,13 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent, TnSelectOption,
+} from '@truenas/ui-components';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { ContainerStopParams } from 'app/interfaces/container.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export enum StopOptionsOperation {
   Restart,
@@ -32,20 +26,19 @@ enum StopMethod {
   styleUrls: ['./stop-options-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnDialogShellComponent,
     FormActionsComponent,
-    MatButton,
-    MatDialogTitle,
+    TnButtonComponent,
     ReactiveFormsModule,
-    TestDirective,
     TranslateModule,
-    MatDialogClose,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
   ],
 })
 export class StopOptionsDialog {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<StopOptionsDialog, ContainerStopParams | false>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<ContainerStopParams | false, StopOptionsDialog>>(DialogRef);
 
   protected readonly operation = signal(StopOptionsOperation.Stop);
 
@@ -55,28 +48,26 @@ export class StopOptionsDialog {
     stopMethod: [StopMethod.ForceAfterTimeout],
   });
 
-  protected readonly stopMethodOptions$: Observable<Option[]> = toObservable(this.isRestart).pipe(
-    map((isRestart) => {
-      const baseLabel = isRestart ? 'restart' : 'stop';
-      return [
-        {
-          label: this.translate.instant('Wait for graceful {action}', { action: baseLabel }),
-          value: StopMethod.Graceful,
-        },
-        {
-          label: this.translate.instant('Wait for graceful {action}, then force', { action: baseLabel }),
-          value: StopMethod.ForceAfterTimeout,
-        },
-        {
-          label: this.translate.instant('Force {action} immediately', { action: baseLabel }),
-          value: StopMethod.ForceImmediately,
-        },
-      ];
-    }),
-  );
+  protected readonly stopMethodOptions = computed<TnSelectOption<StopMethod>[]>(() => {
+    const baseLabel = this.isRestart() ? 'restart' : 'stop';
+    return [
+      {
+        label: this.translate.instant('Wait for graceful {action}', { action: baseLabel }),
+        value: StopMethod.Graceful,
+      },
+      {
+        label: this.translate.instant('Wait for graceful {action}, then force', { action: baseLabel }),
+        value: StopMethod.ForceAfterTimeout,
+      },
+      {
+        label: this.translate.instant('Force {action} immediately', { action: baseLabel }),
+        value: StopMethod.ForceImmediately,
+      },
+    ];
+  });
 
   constructor() {
-    const operation = inject<StopOptionsOperation>(MAT_DIALOG_DATA);
+    const operation = inject<StopOptionsOperation>(DIALOG_DATA);
 
     this.operation.set(operation);
   }

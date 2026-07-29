@@ -1,21 +1,19 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
-import { TranslateModule } from '@ngx-translate/core';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  finalize, switchMap,
-} from 'rxjs';
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+} from '@truenas/ui-components';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { finalize, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { failoverCardElements } from 'app/pages/system/advanced/failover/failover-card.elements';
 import { FailoverFormComponent } from 'app/pages/system/advanced/failover/failover-form/failover-form.component';
@@ -25,20 +23,14 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 @Component({
   selector: 'ix-failover-card',
   templateUrl: './failover-card.component.html',
-  styleUrls: [
-    '../../general-settings/common-settings-card.scss',
-  ],
+  styleUrls: ['./failover-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatCard,
-    MatCardContent,
-    MatList,
-    MatListItem,
-    MatToolbarRow,
+    TnButtonComponent,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     RequiresRolesDirective,
     TranslateModule,
-    TestDirective,
     YesNoPipe,
     NgxSkeletonLoaderModule,
     UiSearchDirective,
@@ -47,8 +39,9 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 export class FailoverCardComponent implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private slideIn = inject(SlideIn);
   private firstTimeWarning = inject(FirstTimeWarningService);
+  private translate = inject(TranslateService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = failoverCardElements;
@@ -77,9 +70,12 @@ export class FailoverCardComponent implements OnInit {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(FailoverFormComponent, { data: this.config() }).success$),
+      take(1),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.loadConfig());
+    ).subscribe(() => {
+      this.formPanel.open(FailoverFormComponent, { title: this.translate.instant('Failover') })
+        .onSuccess(() => this.loadConfig(), this.destroyRef);
+    });
   }
 
   // TODO: Add search elements

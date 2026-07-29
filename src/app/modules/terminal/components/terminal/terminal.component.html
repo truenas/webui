@@ -5,7 +5,14 @@
 </ix-page-header>
 
 <div class="terminal-wrapper">
-  @if (!shellConnected()) {
+  @if (accessDenied()) {
+    <div class="terminal-busy-overlay">
+      <div class="busy-content" role="alert">
+        <tn-icon name="lock" library="mdi" size="xl" aria-hidden="true"></tn-icon>
+        <p>{{ webShellAccessDenied | translate }}</p>
+      </div>
+    </div>
+  } @else if (!shellConnected()) {
     <div class="terminal-busy-overlay">
       <div class="busy-content">
         @if (isReconnecting()) {
@@ -23,16 +30,18 @@
       </div>
     </div>
   }
-  <div
-    #terminal
-    id="terminal"
-    [ngStyle]="{ 'font-size': fontSize + 'px' }"
-    [class.terminal-dimmed]="!shellConnected()"
-  ></div>
+  @if (!accessDenied()) {
+    <div
+      #terminal
+      id="terminal"
+      [ngStyle]="{ 'font-size': fontSize + 'px' }"
+      [class.terminal-dimmed]="!shellConnected()"
+    ></div>
+  }
 </div>
 
 <ng-template #terminalLoading>
-  <mat-progress-spinner diameter="48" mode="indeterminate"></mat-progress-spinner>
+  <tn-spinner mode="indeterminate" [diameter]="48"></tn-spinner>
   @if (isInstanceShell()) {
     <p>{{ 'Connecting to instance shell...' | translate }}</p>
   } @else {

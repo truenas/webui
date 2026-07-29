@@ -1,9 +1,12 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  InputType,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
 import { Role } from 'app/enums/role.enum';
@@ -11,9 +14,7 @@ import { helptextActiveDirectory } from 'app/helptext/directory-service/active-d
 import { DirectoryServicesLeaveParams } from 'app/interfaces/directoryservices-leave.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -23,23 +24,23 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./leave-domain-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
-    MatButton,
-    MatDialogClose,
-    TestDirective,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
 })
 export class LeaveDomainDialog {
+  protected readonly InputType = InputType;
   private errorHandler = inject(ErrorHandlerService);
   private formBuilder = inject(FormBuilder);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
-  private dialogRef = inject<MatDialogRef<LeaveDomainDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, LeaveDomainDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);

@@ -63,17 +63,13 @@
 }
 
 .update-profile {
-  align-items: center;
+  align-items: flex-end;
   display: flex;
   gap: 16px;
 
-  ix-select {
+  tn-form-field {
     margin: 0;
     min-width: 50%;
-  }
-
-  button {
-    margin-top: 24px;
   }
 
   &.disabled {

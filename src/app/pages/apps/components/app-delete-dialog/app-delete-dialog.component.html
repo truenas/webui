@@ -1,44 +1,59 @@
-<h1 matDialogTitle>
-  {{ 'Delete application {name}' | translate: { name: data.name } }}
-</h1>
+<tn-dialog-shell testId="app-delete" [title]="'Delete application {name}' | translate: { name: data.name }">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <p [innerHTML]="deleteMessage()"></p>
 
   <p [innerHtml]="deleteAppHelpText()"></p>
-  <ix-input formControlName="confirmAppName"></ix-input>
+  <tn-form-field>
+    <tn-input
+      testId="confirm-app-name"
+      formControlName="confirmAppName"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
   
   @if (data.showRemoveVolumes) {
-    <ix-checkbox
-      formControlName="removeVolumes"
-      [label]="'Remove iXVolumes' | translate"
-    ></ix-checkbox>
+    <tn-form-field>
+      <tn-checkbox
+        testId="remove-volumes"
+        formControlName="removeVolumes"
+        [label]="'Remove iXVolumes' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
     @if (data.showRemoveVolumes && form.value.removeVolumes) {
-      <ix-checkbox
-        formControlName="forceRemoveVolumes"
-        [label]="'Force-remove iXVolumes' | translate"
-      ></ix-checkbox>
+      <tn-form-field>
+        <tn-checkbox
+          testId="force-remove-volumes"
+          formControlName="forceRemoveVolumes"
+          [label]="'Force-remove iXVolumes' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
     }
   }
 
-  <ix-checkbox
-    formControlName="removeImages"
-    [label]="'Remove Images' | translate"
-  ></ix-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      testId="remove-images"
+      formControlName="removeImages"
+      [label]="'Remove Images' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" matDialogClose>
-      {{ 'Cancel' | translate }}
-    </button>
+  </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
 
-    <button
-      mat-button
-      type="submit"
-      color="warn"
-      ixTest="delete"
-      [disabled]="form.invalid"
-    >
-      {{ 'Delete' | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+  <tn-button
+    color="warn"
+    testId="delete"
+    [label]="'Delete' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

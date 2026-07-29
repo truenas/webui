@@ -1,16 +1,15 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   Spectator, SpectatorFactory, createComponentFactory, mockProvider,
 } from '@ngneat/spectator/jest';
+import { TnDialog, TnCheckboxHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
@@ -29,7 +28,7 @@ describe('ContainerLogsComponent', () => {
     });
 
     it('subscribes to logs updates', () => {
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(LogsDetailsDialog, { width: '400px' });
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(LogsDetailsDialog, { width: '400px' });
 
       expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith(
         'app.container_log_follow: {"app_name":"ix-test-app","container_id":"ix-test-container","tail_lines":650}',
@@ -50,8 +49,23 @@ describe('ContainerLogsComponent', () => {
     });
 
     it('has auto-scroll checkbox enabled by default', async () => {
-      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Auto Scroll' }));
-      expect(await checkbox.getValue()).toBe(true);
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Auto Scroll' }));
+      expect(await checkbox.isChecked()).toBe(true);
+    });
+
+    it('applies the default font size to the logs container', () => {
+      const logs = spectator.query('.logs') as HTMLElement;
+      expect(logs.style.fontSize).toBe('14px');
+    });
+
+    it('updates the logs font size when the slider changes', () => {
+      const thumb = spectator.query('input[tnSliderThumb]') as HTMLInputElement;
+      thumb.value = '18';
+      spectator.dispatchFakeEvent(thumb, 'input');
+      spectator.detectChanges();
+
+      const logs = spectator.query('.logs') as HTMLElement;
+      expect(logs.style.fontSize).toBe('18px');
     });
   });
 
@@ -63,15 +77,12 @@ describe('ContainerLogsComponent', () => {
       imports: [
         MockComponent(PageHeaderComponent),
       ],
-      declarations: [
-        MockComponent(ToolbarSliderComponent),
-      ],
       providers: [
         mockProvider(Router),
-        mockProvider(MatDialog, {
+        mockProvider(TnDialog, {
           open: jest.fn(() => ({
-            afterClosed: jest.fn(() => of({ tail_lines: 500 } as LogsDetailsDialog['form']['value'])),
-          }) as unknown as MatDialogRef<LogsDetailsDialog>),
+            closed: of({ tail_lines: 500 } as LogsDetailsDialog['form']['value']),
+          }) as unknown as DialogRef<unknown, LogsDetailsDialog>),
         }),
         mockProvider(ApiService, {
           subscribe: jest.fn(() => {
@@ -96,8 +107,8 @@ describe('ContainerLogsComponent', () => {
     });
 
     it('scrolls to bottom when auto-scroll is enabled and new logs arrive', async () => {
-      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Auto Scroll' }));
-      expect(await checkbox.getValue()).toBe(true);
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Auto Scroll' }));
+      expect(await checkbox.isChecked()).toBe(true);
 
       const logContainer = spectator.query('.logs') as HTMLElement;
       jest.spyOn(logContainer, 'scrollHeight', 'get').mockReturnValue(1000);
@@ -110,8 +121,8 @@ describe('ContainerLogsComponent', () => {
     });
 
     it('does not scroll when auto-scroll is disabled and new logs arrive', async () => {
-      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Auto Scroll' }));
-      await checkbox.setValue(false);
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Auto Scroll' }));
+      await checkbox.uncheck();
 
       const logContainer = spectator.query('.logs') as HTMLElement;
       jest.spyOn(logContainer, 'scrollHeight', 'get').mockReturnValue(1000);
@@ -124,7 +135,7 @@ describe('ContainerLogsComponent', () => {
     });
 
     it('responds to toggling auto-scroll checkbox', async () => {
-      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Auto Scroll' }));
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Auto Scroll' }));
       const logContainer = spectator.query('.logs') as HTMLElement;
       jest.spyOn(logContainer, 'scrollHeight', 'get').mockReturnValue(1000);
 
@@ -135,14 +146,14 @@ describe('ContainerLogsComponent', () => {
       expect(logContainer.scrollTop).toBe(1000);
 
       // Disable auto-scroll
-      await checkbox.setValue(false);
+      await checkbox.uncheck();
       logContainer.scrollTop = 0;
       logSubject$.next({ fields: { timestamp: '[12:36]', data: 'Log 2' } });
       spectator.detectChanges();
       expect(logContainer.scrollTop).toBe(0);
 
       // Re-enable auto-scroll
-      await checkbox.setValue(true);
+      await checkbox.check();
       logContainer.scrollTop = 0;
       logSubject$.next({ fields: { timestamp: '[12:37]', data: 'Log 3' } });
       spectator.detectChanges();
@@ -168,23 +179,16 @@ describe('ContainerLogsComponent', () => {
       imports: [
         MockComponent(PageHeaderComponent),
       ],
-      declarations: [
-        MockComponent(ToolbarSliderComponent),
-      ],
       providers: [
         mockProvider(Router),
-        mockProvider(MatDialog, {
+        mockProvider(TnDialog, {
           open: jest.fn(() => ({
-            afterClosed: jest.fn(() => {
-              if (cancel) {
-                return of(false);
-              }
-
-              return of({
-                tail_lines: 650,
-              } as LogsDetailsDialog['form']['value']);
-            }),
-          }) as unknown as MatDialogRef<LogsDetailsDialog>),
+            closed: cancel
+              ? of(false)
+              : of({
+                  tail_lines: 650,
+                } as LogsDetailsDialog['form']['value']),
+          }) as unknown as DialogRef<unknown, LogsDetailsDialog>),
         }),
         mockProvider(ApiService, {
           subscribe: jest.fn(() => of({

@@ -2,11 +2,10 @@ import {
   ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
-import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDividerComponent, TnFormSectionComponent } from '@truenas/ui-components';
 import { AddListItemEvent, DeleteListItemEvent, DynamicWizardSchema } from 'app/interfaces/dynamic-form-schema.interface';
 import { IxDynamicFormItemComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 
 @Component({
   selector: 'ix-dynamic-wizard',
@@ -14,8 +13,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
   templateUrl: './ix-dynamic-wizard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
-    MatDivider,
+    TnFormSectionComponent,
+    TnDividerComponent,
     IxDynamicFormItemComponent,
     TranslateModule,
   ],

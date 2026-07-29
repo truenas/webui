@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective } from '@truenas/ui-components';
 import { of, timer } from 'rxjs';
 import {
   filter, map, switchMap, tap,
@@ -13,7 +12,6 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 export enum DispersalStrategy {
@@ -32,10 +30,9 @@ export enum DispersalStrategy {
     IxRadioGroupComponent,
     IxSelectComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperPrevious,
-    TestDirective,
-    MatStepperNext,
+    TnButtonComponent,
+    TnStepperPreviousDirective,
+    TnStepperNextDirective,
     TranslateModule,
   ],
 })

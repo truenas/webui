@@ -22,7 +22,6 @@ import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { auditElements } from 'app/pages/audit/audit.elements';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
-import { AuditEventLabelPipe } from 'app/pages/audit/utils/audit-event-label.pipe';
 import { AuditServiceLabelPipe } from 'app/pages/audit/utils/audit-service-label.pipe';
 import { GetLogImportantDataPipe } from 'app/pages/audit/utils/get-log-important-data.pipe';
 import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
@@ -60,7 +59,6 @@ const defaultEmptyAttrs: EmptyAttrs = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    AuditEventLabelPipe,
     AuditSearchComponent,
     AuditServiceLabelPipe,
     IxDateComponent,

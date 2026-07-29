@@ -1,11 +1,3 @@
-@import 'scss-imports/variables';
-
-:host ::ng-deep {
-  .actions-column {
-    width: 40%;
-
-    @media (max-width: $breakpoint-xs) {
-      width: 100px;
-    }
-  }
+.table {
+  width: 100%;
 }

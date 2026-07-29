@@ -1,11 +1,12 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
+} from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { CertificateExtensions } from 'app/interfaces/certificate.interface';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   CsrConstraintsComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-constraints/csr-constraints.component';
@@ -17,7 +18,16 @@ import {
 describe('CsrConstraintsComponent', () => {
   let spectator: Spectator<CsrConstraintsComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
+
+  const selectMulti = async (name: string, values: string[]): Promise<void> => {
+    const select = await loader.getHarness(
+      TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+    );
+    for (const value of values) {
+      await select.selectOption(value);
+    }
+    await select.close();
+  };
 
   const createComponent = createComponentFactory({
     component: CsrConstraintsComponent,
@@ -25,7 +35,7 @@ describe('CsrConstraintsComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockApi([
         mockCall('certificate.extended_key_usage_choices', {
           CLIENT_AUTH: 'CLIENT_AUTH',
@@ -35,26 +45,36 @@ describe('CsrConstraintsComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const setCheckbox = async (label: string, value: boolean): Promise<void> => {
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label }));
+    if (value) {
+      await checkbox.check();
+    } else {
+      await checkbox.uncheck();
+    }
+  };
+
+  const setPathLength = async (value: string): Promise<void> => {
+    const input = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="path_length"]' }));
+    await input.setValue(value);
+  };
+
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   describe('all constraints used', () => {
     beforeEach(async () => {
-      await form.fillForm(
-        {
-          'Basic Constraints': true,
-          'Extended Key Usage': true,
-          'Key Usage': true,
-          'Path Length': 128,
-          'Basic Constraints Config': ['CA', 'Critical Extension'],
-          Usages: ['CLIENT_AUTH', 'CODE_SIGNING'],
-          'Critical Extension': true,
-          'Key Usage Config': ['CRL Sign', 'Digital Signature'],
-        },
-      );
+      await setCheckbox('Basic Constraints', true);
+      await setCheckbox('Extended Key Usage', true);
+      await setCheckbox('Key Usage', true);
+
+      await setPathLength('128');
+      await selectMulti('BasicConstraints', ['CA', 'Critical Extension']);
+      await selectMulti('usages', ['CLIENT_AUTH', 'CODE_SIGNING']);
+      await selectMulti('KeyUsage', ['Digital Signature', 'CRL Sign']);
+      await setCheckbox('Critical Extension', true);
     });
 
     it('returns cert_extensions when getPayload is called', () => {
@@ -111,15 +131,12 @@ describe('CsrConstraintsComponent', () => {
 
   describe('some constraints used', () => {
     beforeEach(async () => {
-      await form.fillForm(
-        {
-          'Basic Constraints': true,
-          'Extended Key Usage': false,
-          'Key Usage': false,
-          'Path Length': 256,
-          'Basic Constraints Config': ['CA', 'Critical Extension'],
-        },
-      );
+      await setCheckbox('Basic Constraints', true);
+      await setCheckbox('Extended Key Usage', false);
+      await setCheckbox('Key Usage', false);
+
+      await setPathLength('256');
+      await selectMulti('BasicConstraints', ['CA', 'Critical Extension']);
     });
 
     it('returns cert_extensions when getPayload is called', () => {

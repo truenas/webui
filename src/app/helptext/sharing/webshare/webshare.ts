@@ -16,7 +16,7 @@ export const helptextSharingWebshare = {
   webshare_is_home_base_label: T('Home Share'),
   webshare_is_home_base_tooltip: T('If set, this share is used as the base path for user home directories. Only one share can have this enabled.'),
 
-  webshare_warning: T('WebShares are recursive - all subdirectories within the selected path will be accessible to authorized users based on their filesystem permissions.'),
+  webshare_warning: T('All subdirectories within the selected path will be accessible to authorized users based on their filesystem permissions.'),
 
   validation_errors: {
     name_required: T('Name is required'),

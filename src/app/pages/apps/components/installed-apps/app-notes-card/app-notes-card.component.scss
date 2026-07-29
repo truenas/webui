@@ -1,9 +1,17 @@
-@import 'mixins/cards';
 @import 'mixins/markdown';
+@import 'mixins/cards';
+
+@include tn-detail-card();
 
 .card {
-  @include details-card();
   margin: 0;
+}
+
+.card-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .notes {

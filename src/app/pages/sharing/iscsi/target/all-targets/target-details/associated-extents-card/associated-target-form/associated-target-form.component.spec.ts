@@ -1,20 +1,20 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnButtonHarness, TnDialogHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AssociatedTargetFormComponent } from './associated-target-form.component';
 
 describe('AssociatedTargetFormComponent', () => {
   let spectator: Spectator<AssociatedTargetFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let api: ApiService;
 
   const dialogData = {
@@ -31,33 +31,33 @@ describe('AssociatedTargetFormComponent', () => {
         mockCall('iscsi.targetextent.create'),
       ]),
       mockProvider(FormErrorHandlerService),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: dialogData,
       },
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     api = spectator.inject(ApiService);
   });
 
-  it('shows the dialog title with target name', () => {
-    const title = spectator.query('h1');
-    expect(title).toHaveText('Associate Target 1');
+  it('shows the dialog title with target name', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('Associate Target 1');
   });
 
   it('submits form with correct values', async () => {
-    await form.fillForm({
-      'LUN ID': 0,
-      Extent: 'Extent 1',
-    });
+    const lunIdInput = await loader.getHarness(TnInputHarness);
+    await lunIdInput.setValue('0');
 
-    const associateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Associate' }));
+    const extentSelect = await loader.getHarness(TnSelectHarness);
+    await extentSelect.selectOption(/Extent 1/);
+
+    const associateButton = await loader.getHarness(TnButtonHarness.with({ label: 'Associate' }));
     await associateButton.click();
 
     expect(api.call).toHaveBeenCalledWith('iscsi.targetextent.create', [
@@ -66,10 +66,10 @@ describe('AssociatedTargetFormComponent', () => {
   });
 
   it('closes dialog on cancel', async () => {
-    const dialogRef = spectator.inject(MatDialogRef);
+    const dialogRef = spectator.inject(DialogRef);
     const spyClose = jest.spyOn(dialogRef, 'close');
 
-    const cancelButton = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
+    const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
     await cancelButton.click();
 
     expect(spyClose).toHaveBeenCalledWith(false);

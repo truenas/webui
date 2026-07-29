@@ -141,7 +141,7 @@ import {
   UpdateInitShutdownScriptParams,
 } from 'app/interfaces/init-shutdown-script.interface';
 import {
-  Ipmi, IpmiChassis, IpmiChassisIdentifyParams, IpmiChassisInfoParams, IpmiQueryParams, IpmiUpdate,
+  Ipmi, IpmiChassis, IpmiChassisIdentifyParams, IpmiChassisInfoParams, IpmiEvent, IpmiQueryParams, IpmiUpdate,
 } from 'app/interfaces/ipmi.interface';
 import {
   IscsiGlobalConfig,
@@ -568,6 +568,7 @@ export interface ApiCallDirectory {
   'ipmi.chassis.info': { params: [IpmiChassisInfoParams?]; response: IpmiChassis };
   'ipmi.is_loaded': { params: void; response: boolean };
   'ipmi.lan.query': { params: IpmiQueryParams; response: Ipmi[] };
+  'ipmi.sel.elist': { params: void; response: IpmiEvent[] };
   'ipmi.lan.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
 
   // iSCSI

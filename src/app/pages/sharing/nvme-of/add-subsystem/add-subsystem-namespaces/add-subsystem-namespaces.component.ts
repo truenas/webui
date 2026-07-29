@@ -1,12 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnIconButtonComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
@@ -23,16 +20,15 @@ import {
   imports: [
     TranslateModule,
     ReactiveFormsModule,
-    MatButton,
-    MatIconButton,
-    TnIconComponent,
-    MatTooltip,
-    TestDirective,
+    TnButtonComponent,
+    TnIconButtonComponent,
+    TnTooltipDirective,
     NamespaceDescriptionComponent,
   ],
 })
 export class AddSubsystemNamespacesComponent {
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
@@ -43,7 +39,9 @@ export class AddSubsystemNamespacesComponent {
   }
 
   protected onAddNamespace(): void {
-    this.slideIn.open(AddSubsystemNamespaceComponent)
+    this.formPanel.open(AddSubsystemNamespaceComponent, {
+      title: this.translate.instant('Add Namespace'),
+    })
       .onSuccess((response) => {
         const newNamespaces = [...this.namespaces, response];
         this.namespacesControl().setValue(uniqBy(newNamespaces, 'device_path'));

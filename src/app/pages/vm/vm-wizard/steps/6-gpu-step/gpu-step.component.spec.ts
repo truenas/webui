@@ -1,10 +1,9 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { GpuStepComponent } from 'app/pages/vm/vm-wizard/steps/6-gpu-step/gpu-step.component';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
@@ -12,12 +11,11 @@ import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-valid
 describe('GpuStepComponent', () => {
   let spectator: Spectator<GpuStepComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const createComponent = createComponentFactory({
     component: GpuStepComponent,
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(GpuService, {
         getRawGpuPciChoices: () => of({
           'GeForce GTX 1080 [0000:03:00.0]': {
@@ -55,18 +53,24 @@ describe('GpuStepComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   async function fillForm(): Promise<void> {
-    await form.fillForm({
-      'Hide from MSR': true,
-      'Ensure Display Device': true,
-      GPUs: ['GeForce GTX 1080 Ti [0000:04:00.0]'],
-    });
+    const hideFromMsr = await loader.getHarness(
+      TnCheckboxHarness.with({ selector: '[formControlName="hide_from_msr"]' }),
+    );
+    await hideFromMsr.check();
+
+    const ensureDisplayDevice = await loader.getHarness(
+      TnCheckboxHarness.with({ selector: '[formControlName="ensure_display_device"]' }),
+    );
+    await ensureDisplayDevice.check();
+
+    const gpusSelect = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="gpus"]' }));
+    await gpusSelect.selectOption('GeForce GTX 1080 Ti [0000:04:00.0]');
   }
 
   it('shows form with GPU fields', async () => {

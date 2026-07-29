@@ -1,3 +1,4 @@
+import { byText } from '@ngneat/spectator';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { BackupTaskEmptyComponent } from './backup-task-empty.component';
@@ -33,7 +34,7 @@ describe('BackupTaskEmptyComponent', () => {
     spectator.setInput('isLoading', false);
     spectator.detectChanges();
     const spy = jest.spyOn(spectator.component.addCloudSyncTask, 'emit');
-    spectator.click(spectator.query('[ixTest="cloud-sync"]')!);
+    spectator.click(spectator.query(byText('Cloud Sync to Storj or similar provider', { selector: 'a.action' }))!);
     expect(spy).toHaveBeenCalled();
   });
 
@@ -41,7 +42,7 @@ describe('BackupTaskEmptyComponent', () => {
     spectator.setInput('isLoading', false);
     spectator.detectChanges();
     const spy = jest.spyOn(spectator.component.addReplicationTask, 'emit');
-    spectator.click(spectator.query('[ixTest="replication"]')!);
+    spectator.click(spectator.query(byText('ZFS Replication to another TrueNAS', { selector: 'a.action' }))!);
     expect(spy).toHaveBeenCalled();
   });
 
@@ -49,7 +50,7 @@ describe('BackupTaskEmptyComponent', () => {
     spectator.setInput('isLoading', false);
     spectator.detectChanges();
     const spy = jest.spyOn(spectator.component.addRsyncTask, 'emit');
-    spectator.click(spectator.query('[ixTest="rsync"]')!);
+    spectator.click(spectator.query(byText('Rsync to another server', { selector: 'a.action' }))!);
     expect(spy).toHaveBeenCalled();
   });
 });

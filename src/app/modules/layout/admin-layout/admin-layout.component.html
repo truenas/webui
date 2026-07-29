@@ -1,12 +1,21 @@
-<mat-sidenav-container class="app-side-nav-container">
+<tn-drawer-container class="app-side-nav-container">
   <!-- Main side navigation -->
-  <mat-sidenav
+  <!--
+    The drawer panel is a forced landmark (role="navigation" in side mode,
+    "dialog" in over mode). Label it distinctly from the inner
+    <nav aria-label="Main menu"> so the two don't read as duplicate landmarks;
+    "Sidebar" also covers the logo/copyright content the panel wraps. Avoid the
+    word "navigation" in the label — screen readers already announce the role.
+  -->
+  <tn-drawer
     class="sidebar-panel not-alerts"
-    [style.flex-basis]="sidenavWidth"
+    [ariaLabel]="'Sidebar' | translate"
+    [width]="sidenavWidth"
     [opened]="isSidenavOpen"
     [mode]="sidenavMode"
     [disableClose]="sidenavMode !== 'over'"
-    (closedStart)="onMenuClosed()"
+    (openedChange)="onSidenavOpenedChange($event)"
+    (closed)="onMenuClosed()"
   >
     <div id="scroll-area" class="navigation-hold">
       <ix-truenas-logo [hideText]="isSidenavCollapsed"></ix-truenas-logo>
@@ -28,8 +37,8 @@
       @if (isSidenavCollapsed) {
         <div
           class="sidenav-copyright-icon"
-          matTooltipPosition="right"
-          [matTooltip]="copyrightText()"
+          tnTooltipPosition="right"
+          [tnTooltip]="copyrightText()"
         >
           <tn-icon name="copyright" library="mdi"></tn-icon>
         </div>
@@ -38,16 +47,17 @@
           @if (hostname$ | async; as hostname) {
             <div
               class="hostname-label"
-              matTooltipPosition="above"
-              [matTooltip]="'Hostname: {hostname}' | translate: { hostname }"
+              tnTooltipPosition="above"
+              [tnTooltip]="'Hostname: {hostname}' | translate: { hostname }"
             >{{ hostname }}</div>
           }
 
           <p class="product-type">
             @if (!isEnterprise()) {
               <a
-                ixTest="navigate-to-enterprise-marketing-link"
+                tnTestIdType="link"
                 target="_blank"
+                [tnTestId]="'navigate-to-enterprise-marketing-link'"
                 [href]="currentMessageHref()"
               >
                 {{ productTypeText }}
@@ -63,13 +73,9 @@
         </div>
       }
     </div>
-  </mat-sidenav>
+  </tn-drawer>
 
-  <mat-sidenav-content
-    class="fn-maincontent"
-    [style.flex-basis]="'calc(100% - ' + sidenavWidth + ')'"
-    [style.margin-left]="sidenavWidth"
-  >
+  <tn-drawer-content class="fn-maincontent">
     <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpenSecondaryMenu">
       <ix-secondary-menu
         [subMenuItems]="subs"
@@ -93,11 +99,11 @@
     @if (hasConsoleFooter$ | async) {
       <ix-console-footer></ix-console-footer>
     }
-  </mat-sidenav-content>
+  </tn-drawer-content>
 
-</mat-sidenav-container>
+</tn-drawer-container>
 
-<!-- Alert bar - rendered outside mat-sidenav-container so it layers above CDK overlays (slide-ins) -->
+<!-- Alert bar - rendered outside the drawer container so it layers above CDK overlays (slide-ins) -->
 <div
   class="alert-panel-backdrop"
   aria-hidden="true"

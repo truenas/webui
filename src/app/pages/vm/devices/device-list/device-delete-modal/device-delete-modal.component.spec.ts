@@ -1,17 +1,16 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VmDeviceType, VmDisplayType } from 'app/enums/vm.enum';
 import { VmDevice, VmDiskDevice, VmRawFileDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DeviceDeleteModalComponent,
@@ -33,11 +32,11 @@ describe('DeviceDeleteModalComponent', () => {
           mockCall('vm.device.delete'),
         ]),
         mockProvider(DialogService),
-        mockProvider(MatDialogRef),
+        mockProvider(DialogRef),
         mockAuth(),
       ],
       componentProviders: [
-        { provide: MAT_DIALOG_DATA, useFactory: () => device },
+        { provide: DIALOG_DATA, useFactory: () => device },
       ],
     });
   }
@@ -65,13 +64,11 @@ describe('DeviceDeleteModalComponent', () => {
 
     describe('when opened', () => {
       it('shows initial state of checkboxes', async () => {
-        const form = await loader.getHarness(IxFormHarness);
-        const values = await form.getValues();
+        const zvolCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Delete zvol device' }));
+        const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force Delete' }));
 
-        expect(values).toEqual({
-          'Delete zvol device': false,
-          'Force Delete': false,
-        });
+        expect(await zvolCheckbox.isChecked()).toBe(false);
+        expect(await forceCheckbox.isChecked()).toBe(false);
       });
     });
 
@@ -83,13 +80,12 @@ describe('DeviceDeleteModalComponent', () => {
         `when zvol = '${String(filledValues.zvol)}' and force = '${String(filledValues.force)}' filled and submitted`,
         () => {
           it(`sends ${JSON.stringify(expectedValues)} to websocket`, async () => {
-            const form = await loader.getHarness(IxFormHarness);
-            await form.fillForm({
-              'Delete zvol device': filledValues.zvol,
-              'Force Delete': filledValues.force,
-            });
+            const zvolCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Delete zvol device' }));
+            await (filledValues.zvol ? zvolCheckbox.check() : zvolCheckbox.uncheck());
+            const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force Delete' }));
+            await (filledValues.force ? forceCheckbox.check() : forceCheckbox.uncheck());
 
-            const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete Device' }));
+            const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete Device' }));
             await submitButton.click();
 
             expect(api.call).toHaveBeenCalledWith('vm.device.delete', [
@@ -124,13 +120,11 @@ describe('DeviceDeleteModalComponent', () => {
 
     describe('when opened', () => {
       it('shows initial state of checkboxes', async () => {
-        const form = await loader.getHarness(IxFormHarness);
-        const values = await form.getValues();
+        const rawFileCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Delete raw file' }));
+        const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force Delete' }));
 
-        expect(values).toEqual({
-          'Delete raw file': false,
-          'Force Delete': false,
-        });
+        expect(await rawFileCheckbox.isChecked()).toBe(false);
+        expect(await forceCheckbox.isChecked()).toBe(false);
       });
     });
 
@@ -158,13 +152,12 @@ describe('DeviceDeleteModalComponent', () => {
         + `and force = '${String(filledValues.force)}' filled and submitted`,
         () => {
           it(`sends ${JSON.stringify(expectedValues)} to websocket`, async () => {
-            const form = await loader.getHarness(IxFormHarness);
-            await form.fillForm({
-              'Delete raw file': filledValues.raw_file,
-              'Force Delete': filledValues.force,
-            });
+            const rawFileCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Delete raw file' }));
+            await (filledValues.raw_file ? rawFileCheckbox.check() : rawFileCheckbox.uncheck());
+            const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force Delete' }));
+            await (filledValues.force ? forceCheckbox.check() : forceCheckbox.uncheck());
 
-            const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete Device' }));
+            const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete Device' }));
             await submitButton.click();
 
             expect(api.call).toHaveBeenCalledWith('vm.device.delete', [
@@ -199,12 +192,9 @@ describe('DeviceDeleteModalComponent', () => {
 
     describe('when opened', () => {
       it('shows initial state of checkboxes', async () => {
-        const form = await loader.getHarness(IxFormHarness);
-        const values = await form.getValues();
+        const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force Delete' }));
 
-        expect(values).toEqual({
-          'Force Delete': false,
-        });
+        expect(await forceCheckbox.isChecked()).toBe(false);
       });
     });
 
@@ -214,12 +204,10 @@ describe('DeviceDeleteModalComponent', () => {
     ].forEach(({ filledValues, expectedValues }) => {
       describe(`when force = '${String(filledValues.force)}' filled and submitted`, () => {
         it(`sends ${JSON.stringify(expectedValues)} to websocket`, async () => {
-          const form = await loader.getHarness(IxFormHarness);
-          await form.fillForm({
-            'Force Delete': filledValues.force,
-          });
+          const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force Delete' }));
+          await (filledValues.force ? forceCheckbox.check() : forceCheckbox.uncheck());
 
-          const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete Device' }));
+          const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete Device' }));
           await submitButton.click();
 
           expect(api.call).toHaveBeenCalledWith('vm.device.delete', [

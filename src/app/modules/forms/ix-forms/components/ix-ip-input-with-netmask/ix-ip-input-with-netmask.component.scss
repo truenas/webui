@@ -14,49 +14,71 @@
   }
 }
 
+// One bordered box holding: address input | "/" | netmask dropdown — full width, the address
+// input grows to fill and the netmask select sits compact on the right. The input and the
+// tn-select carry no border of their own; the container owns the single border.
 .input-container {
   align-items: center;
+  background: var(--bg1);
+  border: solid 1.5px var(--lines);
+  border-radius: 2px;
   display: flex;
-
-  ::ng-deep {
-    .mat-mdc-select-value {
-      padding: 0;
-    }
-
-    .mat-mdc-select-arrow-wrapper {
-      width: max-content;
-    }
-  }
+  flex-direction: row;
+  font-size: 12px;
+  position: relative;
+  width: 100%;
 
   @include prevent-ios-autozoom;
 
-  input,
-  .select {
-    background: var(--bg1);
-    border: solid 1.5px var(--lines);
-    border-radius: 2px;
-    flex-direction: row;
-    font-size: 12px;
-    padding: 8.5px 8px;
-    position: relative;
-
-    &:focus-within {
-      border-color: var(--primary);
-    }
+  &:focus-within {
+    border-color: var(--primary);
   }
 
   input {
-    display: flex;
+    background: transparent;
+    border: none;
+    color: var(--fg1);
+    flex: 1 1 auto;
+    font-size: 12px;
+    min-height: 26px;
+    min-width: 0;
+    outline: none;
+    padding: 8.5px 8px;
   }
 
   .select {
-    padding: 3.5px 8px;
-    width: 64px;
+    flex: 0 0 auto;
+
+    // Strip tn-select's own bordered field so it reads as part of the single input-container box
+    // (address / netmask) instead of a border-in-border.
+    ::ng-deep {
+      .tn-select-container {
+        width: auto;
+      }
+
+      .tn-select-trigger {
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        font-size: 12px;
+        min-height: auto;
+        padding: 8.5px 1.25rem 8.5px 8px;
+      }
+
+      .tn-select-text {
+        font-size: 12px;
+      }
+
+      .tn-select-arrow {
+        right: 4px;
+      }
+    }
   }
 
   .slash {
-    margin-left: 8px;
-    margin-right: 8px;
+    flex: 0 0 auto;
+    padding: 0 2px;
   }
 
   &.disabled {

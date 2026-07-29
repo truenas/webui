@@ -1,16 +1,12 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent, TnProgressBarComponent } from '@truenas/ui-components';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -19,18 +15,15 @@ import { ApiService } from 'app/modules/websocket/api.service';
   styleUrls: ['./resilver-progress.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatProgressBar,
-    MatDialogActions,
-    MatButton,
-    MatDialogClose,
+    TnDialogShellComponent,
+    TnButtonComponent,
+    TnProgressBarComponent,
     DecimalPipe,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class ResilverProgressDialog implements OnInit {
+  protected dialogRef = inject<DialogRef<string, ResilverProgressDialog>>(DialogRef);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);

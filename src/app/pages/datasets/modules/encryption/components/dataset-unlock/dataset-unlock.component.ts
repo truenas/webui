@@ -3,11 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnCardComponent, TnDialog } from '@truenas/ui-components';
 import {
   Observable,
   from, of, switchMap,
@@ -29,7 +27,6 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UnlockSummaryDialog } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -49,8 +46,7 @@ interface DatasetFormGroup {
   styleUrls: ['./dataset-unlock.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
     IxRadioGroupComponent,
     ReactiveFormsModule,
     IxCheckboxComponent,
@@ -60,9 +56,8 @@ interface DatasetFormGroup {
     TranslateModule,
     IxInputComponent,
     IxTextareaComponent,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
   ],
 })
 export class DatasetUnlockComponent implements OnInit {
@@ -72,7 +67,7 @@ export class DatasetUnlockComponent implements OnInit {
   private authService = inject(AuthService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private router = inject(Router);
   private translate = inject(TranslateService);
   private upload = inject(UploadService);
@@ -280,7 +275,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     if (!this.dialogOpen) {
       this.dialogOpen = true;
-      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialog, { disableClose: true });
+      const unlockDialogRef = this.tnDialog.open(UnlockSummaryDialog, { disableClose: true });
       unlockDialogRef.componentInstance.parent = this;
       unlockDialogRef.componentInstance.showFinalResults();
       unlockDialogRef.componentInstance.unlockDatasets = unlock;
@@ -304,7 +299,7 @@ export class DatasetUnlockComponent implements OnInit {
     }
     if (!this.dialogOpen) { // prevent dialog from opening more than once
       this.dialogOpen = true;
-      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialog, { disableClose: true });
+      const unlockDialogRef = this.tnDialog.open(UnlockSummaryDialog, { disableClose: true });
       unlockDialogRef.componentInstance.parent = this;
       unlockDialogRef.componentInstance.unlockDatasets = unlock;
       unlockDialogRef.componentInstance.errorDatasets = errors;

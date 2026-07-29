@@ -1,11 +1,8 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatDialogHarness } from '@angular/material/dialog/testing';
-import { MatProgressBarHarness } from '@angular/material/progress-bar/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness, TnIconButtonHarness, TnProgressBarComponent } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
@@ -20,7 +17,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 describe('JobProgressDialogComponent', () => {
   let spectator: Spectator<JobProgressDialog<unknown>>;
   let loader: HarnessLoader;
-  let dialogHarness: MatDialogHarness;
+  let dialogHarness: TnDialogHarness;
 
   const createComponent = createComponentFactory({
     component: JobProgressDialog<unknown>,
@@ -28,7 +25,7 @@ describe('JobProgressDialogComponent', () => {
       mockApi([
         mockCall('core.job_abort'),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -47,7 +44,7 @@ describe('JobProgressDialogComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: {
             job$: of(testJob),
             ...data,
@@ -56,14 +53,14 @@ describe('JobProgressDialogComponent', () => {
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    dialogHarness = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, MatDialogHarness);
+    dialogHarness = await loader.getHarness(TnDialogHarness);
   }
 
   it('shows title from data when it is provided', async () => {
     await setupTest({
       title: ignoreTranslation('Test job'),
     });
-    expect(await dialogHarness.getTitleText()).toBe('Test job');
+    expect(await dialogHarness.getTitle()).toBe('Test job');
   });
 
   it('shows description from data when it is provided', async () => {
@@ -75,14 +72,14 @@ describe('JobProgressDialogComponent', () => {
 
   it('uses job method as a title when title is not provided', async () => {
     await setupTest();
-    expect(await dialogHarness.getTitleText()).toBe('pool.create');
+    expect(await dialogHarness.getTitle()).toBe('pool.create');
   });
 
   it('shows a progress bar with a percentage once job is active', async () => {
     await setupTest();
-    const progressBar = await loader.getHarness(MatProgressBarHarness);
+    const progressBar = spectator.query(TnProgressBarComponent);
 
-    expect(await progressBar.getValue()).toBe(50);
+    expect(progressBar.value()).toBe(50);
   });
 
   it('should update job description and progress when job updates', async () => {
@@ -96,8 +93,8 @@ describe('JobProgressDialogComponent', () => {
       } as Job),
     });
 
-    const progressBar = await loader.getHarness(MatProgressBarHarness);
-    expect(await progressBar.getValue()).toBe(74);
+    const progressBar = spectator.query(TnProgressBarComponent);
+    expect(progressBar.value()).toBe(74);
     expect(spectator.query('.job-description')).toHaveExactText('Confabulating bits');
   });
 
@@ -131,7 +128,7 @@ describe('JobProgressDialogComponent', () => {
 
     expect(emitSpy).toHaveBeenCalledWith(newJob);
     job$.complete();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   it('should emit jobFailure and close when job state is Failed', async () => {
@@ -146,7 +143,7 @@ describe('JobProgressDialogComponent', () => {
     job$.complete();
 
     expect(emitSpy).toHaveBeenCalledWith(newJob);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   describe('aborting', () => {
@@ -160,16 +157,16 @@ describe('JobProgressDialogComponent', () => {
     });
 
     it('should show an Abort button for abortable jobs', async () => {
-      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Abort' }))).toBeTruthy();
+      expect(await loader.getHarness(TnButtonHarness.with({ label: 'Abort' }))).toBeTruthy();
     });
 
     it('makes a call to abort a job when Abort button is clicked', async () => {
-      const abortButton = await loader.getHarness(MatButtonHarness.with({ text: 'Abort' }));
+      const abortButton = await loader.getHarness(TnButtonHarness.with({ label: 'Abort' }));
       await abortButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.job_abort', [testJob.id]);
 
-      const abortingButton = await loader.getHarness(MatButtonHarness.with({ text: 'Aborting...' }));
+      const abortingButton = await loader.getHarness(TnButtonHarness.with({ label: 'Aborting...' }));
       expect(await abortingButton.isDisabled()).toBe(true);
     });
 
@@ -183,7 +180,7 @@ describe('JobProgressDialogComponent', () => {
       job$.complete();
 
       expect(emitSpy).toHaveBeenCalledWith(newJob);
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
     });
   });
 
@@ -198,7 +195,7 @@ describe('JobProgressDialogComponent', () => {
       const abortedSpy = jest.spyOn(spectator.component.jobAborted, 'emit');
       const successSpy = jest.spyOn(spectator.component.jobSuccess, 'emit');
 
-      const abortButton = await loader.getHarness(MatButtonHarness.with({ text: 'Abort' }));
+      const abortButton = await loader.getHarness(TnButtonHarness.with({ label: 'Abort' }));
       await abortButton.click();
 
       const completedJob = {
@@ -210,7 +207,7 @@ describe('JobProgressDialogComponent', () => {
 
       expect(abortedSpy).toHaveBeenCalledWith(completedJob);
       expect(successSpy).not.toHaveBeenCalled();
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
     });
   });
 
@@ -223,7 +220,7 @@ describe('JobProgressDialogComponent', () => {
     expect(icon).not.toBeNull();
     await icon.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
   it('does not allow dialog to be closed by clicking on the backdrop if dialog cannot be minimized', async () => {
@@ -231,7 +228,7 @@ describe('JobProgressDialogComponent', () => {
       canMinimize: true,
     });
 
-    expect(spectator.inject(MatDialogRef).disableClose).toBe(false);
+    expect(spectator.inject(DialogRef).disableClose).toBe(false);
   });
 
   describe('realtime logs', () => {
@@ -251,7 +248,7 @@ describe('JobProgressDialogComponent', () => {
             })),
           }),
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               job$: of(jobWithLogs),
               showRealtimeLogs: true,

@@ -1,12 +1,13 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  InputType,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -15,11 +16,8 @@ import { helptextIscsi } from 'app/helptext/sharing';
 import { AssociatedTargetDialogData, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -28,29 +26,28 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './associated-target-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogContent,
-    MatDialogTitle,
-    MatDialogClose,
+    AsyncPipe,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
-    IxSelectComponent,
-    IxInputComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
-    MatDialogActions,
   ],
 })
 export class AssociatedTargetFormComponent {
+  protected readonly InputType = InputType;
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
-  data = inject<AssociatedTargetDialogData>(MAT_DIALOG_DATA);
-  dialogRef = inject<MatDialogRef<AssociatedTargetFormComponent>>(MatDialogRef);
+  data = inject<AssociatedTargetDialogData>(DIALOG_DATA);
+  dialogRef = inject<DialogRef<unknown, AssociatedTargetFormComponent>>(DialogRef);
 
   form = this.formBuilder.group({
     lunid: [null as number | null, [

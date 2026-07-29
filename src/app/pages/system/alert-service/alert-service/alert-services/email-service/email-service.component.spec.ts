@@ -1,14 +1,15 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnInputHarness } from '@truenas/ui-components';
 import {
   EmailServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/email-service/email-service.component';
 
 describe('EmailServiceComponent', () => {
   let spectator: Spectator<EmailServiceComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: EmailServiceComponent,
     imports: [
@@ -16,9 +17,13 @@ describe('EmailServiceComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('renders a form with alert service values', async () => {
@@ -26,16 +31,11 @@ describe('EmailServiceComponent', () => {
       email: 'me@truenas.com',
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
-      'Override Admin Email': 'me@truenas.com',
-    });
+    expect(await (await getInput('email')).getValue()).toBe('me@truenas.com');
   });
 
   it('returns alert service form values when getSubmitAttributes is called', async () => {
-    await form.fillForm({
-      'Override Admin Email': 'new@truenas.com',
-    });
+    await (await getInput('email')).setValue('new@truenas.com');
 
     const submittedValues = spectator.component.getSubmitAttributes();
     expect(submittedValues).toEqual({

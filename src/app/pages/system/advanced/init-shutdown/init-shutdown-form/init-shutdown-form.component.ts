@@ -1,11 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { Observable, of, Subscription } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
@@ -15,19 +18,14 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextInitShutdown } from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -37,34 +35,32 @@ import { FilesystemService } from 'app/services/filesystem.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     IxExplorerComponent,
-    IxCheckboxComponent,
+    TnCheckboxComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
     AsyncPipe,
     ExplorerCreateDatasetComponent,
   ],
 })
-export class InitShutdownFormComponent implements OnInit {
+export class InitShutdownFormComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private filesystemService = inject(FilesystemService);
-  slideInRef = inject<SlideInRef<InitShutdownScript | undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemCronWrite];
+  protected readonly InputType = InputType;
 
   get isNew(): boolean {
     return !this.editingScript;
@@ -90,6 +86,8 @@ export class InitShutdownFormComponent implements OnInit {
     timeout: [10],
   });
 
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
   readonly isCommand$ = this.form.select((values) => values.type === InitShutdownScriptType.Command);
 
   readonly typeOptions$ = of(mapToOptions(initShutdownScriptTypeLabels, this.translate));
@@ -107,17 +105,25 @@ export class InitShutdownFormComponent implements OnInit {
 
   private editingScript: InitShutdownScript | undefined;
 
+  /**
+   * Row to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
+   * carry data). Absent for Add, and unused in the legacy SlideIn host (which
+   * supplies the row via `slideInRef.getData()`).
+   */
+  readonly editScript = input<InitShutdownScript | undefined>(undefined);
+
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingScript = this.slideInRef.getData();
+    super();
     this.destroyRef.onDestroy(() => {
       this.subscriptions.forEach((sub) => sub.unsubscribe());
     });
   }
 
   ngOnInit(): void {
+    this.editingScript = this.slideInRef
+      ? this.slideInRef.getData() as InitShutdownScript | undefined
+      : this.editScript();
+
     this.subscriptions.push(
       this.form.controls.command.enabledWhile(this.isCommand$),
       this.form.controls.script.disabledWhile(this.isCommand$),
@@ -150,7 +156,7 @@ export class InitShutdownFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Init/Shutdown Script updated'));
         }
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

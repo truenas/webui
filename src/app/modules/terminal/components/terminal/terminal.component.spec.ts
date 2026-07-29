@@ -1,11 +1,30 @@
 /* eslint-disable max-classes-per-file */
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { of, Subject, throwError } from 'rxjs';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
+import { TnIconHarness } from '@truenas/ui-components';
+import {
+  EMPTY, of, Subject, throwError,
+} from 'rxjs';
 import { take, tap } from 'rxjs/operators';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { Role } from 'app/enums/role.enum';
+import { helptextGlobal } from 'app/helptext/global-helptext';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { TerminalComponent } from 'app/modules/terminal/components/terminal/terminal.component';
 import { ShellService } from 'app/services/shell.service';
+
+// Loading the real @xterm/xterm module touches a canvas at import time, which jsdom logs as
+// "not implemented" and jest-fail-on-console turns into a failure. The terminal is never
+// instantiated in these tests, so a lightweight stub is enough.
+jest.mock('@xterm/xterm', () => ({ Terminal: jest.fn() }));
 
 // Mock the terminal logic from TerminalComponent
 class TestTerminalReconnectLogic {
@@ -309,5 +328,76 @@ describe('TerminalComponent Reconnect Logic', () => {
       shellConnected$.next({ connected: false });
       expect(logic.shellConnected()).toBe(false);
     });
+  });
+});
+
+describe('TerminalComponent access control', () => {
+  let spectator: Spectator<TerminalComponent>;
+  let shellService: ShellService;
+  let loader: HarnessLoader;
+  let getOneTimeToken: jest.Mock;
+
+  const accessDeniedText = helptextGlobal.webShellAccessDenied;
+
+  const getLockIcon = (): Promise<TnIconHarness | null> => loader.getHarnessOrNull(TnIconHarness.with({ name: 'lock' }));
+
+  const createComponent = createComponentFactory({
+    component: TerminalComponent,
+    componentProviders: [
+      mockProvider(ShellService, {
+        connect: jest.fn(),
+        disconnectIfSessionActive: jest.fn(),
+        shellConnected$: new Subject<ShellConnectedEvent>().asObservable(),
+      }),
+    ],
+    providers: [
+      mockApi(),
+      provideMockStore(),
+      mockAuth(),
+    ],
+  });
+
+  function setupComponent(
+    conf: TerminalConfiguration,
+    options: { webShell?: boolean } = {},
+  ): void {
+    const { webShell = true } = options;
+
+    spectator = createComponent({
+      props: { conf },
+      detectChanges: false,
+    });
+
+    const authService = spectator.inject(MockAuthService);
+    authService.setUser({
+      privilege: {
+        roles: { $set: [Role.FullAdmin] },
+        web_shell: webShell,
+      },
+    } as LoggedInUser);
+    // Prevent terminal/websocket initialization in tests. getOneTimeToken is the first call
+    // startShell() makes, so it doubles as a probe for whether the connect path ran.
+    getOneTimeToken = jest.fn(() => EMPTY);
+    (authService as unknown as AuthService).getOneTimeToken = getOneTimeToken;
+
+    spectator.detectChanges();
+    shellService = spectator.inject(ShellService, true);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  }
+
+  it('shows a restricted-access warning when the user lacks the web_shell privilege', async () => {
+    setupComponent({ connectionData: {} }, { webShell: false });
+
+    expect(await getLockIcon()).not.toBeNull();
+    expect(spectator.fixture.nativeElement).toHaveText(accessDeniedText);
+    expect(shellService.connect).not.toHaveBeenCalled();
+    expect(getOneTimeToken).not.toHaveBeenCalled();
+  });
+
+  it('proceeds to connect when the user has the web_shell privilege', async () => {
+    setupComponent({ connectionData: { container_id: 1, use_console: false } }, { webShell: true });
+
+    expect(await getLockIcon()).toBeNull();
+    expect(getOneTimeToken).toHaveBeenCalled();
   });
 });

@@ -3,10 +3,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -15,9 +15,6 @@ import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -55,6 +52,10 @@ jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => 
         get invalid(): boolean {
           return false;
         },
+        get valid(): boolean {
+          return true;
+        },
+        statusChanges: of('VALID'),
       } as Partial<FormGroup>;
     }),
   };
@@ -74,7 +75,6 @@ jest.mock('./provider-forms/token-provider-form/token-provider-form.component', 
 describe('CloudCredentialsFormComponent', () => {
   let spectator: Spectator<CloudCredentialsFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const s3Provider = {
     name: CloudSyncProviderName.AmazonS3,
     title: 'Amazon S3',
@@ -92,19 +92,18 @@ describe('CloudCredentialsFormComponent', () => {
     },
   } as CloudSyncCredential;
 
-  const getData = jest.fn(() => ({ existingCredential: fakeCloudSyncCredential }));
-  const slideInRef = {
-    close: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-    requireConfirmationWhen: jest.fn(),
-  };
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getProviderSelect = (): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: '[formControlName="type"]' }),
+  );
 
   const createComponent = createComponentFactory({
     component: CloudCredentialsFormComponent,
     providers: [
       mockProvider(SnackbarService),
       mockProvider(DialogService),
-      mockProvider(SlideInRef, slideInRef),
       mockApi([
         mockCall('cloudsync.credentials.query', []),
         mockCall('cloudsync.credentials.create', fakeCloudSyncCredential),
@@ -119,22 +118,22 @@ describe('CloudCredentialsFormComponent', () => {
   });
 
   describe('rendering', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('loads a list of providers and shows them in Provider select', async () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.providers');
 
-      const providersSelect = await form.getControl('Provider') as IxSelectHarness;
-      expect(await providersSelect.getOptionLabels()).toEqual(['Amazon S3', 'Box', 'Storj']);
+      const providersSelect = await getProviderSelect();
+      await providersSelect.open();
+      expect(await providersSelect.getOptions()).toEqual(['Amazon S3', 'Box', 'Storj']);
     });
 
     it('renders dynamic provider specific form when Provider is selected', async () => {
-      const providersSelect = await form.getControl('Provider') as IxSelectHarness;
-      await providersSelect.setValue('Amazon S3');
+      const providersSelect = await getProviderSelect();
+      await providersSelect.selectOption('Amazon S3');
 
       const providerForm = spectator.query(S3ProviderFormComponent)!;
       expect(providerForm).toBeTruthy();
@@ -142,8 +141,8 @@ describe('CloudCredentialsFormComponent', () => {
     });
 
     it('checks storj provider specific form and description when Provider is selected', async () => {
-      const providersSelect = await form.getControl('Provider') as IxSelectHarness;
-      await providersSelect.setValue('Storj');
+      const providersSelect = await getProviderSelect();
+      await providersSelect.selectOption('Storj');
 
       const providerForm = spectator.query(StorjProviderFormComponent)!;
       expect(providerForm).toBeTruthy();
@@ -152,8 +151,8 @@ describe('CloudCredentialsFormComponent', () => {
     });
 
     it('renders a token only form for some providers', async () => {
-      const providersSelect = await form.getControl('Provider') as IxSelectHarness;
-      await providersSelect.setValue('Box');
+      const providersSelect = await getProviderSelect();
+      await providersSelect.selectOption('Box');
 
       const providerForm = spectator.query(TokenProviderFormComponent)!;
       expect(providerForm).toBeTruthy();
@@ -162,12 +161,10 @@ describe('CloudCredentialsFormComponent', () => {
 
     describe('verification', () => {
       it('verifies entered values when user presses Verify', async () => {
-        await form.fillForm({
-          Name: 'New sync',
-          Provider: 'Amazon S3',
-        });
+        await (await getProviderSelect()).selectOption('Amazon S3');
+        await (await getInput('name')).setValue('New sync');
 
-        const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
+        const verifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Verify Credential' }));
         await verifyButton.click();
 
         expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
@@ -177,12 +174,10 @@ describe('CloudCredentialsFormComponent', () => {
       });
 
       it('calls beforeSubmit before verifying entered values', async () => {
-        await form.fillForm({
-          Name: 'New sync',
-          Provider: 'Amazon S3',
-        });
+        await (await getProviderSelect()).selectOption('Amazon S3');
+        await (await getInput('name')).setValue('New sync');
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
+        const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Verify Credential' }));
         await saveButton.click();
 
         const providerForm = spectator.query(S3ProviderFormComponent)!;
@@ -197,12 +192,10 @@ describe('CloudCredentialsFormComponent', () => {
           error: 'Some error',
         });
 
-        await form.fillForm({
-          Name: 'New sync',
-          Provider: 'Amazon S3',
-        });
+        await (await getProviderSelect()).selectOption('Amazon S3');
+        await (await getInput('name')).setValue('New sync');
 
-        const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
+        const verifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Verify Credential' }));
         await verifyButton.click();
 
         expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
@@ -215,26 +208,22 @@ describe('CloudCredentialsFormComponent', () => {
 
     describe('saving', () => {
       it('calls beforeSubmit before saving form', async () => {
-        await form.fillForm({
-          Name: 'New sync',
-          Provider: 'Amazon S3',
-        });
+        await (await getProviderSelect()).selectOption('Amazon S3');
+        await (await getInput('name')).setValue('New sync');
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-        await saveButton.click();
+        spectator.component.submit();
 
         const providerForm = spectator.query(S3ProviderFormComponent)!;
         expect(providerForm.beforeSubmit).toHaveBeenCalled();
       });
 
       it('saves new credentials when new form is saved', async () => {
-        await form.fillForm({
-          Name: 'New sync',
-          Provider: 'Amazon S3',
-        });
+        const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-        await saveButton.click();
+        await (await getProviderSelect()).selectOption('Amazon S3');
+        await (await getInput('name')).setValue('New sync');
+
+        spectator.component.submit();
 
         expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
           name: 'New sync',
@@ -243,62 +232,39 @@ describe('CloudCredentialsFormComponent', () => {
             s3attribute: 's3 value',
           },
         }]);
-        expect(slideInRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential });
+        expect(closedSpy).toHaveBeenCalledWith(fakeCloudSyncCredential);
         expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       });
 
       it('sets default name when provider is selected and name field has not been touched by the user', async () => {
-        await form.fillForm({
-          Provider: 'Amazon S3',
-        });
-        expect(await form.getValues()).toMatchObject({
-          Name: 'Amazon S3',
-        });
+        await (await getProviderSelect()).selectOption('Amazon S3');
+        expect(await (await getInput('name')).getValue()).toBe('Amazon S3');
 
-        await form.fillForm({
-          Provider: 'Box',
-        });
-        expect(await form.getValues()).toMatchObject({
-          Name: 'Box',
-        });
+        await (await getProviderSelect()).selectOption('Box');
+        expect(await (await getInput('name')).getValue()).toBe('Box');
 
-        await form.fillForm(
-          {
-            Name: 'My Box',
-            Provider: 'Amazon S3',
-          },
-        );
+        const nameInput = await getInput('name');
+        await nameInput.setValue('My Box');
+        await nameInput.blur();
+        await (await getProviderSelect()).selectOption('Amazon S3');
 
-        expect(await form.getValues()).toEqual({
-          Name: 'My Box',
-          Provider: 'Amazon S3',
-        });
+        expect(await (await getInput('name')).getValue()).toBe('My Box');
+        expect(await (await getProviderSelect()).getDisplayText()).toBe('Amazon S3');
       });
     });
   });
 
   describe('saving with credentials', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData,
-          }),
-        ],
+        props: { editInput: { existingCredential: fakeCloudSyncCredential } },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('shows existing values when form is opened for edit', async () => {
-      spectator.component.setCredentialsForEdit();
-
-      const commonFormValues = await form.getValues();
-      expect(commonFormValues).toEqual({
-        Name: 'My backup server',
-        Provider: 'Amazon S3',
-      });
+      expect(await (await getInput('name')).getValue()).toBe('My backup server');
+      expect(await (await getProviderSelect()).getDisplayText()).toBe('Amazon S3');
 
       const providerForm = spectator.query(S3ProviderFormComponent)!;
       expect(providerForm).toBeTruthy();
@@ -309,14 +275,11 @@ describe('CloudCredentialsFormComponent', () => {
     });
 
     it('updates existing credentials when edit form is saved', async () => {
-      spectator.component.setCredentialsForEdit();
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
-      await form.fillForm({
-        Name: 'My updated server',
-      });
+      await (await getInput('name')).setValue('My updated server');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.update', [
         233,
@@ -328,7 +291,7 @@ describe('CloudCredentialsFormComponent', () => {
           },
         },
       ]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential });
+      expect(closedSpy).toHaveBeenCalledWith(fakeCloudSyncCredential);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
   });

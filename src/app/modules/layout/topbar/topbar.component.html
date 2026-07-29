@@ -1,103 +1,103 @@
 <nav [attr.aria-label]="'Top bar' | translate">
-  <mat-toolbar class="topbar">
-    <mat-toolbar-row>
-      <!-- Sidenav toggle button -->
+  <div class="topbar">
+    <!-- Sidenav toggle button -->
+    <tn-icon-button
+      id="sidenavToggle"
+      name="menu"
+      library="mdi"
+      size="lg"
+      testId="toggle-sidenav"
+      tooltipPosition="right"
+      [dense]="true"
+      [tooltip]="tooltips.toggleCollapse | translate"
+      [ariaLabel]="'Toggle Sidenav' | translate"
+      (onClick)="onSidenavIndicatorPressed()"
+    ></tn-icon-button>
+
+    <ix-global-search-trigger></ix-global-search-trigger>
+
+    <ix-truenas-logo></ix-truenas-logo>
+
+    <div class="topbar-mobile-footer" [class.has-console-footer]="hasConsoleFooter()">
       <tn-icon-button
-        id="sidenavToggle"
-        name="menu"
+        class="topbar-button-right"
+        name="emoticon"
         library="mdi"
         size="lg"
-        testId="toggle-sidenav"
-        tooltipPosition="right"
+        testId="leave-feedback"
         [dense]="true"
-        [tooltip]="tooltips.toggleCollapse | translate"
-        [ariaLabel]="'Toggle Sidenav' | translate"
-        (onClick)="onSidenavIndicatorPressed()"
+        [tooltip]="'Send Feedback' | translate"
+        [ariaLabel]="'Send Feedback' | translate"
+        [ixUiSearch]="searchableElements.elements.sendFeedback"
+        (onClick)="onFeedbackIndicatorPressed()"
       ></tn-icon-button>
 
-      <ix-global-search-trigger></ix-global-search-trigger>
+      <ix-truecommand-button></ix-truecommand-button>
+      @if (hasTncConfig()) {
+        <ix-truenas-connect-button></ix-truenas-connect-button>
+      }
 
-      <ix-truenas-logo></ix-truenas-logo>
-
-      <div class="topbar-mobile-footer" [class.has-console-footer]="hasConsoleFooter()">
+      @if (hasRebootRequiredReasons()) {
         <tn-icon-button
           class="topbar-button-right"
-          name="emoticon"
+          name="update"
           library="mdi"
           size="lg"
-          testId="leave-feedback"
+          iconClass="movement"
+          testId="reboot-info"
           [dense]="true"
-          [tooltip]="'Send Feedback' | translate"
-          [ariaLabel]="'Send Feedback' | translate"
-          [ixUiSearch]="searchableElements.elements.sendFeedback"
-          (onClick)="onFeedbackIndicatorPressed()"
+          [tooltip]="tooltips.rebootInfo | translate"
+          [ariaLabel]="tooltips.rebootInfo | translate"
+          (onClick)="showRebootInfoDialog()"
         ></tn-icon-button>
+      }
 
-        <ix-truecommand-button></ix-truecommand-button>
-        @if (hasTncConfig()) {
-          <ix-truenas-connect-button></ix-truenas-connect-button>
-        }
-
-        @if (hasRebootRequiredReasons()) {
-          <tn-icon-button
-            class="topbar-button-right"
-            name="update"
-            library="mdi"
-            size="lg"
-            iconClass="movement"
-            testId="reboot-info"
-            [dense]="true"
-            [tooltip]="tooltips.rebootInfo | translate"
-            (onClick)="showRebootInfoDialog()"
-          ></tn-icon-button>
-        }
-
-        <!-- finish update -->
-        @if (updateIsRunning) {
-          <tn-icon-button
-            id="update-running"
-            class="topbar-button-right"
-            name="download"
-            library="mdi"
-            size="lg"
-            iconClass="movement"
-            testId="update-is-running"
-            [dense]="true"
-            [tooltip]="tooltips.update | translate"
-            (onClick)="showUpdateDialog()"
-          ></tn-icon-button>
-        }
-        <ix-checkin-indicator></ix-checkin-indicator>
-        <ix-resilvering-indicator></ix-resilvering-indicator>
-        <ix-ha-status-icon></ix-ha-status-icon>
-        <ix-jobs-indicator></ix-jobs-indicator>
-
-        <!-- Alert toggle button -->
+      <!-- finish update -->
+      @if (updateIsRunning) {
         <tn-icon-button
-          #alertIndicator
+          id="update-running"
           class="topbar-button-right"
-          name="bell"
+          name="download"
           library="mdi"
           size="lg"
-          testId="alerts-indicator"
+          iconClass="movement"
+          testId="update-is-running"
           [dense]="true"
-          [class.severity-critical]="alertSeverity() === 'critical'"
-          [class.severity-warning]="alertSeverity() === 'warning'"
-          [iconClass]="alertIconClass()"
-          [ariaExpanded]="isAlertPanelOpen()"
-          [tooltip]="alertTooltip()"
-          [ariaLabel]="alertTooltip()"
-          [ixUiSearch]="searchableElements.elements.alerts"
-          (onClick)="onAlertIndicatorPressed()"
-        >
-          @if (alertBadge(); as badge) {
-            <ix-status-badge [badge]="badge"></ix-status-badge>
-          }
-        </tn-icon-button>
+          [tooltip]="tooltips.update | translate"
+          [ariaLabel]="tooltips.update | translate"
+          (onClick)="showUpdateDialog()"
+        ></tn-icon-button>
+      }
+      <ix-checkin-indicator></ix-checkin-indicator>
+      <ix-resilvering-indicator></ix-resilvering-indicator>
+      <ix-ha-status-icon></ix-ha-status-icon>
+      <ix-jobs-indicator></ix-jobs-indicator>
 
-        <ix-user-menu></ix-user-menu>
-        <ix-power-menu></ix-power-menu>
-      </div>
-    </mat-toolbar-row>
-  </mat-toolbar>
+      <!-- Alert toggle button -->
+      <tn-icon-button
+        #alertIndicator
+        class="topbar-button-right"
+        name="bell"
+        library="mdi"
+        size="lg"
+        testId="alerts-indicator"
+        [dense]="true"
+        [class.severity-critical]="alertSeverity() === 'critical'"
+        [class.severity-warning]="alertSeverity() === 'warning'"
+        [iconClass]="alertIconClass()"
+        [ariaExpanded]="isAlertPanelOpen()"
+        [tooltip]="alertTooltip()"
+        [ariaLabel]="alertTooltip()"
+        [ixUiSearch]="searchableElements.elements.alerts"
+        (onClick)="onAlertIndicatorPressed()"
+      >
+        @if (alertBadge(); as badge) {
+          <ix-status-badge [badge]="badge"></ix-status-badge>
+        }
+      </tn-icon-button>
+
+      <ix-user-menu></ix-user-menu>
+      <ix-power-menu></ix-power-menu>
+    </div>
+  </div>
 </nav>

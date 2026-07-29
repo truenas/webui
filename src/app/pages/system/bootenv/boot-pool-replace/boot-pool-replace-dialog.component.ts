@@ -1,11 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
@@ -16,7 +14,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -26,25 +23,23 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./boot-pool-replace-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     UnusedDiskSelectComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
     FakeProgressBarComponent,
     TranslateModule,
   ],
 })
 export class BootPoolReplaceDialog implements OnInit {
-  pk = inject(MAT_DIALOG_DATA);
+  pk = inject(DIALOG_DATA);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
-  private dialogRef = inject<MatDialogRef<BootPoolReplaceDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, BootPoolReplaceDialog>>(DialogRef);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);

@@ -1,9 +1,9 @@
-<div class="header">
-  <div class="image">
-    <img [src]="image()" [src-fallback]="imagePlaceholder">
+<tn-banner type="info">
+  <div class="header">
+    <div class="image">
+      <img [src]="image()" [src-fallback]="imagePlaceholder">
+    </div>
+    <div class="name">{{ name() }}</div>
   </div>
-  <div class="name">{{ name() }}</div>
-</div>
-<div class="body">
-  <p [innerHTML]="description()"></p>
-</div>
+  <p class="body" [innerHTML]="description()"></p>
+</tn-banner>

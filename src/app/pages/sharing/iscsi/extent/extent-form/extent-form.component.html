@@ -1,173 +1,192 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew"
   [requiredRoles]="requiredRoles"
-  [title]="title"
-  [loading]="isLoading()"
-></ix-modal-header>
-
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <div class="columns">
-        <div class="column">
-          <ix-fieldset [title]="helptext.fieldsetExtentBasic | translate">
-            <ix-input
-              formControlName="name"
-              [label]="helptext.extent.nameLabel | translate"
-              [tooltip]="helptext.extent.nameTooltip | translate"
-              [placeholder]="helptext.extent.nameLabel | translate"
-              [required]="true"
-            ></ix-input>
-
-            <ix-input
-              formControlName="comment"
-              [label]="helptext.extent.commentLabel | translate"
-              [placeholder]="helptext.extent.commentLabel | translate"
-            ></ix-input>
-
-            <ix-checkbox
-              formControlName="enabled"
-              [label]="helptext.extent.enabledLabel | translate"
-              [tooltip]="helptext.extent.enabledTooltip | translate"
-            ></ix-checkbox>
-          </ix-fieldset>
-          <ix-fieldset [title]="helptext.fieldsetExtentOptions | translate">
-            <ix-checkbox
-              formControlName="insecure_tpc"
-              [label]="helptext.extent.tpcLabel | translate"
-              [tooltip]="helptext.extent.tpcTooltip | translate"
-            ></ix-checkbox>
-
-            <ix-checkbox
-              formControlName="xen"
-              [label]="helptext.extent.xenLabel | translate"
-              [tooltip]="helptext.extent.xenTooltip | translate"
-            ></ix-checkbox>
-
-            <ix-select
-              formControlName="rpm"
-              [label]="helptext.extent.rpmLabel | translate"
-              [options]="rpms$"
-              [tooltip]="helptext.extent.rpmTooltip | translate"
-              [required]="true"
-            ></ix-select>
-
-            <ix-checkbox
-              formControlName="ro"
-              [label]="helptext.extent.readOnlyLabel | translate"
-              [tooltip]="helptext.extent.readOnlyTooltip | translate"
-            ></ix-checkbox>
-          </ix-fieldset>
-        </div>
-
-        <div class="column">
-          <ix-fieldset [title]="helptext.fieldsetExtentType | translate">
-            <ix-select
-              formControlName="type"
-              [label]="helptext.extent.typeLabel | translate"
-              [options]="types$ | translateOptions"
-              [tooltip]="helptext.extent.typeTooltip | translate"
-              [required]="true"
-            ></ix-select>
-
-            @if (isDevice) {
-              <ix-select
-                formControlName="disk"
-                [label]="helptext.extent.deviceLabel | translate"
-                [options]="disks$"
-                [tooltip]="helptext.extent.deviceTooltip | translate"
-                [required]="true"
-              ></ix-select>
-
-              @if (isSnapshot) {
-                <div class="snapshot-info-box" role="status">
-                  <div class="info-header">
-                    <tn-icon name="information-outline" library="mdi"></tn-icon>
-                    <span>{{ 'Snapshot Selected' | translate }}</span>
-                  </div>
-                  <p class="info-message">
-                    {{ 'Snapshots preserve data at a specific point in time and cannot be changed. Clients can only read from this extent.' | translate }}
-                  </p>
-                </div>
-              }
-            } @else {
-              <ix-explorer
-                formControlName="path"
-                [nodeProvider]="treeNodeProvider"
-                [label]="helptext.extent.pathLabel | translate"
-                [tooltip]="helptext.extent.pathTooltip | translate"
-                [required]="true"
-              >
-                @if (isNew) {
-                  <ix-explorer-create-dataset></ix-explorer-create-dataset>
-                }
-              </ix-explorer>
-
-              <ix-input
-                formControlName="filesize"
-                [label]="helptext.extent.filesizeLabel | translate"
-                [tooltip]="helptext.extent.filesizeTooltip | translate"
-                [placeholder]="helptext.extent.filesizeLabel | translate"
-                [required]="true"
-                [parse]="formatter.memorySizeParsing"
-                [format]="formatter.memorySizeFormatting"
-              ></ix-input>
-            }
-
-            @if (!isNew) {
-              <ix-input
-                formControlName="serial"
-                [label]="helptext.extent.serialLabel | translate"
-                [tooltip]="helptext.extent.serialTooltip | translate"
-                [placeholder]="helptext.extent.serialLabel | translate"
-              ></ix-input>
-            }
-
-            <ix-input
-              formControlName="product_id"
-              [label]="helptext.extent.productIdLabel | translate"
-              [tooltip]="helptext.extent.productIdTooltip | translate"
-              [placeholder]="helptext.extent.productIdPlaceholder | translate"
-            ></ix-input>
-
-            <ix-select
-              formControlName="blocksize"
-              [label]="helptext.extent.blocksizeLabel | translate"
-              [options]="blocksizes$"
-              [tooltip]="helptext.extent.blocksizeTooltip | translate"
-              [required]="true"
-            ></ix-select>
-
-            <ix-checkbox
-              formControlName="pblocksize"
-              [label]="helptext.extent.disablePhysicalBlockSizeLabel | translate"
-              [tooltip]="helptext.extent.disablePhysicalBlockSizeTooltip | translate"
-            ></ix-checkbox>
-
-            @if (isAvailableThreshold) {
-              <ix-input
-                formControlName="avail_threshold"
-                type="number"
-                [label]="helptext.extent.thresholdLabel | translate"
-                [tooltip]="helptext.extent.thresholdTooltip | translate"
-                [placeholder]="helptext.extent.thresholdLabel | translate"
-              ></ix-input>
-            }
-          </ix-fieldset>
-        </div>
-      </div>
-
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <div class="columns">
+    <div class="column">
+      <tn-form-section [heading]="helptext.fieldsetExtentBasic | translate">
+        <tn-form-field
+          [label]="helptext.extent.nameLabel | translate"
+          [tooltip]="helptext.extent.nameTooltip | translate"
         >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+          <tn-input
+            formControlName="name"
+            [required]="true"
+            [placeholder]="helptext.extent.nameLabel | translate"
+          ></tn-input>
+        </tn-form-field>
+
+        <tn-form-field [label]="helptext.extent.commentLabel | translate">
+          <tn-input
+            formControlName="comment"
+            [placeholder]="helptext.extent.commentLabel | translate"
+          ></tn-input>
+        </tn-form-field>
+
+        <tn-form-field [tooltip]="helptext.extent.enabledTooltip | translate">
+          <tn-checkbox
+            formControlName="enabled"
+            [label]="helptext.extent.enabledLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      </tn-form-section>
+      <tn-form-section [heading]="helptext.fieldsetExtentOptions | translate">
+        <tn-form-field [tooltip]="helptext.extent.tpcTooltip | translate">
+          <tn-checkbox
+            formControlName="insecure_tpc"
+            [label]="helptext.extent.tpcLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+
+        <tn-form-field [tooltip]="helptext.extent.xenTooltip | translate">
+          <tn-checkbox
+            formControlName="xen"
+            [label]="helptext.extent.xenLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="helptext.extent.rpmLabel | translate"
+          [tooltip]="helptext.extent.rpmTooltip | translate"
+          [required]="true"
+        >
+          <tn-select
+            formControlName="rpm"
+            [options]="(rpms$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
+
+        <tn-form-field [tooltip]="helptext.extent.readOnlyTooltip | translate">
+          <tn-checkbox
+            formControlName="ro"
+            [label]="helptext.extent.readOnlyLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      </tn-form-section>
+    </div>
+
+    <div class="column">
+      <tn-form-section [heading]="helptext.fieldsetExtentType | translate">
+        <tn-form-field
+          [label]="helptext.extent.typeLabel | translate"
+          [tooltip]="helptext.extent.typeTooltip | translate"
+          [required]="true"
+        >
+          <tn-select
+            formControlName="type"
+            [options]="(types$ | translateOptions | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
+
+        @if (isDevice) {
+          <tn-form-field
+            [label]="helptext.extent.deviceLabel | translate"
+            [tooltip]="helptext.extent.deviceTooltip | translate"
+            [required]="true"
+          >
+            <tn-select
+              formControlName="disk"
+              [options]="(disks$ | async) ?? []"
+            ></tn-select>
+          </tn-form-field>
+
+          @if (isSnapshot) {
+            <div class="snapshot-info-box" role="status">
+              <div class="info-header">
+                <tn-icon name="information-outline" library="mdi"></tn-icon>
+                <span>{{ 'Snapshot Selected' | translate }}</span>
+              </div>
+              <p class="info-message">
+                {{ 'Snapshots preserve data at a specific point in time and cannot be changed. Clients can only read from this extent.' | translate }}
+              </p>
+            </div>
+          }
+        } @else {
+          <ix-explorer
+            formControlName="path"
+            [nodeProvider]="treeNodeProvider"
+            [label]="helptext.extent.pathLabel | translate"
+            [tooltip]="helptext.extent.pathTooltip | translate"
+            [required]="true"
+          >
+            @if (isNew) {
+              <ix-explorer-create-dataset></ix-explorer-create-dataset>
+            }
+          </ix-explorer>
+
+          <!--
+            Kept as ix-input: tn-input [inputType]="InputType.Size" reformats on blur
+            (e.g. 2049 KiB → 2 MiB) and re-parses, losing the exact byte value the
+            extent API requires. ix-input's memory-size parse/format round-trips the
+            exact byte count.
+          -->
+          <ix-input
+            formControlName="filesize"
+            [label]="helptext.extent.filesizeLabel | translate"
+            [tooltip]="helptext.extent.filesizeTooltip | translate"
+            [placeholder]="helptext.extent.filesizeLabel | translate"
+            [required]="true"
+            [parse]="formatter.memorySizeParsing"
+            [format]="formatter.memorySizeFormatting"
+          ></ix-input>
+        }
+
+        @if (!isNew) {
+          <tn-form-field
+            [label]="helptext.extent.serialLabel | translate"
+            [tooltip]="helptext.extent.serialTooltip | translate"
+          >
+            <tn-input
+              formControlName="serial"
+              [placeholder]="helptext.extent.serialLabel | translate"
+            ></tn-input>
+          </tn-form-field>
+        }
+
+        <tn-form-field
+          [label]="helptext.extent.productIdLabel | translate"
+          [tooltip]="helptext.extent.productIdTooltip | translate"
+        >
+          <tn-input
+            formControlName="product_id"
+            [placeholder]="helptext.extent.productIdPlaceholder | translate"
+          ></tn-input>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="helptext.extent.blocksizeLabel | translate"
+          [tooltip]="helptext.extent.blocksizeTooltip | translate"
+          [required]="true"
+        >
+          <tn-select
+            formControlName="blocksize"
+            [options]="(blocksizes$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
+
+        <tn-form-field [tooltip]="helptext.extent.disablePhysicalBlockSizeTooltip | translate">
+          <tn-checkbox
+            formControlName="pblocksize"
+            [label]="helptext.extent.disablePhysicalBlockSizeLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+
+        @if (isAvailableThreshold) {
+          <tn-form-field
+            [label]="helptext.extent.thresholdLabel | translate"
+            [tooltip]="helptext.extent.thresholdTooltip | translate"
+          >
+            <tn-input
+              formControlName="avail_threshold"
+              [inputType]="InputType.Number"
+              [placeholder]="helptext.extent.thresholdLabel | translate"
+            ></tn-input>
+          </tn-form-field>
+        }
+      </tn-form-section>
+    </div>
+  </div>
+</ix-form>

@@ -1,23 +1,8 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      @if (isFilesystem()) {
-        {{ 'Space Management' | translate }}
-      }
-      @if (isZvol()) {
-        {{ 'Zvol Space Management' | translate }}
-      }
-    </h3>
-    @if (!isZvol()) {
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        ixTest="edit-quotas"
-        (click)="editDataset()"
-      >{{ 'Edit' | translate }}</button>
-    }
-  </mat-card-header>
-  <mat-card-content>
+<tn-card
+  padding="small"
+  [title]="isZvol() ? ('Zvol Space Management' | translate) : ('Space Management' | translate)"
+  [secondaryAction]="editAction()"
+>
     <ix-space-management-chart [dataset]="dataset()"></ix-space-management-chart>
 
     <div class="chart-extra">
@@ -127,7 +112,8 @@
             }}
           </div>
           <a
-            [ixTest]="[inheritedQuotasDataset.id, 'go-to-dataset']"
+            tnTestIdType="link"
+            [tnTestId]="[inheritedQuotasDataset.id, 'go-to-dataset']"
             [routerLink]="['/', 'datasets', inheritedQuotasDataset.id]"
           >
             {{ 'Go To Dataset' }}
@@ -157,7 +143,8 @@
           }
           @if (checkQuotas()) {
             <a
-              [ixTest]="[dataset().id, 'manage-user-quotas']"
+              tnTestIdType="link"
+              [tnTestId]="[dataset().id, 'manage-user-quotas']"
               [routerLink]="['/', 'datasets', dataset().id, 'user-quotas']"
               [ixUiSearch]="searchableElements.elements.manageUserQuotas"
             >
@@ -184,7 +171,8 @@
         }
         @if (checkQuotas()) {
           <a
-            [ixTest]="[dataset().id, 'manage-group-quotas']"
+            tnTestIdType="link"
+            [tnTestId]="[dataset().id, 'manage-group-quotas']"
             [routerLink]="['/', 'datasets', dataset().id, 'group-quotas']"
             [ixUiSearch]="searchableElements.elements.manageGroupQuotas"
           >
@@ -194,7 +182,6 @@
       </div>
     </div>
   }
-  </mat-card-content>
-</mat-card>
+</tn-card>
 
 

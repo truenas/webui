@@ -4,12 +4,10 @@
 </span>
 
 <div class="detail-actions">
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    ixTest="delete-subsys"
-    (click)="deleteSubsystem()"
-  >
-    {{ 'Delete' | translate }}
-  </button>
+    [testId]="'delete-subsys'"
+    [label]="'Delete' | translate"
+    (onClick)="deleteSubsystem()"
+  ></tn-button>
 </div>

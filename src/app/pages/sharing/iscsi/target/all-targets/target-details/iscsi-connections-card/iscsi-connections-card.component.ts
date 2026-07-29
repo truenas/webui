@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, input, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import uniqBy from 'lodash-es/uniqBy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { finalize, take } from 'rxjs';
@@ -19,10 +17,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CardExpandCollapseComponent,
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
     NgxSkeletonLoaderModule,
     TranslateModule,
   ],

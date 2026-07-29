@@ -1,18 +1,15 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatAnchor, MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnTooltipDirective, TnDialog, TnButtonComponent, TnCardComponent,
+  TnCardFooterActionsDirective, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import {
   EncryptionOptionsDialogData,
@@ -38,23 +35,19 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
   styleUrls: ['./zfs-encryption-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatTooltipModule,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnButtonComponent,
+    TnTooltipDirective,
     TranslateModule,
-    MatButton,
-    TestDirective,
+    TnTestIdDirective,
     RequiresRolesDirective,
     RouterLink,
-    MatCardContent,
-    MatCardActions,
-    MatAnchor,
     TooltipComponent,
   ],
 })
 export class ZfsEncryptionCardComponent {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private datasetStore = inject(DatasetTreeStore);
   private destroyRef = inject(DestroyRef);
@@ -98,36 +91,36 @@ export class ZfsEncryptionCardComponent {
     return this.isEncryptionRoot() && this.dataset().locked && !this.parentDataset()?.locked;
   });
 
-  onEditPressed(): void {
-    const dialog = this.matDialog.open(EncryptionOptionsDialog, {
+  protected onEditPressed(): void {
+    const dialog = this.tnDialog.open(EncryptionOptionsDialog, {
       data: {
         dataset: this.dataset(),
         parent: this.parentDataset(),
       } as EncryptionOptionsDialogData,
     });
     dialog
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.datasetStore.datasetUpdated());
   }
 
-  onLock(): void {
-    this.matDialog.open(LockDatasetDialog, {
+  protected onLock(): void {
+    this.tnDialog.open(LockDatasetDialog, {
       data: this.dataset(),
     })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.datasetStore.datasetUpdated());
   }
 
-  onExportKey(): void {
-    this.matDialog.open(ExportDatasetKeyDialog, {
+  protected onExportKey(): void {
+    this.tnDialog.open(ExportDatasetKeyDialog, {
       data: this.dataset(),
     });
   }
 
-  onExportAllKeys(): void {
-    this.matDialog.open(ExportAllKeysDialog, {
+  protected onExportAllKeys(): void {
+    this.tnDialog.open(ExportAllKeysDialog, {
       data: this.dataset(),
     });
   }

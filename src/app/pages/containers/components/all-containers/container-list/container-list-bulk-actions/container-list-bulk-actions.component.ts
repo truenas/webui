@@ -1,10 +1,9 @@
 import { Component, ChangeDetectionStrategy, computed, input, output, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialog, TnMenuComponent, TnMenuItem, TnMenuTriggerDirective, tnIconMarker,
+} from '@truenas/ui-components';
 import {
   filter,
   forkJoin,
@@ -19,7 +18,6 @@ import { Container, ContainerStopParams } from 'app/interfaces/container.interfa
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StopOptionsDialog, StopOptionsOperation } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -30,14 +28,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./container-list-bulk-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    TnIconComponent,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
+    TnButtonComponent,
+    TnMenuComponent,
+    TnMenuTriggerDirective,
     TranslateModule,
     RequiresRolesDirective,
-    TestDirective,
   ],
 })
 
@@ -48,15 +43,16 @@ export class ContainerListBulkActionsComponent {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private dialog = inject(DialogService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private loader = inject(LoaderService);
 
   readonly checkedContainers = input.required<Container[]>();
   readonly resetBulkSelection = output();
 
   protected readonly requiredRoles = [Role.ContainerWrite];
+  protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
 
-  readonly bulkActionStartedMessage = this.translate.instant('Requested action performed for selected Containers');
+  private readonly bulkActionStartedMessage = this.translate.instant('Requested action performed for selected Containers');
 
   protected readonly isBulkStartDisabled = computed(() => {
     return this.checkedContainers().every(
@@ -82,7 +78,31 @@ export class ContainerListBulkActionsComponent {
     );
   });
 
-  onBulkStart(): void {
+  protected readonly menuItems = computed<TnMenuItem[]>(() => [
+    {
+      id: 'start-selected',
+      label: this.translate.instant('Start All Selected'),
+      testId: 'start-selected',
+      disabled: this.isBulkStartDisabled(),
+      action: () => this.onBulkStart(),
+    },
+    {
+      id: 'stop-selected',
+      label: this.translate.instant('Stop All Selected'),
+      testId: 'stop-selected',
+      disabled: this.isBulkStopDisabled(),
+      action: () => this.onBulkStop(),
+    },
+    {
+      id: 'restart-selected',
+      label: this.translate.instant('Restart All Selected'),
+      testId: 'restart-selected',
+      disabled: this.isBulkStopDisabled(),
+      action: () => this.onBulkRestart(),
+    },
+  ]);
+
+  protected onBulkStart(): void {
     const containers = this.stoppedCheckedContainers();
     if (containers.length === 0) {
       return;
@@ -96,15 +116,15 @@ export class ContainerListBulkActionsComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
+        this.snackbar.success(this.bulkActionStartedMessage);
         this.resetBulkSelection.emit();
       });
   }
 
-  onBulkStop(): void {
-    this.matDialog
+  protected onBulkStop(): void {
+    this.tnDialog
       .open(StopOptionsDialog, { data: StopOptionsOperation.Stop })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         switchMap((options: ContainerStopParams) => {
@@ -119,15 +139,15 @@ export class ContainerListBulkActionsComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
+        this.snackbar.success(this.bulkActionStartedMessage);
         this.resetBulkSelection.emit();
       });
   }
 
-  onBulkRestart(): void {
-    this.matDialog
+  protected onBulkRestart(): void {
+    this.tnDialog
       .open(StopOptionsDialog, { data: StopOptionsOperation.Restart })
-      .afterClosed()
+      .closed
       .pipe(
         filter(Boolean),
         switchMap((options: ContainerStopParams) => {
@@ -142,7 +162,7 @@ export class ContainerListBulkActionsComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
+        this.snackbar.success(this.bulkActionStartedMessage);
         this.resetBulkSelection.emit();
       });
   }

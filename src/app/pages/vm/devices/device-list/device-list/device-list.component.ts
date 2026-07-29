@@ -2,12 +2,10 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent, TnTablePagerComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -63,7 +61,7 @@ import { ExportDiskDialogComponent } from 'app/pages/vm/devices/device-list/expo
     TnIconComponent,
     MatMenu,
     MatMenuItem,
-    MatTooltip,
+    TnTooltipDirective,
     TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,
@@ -75,7 +73,7 @@ export class DeviceListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private route = inject(ActivatedRoute);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
@@ -175,7 +173,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   onDelete(device: VmDevice): void {
-    this.matDialog
+    this.tnDialog
       .open(
         DeviceDeleteModalComponent,
         {
@@ -184,7 +182,7 @@ export class DeviceListComponent implements OnInit {
           data: device,
         },
       )
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(
         () => this.loadDevices(),
@@ -192,7 +190,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   onDetails(device: VmDevice): void {
-    this.matDialog.open(DeviceDetailsComponent, {
+    this.tnDialog.open(DeviceDetailsComponent, {
       data: device,
     });
   }
@@ -204,7 +202,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   onExportDisk(device: VmDevice): void {
-    const dialogRef = this.matDialog.open(ExportDiskDialogComponent, {
+    const dialogRef = this.tnDialog.open(ExportDiskDialogComponent, {
       width: '600px',
       data: {
         device,
@@ -212,7 +210,7 @@ export class DeviceListComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed()
+    dialogRef.closed
       .pipe(
         filter((result) => !!result),
         takeUntilDestroyed(this.destroyRef),

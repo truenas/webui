@@ -1,16 +1,17 @@
+import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { SomeProviderAttributes } from 'app/interfaces/cloudsync-credential.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   BaseProviderFormComponent,
@@ -22,14 +23,16 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     DetailsTableComponent,
     DetailsItemComponent,
     EditableComponent,
     TranslateModule,
     MapValuePipe,
+    AsyncPipe,
   ],
 })
 export class OpenstackSwiftProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
@@ -37,6 +40,8 @@ export class OpenstackSwiftProviderFormComponent extends BaseProviderFormCompone
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+
+  protected readonly InputType = InputType;
 
   form = this.formBuilder.group({
     user: ['', Validators.required],

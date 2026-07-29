@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import {
@@ -9,7 +8,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { StartServiceDialog, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServicesService } from 'app/services/services.service';
 import { AppState } from 'app/store';
@@ -25,7 +24,7 @@ export class ServicesEffects {
   private store$ = inject<Store<AppState>>(Store);
   private actions$ = inject(Actions);
   private api = inject(ApiService);
-  private matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
   private authService = inject(AuthService);
   private servicesService = inject(ServicesService);
 
@@ -62,14 +61,7 @@ export class ServicesEffects {
     }),
     switchMap((service) => {
       if (service.state === ServiceStatus.Stopped) {
-        return this.matDialog.open<StartServiceDialog, unknown, StartServiceDialogResult>(
-          StartServiceDialog,
-          {
-            data: service.service,
-            disableClose: true,
-          },
-        )
-          .afterClosed()
+        return this.dialogService.startService(service.service)
           .pipe(
             filter((data) => !!data),
             map((data) => {

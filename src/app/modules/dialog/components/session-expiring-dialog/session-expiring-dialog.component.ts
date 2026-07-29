@@ -1,13 +1,10 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 
 export interface SessionExpiringDialogOptions {
   title: string;
@@ -21,23 +18,21 @@ export interface SessionExpiringDialogOptions {
   styleUrls: ['./session-expiring-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatButton,
+    TnDialogShellComponent,
+    TnButtonComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class SessionExpiringDialog {
-  private dialogRef = inject<MatDialogRef<SessionExpiringDialog>>(MatDialogRef);
-  private slideIn = inject(SlideIn);
+  private dialogRef = inject<DialogRef<boolean, SessionExpiringDialog>>(DialogRef);
+  private formSidePanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
   private navigateAndHighlight = inject(NavigateAndHighlightService);
 
   options: SessionExpiringDialogOptions;
 
   constructor() {
-    const options = inject<SessionExpiringDialogOptions>(MAT_DIALOG_DATA);
+    const options = inject<SessionExpiringDialogOptions>(DIALOG_DATA);
 
     this.options = { ...options };
   }
@@ -48,8 +43,8 @@ export class SessionExpiringDialog {
 
   openPreferences(): void {
     this.extendSession();
-    this.slideIn.open(PreferencesFormComponent);
-    // Wait a frame for the slide-in to render before polling for the element.
+    this.formSidePanel.open(PreferencesFormComponent, { title: this.translate.instant('Preferences') });
+    // Wait a frame for the side panel to render before polling for the element.
     setTimeout(() => this.navigateAndHighlight.waitForElement('session-timeout'));
   }
 }

@@ -2,6 +2,7 @@
 
 .columns {
   display: flex;
+  gap: 24px;
 
   @media (max-width: $breakpoint-tablet) {
     display: block;
@@ -9,6 +10,7 @@
 
   > .column {
     flex: 1;
+    min-width: 0;
 
     @media (max-width: $breakpoint-tablet) {
       width: 100%;
@@ -20,6 +22,10 @@
 .refquota-critical-fields,
 .quota-warning-fields,
 .quota-critical-fields {
+  // Align the "Default"/"Inherit" checkbox with the input on the left. The input field
+  // carries a label above it, the checkbox field does not — aligning to the bottom of the
+  // row lines the checkbox up with the input box regardless of the label's height.
+  align-items: flex-end;
   column-gap: 14px;
   display: flex;
 
@@ -28,6 +34,6 @@
   }
 
   .inherit-field {
-    margin-top: 22px;
+    margin-bottom: 8px;
   }
 }

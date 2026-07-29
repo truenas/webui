@@ -2,13 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnFormFieldHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { DatasetCaseSensitivity, DatasetPreset } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
-import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   NameAndOptionsSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/name-and-options-section/name-and-options-section.component';
@@ -17,7 +17,6 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
 describe('NameAndOptionsSectionComponent', () => {
   let spectator: Spectator<NameAndOptionsSectionComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const existingChildDataset = {
     name: 'parent/child',
   } as Dataset;
@@ -40,10 +39,17 @@ describe('NameAndOptionsSectionComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getNameInput = (): Promise<TnInputHarness> => {
+    return loader.getHarness(TnInputHarness.with({ selector: '[formControlName="name"]' }));
+  };
+
+  const getPresetSelect = (): Promise<TnSelectHarness> => {
+    return loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="share_type"]' }));
+  };
+
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFieldsetHarness);
   });
 
   describe('new dataset', () => {
@@ -58,11 +64,8 @@ describe('NameAndOptionsSectionComponent', () => {
         'Parent Path:': 'parent',
       });
 
-      const formValues = await form.getValues();
-      expect(formValues).toEqual({
-        Name: '',
-        'Dataset Preset': 'Generic',
-      });
+      expect(await (await getNameInput()).getValue()).toBe('');
+      expect(await (await getPresetSelect()).getDisplayText()).toBe('Generic');
     });
 
     it('returns payload for updating a dataset', async () => {
@@ -70,10 +73,8 @@ describe('NameAndOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
-      await form.fillForm({
-        Name: 'new-dataset',
-        'Dataset Preset': 'Apps',
-      });
+      await (await getNameInput()).setValue('new-dataset');
+      await (await getPresetSelect()).selectOption('Apps');
 
       expect(spectator.component.getPayload()).toEqual({
         name: 'parent/new-dataset',
@@ -96,10 +97,7 @@ describe('NameAndOptionsSectionComponent', () => {
         parent: undefined,
       });
 
-      const values = await form.getValues();
-      expect(values).toEqual({
-        Name: 'pool1',
-      });
+      expect(await (await getNameInput()).getValue()).toBe('pool1');
     });
 
     it('shows form for editing an existing child dataset', async () => {
@@ -108,10 +106,7 @@ describe('NameAndOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
-      const values = await form.getValues();
-      expect(values).toEqual({
-        Name: 'parent/child',
-      });
+      expect(await (await getNameInput()).getValue()).toBe('parent/child');
     });
 
     it('returns payload for updating a dataset', () => {
@@ -137,10 +132,10 @@ describe('NameAndOptionsSectionComponent', () => {
         },
       });
 
-      const nameControl = await form.getControl('Name') as IxInputHarness;
-      await nameControl.setValue('in-use');
+      await (await getNameInput()).setValue('in-use');
 
-      expect(await nameControl.getErrorText()).not.toBeNull();
+      const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
+      expect(await nameField.getErrorMessage()).not.toBeNull();
     });
 
     it('emits invalid state when name is empty on form initialization', () => {
@@ -175,9 +170,7 @@ describe('NameAndOptionsSectionComponent', () => {
       const emitSpy = jest.spyOn(spectator.component.formValidityChange, 'emit');
       emitSpy.mockClear(); // Clear previous calls from initialization
 
-      await form.fillForm({
-        Name: 'valid-dataset-name',
-      });
+      await (await getNameInput()).setValue('valid-dataset-name');
 
       // Should emit true because name is now valid
       expect(emitSpy).toHaveBeenCalledWith(true);

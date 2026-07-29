@@ -2,8 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetInterfaceIpSettingsComponent } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip-settings/widget-interface-ip-settings.component';
@@ -47,13 +47,13 @@ describe('WidgetInterfaceIpSettingsComponent', () => {
   });
 
   it('checks pre-select first option when no settings', async () => {
-    const networkInterface = await loader.getHarness(IxSelectHarness.with({ label: 'Interface' }));
-    const selectedInterface = await networkInterface.getValue();
+    const networkInterface = await loader.getHarness(TnSelectHarness);
+    const selectedInterface = await networkInterface.getDisplayText();
     expect(selectedInterface).toBe('eth0');
   });
 
   it('checks interface options', async () => {
-    const networkInterface = await loader.getHarness(IxSelectHarness.with({ label: 'Interface' }));
-    expect(await networkInterface.getOptionLabels()).toEqual(['eth0', 'eth1', 'eth2']);
+    const networkInterface = await loader.getHarness(TnSelectHarness);
+    expect(await networkInterface.getOptions()).toEqual(['eth0', 'eth1', 'eth2']);
   });
 });

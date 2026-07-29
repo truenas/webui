@@ -2,15 +2,19 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnCheckboxHarness,
+  TnChipInputHarness,
+  TnInputHarness,
+  TnSelectHarness,
+} from '@truenas/ui-components';
 import { LdapSchema } from 'app/enums/directory-services.enum';
 import { LdapConfig, LdapSearchBases, LdapAttributeMaps } from 'app/interfaces/ldap-config.interface';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LdapConfigComponent } from 'app/pages/directory-service/components/directory-services-form/ldap-config/ldap-config.component';
 
 describe('LdapConfigComponent', () => {
   let spectator: Spectator<LdapConfigComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const mockLdapConfig: LdapConfig = {
     server_urls: ['ldap://ldap.example.com', 'ldaps://ldap2.example.com'],
@@ -62,14 +66,54 @@ describe('LdapConfigComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  async function getInput(name: string): Promise<TnInputHarness> {
+    return loader.getHarness(TnInputHarness.with({ name }));
+  }
+
+  async function getCheckbox(label: string): Promise<TnCheckboxHarness> {
+    return loader.getHarness(TnCheckboxHarness.with({ label }));
+  }
+
+  async function getSchemaSelect(): Promise<TnSelectHarness> {
+    return loader.getHarness(TnSelectHarness);
+  }
+
+  async function getServerUrls(): Promise<TnChipInputHarness> {
+    return loader.getHarness(TnChipInputHarness);
+  }
+
+  async function clearInput(name: string): Promise<void> {
+    const input = await getInput(name);
+    // tn-input's setValue('') throws after clearing the field; the clear itself still applies.
+    await input.setValue('').catch(() => undefined);
+  }
+
+  async function setServerUrls(urls: string[]): Promise<void> {
+    const chips = await getServerUrls();
+    for (const chip of await chips.getChips()) {
+      await chips.removeChip(chip);
+    }
+    for (const url of urls) {
+      await chips.addChip(url);
+    }
+  }
+
+  async function setCheckbox(label: string, checked: boolean): Promise<void> {
+    const checkbox = await getCheckbox(label);
+    if (checked) {
+      await checkbox.check();
+    } else {
+      await checkbox.uncheck();
+    }
+  }
+
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         ldapConfig: mockLdapConfig,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   it('should create', () => {
@@ -77,17 +121,17 @@ describe('LdapConfigComponent', () => {
   });
 
   it('should initialize form with existing LDAP config', async () => {
-    const values = await form.getValues();
-    expect(values).toEqual(expect.objectContaining({
-      'Server URLs': ['ldap://ldap.example.com', 'ldaps://ldap2.example.com'],
-      'Base DN': 'dc=example,dc=com',
-      'Start TLS': true,
-      'Validate Certificates': true,
-      Schema: LdapSchema.Rfc2307,
-      'Use Standard Search Bases': false,
-      'Use Standard Attribute Maps': false,
-      'Use Standard Auxiliary Parameters': false,
-    }));
+    expect(await (await getServerUrls()).getChips()).toEqual([
+      'ldap://ldap.example.com',
+      'ldaps://ldap2.example.com',
+    ]);
+    expect(await (await getInput('basedn')).getValue()).toBe('dc=example,dc=com');
+    expect(await (await getCheckbox('Start TLS')).isChecked()).toBe(true);
+    expect(await (await getCheckbox('Validate Certificates')).isChecked()).toBe(true);
+    expect(await (await getSchemaSelect()).getDisplayText()).toBe(LdapSchema.Rfc2307);
+    expect(await (await getCheckbox('Use Standard Search Bases')).isChecked()).toBe(false);
+    expect(await (await getCheckbox('Use Standard Attribute Maps')).isChecked()).toBe(false);
+    expect(await (await getCheckbox('Use Standard Auxiliary Parameters')).isChecked()).toBe(false);
   });
 
   it('should initialize with standard options when config has null values', async () => {
@@ -99,13 +143,11 @@ describe('LdapConfigComponent', () => {
     };
     spectator.setInput('ldapConfig', configWithNullValues);
     spectator.component.ngOnInit();
+    spectator.detectChanges();
 
-    const values = await form.getValues();
-    expect(values).toEqual(expect.objectContaining({
-      'Use Standard Search Bases': true,
-      'Use Standard Attribute Maps': true,
-      'Use Standard Auxiliary Parameters': true,
-    }));
+    expect(await (await getCheckbox('Use Standard Search Bases')).isChecked()).toBe(true);
+    expect(await (await getCheckbox('Use Standard Attribute Maps')).isChecked()).toBe(true);
+    expect(await (await getCheckbox('Use Standard Auxiliary Parameters')).isChecked()).toBe(true);
   });
 
   describe('form validation', () => {
@@ -115,9 +157,7 @@ describe('LdapConfigComponent', () => {
         isValidEmitted = valid;
       });
 
-      await form.fillForm({
-        'Server URLs': [],
-      });
+      await setServerUrls([]);
 
       expect(isValidEmitted).toBe(false);
     });
@@ -128,23 +168,19 @@ describe('LdapConfigComponent', () => {
         isValidEmitted = valid;
       });
 
-      await form.fillForm({
-        'Base DN': '',
-      });
+      await clearInput('basedn');
 
       expect(isValidEmitted).toBe(false);
     });
 
-    it('should require schema', async () => {
+    it('should require schema', () => {
       let isValidEmitted: boolean | undefined;
       spectator.component.isValid.subscribe((valid) => {
         isValidEmitted = valid;
       });
 
-      await form.fillForm({
-        'Server URLs': [],
-        'Base DN': '',
-      });
+      spectator.setInput('ldapConfig', { ...mockLdapConfig, schema: null });
+      spectator.component.ngOnInit();
 
       expect(isValidEmitted).toBe(false);
     });
@@ -155,13 +191,11 @@ describe('LdapConfigComponent', () => {
         isValidEmitted = valid;
       });
 
-      await form.fillForm({
-        'Server URLs': ['ldap://test.com'],
-        'Base DN': 'dc=test,dc=com',
-        'Start TLS': false,
-        'Validate Certificates': false,
-        Schema: LdapSchema.Rfc2307,
-      });
+      await setServerUrls(['ldap://test.com']);
+      await (await getInput('basedn')).setValue('dc=test,dc=com');
+      await setCheckbox('Start TLS', false);
+      await setCheckbox('Validate Certificates', false);
+      await (await getSchemaSelect()).selectOption(LdapSchema.Rfc2307);
 
       expect(isValidEmitted).toBe(true);
     });
@@ -169,45 +203,35 @@ describe('LdapConfigComponent', () => {
 
   describe('search bases configuration', () => {
     it('should show search bases fields when not using standard', async () => {
-      await form.fillForm({
-        'Use Standard Search Bases': false,
-      });
+      await setCheckbox('Use Standard Search Bases', false);
 
-      // At minimum, should not use standard search bases
-      const values = await form.getValues();
-      expect(values['Use Standard Search Bases']).toBe(false);
+      expect(await (await getCheckbox('Use Standard Search Bases')).isChecked()).toBe(false);
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'base_user' }))).not.toBeNull();
     });
 
     it('should hide search bases fields when using standard', async () => {
-      await form.fillForm({
-        'Use Standard Search Bases': true,
-      });
+      await setCheckbox('Use Standard Search Bases', true);
 
-      // When using standard, the custom fields should not be visible in the form
       let emittedConfig: LdapConfig | undefined;
       spectator.component.configurationChanged.subscribe((config) => {
         emittedConfig = config;
       });
 
-      await form.fillForm({
-        'Server URLs': ['ldap://test.com'],
-        'Base DN': 'dc=test,dc=com',
-        Schema: LdapSchema.Rfc2307,
-      });
+      await setServerUrls(['ldap://test.com']);
+      await (await getInput('basedn')).setValue('dc=test,dc=com');
+      await (await getSchemaSelect()).selectOption(LdapSchema.Rfc2307);
 
       expect(emittedConfig).not.toHaveProperty('search_bases');
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'base_user' }))).toBeNull();
     });
   });
 
   describe('attribute maps configuration', () => {
     it('should show attribute maps fields when not using standard', async () => {
-      await form.fillForm({
-        'Use Standard Attribute Maps': false,
-      });
+      await setCheckbox('Use Standard Attribute Maps', false);
 
-      // At minimum, should not use standard attribute maps
-      const values = await form.getValues();
-      expect(values['Use Standard Attribute Maps']).toBe(false);
+      expect(await (await getCheckbox('Use Standard Attribute Maps')).isChecked()).toBe(false);
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'user_object_class' }))).not.toBeNull();
     });
 
     it('should hide attribute maps fields when using standard', async () => {
@@ -216,12 +240,10 @@ describe('LdapConfigComponent', () => {
         emittedConfig = config;
       });
 
-      await form.fillForm({
-        'Use Standard Attribute Maps': true,
-        'Server URLs': ['ldap://test.com'],
-        'Base DN': 'dc=test,dc=com',
-        Schema: LdapSchema.Rfc2307,
-      });
+      await setCheckbox('Use Standard Attribute Maps', true);
+      await setServerUrls(['ldap://test.com']);
+      await (await getInput('basedn')).setValue('dc=test,dc=com');
+      await (await getSchemaSelect()).selectOption(LdapSchema.Rfc2307);
 
       expect(emittedConfig).not.toHaveProperty('attribute_maps');
     });
@@ -229,12 +251,9 @@ describe('LdapConfigComponent', () => {
 
   describe('auxiliary parameters configuration', () => {
     it('should show auxiliary parameters field when not using standard', async () => {
-      await form.fillForm({
-        'Use Standard Auxiliary Parameters': false,
-      });
+      await setCheckbox('Use Standard Auxiliary Parameters', false);
 
-      const values = await form.getValues();
-      expect(values).toHaveProperty('Auxiliary Parameters');
+      expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'auxiliary_parameters' }))).not.toBeNull();
     });
 
     it('should hide auxiliary parameters field when using standard', async () => {
@@ -243,12 +262,10 @@ describe('LdapConfigComponent', () => {
         emittedConfig = config;
       });
 
-      await form.fillForm({
-        'Use Standard Auxiliary Parameters': true,
-        'Server URLs': ['ldap://test.com'],
-        'Base DN': 'dc=test,dc=com',
-        Schema: LdapSchema.Rfc2307,
-      });
+      await setCheckbox('Use Standard Auxiliary Parameters', true);
+      await setServerUrls(['ldap://test.com']);
+      await (await getInput('basedn')).setValue('dc=test,dc=com');
+      await (await getSchemaSelect()).selectOption(LdapSchema.Rfc2307);
 
       expect(emittedConfig).not.toHaveProperty('auxiliary_parameters');
     });
@@ -261,11 +278,9 @@ describe('LdapConfigComponent', () => {
         emittedValid = valid;
       });
 
-      await form.fillForm({
-        'Server URLs': ['ldap://valid.com'],
-        'Base DN': 'dc=valid,dc=com',
-        Schema: LdapSchema.Rfc2307,
-      });
+      await setServerUrls(['ldap://valid.com']);
+      await (await getInput('basedn')).setValue('dc=valid,dc=com');
+      await (await getSchemaSelect()).selectOption(LdapSchema.Rfc2307);
 
       expect(emittedValid).toBe(true);
     });
@@ -276,16 +291,14 @@ describe('LdapConfigComponent', () => {
         emittedConfig = config;
       });
 
-      await form.fillForm({
-        'Server URLs': ['ldap://new.com'],
-        'Base DN': 'dc=new,dc=com',
-        'Start TLS': false,
-        'Validate Certificates': false,
-        Schema: LdapSchema.Rfc2307Bis,
-        'Use Standard Search Bases': true,
-        'Use Standard Attribute Maps': true,
-        'Use Standard Auxiliary Parameters': true,
-      });
+      await setCheckbox('Use Standard Search Bases', true);
+      await setCheckbox('Use Standard Attribute Maps', true);
+      await setCheckbox('Use Standard Auxiliary Parameters', true);
+      await setServerUrls(['ldap://new.com']);
+      await (await getInput('basedn')).setValue('dc=new,dc=com');
+      await setCheckbox('Start TLS', false);
+      await setCheckbox('Validate Certificates', false);
+      await (await getSchemaSelect()).selectOption(LdapSchema.Rfc2307Bis);
 
       // The improved config only includes non-null fields
       expect(emittedConfig).toEqual({
@@ -303,25 +316,16 @@ describe('LdapConfigComponent', () => {
         emittedConfig = config;
       });
 
-      await form.fillForm({
-        'Server URLs': ['ldap://test.com'],
-        'Base DN': 'dc=test,dc=com',
-        'Start TLS': true,
-        'Validate Certificates': true,
-        Schema: LdapSchema.Rfc2307,
-        'Use Standard Search Bases': false,
-      });
+      await setServerUrls(['ldap://test.com']);
+      await (await getInput('basedn')).setValue('dc=test,dc=com');
+      await setCheckbox('Start TLS', true);
+      await setCheckbox('Validate Certificates', true);
+      await (await getSchemaSelect()).selectOption(LdapSchema.Rfc2307);
+      await setCheckbox('Use Standard Search Bases', false);
 
-      // Try to fill the search bases fields if they exist
-      try {
-        await form.fillForm({
-          'Base User': 'ou=people,dc=test,dc=com',
-          'Base Group': 'ou=groups,dc=test,dc=com',
-          'Base Netgroup': 'ou=netgroups,dc=test,dc=com',
-        });
-      } catch {
-        // Fields might not be available immediately after checkbox change
-      }
+      await (await getInput('base_user')).setValue('ou=people,dc=test,dc=com');
+      await (await getInput('base_group')).setValue('ou=groups,dc=test,dc=com');
+      await (await getInput('base_netgroup')).setValue('ou=netgroups,dc=test,dc=com');
 
       expect(emittedConfig.search_bases).toEqual(expect.objectContaining({
         base_user: expect.any(String),
@@ -336,23 +340,14 @@ describe('LdapConfigComponent', () => {
         emittedConfig = config;
       });
 
-      await form.fillForm({
-        'Server URLs': ['ldap://test.com'],
-        'Base DN': 'dc=test,dc=com',
-        Schema: LdapSchema.Rfc2307,
-        'Use Standard Attribute Maps': false,
-      });
+      await setServerUrls(['ldap://test.com']);
+      await (await getInput('basedn')).setValue('dc=test,dc=com');
+      await (await getSchemaSelect()).selectOption(LdapSchema.Rfc2307);
+      await setCheckbox('Use Standard Attribute Maps', false);
 
-      // Try to fill the attribute maps fields if they exist
-      try {
-        await form.fillForm({
-          'User Object Class': 'inetOrgPerson',
-          'User Name': 'cn',
-          'User UID': 'employeeNumber',
-        });
-      } catch {
-        // Fields might not be available immediately after checkbox change
-      }
+      await (await getInput('user_object_class')).setValue('inetOrgPerson');
+      await (await getInput('user_name')).setValue('cn');
+      await (await getInput('user_uid')).setValue('employeeNumber');
 
       expect(emittedConfig.attribute_maps).toEqual(expect.objectContaining({
         passwd: expect.objectContaining({
@@ -369,13 +364,11 @@ describe('LdapConfigComponent', () => {
         emittedConfig = config;
       });
 
-      await form.fillForm({
-        'Server URLs': ['ldap://test.com'],
-        'Base DN': 'dc=test,dc=com',
-        Schema: LdapSchema.Rfc2307,
-        'Use Standard Auxiliary Parameters': false,
-        'Auxiliary Parameters': 'custom_parameter value',
-      });
+      await setServerUrls(['ldap://test.com']);
+      await (await getInput('basedn')).setValue('dc=test,dc=com');
+      await (await getSchemaSelect()).selectOption(LdapSchema.Rfc2307);
+      await setCheckbox('Use Standard Auxiliary Parameters', false);
+      await (await getInput('auxiliary_parameters')).setValue('custom_parameter value');
 
       expect(emittedConfig.auxiliary_parameters).toBe('custom_parameter value');
     });
@@ -383,8 +376,10 @@ describe('LdapConfigComponent', () => {
 
   describe('schema options', () => {
     it('should provide RFC2307 and RFC2307bis schema options', async () => {
-      const schemaControl = await form.getControl('Schema');
-      expect(schemaControl).toBeTruthy();
+      const schema = await getSchemaSelect();
+      await schema.open();
+
+      expect(await schema.getOptions()).toEqual([LdapSchema.Rfc2307, LdapSchema.Rfc2307Bis]);
     });
 
     it('should handle schema selection changes', async () => {
@@ -393,9 +388,7 @@ describe('LdapConfigComponent', () => {
         emittedConfig = config;
       });
 
-      await form.fillForm({
-        Schema: LdapSchema.Rfc2307Bis,
-      });
+      await (await getSchemaSelect()).selectOption(LdapSchema.Rfc2307Bis);
 
       expect(emittedConfig?.schema).toBe(LdapSchema.Rfc2307Bis);
     });
@@ -408,9 +401,7 @@ describe('LdapConfigComponent', () => {
         emittedConfig = config;
       });
 
-      await form.fillForm({
-        'Server URLs': [],
-      });
+      await setServerUrls([]);
 
       expect(emittedConfig.server_urls).toEqual([]);
     });
@@ -421,23 +412,14 @@ describe('LdapConfigComponent', () => {
         emittedConfig = config;
       });
 
-      await form.fillForm({
-        'Server URLs': ['ldap://test.com'],
-        'Base DN': 'dc=test,dc=com',
-        Schema: LdapSchema.Rfc2307,
-        'Use Standard Search Bases': false,
-      });
+      await setServerUrls(['ldap://test.com']);
+      await (await getInput('basedn')).setValue('dc=test,dc=com');
+      await (await getSchemaSelect()).selectOption(LdapSchema.Rfc2307);
+      await setCheckbox('Use Standard Search Bases', false);
 
-      // Try to fill the search bases fields if they exist
-      try {
-        await form.fillForm({
-          'Base User': '',
-          'Base Group': '',
-          'Base Netgroup': '',
-        });
-      } catch {
-        // Fields might not be available immediately after checkbox change
-      }
+      await (await getInput('base_user')).setValue('ou=people,dc=test,dc=com');
+      await (await getInput('base_group')).setValue('ou=groups,dc=test,dc=com');
+      await (await getInput('base_netgroup')).setValue('ou=netgroups,dc=test,dc=com');
 
       expect(emittedConfig.search_bases).toEqual(expect.objectContaining({
         base_user: expect.any(String),
@@ -452,13 +434,11 @@ describe('LdapConfigComponent', () => {
         emittedConfig = config;
       });
 
-      await form.fillForm({
-        'Server URLs': ['ldap://test.com'],
-        'Base DN': 'dc=test,dc=com',
-        Schema: LdapSchema.Rfc2307,
-        'Use Standard Auxiliary Parameters': false,
-        'Auxiliary Parameters': '',
-      });
+      await setServerUrls(['ldap://test.com']);
+      await (await getInput('basedn')).setValue('dc=test,dc=com');
+      await (await getSchemaSelect()).selectOption(LdapSchema.Rfc2307);
+      await setCheckbox('Use Standard Auxiliary Parameters', false);
+      await clearInput('auxiliary_parameters');
 
       // Empty string auxiliary parameters should not be included in config
       expect(emittedConfig).not.toHaveProperty('auxiliary_parameters');

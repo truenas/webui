@@ -1,20 +1,14 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent, TnEmptyComponent } from '@truenas/ui-components';
 import { parse } from 'date-fns';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -24,38 +18,29 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./ipmi-events-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnDialogShellComponent,
     FakeProgressBarComponent,
-    MatDialogTitle,
-    MatDialogContent,
-    EmptyComponent,
+    TnEmptyComponent,
     FormActionsComponent,
-    MatDialogActions,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     TranslateModule,
     FormatDateTimePipe,
   ],
 })
 export class IpmiEventsDialog implements OnInit {
+  protected dialogRef = inject<DialogRef<unknown, IpmiEventsDialog>>(DialogRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly isLoading = signal(false);
   protected events: IpmiEvent[] = [];
 
-  protected emptyConfig: EmptyConfig = {
-    title: this.translate.instant('No events to display.'),
-    type: EmptyType.NoPageData,
-  };
-
-  get canClear(): boolean {
+  protected get canClear(): boolean {
     return this.events.length > 0 && !this.isLoading();
   }
 
-  onClear(): void {
+  protected onClear(): void {
     this.isLoading.set(true);
     this.api.job('ipmi.sel.clear').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (job) => {
@@ -74,7 +59,7 @@ export class IpmiEventsDialog implements OnInit {
     });
   }
 
-  getEventDate(event: IpmiEvent): Date {
+  protected getEventDate(event: IpmiEvent): Date {
     return parse(`${event.date} ${event.time}`, 'MMM-dd-yyyy HH:mm:ss', new Date());
   }
 
@@ -84,18 +69,15 @@ export class IpmiEventsDialog implements OnInit {
 
   private loadEvents(): void {
     this.isLoading.set(true);
-    this.api.job('ipmi.sel.elist').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (job) => {
-        if (job.state !== JobState.Success) {
-          return;
-        }
-
-        this.events = this.sortEvents(job.result);
+    this.api.call('ipmi.sel.elist').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (events) => {
+        this.events = this.sortEvents(events);
       },
       complete: () => {
         this.isLoading.set(false);
       },
       error: (error: unknown) => {
+        this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },
     });

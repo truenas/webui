@@ -6,13 +6,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { ActiveDirectoryConfig, PrimaryDomainIdmap, DomainIdmap } from 'app/interfaces/active-directory-config.interface';
 import { DirectoryServicesUpdate } from 'app/interfaces/directoryservices-update.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IdmapConfigComponent } from 'app/pages/directory-service/components/directory-services-form/active-directory-config/idmap-config/idmap-config.component';
 import { TrustedDomainsConfigComponent } from 'app/pages/directory-service/components/directory-services-form/active-directory-config/trusted-domains-config/trusted-domains-config.component';
 
@@ -23,9 +23,10 @@ import { TrustedDomainsConfigComponent } from 'app/pages/directory-service/compo
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
     TrustedDomainsConfigComponent,
     TranslateModule,
     IdmapConfigComponent,

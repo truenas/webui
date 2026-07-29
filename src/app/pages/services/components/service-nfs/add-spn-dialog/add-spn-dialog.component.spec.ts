@@ -1,12 +1,11 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
@@ -24,7 +23,7 @@ describe('AddSpnDialogComponent', () => {
       mockApi([
         mockCall('nfs.add_principal'),
       ]),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(SnackbarService),
     ],
   });
@@ -35,14 +34,13 @@ describe('AddSpnDialogComponent', () => {
   });
 
   it('submit credentials', async () => {
-    const form = await loader.getHarness(IxFormHarness);
+    const nameInput = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
+    await nameInput.setValue('username');
 
-    await form.fillForm({
-      Name: 'username',
-      Password: 'password',
-    });
+    const passwordInput = await loader.getHarness(TnInputHarness.with({ name: 'password' }));
+    await passwordInput.setValue('password');
 
-    const save = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
+    const save = await loader.getHarness(TnButtonHarness.with({ label: 'Submit' }));
     await save.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nfs.add_principal', [{
@@ -50,6 +48,6 @@ describe('AddSpnDialogComponent', () => {
       password: 'password',
     }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Credentials have been successfully added.');
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 });

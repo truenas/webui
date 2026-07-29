@@ -82,4 +82,14 @@ export const helptextAcl = {
     message: T('This process continues in the background after closing this dialog.'),
   },
 
+  effectiveAclDialog: {
+    title: T('Traverse Access Warning'),
+    message: T('One or more users or groups do not have permission to traverse to this dataset,\
+ so some Access Control Entries will not grant them the access shown:<br><br>{details}<br><br>\
+This can be expected when a dataset is reached through a path the user cannot traverse, such as a\
+ container volume mounted from another user\'s home directory. Saving will apply the ACL without\
+ validating this access.<br><br>Do you want to save anyway?'),
+    buttonText: T('Save Anyway'),
+  },
+
 };

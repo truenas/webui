@@ -1,51 +1,49 @@
-<mat-card [ixUiSearch]="searchableElements.elements.console">
-  <mat-toolbar-row>
-    <h3>{{ 'Console' | translate }}</h3>
-    <div class="actions action-icon">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['console', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
-        (click)="onConfigurePressed()"
-      >
-        {{ 'Configure' | translate }}
-      </button>
+<tn-card
+  padding="small"
+  [title]="'Console' | translate"
+  [ixUiSearch]="searchableElements.elements.console"
+>
+  <div class="details">
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.consoleMenu">
+      <span class="label">{{ 'Show Text Console without Password Prompt' | translate }}:</span>
+      <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+        {{ advancedConfig.consolemenu ? ('Enabled' | translate) : ('Disabled' | translate) }}
+      </span>
     </div>
-  </mat-toolbar-row>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.serialConsole">
+      <span class="label">{{ 'Enable Serial Console' | translate }}:</span>
+      <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+        {{ advancedConfig.serialconsole ? ('Enabled' | translate) : ('Disabled' | translate) }}
+      </span>
+    </div>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.serialPort">
+      <span class="label">{{ 'Serial Port' | translate }}:</span>
+      <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+        {{ advancedConfig.serialport || '–' }}
+      </span>
+    </div>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.serialSpeed">
+      <span class="label">{{ 'Serial Speed' | translate }}:</span>
+      <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+        {{ advancedConfig.serialspeed ? (advancedConfig.serialspeed + ' bps') : '–' }}
+      </span>
+    </div>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.motd">
+      <span class="label">{{ 'MOTD Banner' | translate }}:</span>
+      <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+        {{ advancedConfig.motd || '–' }}
+      </span>
+    </div>
+  </div>
 
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.consoleMenu">
-        <span class="label">{{ 'Show Text Console without Password Prompt' | translate }}:</span>
-        <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
-          {{ advancedConfig.consolemenu ? ('Enabled' | translate) : ('Disabled' | translate) }}
-        </span>
-      </mat-list-item>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.serialConsole">
-        <span class="label">{{ 'Enable Serial Console' | translate }}:</span>
-        <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
-          {{ advancedConfig.serialconsole ? ('Enabled' | translate) : ('Disabled' | translate) }}
-        </span>
-      </mat-list-item>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.serialPort">
-        <span class="label">{{ 'Serial Port' | translate }}:</span>
-        <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
-          {{ advancedConfig.serialport || '–' }}
-        </span>
-      </mat-list-item>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.serialSpeed">
-        <span class="label">{{ 'Serial Speed' | translate }}:</span>
-        <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
-          {{ advancedConfig.serialspeed ? (advancedConfig.serialspeed + ' bps') : '–' }}
-        </span>
-      </mat-list-item>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.motd">
-        <span class="label">{{ 'MOTD Banner' | translate }}:</span>
-        <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
-          {{ advancedConfig.motd || '–' }}
-        </span>
-      </mat-list-item>
-    </mat-list>
-  </mat-card-content>
-</mat-card>
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="['console', 'configure']"
+      [ixUiSearch]="searchableElements.elements.configure"
+      [label]="'Configure' | translate"
+      (onClick)="onConfigurePressed()"
+    ></tn-button>
+  </ng-template>
+</tn-card>

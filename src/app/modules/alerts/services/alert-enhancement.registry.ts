@@ -1307,7 +1307,8 @@ export const smartAlertRegistry: SmartAlertConfig = {
     // API Keys
     ApiKeyRevoked: {
       category: SmartAlertCategory.Security,
-      relatedMenuPath: ['credentials', 'users', 'api-keys'],
+      relatedMenuPath: ['credentials'],
+      bannerMenuPath: ['credentials', 'users', 'api-keys'],
       actions: [{
         label: T('Go to API keys'),
         type: SmartAlertActionType.Navigate,
@@ -1319,7 +1320,8 @@ export const smartAlertRegistry: SmartAlertConfig = {
 
     APIFailedLogin: {
       category: SmartAlertCategory.Security,
-      relatedMenuPath: ['credentials', 'users', 'api-keys'],
+      relatedMenuPath: ['credentials'],
+      bannerMenuPath: ['credentials', 'users', 'api-keys'],
       actions: [{
         label: T('Go to API keys'),
         type: SmartAlertActionType.Navigate,

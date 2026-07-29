@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import {
   SlotSize,
@@ -14,7 +15,7 @@ import { cpuTemperatureBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-
   templateUrl: './widget-cpu-temperature-bar.component.html',
   styleUrls: ['./widget-cpu-temperature-bar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CpuCoreBarComponent, TranslateModule],
+  imports: [TnCardComponent, CpuCoreBarComponent, TranslateModule],
 })
 export class WidgetCpuTemperatureBarComponent implements WidgetComponent {
   size = input.required<SlotSize>();

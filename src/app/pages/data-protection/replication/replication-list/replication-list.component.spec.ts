@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -34,7 +34,7 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -154,16 +154,16 @@ describe('ReplicationListComponent', () => {
         mockJob('replication.run', fakeSuccessfulJob()),
         mockCall('replication.delete'),
       ]),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
+          closed: of(true),
         })),
       }),
       mockProvider(DownloadService, {
@@ -209,10 +209,12 @@ describe('ReplicationListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       ReplicationWizardComponent,
       {
+        title: 'Replication Task Wizard',
         wide: true,
+        footerless: true,
       },
     );
   });
@@ -223,11 +225,12 @@ describe('ReplicationListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       ReplicationFormComponent,
       {
+        title: 'Edit Replication Task',
         wide: true,
-        data: expect.objectContaining(tasks[0]),
+        inputs: { replicationToEdit: expect.objectContaining(tasks[0]) },
       },
     );
   });
@@ -249,12 +252,12 @@ describe('ReplicationListComponent', () => {
   it('shows dialog when Restore button is pressed', async () => {
     await table.expandRow(0);
 
-    jest.spyOn(spectator.inject(MatDialog), 'open');
+    jest.spyOn(spectator.inject(TnDialog), 'open');
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Restore' }));
     await editButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ReplicationRestoreDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ReplicationRestoreDialog, {
       data: 1,
     });
   });
@@ -275,7 +278,7 @@ describe('ReplicationListComponent', () => {
   it('checks if downloads encryption keys when button is pressed', async () => {
     await table.expandRow(0);
 
-    jest.spyOn(spectator.inject(MatDialog), 'open');
+    jest.spyOn(spectator.inject(TnDialog), 'open');
 
     const downloadKeysButtons = await loader.getHarness(MatButtonHarness.with({ text: 'Download Keys' }));
     await downloadKeysButtons.click();

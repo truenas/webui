@@ -1,11 +1,10 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, inject } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
@@ -15,10 +14,9 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxLabelComponent,
-    MatButton,
+    TnButtonComponent,
     IxErrorsComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class IxListComponent implements AfterViewInit {

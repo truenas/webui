@@ -2,6 +2,12 @@
   <div class="session-form-hold">
     @if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
       <tn-card [padContent]="false">
+        <tn-progress-bar
+          class="session-progress"
+          [value]="0"
+          [mode]="'indeterminate'"
+          [ariaLabel]="'Connecting' | translate"
+        ></tn-progress-bar>
         <ix-disconnected-message></ix-disconnected-message>
       </tn-card>
     } @else if (isConnected$ | async) {

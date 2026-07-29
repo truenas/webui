@@ -1,14 +1,15 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnInputHarness } from '@truenas/ui-components';
 import {
   HttpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/http-provider-form/http-provider-form.component';
 
 describe('HttpProviderFormComponent', () => {
   let spectator: Spectator<HttpProviderFormComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: HttpProviderFormComponent,
     imports: [
@@ -16,9 +17,13 @@ describe('HttpProviderFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
@@ -26,16 +31,11 @@ describe('HttpProviderFormComponent', () => {
       url: 'http://truenas.com/provider',
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
-      URL: 'http://truenas.com/provider',
-    });
+    expect(await (await getInput('url')).getValue()).toBe('http://truenas.com/provider');
   });
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
-    await form.fillForm({
-      URL: 'truenas.com/sync',
-    });
+    await (await getInput('url')).setValue('truenas.com/sync');
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toEqual({

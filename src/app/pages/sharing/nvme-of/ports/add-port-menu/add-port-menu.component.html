@@ -1,54 +1,43 @@
 @if (noPortsExist()) {
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    type="button"
-    [ixTest]="'add-port'"
-    (click)="openPortForm()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    [testId]="'add-port'"
+    [label]="'Add' | translate"
+    (onClick)="openPortForm()"
+  ></tn-button>
 }
 @else {
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    type="button"
-    [ixTest]="'add-port'"
-    [matMenuTriggerFor]="addMenu"
-  >
-    {{ 'Add' | translate }}
+    iconPosition="right"
+    [icon]="menuDownIcon"
+    [testId]="'add-port'"
+    [label]="'Add' | translate"
+    [tnMenuTriggerFor]="addMenu"
+  ></tn-button>
 
-    <tn-icon name="menu-down" library="mdi"></tn-icon>
-  </button>
-
-  <mat-menu #addMenu="matMenu">
+  <tn-menu #addMenu>
     @for (port of unusedPorts(); track port.id) {
-      <button
-        mat-menu-item
-        [ixTest]="['add-port', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
-        (click)="selectPort(port)"
+      <tn-menu-item
+        [testId]="addPortTestId(port)"
+        (itemClick)="selectPort(port)"
       >
         <ix-port-description [port]="port"></ix-port-description>
-      </button>
+      </tn-menu-item>
     }
 
-    <mat-divider></mat-divider>
+    <tn-divider></tn-divider>
 
-    <button
-      mat-menu-item
-      ixTest="create-new-port"
-      (click)="openPortForm()"
-    >
-      {{ 'Create New' | translate }}
-    </button>
+    <tn-menu-item
+      [testId]="'create-new-port'"
+      [label]="'Create New' | translate"
+      (itemClick)="openPortForm()"
+    ></tn-menu-item>
 
-    <button
-      mat-menu-item
-      ixTest="manage-ports"
-      (click)="onManagePorts()"
-    >
-      {{ 'Manage Ports' | translate }}
-    </button>
-  </mat-menu>
+    <tn-menu-item
+      [testId]="'manage-ports'"
+      [label]="'Manage Ports' | translate"
+      (itemClick)="onManagePorts()"
+    ></tn-menu-item>
+  </tn-menu>
 }

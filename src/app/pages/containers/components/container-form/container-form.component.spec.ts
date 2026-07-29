@@ -1,10 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import {
+  TnBannerHarness, TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness, TnDialog,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -12,9 +13,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerCapabilitiesPolicy, ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -94,9 +92,9 @@ describe('ContainerFormComponent', () => {
       mockProvider(ContainersStore, {
         reload: jest.fn(),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of({
+          closed: of({
             name: 'ubuntu',
             version: '22.04',
           }),
@@ -116,6 +114,14 @@ describe('ContainerFormComponent', () => {
     ],
   });
 
+  const getInput = (formControlName: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${formControlName}"]` }),
+  );
+
+  const getSelect = (formControlName: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${formControlName}"]` }),
+  );
+
   describe('creating new container', () => {
     beforeEach(() => {
       spectator = createComponent();
@@ -134,13 +140,13 @@ describe('ContainerFormComponent', () => {
     });
 
     it('toggles isAdvancedMode when Advanced Options is clicked', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
 
       // eslint-disable-next-line @typescript-eslint/dot-notation
       expect(spectator.component['isAdvancedMode']).toBe(true);
 
-      const basicButton = await loader.getHarness(MatButtonHarness.with({ text: 'Basic Options' }));
+      const basicButton = await loader.getHarness(TnButtonHarness.with({ label: 'Basic Options' }));
       await basicButton.click();
 
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -148,15 +154,15 @@ describe('ContainerFormComponent', () => {
     });
 
     it('shows Browse Catalog button for image selection', async () => {
-      const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
+      const browseButton = await loader.getHarness(TnButtonHarness.with({ label: 'Browse Catalog' }));
       expect(browseButton).toBeTruthy();
     });
 
     it('opens image selection dialog when Browse Catalog is clicked', async () => {
-      const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
+      const browseButton = await loader.getHarness(TnButtonHarness.with({ label: 'Browse Catalog' }));
       await browseButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalled();
     });
   });
 
@@ -190,9 +196,9 @@ describe('ContainerFormComponent', () => {
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
         }),
-        mockProvider(MatDialog, {
+        mockProvider(TnDialog, {
           open: jest.fn(() => ({
-            afterClosed: () => of({
+            closed: of({
               name: 'ubuntu',
               version: '22.04',
             }),
@@ -219,18 +225,20 @@ describe('ContainerFormComponent', () => {
       expect(spectator.component['isEditMode']()).toBe(true);
     });
 
-    it('does not show pool field when editing', () => {
-      const poolField = spectator.query('ix-select[formcontrolname="pool"]');
-      expect(poolField).toBeNull();
+    it('does not show pool field when editing', async () => {
+      await expect(
+        loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="pool"]' })),
+      ).rejects.toThrow();
     });
 
-    it('does not show image field when editing', () => {
-      const imageField = spectator.query('.image-field');
-      expect(imageField).toBeNull();
+    it('does not show image field when editing', async () => {
+      await expect(
+        loader.getHarness(TnInputHarness.with({ selector: '[formControlName="image"]' })),
+      ).rejects.toThrow();
     });
 
     it('shows Save button instead of Create button', async () => {
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       expect(saveButton).toBeTruthy();
     });
   });
@@ -243,15 +251,15 @@ describe('ContainerFormComponent', () => {
 
     it('hides CPU Set field in basic view', async () => {
       await expect(
-        loader.getHarness(IxInputHarness.with({ label: 'CPU Set' })),
+        getInput('cpuset'),
       ).rejects.toThrow();
     });
 
     it('shows CPU Set field in Advanced Settings', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
 
-      const cpusetInput = await loader.getHarness(IxInputHarness.with({ label: 'CPU Set' }));
+      const cpusetInput = await getInput('cpuset');
       expect(cpusetInput).toBeTruthy();
     });
   });
@@ -269,14 +277,14 @@ describe('ContainerFormComponent', () => {
       const slideInRef = spectator.inject(SlideInRef);
       const containersStore = spectator.inject(ContainersStore);
 
-      const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+      const nameInput = await getInput('name');
       await nameInput.setValue('new-container');
 
-      const descriptionInput = await loader.getHarness(IxInputHarness.with({ label: 'Description' }));
+      const descriptionInput = await getInput('description');
       await descriptionInput.setValue('Test container');
 
-      const autostartCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Autostart' }));
-      await autostartCheckbox.setValue(false);
+      const autostartCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Autostart' }));
+      await autostartCheckbox.uncheck();
 
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['form'].patchValue({
@@ -285,7 +293,7 @@ describe('ContainerFormComponent', () => {
       });
       spectator.detectChanges();
 
-      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create' }));
       expect(await submitButton.isDisabled()).toBe(false);
 
       await submitButton.click();
@@ -332,9 +340,9 @@ describe('ContainerFormComponent', () => {
           initialize: jest.fn(),
           containerUpdated: jest.fn(),
         }),
-        mockProvider(MatDialog, {
+        mockProvider(TnDialog, {
           open: jest.fn(() => ({
-            afterClosed: () => of({
+            closed: of({
               name: 'ubuntu',
               version: '22.04',
             }),
@@ -357,10 +365,10 @@ describe('ContainerFormComponent', () => {
       const slideInRef = spectator.inject(SlideInRef);
       const containersStore = spectator.inject(ContainersStore);
 
-      const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+      const nameInput = await getInput('name');
       await nameInput.setValue('updated-container');
 
-      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
       await submitButton.click();
 
       expect(api.call).toHaveBeenCalledWith('container.update', [
@@ -386,48 +394,46 @@ describe('ContainerFormComponent', () => {
 
     it('hides pool selector in basic view when preferred pool is configured', async () => {
       await spectator.fixture.whenStable();
-      const poolSelect = spectator.query('ix-select[formControlName="pool"]');
-      expect(poolSelect).toBeNull();
+      await expect(
+        loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="pool"]' })),
+      ).rejects.toThrow();
     });
 
     it('shows "Use Preferred Pool" checkbox in Advanced Settings when preferred pool is configured', async () => {
       await spectator.fixture.whenStable();
 
-      // Click Advanced Options button
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
       spectator.detectChanges();
 
       await spectator.fixture.whenStable();
-      const usePreferredPoolCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use Preferred Pool' }));
+      const usePreferredPoolCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Use Preferred Pool' }));
       expect(usePreferredPoolCheckbox).toBeTruthy();
-      expect(await usePreferredPoolCheckbox.getValue()).toBe(true);
+      expect(await usePreferredPoolCheckbox.isChecked()).toBe(true);
     });
 
     it('shows pool selector when "Use Preferred Pool" is unchecked', async () => {
       await spectator.fixture.whenStable();
 
-      // Click Advanced Options button
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
       spectator.detectChanges();
 
       await spectator.fixture.whenStable();
 
-      // Uncheck "Use Preferred Pool"
-      const usePreferredPoolCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use Preferred Pool' }));
-      await usePreferredPoolCheckbox.setValue(false);
+      const usePreferredPoolCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Use Preferred Pool' }));
+      await usePreferredPoolCheckbox.uncheck();
       spectator.detectChanges();
 
       await spectator.fixture.whenStable();
-      const poolSelect = spectator.query('ix-select[formControlName="pool"]');
+      const poolSelect = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="pool"]' }));
       expect(poolSelect).toBeTruthy();
     });
 
     it('sends empty string for pool when no pool is selected (uses preferred pool)', async () => {
       const dialogService = spectator.inject(DialogService);
 
-      const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+      const nameInput = await getInput('name');
       await nameInput.setValue('new-container');
 
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -436,14 +442,13 @@ describe('ContainerFormComponent', () => {
       });
       spectator.detectChanges();
 
-      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create' }));
       await submitButton.click();
 
       expect(dialogService.jobDialog).toHaveBeenCalled();
       const jobDialogCall = (dialogService.jobDialog as jest.Mock).mock.calls[0];
       const jobObservable = jobDialogCall[0];
 
-      // Subscribe to get the actual job parameters
       jobObservable.subscribe((job: { params: unknown[] }) => {
         const payload = job.params[0];
         expect(payload).toMatchObject({
@@ -484,9 +489,9 @@ describe('ContainerFormComponent', () => {
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
         }),
-        mockProvider(MatDialog, {
+        mockProvider(TnDialog, {
           open: jest.fn(() => ({
-            afterClosed: () => of({
+            closed: of({
               name: 'ubuntu',
               version: '22.04',
             }),
@@ -513,22 +518,20 @@ describe('ContainerFormComponent', () => {
 
     it('shows pool selector in basic view when no preferred pool is configured', async () => {
       await spectator.fixture.whenStable();
-      const poolSelect = spectator.query('ix-select[formControlName="pool"]');
+      const poolSelect = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="pool"]' }));
       expect(poolSelect).toBeTruthy();
     });
 
     it('does not show pool selector in Advanced Settings when no preferred pool is configured', async () => {
       await spectator.fixture.whenStable();
 
-      // Click Advanced Options button
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
       spectator.detectChanges();
 
       await spectator.fixture.whenStable();
 
-      // Should still only show one pool selector (in basic view)
-      const poolSelects = spectator.queryAll('ix-select[formControlName="pool"]');
+      const poolSelects = await loader.getAllHarnesses(TnSelectHarness.with({ selector: '[formControlName="pool"]' }));
       expect(poolSelects).toHaveLength(1);
     });
   });
@@ -540,43 +543,43 @@ describe('ContainerFormComponent', () => {
     });
 
     it('shows ID Map Type in advanced mode for create', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
 
-      const idmapSelect = await loader.getHarness(IxSelectHarness.with({ label: 'ID Map Type' }));
+      const idmapSelect = await getSelect('idmap_type');
       expect(idmapSelect).toBeTruthy();
     });
 
     it('shows slice input when Isolated is selected', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
 
-      const idmapSelect = await loader.getHarness(IxSelectHarness.with({ label: 'ID Map Type' }));
-      await idmapSelect.setValue('Isolated');
+      const idmapSelect = await getSelect('idmap_type');
+      await idmapSelect.selectOption('Isolated');
       spectator.detectChanges();
 
-      const sliceInput = await loader.getHarness(IxInputHarness.with({ label: 'ID Map Slice' }));
+      const sliceInput = await getInput('idmap_slice');
       expect(sliceInput).toBeTruthy();
     });
 
     it('shows privileged warning when Privileged is selected', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
 
-      const idmapSelect = await loader.getHarness(IxSelectHarness.with({ label: 'ID Map Type' }));
-      await idmapSelect.setValue('Privileged');
+      const idmapSelect = await getSelect('idmap_type');
+      await idmapSelect.selectOption('Privileged');
       spectator.detectChanges();
 
-      const warning = spectator.query('ix-warning');
+      const warning = await loader.getHarness(TnBannerHarness);
       expect(warning).toBeTruthy();
     });
 
     it('does not show slice input for Default idmap type', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
 
       await expect(
-        loader.getHarness(IxInputHarness.with({ label: 'ID Map Slice' })),
+        getInput('idmap_slice'),
       ).rejects.toThrow();
     });
   });
@@ -607,7 +610,7 @@ describe('ContainerFormComponent', () => {
           requireConfirmationWhen: jest.fn(),
         }),
         mockProvider(ContainersStore, { initialize: jest.fn() }),
-        mockProvider(MatDialog),
+        mockProvider(TnDialog),
         mockProvider(DialogService),
         mockProvider(Router),
       ],
@@ -619,11 +622,11 @@ describe('ContainerFormComponent', () => {
     });
 
     it('does not show ID Map Type in edit mode', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
 
       await expect(
-        loader.getHarness(IxSelectHarness.with({ label: 'ID Map Type' })),
+        getSelect('idmap_type'),
       ).rejects.toThrow();
     });
   });
@@ -635,11 +638,11 @@ describe('ContainerFormComponent', () => {
     });
 
     it('has only Default and Allow All options', async () => {
-      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
       await advancedButton.click();
 
-      const capabilitiesSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Capabilities Policy' }));
-      const options = await capabilitiesSelect.getOptionLabels();
+      const capabilitiesSelect = await getSelect('capabilities_policy');
+      const options = await capabilitiesSelect.getOptions();
       expect(options).toEqual(['Default', 'Allow All']);
     });
   });
@@ -651,7 +654,7 @@ describe('ContainerFormComponent', () => {
     });
 
     async function submitWithIdmap(idmapType: ContainerIdmapType, idmapSlice?: number | null): Promise<void> {
-      const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+      const nameInput = await getInput('name');
       await nameInput.setValue('idmap-test');
 
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -663,7 +666,7 @@ describe('ContainerFormComponent', () => {
       });
       spectator.detectChanges();
 
-      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create' }));
       await submitButton.click();
     }
 

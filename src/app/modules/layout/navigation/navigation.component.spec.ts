@@ -1,7 +1,4 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { MatNavListItemHarness } from '@angular/material/list/testing';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconComponent, TnSpriteLoaderService } from '@truenas/ui-components';
@@ -13,7 +10,6 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
 
 describe('NavigationComponent', () => {
   let spectator: Spectator<NavigationComponent>;
-  let loader: HarnessLoader;
   let router: Router;
 
   const createComponent = createComponentFactory({
@@ -75,14 +71,13 @@ describe('NavigationComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     router = spectator.inject(Router);
   });
 
-  async function isNavItemHighlighted(text: string): Promise<boolean> {
-    const item = await loader.getHarness(MatNavListItemHarness.with({ text: new RegExp(text) }));
-    const host = await item.host();
-    return host.hasClass('highlighted');
+  function isNavItemHighlighted(text: string): boolean {
+    const items = spectator.queryAll('li.sidebar-list-item');
+    const item = items.find((element) => element.textContent?.includes(text));
+    return item?.classList.contains('highlighted') ?? false;
   }
 
   describe('SlideOut item highlighting', () => {
@@ -91,7 +86,7 @@ describe('NavigationComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      expect(await isNavItemHighlighted('Credentials')).toBe(true);
+      expect(isNavItemHighlighted('Credentials')).toBe(true);
     });
 
     it('does not highlight Credentials when user navigates elsewhere', async () => {
@@ -99,7 +94,7 @@ describe('NavigationComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      expect(await isNavItemHighlighted('Credentials')).toBe(false);
+      expect(isNavItemHighlighted('Credentials')).toBe(false);
     });
   });
 
@@ -109,7 +104,7 @@ describe('NavigationComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      expect(await isNavItemHighlighted('Dashboard')).toBe(true);
+      expect(isNavItemHighlighted('Dashboard')).toBe(true);
     });
 
     it('does not highlight Dashboard when user navigates elsewhere', async () => {
@@ -117,7 +112,7 @@ describe('NavigationComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      expect(await isNavItemHighlighted('Dashboard')).toBe(false);
+      expect(isNavItemHighlighted('Dashboard')).toBe(false);
     });
   });
 });

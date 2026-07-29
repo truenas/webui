@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -9,7 +8,6 @@ import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCellStateButtonComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
@@ -42,15 +40,13 @@ describe('IxCellStateButtonComponent', () => {
           },
         ],
       }),
-      mockProvider(MatDialog, {
-        open: jest.fn(),
-      }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => {
           return {
             afterClosed: jest.fn(() => of()),
           };
         }),
+        showLogs: jest.fn(() => of(undefined)),
       }),
     ],
   });
@@ -92,13 +88,8 @@ describe('IxCellStateButtonComponent', () => {
     const button = await loader.getHarness(MatButtonHarness);
     await button.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-      ShowLogsDialog,
-      {
-        data: expect.objectContaining({
-          id: 123456,
-        }),
-      },
+    expect(spectator.inject(DialogService).showLogs).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 123456 }),
     );
   });
 

@@ -1,8 +1,13 @@
 <ix-page-header>
-  <mat-button-toggle-group [value]="activeNfsType()" (change)="nfsTypeChanged($event)">
-    <mat-button-toggle [value]="NfsType.Nfs3">NFS 3</mat-button-toggle>
-    <mat-button-toggle [value]="NfsType.Nfs4">NFS 4</mat-button-toggle>
-  </mat-button-toggle-group>
+  <span class="visually-hidden-label" [id]="nfsTypeToggleLabelId">{{ 'NFS Version' | translate }}</span>
+  <tn-button-toggle-group
+    [ngModel]="activeNfsType()"
+    [ariaLabelledby]="nfsTypeToggleLabelId"
+    (ngModelChange)="nfsTypeChanged($event)"
+  >
+    <tn-button-toggle [value]="NfsType.Nfs3" [testId]="['nfs', 'nfs-3']">NFS 3</tn-button-toggle>
+    <tn-button-toggle [value]="NfsType.Nfs4" [testId]="['nfs', 'nfs-4']">NFS 4</tn-button-toggle>
+  </tn-button-toggle-group>
 
   <ix-basic-search
     [query]="searchQuery()"
@@ -10,60 +15,183 @@
   ></ix-basic-search>
 
   @if (activeNfsType() === NfsType.Nfs3) {
-    <ng-container
-      *ngTemplateOutlet="nfsColumnsSelector; context: { dataProvider: nfs3DataProvider, columns: nfs3Columns }"
-    ></ng-container>
+    <ix-table-column-picker
+      [columns]="nfs3Columns()"
+      [columnPreferencesKey]="'nfsSessionList'"
+      (columnsChange)="onColumnsChange($event)"
+    ></ix-table-column-picker>
+  } @else {
+    <ix-table-column-picker
+      [columns]="nfs4Columns()"
+      [columnPreferencesKey]="'nfsSessionList'"
+      (columnsChange)="onColumnsChange($event)"
+    ></ix-table-column-picker>
   }
 
-  @if (activeNfsType() === NfsType.Nfs4) {
-    <ng-container
-      *ngTemplateOutlet="nfsColumnsSelector; context: { dataProvider: nfs4DataProvider, columns: nfs4Columns }"
-    ></ng-container>
-  }
-
-  <button mat-button color="primary" ixTest="refresh-data" (click)="loadData()">
-    {{ 'Refresh' | translate }}
-  </button>
+  <tn-button
+    color="primary"
+    [testId]="'refresh-data'"
+    [label]="'Refresh' | translate"
+    (onClick)="loadData()"
+  ></tn-button>
 </ix-page-header>
 
 @if (activeNfsType() === NfsType.Nfs3) {
-  <ng-container
-    *ngTemplateOutlet="nfsTable; context: { dataProvider: nfs3DataProvider, columns: nfs3Columns }"
-  ></ng-container>
-}
-
-@if (activeNfsType() === NfsType.Nfs4) {
-  <ng-container
-    *ngTemplateOutlet="nfsTable; context: { dataProvider: nfs4DataProvider, columns: nfs4Columns }"
-  ></ng-container>
-}
-
-<ng-template #nfsColumnsSelector let-dataProvider="dataProvider" let-columns="columns">
-  <ix-table-columns-selector
-    [columnPreferencesKey]="'nfsSessionList'"
-    [columns]="columns"
-    (columnsChange)="columnsChange($event)"
-  ></ix-table-columns-selector>
-</ng-template>
-
-<ng-template #nfsTable let-dataProvider="dataProvider" let-columns="columns">
-  <ix-table
+  @let emptyConf = emptyService.defaultEmptyConfig(nfs3EmptyType());
+  <tn-table
     class="table"
+    [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.nfsSessions"
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    [dataSource]="nfs3Rows()"
+    [displayedColumns]="nfs3DisplayedColumns()"
+    [trackBy]="trackByNfs3"
+    [loading]="nfs3Loading()"
+    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyIcon]="emptyConf?.icon ?? ''"
+    (sortChange)="onNfs3SortChange($event)"
   >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
-    ></tbody>
-  </ix-table>
-  <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
-</ng-template>
+    <ng-container [tnColumnDef]="'ip'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'IP' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('IP' | translate), uniqueRowTag3(row), 'row-text']"
+        >{{ row.ip }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'export'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Export' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Export' | translate), uniqueRowTag3(row), 'row-text']"
+        >{{ row.export }}</span>
+      </ng-template>
+    </ng-container>
+  </tn-table>
+  <tn-table-pager [dataProvider]="nfs3DataProvider"></tn-table-pager>
+} @else {
+  @let emptyConf = emptyService.defaultEmptyConfig(nfs4EmptyType());
+  <tn-table
+    class="table"
+    [testId]="'table-table'"
+    [ixUiSearch]="searchableElements.elements.nfsSessions"
+    [dataSource]="nfs4Rows()"
+    [displayedColumns]="nfs4DisplayedColumns()"
+    [trackBy]="trackByNfs4"
+    [loading]="nfs4Loading()"
+    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyIcon]="emptyConf?.icon ?? ''"
+    (sortChange)="onNfs4SortChange($event)"
+  >
+    <ng-container [tnColumnDef]="'name'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Name' | translate), uniqueRowTag4(row), 'row-text']"
+        >{{ row.name }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'clientid'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Client ID' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Client ID' | translate), uniqueRowTag4(row), 'row-text']"
+        >{{ row.clientid }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'address'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Address' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Address' | translate), uniqueRowTag4(row), 'row-text']"
+        >{{ row.address }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'status'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Status' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Status' | translate), uniqueRowTag4(row), 'row-text']"
+        >{{ formatStatus(row.status) }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'seconds from last renew'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Seconds From Last Renew' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Seconds From Last Renew' | translate), uniqueRowTag4(row), 'row-text']"
+        >
+          {{ row['seconds from last renew'] }}
+        </span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'minor version'">
+      <ng-template tnHeaderCellDef>{{ 'Minor Version' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Minor Version' | translate), uniqueRowTag4(row), 'row-text']"
+        >{{ row['minor version'] }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'Implementation domain'">
+      <ng-template tnHeaderCellDef>{{ 'Implementation Domain' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Implementation Domain' | translate), uniqueRowTag4(row), 'row-text']"
+        >
+          {{ row['Implementation domain'] }}
+        </span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'Implementation name'">
+      <ng-template tnHeaderCellDef>{{ 'Implementation Name' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Implementation Name' | translate), uniqueRowTag4(row), 'row-text']"
+        >
+          {{ row['Implementation name'] }}
+        </span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'callback state'">
+      <ng-template tnHeaderCellDef>{{ 'Callback State' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Callback State' | translate), uniqueRowTag4(row), 'row-text']"
+        >{{ row['callback state'] }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'callback address'">
+      <ng-template tnHeaderCellDef>{{ 'Callback Address' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Callback Address' | translate), uniqueRowTag4(row), 'row-text']"
+        >
+          {{ row['callback address'] }}
+        </span>
+      </ng-template>
+    </ng-container>
+  </tn-table>
+  <tn-table-pager [dataProvider]="nfs4DataProvider"></tn-table-pager>
+}

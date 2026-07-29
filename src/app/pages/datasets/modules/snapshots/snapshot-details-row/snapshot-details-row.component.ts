@@ -1,11 +1,10 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit, OnDestroy, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { MatDivider } from '@angular/material/divider';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnTooltipDirective, TnDialog, TnButtonComponent, TnCheckboxComponent, TnDividerComponent,
+} from '@truenas/ui-components';
 import { isEmpty } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -17,13 +16,10 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
-import { ZfsSnapshotUi } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { getFiniteNumber, getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -40,12 +36,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormatDateTimePipe,
     IxDateComponent,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    MatDivider,
-    MatButton,
+    TnCheckboxComponent,
+    TnDividerComponent,
+    TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
-    MatTooltip,
+    TnTooltipDirective,
   ],
 })
 export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
@@ -54,14 +49,14 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
-  readonly snapshot = input.required<ZfsSnapshotUi>();
+  readonly snapshot = input.required<ZfsSnapshot>();
 
   isLoading = true;
-  snapshotInfo: ZfsSnapshotUi | undefined;
+  snapshotInfo: ZfsSnapshot | undefined;
   holdControl = new FormControl(false);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
@@ -107,7 +102,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       ],
     )
       .pipe(
-        map((snapshots) => ({ ...snapshots[0], selected: this.snapshot().selected })),
+        map((snapshots) => snapshots[0]),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
@@ -138,7 +133,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   doClone(snapshot: ZfsSnapshot): void {
-    this.matDialog.open(SnapshotCloneDialog, { data: snapshot.name });
+    this.tnDialog.open(SnapshotCloneDialog, { data: snapshot.name });
   }
 
   doRollback(snapshot: ZfsSnapshot): void {
@@ -148,7 +143,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     // on, so `snapshot` itself often won't have them and the dialog would have
     // to query — passing `snapshotInfo` short-circuits that round trip in the
     // common path.
-    this.matDialog.open(SnapshotRollbackDialog, { data: this.snapshotInfo ?? snapshot });
+    this.tnDialog.open(SnapshotRollbackDialog, { data: this.snapshotInfo ?? snapshot });
   }
 
   doDelete(snapshot: ZfsSnapshot): void {

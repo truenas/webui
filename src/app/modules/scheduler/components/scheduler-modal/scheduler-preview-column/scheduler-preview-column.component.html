@@ -1,13 +1,14 @@
 <section class="preview-header">
   <h4 class="crontab-header">
     {{ 'Schedule Preview' | translate }}
-    <div class="close-wrapper" [attr.aria-label]="'Close scheduler' | translate">
+    <div class="close-wrapper">
       <tn-icon-button
         class="close-btn"
         name="close"
         library="mdi"
         testId="close-scheduler"
-        [matDialogClose]
+        [ariaLabel]="'Close scheduler' | translate"
+        (click)="closeRequested.emit()"
       ></tn-icon-button>
     </div>
   </h4>
@@ -16,6 +17,8 @@
 </section>
 
 <div class="calendar">
+  <!-- TEMP (NAS-141021): held on mat-calendar — tn-calendar (0.2.4) has no [dateClass]
+       equivalent to mark scheduled days. Migrate once the library exposes it. -->
   <mat-calendar #calendar [dateClass]="getSelectedDateClass"></mat-calendar>
 </div>
 

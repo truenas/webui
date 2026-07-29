@@ -1,5 +1,5 @@
-import { CdkStepper } from '@angular/cdk/stepper';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { TnStepperComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
@@ -36,7 +36,7 @@ describe('CacheWizardStepComponent', () => {
       MockComponent(LayoutStepComponent),
     ],
     providers: [
-      mockProvider(CdkStepper),
+      mockProvider(TnStepperComponent),
       mockProvider(PoolManagerStore, {
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
       }),

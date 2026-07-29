@@ -1,17 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
-import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { Nfs3Session, Nfs4Session } from 'app/interfaces/nfs-share.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { NfsSessionListComponent } from './nfs-session-list.component';
@@ -19,7 +14,7 @@ import { NfsSessionListComponent } from './nfs-session-list.component';
 describe('NfsSessionListComponent', () => {
   let spectator: Spectator<NfsSessionListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const nfs3Sessions = [{ ip: '10.238.238.162', export: '10.238.238.162:/mnt/tank/nfs' }] as Nfs3Session[];
 
@@ -49,10 +44,7 @@ describe('NfsSessionListComponent', () => {
   const createComponent = createComponentFactory({
     component: NfsSessionListComponent,
     imports: [
-      MatButtonToggleModule,
       MockComponent(PageHeaderComponent),
-      BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
     ],
     providers: [
       mockApi([
@@ -74,43 +66,38 @@ describe('NfsSessionListComponent', () => {
     beforeEach(async () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      table = await loader.getHarness(IxTableHarness);
+      table = await loader.getHarness(TnTableHarness);
     });
 
     it('should show NFS 3 table rows', async () => {
-      const expectedRows = [
-        [
-          'IP',
-          'Export',
-        ],
-        [
-          '10.238.238.162',
-          '10.238.238.162:/mnt/tank/nfs',
-        ],
-      ];
-
-      const cells = await table.getCellTexts();
-      expect(cells).toEqual(expectedRows);
+      expect(await table.getHeaderTexts()).toEqual(['IP', 'Export']);
+      expect(await table.getAllRowTexts()).toEqual([
+        ['10.238.238.162', '10.238.238.162:/mnt/tank/nfs'],
+      ]);
     });
   });
 
   describe('NFS 4', () => {
     beforeEach(async () => {
       spectator = createComponent();
-      spectator.component.nfsTypeChanged({ value: NfsType.Nfs4 } as MatButtonToggleChange);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      table = await loader.getHarness(IxTableHarness);
+
+      // Switch versions through the toggle so the [ngModel] wiring is exercised.
+      const nfs4Toggle = await loader.getHarness(TnButtonToggleHarness.with({ label: 'NFS 4' }));
+      await nfs4Toggle.check();
+      spectator.detectChanges();
+      table = await loader.getHarness(TnTableHarness);
     });
 
     it('shows NFS 4 table once is switched', async () => {
-      const expectedRows = [
-        [
-          'Name',
-          'Client ID',
-          'Address',
-          'Status',
-          'Seconds From Last Renew',
-        ],
+      expect(await table.getHeaderTexts()).toEqual([
+        'Name',
+        'Client ID',
+        'Address',
+        'Status',
+        'Seconds From Last Renew',
+      ]);
+      expect(await table.getAllRowTexts()).toEqual([
         [
           'Linux NFSv4.2 debian12-hv',
           '6273260596088110000',
@@ -118,10 +105,7 @@ describe('NfsSessionListComponent', () => {
           'Confirmed',
           '45',
         ],
-      ];
-
-      const cells = await table.getCellTexts();
-      expect(cells).toEqual(expectedRows);
+      ]);
     });
   });
 });

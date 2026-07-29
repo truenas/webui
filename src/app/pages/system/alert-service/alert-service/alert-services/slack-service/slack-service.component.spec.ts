@@ -1,15 +1,16 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness } from '@truenas/ui-components';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   SlackServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/slack-service/slack-service.component';
 
 describe('SlackServiceComponent', () => {
   let spectator: Spectator<SlackServiceComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: SlackServiceComponent,
     imports: [
@@ -24,9 +25,13 @@ describe('SlackServiceComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('renders a form with alert service values', async () => {
@@ -34,16 +39,12 @@ describe('SlackServiceComponent', () => {
       url: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
-      'Webhook URL': 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
-    });
+    expect(await (await getInput('url')).getValue())
+      .toBe('https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX');
   });
 
   it('returns alert service form values when getSubmitAttributes is called', async () => {
-    await form.fillForm({
-      'Webhook URL': 'hooks.slack.com/services/T00000000/A11111111/XXXXXXXXXXXXXXXXXXXXXXXX',
-    });
+    await (await getInput('url')).setValue('hooks.slack.com/services/T00000000/A11111111/XXXXXXXXXXXXXXXXXXXXXXXX');
 
     const submittedValues = spectator.component.getSubmitAttributes();
     expect(submittedValues).toEqual({

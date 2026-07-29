@@ -5,21 +5,19 @@
   @include details-cards();
 
   .scroll-window {
-    align-items: start;
-    columns: unset;
-    display: grid;
-    gap: 8px;
-    grid-template-columns: 1fr;
+    column-gap: 8px;
+    columns: 1;
 
     // Details panel only gets wide enough for two card columns past this breakpoint
     // (see tree-node-with-details-container in mixins/layout.scss).
     @media (min-width: $breakpoint-dualcolumn-slim) {
-      grid-template-columns: 1fr 1fr;
+      columns: 2;
     }
 
     > * {
+      break-inside: avoid;
       display: block;
-      margin-bottom: 0;
+      margin-bottom: 8px;
     }
   }
 }

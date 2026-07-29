@@ -1,59 +1,51 @@
 <ng-container *ixWithLoadingState="app() as app">
   @if (mainPortal(); as mainPortal) {
     <div class="portal-button-wrapper">
-      <button
-        mat-icon-button
-        ixTest="apps-web-portal"
-        matTooltipPosition="above"
-        [attr.aria-label]="mainPortal.label"
-        [matTooltip]="mainPortal.label"
-        (click)="openPortal(mainPortal.url)"
-      >
-        <tn-icon name="web" library="mdi"></tn-icon>
-      </button>
+      <tn-icon-button
+        name="web"
+        library="mdi"
+        testId="apps-web-portal"
+        tooltipPosition="above"
+        [ariaLabel]="mainPortal.label"
+        [tooltip]="mainPortal.label"
+        (onClick)="openPortal(mainPortal.url)"
+      ></tn-icon-button>
 
       @if (otherPortals().length > 0) {
-        <button
-          mat-icon-button
-          ixTest="apps-web-portal-dropdown"
-          matTooltipPosition="above"
-          [matTooltip]="'Other Portals' | translate"
-          [matMenuTriggerFor]="portalMenu"
-        >
-          <tn-icon name="menu-down" library="mdi" class="dropdown-icon"></tn-icon>
-        </button>
+        <tn-icon-button
+          name="menu-down"
+          library="mdi"
+          testId="apps-web-portal-dropdown"
+          tooltipPosition="above"
+          iconClass="dropdown-icon"
+          [ariaLabel]="'Other Portals' | translate"
+          [tooltip]="'Other Portals' | translate"
+          [tnMenuTriggerFor]="portalMenu"
+        ></tn-icon-button>
 
-        <mat-menu #portalMenu="matMenu">
-          @for (portal of otherPortals(); track portal.label) {
-            <button mat-menu-item [ixTest]="['apps-web-portal', portal.label]" (click)="openPortal(portal.url)">
-              {{ portal.label }}
-            </button>
-          }
-        </mat-menu>
+        <tn-menu #portalMenu [items]="portalMenuItems()"></tn-menu>
       }
     </div>
   }
 
-  <button
-    mat-icon-button
-    ixTest="apps-restart"
-    matTooltipPosition="above"
-    [attr.aria-label]="'Restart App' | translate"
-    [matTooltip]="'Restart App' | translate"
+  <tn-icon-button
+    name="restart"
+    library="mdi"
+    testId="apps-restart"
+    tooltipPosition="above"
+    [ariaLabel]="'Restart App' | translate"
+    [tooltip]="'Restart App' | translate"
     [disabled]="app.state === appState.Deploying"
-    (click)="onRestartApp(app)"
-  >
-    <tn-icon name="restart" library="mdi"></tn-icon>
-  </button>
+    (onClick)="onRestartApp(app)"
+  ></tn-icon-button>
 
-  <button
-    mat-icon-button
-    ixTest="apps-details"
-    matTooltipPosition="above"
-    [attr.aria-label]="'Check App Details' | translate"
-    [matTooltip]="'Check App Details' | translate"
-    (click)="openAppDetails(app)"
-  >
-    <tn-icon name="cog" library="mdi"></tn-icon>
-  </button>
+  <tn-icon-button
+    name="cog"
+    library="mdi"
+    testId="apps-details"
+    tooltipPosition="above"
+    [ariaLabel]="'Check App Details' | translate"
+    [tooltip]="'Check App Details' | translate"
+    (onClick)="openAppDetails(app)"
+  ></tn-icon-button>
 </ng-container>

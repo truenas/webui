@@ -1,6 +1,6 @@
 <div class="actions">
   @for (action of actions; track action) {
-    <div [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || ''">
+    <div [tnTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || ''">
       @if (action.hidden ? !(action.hidden(row()) | async) : true) {
         <button
           *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"

@@ -32,7 +32,7 @@
         <button
           mat-icon-button
           ixTest="toggle-row"
-          [matTooltip]="isExpanded(row) ? ('Collapse Row' | translate) : ('Expand Row' | translate)"
+          [tnTooltip]="isExpanded(row) ? ('Collapse Row' | translate) : ('Expand Row' | translate)"
           (click)="$event.stopPropagation(); onToggle(row)"
         >
           @if (isExpanded(row)) {
@@ -61,7 +61,7 @@
 @if (isLoading()) {
   <td [attr.colspan]="displayedColumns.length">
     <div class="spinner-container">
-      <mat-spinner [diameter]="40"></mat-spinner>
+      <tn-spinner mode="indeterminate" [diameter]="40"></tn-spinner>
     </div>
   </td>
 }

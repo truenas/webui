@@ -1,12 +1,12 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, vmDeviceTypeLabels } from 'app/enums/vm.enum';
@@ -14,11 +14,8 @@ import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -29,16 +26,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
+    TnCheckboxComponent,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    IxInputComponent,
-    MatDialogActions,
+    TnFormFieldComponent,
+    TnInputComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -46,12 +40,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class DeleteVmDialogComponent implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
-  private dialogRef = inject<MatDialogRef<DeleteVmDialogComponent>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, DeleteVmDialogComponent>>(DialogRef);
   private validators = inject(IxValidatorsService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
-  vm = inject<VirtualMachine>(MAT_DIALOG_DATA);
+  vm = inject<VirtualMachine>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.VmWrite];

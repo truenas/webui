@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import uniqBy from 'lodash-es/uniqBy';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
@@ -38,8 +38,7 @@ interface CategorizedIpAddresses {
     WithLoadingStateDirective,
     WidgetDatapointComponent,
     TranslateModule,
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
   ],
 })
 export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfaceIpSettings> {

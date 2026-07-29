@@ -1,7 +1,11 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChanges, OnInit, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { minimumPbkdf2Iterations } from 'app/constants/dataset.constants';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
@@ -9,11 +13,6 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
@@ -24,13 +23,14 @@ import { ApiService } from 'app/modules/websocket/api.service';
   templateUrl: './encryption-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    IxSelectComponent,
-    IxTextareaComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
+    TnInputComponent,
     TranslateModule,
-    IxInputComponent,
+    AsyncPipe,
   ],
 })
 export class EncryptionSectionComponent implements OnChanges, OnInit {
@@ -161,4 +161,5 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   }
 
   protected readonly ignoreTranslation = ignoreTranslation;
+  protected readonly InputType = InputType;
 }

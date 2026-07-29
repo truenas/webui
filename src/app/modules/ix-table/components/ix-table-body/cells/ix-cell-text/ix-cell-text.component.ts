@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -11,7 +11,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-cell-text.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatTooltip,
+    TnTooltipDirective,
     TranslateModule,
     TestDirective,
   ],

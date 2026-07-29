@@ -1,318 +1,422 @@
-<ix-modal-header [requiredRoles]="requiredRoles" [title]="title" [loading]="isLoading"></ix-modal-header>
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <div class="fieldsets">
-        <ix-fieldset
-          class="fieldset"
-          [title]="helptext.transferTitle | translate"
+<ix-form
+  #ixForm
+  [formGroup]="form"
+  [addTitle]="'Add Cloud Sync Task' | translate"
+  [editTitle]="'Edit Cloud Sync Task' | translate"
+  [isEditMode]="!isNew"
+  [requiredRoles]="requiredRoles"
+  [externalLoading]="isLoading()"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <div class="fieldsets">
+    <tn-form-section
+      class="fieldset"
+      [heading]="helptext.transferTitle | translate"
+    >
+      @if (form.controls.description.enabled) {
+        <tn-form-field [label]="helptext.descriptionLabel | translate" [required]="true">
+          <tn-input
+            name="description"
+            testId="description"
+            formControlName="description"
+            [required]="true"
+          ></tn-input>
+        </tn-form-field>
+      }
+      @if (form.controls.direction.enabled) {
+        <tn-form-field
+          [label]="helptext.directionLabel | translate"
+          [tooltip]="helptext.directionTooltip | translate"
+          [required]="true"
         >
-          @if (form.controls.description.enabled) {
-            <ix-input
-              formControlName="description"
-              [label]="helptext.descriptionLabel | translate"
-              [required]="true"
-            ></ix-input>
-          }
-          @if (form.controls.direction.enabled) {
-            <ix-select
-              formControlName="direction"
-              [label]="helptext.directionLabel | translate"
-              [tooltip]="helptext.directionTooltip | translate"
-              [required]="true"
-              [options]="directionOptions$"
-            ></ix-select>
-          }
-          @if (form.controls.transfer_mode.enabled) {
-            <ix-select
-              formControlName="transfer_mode"
-              [label]="helptext.transferModeLabel | translate"
-              [tooltip]="transferModeTooltip | translate"
-              [required]="true"
-              [options]="transferModeOptions$"
-            ></ix-select>
-          }
-          <ix-transfer-mode-explanation
-            [mode]="form.controls.transfer_mode.value"
-          ></ix-transfer-mode-explanation>
-          @if (form.controls.path_destination.enabled) {
-            <ix-explorer
-              formControlName="path_destination"
-              [label]="helptext.pathLabel | translate"
-              [tooltip]="helptext.pathTooltip | translate"
-              [required]="true"
-              [nodeProvider]="fileNodeProvider"
-            ></ix-explorer>
-          }
-          @if (form.controls.path_source.enabled) {
-            <ix-explorer
-              formControlName="path_source"
-              [label]="helptext.pathLabel | translate"
-              [tooltip]="helptext.pathTooltip | translate"
-              [required]="true"
-              [multiple]="true"
-              [nodeProvider]="fileNodeProvider"
-            ></ix-explorer>
-          }
-        </ix-fieldset>
+          <tn-select
+            name="direction"
+            testId="direction"
+            formControlName="direction"
+            [options]="(directionOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
+      }
+      @if (form.controls.transfer_mode.enabled) {
+        <tn-form-field
+          [label]="helptext.transferModeLabel | translate"
+          [tooltip]="transferModeTooltip | translate"
+          [required]="true"
+        >
+          <tn-select
+            name="transfer_mode"
+            testId="transfer-mode"
+            formControlName="transfer_mode"
+            [options]="(transferModeOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
+      }
+      <ix-transfer-mode-explanation
+        [mode]="form.controls.transfer_mode.value"
+      ></ix-transfer-mode-explanation>
+      @if (form.controls.path_destination.enabled) {
+        <ix-explorer
+          formControlName="path_destination"
+          [label]="helptext.pathLabel | translate"
+          [tooltip]="helptext.pathTooltip | translate"
+          [required]="true"
+          [nodeProvider]="fileNodeProvider"
+        ></ix-explorer>
+      }
+      @if (form.controls.path_source.enabled) {
+        <ix-explorer
+          formControlName="path_source"
+          [label]="helptext.pathLabel | translate"
+          [tooltip]="helptext.pathTooltip | translate"
+          [required]="true"
+          [multiple]="true"
+          [nodeProvider]="fileNodeProvider"
+        ></ix-explorer>
+      }
+    </tn-form-section>
 
-        <ix-fieldset
-          class="fieldset"
-          [title]="helptext.remoteTitle | translate"
+    <tn-form-section
+      class="fieldset"
+      [heading]="helptext.remoteTitle | translate"
+    >
+      <a
+        tnTestIdType="link"
+        [tnTestId]="'manage-credentials'"
+        [tnTooltip]="'Open Backup Credentials in full page' | translate"
+        (click)="goToManageCredentials()"
+      >
+        <div class="link">
+          {{ 'Manage Credentials' | translate }}<tn-icon
+            name="open-in-new"
+            library="mdi"
+            customSize="13px"
+            [attr.aria-label]="'Open Backup Credentials in full page' | translate"
+          ></tn-icon>
+        </div>
+      </a>
+      @if (form.controls.credentials.enabled) {
+        <ix-cloud-credentials-select
+          formControlName="credentials"
+          [label]="helptext.credentialLabel | translate"
+          [tooltip]="helptext.credentialsTooltip | translate"
+          [required]="true"
+        ></ix-cloud-credentials-select>
+      }
+      @if (form.controls.bucket.enabled) {
+        <tn-form-field
+          [label]="bucketPlaceholder | translate"
+          [tooltip]="bucketTooltip | translate"
         >
-          <a
-            ixTest="manage-credentials"
-            [matTooltip]="'Open Backup Credentials in full page' | translate"
-            (click)="goToManageCredentials()"
-          >
-            <div class="link">
-              {{ 'Manage Credentials' | translate }}<tn-icon
-                name="open-in-new"
-                library="mdi"
-                customSize="13px"
-                [attr.aria-label]="'Open Backup Credentials in full page' | translate"
-              ></tn-icon>
-            </div>
-          </a>
-          @if (form.controls.credentials.enabled) {
-            <ix-cloud-credentials-select
-              formControlName="credentials"
-              [label]="helptext.credentialLabel | translate"
-              [tooltip]="helptext.credentialsTooltip | translate"
-              [required]="true"
-            ></ix-cloud-credentials-select>
-          }
-          @if (form.controls.bucket.enabled) {
-            <ix-select
-              formControlName="bucket"
-              [label]="bucketPlaceholder | translate"
-              [tooltip]="bucketTooltip | translate"
-              [options]="bucketOptions$"
-            ></ix-select>
-          }
-          @if (form.controls.bucket_input.enabled) {
-            <ix-input
-              formControlName="bucket_input"
-              [label]="bucketInputPlaceholder | translate"
-              [tooltip]="bucketInputTooltip | translate"
-              [required]="true"
-            ></ix-input>
-          }
-          @if (form.controls.folder_destination.enabled) {
-            <ix-explorer
-              formControlName="folder_destination"
-              [rootNodes]="slashRootNode"
-              [readonly]="!hasRequiredRoles()"
-              [label]="helptext.folderLabel | translate"
-              [tooltip]="helptext.folderTooltip | translate"
-              [nodeProvider]="bucketNodeProvider"
-            ></ix-explorer>
-          }
-          @if (form.controls.folder_source.enabled) {
-            <ix-explorer
-              formControlName="folder_source"
-              [rootNodes]="slashRootNode"
-              [readonly]="!hasRequiredRoles()"
-              [label]="helptext.folderLabel | translate"
-              [tooltip]="helptext.folderTooltip | translate"
-              [multiple]="true"
-              [nodeProvider]="bucketNodeProvider"
-            ></ix-explorer>
-          }
-          @if (form.controls.bucket_policy_only.enabled) {
-            <ix-checkbox
-              formControlName="bucket_policy_only"
-              [label]="helptext.bucketPolicyOnlyLabel | translate"
-              [tooltip]="helptext.bucketPolicyOnlyTooltip | translate"
-            ></ix-checkbox>
-          }
-        </ix-fieldset>
+          <tn-select
+            name="bucket"
+            testId="bucket"
+            formControlName="bucket"
+            [options]="(bucketOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
+      }
+      @if (form.controls.bucket_input.enabled) {
+        <tn-form-field
+          [label]="bucketInputPlaceholder | translate"
+          [tooltip]="bucketInputTooltip | translate"
+          [required]="true"
+        >
+          <tn-input
+            name="bucket_input"
+            testId="bucket-input"
+            formControlName="bucket_input"
+            [required]="true"
+          ></tn-input>
+        </tn-form-field>
+      }
+      @if (form.controls.folder_destination.enabled) {
+        <ix-explorer
+          formControlName="folder_destination"
+          [rootNodes]="slashRootNode"
+          [readonly]="!hasRequiredRoles()"
+          [label]="helptext.folderLabel | translate"
+          [tooltip]="helptext.folderTooltip | translate"
+          [nodeProvider]="bucketNodeProvider"
+        ></ix-explorer>
+      }
+      @if (form.controls.folder_source.enabled) {
+        <ix-explorer
+          formControlName="folder_source"
+          [rootNodes]="slashRootNode"
+          [readonly]="!hasRequiredRoles()"
+          [label]="helptext.folderLabel | translate"
+          [tooltip]="helptext.folderTooltip | translate"
+          [multiple]="true"
+          [nodeProvider]="bucketNodeProvider"
+        ></ix-explorer>
+      }
+      @if (form.controls.bucket_policy_only.enabled) {
+        <tn-form-field [tooltip]="helptext.bucketPolicyOnlyTooltip | translate">
+          <tn-checkbox
+            name="bucket_policy_only"
+            testId="bucket-policy-only"
+            formControlName="bucket_policy_only"
+            [label]="helptext.bucketPolicyOnlyLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      }
+    </tn-form-section>
 
-        <ix-fieldset
-          class="fieldset"
-          [title]="helptext.controlTitle | translate"
-        >
-          @if (form.controls.cloudsync_picker.enabled) {
-            <ix-scheduler
-              formControlName="cloudsync_picker"
-              [required]="true"
-              [label]="helptext.scheduleLabel | translate"
-            ></ix-scheduler>
-          }
-          @if (form.controls.enabled.enabled) {
-            <ix-checkbox
-              formControlName="enabled"
-              [label]="helptext.enabledLabel | translate"
-            ></ix-checkbox>
-          }
-        </ix-fieldset>
+    <tn-form-section
+      class="fieldset"
+      [heading]="helptext.controlTitle | translate"
+    >
+      @if (form.controls.cloudsync_picker.enabled) {
+        <ix-scheduler
+          formControlName="cloudsync_picker"
+          [required]="true"
+          [label]="helptext.scheduleLabel | translate"
+        ></ix-scheduler>
+      }
+      @if (form.controls.enabled.enabled) {
+        <tn-form-field>
+          <tn-checkbox
+            name="enabled"
+            testId="enabled"
+            formControlName="enabled"
+            [label]="helptext.enabledLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      }
+    </tn-form-section>
 
-        <ix-fieldset
-          class="fieldset"
-          [title]="helptext.advancedOptionsTitle | translate"
+    <tn-form-section
+      class="fieldset"
+      [heading]="helptext.advancedOptionsTitle | translate"
+    >
+      @if (googleDriveProviderIds.includes(form.controls.credentials.value)) {
+        <tn-form-field [tooltip]="helptext.acknowledgeAbuseTooltip | translate">
+          <tn-checkbox
+            name="acknowledge_abuse"
+            testId="acknowledge-abuse"
+            formControlName="acknowledge_abuse"
+            [label]="helptext.acknowledgeAbuseLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      }
+      @if (form.controls.snapshot.enabled) {
+        <tn-form-field [tooltip]="helptext.snapshotTooltip | translate">
+          <tn-checkbox
+            name="snapshot"
+            testId="snapshot"
+            formControlName="snapshot"
+            [label]="helptext.snapshotLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      }
+      @if (form.controls.create_empty_src_dirs.enabled) {
+        <tn-form-field>
+          <tn-checkbox
+            name="create_empty_src_dirs"
+            testId="create-empty-src-dirs"
+            formControlName="create_empty_src_dirs"
+            [label]="helptext.emptySrcDirsLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      }
+      @if (form.controls.follow_symlinks.enabled) {
+        <tn-form-field [tooltip]="helptext.followSymlinksTooltip | translate">
+          <tn-checkbox
+            name="follow_symlinks"
+            testId="follow-symlinks"
+            formControlName="follow_symlinks"
+            [label]="helptext.followSymlinksLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      }
+      @if (form.controls.pre_script.enabled) {
+        <tn-form-field
+          [label]="helptext.preScriptLabel | translate"
+          [tooltip]="helptext.preScriptTooltip | translate"
         >
-          @if (googleDriveProviderIds.includes(form.controls.credentials.value)) {
-            <ix-checkbox
-              formControlName="acknowledge_abuse"
-              [label]="helptext.acknowledgeAbuseLabel | translate"
-              [tooltip]="helptext.acknowledgeAbuseTooltip | translate"
-            ></ix-checkbox>
-          }
-          @if (form.controls.snapshot.enabled) {
-            <ix-checkbox
-              formControlName="snapshot"
-              [label]="helptext.snapshotLabel | translate"
-              [tooltip]="helptext.snapshotTooltip | translate"
-            ></ix-checkbox>
-          }
-          @if (form.controls.create_empty_src_dirs.enabled) {
-            <ix-checkbox
-              formControlName="create_empty_src_dirs"
-              [label]="helptext.emptySrcDirsLabel | translate"
-            ></ix-checkbox>
-          }
-          @if (form.controls.follow_symlinks.enabled) {
-            <ix-checkbox
-              formControlName="follow_symlinks"
-              [label]="helptext.followSymlinksLabel | translate"
-              [tooltip]="helptext.followSymlinksTooltip | translate"
-            ></ix-checkbox>
-          }
-          @if (form.controls.pre_script.enabled) {
-            <ix-textarea
-              formControlName="pre_script"
-              [label]="helptext.preScriptLabel | translate"
-              [tooltip]="helptext.preScriptTooltip | translate"
-            ></ix-textarea>
-          }
-          @if (form.controls.post_script.enabled) {
-            <ix-textarea
-              formControlName="post_script"
-              [label]="helptext.postScriptLabel | translate"
-              [tooltip]="helptext.postScriptTooltip | translate"
-            ></ix-textarea>
-          }
-          @if (form.controls.exclude.enabled) {
-            <ix-chips
-              formControlName="exclude"
-              [label]="helptext.excludeLabel | translate"
-              [tooltip]="helptext.excludeTooltip | translate"
-            ></ix-chips>
-          }
-          @if (form.controls.task_encryption.enabled) {
-            <ix-select
-              formControlName="task_encryption"
-              [label]="helptext.encryptionLabel | translate"
-              [tooltip]="helptext.encryptionTooltip | translate"
-              [options]="encryptionOptions$"
-            ></ix-select>
-          }
-          @if (form.controls.chunk_size.enabled) {
-            <ix-input
-              formControlName="chunk_size"
-              type="number"
-              [label]="helptext.chunkSizeLabel | translate"
-              [tooltip]="helptext.chunkSizeTooltip | translate"
-            ></ix-input>
-          }
-          <div class="advanced-title">
-            {{ helptext.advancedRemoteOptionsTitle | translate }}
-          </div>
-          @if (form.controls.storage_class.enabled) {
-            <ix-select
-              formControlName="storage_class"
-              [label]="helptext.storageClassLabel | translate"
-              [tooltip]="helptext.storageClassTooltip | translate"
-              [options]="storageClassOptions$"
-            ></ix-select>
-          }
-          @if (form.controls.fast_list.enabled) {
-            <ix-checkbox
-              formControlName="fast_list"
-              [label]="helptext.fastListLabel | translate"
-              [tooltip]="helptext.fastListTooltip | translate"
-            ></ix-checkbox>
-          }
-          @if (form.controls.encryption.enabled) {
-            <ix-checkbox
-              formControlName="encryption"
-              [label]="helptext.remoteEncryptionLabel | translate"
-              [tooltip]="helptext.remoteEncryptionTooltip | translate"
-            ></ix-checkbox>
-          }
-          @if (form.controls.filename_encryption.enabled) {
-            <ix-checkbox
-              formControlName="filename_encryption"
-              [label]="helptext.filenameEncryptionLabel | translate"
-              [tooltip]="helptext.filenameEncryptionTooltip | translate"
-            ></ix-checkbox>
-          }
-          @if (form.controls.encryption_password.enabled) {
-            <ix-input
-              formControlName="encryption_password"
-              type="password"
-              [label]="helptext.encryptionPasswordLabel | translate"
-              [tooltip]="helptext.encryptionPasswordTooltip | translate"
-            ></ix-input>
-          }
-          @if (form.controls.encryption_salt.enabled) {
-            <ix-input
-              formControlName="encryption_salt"
-              type="password"
-              [label]="helptext.encryptionSaltLabel | translate"
-              [tooltip]="helptext.encryptionSaltTooltip | translate"
-            ></ix-input>
-          }
-          @if (form.controls.transfers.enabled) {
-            <ix-select
-              formControlName="transfers"
-              [options]="transfersOptions$"
-              [label]="helptext.transfersLabel | translate"
-              [tooltip]="helptext.transfersTooltip | translate"
-            ></ix-select>
-          }
-          @if (form.controls.bwlimit.enabled) {
-            <ix-chips
-              formControlName="bwlimit"
-              [label]="helptext.bwlimitLabel | translate"
-              [tooltip]="helptext.bwlimitTooltip | translate"
-            ></ix-chips>
-          }
-        </ix-fieldset>
+          <tn-input
+            name="pre_script"
+            testId="pre-script"
+            formControlName="pre_script"
+            [multiline]="true"
+          ></tn-input>
+        </tn-form-field>
+      }
+      @if (form.controls.post_script.enabled) {
+        <tn-form-field
+          [label]="helptext.postScriptLabel | translate"
+          [tooltip]="helptext.postScriptTooltip | translate"
+        >
+          <tn-input
+            name="post_script"
+            testId="post-script"
+            formControlName="post_script"
+            [multiline]="true"
+          ></tn-input>
+        </tn-form-field>
+      }
+      @if (form.controls.exclude.enabled) {
+        <tn-form-field
+          [label]="helptext.excludeLabel | translate"
+          [tooltip]="helptext.excludeTooltip | translate"
+        >
+          <tn-chip-input
+            name="exclude"
+            testId="exclude"
+            formControlName="exclude"
+            [allowCustomValue]="true"
+          ></tn-chip-input>
+        </tn-form-field>
+      }
+      @if (form.controls.task_encryption.enabled) {
+        <tn-form-field
+          [label]="helptext.encryptionLabel | translate"
+          [tooltip]="helptext.encryptionTooltip | translate"
+        >
+          <tn-select
+            name="task_encryption"
+            testId="task-encryption"
+            formControlName="task_encryption"
+            [options]="(encryptionOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
+      }
+      @if (form.controls.chunk_size.enabled) {
+        <tn-form-field
+          [label]="helptext.chunkSizeLabel | translate"
+          [tooltip]="helptext.chunkSizeTooltip | translate"
+        >
+          <tn-input
+            name="chunk_size"
+            testId="chunk-size"
+            formControlName="chunk_size"
+            [inputType]="InputType.Number"
+          ></tn-input>
+        </tn-form-field>
+      }
+      <div class="advanced-title">
+        {{ helptext.advancedRemoteOptionsTitle | translate }}
       </div>
+      @if (form.controls.storage_class.enabled) {
+        <tn-form-field
+          [label]="helptext.storageClassLabel | translate"
+          [tooltip]="helptext.storageClassTooltip | translate"
+        >
+          <tn-select
+            name="storage_class"
+            testId="storage-class"
+            formControlName="storage_class"
+            [options]="(storageClassOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
+      }
+      @if (form.controls.fast_list.enabled) {
+        <tn-form-field [tooltip]="helptext.fastListTooltip | translate">
+          <tn-checkbox
+            name="fast_list"
+            testId="fast-list"
+            formControlName="fast_list"
+            [label]="helptext.fastListLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      }
+      @if (form.controls.encryption.enabled) {
+        <tn-form-field [tooltip]="helptext.remoteEncryptionTooltip | translate">
+          <tn-checkbox
+            name="encryption"
+            testId="encryption"
+            formControlName="encryption"
+            [label]="helptext.remoteEncryptionLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      }
+      @if (form.controls.filename_encryption.enabled) {
+        <tn-form-field [tooltip]="helptext.filenameEncryptionTooltip | translate">
+          <tn-checkbox
+            name="filename_encryption"
+            testId="filename-encryption"
+            formControlName="filename_encryption"
+            [label]="helptext.filenameEncryptionLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      }
+      @if (form.controls.encryption_password.enabled) {
+        <tn-form-field
+          [label]="helptext.encryptionPasswordLabel | translate"
+          [tooltip]="helptext.encryptionPasswordTooltip | translate"
+        >
+          <tn-input
+            name="encryption_password"
+            testId="encryption-password"
+            formControlName="encryption_password"
+            [inputType]="InputType.Password"
+            [showPasswordToggle]="true"
+          ></tn-input>
+        </tn-form-field>
+      }
+      @if (form.controls.encryption_salt.enabled) {
+        <tn-form-field
+          [label]="helptext.encryptionSaltLabel | translate"
+          [tooltip]="helptext.encryptionSaltTooltip | translate"
+        >
+          <tn-input
+            name="encryption_salt"
+            testId="encryption-salt"
+            formControlName="encryption_salt"
+            [inputType]="InputType.Password"
+            [showPasswordToggle]="true"
+          ></tn-input>
+        </tn-form-field>
+      }
+      @if (form.controls.transfers.enabled) {
+        <tn-form-field
+          [label]="helptext.transfersLabel | translate"
+          [tooltip]="helptext.transfersTooltip | translate"
+        >
+          <tn-select
+            name="transfers"
+            testId="transfers"
+            formControlName="transfers"
+            [options]="(transfersOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
+      }
+      @if (form.controls.bwlimit.enabled) {
+        <tn-form-field
+          [label]="helptext.bwlimitLabel | translate"
+          [tooltip]="helptext.bwlimitTooltip | translate"
+        >
+          <tn-chip-input
+            name="bwlimit"
+            testId="bwlimit"
+            formControlName="bwlimit"
+            [allowCustomValue]="true"
+          ></tn-chip-input>
+        </tn-form-field>
+      }
+    </tn-form-section>
+  </div>
 
-      <div class="form-actions">
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading"
-        >
-          {{ 'Save' | translate }}
-        </button>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="button"
-          ixTest="dry-run"
-          [disabled]="form.invalid || isLoading"
-          (click)="onDryRun()"
-        >
-          {{ helptext.dryRunButton | translate }}
-        </button>
-        @if (isNew) {
-          <button
-            mat-button
-            type="button"
-            ixTest="switch-to-wizard"
-            (click)="onSwitchToWizard()"
-          >
-            {{ 'Switch To Wizard' | translate }}
-          </button>
-        }
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
+  <!-- Inline extra actions only in the legacy SlideIn host. In the `<tn-side-panel>` host these are
+       rendered in the panel footer instead (see `footerActions`), so gate them to avoid duplicates. -->
+  @if (slideInRef) {
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      ixExtraActions
+      testId="dry-run"
+      [label]="helptext.dryRunButton | translate"
+      [disabled]="form.invalid || isLoading() || ixForm.isSubmitting()"
+      (onClick)="onDryRun()"
+    ></tn-button>
+    @if (isNew) {
+      <tn-button
+        ixExtraActions
+        testId="switch-to-wizard"
+        [label]="'Switch To Wizard' | translate"
+        [disabled]="ixForm.isSubmitting()"
+        (onClick)="onSwitchToWizard()"
+      ></tn-button>
+    }
+  }
+</ix-form>

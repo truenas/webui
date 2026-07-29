@@ -2,7 +2,6 @@ import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
@@ -36,7 +35,6 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
   private errorHandler = inject(ErrorHandlerService);
   translate = inject(TranslateService);
   protected dialogService = inject(DialogService);
-  protected matDialog = inject(MatDialog);
   private location = inject(Location);
   private api = inject(ApiService);
   private authService = inject(AuthService);
@@ -66,7 +64,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
     // Replace URL so that we don't reset config again if page is refreshed.
     this.location.replaceState('/signin');
 
-    this.matDialog.closeAll();
+    this.dialogService.closeAllDialogs();
     this.resetConfig();
   }
 

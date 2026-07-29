@@ -15,8 +15,9 @@
   <div class="apps">
     @for (app of apps$ | async; track trackByAppId($index, app)) {
       <a
+        tnTestIdType="link"
         [routerLink]="['/apps', 'available', app.train, app.name]"
-        [ixTest]="['open', app.train, app.name]"
+        [tnTestId]="['open', app.train, app.name]"
       >
         <ix-app-card [app]="app"></ix-app-card>
       </a>
@@ -24,11 +25,11 @@
   </div>
 
   <div class="view-all">
-    <button
-      mat-flat-button
-      [ixTest]="['back-to-discover-page']"
+    <tn-button
+      [testId]="['back-to-discover-page']"
+      [label]="'Back to Discover Page' | translate"
       [routerLink]="['/apps', 'available']"
-    >{{ 'Back to Discover Page' | translate }}</button>
+    ></tn-button>
   </div>
 }
 

@@ -1,19 +1,15 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import {
-  MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle,
-} from '@angular/material/dialog';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatTooltip } from '@angular/material/tooltip';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnIconButtonComponent, TnSpinnerComponent,
+} from '@truenas/ui-components';
 import { LicenseFingerprintValue } from 'app/interfaces/system-info.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -96,20 +92,15 @@ export function buildFingerprintField(
   styleUrls: ['./license-fingerprint-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatIconButton,
-    MatDialogActions,
-    MatDialogClose,
-    MatDialogContent,
-    MatDialogTitle,
-    MatProgressSpinner,
-    MatTooltip,
-    TestDirective,
-    TnIconComponent,
+    TnDialogShellComponent,
+    TnButtonComponent,
+    TnIconButtonComponent,
+    TnSpinnerComponent,
     TranslateModule,
   ],
 })
 export class LicenseFingerprintDialog implements OnInit {
+  protected dialogRef = inject<DialogRef<unknown, LicenseFingerprintDialog>>(DialogRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);

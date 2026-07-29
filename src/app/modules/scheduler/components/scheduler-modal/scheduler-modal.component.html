@@ -2,11 +2,11 @@
   <form [formGroup]="form">
     <section>
       <h4>{{ 'Presets' | translate }}</h4>
-      <ix-select
+      <tn-select
         class="preset-select"
         formControlName="preset"
-        [options]="presetOptions$"
-      ></ix-select>
+        [options]="presetSelectOptions"
+      ></tn-select>
     </section>
 
     <section>
@@ -19,34 +19,49 @@
       </div>
 
       @if (!config.hideMinutes) {
-        <ix-input
+        <tn-form-field
           class="input"
-          formControlName="minutes"
-          [required]="true"
           [label]="'Minutes' | translate"
           [tooltip]="tooltips.minutes | translate"
-        ></ix-input>
+          [required]="true"
+        >
+          <tn-input
+            name="minutes"
+            formControlName="minutes"
+            [required]="true"
+          ></tn-input>
+        </tn-form-field>
       }
 
-      <ix-input
+      <tn-form-field
         class="input"
-        formControlName="hours"
-        [required]="true"
         [label]="'Hours' | translate"
         [tooltip]="tooltips.hours | translate"
-      ></ix-input>
+        [required]="true"
+      >
+        <tn-input
+          name="hours"
+          formControlName="hours"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
     </section>
 
     <section>
       <h4>{{ 'Days' | translate }}</h4>
 
-      <ix-input
+      <tn-form-field
         class="input days-of-month-input"
-        formControlName="days"
-        [required]="true"
         [label]="'Days of Month' | translate"
         [tooltip]="tooltips.days | translate"
-      ></ix-input>
+        [required]="true"
+      >
+        <tn-input
+          name="days"
+          formControlName="days"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
 
       @if (hasOrConditionExplanation$ | async) {
         <div
@@ -64,14 +79,11 @@
 
       <div class="weekdays" formGroupName="weekdays">
         @for (weekday of weekdays; track weekday) {
-          <mat-checkbox
-            color="primary"
-            class="weekend"
-            [ixTest]="['scheduler', weekday.label]"
+          <tn-checkbox
+            [testId]="['scheduler', weekday.label]"
+            [label]="weekday.label | translate"
             [formControlName]="weekday.value"
-          >
-            {{ weekday.label | translate }}
-          </mat-checkbox>
+          ></tn-checkbox>
         }
       </div>
     </section>
@@ -81,28 +93,23 @@
 
       <div class="months" formArrayName="months">
         @for (month of months; track month) {
-          <mat-checkbox
-            color="primary"
-            class="month"
-            [ixTest]="['scheduler', month.label]"
+          <tn-checkbox
+            [testId]="['scheduler', month.label]"
+            [label]="month.label | translate"
             [formControlName]="month.value"
-          >
-            {{ month.label | translate }}
-          </mat-checkbox>
+          ></tn-checkbox>
         }
       </div>
     </section>
 
     <div class="form-actions">
-      <button
-        mat-button
+      <tn-button
         color="primary"
-        ixTest="done"
+        testId="done"
+        [label]="'Done' | translate"
         [disabled]="form.invalid"
-        (click)="onDone()"
-      >
-        {{ 'Done' | translate }}
-      </button>
+        (onClick)="onDone()"
+      ></tn-button>
     </div>
   </form>
 </div>
@@ -111,4 +118,5 @@
   [timezone]="timezone"
   [startTime]="config.startTime"
   [endTime]="config.endTime"
+  (closeRequested)="closeModal()"
 ></ix-scheduler-preview-column>

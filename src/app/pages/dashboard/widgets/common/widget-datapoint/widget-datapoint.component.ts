@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { Ng2FittextModule } from 'ng2-fittext';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 
@@ -12,8 +12,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
   styleUrl: './widget-datapoint.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
     Ng2FittextModule,
     TranslateModule,
   ],

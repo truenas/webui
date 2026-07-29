@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -11,12 +11,11 @@ import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
@@ -29,30 +28,27 @@ describe('GuiFormComponent', () => {
   let loader: HarnessLoader;
   let api: ApiService;
 
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
   const mockSystemGeneralConfig = {
     usage_collection: false,
-    ui_address: [
-      '0.0.0.0',
-    ],
-    ui_v6address: [
-      '::',
-    ],
+    ui_address: ['0.0.0.0'],
+    ui_v6address: ['::'],
     ui_port: 80,
     ui_httpsport: 443,
     ui_httpsredirect: false,
-    ui_httpsprotocols: [
-      'TLSv1.2',
-      'TLSv1.3',
-    ],
+    ui_httpsprotocols: ['TLSv1.2', 'TLSv1.3'],
     ui_consolemsg: false,
     ui_certificate: 1,
   } as SystemGeneralConfig;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const createComponent = createComponentFactory({
     component: GuiFormComponent,
@@ -69,7 +65,6 @@ describe('GuiFormComponent', () => {
           enable_gpos_stig: false,
         } as SystemSecurityConfig),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(WebSocketHandlerService),
       mockProvider(WebSocketStatusService),
       mockProvider(DialogService, {
@@ -86,7 +81,8 @@ describe('GuiFormComponent', () => {
           'TLSv1.3': 'TLSv1.3',
         }),
       }),
-      mockProvider(FormErrorHandlerService),
+      ...ixFormTestingProviders(),
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       provideMockStore({
         selectors: [
           {
@@ -119,33 +115,22 @@ describe('GuiFormComponent', () => {
     });
 
     it('shows current values when form is being edited', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
-
-      expect(values).toEqual(
-        {
-          'GUI SSL Certificate': 'freenas_default',
-          'HTTPS Protocols': ['TLSv1.2', 'TLSv1.3'],
-          'Show Console Messages': false,
-          'Usage collection & UI error reporting': false,
-          'Web Interface HTTP -> HTTPS Redirect': false,
-          'Web Interface HTTP Port': '80',
-          'Web Interface HTTPS Port': '443',
-          'Web Interface IPv4 Address': ['0.0.0.0'],
-          'Web Interface IPv6 Address': ['::'],
-        },
-      );
+      expect(await (await getSelect('ui_certificate')).getDisplayText()).toBe('freenas_default');
+      expect(await (await getInput('ui_port')).getValue()).toBe('80');
+      expect(await (await getInput('ui_httpsport')).getValue()).toBe('443');
+      expect(await (await getCheckbox('ui_httpsredirect')).isChecked()).toBe(false);
+      expect(await (await getCheckbox('usage_collection')).isChecked()).toBe(false);
+      expect(await (await getCheckbox('ui_consolemsg')).isChecked()).toBe(false);
+      expect(spectator.component.formGroup.value.ui_httpsprotocols).toEqual(['TLSv1.2', 'TLSv1.3']);
+      expect(spectator.component.formGroup.value.ui_address).toEqual(['0.0.0.0']);
+      expect(spectator.component.formGroup.value.ui_v6address).toEqual(['::']);
     });
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Show Console Messages': true,
-        'Usage collection & UI error reporting': true,
-      });
+      await (await getCheckbox('ui_consolemsg')).check();
+      await (await getCheckbox('usage_collection')).check();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('system.general.update', [
         {
@@ -163,13 +148,9 @@ describe('GuiFormComponent', () => {
         get: jest.fn(() => new BehaviorSubject(true)),
       });
 
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Web Interface HTTP -> HTTPS Redirect': true,
-      });
+      await (await getCheckbox('ui_httpsredirect')).check();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const dialog = spectator.inject(DialogService);
       expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -183,13 +164,9 @@ describe('GuiFormComponent', () => {
         get: jest.fn(() => new BehaviorSubject(true)),
       });
 
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Web Interface HTTP -> HTTPS Redirect': true,
-      });
+      await (await getCheckbox('ui_httpsredirect')).check();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const dialog = spectator.inject(DialogService);
       expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -223,13 +200,9 @@ describe('GuiFormComponent', () => {
     });
 
     it('does not include usage_collection in update payload', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Web Interface HTTP -> HTTPS Redirect': true,
-      });
+      await (await getCheckbox('ui_httpsredirect')).check();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const dialog = spectator.inject(DialogService);
       expect(dialog.confirm).toHaveBeenCalledWith(expect.not.objectContaining({

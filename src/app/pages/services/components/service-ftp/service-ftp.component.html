@@ -1,325 +1,301 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
-  [title]="'FTP' | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
+@if (slideInRef) {
+  <ix-modal-header
+    [requiredRoles]="requiredRoles"
+    [title]="'FTP' | translate"
+    [loading]="isFormLoading()"
+  ></ix-modal-header>
+}
 
-<mat-card class="card">
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <div class="form-columns">
-        <div class="column">
-          <ix-fieldset [title]="'General Options' | translate">
-            <ix-input
-              formControlName="port"
-              type="number"
-              [label]="'Port' | translate"
-              [required]="true"
-              [tooltip]="helptext.portTooltip | translate"
-            ></ix-input>
-
-            <ix-input
-              formControlName="clients"
-              type="number"
-              [label]="'Clients' | translate"
-              [required]="true"
-              [tooltip]="helptext.clientsTooltip | translate"
-            ></ix-input>
-
-            <ix-input
-              formControlName="ipconnections"
-              type="number"
-              [label]="'Connections' | translate"
-              [required]="true"
-              [tooltip]="helptext.ipconnectionsTooltip | translate"
-            ></ix-input>
-
-            <ix-input
-              formControlName="loginattempt"
-              type="number"
-              [label]="'Login Attempts' | translate"
-              [required]="true"
-              [tooltip]="helptext.loginattemptTooltip | translate"
-            ></ix-input>
-
-            <ix-input
-              formControlName="timeout_notransfer"
-              type="number"
-              [label]="'Notransfer Timeout' | translate"
-              [required]="true"
-              [tooltip]="helptext.timeoutNotransferTooltip | translate"
-            ></ix-input>
-
-            <ix-input
-              formControlName="timeout"
-              type="number"
-              [label]="'Timeout' | translate"
-              [required]="true"
-              [tooltip]="helptext.timeoutTooltip | translate"
-            ></ix-input>
-          </ix-fieldset>
-
-          @if (isAdvancedMode) {
-            <ix-fieldset [title]="'Access' | translate">
-              <ix-checkbox
-                formControlName="defaultroot"
-                [label]="'Always Chroot' | translate"
-                [tooltip]="helptext.defaultrootTooltip | translate"
-              ></ix-checkbox>
-
-              <ix-checkbox
-                formControlName="onlyanonymous"
-                [label]="'Allow Anonymous Login' | translate"
-                [tooltip]="helptext.onlyanonymousTooltip | translate"
-              ></ix-checkbox>
-
-              @if (isAnonymousLoginAllowed$ | async) {
-                <ix-explorer
-                  formControlName="anonpath"
-                  [label]="'Path' | translate"
-                  [tooltip]="helptext.anonpathTooltip | translate"
-                  [nodeProvider]="treeNodeProvider"
-                >
-                  <ix-explorer-create-dataset></ix-explorer-create-dataset>
-                </ix-explorer>
-              }
-
-              <ix-checkbox
-                formControlName="onlylocal"
-                [label]="'Allow Local User Login' | translate"
-                [tooltip]="helptext.onlylocalTooltip | translate"
-              ></ix-checkbox>
-
-              <ix-checkbox
-                formControlName="ident"
-                [label]="'Require IDENT Authentication' | translate"
-                [tooltip]="helptext.identTooltip | translate"
-              ></ix-checkbox>
-
-              <ix-permissions
-                formControlName="filemask"
-                [label]="'File Permissions' | translate"
-                [tooltip]="helptext.filemaskTooltip | translate"
-              ></ix-permissions>
-
-              <ix-permissions
-                formControlName="dirmask"
-                [label]="'Directory Permissions' | translate"
-                [tooltip]="helptext.dirmaskTooltip | translate"
-              ></ix-permissions>
-            </ix-fieldset>
-          }
-        </div>
-        @if (isAdvancedMode) {
-          <div class="column">
-            <ix-fieldset [title]="ignoreTranslation('TLS')">
-              <ix-checkbox
-                formControlName="tls"
-                [label]="'Enable TLS' | translate"
-                [tooltip]="helptext.tlsTooltip | translate"
-              ></ix-checkbox>
-
-              @if (isTlsEnabled$ | async) {
-                <ix-with-manage-certificates-link>
-                  <ix-select
-                    formControlName="ssltls_certificate"
-                    [label]="'Certificate' | translate"
-                    [tooltip]="helptext.ssltlsCertificateTooltip | translate"
-                    [required]="true"
-                    [options]="certificates$"
-                  ></ix-select>
-                </ix-with-manage-certificates-link>
-
-                <ix-select
-                  formControlName="tls_policy"
-                  [label]="'TLS Policy' | translate"
-                  [tooltip]="helptext.tlsPolicyTooltip | translate"
-                  [options]="tlsPolicyOptions$"
-                ></ix-select>
-
-                <ix-checkbox
-                  formControlName="tls_opt_allow_client_renegotiations"
-                  [label]="'TLS Allow Client Renegotiations' | translate"
-                  [tooltip]="helptext.tlsAllowClientRenegotiationsTooltip| translate"
-                ></ix-checkbox>
-
-                <ix-checkbox
-                  formControlName="tls_opt_allow_dot_login"
-                  [label]="'TLS Allow Dot Login' | translate"
-                  [tooltip]="helptext.tlsAllowDotLoginTooltip | translate"
-                ></ix-checkbox>
-
-                <ix-checkbox
-                  formControlName="tls_opt_allow_per_user"
-                  [label]="'TLS Allow Per User' | translate"
-                  [tooltip]="helptext.tlsAllowPerUserTooltip | translate"
-                ></ix-checkbox>
-
-                <ix-checkbox
-                  formControlName="tls_opt_common_name_required"
-                  [label]="'TLS Common Name Required' | translate"
-                  [tooltip]="helptext.tlsCommonNameRequiredTooltip | translate"
-                ></ix-checkbox>
-
-                <ix-checkbox
-                  formControlName="tls_opt_enable_diags"
-                  [label]="'TLS Enable Diagnostics' | translate"
-                  [tooltip]="helptext.tlsEnableDiagsTooltip | translate"
-                ></ix-checkbox>
-
-                <ix-checkbox
-                  formControlName="tls_opt_export_cert_data"
-                  [label]="'TLS Export Certificate Data' | translate"
-                  [tooltip]="helptext.tlsExportCertDataTooltip | translate"
-                ></ix-checkbox>
-
-                <ix-checkbox
-                  formControlName="tls_opt_no_empty_fragments"
-                  [label]="'TLS No Empty Fragments' | translate"
-                  [tooltip]="helptext.tlsNoEmptyFragmentsTooltip | translate"
-                ></ix-checkbox>
-
-                <ix-checkbox
-                  formControlName="tls_opt_no_session_reuse_required"
-                  [label]="'TLS No Session Reuse Required' | translate"
-                  [tooltip]="helptext.tlsNoSessionReuseRequiredTooltip | translate"
-                ></ix-checkbox>
-
-                <ix-checkbox
-                  formControlName="tls_opt_stdenvvars"
-                  [label]="'TLS Export Standard Vars' | translate"
-                  [tooltip]="helptext.tlsStdenvvarsTooltip | translate"
-                ></ix-checkbox>
-
-                <ix-checkbox
-                  formControlName="tls_opt_dns_name_required"
-                  [label]="'TLS DNS Name Required' | translate"
-                  [tooltip]="helptext.tlsDnsNameRequiredTooltip | translate"
-                ></ix-checkbox>
-
-                <ix-checkbox
-                  formControlName="tls_opt_ip_address_required"
-                  [label]="'TLS IP Address Required' | translate"
-                  [tooltip]="helptext.tlsIpAddressRequiredTooltip | translate"
-                ></ix-checkbox>
-              }
-            </ix-fieldset>
-            <ix-fieldset [title]="'Other Options' | translate">
-              <ix-input
-                formControlName="passiveportsmin"
-                type="number"
-                [label]="'Minimum Passive Port' | translate"
-                [tooltip]="helptext.passiveportsminTooltip | translate"
-              ></ix-input>
-
-              <ix-input
-                formControlName="passiveportsmax"
-                type="number"
-                [label]="'Maximum Passive Port' | translate"
-                [tooltip]="helptext.passiveportsmaxTooltip | translate"
-              ></ix-input>
-
-              <ix-checkbox
-                formControlName="fxp"
-                [label]="'Enable FXP' | translate"
-                [tooltip]="helptext.fxp_tooltip | translate"
-              ></ix-checkbox>
-
-              <ix-checkbox
-                formControlName="resume"
-                [label]="'Allow Transfer Resumption' | translate"
-                [tooltip]="helptext.resumeTooltip | translate"
-              ></ix-checkbox>
-
-              <ix-checkbox
-                formControlName="reversedns"
-                [label]="'Perform Reverse DNS Lookups' | translate"
-                [tooltip]="helptext.reversednsTooltip | translate"
-              ></ix-checkbox>
-
-              <ix-input
-                formControlName="masqaddress"
-                [label]="'Masquerade Address' | translate"
-                [tooltip]="helptext.masqaddressTooltip | translate"
-              ></ix-input>
-
-              <ix-textarea
-                formControlName="banner"
-                [label]="'Display Login' | translate"
-                [tooltip]="helptext.bannerTooltip | translate"
-              ></ix-textarea>
-
-              <ix-textarea
-                formControlName="options"
-                [label]="'Auxiliary Parameters' | translate"
-                [tooltip]="helptext.optionsTooltip | translate"
-              ></ix-textarea>
-            </ix-fieldset>
-
-            <ix-fieldset [title]="'Bandwidth' | translate">
-              <ix-input
-                formControlName="localuserbw"
-                [label]="helptext.localuserbwLabel | translate"
-                [tooltip]="helptext.userbwTooltip | translate"
-                [format]="iecFormatter.memorySizeFormatting"
-                [parse]="kibParser"
-              ></ix-input>
-
-              <ix-input
-                formControlName="localuserdlbw"
-                [label]="'Local User Download Bandwidth' | translate"
-                [tooltip]="helptext.userbwTooltip | translate"
-                [format]="iecFormatter.memorySizeFormatting"
-                [parse]="kibParser"
-              ></ix-input>
-
-              <ix-input
-                formControlName="anonuserbw"
-                [label]="'Anonymous User Upload Bandwidth' | translate"
-                [tooltip]="helptext.userbwTooltip | translate"
-                [format]="iecFormatter.memorySizeFormatting"
-                [parse]="kibParser"
-              ></ix-input>
-
-              <ix-input
-                formControlName="anonuserdlbw"
-                [label]="'Anonymous User Download Bandwidth' | translate"
-                [tooltip]="helptext.userbwTooltip | translate"
-                [format]="iecFormatter.memorySizeFormatting"
-                [parse]="kibParser"
-              ></ix-input>
-            </ix-fieldset>
-          </div>
-        }
-      </div>
-
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isFormLoading()"
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <div class="form-columns">
+    <div class="column">
+      <tn-form-section [heading]="'General Options' | translate">
+        <tn-form-field
+          [label]="'Port' | translate"
+          [tooltip]="helptext.portTooltip | translate"
         >
-          {{ 'Save' | translate }}
-        </button>
+          <tn-input formControlName="port" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+        </tn-form-field>
 
-        @if (isAdvancedMode) {
-          <button
-            mat-button
-            type="button"
-            ixTest="toggle-advanced-options"
-            (click)="onToggleAdvancedOptions()"
+        <tn-form-field
+          [label]="'Clients' | translate"
+          [tooltip]="helptext.clientsTooltip | translate"
+        >
+          <tn-input formControlName="clients" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="'Connections' | translate"
+          [tooltip]="helptext.ipconnectionsTooltip | translate"
+        >
+          <tn-input formControlName="ipconnections" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="'Login Attempts' | translate"
+          [tooltip]="helptext.loginattemptTooltip | translate"
+        >
+          <tn-input formControlName="loginattempt" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="'Notransfer Timeout' | translate"
+          [tooltip]="helptext.timeoutNotransferTooltip | translate"
+        >
+          <tn-input formControlName="timeout_notransfer" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="'Timeout' | translate"
+          [tooltip]="helptext.timeoutTooltip | translate"
+        >
+          <tn-input formControlName="timeout" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+        </tn-form-field>
+      </tn-form-section>
+
+      @if (isAdvancedMode) {
+        <tn-form-section [heading]="'Access' | translate">
+          <tn-form-field [tooltip]="helptext.defaultrootTooltip | translate">
+            <tn-checkbox formControlName="defaultroot" [label]="'Always Chroot' | translate"></tn-checkbox>
+          </tn-form-field>
+
+          <tn-form-field [tooltip]="helptext.onlyanonymousTooltip | translate">
+            <tn-checkbox formControlName="onlyanonymous" [label]="'Allow Anonymous Login' | translate"></tn-checkbox>
+          </tn-form-field>
+
+          @if (isAnonymousLoginAllowed$ | async) {
+            <ix-explorer
+              formControlName="anonpath"
+              [label]="'Path' | translate"
+              [tooltip]="helptext.anonpathTooltip | translate"
+              [nodeProvider]="treeNodeProvider"
+            >
+              <ix-explorer-create-dataset></ix-explorer-create-dataset>
+            </ix-explorer>
+          }
+
+          <tn-form-field [tooltip]="helptext.onlylocalTooltip | translate">
+            <tn-checkbox formControlName="onlylocal" [label]="'Allow Local User Login' | translate"></tn-checkbox>
+          </tn-form-field>
+
+          <tn-form-field [tooltip]="helptext.identTooltip | translate">
+            <tn-checkbox formControlName="ident" [label]="'Require IDENT Authentication' | translate"></tn-checkbox>
+          </tn-form-field>
+
+          <ix-permissions
+            formControlName="filemask"
+            [label]="'File Permissions' | translate"
+            [tooltip]="helptext.filemaskTooltip | translate"
+          ></ix-permissions>
+
+          <ix-permissions
+            formControlName="dirmask"
+            [label]="'Directory Permissions' | translate"
+            [tooltip]="helptext.dirmaskTooltip | translate"
+          ></ix-permissions>
+        </tn-form-section>
+      }
+    </div>
+    @if (isAdvancedMode) {
+      <div class="column">
+        <tn-form-section [heading]="ignoreTranslation('TLS')">
+          <tn-form-field [tooltip]="helptext.tlsTooltip | translate">
+            <tn-checkbox formControlName="tls" [label]="'Enable TLS' | translate"></tn-checkbox>
+          </tn-form-field>
+
+          @if (isTlsEnabled$ | async) {
+            <ix-with-manage-certificates-link>
+              <tn-form-field
+                [label]="'Certificate' | translate"
+                [required]="true"
+                [tooltip]="helptext.ssltlsCertificateTooltip | translate"
+              >
+                <tn-select formControlName="ssltls_certificate" [options]="(certificates$ | async) ?? []"></tn-select>
+              </tn-form-field>
+            </ix-with-manage-certificates-link>
+
+            <tn-form-field
+              [label]="'TLS Policy' | translate"
+              [tooltip]="helptext.tlsPolicyTooltip | translate"
+            >
+              <tn-select formControlName="tls_policy" [options]="tlsPolicyOptions"></tn-select>
+            </tn-form-field>
+
+            <tn-form-field [tooltip]="helptext.tlsAllowClientRenegotiationsTooltip | translate">
+              <tn-checkbox formControlName="tls_opt_allow_client_renegotiations" [label]="'TLS Allow Client Renegotiations' | translate"></tn-checkbox>
+            </tn-form-field>
+
+            <tn-form-field [tooltip]="helptext.tlsAllowDotLoginTooltip | translate">
+              <tn-checkbox formControlName="tls_opt_allow_dot_login" [label]="'TLS Allow Dot Login' | translate"></tn-checkbox>
+            </tn-form-field>
+
+            <tn-form-field [tooltip]="helptext.tlsAllowPerUserTooltip | translate">
+              <tn-checkbox formControlName="tls_opt_allow_per_user" [label]="'TLS Allow Per User' | translate"></tn-checkbox>
+            </tn-form-field>
+
+            <tn-form-field [tooltip]="helptext.tlsCommonNameRequiredTooltip | translate">
+              <tn-checkbox formControlName="tls_opt_common_name_required" [label]="'TLS Common Name Required' | translate"></tn-checkbox>
+            </tn-form-field>
+
+            <tn-form-field [tooltip]="helptext.tlsEnableDiagsTooltip | translate">
+              <tn-checkbox formControlName="tls_opt_enable_diags" [label]="'TLS Enable Diagnostics' | translate"></tn-checkbox>
+            </tn-form-field>
+
+            <tn-form-field [tooltip]="helptext.tlsExportCertDataTooltip | translate">
+              <tn-checkbox formControlName="tls_opt_export_cert_data" [label]="'TLS Export Certificate Data' | translate"></tn-checkbox>
+            </tn-form-field>
+
+            <tn-form-field [tooltip]="helptext.tlsNoEmptyFragmentsTooltip | translate">
+              <tn-checkbox formControlName="tls_opt_no_empty_fragments" [label]="'TLS No Empty Fragments' | translate"></tn-checkbox>
+            </tn-form-field>
+
+            <tn-form-field [tooltip]="helptext.tlsNoSessionReuseRequiredTooltip | translate">
+              <tn-checkbox formControlName="tls_opt_no_session_reuse_required" [label]="'TLS No Session Reuse Required' | translate"></tn-checkbox>
+            </tn-form-field>
+
+            <tn-form-field [tooltip]="helptext.tlsStdenvvarsTooltip | translate">
+              <tn-checkbox formControlName="tls_opt_stdenvvars" [label]="'TLS Export Standard Vars' | translate"></tn-checkbox>
+            </tn-form-field>
+
+            <tn-form-field [tooltip]="helptext.tlsDnsNameRequiredTooltip | translate">
+              <tn-checkbox formControlName="tls_opt_dns_name_required" [label]="'TLS DNS Name Required' | translate"></tn-checkbox>
+            </tn-form-field>
+
+            <tn-form-field [tooltip]="helptext.tlsIpAddressRequiredTooltip | translate">
+              <tn-checkbox formControlName="tls_opt_ip_address_required" [label]="'TLS IP Address Required' | translate"></tn-checkbox>
+            </tn-form-field>
+          }
+        </tn-form-section>
+        <tn-form-section [heading]="'Other Options' | translate">
+          <tn-form-field
+            [label]="'Minimum Passive Port' | translate"
+            [tooltip]="helptext.passiveportsminTooltip | translate"
           >
-            {{ 'Basic Options' | translate }}
-          </button>
-        } @else {
-          <button mat-button type="button" ixTest="toggle-advanced-options" (click)="onToggleAdvancedOptions()">
-            {{ 'Advanced Options' | translate }}
-          </button>
-        }
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+            <tn-input formControlName="passiveportsmin" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+          </tn-form-field>
+
+          <tn-form-field
+            [label]="'Maximum Passive Port' | translate"
+            [tooltip]="helptext.passiveportsmaxTooltip | translate"
+          >
+            <tn-input formControlName="passiveportsmax" [inputType]="InputType.Number" [allowDecimals]="false"></tn-input>
+          </tn-form-field>
+
+          <tn-form-field [tooltip]="helptext.fxp_tooltip | translate">
+            <tn-checkbox formControlName="fxp" [label]="'Enable FXP' | translate"></tn-checkbox>
+          </tn-form-field>
+
+          <tn-form-field [tooltip]="helptext.resumeTooltip | translate">
+            <tn-checkbox formControlName="resume" [label]="'Allow Transfer Resumption' | translate"></tn-checkbox>
+          </tn-form-field>
+
+          <tn-form-field [tooltip]="helptext.reversednsTooltip | translate">
+            <tn-checkbox formControlName="reversedns" [label]="'Perform Reverse DNS Lookups' | translate"></tn-checkbox>
+          </tn-form-field>
+
+          <tn-form-field
+            [label]="'Masquerade Address' | translate"
+            [tooltip]="helptext.masqaddressTooltip | translate"
+          >
+            <tn-input formControlName="masqaddress"></tn-input>
+          </tn-form-field>
+
+          <tn-form-field
+            [label]="'Display Login' | translate"
+            [tooltip]="helptext.bannerTooltip | translate"
+          >
+            <tn-input formControlName="banner" [multiline]="true"></tn-input>
+          </tn-form-field>
+
+          <tn-form-field
+            [label]="'Auxiliary Parameters' | translate"
+            [tooltip]="helptext.optionsTooltip | translate"
+          >
+            <tn-input formControlName="options" [multiline]="true"></tn-input>
+          </tn-form-field>
+        </tn-form-section>
+
+        <tn-form-section [heading]="'Bandwidth' | translate">
+          <tn-form-field
+            [label]="helptext.localuserbwLabel | translate"
+            [tooltip]="helptext.userbwTooltip | translate"
+          >
+            <tn-input
+              formControlName="localuserbw"
+              sizeStandard="iec"
+              sizeDefaultUnit="KiB"
+              [inputType]="InputType.Size"
+            ></tn-input>
+          </tn-form-field>
+
+          <tn-form-field
+            [label]="'Local User Download Bandwidth' | translate"
+            [tooltip]="helptext.userbwTooltip | translate"
+          >
+            <tn-input
+              formControlName="localuserdlbw"
+              sizeStandard="iec"
+              sizeDefaultUnit="KiB"
+              [inputType]="InputType.Size"
+            ></tn-input>
+          </tn-form-field>
+
+          <tn-form-field
+            [label]="'Anonymous User Upload Bandwidth' | translate"
+            [tooltip]="helptext.userbwTooltip | translate"
+          >
+            <tn-input
+              formControlName="anonuserbw"
+              sizeStandard="iec"
+              sizeDefaultUnit="KiB"
+              [inputType]="InputType.Size"
+            ></tn-input>
+          </tn-form-field>
+
+          <tn-form-field
+            [label]="'Anonymous User Download Bandwidth' | translate"
+            [tooltip]="helptext.userbwTooltip | translate"
+          >
+            <tn-input
+              formControlName="anonuserdlbw"
+              sizeStandard="iec"
+              sizeDefaultUnit="KiB"
+              [inputType]="InputType.Size"
+            ></tn-input>
+          </tn-form-field>
+        </tn-form-section>
+      </div>
+    }
+  </div>
+
+  <ix-form-actions>
+    @if (slideInRef) {
+      <div>
+        <tn-button
+          *ixRequiresRoles="requiredRoles"
+          color="primary"
+          type="submit"
+          [testId]="'save'"
+          [disabled]="form.invalid || isFormLoading()"
+          [label]="'Save' | translate"
+        ></tn-button>
+      </div>
+    }
+
+    @if (isAdvancedMode) {
+      <tn-button
+        color="default"
+        [testId]="'toggle-advanced-options'"
+        [label]="'Basic Options' | translate"
+        (onClick)="onToggleAdvancedOptions()"
+      ></tn-button>
+    } @else {
+      <tn-button
+        color="default"
+        [testId]="'toggle-advanced-options'"
+        [label]="'Advanced Options' | translate"
+        (onClick)="onToggleAdvancedOptions()"
+      ></tn-button>
+    }
+  </ix-form-actions>
+</form>

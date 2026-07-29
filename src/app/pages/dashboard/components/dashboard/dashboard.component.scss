@@ -59,6 +59,7 @@
 
   .controls {
     opacity: 1;
+    pointer-events: auto;
   }
 }
 
@@ -102,7 +103,7 @@
     pointer-events: none;
   }
 
-  mat-card-content .header h3,
+  tn-card .header h3,
   .slot .wrapper h3 {
     @media(max-width: 767px) {
       @include line-clamp(1);

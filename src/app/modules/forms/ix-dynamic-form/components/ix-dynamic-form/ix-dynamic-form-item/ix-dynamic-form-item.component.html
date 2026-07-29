@@ -25,11 +25,14 @@
 
               @if (dictSchema.tooltip) {
                 <div class="label-tooltip">
-                  <ix-tooltip
+                  <button
+                    type="button"
                     class="tooltip"
-                    [header]="dictSchema.title"
-                    [message]="dictSchema.tooltip"
-                  ></ix-tooltip>
+                    [attr.aria-label]="dictSchema.tooltip"
+                    [tnTooltip]="dictSchema.tooltip"
+                  >
+                    <tn-icon name="help-circle" library="mdi" size="sm"></tn-icon>
+                  </button>
                 </div>
               }
             </div>
@@ -101,49 +104,71 @@
 
         @case (DynamicFormSchemaType.Input) {
           @let inputSchema = asInputSchema(schema);
-          <ix-input
-            [formControlName]="inputSchema.controlName"
+          <tn-form-field
             [label]="inputSchema.title ? (inputSchema.title | translate) : ''"
-            [placeholder]="inputSchema.placeholder ? (inputSchema.placeholder | translate) : ''"
             [tooltip]="inputSchema.tooltip ? (inputSchema.tooltip | translate) : ''"
             [required]="inputSchema.required || false"
-            [type]="inputSchema.inputType || 'text'"
-          ></ix-input>
+          >
+            <tn-input
+              [name]="inputSchema.controlName"
+              [testId]="inputSchema.controlName"
+              [formControlName]="inputSchema.controlName"
+              [placeholder]="inputSchema.placeholder ? (inputSchema.placeholder | translate) : ''"
+              [required]="inputSchema.required || false"
+              [inputType]="toInputType(inputSchema.inputType)"
+              [showPasswordToggle]="inputSchema.inputType === 'password'"
+            ></tn-input>
+          </tn-form-field>
         }
 
         @case (DynamicFormSchemaType.Uri) {
           @let uriSchema = asUriSchema(schema);
-          <ix-input
-            [formControlName]="uriSchema.controlName"
+          <tn-form-field
             [label]="uriSchema.title ? (uriSchema.title | translate) : ''"
-            [placeholder]="uriSchema.placeholder ? (uriSchema.placeholder | translate) : ''"
             [tooltip]="uriSchema.tooltip ? (uriSchema.tooltip | translate) : ''"
             [required]="uriSchema.required || false"
-            [type]="uriSchema.inputType || 'text'"
-          ></ix-input>
+          >
+            <tn-input
+              [name]="uriSchema.controlName"
+              [testId]="uriSchema.controlName"
+              [formControlName]="uriSchema.controlName"
+              [placeholder]="uriSchema.placeholder ? (uriSchema.placeholder | translate) : ''"
+              [required]="uriSchema.required || false"
+              [inputType]="toInputType(uriSchema.inputType)"
+            ></tn-input>
+          </tn-form-field>
         }
 
         @case (DynamicFormSchemaType.Select) {
           @let selectSchema = asSelectSchema(schema);
-          <ix-select
-            [formControlName]="selectSchema.controlName"
+          <tn-form-field
             [label]="selectSchema.title ? (selectSchema.title | translate) : ''"
-            [options]="selectSchema.options"
             [tooltip]="selectSchema.tooltip ? (selectSchema.tooltip | translate) : ''"
             [required]="selectSchema.required || false"
-            [hideEmpty]="selectSchema.hideEmpty || false"
-          ></ix-select>
+          >
+            <tn-select
+              [testId]="selectSchema.controlName"
+              [formControlName]="selectSchema.controlName"
+              [options]="(selectSchema.options | async) ?? []"
+              [allowEmpty]="!selectSchema.required && !selectSchema.hideEmpty"
+            ></tn-select>
+          </tn-form-field>
         }
 
         @case (DynamicFormSchemaType.Enum) {
           @let enumSchema = asEnumSchema(schema);
-          <ix-combobox
-            [formControlName]="enumSchema.controlName"
+          <tn-form-field
             [label]="enumSchema.title ? (enumSchema.title | translate) : ''"
-            [provider]="getEnumTypeProvider(enumSchema.options)"
             [tooltip]="enumSchema.tooltip ? (enumSchema.tooltip | translate) : ''"
             [required]="enumSchema.required || false"
-          ></ix-combobox>
+          >
+            <tn-autocomplete
+              [testId]="enumSchema.controlName"
+              [formControlName]="enumSchema.controlName"
+              [options]="(enumSchema.options | async) ?? []"
+              [requireSelection]="true"
+            ></tn-autocomplete>
+          </tn-form-field>
         }
 
         @case (DynamicFormSchemaType.Explorer) {
@@ -162,12 +187,18 @@
         }
 
         @case (DynamicFormSchemaType.Checkbox) {
-          <ix-checkbox
-            [formControlName]="schema.controlName"
-            [label]="schema.title ? (schema.title | translate) : ''"
+          <tn-form-field
+            class="checkbox-field"
             [tooltip]="schema.tooltip ? (schema.tooltip | translate) : ''"
             [required]="schema.required || false"
-          ></ix-checkbox>
+          >
+            <tn-checkbox
+              [testId]="schema.controlName"
+              [formControlName]="schema.controlName"
+              [label]="schema.title ? (schema.title | translate) : ''"
+              [required]="schema.required || false"
+            ></tn-checkbox>
+          </tn-form-field>
         }
 
         @case (DynamicFormSchemaType.Ipaddr) {

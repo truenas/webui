@@ -1,14 +1,13 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
@@ -29,6 +28,7 @@ const fakeSystemSecurityConfig: SystemSecurityConfig = {
 describe('SystemSecurityCardComponent', () => {
   let spectator: Spectator<SystemSecurityCardComponent>;
   let loader: HarnessLoader;
+  let formPanel: FormSidePanelService;
 
   const createComponent = createComponentFactory({
     component: SystemSecurityCardComponent,
@@ -42,8 +42,8 @@ describe('SystemSecurityCardComponent', () => {
       mockApi([
         mockCall('system.security.config', fakeSystemSecurityConfig),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel()),
       }),
     ],
   });
@@ -51,13 +51,13 @@ describe('SystemSecurityCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    formPanel = spectator.inject(FormSidePanelService);
   });
 
-  it('shows all System Security settings in card', async () => {
-    const items = await loader.getAllHarnesses(MatListItemHarness);
-    const texts = await parallel(() => items.map((item) => item.getFullText()));
+  it('shows all System Security settings in card', () => {
+    const items = spectator.queryAll('.details-item').map((item) => item.textContent?.replace(/\s+/g, ' ').trim());
 
-    expect(texts).toEqual([
+    expect(items).toEqual([
       'Enable FIPS: No',
       'Enable General Purpose OS STIG compatibility mode: No',
       'Min Password Age: 5 days',
@@ -68,13 +68,10 @@ describe('SystemSecurityCardComponent', () => {
     ]);
   });
 
-  it('opens System Security form when Settings button is clicked', async () => {
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
+  it('opens System Security form when Configure button is clicked', async () => {
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await button.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      SystemSecurityFormComponent,
-      { data: fakeSystemSecurityConfig },
-    );
+    expect(formPanel.open).toHaveBeenCalledWith(SystemSecurityFormComponent, { title: 'System Security' });
   });
 });

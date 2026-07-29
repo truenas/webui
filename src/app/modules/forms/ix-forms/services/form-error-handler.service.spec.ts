@@ -205,6 +205,45 @@ describe('FormErrorHandlerService', () => {
         manualValidateErrorMsg: 'Command not allowed',
       });
     });
+
+    it('resolves controls nested in sub-groups from the full error path', () => {
+      const nestedFormGroup = new FormGroup({
+        name: new FormControl(''),
+        audit: new FormGroup({
+          enable: new FormControl(false),
+          watch_list: new FormControl([] as string[]),
+        }),
+      });
+      const nestedError = new ApiCallError({
+        code: JsonRpcErrorCode.CallError,
+        message: 'Validation error',
+        data: {
+          error: 22,
+          errname: ApiErrorName.Validation,
+          extra: [
+            [
+              'sharingsmb_update.audit.watch_list.0',
+              'operator: not an SMB group.',
+              22,
+            ],
+          ],
+          trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+          reason: 'Test reason',
+        },
+      });
+
+      spectator.service.handleValidationErrors(nestedError, nestedFormGroup);
+
+      expect(nestedFormGroup.controls.audit.controls.watch_list.errors).toEqual({
+        ixManualValidateError: {
+          message: 'operator: not an SMB group.',
+        },
+        manualValidateError: true,
+        manualValidateErrorMsg: 'operator: not an SMB group.',
+      });
+      expect(nestedFormGroup.controls.audit.controls.watch_list.touched).toBe(true);
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+    });
   });
 
   describe('clearValidationErrorsForHiddenFields', () => {

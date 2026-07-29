@@ -1,8 +1,10 @@
 import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from '@angular/cdk/scrolling';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnDestroy, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard } from '@angular/material/card';
+import {
+  ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, effect, signal, inject,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
+import { TnCardComponent } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
@@ -15,6 +17,55 @@ import { reportingElements } from 'app/pages/reports-dashboard/reports-dashboard
 import { ReportComponent } from './components/report/report.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 import { ReportsService } from './reports.service';
+
+/**
+ * helper map to match reporting graph names to their corresponding report type.
+ * used by `getActiveReportsForTab`.
+ */
+const reportTypeMap = new Map([
+  [ReportType.Cpu, [
+    ReportingGraphName.Cpu,
+    ReportingGraphName.CpuTemp,
+    ReportingGraphName.SystemLoad,
+    ReportingGraphName.Processes,
+  ]],
+  [ReportType.Memory, [
+    ReportingGraphName.Memory,
+  ]],
+  [ReportType.Network, [
+    ReportingGraphName.NetworkInterface,
+  ]],
+  [ReportType.Nfs, [
+    ReportingGraphName.NfsStat,
+    ReportingGraphName.NfsStatBytes,
+  ]],
+  [ReportType.Partition, [
+    ReportingGraphName.Partition,
+  ]],
+  [ReportType.System, [
+    ReportingGraphName.Processes,
+    ReportingGraphName.Uptime,
+  ]],
+  [ReportType.Target, [
+    ReportingGraphName.Target,
+  ]],
+  [ReportType.Ups, [
+    ReportingGraphName.UpsCharge,
+    ReportingGraphName.UpsCurrent,
+    ReportingGraphName.UpsFrequency,
+    ReportingGraphName.UpsLoad,
+    ReportingGraphName.UpsRuntime,
+    ReportingGraphName.UpsTemp,
+    ReportingGraphName.UpsVoltage,
+  ]],
+  [ReportType.Zfs, [
+    ReportingGraphName.ZfsArcSize,
+    ReportingGraphName.ZfsArcRatio,
+    ReportingGraphName.ZfsArcResult,
+    ReportingGraphName.ZfsArcActualRate,
+    ReportingGraphName.ZfsArcRate,
+  ]],
+]);
 
 @Component({
   selector: 'ix-reports-dashboard',
@@ -29,60 +80,113 @@ import { ReportsService } from './reports.service';
     CdkFixedSizeVirtualScroll,
     CdkVirtualForOf,
     ReportComponent,
-    MatCard,
+    TnCardComponent,
   ],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private layoutService = inject(LayoutService);
   private reportsService = inject(ReportsService);
-  private cdr = inject(ChangeDetectorRef);
-  private destroyRef = inject(DestroyRef);
 
   readonly searchableElements = reportingElements;
 
   scrollContainer: HTMLElement | null;
 
-  allReports: Report[] = [];
-  diskReports: Report[] = [];
-  otherReports: Report[] = [];
-  activeReports: Report[] = [];
-  visibleReports: number[] = [];
-  allTabs: ReportTab[];
+  private readonly reports = toSignal(this.reportsService.getReportGraphs(), { initialValue: [] as Report[] });
+
+  protected readonly allTabs = computed<ReportTab[]>(() => {
+    if (!this.reports().length) {
+      return [];
+    }
+    return this.reportsService.getReportTabs();
+  });
+
+  readonly allReports = computed<Report[]>(() => {
+    return this.reports().map((report) => {
+      const list: boolean[] = [];
+      if (report.identifiers?.length) {
+        report.identifiers.forEach(() => list.push(true));
+      } else {
+        list.push(true);
+      }
+      return {
+        ...report,
+        isRendered: list,
+      };
+    });
+  });
+
+  readonly diskReports = computed<Report[]>(() => {
+    return this.allReports().filter((report) => {
+      return [ReportingGraphName.Disk, ReportingGraphName.DiskTemp].includes(report.name);
+    });
+  });
+
+  readonly otherReports = computed<Report[]>(() => {
+    return this.allReports().filter((report) => {
+      return ![ReportingGraphName.Disk, ReportingGraphName.DiskTemp].includes(report.name);
+    });
+  });
+
+  private readonly diskOptions = signal<{ devices: string[]; metrics: string[] } | null>(null);
+
+  protected readonly activeTab = computed<ReportTab | undefined>(() => {
+    const tabs = this.allTabs();
+    if (!tabs.length) {
+      return undefined;
+    }
+    const subpath = this.route.snapshot?.url[0]?.path;
+    return tabs.find((tab) => (tab.value as string) === subpath) || tabs[0];
+  });
+
+  readonly activeReports = computed<Report[]>(() => {
+    const tab = this.activeTab();
+    if (!tab) {
+      return [];
+    }
+    return this.flattenReports(this.getReportsForTab(tab));
+  });
+
+  readonly visibleReports = computed<number[]>(() => {
+    const tab = this.activeTab();
+    const reports = this.activeReports();
+    if (tab?.value !== ReportType.Disk) {
+      return Object.keys(reports).map((reportIndex) => parseInt(reportIndex));
+    }
+
+    const options = this.diskOptions();
+    if (!options) {
+      return [];
+    }
+
+    const visible: number[] = [];
+    reports.forEach((item, index) => {
+      if (item.identifiers[0]) {
+        const [diskName] = item.identifiers[0].split(' | ');
+        const deviceMatch = options.devices.includes(diskName);
+        const metricMatch = options.metrics.includes(item.name);
+        if (deviceMatch && metricMatch) {
+          visible.push(index);
+        }
+      }
+    });
+    return visible;
+  });
+
+  constructor() {
+    // Rebuild disk metrics whenever the disk report tab becomes active.
+    effect(() => {
+      if (this.activeTab()?.value === ReportType.Disk) {
+        this.buildDiskMetrics();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.scrollContainer = this.layoutService.getContentContainer();
     if (this.scrollContainer) {
       this.scrollContainer.style.overflow = 'hidden';
     }
-
-    this.reportsService.getReportGraphs()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((reports) => {
-        this.allTabs = this.reportsService.getReportTabs();
-        this.allReports = reports.map((report) => {
-          const list = [];
-          if (report.identifiers?.length) {
-            report.identifiers.forEach(() => list.push(true));
-          } else {
-            list.push(true);
-          }
-          return {
-            ...report,
-            isRendered: list,
-          };
-        });
-
-        this.diskReports = this.allReports.filter((report) => {
-          return [ReportingGraphName.Disk, ReportingGraphName.DiskTemp].includes(report.name);
-        });
-        this.otherReports = this.allReports.filter((report) => {
-          return ![ReportingGraphName.Disk, ReportingGraphName.DiskTemp].includes(report.name);
-        });
-
-        this.activateTabFromUrl();
-        this.cdr.markForCheck();
-      });
   }
 
   ngOnDestroy(): void {
@@ -91,94 +195,16 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  private activateTabFromUrl(): void {
-    const subpath = this.route.snapshot?.url[0]?.path;
-    const tabFound = this.allTabs.find((tab) => (tab.value as string) === subpath);
-    this.updateActiveTab(tabFound || this.allTabs[0]);
-  }
-
-  updateActiveTab(tab: ReportTab): void {
-    this.activateTab(tab);
-
-    if (tab.value === ReportType.Disk) {
-      this.buildDiskMetrics();
+  private getReportsForTab(activeTab: ReportTab): Report[] {
+    if (activeTab.value === ReportType.Disk) {
+      return this.diskReports();
     }
-  }
 
-  private activateTab(activeTab: ReportTab): void {
-    const reportCategories = activeTab.value === ReportType.Disk
-      ? this.diskReports
-      : this.otherReports.filter(
-          (report) => {
-            const graphName = report.name;
-            let condition;
-            switch (activeTab.value) {
-              case ReportType.Cpu:
-                condition = [
-                  ReportingGraphName.Cpu,
-                  ReportingGraphName.CpuTemp,
-                  ReportingGraphName.SystemLoad,
-                  ReportingGraphName.Processes,
-                ].includes(graphName);
-                break;
-              case ReportType.Memory:
-                condition = [ReportingGraphName.Memory].includes(graphName);
-                break;
-              case ReportType.Network:
-                condition = ReportingGraphName.NetworkInterface === graphName;
-                break;
-              case ReportType.Nfs:
-                condition = [
-                  ReportingGraphName.NfsStat,
-                  ReportingGraphName.NfsStatBytes,
-                ].includes(graphName);
-                break;
-              case ReportType.Partition:
-                condition = ReportingGraphName.Partition === graphName;
-                break;
-              case ReportType.System:
-                condition = [
-                  ReportingGraphName.Processes,
-                  ReportingGraphName.Uptime,
-                ].includes(graphName);
-                break;
-              case ReportType.Target:
-                condition = ReportingGraphName.Target === graphName;
-                break;
-              case ReportType.Ups:
-                condition = [
-                  ReportingGraphName.UpsCharge,
-                  ReportingGraphName.UpsCurrent,
-                  ReportingGraphName.UpsFrequency,
-                  ReportingGraphName.UpsLoad,
-                  ReportingGraphName.UpsRuntime,
-                  ReportingGraphName.UpsTemp,
-                  ReportingGraphName.UpsVoltage,
-                ].includes(graphName);
-                break;
-              case ReportType.Zfs:
-                condition = [
-                  ReportingGraphName.ZfsArcSize,
-                  ReportingGraphName.ZfsArcRatio,
-                  ReportingGraphName.ZfsArcResult,
-                  ReportingGraphName.ZfsArcActualRate,
-                  ReportingGraphName.ZfsArcRate,
-                ].includes(graphName);
-                break;
-              default:
-                condition = true;
-                break;
-            }
-
-            return condition;
-          },
-        );
-
-    this.activeReports = this.flattenReports(reportCategories);
-
-    if (activeTab.value !== ReportType.Disk) {
-      this.visibleReports = Object.keys(this.activeReports).map((reportIndex) => parseInt(reportIndex));
-    }
+    return this.otherReports().filter((report) => {
+      const graphName = report.name;
+      const reportTypeList = reportTypeMap.get(activeTab.value);
+      return reportTypeList?.includes(graphName) ?? true;
+    });
   }
 
   /**
@@ -220,7 +246,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   private buildDiskMetrics(): void {
     const metrics: Option[] = [];
 
-    this.diskReports.forEach((item) => {
+    this.diskReports().forEach((item) => {
       let formatted = item.title.replace(/ \(.*\)/, '');// remove placeholders for identifiers eg. '({identifier})'
       formatted = formatted.replace(/identifier/, '');
       formatted = formatted.replace(/[{][}]/, '');
@@ -231,20 +257,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   }
 
   buildDiskReport(event: { devices: string[]; metrics: string[] }): void {
-    const { devices, metrics } = event;
-
-    const visible: number[] = [];
-    this.activeReports.forEach((item, index) => {
-      if (item.identifiers[0]) {
-        const [diskName] = item.identifiers[0].split(' | ');
-        const deviceMatch = devices.includes(diskName);
-        const metricMatch = metrics.includes(item.name);
-        if (deviceMatch && metricMatch) {
-          visible.push(index);
-        }
-      }
-    });
-
-    this.visibleReports = visible;
+    this.diskOptions.set(event);
   }
 }

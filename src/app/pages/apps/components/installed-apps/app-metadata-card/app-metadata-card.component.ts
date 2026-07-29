@@ -1,11 +1,10 @@
 import {
   ChangeDetectionStrategy, Component, inject, input,
 } from '@angular/core';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconButtonComponent } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnCardHeaderDirective, TnDialog, TnIconButtonComponent,
+} from '@truenas/ui-components';
 import { App, AppMetadata } from 'app/interfaces/app.interface';
 import {
   AppMetadataDialog,
@@ -20,10 +19,8 @@ import {
   styleUrls: ['./app-metadata-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
+    TnCardHeaderDirective,
     TranslateModule,
     TnIconButtonComponent,
     AppMetadataListComponent,

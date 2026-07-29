@@ -1,16 +1,17 @@
+import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent, InputType,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
 import {
   CloudSyncOneDriveDrive,
 } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   OauthProviderComponent,
@@ -25,15 +26,19 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './one-drive-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
-    IxInputComponent,
     TranslateModule,
     ReactiveFormsModule,
-    IxSelectComponent,
+    AsyncPipe,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     OauthProviderComponent,
   ],
 })
 export class OneDriveProviderFormComponent extends BaseProviderFormComponent implements OnInit, AfterViewInit {
+  protected readonly InputType = InputType;
+
   private errorHandler = inject(ErrorHandlerService);
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);

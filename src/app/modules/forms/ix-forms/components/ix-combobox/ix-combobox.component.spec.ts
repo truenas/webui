@@ -166,7 +166,7 @@ describe('IxComboboxComponent', () => {
       tick(300);
       spectator.detectChanges();
 
-      expect(spectator.query('mat-progress-spinner')).toBeVisible();
+      expect(spectator.query('tn-spinner')).toBeVisible();
       discardPeriodicTasks();
     }));
 
@@ -179,7 +179,7 @@ describe('IxComboboxComponent', () => {
       tick(300);
       spectator.detectChanges();
 
-      expect(spectator.query('mat-progress-spinner')).toBeVisible();
+      expect(spectator.query('tn-spinner')).toBeVisible();
       discardPeriodicTasks();
     }));
 
@@ -188,7 +188,7 @@ describe('IxComboboxComponent', () => {
       tick(300);
       spectator.detectChanges();
 
-      expect(spectator.query('mat-progress-spinner')).not.toBeVisible();
+      expect(spectator.query('tn-spinner')).not.toBeVisible();
       discardPeriodicTasks();
     }));
 

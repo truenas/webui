@@ -1,6 +1,4 @@
-<h1 matDialogTitle>
-  {{ 'Replacing disk {name}' | translate: { name: data.diskName } }}
-</h1>
+<tn-dialog-shell testId="replace-disk" [title]="'Replacing disk {name}' | translate: { name: data.diskName }">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-unused-disk-select
     formControlName="replacement"
@@ -10,35 +8,45 @@
     [tooltip]="helptext.dialogFormFields.disk.tooltip | translate"
   ></ix-unused-disk-select>
 
-  <ix-checkbox
-    formControlName="preserve_settings"
-    [label]="'Preserve Power Management settings' | translate"
-  ></ix-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      testId="preserve-settings"
+      formControlName="preserve_settings"
+      [label]="'Preserve Power Management settings' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-checkbox
-    formControlName="preserve_description"
-    [label]="'Preserve disk description' | translate"
-  ></ix-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      testId="preserve-description"
+      formControlName="preserve_description"
+      [label]="'Preserve disk description' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-checkbox
-    formControlName="force"
-    [label]="'Force' | translate"
-    [tooltip]="helptext.dialogFormFields.force.tooltip | translate"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="helptext.dialogFormFields.force.tooltip | translate">
+    <tn-checkbox
+      testId="force"
+      formControlName="force"
+      [label]="'Force' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" matDialogClose>
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <button
-      *ixRequiresRoles="[Role.PoolWrite]"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="replace"
-    >
-      {{ 'Replace Disk' | translate }}
-    </button>
-  </ix-form-actions>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="[Role.PoolWrite]"
+    color="primary"
+    testId="replace"
+    [label]="'Replace Disk' | translate"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

@@ -1,15 +1,14 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import {
   SaveConfigDialog,
 } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
@@ -41,7 +40,7 @@ describe('SaveConfigDialogComponent', () => {
       mockProvider(DownloadService, {
         coreDownload: jest.fn(() => of(undefined)),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(DialogService),
       mockProvider(ErrorHandlerService),
     ],
@@ -53,10 +52,10 @@ describe('SaveConfigDialogComponent', () => {
   });
 
   it('saves configuration when save dialog is submitted is submitted without Export checkbox', async () => {
-    const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Export Password Secret Seed' }));
-    await checkbox.setValue(false);
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Export Password Secret Seed' }));
+    await checkbox.uncheck();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(DownloadService).coreDownload).toHaveBeenCalledWith({
@@ -65,11 +64,11 @@ describe('SaveConfigDialogComponent', () => {
       fileName: expect.any(String),
       mimeType: 'application/x-sqlite3',
     });
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('saves configuration together with password seed when dialog is submitted with Export checkbox', async () => {
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(DownloadService).coreDownload).toHaveBeenCalledWith({
@@ -84,10 +83,10 @@ describe('SaveConfigDialogComponent', () => {
     const downloadService = spectator.inject(DownloadService);
     jest.spyOn(downloadService, 'coreDownload').mockReturnValue(throwError(() => new Error('Download failed')));
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith();
   });
 });

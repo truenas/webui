@@ -1,24 +1,18 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonHarness, TnCardComponent, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import { DeleteExtentDialog } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
@@ -41,38 +35,27 @@ const extents: IscsiExtent[] = [
 describe('ExtentListComponent', () => {
   let spectator: Spectator<ExtentListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: ExtentListComponent,
-    imports: [
-      BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
-      FakeProgressBarComponent,
-    ],
     providers: [
       mockProvider(EmptyService),
       mockApi([
         mockCall('iscsi.extent.query', extents),
         mockCall('iscsi.extent.delete'),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of(null)),
-        })),
+          closed: of(null),
+          close: jest.fn(),
+        } as unknown as DialogRef)),
       }),
       provideMockStore({
         selectors: [
@@ -86,48 +69,61 @@ describe('ExtentListComponent', () => {
     ],
   });
 
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    const trigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
-  it('shows acurate page title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Extents');
+  it('shows accurate page title', () => {
+    // White-box: no TnCardHarness in @truenas/ui-components yet.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Extents');
   });
 
   it('opens extent form when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
+    spectator.detectChanges();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ExtentFormComponent, { wide: true });
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ExtentFormComponent, {
+      title: 'Add Extent',
+      wide: true,
+      inputs: { extentData: undefined },
+    });
   });
 
   it('opens extent form when "Edit" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Edit' });
+    spectator.detectChanges();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ExtentFormComponent, {
-      data: extents[0],
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ExtentFormComponent, {
+      title: 'Edit Extent',
       wide: true,
+      inputs: { extentData: extents[0] },
     });
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteExtentDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeleteExtentDialog, {
       data: extents[0],
     });
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Extent Name', 'Device/File', 'Description', 'Serial', 'Product ID', 'NAA', 'Enabled', ''],
+    expect(await table.getHeaderTexts()).toEqual([
+      'Extent Name', 'Device/File', 'Description', 'Serial', 'Product ID', 'NAA', 'Enabled', '',
+    ]);
+    expect(await table.getAllRowTexts()).toEqual([
       [
         'test-iscsi-extent',
         '/dev/zvol/tank/iscsi-extent',
@@ -138,9 +134,6 @@ describe('ExtentListComponent', () => {
         'Yes',
         '',
       ],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 });

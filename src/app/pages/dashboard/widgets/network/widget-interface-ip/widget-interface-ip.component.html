@@ -1,7 +1,7 @@
 <div class="wrapper">
   @if (isHaLicensed()) {
-    <mat-card *ixWithLoadingState="ipAddressList() as ipList" class="card">
-      <mat-card-content class="card-content">
+    <tn-card *ixWithLoadingState="ipAddressList() as ipList" class="card" [padContent]="false">
+      <div class="card-content">
         <div class="header">
           <h3>{{ widgetName() }}</h3>
         </div>
@@ -15,8 +15,8 @@
             </div>
           }
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </tn-card>
   } @else {
     <ix-widget-datapoint
       *ixWithLoadingState="ips() as ips"

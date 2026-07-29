@@ -1,14 +1,4 @@
 @import 'scss-imports/variables';
+@import 'mixins/forms';
 
-.fieldsets {
-  display: flex;
-  flex-wrap: wrap;
-
-  @media (max-width: $breakpoint-tablet) {
-    display: block;
-  }
-
-  .fieldset {
-    width: 50%;
-  }
-}
+@include tn-form-fieldsets-columns();

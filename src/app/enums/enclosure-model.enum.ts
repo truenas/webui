@@ -48,6 +48,8 @@ export enum EnclosureModel {
 
   V140 = 'V140',
   V160 = 'V160',
+  V260 = 'V260',
+  V280 = 'V280',
 
   X10 = 'X10',
   X20 = 'X20',

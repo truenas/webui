@@ -1,19 +1,19 @@
+import { Overlay } from '@angular/cdk/overlay';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnIconButtonHarness, TnSpriteLoaderService } from '@truenas/ui-components';
+import { TnDialog, TnIconButtonHarness, TnSpriteLoaderService } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
 import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import { selectIsJobPanelOpen, selectRunningJobsCount } from 'app/modules/jobs/store/job.selectors';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
-import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 
 describe('JobsIndicatorComponent', () => {
   let spectator: Spectator<JobsIndicatorComponent>;
   let loader: HarnessLoader;
+  const positionStrategy = { top: jest.fn().mockReturnThis(), right: jest.fn().mockReturnThis() };
   const createComponent = createComponentFactory({
     component: JobsIndicatorComponent,
     providers: [
@@ -29,10 +29,13 @@ describe('JobsIndicatorComponent', () => {
           },
         ],
       }),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          beforeClosed: () => of(undefined),
+          closed: of(undefined),
         })),
+      }),
+      mockProvider(Overlay, {
+        position: jest.fn(() => ({ global: () => positionStrategy })),
       }),
       mockProvider(TnSpriteLoaderService, {
         ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
@@ -61,12 +64,11 @@ describe('JobsIndicatorComponent', () => {
     store$.overrideSelector(selectIsJobPanelOpen, true);
     spectator.component.ngOnInit();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(JobsPanelComponent, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(JobsPanelComponent, expect.objectContaining({
       width: '420px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',
-      position: topbarDialogPosition,
-    });
+    }));
   });
 
   it('emits jobPanelClosed() when jobs panel is closed', () => {
@@ -75,12 +77,11 @@ describe('JobsIndicatorComponent', () => {
     jest.spyOn(store$, 'dispatch');
     spectator.component.ngOnInit();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(JobsPanelComponent, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(JobsPanelComponent, expect.objectContaining({
       width: '420px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',
-      position: topbarDialogPosition,
-    });
+    }));
 
     expect(store$.dispatch).toHaveBeenCalledWith(jobPanelClosed());
   });

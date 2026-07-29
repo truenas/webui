@@ -3,8 +3,8 @@ import {
 } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnFormSectionComponent } from '@truenas/ui-components';
 import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxDynamicFormItemComponent } from './ix-dynamic-form-item/ix-dynamic-form-item.component';
 
 @Component({
@@ -13,7 +13,7 @@ import { IxDynamicFormItemComponent } from './ix-dynamic-form-item/ix-dynamic-fo
   templateUrl: './ix-dynamic-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     IxDynamicFormItemComponent,
     TranslateModule,
   ],

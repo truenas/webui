@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { KiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -10,8 +11,7 @@ import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -21,7 +21,6 @@ import { StorageService } from 'app/services/storage.service';
 describe('ExtentFormComponent', () => {
   let spectator: Spectator<ExtentFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -49,6 +48,19 @@ describe('ExtentFormComponent', () => {
     ro: true,
   } as IscsiExtent;
 
+  const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getTnSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getIxInput = (label: string): Promise<IxInputHarness> => loader.getHarness(
+    IxInputHarness.with({ label }),
+  );
+
   const createComponent = createComponentFactory({
     component: ExtentFormComponent,
     imports: [
@@ -56,7 +68,9 @@ describe('ExtentFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideIn),
+      mockProvider(SlideIn, {
+        openSlideIns: jest.fn(() => 1),
+      }),
       mockProvider(StorageService),
       mockProvider(DialogService),
       mockApi([
@@ -73,44 +87,37 @@ describe('ExtentFormComponent', () => {
   });
 
   describe('adds new extent', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('shows values for an existing extent when form is opened for add', async () => {
-      const values = await form.getValues();
-      expect(values).toEqual({
-        Description: '',
-        Device: '',
-        'Disable Physical Block Size Reporting': false,
-        'Enable TPC': true,
-        Enabled: true,
-        'Extent Type': 'Device',
-        'LUN RPM': 'SSD',
-        'Logical Block Size': '512',
-        Name: '',
-        'Product ID': '',
-        'Read-only': false,
-        'Xen initiator compat mode': false,
-      });
+      expect(await (await getTnInput('name')).getValue()).toBe('');
+      expect(await (await getTnInput('comment')).getValue()).toBe('');
+      expect(await (await getTnCheckbox('enabled')).isChecked()).toBe(true);
+      expect(await (await getTnCheckbox('insecure_tpc')).isChecked()).toBe(true);
+      expect(await (await getTnCheckbox('xen')).isChecked()).toBe(false);
+      expect(await (await getTnCheckbox('ro')).isChecked()).toBe(false);
+      expect(await (await getTnCheckbox('pblocksize')).isChecked()).toBe(false);
+      expect(await (await getTnSelect('type')).getDisplayText()).toBe('Device');
+      expect(await (await getTnSelect('rpm')).getDisplayText()).toBe('SSD');
+      expect(await (await getTnSelect('blocksize')).getDisplayText()).toBe('512');
+      expect(await (await getTnInput('product_id')).getValue()).toBe('');
     });
 
     it('add new extent when form is submitted', async () => {
-      await form.fillForm({
-        Description: 'new_comment',
-        Device: 'value_device_2',
-        'Disable Physical Block Size Reporting': true,
-        'Enable TPC': false,
-        Enabled: false,
-        'Extent Type': 'Device',
-        'LUN RPM': '5400',
-        'Logical Block Size': '1024',
-        Name: 'new_name',
-        'Read-only': true,
-        'Xen initiator compat mode': true,
-      });
+      await (await getTnInput('name')).setValue('new_name');
+      await (await getTnInput('comment')).setValue('new_comment');
+      await (await getTnCheckbox('enabled')).uncheck();
+      await (await getTnCheckbox('insecure_tpc')).uncheck();
+      await (await getTnCheckbox('xen')).check();
+      await (await getTnCheckbox('pblocksize')).check();
+      await (await getTnSelect('type')).selectOption('Device');
+      await (await getTnSelect('disk')).selectOption('value_device_2');
+      await (await getTnSelect('rpm')).selectOption('5400');
+      await (await getTnSelect('blocksize')).selectOption('1024');
+      await (await getTnCheckbox('ro')).check();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -137,43 +144,36 @@ describe('ExtentFormComponent', () => {
   });
 
   describe('edits extent', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingExtent }),
-        ],
+        props: {
+          extentData: existingExtent,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('shows values for an existing extent when form is opened for edit', async () => {
-      const values = await form.getValues();
-      expect(values).toEqual({
-        Description: 'test_comment',
-        'Disable Physical Block Size Reporting': true,
-        'Enable TPC': false,
-        Enabled: false,
-        'Extent Type': 'File',
-        Filesize: '512 KiB',
-        'LUN RPM': '5400',
-        'Logical Block Size': '1024',
-        Name: 'test_name',
-        'Path to the Extent': '/mnt/opt',
-        'Product ID': 'test_product',
-        'Read-only': true,
-        Serial: 'serial_number',
-        'Xen initiator compat mode': true,
-      });
+      expect(await (await getTnInput('name')).getValue()).toBe('test_name');
+      expect(await (await getTnInput('comment')).getValue()).toBe('test_comment');
+      expect(await (await getTnCheckbox('enabled')).isChecked()).toBe(false);
+      expect(await (await getTnCheckbox('insecure_tpc')).isChecked()).toBe(false);
+      expect(await (await getTnCheckbox('xen')).isChecked()).toBe(true);
+      expect(await (await getTnCheckbox('ro')).isChecked()).toBe(true);
+      expect(await (await getTnCheckbox('pblocksize')).isChecked()).toBe(true);
+      expect(await (await getTnSelect('type')).getDisplayText()).toBe('File');
+      expect(await (await getTnSelect('rpm')).getDisplayText()).toBe('5400');
+      expect(await (await getTnSelect('blocksize')).getDisplayText()).toBe('1024');
+      expect(await (await getTnInput('serial')).getValue()).toBe('serial_number');
+      expect(await (await getTnInput('product_id')).getValue()).toBe('test_product');
+      expect(await (await getIxInput('Filesize')).getValue()).toBe('512 KiB');
     });
 
     it('edits existing extent when form opened for edit is submitted', async () => {
-      await form.fillForm({
-        Name: 'test_name',
-        Description: 'test_comment',
-        Filesize: '2049 KiB',
-        'Logical Block Size': '512',
-      });
+      await (await getTnInput('name')).setValue('test_name');
+      await (await getTnInput('comment')).setValue('test_comment');
+      await (await getIxInput('Filesize')).setValue('2049 KiB');
+      await (await getTnSelect('blocksize')).selectOption('512');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -202,13 +202,12 @@ describe('ExtentFormComponent', () => {
     });
 
     it('sends product_id as null when field is empty', async () => {
-      await form.fillForm({
-        Name: 'test_name',
-        Description: 'test_comment',
-        Filesize: '2049 KiB',
-        'Logical Block Size': '512',
-        'Product ID': '',
-      });
+      await (await getTnInput('name')).setValue('test_name');
+      await (await getTnInput('comment')).setValue('test_comment');
+      await (await getIxInput('Filesize')).setValue('2049 KiB');
+      await (await getTnSelect('blocksize')).selectOption('512');
+      spectator.component.form.controls.product_id.setValue('');
+      spectator.detectChanges();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -223,26 +222,23 @@ describe('ExtentFormComponent', () => {
   });
 
   describe('snapshot readonly behavior - user perspective', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
     });
 
     it('should show readonly checkbox as enabled and unchecked by default', async () => {
-      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+      const roCheckbox = await getTnCheckbox('ro');
 
       expect(await roCheckbox.isDisabled()).toBe(false);
-      expect(await roCheckbox.getValue()).toBe(false);
+      expect(await roCheckbox.isChecked()).toBe(false);
     });
 
     it('should disable and check readonly checkbox when snapshot device is selected', async () => {
-      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+      const roCheckbox = await getTnCheckbox('ro');
 
       // Simulate user selecting Device extent type
-      await form.fillForm({
-        'Extent Type': 'Device',
-      });
+      await (await getTnSelect('type')).selectOption('Device');
 
       // Simulate backend returning snapshot device and user selecting it
       // Note: We can't use harness here because extent-form doesn't have snapshots in mock
@@ -251,7 +247,7 @@ describe('ExtentFormComponent', () => {
       spectator.detectChanges();
 
       // Verify readonly is checked and disabled (user can see this)
-      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isChecked()).toBe(true);
       expect(await roCheckbox.isDisabled()).toBe(true);
     });
 
@@ -261,9 +257,7 @@ describe('ExtentFormComponent', () => {
       expect(banner).toBeFalsy();
 
       // User selects Device type and snapshot
-      await form.fillForm({
-        'Extent Type': 'Device',
-      });
+      await (await getTnSelect('type')).selectOption('Device');
       spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
       spectator.detectChanges();
 
@@ -276,9 +270,7 @@ describe('ExtentFormComponent', () => {
 
     it('should hide snapshot banner when switching to regular device', async () => {
       // Start with snapshot selected
-      await form.fillForm({
-        'Extent Type': 'Device',
-      });
+      await (await getTnSelect('type')).selectOption('Device');
       spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
       spectator.detectChanges();
 
@@ -295,12 +287,10 @@ describe('ExtentFormComponent', () => {
     });
 
     it('should re-enable readonly checkbox when switching from snapshot to regular device', async () => {
-      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+      const roCheckbox = await getTnCheckbox('ro');
 
       // Start with snapshot
-      await form.fillForm({
-        'Extent Type': 'Device',
-      });
+      await (await getTnSelect('type')).selectOption('Device');
       spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
       spectator.detectChanges();
 
@@ -315,82 +305,68 @@ describe('ExtentFormComponent', () => {
     });
 
     it('should allow user to manually check readonly for regular devices', async () => {
-      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+      const roCheckbox = await getTnCheckbox('ro');
 
-      await form.fillForm({
-        'Extent Type': 'Device',
-      });
+      await (await getTnSelect('type')).selectOption('Device');
       spectator.component.form.controls.disk.setValue('zvol/tank/regular-vol');
       spectator.detectChanges();
 
       // User checks readonly
-      await form.fillForm({
-        'Read-only': true,
-      });
+      await roCheckbox.check();
 
-      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isChecked()).toBe(true);
       expect(await roCheckbox.isDisabled()).toBe(false);
     });
 
     it('should preserve user readonly selection when switching between regular devices', async () => {
-      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+      const roCheckbox = await getTnCheckbox('ro');
 
       // User selects first device and checks readonly
-      await form.fillForm({
-        'Extent Type': 'Device',
-      });
+      await (await getTnSelect('type')).selectOption('Device');
       spectator.component.form.controls.disk.setValue('zvol/tank/vol1');
-      await form.fillForm({
-        'Read-only': true,
-      });
+      await roCheckbox.check();
       spectator.detectChanges();
 
-      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isChecked()).toBe(true);
 
       // User switches to another regular device
       spectator.component.form.controls.disk.setValue('zvol/tank/vol2');
       spectator.detectChanges();
 
       // Readonly choice is preserved
-      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isChecked()).toBe(true);
       expect(await roCheckbox.isDisabled()).toBe(false);
     });
 
     it('should force readonly when switching from regular device to snapshot', async () => {
-      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+      const roCheckbox = await getTnCheckbox('ro');
 
       // User selects regular device and unchecks readonly
-      await form.fillForm({
-        'Extent Type': 'Device',
-      });
+      await (await getTnSelect('type')).selectOption('Device');
       spectator.component.form.controls.disk.setValue('zvol/tank/regular-vol');
-      await form.fillForm({
-        'Read-only': false,
-      });
+      await roCheckbox.uncheck();
       spectator.detectChanges();
 
-      expect(await roCheckbox.getValue()).toBe(false);
+      expect(await roCheckbox.isChecked()).toBe(false);
 
       // User switches to snapshot
       spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
       spectator.detectChanges();
 
       // User sees readonly is now forced checked and disabled
-      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isChecked()).toBe(true);
       expect(await roCheckbox.isDisabled()).toBe(true);
     });
 
     it('should keep readonly disabled when switching between different snapshots', async () => {
-      const roCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Read-only' }));
+      const roCheckbox = await getTnCheckbox('ro');
 
       // User selects first snapshot
-      await form.fillForm({
-        'Extent Type': 'Device',
-      });
+      await (await getTnSelect('type')).selectOption('Device');
       spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
       spectator.detectChanges();
 
-      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isChecked()).toBe(true);
       expect(await roCheckbox.isDisabled()).toBe(true);
 
       // User switches to different snapshot
@@ -398,15 +374,13 @@ describe('ExtentFormComponent', () => {
       spectator.detectChanges();
 
       // Should remain checked and disabled
-      expect(await roCheckbox.getValue()).toBe(true);
+      expect(await roCheckbox.isChecked()).toBe(true);
       expect(await roCheckbox.isDisabled()).toBe(true);
     });
 
     it('should include disabled ro field in form submission via getRawValue', async () => {
       // Select snapshot (ro becomes disabled)
-      await form.fillForm({
-        'Extent Type': 'Device',
-      });
+      await (await getTnSelect('type')).selectOption('Device');
       spectator.component.form.controls.disk.setValue('zvol/tank/myvol@snapshot1');
       spectator.detectChanges();
 

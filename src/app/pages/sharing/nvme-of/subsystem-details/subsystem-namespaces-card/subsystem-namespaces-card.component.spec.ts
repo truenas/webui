@@ -1,14 +1,14 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnBannerHarness, TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfNamespace, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { NamespaceDescriptionComponent } from 'app/pages/sharing/nvme-of/namespaces/namespace-description/namespace-description.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -24,12 +24,12 @@ describe('SubsystemNamespacesCardComponent', () => {
       NamespaceDescriptionComponent,
     ],
     providers: [
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(true),
-        } as MatDialogRef<unknown>)),
+          closed: of(true),
+        } as DialogRef)),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(NvmeOfStore, {
@@ -52,15 +52,14 @@ describe('SubsystemNamespacesCardComponent', () => {
   }
 
   describe('no namespaces', () => {
-    it('shows a warning when subsystem has no namespaces', async () => {
+    it('shows a warning banner when subsystem has no namespaces', async () => {
       initComponent({
         name: 'Test Subsystem',
         namespaces: [],
       });
 
-      const icon = await loader.getHarness(TnIconHarness);
-      expect(await icon.getName()).toBe('alert');
-      expect(spectator.query('.no-namespaces-warning')).toHaveText(helptextNvmeOf.noNamespacesWarning);
+      const banner = await loader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain(helptextNvmeOf.noNamespacesWarning);
     });
   });
 
@@ -100,7 +99,7 @@ describe('SubsystemNamespacesCardComponent', () => {
       const deleteButton = await loader.getHarness(TnIconHarness.with({ name: 'delete' }));
       await deleteButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
         DeleteNamespaceDialogComponent,
         {
           data: namespaces[0],

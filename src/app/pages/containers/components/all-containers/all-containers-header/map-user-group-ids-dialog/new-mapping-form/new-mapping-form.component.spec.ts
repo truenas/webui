@@ -1,13 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { directIdMapping, User } from 'app/interfaces/user.interface';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ViewType } from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/mapping.types';
@@ -67,8 +66,8 @@ describe('NewMappingFormComponent', () => {
   });
 
   it('has "Map directly" checkbox checked by default', async () => {
-    const checkbox = await loader.getHarness(IxCheckboxHarness);
-    expect(await checkbox.getValue()).toBe(true);
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    expect(await checkbox.isChecked()).toBe(true);
   });
 
   it('hides Container UID input when "Map directly" is checked', async () => {
@@ -77,8 +76,8 @@ describe('NewMappingFormComponent', () => {
   });
 
   it('shows Container UID input when "Map directly" is unchecked', async () => {
-    const checkbox = await loader.getHarness(IxCheckboxHarness);
-    await checkbox.setValue(false);
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    await checkbox.uncheck();
 
     const input = await loader.getHarness(IxInputHarness.with({ label: 'Container UID' }));
     expect(input).toBeTruthy();
@@ -87,7 +86,7 @@ describe('NewMappingFormComponent', () => {
   it('submits form with direct mapping when "Map directly" is checked', async () => {
     spectator.component.form.patchValue({ hostUidOrGid: 'testuser' });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set' }));
     await submitButton.click();
 
     expect(api.call).toHaveBeenCalledWith('user.query', [[['username', '=', 'testuser']]]);
@@ -97,13 +96,13 @@ describe('NewMappingFormComponent', () => {
   it('submits form with custom UID when "Map directly" is unchecked', async () => {
     spectator.component.form.patchValue({ hostUidOrGid: 'testuser' });
 
-    const checkbox = await loader.getHarness(IxCheckboxHarness);
-    await checkbox.setValue(false);
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    await checkbox.uncheck();
 
     const input = await loader.getHarness(IxInputHarness.with({ label: 'Container UID' }));
     await input.setValue('2000');
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set' }));
     await submitButton.click();
 
     expect(api.call).toHaveBeenCalledWith('user.query', [[['username', '=', 'testuser']]]);
@@ -114,7 +113,7 @@ describe('NewMappingFormComponent', () => {
     spectator.setInput('type', ViewType.Groups);
     spectator.component.form.patchValue({ hostUidOrGid: 'testgroup' });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set' }));
     await submitButton.click();
 
     expect(api.call).toHaveBeenCalledWith('group.query', [[['group', '=', 'testgroup']]]);
@@ -127,14 +126,14 @@ describe('NewMappingFormComponent', () => {
 
     spectator.component.form.patchValue({ hostUidOrGid: 'testuser' });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set' }));
     await submitButton.click();
 
     expect(emitSpy).toHaveBeenCalled();
   });
 
   it('disables submit button when form is invalid', async () => {
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set' }));
     expect(await submitButton.isDisabled()).toBe(true);
   });
 
@@ -142,20 +141,20 @@ describe('NewMappingFormComponent', () => {
     spectator.component.form.patchValue({ hostUidOrGid: 'testuser' });
     spectator.detectChanges();
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set' }));
     expect(await submitButton.isDisabled()).toBe(false);
   });
 
   it('requires Container UID when "Map directly" is unchecked', async () => {
     spectator.component.form.patchValue({ hostUidOrGid: 'testuser' });
 
-    const checkbox = await loader.getHarness(IxCheckboxHarness);
-    await checkbox.setValue(false);
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    await checkbox.uncheck();
 
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
+    const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Set' }));
     expect(await submitButton.isDisabled()).toBe(true);
 
     const input = await loader.getHarness(IxInputHarness.with({ label: 'Container UID' }));

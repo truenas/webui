@@ -1,7 +1,7 @@
 <div class="container">
-  <div class="table-container">
+  <tn-card class="table-container" [padContent]="false">
     <ng-content select="[master]"></ng-content>
-  </div>
+  </tn-card>
 
   @if (selectedItem() && showDetails()) {
     <div

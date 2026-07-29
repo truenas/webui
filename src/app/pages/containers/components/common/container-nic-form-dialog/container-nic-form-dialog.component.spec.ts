@@ -1,10 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnDialogHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { ContainerNicFormDialog } from 'app/pages/containers/components/common/container-nic-form-dialog/container-nic-form-dialog.component';
 
 describe('ContainerNicFormDialogComponent', () => {
@@ -14,11 +14,11 @@ describe('ContainerNicFormDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: ContainerNicFormDialog,
     providers: [
-      mockProvider(MatDialogRef, {
+      mockProvider(DialogRef, {
         close: jest.fn(),
       }),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: { nic: 'ens' },
       },
     ],
@@ -29,18 +29,18 @@ describe('ContainerNicFormDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows nic name in title', () => {
-    const title = spectator.query('h1');
-    expect(title.textContent.trim()).toBe('Add NIC Device: ens');
+  it('shows nic name in title', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    expect(await dialog.getTitle()).toBe('Add NIC Device: ens');
   });
 
   it('returns default value', async () => {
-    const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use Default Mac Address' }));
-    await checkbox.setValue(true);
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Use Default Mac Address' }));
+    await checkbox.check();
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await button.isDisabled()).toBeFalsy();
     await button.click();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       type: 'VIRTIO',
       useDefault: true,
       trust_guest_rx_filters: false,
@@ -48,14 +48,14 @@ describe('ContainerNicFormDialogComponent', () => {
   });
 
   it('returns mac value', async () => {
-    const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use Default Mac Address' }));
-    await checkbox.setValue(false);
-    const input = await loader.getHarness(IxInputHarness.with({ label: 'Mac Address' }));
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Use Default Mac Address' }));
+    await checkbox.uncheck();
+    const input = await loader.getHarness(TnInputHarness);
     await input.setValue('aa:bb:cc:dd:ee:ff');
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await button.isDisabled()).toBeFalsy();
     await button.click();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
       type: 'VIRTIO',
       useDefault: false,
       mac: 'aa:bb:cc:dd:ee:ff',
@@ -64,11 +64,11 @@ describe('ContainerNicFormDialogComponent', () => {
   });
 
   it('doesnt allow invalid mac value', async () => {
-    const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use Default Mac Address' }));
-    await checkbox.setValue(false);
-    const input = await loader.getHarness(IxInputHarness.with({ label: 'Mac Address' }));
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Use Default Mac Address' }));
+    await checkbox.uncheck();
+    const input = await loader.getHarness(TnInputHarness);
     await input.setValue('aa:bb:cc:dd:ff');
-    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await button.isDisabled()).toBeTruthy();
   });
 });

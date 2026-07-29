@@ -6,8 +6,8 @@
     ixTest="add-jbof"
     color="primary"
     [disabled]="!canAddJbof()"
-    [matTooltip]="'No available licensed Expansion Shelves ' | translate"
-    [matTooltipDisabled]="canAddJbof()"
+    [tnTooltip]="'No available licensed Expansion Shelves ' | translate"
+    [tnTooltipDisabled]="canAddJbof()"
     (click)="openForm()"
   >
     {{ 'Add' | translate }}

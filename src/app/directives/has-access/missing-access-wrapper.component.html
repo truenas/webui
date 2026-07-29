@@ -1,8 +1,8 @@
 <span
-  matTooltipPosition="above"
+  tnTooltipPosition="above"
   [disableFocusableElements]="!!template()"
   [class]="['role-missing', class()]"
-  [matTooltip]="'Missing permissions for this action' | translate"
+  [tnTooltip]="'Missing permissions for this action' | translate"
 >
   <ng-container *ngTemplateOutlet="template()"></ng-container>
   <tn-icon name="lock" library="mdi" class="role-missing-icon"></tn-icon>

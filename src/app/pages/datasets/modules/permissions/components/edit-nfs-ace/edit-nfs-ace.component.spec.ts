@@ -2,16 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness, TnRadioHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import {
   NfsAclTag, NfsAclType, NfsAdvancedFlag, NfsAdvancedPermission, NfsBasicFlag, NfsBasicPermission,
 } from 'app/enums/nfs-acl.enum';
 import { NfsAclItem } from 'app/interfaces/acl.interface';
 import { User } from 'app/interfaces/user.interface';
-import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { UserService } from 'app/services/user.service';
@@ -75,37 +73,43 @@ describe('EditNfsAceComponent', () => {
   });
 
   it('shows current ace values from ace input', async () => {
-    const values = await form.getValues();
+    const whoSelect = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="tag"]' }));
+    expect(await whoSelect.getDisplayText()).toBe('User');
 
-    expect(values).toEqual({
-      Who: 'User',
-      User: 'trunk',
-      'ACL Type': 'Allow',
-      'Permissions Type': 'Advanced',
-      Permissions: [
-        'Read Data',
-        'Append Data',
-        'Execute',
-        'Read ACL',
-      ],
-      'Flags Type': 'Advanced',
-      Flags: [
-        'File Inherit',
-        'Directory Inherit',
-      ],
-    });
+    const userCombobox = await form.getControl('User') as IxComboboxHarness;
+    expect(await userCombobox.getValue()).toBe('trunk');
+
+    const allowRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Allow' }));
+    expect(await allowRadio.isChecked()).toBe(true);
+
+    const advancedPermsRadio = await loader.getHarness(TnRadioHarness.with({ testId: 'radio-permission-type-advanced' }));
+    expect(await advancedPermsRadio.isChecked()).toBe(true);
+
+    expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Read Data' }))).isChecked()).toBe(true);
+    expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Append Data' }))).isChecked()).toBe(true);
+    expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Execute' }))).isChecked()).toBe(true);
+    expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Read ACL' }))).isChecked()).toBe(true);
+    expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Write Data' }))).isChecked()).toBe(false);
+
+    const advancedFlagsRadio = await loader.getHarness(TnRadioHarness.with({ testId: 'radio-flags-type-advanced' }));
+    expect(await advancedFlagsRadio.isChecked()).toBe(true);
+
+    expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'File Inherit' }))).isChecked()).toBe(true);
+    expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Directory Inherit' }))).isChecked()).toBe(true);
+    expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Inherit Only' }))).isChecked()).toBe(false);
   });
 
   it('updates value in store when form is updated', async () => {
-    await form.fillForm(
-      {
-        'ACL Type': 'Deny',
-        'Permissions Type': 'Basic',
-        'Flags Type': 'Basic',
-        Permissions: 'Full Control',
-        Flags: 'Inherit',
-      },
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Deny' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-permission-type-basic' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-flags-type-basic' }))).check();
+
+    const basicPermissionSelect = await loader.getHarness(
+      TnSelectHarness.with({ selector: '[formControlName="basicPermission"]' }),
     );
+    await basicPermissionSelect.selectOption('Full Control');
+
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Inherit' }))).check();
 
     expect(spectator.inject(DatasetAclEditorStore).updateSelectedAce).toHaveBeenLastCalledWith({
       tag: NfsAclTag.User,
@@ -119,19 +123,11 @@ describe('EditNfsAceComponent', () => {
 
   describe('user ace', () => {
     it('shows user combobox when Who is user', async () => {
-      await form.fillForm({
-        Who: 'User',
-      });
-
       const userSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
       expect(userSelect).toExist();
     });
 
     it('allows custom values in User combobox', async () => {
-      await form.fillForm({
-        Who: 'User',
-      });
-
       const userCombobox = await form.getControl('User') as IxComboboxHarness;
       await userCombobox.writeCustomValue('AD\\administrator');
 
@@ -144,18 +140,16 @@ describe('EditNfsAceComponent', () => {
 
   describe('group ace', () => {
     it('shows group combobox when Who is group', async () => {
-      await form.fillForm({
-        Who: 'Group',
-      });
+      const whoSelect = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="tag"]' }));
+      await whoSelect.selectOption(/^Group$/);
 
       const groupSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
       expect(groupSelect).toExist();
     });
 
     it('allows custom values in Group combobox', async () => {
-      await form.fillForm({
-        Who: 'Group',
-      });
+      const whoSelect = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="tag"]' }));
+      await whoSelect.selectOption(/^Group$/);
 
       const userCombobox = await form.getControl('Group') as IxComboboxHarness;
       await userCombobox.writeCustomValue('AD\\domain users');
@@ -168,49 +162,41 @@ describe('EditNfsAceComponent', () => {
   });
 
   it('shows basic permissions select when permission type is basic', async () => {
-    await form.fillForm({
-      'Permissions Type': 'Basic',
-    });
+    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-permission-type-basic' }))).check();
 
-    const permissionsSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Permissions' }));
-    expect(permissionsSelect).toExist();
-    const advancedFlagChecklist = await loader.getAllHarnesses(IxCheckboxListHarness.with({ label: 'Permissions' }));
-    expect(advancedFlagChecklist).toHaveLength(0);
+    const basicPermSelect = await loader.getHarnessOrNull(
+      TnSelectHarness.with({ selector: '[formControlName="basicPermission"]' }),
+    );
+    expect(basicPermSelect).not.toBeNull();
+    const advancedPermCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Read Data' }));
+    expect(advancedPermCheckbox).toBeNull();
   });
 
   it('shows advanced permissions checkbox list when permission type is advanced', async () => {
-    await form.fillForm({
-      'Permissions Type': 'Advanced',
-    });
+    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-permission-type-advanced' }))).check();
 
-    const advancedPermissionsChecklist = await loader.getHarness(IxCheckboxListHarness.with({ label: 'Permissions' }));
-    expect(advancedPermissionsChecklist).toExist();
-
-    const checkboxes = await advancedPermissionsChecklist.getCheckboxes();
-    expect(checkboxes).toHaveLength(14);
+    const readDataCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Read Data' }));
+    const writeOwnerCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Write Owner' }));
+    expect(readDataCheckbox).not.toBeNull();
+    expect(writeOwnerCheckbox).not.toBeNull();
   });
 
   it('shows basic flags when flag type is basic', async () => {
-    await form.fillForm({
-      'Flags Type': 'Basic',
-    });
+    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-flags-type-basic' }))).check();
 
-    const flagsRadioGroup = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Flags' }));
-    expect(flagsRadioGroup).toExist();
-    const advancedFlagChecklist = await loader.getAllHarnesses(IxCheckboxListHarness.with({ label: 'Flags' }));
-    expect(advancedFlagChecklist).toHaveLength(0);
+    const basicFlagRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Inherit' }));
+    expect(basicFlagRadio).toExist();
+    const advancedFlagCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'File Inherit' }));
+    expect(advancedFlagCheckbox).toBeNull();
   });
 
   it('shows advanced flags when flag type is advanced', async () => {
-    await form.fillForm({
-      'Flags Type': 'Advanced',
-    });
+    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-flags-type-advanced' }))).check();
 
-    const advancedFlagChecklist = await loader.getHarness(IxCheckboxListHarness.with({ label: 'Flags' }));
-    expect(advancedFlagChecklist).toExist();
-
-    const checkboxes = await advancedFlagChecklist.getCheckboxes();
-    expect(checkboxes).toHaveLength(5);
+    const fileInheritCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'File Inherit' }));
+    const inheritOnlyCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Inherit Only' }));
+    expect(fileInheritCheckbox).not.toBeNull();
+    expect(inheritOnlyCheckbox).not.toBeNull();
   });
 
   describe('validation', () => {

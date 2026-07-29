@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, Signal, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
+import { TnDialog } from '@truenas/ui-components';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
 import { ConsolePanelDialog } from 'app/modules/layout/console-footer/console-panel/console-panel-dialog.component';
 
@@ -13,7 +13,7 @@ import { ConsolePanelDialog } from 'app/modules/layout/console-footer/console-pa
   imports: [AsyncPipe],
 })
 export class ConsoleFooterComponent implements OnInit {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private messagesStore = inject(ConsoleMessagesStore);
   private destroyRef = inject(DestroyRef);
 
@@ -27,7 +27,7 @@ export class ConsoleFooterComponent implements OnInit {
   }
 
   onShowConsolePanel(): void {
-    this.matDialog.open(ConsolePanelDialog);
+    this.tnDialog.open(ConsolePanelDialog);
   }
 
   private scrollToBottomOnNewMessages(): void {

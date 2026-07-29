@@ -1,16 +1,8 @@
-h1.mat-mdc-dialog-title {
-  margin-bottom: 1px;
-}
-
-.mat-mdc-dialog-content {
-  padding-top: 20px;
-
-  .message-content {
-    max-height: 300px;
-    overflow-x: unset;
-    overflow-y: auto;
-    word-wrap: break-word;
-  }
+.message-content {
+  max-height: 300px;
+  overflow-x: unset;
+  overflow-y: auto;
+  word-wrap: break-word;
 }
 
 .invisible {
@@ -19,8 +11,4 @@ h1.mat-mdc-dialog-title {
   opacity: 0;
   position: fixed;
   right: 0;
-}
-
-.mat-mdc-dialog-actions button {
-  margin-left: 8px;
 }

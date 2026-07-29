@@ -1,21 +1,19 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, input } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
 import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+  ChangeDetectionStrategy, Component, DestroyRef, inject, input,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnBannerComponent, TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnDialog, TnIconButtonComponent,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfNamespace, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   NamespaceDescriptionComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/namespace-description/namespace-description.component';
@@ -32,25 +30,22 @@ import { DeleteNamespaceDialogComponent } from './delete-namespace-dialog/delete
   styleUrl: './subsystem-namespaces-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     TranslateModule,
-    TnIconComponent,
-    MatCardContent,
-    MatIconButton,
+    TnBannerComponent,
+    TnIconButtonComponent,
     NamespaceDescriptionComponent,
-    MatTooltip,
-    TestDirective,
     UiSearchDirective,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
   ],
 })
 export class SubsystemNamespacesCardComponent {
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
   private nvmeOfStore = inject(NvmeOfStore);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
 
   subsystem = input.required<NvmeOfSubsystemDetails>();
@@ -61,15 +56,22 @@ export class SubsystemNamespacesCardComponent {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
+  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
+  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+  protected namespaceTestIdSlug(namespace: NvmeOfNamespace): string {
+    return kebabCase(namespace.device_path);
+  }
+
   protected onAddNamespace(): void {
-    this.slideIn.open(NamespaceFormComponent, {
-      data: { subsystemId: this.subsystem().id },
+    this.formPanel.open(NamespaceFormComponent, {
+      title: this.translate.instant('Add Namespace'),
+      inputs: { namespaceData: { subsystemId: this.subsystem().id } },
     }).onSuccess(() => this.nvmeOfStore.initialize(), this.destroyRef);
   }
 
   protected onDeleteNamespace(namespace: NvmeOfNamespace): void {
-    this.matDialog.open(DeleteNamespaceDialogComponent, { data: namespace })
-      .afterClosed()
+    this.tnDialog.open(DeleteNamespaceDialogComponent, { data: namespace })
+      .closed
       .pipe(
         filter(Boolean),
         takeUntilDestroyed(this.destroyRef),

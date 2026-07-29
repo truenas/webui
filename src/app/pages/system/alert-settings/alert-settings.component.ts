@@ -5,6 +5,7 @@ import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-
 @Component({
   selector: 'ix-alert-settings',
   templateUrl: './alert-settings.component.html',
+  styleUrl: './alert-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AlertServiceListComponent, AlertConfigFormComponent],
 })

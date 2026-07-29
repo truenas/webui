@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnIconComponent, TnSpinnerComponent, TnTooltipDirective } from '@truenas/ui-components';
 import {
   BulkListItem,
   BulkListItemState,
@@ -16,7 +15,7 @@ import {
     TnIconComponent,
     TnTooltipDirective,
     TranslateModule,
-    MatProgressSpinner,
+    TnSpinnerComponent,
   ],
 })
 export class BulkListItemComponent<T> {

@@ -12,19 +12,4 @@
   span {
     margin: 0;
   }
-
-  button {
-    align-items: center;
-    border-radius: 16px !important;
-    display: flex;
-    font-size: 12px;
-    height: max-content;
-    padding: 2px 4px;
-
-    &::ng-deep {
-      span {
-        height: 100%;
-      }
-    }
-  }
 }

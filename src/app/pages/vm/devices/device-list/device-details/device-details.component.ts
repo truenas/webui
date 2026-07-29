@@ -1,13 +1,9 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-device-details',
@@ -16,19 +12,15 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatDialogTitle,
-    TnIconComponent,
-    MatDialogContent,
-    MatDialogActions,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnDialogShellComponent,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
 export class DeviceDetailsComponent {
   private translate = inject(TranslateService);
-  protected device = inject<VmDevice>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<unknown, DeviceDetailsComponent>>(DialogRef);
+  protected device = inject<VmDevice>(DIALOG_DATA);
 
   attributes: [string, unknown][] = [];
 

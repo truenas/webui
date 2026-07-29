@@ -11,6 +11,7 @@ import {
 } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { isFailedJobError } from 'app/helpers/api.helper';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
   Acl, AclTemplateByPath, NfsAclItem, PosixAclItem, SetAcl,
@@ -24,7 +25,16 @@ import {
 } from 'app/pages/datasets/modules/permissions/interfaces/dataset-acl-editor-state.interface';
 import { newNfsAce, newPosixAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ErrorParserService } from 'app/services/errors/error-parser.service';
 import { StorageService } from 'app/services/storage.service';
+
+/**
+ * Stable fragment of the backend `filesystem.check_acl_execute` error message
+ * (raised with errno EPERM when a user/group cannot traverse to the dataset).
+ * Used to distinguish the recoverable "no traverse access" case from other
+ * ACL save failures so we can offer to save without effective-ACL validation.
+ */
+const traverseValidationErrorMarker = 'execute permissions on the path';
 
 const initialState: DatasetAclEditorState = {
   isLoading: false,
@@ -43,6 +53,7 @@ const initialState: DatasetAclEditorState = {
 export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState> {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
+  private errorParser = inject(ErrorParserService);
   private dialogService = inject(DialogService);
   private router = inject(Router);
   private translate = inject(TranslateService);
@@ -243,25 +254,65 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   });
 
   private makeSaveRequest(setAcl: SetAcl): Observable<Job> {
+    return this.runSetAclJob(setAcl).pipe(
+      catchError((error: unknown) => this.handleSaveError(setAcl, error)),
+      tap(() => this.onSaveSucceeded()),
+    );
+  }
+
+  private runSetAclJob(setAcl: SetAcl): Observable<Job> {
     return this.dialogService.jobDialog(
       this.api.job('filesystem.setacl', [setAcl]),
       {
         title: this.translate.instant(helptextAcl.saveDialog.title),
         description: this.translate.instant(helptextAcl.saveDialog.message),
       },
-    )
-      .afterClosed()
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        tap(() => {
-          this.saveSucceeded$.next();
-          const returnUrl = this.state().returnUrl;
-          const returnRoute = returnUrl
-            ? [returnUrl]
-            : ['datasets', this.get()?.mountpoint?.replace(`${mntPath}/`, '')];
-          this.router.navigate(returnRoute);
-        }),
-      );
+    ).afterClosed();
+  }
+
+  /**
+   * If the backend rejected the ACL only because a user/group lacks traverse
+   * access to the dataset, warn the user and offer to save anyway with
+   * effective-ACL validation disabled. Any other error is shown as usual.
+   */
+  private handleSaveError(setAcl: SetAcl, error: unknown): Observable<Job> {
+    if (!this.isTraverseValidationError(error)) {
+      this.errorHandler.showErrorModal(error);
+      return EMPTY;
+    }
+
+    return this.dialogService.confirm({
+      title: this.translate.instant(helptextAcl.effectiveAclDialog.title),
+      message: this.translate.instant(helptextAcl.effectiveAclDialog.message, {
+        details: this.errorParser.getFirstErrorMessage(error),
+      }),
+      buttonText: this.translate.instant(helptextAcl.effectiveAclDialog.buttonText),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        // On success the job flows out to the outer `tap` in makeSaveRequest, which
+        // navigates away. withErrorHandler swallows any failure of the retry itself.
+        return this.runSetAclJob({
+          ...setAcl,
+          options: { ...setAcl.options, validate_effective_acl: false },
+        }).pipe(
+          this.errorHandler.withErrorHandler(),
+        );
+      }),
+    );
+  }
+
+  private isTraverseValidationError(error: unknown): boolean {
+    return isFailedJobError(error) && (error.job.error || '').includes(traverseValidationErrorMarker);
+  }
+
+  private onSaveSucceeded(): void {
+    this.saveSucceeded$.next();
+    const returnUrl = this.state().returnUrl;
+    const returnRoute = returnUrl
+      ? [returnUrl]
+      : ['datasets', this.get()?.mountpoint?.replace(`${mntPath}/`, '')];
+    this.router.navigate(returnRoute);
   }
 
   /**

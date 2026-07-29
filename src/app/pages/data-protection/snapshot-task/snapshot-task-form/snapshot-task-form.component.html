@@ -1,136 +1,148 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew"
+  [addTitle]="'Add Periodic Snapshot Task' | translate"
+  [editTitle]="'Edit Periodic Snapshot Task' | translate"
   [requiredRoles]="requiredRoles"
-  [title]="title"
-  [loading]="isLoading()"
-></ix-modal-header>
+  [externalLoading]="isLoading()"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <div class="columns">
+    <div class="column">
+      <tn-form-section [heading]="'Dataset' | translate">
+        <tn-form-field [label]="labels.dataset | translate" [required]="true">
+          <tn-select
+            name="dataset"
+            testId="dataset"
+            formControlName="dataset"
+            [options]="(datasetOptions$ | async) ?? []"
+          ></tn-select>
+        </tn-form-field>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <div class="columns">
-        <div class="column">
-          <ix-fieldset [title]="'Dataset' | translate">
-            <ix-select
-              formControlName="dataset"
-              [label]="labels.dataset | translate"
+        <tn-form-field [label]="labels.exclude | translate" [tooltip]="tooltips.exclude | translate">
+          <tn-chip-input
+            name="exclude"
+            testId="exclude"
+            formControlName="exclude"
+            [allowCustomValue]="true"
+          ></tn-chip-input>
+        </tn-form-field>
+
+        <tn-form-field [tooltip]="tooltips.recursive | translate">
+          <tn-checkbox
+            name="recursive"
+            testId="recursive"
+            formControlName="recursive"
+            [label]="labels.recursive | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      </tn-form-section>
+    </div>
+    <div class="column">
+      <tn-form-section [heading]="'Schedule' | translate">
+        <div class="input-group">
+          <tn-form-field [label]="labels.lifetime | translate" [tooltip]="tooltips.lifetime | translate" [required]="true">
+            <tn-input
+              name="lifetime_value"
+              testId="lifetime-value"
+              formControlName="lifetime_value"
+              [inputType]="InputType.Number"
               [required]="true"
-              [options]="datasetOptions$"
-            ></ix-select>
+            ></tn-input>
+          </tn-form-field>
 
-            <ix-chips
-              formControlName="exclude"
-              [label]="labels.exclude | translate"
-              [placeholder]="labels.exclude | translate"
-              [tooltip]="tooltips.exclude | translate"
-            ></ix-chips>
-
-            <ix-checkbox
-              formControlName="recursive"
-              [label]="labels.recursive | translate"
-              [tooltip]="tooltips.recursive | translate"
-            ></ix-checkbox>
-          </ix-fieldset>
+          <tn-form-field [label]="'Unit' | translate" [required]="true">
+            <tn-select
+              name="lifetime_unit"
+              testId="lifetime-unit"
+              formControlName="lifetime_unit"
+              [options]="(lifetimeOptions$ | async) ?? []"
+            ></tn-select>
+          </tn-form-field>
         </div>
-        <div class="column">
-          <ix-fieldset [title]="'Schedule' | translate">
-            <div class="input-group">
-              <ix-input
-                formControlName="lifetime_value"
-                type="number"
-                [label]="labels.lifetime | translate"
-                [tooltip]="tooltips.lifetime | translate"
-                [required]="true"
-              ></ix-input>
 
-              <ix-select
-                formControlName="lifetime_unit"
-                [label]="'Unit' | translate"
-                [options]="lifetimeOptions$"
-                [required]="true"
-              ></ix-select>
-            </div>
-            <ix-input
-              formControlName="naming_schema"
-              [label]="labels.naming_schema | translate"
-              [tooltip]="tooltips.naming_schema | translate"
-            ></ix-input>
+        <tn-form-field [label]="labels.naming_schema | translate" [tooltip]="tooltips.naming_schema | translate">
+          <tn-input
+            name="naming_schema"
+            testId="naming-schema"
+            formControlName="naming_schema"
+          ></tn-input>
+        </tn-form-field>
 
-            <ix-scheduler
-              formControlName="schedule"
-              [label]="labels.schedule | translate"
-              [tooltip]="tooltips.schedule | translate"
-              [required]="true"
-            ></ix-scheduler>
+        <ix-scheduler
+          formControlName="schedule"
+          [label]="labels.schedule | translate"
+          [tooltip]="tooltips.schedule | translate"
+          [required]="true"
+        ></ix-scheduler>
 
-            @if (isTimeMode) {
-              <ix-select
-                formControlName="begin"
-                [label]="labels.begin | translate"
-                [tooltip]="tooltips.begin | translate"
-                [required]="true"
-                [options]="timeOptions$"
-              ></ix-select>
-            }
+        @if (isTimeMode) {
+          <tn-form-field [label]="labels.begin | translate" [tooltip]="tooltips.begin | translate" [required]="true">
+            <tn-select
+              name="begin"
+              testId="begin"
+              formControlName="begin"
+              [options]="(timeOptions$ | async) ?? []"
+            ></tn-select>
+          </tn-form-field>
+        }
 
-            @if (isTimeMode) {
-              <ix-select
-                formControlName="end"
-                [label]="labels.end | translate"
-                [tooltip]="tooltips.end | translate"
-                [required]="true"
-                [options]="timeOptions$"
-              ></ix-select>
-            }
+        @if (isTimeMode) {
+          <tn-form-field [label]="labels.end | translate" [tooltip]="tooltips.end | translate" [required]="true">
+            <tn-select
+              name="end"
+              testId="end"
+              formControlName="end"
+              [options]="(timeOptions$ | async) ?? []"
+            ></tn-select>
+          </tn-form-field>
+        }
 
-            <ix-checkbox
-              formControlName="allow_empty"
-              [label]="labels.allow_empty | translate"
-              [tooltip]="tooltips.allow_empty | translate"
-            ></ix-checkbox>
+        <tn-form-field [tooltip]="tooltips.allow_empty | translate">
+          <tn-checkbox
+            name="allow_empty"
+            testId="allow-empty"
+            formControlName="allow_empty"
+            [label]="labels.allow_empty | translate"
+          ></tn-checkbox>
+        </tn-form-field>
 
-            <ix-checkbox
-              formControlName="enabled"
-              [label]="labels.enabled | translate"
-            ></ix-checkbox>
+        <tn-form-field>
+          <tn-checkbox
+            name="enabled"
+            testId="enabled"
+            formControlName="enabled"
+            [label]="labels.enabled | translate"
+          ></tn-checkbox>
+        </tn-form-field>
 
-            @if (!isNew && retentionCheckError()) {
-              <div class="retention-warning error">
-                <p class="warning-text">
-                  {{ 'Unable to check if changes will affect snapshot retention. The operation may proceed but retention impact cannot be verified.' | translate }}
-                </p>
-              </div>
-            }
+        @if (!isNew && retentionCheckError()) {
+          <div class="retention-warning error">
+            <p class="warning-text">
+              {{ 'Unable to check if changes will affect snapshot retention. The operation may proceed but retention impact cannot be verified.' | translate }}
+            </p>
+          </div>
+        }
 
-            @if (!isNew && affectedSnapshots().length > 0) {
-              <div class="retention-warning">
-                <p class="warning-text">
-                  {{ 'Warning: This change will affect the retention of' | translate }}
-                  <strong>{{ affectedSnapshots().length }}</strong>
-                  {{ 'existing snapshot(s)' | translate }}.
-                </p>
-                <ix-checkbox
-                  formControlName="fixate_removal_date"
-                  [label]="labels.fixate_removal_date | translate"
-                  [tooltip]="tooltips.fixate_removal_date | translate"
-                ></ix-checkbox>
-              </div>
-            }
-          </ix-fieldset>
-        </div>
-      </div>
-
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+        @if (!isNew && affectedSnapshots().length > 0) {
+          <div class="retention-warning">
+            <p class="warning-text">
+              {{ 'Warning: This change will affect the retention of' | translate }}
+              <strong>{{ affectedSnapshots().length }}</strong>
+              {{ 'existing snapshot(s)' | translate }}.
+            </p>
+            <tn-form-field [tooltip]="tooltips.fixate_removal_date | translate">
+              <tn-checkbox
+                name="fixate_removal_date"
+                testId="fixate-removal-date"
+                formControlName="fixate_removal_date"
+                [label]="labels.fixate_removal_date | translate"
+              ></tn-checkbox>
+            </tn-form-field>
+          </div>
+        }
+      </tn-form-section>
+    </div>
+  </div>
+</ix-form>

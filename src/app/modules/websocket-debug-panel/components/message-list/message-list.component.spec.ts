@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/dot-notation */
 import { ElementRef } from '@angular/core';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { firstValueFrom } from 'rxjs';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import * as WebSocketDebugActions from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectMessages } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
@@ -55,6 +56,7 @@ describe('MessageListComponent', () => {
           },
         ],
       }),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -200,29 +202,40 @@ describe('MessageListComponent', () => {
       );
     });
 
-    it('should copy message to clipboard', () => {
-      Object.defineProperty(navigator, 'clipboard', {
-        value: { writeText: jest.fn().mockResolvedValue(undefined) },
-        configurable: true,
-      });
-      const writeTextSpy = jest.spyOn(navigator.clipboard, 'writeText');
-
-      const message: WebSocketDebugMessage = {
+    const copyTestMessage: WebSocketDebugMessage = {
+      id: '1',
+      timestamp: new Date().toISOString(),
+      direction: 'out',
+      message: {
+        jsonrpc: '2.0',
         id: '1',
-        timestamp: new Date().toISOString(),
-        direction: 'out',
-        message: {
-          jsonrpc: '2.0',
-          id: '1',
-          method: 'test' as never,
-          params: [{ foo: 'bar' }],
-        },
-        isExpanded: false,
-      };
+        method: 'test' as never,
+        params: [{ foo: 'bar' }],
+      },
+      isExpanded: false,
+    };
 
-      spectator.component['copyMessage'](message);
+    it('should copy message to clipboard and show a success snackbar', async () => {
+      const writeText = jest.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
 
-      expect(writeTextSpy).toHaveBeenCalledWith(JSON.stringify(message.message, null, 2));
+      spectator.component['copyMessage'](copyTestMessage);
+      await Promise.resolve();
+
+      expect(writeText).toHaveBeenCalledWith(JSON.stringify(copyTestMessage.message, null, 2));
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Message copied to clipboard');
+      expect(spectator.inject(SnackbarService).error).not.toHaveBeenCalled();
+    });
+
+    it('should show an error snackbar when copying to clipboard fails', async () => {
+      const writeText = jest.fn().mockRejectedValue(new Error('denied'));
+      Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+
+      spectator.component['copyMessage'](copyTestMessage);
+      await Promise.resolve();
+
+      expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('Failed to copy message to clipboard');
+      expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
     });
   });
 

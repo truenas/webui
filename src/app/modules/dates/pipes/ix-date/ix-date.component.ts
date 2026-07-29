@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { getMachineTime, LocaleService } from 'app/modules/language/locale.service';
 
@@ -10,7 +10,7 @@ import { getMachineTime, LocaleService } from 'app/modules/language/locale.servi
   templateUrl: './ix-date.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatTooltip,
+    TnTooltipDirective,
     TranslateModule,
     FormatDateTimePipe,
   ],

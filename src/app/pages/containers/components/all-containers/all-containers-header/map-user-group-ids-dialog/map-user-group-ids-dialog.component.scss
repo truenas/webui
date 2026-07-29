@@ -1,3 +1,17 @@
+:host {
+  display: block;
+  // Anchor the absolutely-positioned progress bar to the top of the dialog
+  // instead of letting it sit in normal flow below the header.
+  position: relative;
+}
+
+ix-fake-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
 .header {
   align-items: center;
   display: flex;
@@ -45,20 +59,15 @@
 }
 
 .table-wrapper {
-  table {
-    th:last-child,
-    td:last-child {
-      text-align: right;
-    }
-
-    td:last-child button {
-      float: right;
-    }
-  }
+  display: block;
 }
 
+// tnTooltipClass is fed straight into the CDK overlay panelClass array, which
+// rejects a space-separated value ("contains HTML space characters"). Keep it a
+// single class and fold the old `.tooltip-multiline` rule (white-space) in here.
 ::ng-deep .tooltip-wide {
   max-width: 500px !important;
   font-size: 13px;
   line-height: 1.4;
+  white-space: pre-line;
 }

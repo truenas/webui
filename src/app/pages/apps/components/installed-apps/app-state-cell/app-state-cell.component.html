@@ -1,6 +1,6 @@
 @if (showIcon()) {
   <tn-icon [name]="state() | mapValue: stateIcons"></tn-icon>
 }
-<span [matTooltip]="job()?.progress?.description">
+<span [tnTooltip]="job()?.progress?.description">
   {{ state() | mapValue: stateLabels | translate }}
 </span>

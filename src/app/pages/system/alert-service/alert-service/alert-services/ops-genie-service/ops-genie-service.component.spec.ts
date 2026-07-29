@@ -1,14 +1,15 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnInputHarness } from '@truenas/ui-components';
 import {
   OpsGenieServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/ops-genie-service/ops-genie-service.component';
 
 describe('OpsGenieServiceComponent', () => {
   let spectator: Spectator<OpsGenieServiceComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: OpsGenieServiceComponent,
     imports: [
@@ -16,9 +17,13 @@ describe('OpsGenieServiceComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('renders a form with alert service values', async () => {
@@ -27,18 +32,13 @@ describe('OpsGenieServiceComponent', () => {
       api_url: 'https://docs.opsgenie.com/docs/api-overview/v2/alerts',
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
-      'API Key': '12345',
-      'API URL': 'https://docs.opsgenie.com/docs/api-overview/v2/alerts',
-    });
+    expect(await (await getInput('api_key')).getValue()).toBe('12345');
+    expect(await (await getInput('api_url')).getValue()).toBe('https://docs.opsgenie.com/docs/api-overview/v2/alerts');
   });
 
   it('returns alert service form values when getSubmitAttributes is called', async () => {
-    await form.fillForm({
-      'API Key': '123456',
-      'API URL': 'https://docs.opsgenie.com/docs/api-overview/v3/alerts',
-    });
+    await (await getInput('api_key')).setValue('123456');
+    await (await getInput('api_url')).setValue('https://docs.opsgenie.com/docs/api-overview/v3/alerts');
 
     const submittedValues = spectator.component.getSubmitAttributes();
     expect(submittedValues).toEqual({

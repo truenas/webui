@@ -1,39 +1,40 @@
-<h1 matDialogTitle>
-  {{ 'Add Kerberos SPN Entry' | translate }}
-</h1>
+<tn-dialog-shell testId="add-spn" [title]="'Add Kerberos SPN Entry' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-input
-    formControlName="username"
-    [label]="'Name' | translate"
-    [required]="true"
-  ></ix-input>
+  <tn-form-field [label]="'Name' | translate">
+    <tn-input
+      testId="username"
+      name="username"
+      formControlName="username"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="password"
-    type="password"
-    [label]="'Password' | translate"
-    [required]="true"
-  ></ix-input>
+  <tn-form-field [label]="'Password' | translate">
+    <tn-input
+      testId="password"
+      name="password"
+      formControlName="password"
+      [inputType]="InputType.Password"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
-  <div class="form-actions">
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="primary"
-      type="submit"
-      ixTest="save"
-      [disabled]="form.invalid"
-    >
-      {{ 'Submit' | translate }}
-    </button>
-
-    <button
-      mat-button
-      type="button"
-      ixTest="cancel"
-      matDialogClose
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-  </div>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    testId="save"
+    [label]="'Submit' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

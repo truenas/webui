@@ -1,10 +1,9 @@
-import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { By } from '@angular/platform-browser';
 import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
+import { TnIconButtonHarness } from '@truenas/ui-components';
 import { ngMocks } from 'ng-mocks';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -38,7 +37,6 @@ const dummyAlert = {
 describe('AlertComponent', () => {
   let spectator: Spectator<AlertComponent>;
   let alert: AlertPageObject;
-  let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
     component: AlertComponent,
@@ -78,7 +76,6 @@ describe('AlertComponent', () => {
     });
 
     alert = new AlertPageObject(spectator);
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows alert level', () => {
@@ -111,6 +108,22 @@ describe('AlertComponent', () => {
     const dispatchSpy = jest.spyOn(store$, 'dispatch');
 
     alert.clickDismissLink();
+
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: '[Alert Panel] Dismiss Pressed',
+        ids: ['79'],
+      }),
+    );
+  });
+
+  it('dismisses an open alert when the dismiss icon button is pressed', async () => {
+    const store$ = spectator.inject(Store);
+    const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
+    const dismissButton = await TestbedHarnessEnvironment.loader(spectator.fixture)
+      .getHarness(TnIconButtonHarness.with({ name: 'mdi-close' }));
+    await dismissButton.click();
 
     expect(dispatchSpy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -162,12 +175,12 @@ describe('AlertComponent', () => {
     });
     spectator.detectChanges();
 
-    const expandButton = await loader.getHarness(MatButtonHarness.with({ text: 'View More' }));
+    const expandButton = spectator.query(byText('View More'));
     expect(expandButton).toExist();
 
-    await expandButton.click();
+    spectator.click(expandButton!);
 
-    const collapseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Collapse' }));
+    const collapseButton = spectator.query(byText('Collapse'));
     expect(collapseButton).toExist();
   });
 });

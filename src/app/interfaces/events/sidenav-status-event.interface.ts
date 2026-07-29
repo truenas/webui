@@ -1,7 +1,7 @@
-import { MatDrawerMode } from '@angular/material/sidenav';
+import { TnDrawerMode } from '@truenas/ui-components';
 
 export interface SidenavStatusData {
   isOpen: boolean;
-  mode: MatDrawerMode;
+  mode: TnDrawerMode;
   isCollapsed: boolean;
 }

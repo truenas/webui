@@ -210,6 +210,9 @@ describe('PoolManagerComponent – create pool', () => {
       'Number of VDEVs': '1',
     });
 
+    // Review (tn-stepper renders only the active step, so navigate to it)
+    await wizard.goToStep('Review');
+
     const reviewView = await wizard.getReviewWizardStep();
     expect(await reviewView.getConfigurationItems()).toEqual({
       Cache: '1 × 20 GiB (HDD)',

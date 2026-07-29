@@ -1,11 +1,7 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TnButtonComponent, TnDialogShellComponent, TnIconComponent } from '@truenas/ui-components';
 
 export interface GeneralDialogConfig {
   title?: string;
@@ -20,8 +16,7 @@ export interface GeneralDialogConfig {
  * General Dialog Component
  *
  * - able to be used as simple dialog to display text content, alert dialog with icon,
- * confirm dialog with single checkbox, able to display text as html or not
- * - works with MatDialogConf
+ * able to display text as html or not
  * - use interface GeneralDialogConfig for general config
  */
 @Component({
@@ -30,16 +25,13 @@ export interface GeneralDialogConfig {
   styleUrls: ['./general-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
+    TnButtonComponent,
     TnIconComponent,
-    MatDialogContent,
-    MatDialogActions,
-    MatButton,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class GeneralDialog {
-  protected dialogRef = inject<MatDialogRef<GeneralDialog>>(MatDialogRef);
-  conf = inject<GeneralDialogConfig>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<boolean, GeneralDialog>>(DialogRef);
+  conf = inject<GeneralDialogConfig>(DIALOG_DATA);
 }

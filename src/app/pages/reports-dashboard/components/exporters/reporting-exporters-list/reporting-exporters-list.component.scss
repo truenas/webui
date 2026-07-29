@@ -1,4 +1,15 @@
 .actions {
   display: flex;
+  gap: 8px;
+  padding: 8px;
   justify-content: flex-end;
+}
+
+.actions tn-input {
+  width: 290px;
+}
+
+.row-actions {
+  gap: 4px;
+  margin-left: auto;
 }

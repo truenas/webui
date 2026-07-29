@@ -1,18 +1,18 @@
-<mat-card class="card">
-  <mat-card-content class="card-content">
+<tn-card class="card" [padContent]="false">
+  <div class="card-content">
     <div class="header">
       <h3>{{ 'Memory' | translate }}</h3>
 
-      <button
-        mat-icon-button
-        ixTest="memory-go-to-reports"
-        matTooltipPosition="above"
-        [attr.aria-label]="'Memory Reports' | translate"
-        [matTooltip]="'Memory Reports' | translate"
-        [routerLink]="['/reportsdashboard', 'memory']"
-      >
-        <tn-icon name="chart-box" library="mdi" size="lg"></tn-icon>
-      </button>
+      <tn-icon-button
+        name="chart-box"
+        library="mdi"
+        size="lg"
+        testId="memory-go-to-reports"
+        tooltipPosition="above"
+        [ariaLabel]="'Memory Reports' | translate"
+        [tooltip]="'Memory Reports' | translate"
+        (onClick)="goToReports()"
+      ></tn-icon-button>
     </div>
 
     @if (isStale()) {
@@ -82,5 +82,5 @@
       </div>
       </div>
     }
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>

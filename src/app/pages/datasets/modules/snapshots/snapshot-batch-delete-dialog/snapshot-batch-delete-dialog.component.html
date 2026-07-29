@@ -1,4 +1,4 @@
-<h1 matDialogTitle>{{ 'Delete' | translate }}</h1>
+<tn-dialog-shell testId="snapshot-batch-delete" [title]="'Delete' | translate">
 @if (!isJobCompleted) {
   <form
     class="ix-form-container"
@@ -11,61 +11,34 @@
       </strong>
     </p>
 
-    <mat-accordion multi displayMode="flat">
-      @for (dataset of dialogData.datasets; track dataset) {
-        <mat-expansion-panel
-          expanded
-          class="mat-elevation-z0"
-          >
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <strong>{{ dataset }}</strong>
-              <span>
-                ({{
-                '{ n, plural, one {# snapshot} other {# snapshots} }' | translate: { n: dialogData.snapshots[dataset].length }
-                }})
-              </span>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <ul>
-            @for (snapshot of dialogData.snapshots[dataset]; track snapshot) {
-              <li>
-                {{ snapshot }}
-              </li>
-            }
-          </ul>
-        </mat-expansion-panel>
-      }
-    </mat-accordion>
+    @for (dataset of dialogData.datasets; track dataset) {
+      <tn-expansion-panel elevation="none" padding="small" [expanded]="true" [background]="false">
+        <div slot="title">
+          <strong>{{ dataset }}</strong>
+          <span>
+            ({{
+            '{ n, plural, one {# snapshot} other {# snapshots} }' | translate: { n: dialogData.snapshots[dataset].length }
+            }})
+          </span>
+        </div>
+        <ul>
+          @for (snapshot of dialogData.snapshots[dataset]; track snapshot) {
+            <li>
+              {{ snapshot }}
+            </li>
+          }
+        </ul>
+      </tn-expansion-panel>
+    }
 
-    <div class="form-actions">
-      <ix-checkbox
+    <tn-form-field>
+      <tn-checkbox
+        testId="confirm"
         formControlName="confirm"
         [label]="'Confirm' | translate"
         [required]="true"
-      ></ix-checkbox>
-
-      <div class="form-buttons">
-        <div
-          [matTooltip]="'Snapshots must not have dependent clones' | translate"
-          [matTooltipDisabled]="!hasClones"
-        >
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            type="submit"
-            color="warn"
-            ixTest="delete"
-            [disabled]="form.invalid || hasClones || isDeleting()"
-          >
-            {{ 'Delete' | translate }}
-          </button>
-        </div>
-        <button mat-button type="button" matDialogClose ixTest="cancel">
-          {{ 'Cancel' | translate }}
-        </button>
-      </div>
-    </div>
+      ></tn-checkbox>
+    </tn-form-field>
   </form>
 } @else {
   @if (jobErrors.length) {
@@ -81,22 +54,42 @@
       { n: jobSuccess.length} }}
     </p>
   }
-  <ix-form-actions>
-    <a
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="go-to-storage"
-      [matDialogClose]="true"
-      [routerLink]="['/storage']"
-    >
-      {{ 'Go to Storage' | translate }}
-    </a>
-    <button mat-button type="button" ixTest="close" [matDialogClose]="true">
-      {{ 'Close' | translate }}
-    </button>
-  </ix-form-actions>
 }
-
-
-
+<ix-form-actions tnDialogAction>
+  @if (!isJobCompleted) {
+    <tn-button
+      variant="outline"
+      testId="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close()"
+    ></tn-button>
+    <div
+      [tnTooltip]="'Snapshots must not have dependent clones' | translate"
+      [tnTooltipDisabled]="!hasClones"
+    >
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="warn"
+        testId="delete"
+        [label]="'Delete' | translate"
+        [disabled]="form.invalid || hasClones || isDeleting()"
+        (onClick)="onSubmit()"
+      ></tn-button>
+    </div>
+  } @else {
+    <tn-button
+      variant="outline"
+      testId="close"
+      [label]="'Close' | translate"
+      (onClick)="dialogRef.close(true)"
+    ></tn-button>
+    <tn-button
+      color="primary"
+      testId="go-to-storage"
+      [label]="'Go to Storage' | translate"
+      [routerLink]="['/storage']"
+      (onClick)="dialogRef.close(true)"
+    ></tn-button>
+  }
+</ix-form-actions>
+</tn-dialog-shell>

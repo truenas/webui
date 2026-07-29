@@ -1,30 +1,33 @@
 <ng-container [formGroup]="form">
-  <ix-input
-    formControlName="region"
+  <tn-form-field
     [label]="'AWS Region' | translate"
-    [required]="true"
     [tooltip]="helptext.awsSns.regionTooltip | translate"
-  ></ix-input>
+    [required]="true"
+  >
+    <tn-input formControlName="region" [testId]="'region'"></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="topic_arn"
+  <tn-form-field
     [label]="'ARN' | translate"
-    [required]="true"
     [tooltip]="helptext.awsSns.topicArnTooltip | translate"
-  ></ix-input>
+    [required]="true"
+  >
+    <tn-input formControlName="topic_arn" [testId]="'topic_arn'"></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="aws_access_key_id"
+  <tn-form-field
     [label]="'Key ID' | translate"
-    [required]="true"
     [tooltip]="helptext.awsSns.accessKeyIdTooltip | translate"
-  ></ix-input>
-
-  <ix-input
-    formControlName="aws_secret_access_key"
-    type="password"
-    [label]="'Secret Key' | translate"
     [required]="true"
+  >
+    <tn-input formControlName="aws_access_key_id" [testId]="'aws_access_key_id'"></tn-input>
+  </tn-form-field>
+
+  <tn-form-field
+    [label]="'Secret Key' | translate"
     [tooltip]="helptext.awsSns.secretAccessKeyTooltip | translate"
-  ></ix-input>
+    [required]="true"
+  >
+    <tn-input formControlName="aws_secret_access_key" [testId]="'aws_secret_access_key'" [inputType]="InputType.Password"></tn-input>
+  </tn-form-field>
 </ng-container>

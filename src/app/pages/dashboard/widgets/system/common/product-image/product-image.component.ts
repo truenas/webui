@@ -1,9 +1,8 @@
 import { NgClass } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed, HostBinding, inject } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 
@@ -14,7 +13,7 @@ import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/p
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgClass,
-    MatTooltip,
+    TnTooltipDirective,
     TnIconComponent,
     NgxSkeletonLoaderModule,
     TranslateModule,

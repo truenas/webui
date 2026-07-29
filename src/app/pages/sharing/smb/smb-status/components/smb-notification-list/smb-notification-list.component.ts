@@ -1,46 +1,46 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, signal,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardHeaderActionsDirective, TnCardHeaderDirective, TnCellDefDirective,
+  TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import { tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbNotificationInfo } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import {
+  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+} from 'app/modules/ix-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-smb-notification-list',
   templateUrl: './smb-notification-list.component.html',
+  styleUrls: ['./smb-notification-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
+    TnCardComponent,
+    TnCardHeaderDirective,
+    TnCardHeaderActionsDirective,
     BasicSearchComponent,
-    IxTableColumnsSelectorComponent,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TableColumnPickerComponent,
+    TnButtonComponent,
+    TnTestIdDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class SmbNotificationListComponent implements OnInit {
@@ -51,10 +51,23 @@ export class SmbNotificationListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   searchQuery = signal('');
-  dataProvider: AsyncDataProvider<SmbNotificationInfo>;
+  private readonly smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Notifications]).pipe(
+    tap((shares: SmbNotificationInfo[]) => {
+      this.notifications = shares;
+      if (this.searchQuery()) {
+        this.onListFiltered(this.searchQuery());
+      }
+    }),
+    takeUntilDestroyed(this.destroyRef),
+  );
+
+  dataProvider = new AsyncDataProvider<SmbNotificationInfo>(this.smbStatus$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
   notifications: SmbNotificationInfo[] = [];
 
-  columns = createTable<SmbNotificationInfo>([
+  protected readonly columns = signal(createTable<SmbNotificationInfo>([
     textColumn({ title: this.translate.instant('Path'), propertyName: 'path' }),
     textColumn({ title: this.translate.instant('Filter'), propertyName: 'filter' }),
     textColumn({ title: this.translate.instant('Subdir Filter'), propertyName: 'subdir_filter' }),
@@ -62,27 +75,22 @@ export class SmbNotificationListComponent implements OnInit {
   ], {
     uniqueRowTag: (row) => 'smb-notification-' + row.creation_time + '-' + row.server_id.unique_id,
     ariaLabels: (row) => [row.creation_time, this.translate.instant('SMB Notification')],
-  });
+  }));
+
+  protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
+
+  protected readonly trackByNotification = (_index: number, row: SmbNotificationInfo): string => {
+    return `${row.creation_time}-${row.server_id.unique_id}`;
+  };
 
   ngOnInit(): void {
-    const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Notifications]).pipe(
-      tap((shares: SmbNotificationInfo[]) => {
-        this.notifications = shares;
-        if (this.searchQuery()) {
-          this.onListFiltered(this.searchQuery());
-        }
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    );
-
-    this.dataProvider = new AsyncDataProvider<SmbNotificationInfo>(smbStatus$);
     this.loadData();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
   }
 
-  loadData(): void {
+  protected loadData(): void {
     this.dataProvider.load();
   }
 
@@ -94,9 +102,18 @@ export class SmbNotificationListComponent implements OnInit {
     });
   }
 
-  columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
+  protected uniqueRowTag(row: SmbNotificationInfo): string {
+    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
+    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
+    return kebabCase(convertStringToId('smb-notification-' + row.creation_time + '-' + row.server_id.unique_id));
+  }
+
+  protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
+    this.columns.set([...columns]);
     this.cdr.markForCheck();
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<SmbNotificationInfo>(event, this.displayedColumns()));
   }
 }

@@ -1,12 +1,10 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
@@ -16,7 +14,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolExtendJobService } from 'app/pages/storage/modules/vdevs/services/pool-extend-job.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -32,13 +29,11 @@ export interface ExtendDialogParams {
   styleUrls: ['./extend-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     UnusedDiskSelectComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -49,9 +44,9 @@ export class ExtendDialog {
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<ExtendDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, ExtendDialog>>(DialogRef);
   private poolExtendJobService = inject(PoolExtendJobService);
-  data = inject<ExtendDialogParams>(MAT_DIALOG_DATA);
+  data = inject<ExtendDialogParams>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   form = this.formBuilder.group({
@@ -62,8 +57,8 @@ export class ExtendDialog {
 
   unusedDisks: DetailsDisk[] = [];
 
-  onSubmit(event: SubmitEvent): void {
-    event.preventDefault();
+  onSubmit(event?: SubmitEvent): void {
+    event?.preventDefault();
 
     // Check for existing pool.attach jobs for this pool
     this.poolExtendJobService.checkForExistingExtendJob(this.data.poolId).pipe(

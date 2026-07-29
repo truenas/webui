@@ -1,17 +1,13 @@
-import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnDestroy, OnInit, output, ViewChild, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatCard } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import {
-  MatStepper, MatStep, MatStepLabel,
-} from '@angular/material/stepper';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnDialog, TnStepComponent, TnStepperComponent,
+} from '@truenas/ui-components';
 import { combineLatest, of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
@@ -21,9 +17,6 @@ import {
   CreatePool, Pool, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import {
-  UseIconsInStepperComponent,
-} from 'app/modules/layout/use-icons-in-stepper/use-icons-in-stepper.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -55,15 +48,12 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
   styleUrls: ['./pool-manager-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
     FakeProgressBarComponent,
     ReactiveFormsModule,
-    MatStepper,
-    MatStep,
+    TnStepperComponent,
+    TnStepComponent,
     StepActivationDirective,
-    MatStepLabel,
-    TnIconComponent,
-    TnTooltipDirective,
     GeneralWizardStepComponent,
     EnclosureWizardStepComponent,
     DataWizardStepComponent,
@@ -75,20 +65,15 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     ReviewWizardStepComponent,
     TranslateModule,
     AsyncPipe,
-    UseIconsInStepperComponent,
   ],
   providers: [
     PoolManagerValidationService,
-    {
-      provide: STEPPER_GLOBAL_OPTIONS,
-      useValue: { showError: true },
-    },
   ],
 })
 export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   private store = inject(PoolManagerStore);
   private systemStore$ = inject<Store<AppState>>(Store);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private router = inject(Router);
@@ -107,7 +92,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   readonly stepChanged = output<PoolCreationWizardStep>();
 
-  private readonly stepper = viewChild.required('stepper', { read: MatStepper });
+  private readonly stepper = viewChild.required(TnStepperComponent);
 
   isLoading$ = combineLatest([this.store.isLoading$, this.addVdevsStore.isLoading$]).pipe(
     map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
@@ -166,6 +151,15 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     return Boolean(this.activatedSteps?.[step]);
   }
 
+  // Mirrors mat-stepper's `showError && hasError && !isCurrentStep`: an error indicator is shown only for a
+  // step that has been activated and is not the one currently being viewed. tn-stepper renders [hasError]
+  // unconditionally, so without the active-step guard the first step would flash its error on open.
+  isStepErrorVisible(step: PoolCreationWizardStep): boolean {
+    return Boolean(this.getTopLevelErrorForStep(step))
+      && this.getWasStepActivated(step)
+      && this.activeStep !== step;
+  }
+
   createPool(): void {
     const payload = this.prepareCreatePayload();
 
@@ -186,10 +180,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
           return of(null);
         }
 
-        return this.matDialog.open<DownloadKeyDialog, DownloadKeyDialogParams>(DownloadKeyDialog, {
+        return this.tnDialog.open<DownloadKeyDialog, DownloadKeyDialogParams>(DownloadKeyDialog, {
           disableClose: true,
           data: job.result,
-        }).afterClosed();
+        }).closed;
       }),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
@@ -214,13 +208,13 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   }
 
   goToLastStep(): void {
-    this.stepper().selectedIndex = this.stepper().steps.length - 1;
+    this.stepper().selectedIndex.set(this.stepper().steps().length - 1);
     this.cdr.markForCheck();
   }
 
   private listenForStartOver(): void {
     this.store.startOver$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.stepper().selectedIndex = 0;
+      this.stepper().selectedIndex.set(0);
       this.activatedSteps = {};
     });
   }
@@ -256,7 +250,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     ).subscribe((result) => {
       this.hasEnclosureStep = result;
       if (result) {
-        setTimeout(() => this.stepper().selectedIndex = getPoolCreationWizardStepIndex[this.activeStep]);
+        setTimeout(() => this.stepper().selectedIndex.set(getPoolCreationWizardStepIndex[this.activeStep]));
       }
       this.cdr.markForCheck();
     });
@@ -281,6 +275,12 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       payload.all_sed = true;
     }
 
+    // Community Edition only. The flag is gated to CE in the UI, so state.forceTopology
+    // is never true on Enterprise, where middleware rejects it outright.
+    if (this.state.forceTopology) {
+      payload.force_topology = true;
+    }
+
     return payload;
   }
 
@@ -289,6 +289,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       topology: topologyToPayload(this.state.topology),
       allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,
     };
+
+    if (this.state.forceTopology) {
+      payload.force_topology = true;
+    }
 
     this.dialogService.jobDialog(
       this.api.job('pool.update', [this.existingPool.id, payload]),

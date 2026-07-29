@@ -4,14 +4,13 @@ import {
   AbstractControl, FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { pickBy } from 'lodash-es';
 import { GiB } from 'app/constants/bytes.constant';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 
 const warning = 80;
@@ -23,21 +22,23 @@ const critical = 95;
   templateUrl: './quotas-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     TranslateModule,
-    IxCheckboxComponent,
+    TnCheckboxComponent,
     ReactiveFormsModule,
   ],
 })
 export class QuotasSectionComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
-  formatter = inject(IxFormatterService);
   private validators = inject(IxValidatorsService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   readonly formValidityChange = output<boolean>();
+
+  protected readonly InputType = InputType;
 
   readonly form = this.formBuilder.nonNullable.group({
     refquota: [null as number | null, this.validators.withMessage(

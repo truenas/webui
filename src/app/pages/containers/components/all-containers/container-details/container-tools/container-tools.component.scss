@@ -1,18 +1,12 @@
-.tool {
+// tn-list-item's own `.tn-list-item--clickable { cursor: pointer }` is content-scoped
+// (Emulated encapsulation) and never reaches the host, so set the cursor here.
+tn-list-item.is-clickable {
+  cursor: pointer;
+}
+
+.shell-row {
+  align-items: center;
   display: flex;
-  margin: 0 -16px;
-
-  &:not(&.disabled) {
-    color: var(--fg2) !important;
-  }
-
-  &.disabled {
-    color: var(--fg2) !important;
-    opacity: 0.5;
-  }
-
-  ::ng-deep .mdc-button__label {
-    flex-grow: 1;
-    justify-content: space-between;
-  }
+  justify-content: space-between;
+  width: 100%;
 }

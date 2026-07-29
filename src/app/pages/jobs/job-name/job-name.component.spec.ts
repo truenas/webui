@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatProgressBarHarness } from '@angular/material/progress-bar/testing';
-import { MatProgressSpinnerHarness } from '@angular/material/progress-spinner/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
@@ -108,9 +107,8 @@ describe('JobNameComponent', () => {
       expect(spectator.query('.job-name')).toHaveText('50.00%');
     });
 
-    it('shows a spinner when job is running', async () => {
-      const spinner = await loader.getHarness(MatProgressSpinnerHarness);
-      expect(spinner).toBeTruthy();
+    it('shows a spinner when job is running', () => {
+      expect(spectator.query('tn-spinner')).toBeTruthy();
     });
 
     it('allows to abort a job when it is in running state and is abortable', async () => {

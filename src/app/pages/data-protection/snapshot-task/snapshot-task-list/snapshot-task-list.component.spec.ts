@@ -29,8 +29,7 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -74,12 +73,6 @@ describe('SnapshotTaskListComponent', () => {
     } as PeriodicSnapshotTaskUi,
   ];
 
-  const slideInRef: SlideInRef<PeriodicSnapshotTaskUi | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: SnapshotTaskListComponent,
     imports: [
@@ -117,10 +110,9 @@ describe('SnapshotTaskListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
         getTaskNextRun: jest.fn(() => 'in about 10 hours'),
@@ -166,11 +158,12 @@ describe('SnapshotTaskListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       SnapshotTaskFormComponent,
       {
+        title: 'Edit Periodic Snapshot Task',
         wide: true,
-        data: snapshotTasksList[0],
+        inputs: { taskToEdit: snapshotTasksList[0] },
       },
     );
 

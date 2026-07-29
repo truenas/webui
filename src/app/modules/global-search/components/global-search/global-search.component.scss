@@ -1,5 +1,9 @@
 @import 'scss-imports/cssvars';
+@import '../search-box.mixin';
 
+// The overlay is positioned so its search box lands exactly on top of the
+// topbar decoy (global-search-trigger). The margins mirror the sidenav's
+// width states — change those together or the overlay visibly jumps.
 .search-box-wrapper {
   margin-left: 307px;
   margin-top: 7.5px;
@@ -25,50 +29,7 @@
 }
 
 .search-box {
-  background: var(--bg1);
-  border: solid 1px var(--lines);
-  border-radius: 2px;
-  display: flex;
-  flex-direction: row;
-  font-size: 12px;
-  position: relative;
-  width: 450px;
-
-  @media(max-width: $breakpoint-md) {
-    width: 250px;
-  }
-
-  &:focus-within {
-    border-color: var(--primary);
-  }
-
-  &:focus-within {
-    .search-input {
-      opacity: 1;
-    }
-
-    .search-icon {
-      opacity: 1;
-    }
-  }
-
-  .search-icon {
-    color: var(--fg1);
-    left: 4px;
-    opacity: 0.2;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  .search-input {
-    opacity: 0.7;
-    padding-right: 30px;
-  }
-
-  ::ng-deep input {
-    padding-left: 30px;
-  }
+  @include search-box;
 
   .reset-input {
     align-items: center;

@@ -1,47 +1,50 @@
-<div class="advanced-search">
-  <span class="prefix-icon" [matTooltip]="errorMessages?.[0]?.message">
-    @if (!queryInputValue) {
-      <tn-icon name="text-search-variant" library="mdi"></tn-icon>
-    } @else if (hasQueryErrors) {
-      <tn-icon name="alert" library="mdi"></tn-icon>
-    } @else {
-      <tn-icon name="check" library="mdi"></tn-icon>
-    }
-  </span>
+<div class="search-row">
+  <div class="advanced-search">
+    <span class="prefix-icon" [tnTooltip]="errorMessages?.[0]?.message">
+      @if (!queryInputValue) {
+        <tn-icon name="text-search-variant" library="mdi"></tn-icon>
+      } @else if (hasQueryErrors) {
+        <tn-icon name="alert" library="mdi"></tn-icon>
+      } @else {
+        <tn-icon name="check" library="mdi"></tn-icon>
+      }
+    </span>
 
-  <div #inputArea class="input-area" (focusin)="startSuggestionsCompletion()" (click)="startSuggestionsCompletion()">
-    @if (showDatePicker$ | async) {
-      <mat-card class="calendar">
-        <mat-calendar (selectedChange)="dateSelected($event)"></mat-calendar>
-      </mat-card>
-    }
+    <div #inputArea class="input-area" (focusin)="startSuggestionsCompletion()" (click)="startSuggestionsCompletion()">
+      @if (showDatePicker$ | async) {
+        <tn-card class="calendar" [padContent]="false">
+          <tn-calendar (selectedChange)="dateSelected($event)"></tn-calendar>
+        </tn-card>
+      }
+    </div>
+
+    <span
+      class="reset-icon reset-input"
+      role="button"
+      tabindex="0"
+      tnTestIdType="text"
+      [tnTestId]="'clear-search'"
+      [class.hidden]="!editorHasValue"
+      [attr.aria-label]="'Clear search' | translate"
+      [tnTooltip]="'Clear search' | translate"
+      (click)="onResetInput()"
+      (keydown.enter)="$event.preventDefault(); onResetInput()"
+    >
+      <tn-icon name="close-circle" library="mdi"></tn-icon>
+    </span>
   </div>
 
-  <span
+  <button
     class="switch-link"
-    ixTest="switch-to-basic"
-    tabindex="0"
-    [matTooltip]="'Switch To Basic' | translate"
+    type="button"
+    tnTestIdType="button"
+    [tnTestId]="'switch-to-basic'"
+    [tnTooltip]="'Switch To Basic' | translate"
     (click)="switchToBasic.emit()"
-    (keydown.enter)="switchToBasic.emit()"
   >
     <tn-icon name="tune" library="mdi" size="sm"></tn-icon>
     {{ 'Basic' | translate }}
-  </span>
-
-  <span
-    class="reset-icon reset-input"
-    role="button"
-    tabindex="0"
-    ixTest="clear-search"
-    [class.hidden]="!editorHasValue"
-    [attr.aria-label]="'Clear search' | translate"
-    [matTooltip]="'Clear search' | translate"
-    (click)="onResetInput()"
-    (keydown.enter)="$event.preventDefault(); onResetInput()"
-  >
-    <tn-icon name="close-circle" library="mdi"></tn-icon>
-  </span>
+  </button>
 </div>
 
 @if (filterPresets()?.length > 0) {

@@ -1,92 +1,91 @@
-<ix-modal-header
+<ix-form
+  [formGroup]="form"
+  [title]="'Restore from Snapshot' | translate"
   [requiredRoles]="requiredRoles"
-  [title]="title"
-  [loading]="isLoading()"
-></ix-modal-header>
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section
+    [heading]="'Snapshot Time {time}' | translate: { time: data?.snapshot?.time?.$date | formatDateTime }"
+  ></tn-form-section>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset
-        [title]="'Snapshot Time {time}' | translate: { time: data?.snapshot?.time?.$date | formatDateTime }"
-      ></ix-fieldset>
-
-      <ix-fieldset [title]="'Remote' | translate">
-        <ix-radio-group
-          formControlName="includeExclude"
-          [label]="'Include/Exclude' | translate"
-          [tooltip]="helptext.tooltips.includeExclude | translate"
-          [options]="includeExcludeOptions$"
-        ></ix-radio-group>
-
-        @if (isExcludePathsSelected) {
-          <ix-explorer
-            formControlName="excludedPaths"
-            [required]="true"
-            [tooltip]="helptext.tooltips.excludedPaths | translate"
-            [label]="'Excluded Paths' | translate"
-            [nodeProvider]="snapshotNodeProvider"
-            [rootNodes]="data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
-            [multiple]="true"
-          ></ix-explorer>
+  <tn-form-section [heading]="'Remote' | translate">
+    <tn-form-field
+      [label]="'Include/Exclude' | translate"
+      [tooltip]="helptext.tooltips.includeExclude | translate"
+    >
+      <div role="radiogroup" [attr.aria-label]="'Include/Exclude' | translate">
+        @for (option of includeExcludeOptions; track option.value) {
+          <tn-radio
+            name="includeExclude"
+            formControlName="includeExclude"
+            [testId]="['include-exclude', option.value]"
+            [value]="option.value"
+            [label]="option.label"
+          ></tn-radio>
         }
+      </div>
+    </tn-form-field>
 
-        @if (isExcludeByPatternSelected) {
-          <ix-input
-            formControlName="excludePattern"
-            [tooltip]="helptext.tooltips.pattern | translate"
-            [label]="'Pattern' | translate"
-            [required]="true"
-          ></ix-input>
-        }
+    @if (isExcludePathsSelected) {
+      <ix-explorer
+        formControlName="excludedPaths"
+        [required]="true"
+        [tooltip]="helptext.tooltips.excludedPaths | translate"
+        [label]="'Excluded Paths' | translate"
+        [nodeProvider]="snapshotNodeProvider"
+        [rootNodes]="data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
+        [multiple]="true"
+      ></ix-explorer>
+    }
 
-        @if (isIncludeFromSubfolderSelected) {
-          <ix-explorer
-            formControlName="subFolder"
-            [required]="true"
-            [label]="'Subfolder' | translate"
-            [nodeProvider]="snapshotNodeProvider"
-            [rootNodes]="data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
-            [tooltip]="helptext.tooltips.subFolder | translate"
-          ></ix-explorer>
-        }
-
-        @if (isIncludeFromSubfolderSelected) {
-          <ix-explorer
-            formControlName="includedPaths"
-            [rootNodes]="includedPathsRootNodes()"
-            [label]="'Included Paths' | translate"
-            [nodeProvider]="snapshotNodeProvider"
-            [tooltip]="helptext.tooltips.includedPaths | translate"
-            [multiple]="true"
-          ></ix-explorer>
-        }
-      </ix-fieldset>
-
-      <ix-fieldset [title]="'Local' | translate">
-        <ix-explorer
-          formControlName="target"
+    @if (isExcludeByPatternSelected) {
+      <tn-form-field
+        [label]="'Pattern' | translate"
+        [tooltip]="helptext.tooltips.pattern | translate"
+        [required]="true"
+      >
+        <tn-input
+          name="excludePattern"
+          testId="exclude-pattern"
+          formControlName="excludePattern"
           [required]="true"
-          [label]="'Target' | translate"
-          [nodeProvider]="fileNodeProvider"
-          [tooltip]="helptext.tooltips.target | translate"
-        >
-          <ix-explorer-create-dataset></ix-explorer-create-dataset>
-        </ix-explorer>
-      </ix-fieldset>
+        ></tn-input>
+      </tn-form-field>
+    }
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+    @if (isIncludeFromSubfolderSelected) {
+      <ix-explorer
+        formControlName="subFolder"
+        [required]="true"
+        [label]="'Subfolder' | translate"
+        [nodeProvider]="snapshotNodeProvider"
+        [rootNodes]="data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
+        [tooltip]="helptext.tooltips.subFolder | translate"
+      ></ix-explorer>
+    }
+
+    @if (isIncludeFromSubfolderSelected) {
+      <ix-explorer
+        formControlName="includedPaths"
+        [rootNodes]="includedPathsRootNodes()"
+        [label]="'Included Paths' | translate"
+        [nodeProvider]="snapshotNodeProvider"
+        [tooltip]="helptext.tooltips.includedPaths | translate"
+        [multiple]="true"
+      ></ix-explorer>
+    }
+  </tn-form-section>
+
+  <tn-form-section [heading]="'Local' | translate">
+    <ix-explorer
+      formControlName="target"
+      [required]="true"
+      [label]="'Target' | translate"
+      [nodeProvider]="fileNodeProvider"
+      [tooltip]="helptext.tooltips.target | translate"
+    >
+      <ix-explorer-create-dataset></ix-explorer-create-dataset>
+    </ix-explorer>
+  </tn-form-section>
+</ix-form>

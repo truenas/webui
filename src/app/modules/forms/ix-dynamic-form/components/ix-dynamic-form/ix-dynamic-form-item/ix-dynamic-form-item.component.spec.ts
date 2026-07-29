@@ -4,6 +4,9 @@ import {
 } from '@angular/forms';
 import { TreeComponent } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import {
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { MockInstance } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -21,14 +24,11 @@ import {
 import { Option } from 'app/interfaces/option.interface';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxDynamicFormItemComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 
 const dynamicForm = new FormGroup({
   dict: new FormGroup({
@@ -145,7 +145,6 @@ describe('IxDynamicFormItemComponent', () => {
 
   beforeEach(() => {
     // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
-    MockInstance(IxInputComponent, 'inputElementRef', signal({} as ElementRef));
     MockInstance(IxCodeEditorComponent, 'inputArea', signal({} as ElementRef));
     MockInstance(IxExplorerComponent, 'tree', signal({} as TreeComponent));
   });
@@ -158,19 +157,19 @@ describe('IxDynamicFormItemComponent', () => {
           dynamicSchema: inputSchema,
         },
       });
-      expect(spectator.query('ix-input')).toBeVisible();
-      expect(spectator.query(IxInputComponent)!.required()).toBe(inputSchema.required);
-      expect(spectator.query(IxInputComponent)!.type()).toBe(inputSchema.inputType);
-      expect(spectator.query(IxInputComponent)!.tooltip()).toBe(inputSchema.tooltip);
+      expect(spectator.query('tn-input')).toBeVisible();
+      expect(spectator.query(TnInputComponent)!.required()).toBe(inputSchema.required);
+      expect(spectator.query(TnInputComponent)!.inputType()).toBe(InputType.Password);
+      expect(spectator.query(TnFormFieldComponent)!.tooltip()).toBe(inputSchema.tooltip);
 
-      expect(spectator.query('ix-input')).not.toBeHidden();
+      expect(spectator.query('tn-input')).not.toBeHidden();
       const field = spectator.component.dynamicForm().controls.input as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
       field.hidden$.next(true);
       spectator.detectComponentChanges();
-      expect(spectator.query('ix-input')).toBeHidden();
+      expect(spectator.query('tn-input')).toBeHidden();
     });
 
     it('renders an "ix-dynamic-form-item" when schema with "text" type is supplied', () => {
@@ -200,19 +199,18 @@ describe('IxDynamicFormItemComponent', () => {
           dynamicSchema: selectSchema,
         },
       });
-      expect(spectator.query('ix-select')).toBeVisible();
-      expect(spectator.query(IxSelectComponent)!.required()).toBe(selectSchema.required);
-      expect(spectator.query(IxSelectComponent)!.hideEmpty()).toBe(selectSchema.hideEmpty);
-      expect(spectator.query(IxSelectComponent)!.tooltip()).toBe(selectSchema.tooltip);
+      expect(spectator.query('tn-select')).toBeVisible();
+      expect(spectator.query(TnFormFieldComponent)!.required()).toBe(selectSchema.required);
+      expect(spectator.query(TnFormFieldComponent)!.tooltip()).toBe(selectSchema.tooltip);
 
-      expect(spectator.query('ix-select')).not.toBeHidden();
+      expect(spectator.query('tn-select')).not.toBeHidden();
       const field = spectator.component.dynamicForm()!.controls.select as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
       field.hidden$.next(true);
       spectator.detectComponentChanges();
-      expect(spectator.query('ix-select')).toBeHidden();
+      expect(spectator.query('tn-select')).toBeHidden();
     });
 
     it('renders an "ix-checkbox" when schema with "checkbox" type is supplied', () => {
@@ -222,18 +220,18 @@ describe('IxDynamicFormItemComponent', () => {
           dynamicSchema: checkboxSchema,
         },
       });
-      expect(spectator.query('ix-checkbox')).toBeVisible();
-      expect(spectator.query(IxCheckboxComponent)!.required()).toBe(checkboxSchema.required);
-      expect(spectator.query(IxCheckboxComponent)!.tooltip()).toBe(checkboxSchema.tooltip);
+      expect(spectator.query('tn-checkbox')).toBeVisible();
+      expect(spectator.query(TnCheckboxComponent)!.required()).toBe(checkboxSchema.required);
+      expect(spectator.query(TnFormFieldComponent)!.tooltip()).toBe(checkboxSchema.tooltip);
 
-      expect(spectator.query('ix-checkbox')).not.toBeHidden();
+      expect(spectator.query('tn-checkbox')).not.toBeHidden();
       const field = spectator.component.dynamicForm()!.controls.checkbox as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
       field.hidden$.next(true);
       spectator.detectComponentChanges();
-      expect(spectator.query('ix-checkbox')).toBeHidden();
+      expect(spectator.query('tn-checkbox')).toBeHidden();
     });
 
     it('renders an "ix-ip-input-with-netmask" when schema with "ipaddr" type is supplied', () => {

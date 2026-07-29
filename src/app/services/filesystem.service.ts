@@ -62,14 +62,17 @@ export class FilesystemService {
 
   private getTreeNodeProvider(options: ProviderOptions): TreeNodeProvider {
     return (node: TreeNode<ExplorerNodeData>) => {
+      // Return fresh copies of the shared root node constants. angular-tree-component caches loaded
+      // children on `node.data`, so handing out the singletons by reference would let a stale dataset
+      // list survive across form instances (only cleared by a full page reload). See NAS-141720.
       if (options.datasetsAndZvols && node.data.path.trim() === '/') {
-        return of([datasetsRootNode, zvolsRootNode]);
+        return of([{ ...datasetsRootNode }, { ...zvolsRootNode }]);
       }
       if (options.zvolsOnly && node.data.path.trim() === '/') {
-        return of([zvolsRootNode]);
+        return of([{ ...zvolsRootNode }]);
       }
       if (options.datasetsOnly && node.data.path.trim() === '/') {
-        return of([datasetsRootNode]);
+        return of([{ ...datasetsRootNode }]);
       }
       const typeFilter: [QueryFilter<FileRecord>?] = [];
       if (options.directoriesOnly) {

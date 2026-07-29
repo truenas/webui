@@ -2378,6 +2378,54 @@ describe('VDevsCardComponent', () => {
     });
   });
 
+  describe('empty optional VDEV state', () => {
+    const disk = (name: string): VDevItem => ({
+      type: 'DISK',
+      disk: name,
+      children: [],
+      stats: {
+        size: 1024 * GiB, timestamp: 0, read_errors: 0, write_errors: 0, checksum_errors: 0,
+      },
+    } as unknown as VDevItem);
+
+    const buildPool = (optionalVdevs: Partial<Pool['topology']>): Pool => ({
+      healthy: true,
+      name: 'pool1',
+      status: PoolStatus.Online,
+      topology: {
+        data: [disk('sda')],
+        special: [],
+        log: [],
+        cache: [],
+        spare: [],
+        dedup: [],
+        ...optionalVdevs,
+      } as Pool['topology'],
+    } as Pool);
+
+    it('shows the "Pool configuration complete" message only when no optional VDEVs exist', () => {
+      spectator = createComponent({
+        props: {
+          poolState: buildPool({}),
+          disks: [],
+        },
+      });
+
+      expect(spectator.query('.empty-vdev-state')).toExist();
+    });
+
+    it('does not show the "Pool configuration complete" message when at least one optional VDEV exists', () => {
+      spectator = createComponent({
+        props: {
+          poolState: buildPool({ log: [disk('sdb')] }),
+          disks: [],
+        },
+      });
+
+      expect(spectator.query('.empty-vdev-state')).not.toExist();
+    });
+  });
+
   describe('tier labels', () => {
     const createTierComponent = createComponentFactory({
       component: VDevsCardComponent,

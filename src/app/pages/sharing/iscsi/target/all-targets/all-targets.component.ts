@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, viewChild, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
 import {
   filter,
   tap,
@@ -12,8 +11,7 @@ import { Role } from 'app/enums/role.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TargetDetailsComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/target-details.component';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
@@ -31,14 +29,14 @@ import { IscsiService } from 'app/services/iscsi.service';
     MasterDetailViewComponent,
     TargetDetailsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
   ],
 })
 export class AllTargetsComponent implements OnInit {
   private iscsiService = inject(IscsiService);
-  private matDialog = inject(MatDialog);
-  private slideIn = inject(SlideIn);
+  private tnDialog = inject(TnDialog);
+  private formPanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
@@ -91,9 +89,9 @@ export class AllTargetsComponent implements OnInit {
   }
 
   deleteTarget(target: IscsiTarget): void {
-    this.matDialog
+    this.tnDialog
       .open(DeleteTargetDialog, { data: target, width: '600px' })
-      .afterClosed()
+      .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.dataProvider.load();
@@ -102,12 +100,13 @@ export class AllTargetsComponent implements OnInit {
   }
 
   editTarget(target: IscsiTarget): void {
-    this.slideIn.open(
-      TargetFormComponent,
-      { data: target, wide: true },
-    ).onSuccess((response) => {
-      this.dataProvider.load();
-      this.dataProvider.expandedRow = response;
-    }, this.destroyRef);
+    // The updated target's expand + reload is driven by `iscsiService.refreshData(...)` (emitted
+    // from the form's onSuccess) which the `listenForDataRefresh` subscription handles by reloading
+    // the dataProvider — so no explicit reload here (it would double-load).
+    this.formPanel.open(TargetFormComponent, {
+      title: this.translate.instant('Edit ISCSI Target'),
+      wide: true,
+      inputs: { targetData: target },
+    });
   }
 }

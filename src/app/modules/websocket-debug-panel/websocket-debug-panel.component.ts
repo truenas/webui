@@ -1,12 +1,13 @@
-import { AsyncPipe, DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, NgZone, OnDestroy, OnInit, Renderer2,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatTabsModule } from '@angular/material/tabs';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import {
+  TnIconButtonComponent, TnTabsComponent, TnTabComponent, TnTabPanelComponent,
+} from '@truenas/ui-components';
 import { map } from 'rxjs/operators';
 import { EnclosureMockService } from 'app/services/enclosure-mock.service';
 import { AlertClassesTabComponent } from './components/alert-classes-tab/alert-classes-tab.component';
@@ -33,8 +34,9 @@ const retryIntervalMs = 100;
   selector: 'ix-websocket-debug-panel',
   standalone: true,
   imports: [
-    AsyncPipe,
-    MatTabsModule,
+    TnTabsComponent,
+    TnTabComponent,
+    TnTabPanelComponent,
     TnIconButtonComponent,
     WebSocketTabComponent,
     MockConfigurationsTabComponent,
@@ -57,17 +59,18 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   enclosureMockService = inject(EnclosureMockService);
   private destroyRef = inject(DestroyRef);
 
-  readonly isPanelOpen$ = this.store$.select(selectIsPanelOpen);
-  readonly activeTab$ = this.store$.select(selectActiveTab);
+  private readonly isPanelOpen$ = this.store$.select(selectIsPanelOpen);
+  protected readonly isPanelOpen = toSignal(this.isPanelOpen$, { initialValue: false });
+  private readonly activeTab$ = this.store$.select(selectActiveTab);
   readonly hasActiveMocks$ = this.store$.select(selectHasActiveMocks);
   private readonly tabIndexMap = [tabs.WEBSOCKET, tabs.MOCK_CONFIG, tabs.ENCLOSURE_MOCK, tabs.ALERT_CLASSES];
 
-  readonly selectedTabIndex$ = this.activeTab$.pipe(
-    map((tab) => Math.max(0, this.tabIndexMap.indexOf(tab))),
+  protected readonly selectedTabIndex = toSignal(
+    this.activeTab$.pipe(map((tab) => Math.max(0, this.tabIndexMap.indexOf(tab)))),
+    { initialValue: 0 },
   );
 
   protected panelWidth = panelWidthDefault;
-  private isPanelOpen = false;
   private retryTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   ngOnInit(): void {
@@ -94,7 +97,6 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
 
     // Manage body margin when panel opens/closes
     this.isPanelOpen$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isOpen) => {
-      this.isPanelOpen = isOpen;
       this.updateAdminLayoutMargin(isOpen);
     });
   }
@@ -178,7 +180,7 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
       document.documentElement.style.setProperty('--debug-panel-width', `${this.panelWidth}px`);
 
       // Update admin layout margin if panel is open
-      if (this.isPanelOpen) {
+      if (this.isPanelOpen()) {
         this.updateAdminLayoutMargin(true);
       }
     };

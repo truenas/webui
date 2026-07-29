@@ -1,34 +1,38 @@
 <form [formGroup]="form">
-  <ix-checkbox
-    formControlName="hide_from_msr"
-    [label]="'Hide from MSR' | translate"
-  ></ix-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      formControlName="hide_from_msr"
+      [label]="'Hide from MSR' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-checkbox
-    formControlName="ensure_display_device"
-    [label]="'Ensure Display Device' | translate"
-    [tooltip]="helptext.ensure_display_device.tooltip | translate"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="helptext.ensure_display_device.tooltip | translate">
+    <tn-checkbox
+      formControlName="ensure_display_device"
+      [label]="'Ensure Display Device' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-select
-    formControlName="gpus"
-    [label]="'GPUs' | translate"
-    [options]="gpuOptions$"
-    [multiple]="true"
-  ></ix-select>
+  <tn-form-field [label]="'GPUs' | translate">
+    <tn-select
+      formControlName="gpus"
+      [options]="(gpuOptions$ | async) ?? []"
+      [multiple]="true"
+    ></tn-select>
+  </tn-form-field>
 
   <ix-form-actions>
-    <button
-      mat-button
-      matStepperPrevious
-      ixTest="back"
-    >{{ 'Back' | translate }}</button>
-    <button
-      mat-button
-      matStepperNext
+    <tn-button
+      tnStepperPrevious
+      [testId]="'back'"
+      [label]="'Back' | translate"
+    ></tn-button>
+    <tn-button
+      tnStepperNext
       color="primary"
-      ixTest="next"
+      [testId]="'next'"
+      [label]="'Next' | translate"
       [disabled]="form.invalid"
-    >{{ 'Next' | translate }}</button>
+    ></tn-button>
   </ix-form-actions>
 </form>

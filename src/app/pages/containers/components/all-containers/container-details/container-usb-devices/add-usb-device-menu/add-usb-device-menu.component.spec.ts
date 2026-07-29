@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerDeviceType, ContainerType } from 'app/enums/container.enum';
@@ -79,19 +79,21 @@ describe('AddUsbDeviceMenuComponent', () => {
     });
 
     it('shows available USB devices that have not been already added to this system', async () => {
-      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-      await menu.open();
+      const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+      await trigger.click();
 
-      const menuItems = await menu.getItems();
-      expect(menuItems).toHaveLength(1);
-      expect(await menuItems[0].getText()).toContain('Card Reader');
+      const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+      const itemLabels = await menu.getItemLabels();
+      expect(itemLabels).toHaveLength(1);
+      expect(itemLabels[0]).toContain('Card Reader');
     });
 
     it('adds a usb device when it is selected', async () => {
-      const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-      await menu.open();
+      const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+      await trigger.click();
 
-      await menu.clickItem({ text: 'Card Reader' });
+      const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+      await menu.clickItem({ label: 'Card Reader' });
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
         container: 123,

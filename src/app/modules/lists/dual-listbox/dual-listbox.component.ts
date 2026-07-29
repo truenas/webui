@@ -13,12 +13,10 @@ import {
   model,
   signal,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
-import { MatListModule } from '@angular/material/list';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TnIconButtonComponent, TnIconComponent, TnListComponent, TnListIconDirective, TnListItemComponent,
+} from '@truenas/ui-components';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
 
 interface ListState<T> {
@@ -37,10 +35,10 @@ interface ListState<T> {
     NgStyle,
     DragDropModule,
     TnIconComponent,
-    MatIconButton,
-    TestDirective,
-    MatTooltip,
-    MatListModule,
+    TnIconButtonComponent,
+    TnListComponent,
+    TnListItemComponent,
+    TnListIconDirective,
     TranslateModule,
   ],
 })

@@ -11,7 +11,7 @@
       [dense]="true"
       [ariaLabel]="('Open user menu for' | translate) + ' ' + user.pw_name"
       [tooltip]="tooltips.settings | translate"
-      [matMenuTriggerFor]="userMenu"
+      [tnMenuTriggerFor]="userMenu"
       [ixUiSearch]="searchableElements.elements.userMenu"
     >
       @if (user.pw_name) {
@@ -23,80 +23,65 @@
       }
     </tn-icon-button>
 
-    <mat-menu #userMenu="matMenu">
+    <tn-menu #userMenu>
       @if (user.account_attributes?.includes(AccountAttribute.Local)) {
-        <button
-          name="settings-change-password"
-          mat-menu-item
-          ixTest="change-password"
+        <tn-menu-item
+          icon="dialpad"
+          iconLibrary="mdi"
+          [testId]="'change-password'"
+          [label]="'Change Password' | translate"
           [ixUiSearch]="searchableElements.elements.changePassword"
-          (click)="openChangePasswordDialog()"
-        >
-          <tn-icon size="lg" name="dialpad" library="mdi"></tn-icon>
-          {{ 'Change Password' | translate }}
-        </button>
+          (itemClick)="openChangePasswordDialog()"
+        ></tn-menu-item>
       }
 
       @if (isTwoFactorEnabledGlobally()) {
-        <button
-          name="settings-2fa"
-          mat-menu-item
-          ixTest="2fa"
-          (click)="onTwoFactorAuth()"
-        >
-          <tn-icon size="lg" name="tn-two-factor-auth"></tn-icon>
-          {{ 'Two-Factor Authentication' | translate }}
-        </button>
+        <tn-menu-item
+          icon="tn-two-factor-auth"
+          [testId]="'2-fa'"
+          [label]="'Two-Factor Authentication' | translate"
+          (itemClick)="onTwoFactorAuth()"
+        ></tn-menu-item>
       }
 
-      <button
-        name="settings-preferences"
-        mat-menu-item
-        ixTest="preferences"
+      <tn-menu-item
+        icon="cog"
+        iconLibrary="mdi"
+        [testId]="'preferences'"
+        [label]="'Preferences' | translate"
         [ixUiSearch]="searchableElements.elements.preferences"
-        (click)="openPreferencesForm()"
-      >
-        <tn-icon size="lg" name="cog" library="mdi"></tn-icon>
-        {{ 'Preferences' | translate }}
-      </button>
+        (itemClick)="openPreferencesForm()"
+      ></tn-menu-item>
 
-      <a
-        name="settings-api"
-        ixTest="api-keys"
-        mat-menu-item
-        [routerLink]="['/credentials/users/api-keys']"
-        [queryParams]="{ userName: user.pw_name }"
+      <tn-menu-item
+        icon="laptop"
+        iconLibrary="mdi"
+        [testId]="'api-keys'"
+        [label]="'My API Keys' | translate"
         [ixUiSearch]="searchableElements.elements.myApiKeys"
-      >
-        <tn-icon size="lg" name="laptop" library="mdi"></tn-icon>
-        {{ 'My API Keys' | translate }}
-      </a>
+        (itemClick)="openMyApiKeys()"
+      ></tn-menu-item>
 
-      <a
-        name="settings-guide"
-        mat-menu-item
-        href="https://www.truenas.com/docs/"
-        target="_blank"
-        ixTest="guide"
+      <tn-menu-item
+        icon="book-multiple"
+        iconLibrary="mdi"
+        [testId]="'guide'"
+        [label]="'Guide' | translate"
         [ixUiSearch]="searchableElements.elements.guide"
-      >
-        <tn-icon size="lg" name="book-multiple" library="mdi"></tn-icon>
-        {{ 'Guide' | translate }}
-      </a>
+        (itemClick)="openGuide()"
+      ></tn-menu-item>
 
-      <!-- Inline styles because mat-menu contents are rendered outside of the component -->
-      <mat-divider style="margin: 5px 0;"></mat-divider>
-
-      <button
-        name="power-log-out"
-        mat-menu-item
-        ixTest="log-out"
+      <!-- TEMP: the divider that separated Log Out is gone — tn-menu has no
+           separator support for projected <tn-menu-item> entries (only for the
+           [items] array input). Restore once the library ships one. -->
+      <tn-menu-item
+        icon="logout"
+        iconLibrary="mdi"
+        [testId]="'log-out'"
+        [label]="'Log Out' | translate"
         [ixUiSearch]="searchableElements.elements.logOut"
-        (click)="onSignOut()"
-      >
-        <tn-icon size="lg" name="logout" library="mdi"></tn-icon>
-        {{ 'Log Out' | translate }}
-      </button>
-    </mat-menu>
+        (itemClick)="onSignOut()"
+      ></tn-menu-item>
+    </tn-menu>
   </div>
 }

@@ -11,14 +11,14 @@
   <div
     class="tree-container"
   >
-    <ix-tree-view
-      [ixDataSource]="dataSource"
-      [ixTreeControl]="treeControl"
+    <tn-tree
+      [dataSource]="dataSource"
+      [treeControl]="treeControl"
     >
-      <ix-tree-node
-        *treeNodeDef="let disk; dataSource: dataSource"
-        treeNodeToggle
-        routerLinkActive="selected"
+      <tn-nested-tree-node
+        *cdkTreeNodeDef="let disk"
+        hideToggle
+        (click)="$event.stopPropagation()"
       >
         <div
           class="unused-disk"
@@ -42,14 +42,19 @@
             [disk]="asDisk(disk)"
           ></ix-disk-info>
         </div>
-      </ix-tree-node>
+      </tn-nested-tree-node>
 
-      <ix-nested-tree-node
-        *treeNodeDef="let group; dataSource: dataSource; when: isGroup"
-        [treeNodeDefDataSource]="dataSource"
+      <!-- hideToggle: the group row draws its own chevron, so the whole row toggles.
+           Enter/Space mirror the click for keyboard users focused on the treeitem host
+           (the library's built-in keyboard toggle is suppressed with the button). -->
+      <tn-nested-tree-node
+        *cdkTreeNodeDef="let group; when: isGroup"
+        hideToggle
+        (click)="toggleGroup(group)"
+        (keydown.enter)="toggleGroup(group)"
+        (keydown.space)="$event.preventDefault(); toggleGroup(group)"
       >
         <div
-          treeNodeToggle
           class="group-row"
           [class.group-row-empty]="!group.children.length"
         >
@@ -63,11 +68,9 @@
           }
         </div>
 
-        @if (isExpanded(group)) {
-          <ng-container treeNodeOutlet></ng-container>
-        }
-      </ix-nested-tree-node>
-    </ix-tree-view>
+        <ng-container slot="children" tnTreeNodeOutlet></ng-container>
+      </tn-nested-tree-node>
+    </tn-tree>
     @if (!dataSource.data.length) {
       <div class="empty-tree">
         {{ 'No Unassigned Disks' | translate }}
@@ -75,4 +78,3 @@
     }
   </div>
 </div>
-

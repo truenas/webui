@@ -1,17 +1,17 @@
 import { ComponentHarness, parallel } from '@angular/cdk/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 
 export class SchedulerModalHarness extends ComponentHarness {
   static readonly hostSelector = 'ix-scheduler-modal';
 
-  getMinutesInput = this.locatorFor(IxInputHarness.with({ label: 'Minutes' }));
-  getHoursInput = this.locatorFor(IxInputHarness.with({ label: 'Hours' }));
-  getDaysInput = this.locatorFor(IxInputHarness.with({ label: 'Days of Month' }));
-  getMonthCheckboxes = this.locatorForAll(MatCheckboxHarness.with({ ancestor: '.months' }));
-  getDaysOfWeekCheckboxes = this.locatorForAll(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
+  getMinutesInput = this.locatorFor(TnInputHarness.with({ name: 'minutes' }));
+  getHoursInput = this.locatorFor(TnInputHarness.with({ name: 'hours' }));
+  getDaysInput = this.locatorFor(TnInputHarness.with({ name: 'days' }));
+  getMonthCheckboxes = this.locatorForAll(TnCheckboxHarness.with({ ancestor: '.months' }));
+  getDaysOfWeekCheckboxes = this.locatorForAll(TnCheckboxHarness.with({ ancestor: '.weekdays' }));
 
   async setMinutes(minutes: string): Promise<void> {
     const input = await this.getMinutesInput();
@@ -48,7 +48,7 @@ export class SchedulerModalHarness extends ComponentHarness {
   }
 
   async pressDone(): Promise<void> {
-    const doneButton = await this.locatorFor(MatButtonHarness.with({ text: 'Done' }))();
+    const doneButton = await this.locatorFor(TnButtonHarness.with({ label: 'Done' }))();
     await doneButton.click();
   }
 }

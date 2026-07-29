@@ -1,27 +1,25 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, OnInit, inject, input,
+} from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import {
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
@@ -31,43 +29,31 @@ import { IscsiService } from 'app/services/iscsi.service';
   styleUrls: ['./portal-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    IxSelectComponent,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     IxListComponent,
     IxListItemComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
+    AsyncPipe,
   ],
 })
-export class PortalFormComponent implements OnInit {
+export class PortalFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   protected api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
-  private errorHandler = inject(FormErrorHandlerService);
   protected iscsiService = inject(IscsiService);
-  private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<IscsiPortal | undefined, boolean>>(SlideInRef);
 
-  protected isLoading = signal(false);
+  /** Edit data supplied by the `<tn-side-panel>` host. */
+  readonly portalData = input<IscsiPortal | undefined>(undefined);
+
   listen: IscsiInterface[] = [];
 
   get isNew(): boolean {
     return !this.editingIscsiPortal;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add Portal')
-      : this.translate.instant('Edit Portal');
   }
 
   form = this.fb.group({
@@ -96,14 +82,10 @@ export class PortalFormComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingIscsiPortal = this.slideInRef.getData();
-  }
-
   ngOnInit(): void {
+    // Edit data arrives via the `portalData` input from the side-panel host.
+    this.editingIscsiPortal = this.portalData();
+
     if (this.editingIscsiPortal) {
       this.setupForm(this.editingIscsiPortal);
     }
@@ -132,30 +114,22 @@ export class PortalFormComponent implements OnInit {
     this.listen.splice(index, 1);
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const values = this.form.value;
     const params = {
       comment: values.comment,
       listen: values.ip.map((ip) => ({ ip })) as IscsiInterface[],
     };
 
-    this.isLoading.set(true);
-    let request$: Observable<unknown>;
-    if (this.editingIscsiPortal) {
-      request$ = this.api.call('iscsi.portal.update', [this.editingIscsiPortal.id, params]);
-    } else {
-      request$ = this.api.call('iscsi.portal.create', [params]);
-    }
+    const request$: Observable<unknown> = this.editingIscsiPortal
+      ? this.api.call('iscsi.portal.update', [this.editingIscsiPortal.id, params])
+      : this.api.call('iscsi.portal.create', [params]);
 
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.slideInRef.close({ response: true });
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    return {
+      request$,
+      successMessage: this.isNew
+        ? this.translate.instant('Portal added')
+        : this.translate.instant('Portal updated'),
+    };
+  };
 }

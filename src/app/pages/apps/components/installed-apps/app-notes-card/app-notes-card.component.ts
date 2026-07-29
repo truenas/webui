@@ -1,11 +1,10 @@
 import {
   ChangeDetectionStrategy, Component, inject, input,
 } from '@angular/core';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconButtonComponent } from '@truenas/ui-components';
+import {
+  TnCardComponent, TnCardHeaderDirective, TnDialog, TnIconButtonComponent,
+} from '@truenas/ui-components';
 import { MarkdownModule } from 'ngx-markdown';
 import { App } from 'app/interfaces/app.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
@@ -20,10 +19,8 @@ import { appNotesCardAnchorId } from 'app/pages/apps/components/installed-apps/i
   styleUrls: ['./app-notes-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
+    TnCardComponent,
+    TnCardHeaderDirective,
     CardExpandCollapseComponent,
     TranslateModule,
     MarkdownModule,

@@ -1,19 +1,24 @@
+import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { Injectable, inject } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TnDialog } from '@truenas/ui-components';
 import {
   defer, EMPTY, finalize, MonoTypeOperatorFunction, Observable, Subscription,
 } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { AppLoaderComponent } from 'app/modules/loader/components/app-loader/app-loader.component';
 import { FocusService } from 'app/services/focus.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoaderService {
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
+  // The cdk `Dialog` is the underlying service `TnDialog` wraps; we inject it
+  // directly to read `openDialogs` for focus restoration, which `TnDialog` does
+  // not expose. Mirrors the pattern in DialogService.
+  private dialog = inject(Dialog);
   private focusService = inject(FocusService);
 
-  dialogRef: MatDialogRef<AppLoaderComponent> | null = null;
+  dialogRef: DialogRef<unknown, AppLoaderComponent> | null = null;
   private onBeforeClose: (() => Observable<boolean>) | null = null;
   private handlersSetup = false;
   private keydownSubscription: Subscription | null = null;
@@ -31,13 +36,21 @@ export class LoaderService {
     });
   }
 
-  open(title: string = T('Please wait')): Observable<boolean> {
+  open(title: string = T('Please wait')): Observable<void> {
     if (this.dialogRef !== null) {
       return EMPTY;
     }
 
-    this.dialogRef = this.matDialog.open(AppLoaderComponent, {
-      disableClose: this.onBeforeClose !== null,
+    this.dialogRef = this.tnDialog.open<AppLoaderComponent>(AppLoaderComponent, {
+      // The loader must never be dismissed by the user (backdrop click / ESC);
+      // it only closes programmatically when loading finishes. The optional
+      // confirmation flow listens to keydownEvents/backdropClick manually,
+      // which still emit while disableClose is true.
+      disableClose: true,
+      // `TnDialog` prepends its `tn-dialog-panel` class (which supplies the
+      // surface — background, border-radius, box-shadow); `app-loader-overlay`
+      // remains for the loader-specific overlay tweaks in _tn-styles.scss.
+      panelClass: 'app-loader-overlay',
       width: '200px',
       height: '200px',
     });
@@ -51,7 +64,7 @@ export class LoaderService {
       this.setupConfirmationHandlers();
     }
 
-    return this.dialogRef.afterClosed();
+    return this.dialogRef.closed as Observable<void>;
   }
 
   close(): void {
@@ -105,9 +118,10 @@ export class LoaderService {
       this.backdropSubscription = null;
     }
 
-    // If dialog is open, restore normal close behavior
+    // The loader still must not be user-dismissible once the confirmation
+    // handler is removed; it only closes programmatically.
     if (this.dialogRef) {
-      this.dialogRef.disableClose = false;
+      this.dialogRef.disableClose = true;
     }
   }
 
@@ -118,14 +132,15 @@ export class LoaderService {
 
     this.handlersSetup = true;
 
-    // Since disableClose is true, we need to manually listen for ESC and backdrop clicks
-    this.keydownSubscription = this.dialogRef.keydownEvents().pipe(
+    // Since disableClose is true, we need to manually listen for ESC and backdrop clicks.
+    // On cdk DialogRef these are observable properties (not methods like on MatDialogRef).
+    this.keydownSubscription = this.dialogRef.keydownEvents.pipe(
       filter((event) => event.key === 'Escape'),
     ).subscribe(() => {
       this.handleConfirmationClose();
     });
 
-    this.backdropSubscription = this.dialogRef.backdropClick().subscribe(() => {
+    this.backdropSubscription = this.dialogRef.backdropClick.subscribe(() => {
       this.handleConfirmationClose();
     });
   }
@@ -133,7 +148,9 @@ export class LoaderService {
   private handleConfirmationClose(): void {
     // Check if handler is still active (not removed)
     if (this.onBeforeClose && this.handlersSetup) {
-      this.onBeforeClose().subscribe((shouldClose) => {
+      // take(1): the confirmation is one-shot, so a caller returning a
+      // long-lived or multi-emitting observable can't leak or fire close() twice.
+      this.onBeforeClose().pipe(take(1)).subscribe((shouldClose) => {
         if (shouldClose) {
           this.close();
         }
@@ -151,7 +168,7 @@ export class LoaderService {
   }
 
   private tryToRestoreFocusToThePreviousDialog(): void {
-    const previousDialogs = this.matDialog.openDialogs.filter((dialog) => dialog.id !== this.dialogRef?.id);
+    const previousDialogs = this.dialog.openDialogs.filter((dialog) => dialog.id !== this.dialogRef?.id);
     const previousDialogId = previousDialogs[previousDialogs.length - 1]?.id;
 
     if (previousDialogId) {

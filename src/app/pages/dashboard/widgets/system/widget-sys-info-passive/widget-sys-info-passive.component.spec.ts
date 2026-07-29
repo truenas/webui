@@ -1,6 +1,3 @@
-import { HarnessLoader, parallel } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatListItemHarness } from '@angular/material/list/testing';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -25,7 +22,6 @@ import {
 
 describe('WidgetSysInfoPassiveComponent', () => {
   let spectator: Spectator<WidgetSysInfoPassiveComponent>;
-  let loader: HarnessLoader;
   let store$: MockStore;
   const refreshInterval$ = new BehaviorSubject<number>(0);
 
@@ -110,7 +106,6 @@ describe('WidgetSysInfoPassiveComponent', () => {
           }),
         ],
       });
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       store$ = spectator.inject(MockStore);
     });
 
@@ -118,14 +113,15 @@ describe('WidgetSysInfoPassiveComponent', () => {
       expect(spectator.query('.header h3')).toHaveText('System Information standby');
     });
 
-    it('checks system info rows', async () => {
-      const matListItems = await loader.getAllHarnesses(MatListItemHarness);
-      const items = await parallel(() => matListItems.map((item) => item.getFullText()));
+    it('checks system info rows', () => {
+      // TODO: replace with TnListItemHarness once @truenas/ui-components ships one.
+      const items = spectator.queryAll('tn-list-item')
+        .map((item) => item.textContent!.replace(/\s+/g, ' ').trim());
       expect(items).toEqual([
         'Platform: TRUENAS-M40-HA',
         'Edition: Enterprise',
         'Version: 25.10.0-MASTER-20250126-184805',
-        'Support License: Gold Contract  Expires on 2025-01-01',
+        'Support License: Gold Contract Expires on 2025-01-01',
         'System Serial: AA-00002',
         'Uptime: 1 minute 17 seconds as of 10:34',
       ]);
@@ -183,7 +179,6 @@ describe('WidgetSysInfoPassiveComponent', () => {
           }),
         ],
       });
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       store$ = spectator.inject(MockStore);
     });
 

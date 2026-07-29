@@ -1,10 +1,15 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, OnInit, output, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperPrevious } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import {
+  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnRadioComponent, TnSelectComponent, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
+import {
+  map, Observable, of, startWith,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { LifetimeUnit, lifetimeUnitNames } from 'app/enums/lifetime-unit.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
@@ -14,14 +19,9 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-replication-when',
@@ -29,16 +29,18 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./replication-when.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxRadioGroupComponent,
+    TnFormFieldComponent,
+    TnFormSectionComponent,
+    TnRadioComponent,
+    TnCheckboxComponent,
+    TnInputComponent,
+    TnSelectComponent,
     SchedulerComponent,
-    IxCheckboxComponent,
-    IxInputComponent,
-    IxSelectComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperPrevious,
-    TestDirective,
+    TnButtonComponent,
+    TnStepperPreviousDirective,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -65,7 +67,14 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
     lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
   });
 
+  // Drives the stepper's linear gating (replaces mat's [stepControl]).
+  readonly completed = toSignal(
+    this.form.statusChanges.pipe(startWith(this.form.status), map(() => this.form.valid)),
+    { initialValue: this.form.valid },
+  );
+
   readonly helptext = helptextReplicationWizard;
+  protected readonly InputType = InputType;
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   scheduleMethodOptions$ = of([

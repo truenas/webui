@@ -3,10 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { FormControl, NgControl } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -61,9 +61,9 @@ describe('ExplorerCreateDatasetComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of({ mountpoint: '/mnt/test' }),
+          closed: of({ mountpoint: '/mnt/test' }),
         })),
       }),
       {
@@ -108,7 +108,7 @@ describe('ExplorerCreateDatasetComponent', () => {
 
     await createButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CreateDatasetDialog, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(CreateDatasetDialog, {
       data: {
         parentId: 'test',
         dataset: datasetProps,
@@ -193,14 +193,14 @@ describe('ExplorerCreateDatasetComponent', () => {
       fakeControl.control.setValue(['/mnt/test']);
       spectator.detectChanges();
 
-      spectator.inject<MatDialog>(MatDialog).open = jest.fn(() => ({
-        afterClosed: () => of({ mountpoint: '/mnt/test/new' }),
-      })) as unknown as MatDialog['open'];
+      spectator.inject<TnDialog>(TnDialog).open = jest.fn(() => ({
+        closed: of({ mountpoint: '/mnt/test/new' }),
+      })) as unknown as TnDialog['open'];
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
       await createButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CreateDatasetDialog, {
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(CreateDatasetDialog, {
         data: {
           parentId: 'test',
           dataset: datasetProps,

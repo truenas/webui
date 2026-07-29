@@ -7,7 +7,8 @@
   width: 100%;
 }
 
-mat-card {
+.card {
+  display: block;
   height: 100%;
   width: 100%;
 
@@ -55,4 +56,9 @@ mat-card {
       }
     }
   }
+}
+
+// Replicates the legacy global "mat-card-content > div" padding from _material-reduction.scss.
+.card-content > div {
+  padding: 16px;
 }

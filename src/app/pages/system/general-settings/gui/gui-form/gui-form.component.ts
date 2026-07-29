@@ -1,31 +1,29 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject, output, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
 import {
-  filter, switchMap, take, tap,
-} from 'rxjs/operators';
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent, InputType,
+} from '@truenas/ui-components';
+import { of } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  FormSubmitEvent,
+  IxFormComponent,
+  SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -40,18 +38,15 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   templateUrl: './gui-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    AsyncPipe,
+    IxFormComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     WithManageCertificatesLinkComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
-    FormActionsComponent,
-    MatButton,
-    TestDirective,
+    TnInputComponent,
+    TnCheckboxComponent,
     TranslateModule,
   ],
 })
@@ -64,28 +59,32 @@ export class GuiFormComponent implements OnInit {
   private dialog = inject(DialogService);
   private loader = inject(LoaderService);
   private translate = inject(TranslateService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
+
+  readonly closed = output<boolean>();
+
+  private readonly ixForm = viewChild(IxFormComponent);
+
+  protected InputType = InputType;
 
   protected isFormLoading = signal(true);
   configData!: SystemGeneralConfig;
   protected isStigMode = signal(false);
 
   formGroup = this.fb.nonNullable.group({
-    // Stored as string because ix-select works with string values; converted to number on submit via parseInt.
+    // Stored as string because the select works with string values; converted to number on submit via parseInt.
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[]],
     ui_v6address: [[] as string[]],
-    ui_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
-    ui_httpsport: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_port: [null as number | null, [Validators.min(1), Validators.max(65535)]],
+    ui_httpsport: [null as number | null, [Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
     usage_collection: [false],
-    ui_consolemsg: [false, [Validators.required]],
+    ui_consolemsg: [false],
   });
 
   options = {
@@ -106,10 +105,6 @@ export class GuiFormComponent implements OnInit {
   });
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.formGroup.dirty);
-    });
-
     this.loadCurrentValues();
   }
 
@@ -127,18 +122,21 @@ export class GuiFormComponent implements OnInit {
     });
   }
 
-  private replaceHrefWhenWsConnected(href: string): void {
-    this.wsStatus.isConnected$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isConnected) => {
-      if (isConnected) {
-        this.loader.close();
-        this.window.location.replace(href);
-      }
-    });
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
   }
 
-  protected onSubmit(): void {
-    const values = this.formGroup.getRawValue();
-    const params = {
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  hasUnsavedChanges(): boolean {
+    return this.ixForm()?.hasUnsavedChanges() ?? false;
+  }
+
+  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
+    const values = event.allValues as ReturnType<typeof this.formGroup.getRawValue>;
+    const params: SystemGeneralConfigUpdate = {
       ...values,
       ui_certificate: parseInt(values.ui_certificate),
     };
@@ -147,36 +145,24 @@ export class GuiFormComponent implements OnInit {
       delete params.usage_collection;
     }
 
-    (
-      !this.configData.ui_httpsredirect && values.ui_httpsredirect
-        ? this.dialog.confirm({
-            title: this.translate.instant(helptext.redirectConfirmTitle),
-            message: this.translate.instant(helptext.redirectConfirmMessage),
-            hideCheckbox: true,
-          })
-        : of(true)
-    ).pipe(
-      filter(Boolean),
-      tap(() => {
-        // prevent to revert momentarily to previous value due to `guiFormSubmitted`
-        this.formGroup.controls.ui_httpsredirect.setValue(values.ui_httpsredirect);
-      }),
-      switchMap(() => {
-        this.isFormLoading.set(true);
-        return this.api.call('system.general.update', [params]);
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.isFormLoading.set(false);
-        this.handleServiceRestart(params);
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.formErrorHandler.handleValidationErrors(error, this.formGroup);
-      },
-    });
-  }
+    const redirectConfirm$ = !this.configData.ui_httpsredirect && values.ui_httpsredirect
+      ? this.dialog.confirm({
+          title: this.translate.instant(helptext.redirectConfirmTitle),
+          message: this.translate.instant(helptext.redirectConfirmMessage),
+          hideCheckbox: true,
+        })
+      : of(true);
+
+    return {
+      request$: redirectConfirm$.pipe(
+        filter(Boolean),
+        switchMap(() => this.api.call('system.general.update', [params])),
+      ),
+      successMessage: this.translate.instant('Settings saved.'),
+      onSuccess: () => this.handleServiceRestart(params),
+      closeWith: () => true,
+    };
+  };
 
   private getServiceRestartChanges(
     current: SystemGeneralConfig,
@@ -205,58 +191,61 @@ export class GuiFormComponent implements OnInit {
     return { isRequired, httpPortChanged, httpsPortChanged };
   }
 
-  protected handleServiceRestart(changed: SystemGeneralConfigUpdate): void {
+  private handleServiceRestart(changed: SystemGeneralConfigUpdate): void {
     const current: SystemGeneralConfig = { ...this.configData };
     const { isRequired: isServiceRestartRequired, httpPortChanged, httpsPortChanged }
       = this.getServiceRestartChanges(current, changed);
 
     this.store$.dispatch(generalConfigUpdated());
 
-    if (isServiceRestartRequired) {
-      this.dialog.confirm({
-        title: this.translate.instant(helptext.restartTitle),
-        message: this.translate.instant(helptext.restartMessage),
-      }).pipe(
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe((confirmed) => {
-        this.slideInRef.close({ response: true });
-
-        if (!confirmed) {
-          return;
-        }
-
-        const hostname = this.window.location.hostname;
-        const protocol = this.window.location.protocol;
-        let port = this.window.location.port;
-        let href = this.window.location.href;
-
-        if (httpPortChanged && protocol === 'http:') {
-          port = String(changed.ui_port);
-        } else if (httpsPortChanged && protocol === 'https:') {
-          port = String(changed.ui_httpsport);
-        }
-
-        href = protocol + '//' + hostname + ':' + port + this.window.location.pathname;
-
-        this.loader.open();
-        this.wsManager.prepareShutdown(); // not really shutting down, just stop websocket detection temporarily
-        this.api.call('system.general.ui_restart').pipe(
-          takeUntilDestroyed(this.destroyRef),
-        ).subscribe({
-          next: () => {
-            this.wsManager.setupConnectionUrl(protocol, hostname + ':' + port);
-            this.wsManager.reconnect();
-            this.replaceHrefWhenWsConnected(href);
-          },
-          error: (error: unknown) => {
-            this.loader.close();
-            this.errorHandler.showErrorModal(error);
-          },
-        });
-      });
-    } else {
-      this.slideInRef.close({ response: true });
+    if (!isServiceRestartRequired) {
+      return;
     }
+
+    this.dialog.confirm({
+      title: this.translate.instant(helptext.restartTitle),
+      message: this.translate.instant(helptext.restartMessage),
+    }).subscribe((confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+
+      const hostname = this.window.location.hostname;
+      const protocol = this.window.location.protocol;
+      let port = this.window.location.port;
+      let href = this.window.location.href;
+
+      if (httpPortChanged && protocol === 'http:') {
+        port = String(changed.ui_port);
+      } else if (httpsPortChanged && protocol === 'https:') {
+        port = String(changed.ui_httpsport);
+      }
+
+      href = protocol + '//' + hostname + ':' + port + this.window.location.pathname;
+
+      this.loader.open();
+      this.wsManager.prepareShutdown();
+      this.api.call('system.general.ui_restart').subscribe({
+        next: () => {
+          this.wsManager.setupConnectionUrl(protocol, hostname + ':' + port);
+          this.wsManager.reconnect();
+          this.replaceHrefWhenWsConnected(href);
+        },
+        error: (error: unknown) => {
+          this.loader.close();
+          this.errorHandler.showErrorModal(error);
+        },
+      });
+    });
+  }
+
+  private replaceHrefWhenWsConnected(href: string): void {
+    this.wsStatus.isConnected$.subscribe((isConnected) => {
+      if (isConnected) {
+        this.loader.close();
+        this.window.location.replace(href);
+      }
+    });
   }
 
   private loadCurrentValues(): void {

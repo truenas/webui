@@ -1,24 +1,21 @@
-<h1 mat-dialog-title>{{ helptext.dialogTitle | translate }}!</h1>
-<div mat-dialog-content>
+<tn-dialog-shell testId="download-key" [title]="helptext.dialogTitle | translate">
+<div>
   {{ helptext.dialogMessage | translate }}
 </div>
 
-<ix-form-actions>
-  <button
-    mat-button
+<ix-form-actions tnDialogAction>
+  <tn-button
     color="warn"
-    ixTest="download-key"
-    (click)="downloadKey()"
-  >
-    {{ 'Download Encryption Key' | translate }}
-  </button>
-  <button
-    mat-button
+    testId="download-key"
+    [label]="'Download Encryption Key' | translate"
+    (onClick)="downloadKey()"
+  ></tn-button>
+  <tn-button
     color="primary"
-    ixTest="done"
+    testId="done"
+    [label]="'Done' | translate"
     [disabled]="!wasDownloaded()"
-    [matDialogClose]="true"
-  >
-    {{ 'Done' | translate }}
-  </button>
+    (onClick)="dialogRef.close(true)"
+  ></tn-button>
 </ix-form-actions>
+</tn-dialog-shell>

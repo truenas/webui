@@ -1,8 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
@@ -15,7 +14,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./ix-cell-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatTooltip,
+    TnTooltipDirective,
     RequiresRolesDirective,
     MatIconButton,
     TnIconComponent,

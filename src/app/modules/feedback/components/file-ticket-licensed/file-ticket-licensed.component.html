@@ -85,23 +85,29 @@
     [required]="true"
   ></ix-textarea>
 
-  <ix-checkbox
-    formControlName="attach_debug"
-    [label]="'Attach debug' | translate"
+  <tn-form-field
     [tooltip]="tooltips.attach_debug | translate"
     [hint]="'Debugs may contain log files with personal information such as usernames or other identifying information about your system.' | translate"
-  ></ix-checkbox>
+  >
+    <tn-checkbox
+      formControlName="attach_debug"
+      [label]="'Attach debug' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-checkbox
-    formControlName="take_screenshot"
-    [label]="'Take screenshot of the current page' | translate"
-    [tooltip]="'Capture and attach screenshot to the review' | translate"
-  ></ix-checkbox>
+  <tn-form-field [tooltip]="'Capture and attach screenshot to the review' | translate">
+    <tn-checkbox
+      formControlName="take_screenshot"
+      [label]="'Take screenshot of the current page' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
-  <ix-checkbox
-    formControlName="attach_images"
-    [label]="'Attach additional images' | translate"
-  ></ix-checkbox>
+  <tn-form-field>
+    <tn-checkbox
+      formControlName="attach_images"
+      [label]="'Attach additional images' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 
   @if (form.controls.attach_images.value) {
     <ix-file-input

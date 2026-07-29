@@ -1,24 +1,23 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, output, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import {
-  catchError, EMPTY, of, pairwise, startWith,
-} from 'rxjs';
+import { TnButtonComponent, TnFormSectionComponent, TnStepperComponent } from '@truenas/ui-components';
+import { catchError, EMPTY, of } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { newOption } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -30,25 +29,27 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     CloudCredentialsSelectComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperNext,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
 export class CloudSyncProviderComponent implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
-  private slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef);
+  // Optional: the wizard is hosted in the `<tn-side-panel>` form panel (no SlideInRef); the wizard's
+  // own closeGuard covers unsaved changes there, and "Advanced Options" swaps via {@link formPanel}.
+  private slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef, { optional: true });
+  private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
   private dialogService = inject(DialogService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   private cloudCredentialService = inject(CloudCredentialService);
   private snackbarService = inject(SnackbarService);
+  private stepper = inject(TnStepperComponent);
   private destroyRef = inject(DestroyRef);
 
   readonly save = output<CloudSyncCredential>();
@@ -66,7 +67,7 @@ export class CloudSyncProviderComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
+    this.slideInRef?.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
   }
@@ -114,7 +115,14 @@ export class CloudSyncProviderComponent implements OnInit {
     this.save.emit(this.existingCredential);
   }
 
+  protected onNext(): void {
+    this.stepper.next();
+  }
+
   onVerify(): void {
+    if (!this.existingCredential) {
+      return;
+    }
     this.loading.emit(true);
 
     const payload = this.existingCredential.provider;
@@ -144,17 +152,18 @@ export class CloudSyncProviderComponent implements OnInit {
   }
 
   openAdvanced(): void {
-    this.slideInRef.swap?.(CloudSyncFormComponent, { wide: true });
+    // Swap the wizard out for the advanced form within the same panel (footered — the form's Save +
+    // "Switch To Wizard" live in the panel footer).
+    this.formPanel.swap(CloudSyncFormComponent as unknown as Type<SidePanelForm>, {
+      title: this.translate.instant('Add Cloud Sync Task'),
+      wide: true,
+    });
   }
 
   private setFormEvents(): void {
     this.form.controls.exist_credential.valueChanges
-      .pipe(
-        startWith(undefined),
-        pairwise(),
-        takeUntilDestroyed(this.destroyRef),
-      ).subscribe(([previousCreds, currentCreds]) => {
-        const isPreviousValueAddNew = previousCreds != null && previousCreds.toString() === addNewIxSelectValue;
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((currentCreds) => {
         const isCurrentValueExists = currentCreds != null;
         const isCurrentValueAddNew = isCurrentValueExists && currentCreds.toString() === addNewIxSelectValue;
 
@@ -162,27 +171,40 @@ export class CloudSyncProviderComponent implements OnInit {
           return;
         }
 
-        if (!isPreviousValueAddNew) {
-          this.emitSelectedCredential(currentCreds as number);
-          return;
-        }
-
-        this.loading.emit(true);
-        this.cloudCredentialService.getCloudSyncCredentials().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-          next: (creds) => {
-            this.credentials = creds;
-            this.emitSelectedCredential(currentCreds as number);
-          },
-          complete: () => {
-            this.loading.emit(false);
-          },
-        });
+        // A freshly created credential (via the select's "Add New") isn't in the cached list yet;
+        // emitSelectedCredential re-fetches on a cache miss, so both cases funnel through it.
+        this.emitSelectedCredential(currentCreds as number);
       });
   }
 
   private emitSelectedCredential(credsId: number): void {
-    this.existingCredential = this.credentials.find((credential) => credential.id === credsId);
-    this.save.emit(this.existingCredential);
-    this.cdr.markForCheck();
+    const cached = this.credentials.find((credential) => credential.id === credsId);
+    if (cached) {
+      this.existingCredential = cached;
+      this.save.emit(this.existingCredential);
+      this.cdr.markForCheck();
+      return;
+    }
+
+    // The credentials cache may not be loaded yet — e.g. when the wizard is opened from the
+    // dashboard, where many concurrent API calls delay this step's own credentials query. Fetch
+    // before resolving so actions (Next/Verify) never operate on an undefined credential.
+    this.loading.emit(true);
+    this.cloudCredentialService.getCloudSyncCredentials().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (creds) => {
+        this.credentials = creds;
+        this.existingCredential = creds.find((credential) => credential.id === credsId);
+        this.save.emit(this.existingCredential);
+        this.cdr.markForCheck();
+      },
+      error: (error: unknown) => {
+        this.loading.emit(false);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
+        this.cdr.markForCheck();
+      },
+      complete: () => {
+        this.loading.emit(false);
+      },
+    });
   }
 }

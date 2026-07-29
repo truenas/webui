@@ -1,23 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { SmbNotificationInfo } from 'app/interfaces/smb-status.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { SmbNotificationListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-notification-list/smb-notification-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('SmbNotificationListComponent', () => {
   let spectator: Spectator<SmbNotificationListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const notifications = [{
     server_id: {
@@ -36,7 +32,6 @@ describe('SmbNotificationListComponent', () => {
     component: SmbNotificationListComponent,
     imports: [
       BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
     ],
     providers: [
       mockApi([mockCall('smb.status', notifications)]),
@@ -54,22 +49,19 @@ describe('SmbNotificationListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Path', 'Filter', 'Subdir Filter', 'Creation Time'],
+    expect(await table.getHeaderTexts()).toEqual(['Path', 'Filter', 'Subdir Filter', 'Creation Time']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['/mnt/APPS/turtles', '3399', '0', '1970-01-11T00:24:00.406311-23:00'],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 
   it('should call loadData when Refresh button is pressed', async () => {
     jest.spyOn(spectator.component.dataProvider, 'load');
-    const refreshButton = await loader.getHarness(MatButtonHarness.with({ text: 'Refresh' }));
+    const refreshButton = await loader.getHarness(TnButtonHarness.with({ label: 'Refresh' }));
     await refreshButton.click();
     expect(spectator.component.dataProvider.load).toHaveBeenCalled();
   });

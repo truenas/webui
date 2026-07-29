@@ -1,4 +1,23 @@
-import { isSigninUrl } from './url.helper';
+import { isSigninUrl, stripQueryAndFragment } from './url.helper';
+
+describe('stripQueryAndFragment', () => {
+  it('returns the path unchanged when there is no query or fragment', () => {
+    expect(stripQueryAndFragment('/credentials/users/api-keys')).toBe('/credentials/users/api-keys');
+  });
+
+  it('strips a query string', () => {
+    expect(stripQueryAndFragment('/credentials/users/api-keys?userName=root')).toBe('/credentials/users/api-keys');
+  });
+
+  it('strips a fragment', () => {
+    expect(stripQueryAndFragment('/credentials/users/api-keys#section')).toBe('/credentials/users/api-keys');
+  });
+
+  it('strips both a query string and a fragment', () => {
+    expect(stripQueryAndFragment('/credentials/users/api-keys?userName=root#section'))
+      .toBe('/credentials/users/api-keys');
+  });
+});
 
 describe('isSigninUrl', () => {
   it('returns true for signin page', () => {

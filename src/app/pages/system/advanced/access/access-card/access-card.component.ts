@@ -1,13 +1,15 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatList, MatListItem } from '@angular/material/list';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnCellDefDirective, TnEmptyComponent, TnHeaderCellDefDirective,
+  TnTableColumnDirective, TnTableComponent, tnIconMarker,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
@@ -17,27 +19,23 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
-import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
+import { getAccessFormConfig } from 'app/pages/system/advanced/access/access-form/access.form-config';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { AppState } from 'app/store';
@@ -46,24 +44,23 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 
 @Component({
   selector: 'ix-access-card',
-  styleUrls: ['../../../general-settings/common-settings-card.scss'],
+  styleUrls: ['./access-card.component.scss'],
   templateUrl: './access-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatToolbarRow,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    MatCardContent,
-    MatList,
-    MatListItem,
+    TnButtonComponent,
     WithLoadingStateDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnEmptyComponent,
+    TableActionsCellComponent,
+    IxDateComponent,
     IxTablePagerShowMoreComponent,
     TestOverrideDirective,
     TranslateModule,
@@ -73,13 +70,13 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 })
 export class AccessCardComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
-  private slideIn = inject(SlideIn);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private api = inject(ApiService);
   private firstTimeWarning = inject(FirstTimeWarningService);
+  private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
@@ -101,33 +98,20 @@ export class AccessCardComponent implements OnInit {
 
   dataProvider: AsyncDataProvider<AuthSession>;
 
-  columns = createTable<AuthSession>([
-    textColumn({
-      title: this.translate.instant('Username'),
-      propertyName: 'credentials_data',
-      getValue: (row) => this.getUsername(row),
-    }),
-    dateColumn({
-      title: this.translate.instant('Start session time'),
-      propertyName: 'created_at',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('exit-to-app', 'mdi'),
-          dynamicTooltip: (row) => of(row.current
-            ? this.translate.instant('This session is current and cannot be terminated')
-            : this.translate.instant('Terminate session')),
-          onClick: (row) => this.onTerminate(row.id),
-          disabled: (row) => of(row.current),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'session-' + this.getUsername(row) + '-' + row.origin,
-    ariaLabels: (row) => [this.getUsername(row), this.translate.instant('Session')],
-  });
+  protected readonly displayedColumns = ['username', 'created_at', 'actions'];
+  protected readonly trackBy = (_: number, row: AuthSession): string => row.id;
+
+  protected readonly actions: IconActionConfig<AuthSession>[] = [
+    {
+      iconName: tnIconMarker('exit-to-app', 'mdi'),
+      dynamicTooltip: (row) => of(row.current
+        ? this.translate.instant('This session is current and cannot be terminated')
+        : this.translate.instant('Terminate session')),
+      onClick: (row) => this.onTerminate(row.id),
+      disabled: (row) => of(row.current),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
 
   ngOnInit(): void {
     const sessions$ = this.api.call('auth.sessions', [[['internal', '=', false]]]).pipe(
@@ -141,9 +125,27 @@ export class AccessCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
+  protected getUsername(row: AuthSessionCredentialsData | undefined): string {
+    if (row?.credentials_data) {
+      return row.credentials_data.username || this.getUsername(row.credentials_data.parent);
+    }
+    return '';
+  }
+
+  protected uniqueRowTag(row: AuthSession): string {
+    return 'session-' + this.getUsername(row) + '-' + row.origin;
+  }
+
+  protected ariaLabel(row: AuthSession): string {
+    return [this.getUsername(row), this.translate.instant('Session')].join(' ');
+  }
+
   onConfigure(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(AccessFormComponent).success$),
+      switchMap(() => this.formPanel.openForm(
+        getAccessFormConfig(this.api, this.translate, this.store$, () => Boolean(this.isEnterprise())),
+        { title: this.translate.instant('Access') },
+      ).success$),
       tap(() => {
         this.updateSessions();
       }),
@@ -189,13 +191,6 @@ export class AccessCardComponent implements OnInit {
     ).subscribe(() => {
       this.updateSessions();
     });
-  }
-
-  private getUsername(credentialsData: AuthSessionCredentialsData | undefined): string {
-    if (credentialsData?.credentials_data) {
-      return credentialsData.credentials_data.username || this.getUsername(credentialsData.credentials_data.parent);
-    }
-    return '';
   }
 
   private terminateSession(sessionId: string): void {

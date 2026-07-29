@@ -1,4 +1,4 @@
-<h1 matDialogTitle>{{ 'Update' | translate }}</h1>
+<tn-dialog-shell testId="app-bulk-update" [title]="'Update' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <p>
     <strong>
@@ -6,25 +6,28 @@
     </strong>
   </p>
 
-  <mat-accordion displayMode="flat" class="bulk-list">
+  <div class="bulk-list">
     @for (bulkItem of bulkItems | keyvalue: originalOrder; track trackByKey($index, bulkItem)) {
-      <mat-expansion-panel (afterExpand)="onExpand(bulkItem)">
-        <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
+      <tn-expansion-panel
+        elevation="none"
+        padding="small"
+        [background]="false"
+        (expandedChange)="$event && onExpand(bulkItem)"
+      >
+        <div slot="title">
           <ix-fake-progress-bar [loading]="loadingMap().get(bulkItem.key)"></ix-fake-progress-bar>
-          <mat-panel-title>
-            <ix-bulk-list-item [item]="bulkItem.value">
-              <span class="app-name-text">{{ bulkItem.key }}</span>
-              <span class="app-version">{{ extractAppVersion(bulkItem.value.item.human_version, bulkItem.value.item.version) }}</span>
+          <ix-bulk-list-item [item]="bulkItem.value">
+            <span class="app-name-text">{{ bulkItem.key }}</span>
+            <span class="app-version">{{ extractAppVersion(bulkItem.value.item.human_version, bulkItem.value.item.version) }}</span>
 
-              <div class="logo">
-                <img
-                  [src]="bulkItem.value.item.metadata.icon"
-                  [src-fallback]="imagePlaceholder"
-                />
-              </div>
-            </ix-bulk-list-item>
-          </mat-panel-title>
-        </mat-expansion-panel-header>
+            <div class="logo">
+              <img
+                [src]="bulkItem.value.item.metadata.icon"
+                [src-fallback]="imagePlaceholder"
+              />
+            </div>
+          </ix-bulk-list-item>
+        </div>
 
         <div class="expansion-content">
           @if(isItemExpanded(bulkItem)) {
@@ -57,12 +60,13 @@
               </div>
 
               @if (hasMultipleVersionOptions(bulkItem.key)) {
-                <ix-select
-                  [formControlName]="bulkItem.key"
-                  [label]="'Version to be updated to' | translate"
-                  [required]="true"
-                  [options]="optionsMap.get(bulkItem.key)"
-                ></ix-select>
+                <tn-form-field [label]="'Version to be updated to' | translate" [required]="true">
+                  <tn-select
+                    [testId]="['app-version', bulkItem.key]"
+                    [formControlName]="bulkItem.key"
+                    [options]="(optionsMap.get(bulkItem.key) | async) ?? []"
+                  ></tn-select>
+                </tn-form-field>
               }
             }
           }
@@ -87,25 +91,27 @@
             </div>
           }
         </div>
-      </mat-expansion-panel>
+      </tn-expansion-panel>
     }
-  </mat-accordion>
-
-
-
-  <div class="form-actions">
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="update"
-      [disabled]="form.invalid || bulkItems.size === 0"
-    >
-      {{ 'Update' | translate }}
-    </button>
-    <button mat-button type="button" matDialogClose ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
   </div>
+
+
+
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    testId="update"
+    [label]="'Update' | translate"
+    [disabled]="form.invalid || bulkItems.size === 0"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

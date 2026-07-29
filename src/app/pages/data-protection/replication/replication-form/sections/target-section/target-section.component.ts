@@ -1,7 +1,11 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
@@ -14,13 +18,9 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ReplicationService } from 'app/services/replication.service';
 
 @Component({
@@ -29,13 +29,16 @@ import { ReplicationService } from 'app/services/replication.service';
   templateUrl: './target-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
+    AsyncPipe,
     ReactiveFormsModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
+    TnInputComponent,
+    // ix-explorer has no tn-* equivalent yet.
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
-    IxInputComponent,
     TranslateModule,
   ],
 })
@@ -76,6 +79,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   readonly lifetimeUnits$ = of(mapToOptions(lifetimeUnitNames, this.translate));
 
   protected readonly RetentionPolicy = RetentionPolicy;
+  protected readonly InputType = InputType;
 
   protected readonly helptext = helptextReplication;
 

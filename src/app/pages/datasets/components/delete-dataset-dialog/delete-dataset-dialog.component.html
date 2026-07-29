@@ -1,15 +1,10 @@
-<h1 matDialogTitle>
-  @if (isZvol) {
-    {{ 'Delete zvol {name}' | translate: { name: dataset.name } }}
-  } @else {
-    {{ 'Delete dataset {name}' | translate: { name: dataset.name } }}
-  }
-</h1>
+<tn-dialog-shell testId="delete-dataset"
+  [title]="(isZvol ? 'Delete zvol {name}' : 'Delete dataset {name}') | translate: { name: dataset.name }"
+>
 <form class="ix-form-container" [formGroup]="form" (submit)="onDelete()">
   <p [innerHTML]="deleteMessage"></p>
 
   <div
-    mat-dialog-content
     class="dialog-content"
   >
     @if (attachments.length) {
@@ -67,26 +62,32 @@
 
   <p [innerHtml]="deleteDatasetHelptext.prompt | translate: { value: dataset.name }"></p>
 
-  <ix-input formControlName="confirmDatasetName"></ix-input>
-  <ix-checkbox
-    formControlName="confirm"
-    [label]="'Confirm' | translate"
-  ></ix-checkbox>
-
-  <ix-form-actions>
-    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="warn"
-      ixTest="delete-dataset"
-      [disabled]="form.invalid"
-    >
-      {{ 'Delete' | translate }} {{ isZvol ? ('Zvol' | translate) : ('Dataset' | translate) }}
-    </button>
-  </ix-form-actions>
+  <tn-form-field>
+    <tn-input testId="confirm-dataset-name" formControlName="confirmDatasetName"></tn-input>
+  </tn-form-field>
+  <tn-form-field>
+    <tn-checkbox
+      testId="confirm"
+      formControlName="confirm"
+      [label]="'Confirm' | translate"
+    ></tn-checkbox>
+  </tn-form-field>
 </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close(false)"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="warn"
+    testId="delete-dataset"
+    [label]="(isZvol ? 'Delete Zvol' : 'Delete Dataset') | translate"
+    [disabled]="form.invalid"
+    (onClick)="onDelete()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

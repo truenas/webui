@@ -1,19 +1,7 @@
 @import 'scss-imports/variables';
 
-:host ::ng-deep {
-  mat-list-item {
-    height: inherit !important;
-    padding: 0;
-  }
-}
-
 .card {
   width: 100%;
-}
-
-.mat-toolbar-row {
-  display: flex;
-  justify-content: space-between;
 }
 
 .columns {
@@ -61,4 +49,8 @@
 
 ul {
   padding: 0 16px;
+}
+
+:host tn-card {
+  height: auto;
 }

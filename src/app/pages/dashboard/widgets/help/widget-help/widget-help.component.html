@@ -1,5 +1,5 @@
-<mat-card class="card">
-  <mat-card-content class="card-content">
+<tn-card class="card" [padContent]="false">
+  <div class="card-content">
     <div class="header">
       <h3>{{ 'TrueNAS Help' | translate }}</h3>
     </div>
@@ -10,8 +10,9 @@
           <div class="icon-wrapper">
             <a
               href="https://www.truenas.com/docs/"
-              ixTest="documentation"
+              tnTestIdType="link"
               target="_blank"
+              [tnTestId]="'documentation'"
             >
               <tn-icon class="bullet-icon" name="clipboard-text" library="mdi" size="xl" [color]="'var(--fg1)'"></tn-icon>
               @if (!fullSize()) {
@@ -25,8 +26,9 @@
           <div class="icon-wrapper">
             <a
               href="https://forums.truenas.com/"
-              ixTest="forums"
+              tnTestIdType="link"
               target="_blank"
+              [tnTestId]="'forums'"
             >
               <tn-icon class="bullet-icon" name="account-group" library="mdi" size="xl" [color]="'var(--fg1)'"></tn-icon>
               @if (!fullSize()) {
@@ -40,8 +42,9 @@
           <div class="icon-wrapper">
             <a
               href="https://www.truenas.com/newsletter/"
-              ixTest="newsletter"
+              tnTestIdType="link"
               target="_blank"
+              [tnTestId]="'newsletter'"
             >
               <tn-icon class="bullet-icon" name="email" library="mdi" size="xl" [color]="'var(--fg1)'"></tn-icon>
               @if (!fullSize()) {
@@ -59,5 +62,5 @@
         <ix-copyright-line></ix-copyright-line>
       </div>
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>

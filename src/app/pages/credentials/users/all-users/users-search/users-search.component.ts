@@ -2,12 +2,12 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input, signal, OnInit, inject, computed, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnSelectComponent, TnSlideToggleComponent, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import {
   Subject, of, map, debounceTime, catchError,
@@ -18,13 +18,11 @@ import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { QueryFilters, QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-data-provider';
 import {
@@ -42,15 +40,14 @@ const searchDebounceTime = 250;
   standalone: true,
   imports: [
     FakeProgressBarComponent,
-    MatButton,
-    MatSlideToggle,
-    MatTooltip,
+    TnButtonComponent,
+    TnSlideToggleComponent,
+    TnTooltipDirective,
     AsyncPipe,
     FormsModule,
     SearchInputComponent,
-    IxSelectComponent,
+    TnSelectComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 
@@ -131,7 +128,7 @@ export class UsersSearchComponent implements OnInit {
     return presets;
   });
 
-  private readonly userTypeOptions = computed(() => {
+  protected readonly userTypeOptions = computed(() => {
     const options: SelectOption[] = [
       { label: this.translate.instant('Local'), value: UserType.Local },
     ];
@@ -153,9 +150,6 @@ export class UsersSearchComponent implements OnInit {
     }
     return '';
   });
-
-  // Observable required by ix-select component
-  protected readonly userTypeOptions$ = toObservable(this.userTypeOptions);
 
   private readonly api = inject(ApiService);
   private readonly isActiveDirectoryEnabled = toSignal(

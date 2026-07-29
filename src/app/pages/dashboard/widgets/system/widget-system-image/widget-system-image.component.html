@@ -1,5 +1,5 @@
-<mat-card class="card">
-  <mat-card-content class="card-content">
+<tn-card class="card" [padContent]="false">
+  <div class="card-content">
     <div class="header">
       <h3>{{ name | translate }}</h3>
     </div>
@@ -14,5 +14,5 @@
         [showProductImageText]="false"
       ></ix-product-image>
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>

@@ -2,10 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DirectoryServiceCredentialType, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { DirectoryServiceCredential } from 'app/interfaces/directoryservice-credentials.interface';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CredentialConfigComponent } from 'app/pages/directory-service/components/directory-services-form/credential-config/credential-config.component';
 import { DirectoryServiceValidationService } from 'app/pages/directory-service/components/directory-services-form/services/directory-service-validation.service';
@@ -13,7 +13,6 @@ import { DirectoryServiceValidationService } from 'app/pages/directory-service/c
 describe('CredentialConfigComponent', () => {
   let spectator: Spectator<CredentialConfigComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const mockKerberosPrincipals = ['host/test@REALM.COM', 'nfs/test@REALM.COM'];
 
@@ -31,7 +30,19 @@ describe('CredentialConfigComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  // The credential-type select is always the first select rendered.
+  async function getCredentialTypeSelect(): Promise<TnSelectHarness> {
+    const selects = await loader.getAllHarnesses(TnSelectHarness);
+    return selects[0];
+  }
+
+  // The dependent select (principal / client certificate) is the second one.
+  async function getSubSelect(): Promise<TnSelectHarness> {
+    const selects = await loader.getAllHarnesses(TnSelectHarness);
+    return selects[1];
+  }
+
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         serviceType: DirectoryServiceType.ActiveDirectory,
@@ -39,7 +50,6 @@ describe('CredentialConfigComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   it('should create', () => {
@@ -58,9 +68,8 @@ describe('CredentialConfigComponent', () => {
         emittedValid = valid;
       });
 
-      await form.fillForm({
-        'Credential Type': 'Kerberos Principal',
-      });
+      const credentialType = await getCredentialTypeSelect();
+      await credentialType.selectOption('Kerberos Principal');
 
       expect(emittedValid).toBe(false);
     });
@@ -72,17 +81,15 @@ describe('CredentialConfigComponent', () => {
       spectator.component.isValid.subscribe(isValidSpy);
 
       // The form should already have KerberosUser as default for Active Directory
-      expect(await form.getValues()).toEqual(expect.objectContaining({
-        'Credential Type': 'Kerberos User',
-      }));
+      const credentialType = await getCredentialTypeSelect();
+      expect(await credentialType.getDisplayText()).toBe('Kerberos User');
 
-      // Username and password fields should be required and empty, making form invalid
-      // Trigger a small change to ensure emissions happen
-      await form.fillForm({
-        Username: '', // Explicitly set empty to trigger validation
-      });
+      // Username and password fields should be required and empty, making form invalid.
+      // Trigger a change to ensure emissions happen.
+      const username = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
+      await username.setValue('test-user');
 
-      // The form should be invalid due to missing required fields
+      // The form should be invalid due to the missing required password field
       expect(isValidSpy).toHaveBeenCalledWith(false);
     });
 
@@ -95,9 +102,8 @@ describe('CredentialConfigComponent', () => {
         emittedValid = valid;
       });
 
-      await form.fillForm({
-        'Credential Type': 'LDAP Plain',
-      });
+      const credentialType = await getCredentialTypeSelect();
+      await credentialType.selectOption('LDAP Plain');
 
       expect(emittedValid).toBe(false);
     });
@@ -111,9 +117,8 @@ describe('CredentialConfigComponent', () => {
         emittedValid = valid;
       });
 
-      await form.fillForm({
-        'Credential Type': 'LDAP MTLS',
-      });
+      const credentialType = await getCredentialTypeSelect();
+      await credentialType.selectOption('LDAP MTLS');
 
       expect(emittedValid).toBe(false);
     });
@@ -127,9 +132,8 @@ describe('CredentialConfigComponent', () => {
         emittedValid = valid;
       });
 
-      await form.fillForm({
-        'Credential Type': 'LDAP Anonymous',
-      });
+      const credentialType = await getCredentialTypeSelect();
+      await credentialType.selectOption('LDAP Anonymous');
 
       expect(emittedValid).toBe(true);
     });
@@ -140,16 +144,16 @@ describe('CredentialConfigComponent', () => {
       spectator.setInput('serviceType', DirectoryServiceType.ActiveDirectory);
       spectator.detectChanges();
 
-      const credentialTypeControl = await form.getControl('Credential Type');
-      expect(credentialTypeControl).toBeTruthy();
+      const credentialType = await getCredentialTypeSelect();
+      expect(credentialType).toBeTruthy();
     });
 
     it('should show LDAP credential types for LDAP service', async () => {
       spectator.setInput('serviceType', DirectoryServiceType.Ldap);
       spectator.detectChanges();
 
-      const credentialTypeControl = await form.getControl('Credential Type');
-      expect(credentialTypeControl).toBeTruthy();
+      const credentialType = await getCredentialTypeSelect();
+      expect(credentialType).toBeTruthy();
     });
   });
 
@@ -262,10 +266,11 @@ describe('CredentialConfigComponent', () => {
         emittedValid = valid;
       });
 
-      await form.fillForm({
-        'Credential Type': 'Kerberos Principal',
-        'Kerberos Principal': 'host/test@REALM.COM',
-      });
+      const credentialType = await getCredentialTypeSelect();
+      await credentialType.selectOption('Kerberos Principal');
+
+      const principal = await getSubSelect();
+      await principal.selectOption('host/test@REALM.COM');
 
       expect(emittedValid).toBe(true);
     });
@@ -276,11 +281,12 @@ describe('CredentialConfigComponent', () => {
         emittedCredential = credential;
       });
 
-      await form.fillForm({
-        'Credential Type': 'Kerberos User',
-        Username: 'test-user',
-        Password: 'test-password',
-      });
+      // Active Directory defaults to the Kerberos User credential type.
+      const username = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
+      await username.setValue('test-user');
+
+      const password = await loader.getHarness(TnInputHarness.with({ name: 'password' }));
+      await password.setValue('test-password');
 
       expect(emittedCredential).toEqual(expect.objectContaining({
         credential_type: DirectoryServiceCredentialType.KerberosUser,
@@ -295,16 +301,15 @@ describe('CredentialConfigComponent', () => {
         emittedValid = valid;
       });
 
-      await form.fillForm({
-        'Credential Type': 'Kerberos Principal',
-        'Kerberos Principal': 'host/test@REALM.COM',
-      });
+      const credentialType = await getCredentialTypeSelect();
+      await credentialType.selectOption('Kerberos Principal');
+
+      const principal = await getSubSelect();
+      await principal.selectOption('host/test@REALM.COM');
 
       expect(emittedValid).toBe(true);
 
-      await form.fillForm({
-        'Credential Type': 'Kerberos User',
-      });
+      await credentialType.selectOption('Kerberos User');
 
       expect(emittedValid).toBe(false);
     });
@@ -326,9 +331,8 @@ describe('CredentialConfigComponent', () => {
     });
 
     it('should update validators when credentialType signal changes', async () => {
-      await form.fillForm({
-        'Credential Type': 'Kerberos Principal',
-      });
+      const credentialType = await getCredentialTypeSelect();
+      await credentialType.selectOption('Kerberos Principal');
 
       expect(spectator.component).toBeTruthy();
     });

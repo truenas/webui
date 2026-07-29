@@ -1,10 +1,13 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { finalize } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
-import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -25,30 +28,53 @@ export interface NamespaceFormParams {
     BaseNamespaceFormComponent,
   ],
 })
-export class NamespaceFormComponent {
-  slideInRef = inject<SlideInRef<NamespaceFormParams, NamespaceChanges>>(SlideInRef);
+export class NamespaceFormComponent extends SidePanelForm<NamespaceChanges> {
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
-  private loader = inject(LoaderService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private baseForm = viewChild(BaseNamespaceFormComponent);
 
-  protected existingNamespace = signal<NvmeOfNamespace>(undefined);
-  protected error = signal<unknown>(null);
+  /** Gates the host-rendered footer Save. */
+  readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  constructor() {
-    this.existingNamespace.set(this.slideInRef.getData().namespace);
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.baseForm()?.isFormDirty || false);
-    });
+  /** Form data supplied by the `tn-side-panel` host. */
+  readonly namespaceData = input<NamespaceFormParams>();
+
+  protected existingNamespace = computed<NvmeOfNamespace>(() => this.namespaceData()?.namespace);
+  protected error = signal<unknown>(null);
+  private readonly isLoading = signal(false);
+
+  readonly canSubmit = computed(() => (this.baseForm()?.canSubmit() ?? false) && !this.isLoading());
+
+  private get data(): NamespaceFormParams | undefined {
+    return this.namespaceData();
   }
 
   protected get subsystemId(): number {
-    return this.slideInRef.getData().subsystemId;
+    return this.data?.subsystemId;
   }
 
-  protected onSubmit(newNamespace: NamespaceChanges): void {
+  /** The form lives in the projected base form; only read through the guarded overrides below. */
+  protected get form(): Pick<AbstractControl, 'dirty' | 'status' | 'statusChanges'> {
+    return this.baseForm()?.form;
+  }
+
+  override isBusy(): boolean {
+    return this.isLoading();
+  }
+
+  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
+  override hasUnsavedChanges(): boolean {
+    return this.baseForm()?.isFormDirty || false;
+  }
+
+  /** Invoked by the host-facing `submit()`; delegates to the base form, which emits `submitted`. */
+  protected onSubmit(): void {
+    this.baseForm()?.submit();
+  }
+
+  protected onNamespaceSubmitted(newNamespace: NamespaceChanges): void {
     const payload = {
       ...newNamespace,
       subsys_id: this.subsystemId,
@@ -58,8 +84,9 @@ export class NamespaceFormComponent {
       ? this.api.call('nvmet.namespace.update', [this.existingNamespace().id, payload])
       : this.api.call('nvmet.namespace.create', [payload]);
 
+    this.isLoading.set(true);
     request$.pipe(
-      this.loader.withLoader(),
+      finalize(() => this.isLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
     )
       .subscribe({
@@ -70,9 +97,7 @@ export class NamespaceFormComponent {
 
           this.snackbar.success(message);
 
-          this.slideInRef.close({
-            response: newNamespace,
-          });
+          this.closeWith(newNamespace);
         },
         error: (error: unknown) => {
           this.error.set(error);

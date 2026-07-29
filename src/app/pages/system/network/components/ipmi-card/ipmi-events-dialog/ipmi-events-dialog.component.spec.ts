@@ -1,13 +1,13 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnEmptyHarness } from '@truenas/ui-components';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -21,12 +21,12 @@ describe('IpmiEventsDialogComponent', () => {
     component: IpmiEventsDialog,
     declarations: [
       FakeFormatDateTimePipe,
-      EmptyComponent,
       FakeProgressBarComponent,
     ],
     providers: [
+      mockProvider(DialogRef),
       mockApi([
-        mockJob('ipmi.sel.elist', fakeSuccessfulJob([
+        mockCall('ipmi.sel.elist', [
           {
             id: 1,
             date: 'Jan-12-2023',
@@ -43,7 +43,7 @@ describe('IpmiEventsDialogComponent', () => {
             event_direction: 'Assertion Event',
             event: 'Another Event',
           },
-        ] as IpmiEvent[])),
+        ] as IpmiEvent[]),
         mockJob('ipmi.sel.clear', fakeSuccessfulJob()),
       ]),
     ],
@@ -64,7 +64,7 @@ describe('IpmiEventsDialogComponent', () => {
   });
 
   it('clears IPMI events when Clear button is pressed', async () => {
-    const clearButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear' }));
+    const clearButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clear' }));
     await clearButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('ipmi.sel.clear');
@@ -73,19 +73,20 @@ describe('IpmiEventsDialogComponent', () => {
   describe('no events', () => {
     beforeEach(() => {
       const mockedApi = spectator.inject(MockApiService);
-      mockedApi.mockJob('ipmi.sel.elist', fakeSuccessfulJob([] as IpmiEvent[]));
+      mockedApi.mockCall('ipmi.sel.elist', [] as IpmiEvent[]);
 
       spectator.component.ngOnInit();
       spectator.detectChanges();
     });
 
     it('does not show Clear button', async () => {
-      const clearButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Clear' }));
+      const clearButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Clear' }));
       expect(clearButton).toBeNull();
     });
 
-    it('shows empty state', () => {
-      expect(spectator.query('.events-container')).toHaveText('No events to display.');
+    it('shows empty state', async () => {
+      const empty = await loader.getHarness(TnEmptyHarness);
+      expect(await empty.getTitle()).toBe('No events to display.');
     });
   });
 });

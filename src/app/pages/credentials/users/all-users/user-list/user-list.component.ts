@@ -1,20 +1,16 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, output, input, signal, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective,
+  TnTableComponent, TnTablePagerComponent, type TnSortEvent,
+} from '@truenas/ui-components';
 import { getUserType } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-data-provider';
 import { UsersSearchComponent } from 'app/pages/credentials/users/all-users/users-search/users-search.component';
 import { UserAccessCellComponent } from './user-access-cell/user-access-cell.component';
@@ -27,12 +23,11 @@ import { UserAccessCellComponent } from './user-access-cell/user-access-cell.com
   imports: [
     TranslateModule,
     AsyncPipe,
-    IxTableBodyComponent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
     TnTablePagerComponent,
-    IxTableCellDirective,
     UsersSearchComponent,
     UserAccessCellComponent,
   ],
@@ -47,29 +42,16 @@ export class UserListComponent {
   protected readonly currentBatch = signal<User[]>([]);
   readonly dataProvider = input.required<UsersDataProvider>();
 
-  protected columns = createTable<User>([
-    textColumn({
-      title: this.translate.instant('Username'),
-      propertyName: 'username',
-    }),
-    textColumn({
-      title: this.translate.instant('Full Name'),
-      propertyName: 'full_name',
-    }),
-    textColumn({
-      title: this.translate.instant('Type'),
-      propertyName: 'builtin',
-      getValue: (user) => this.translate.instant(getUserType(user)),
-    }),
-    templateColumn({
-      title: this.translate.instant('Access'),
-      propertyName: 'roles',
-      disableSorting: true,
-    }),
-  ], {
-    uniqueRowTag: (row) => 'user-' + row.username,
-    ariaLabels: (row) => [row.username, this.translate.instant('User')],
-  });
+  protected readonly displayedColumns = ['username', 'full_name', 'builtin', 'roles'];
+  protected readonly trackByUid = (_index: number, row: User): number => row.uid;
+
+  protected userType(row: User): string {
+    return this.translate.instant(getUserType(row));
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider().setSorting(mapTnSortToTableSort<User>(event, this.displayedColumns));
+  }
 
   constructor() {
     setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);

@@ -3,8 +3,8 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -19,7 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     MatButton,
     TestDirective,
-    MatTooltip,
+    TnTooltipDirective,
     NgClass,
     TranslateModule,
     MapValuePipe,

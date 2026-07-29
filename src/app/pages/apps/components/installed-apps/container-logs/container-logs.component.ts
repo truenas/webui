@@ -1,22 +1,20 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, OnInit, signal, Signal, viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnSliderComponent,
+  TnSliderThumbDirective, TnSpinnerComponent,
+} from '@truenas/ui-components';
 import {
   combineLatest, filter, map, Subscription, switchMap, tap,
 } from 'rxjs';
 import { AppContainerLog } from 'app/interfaces/app.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LogsDetailsDialog } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { DownloadService } from 'app/services/download.service';
@@ -31,13 +29,14 @@ import { ShellService } from 'app/services/shell.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    ToolbarSliderComponent,
-    MatButton,
+    TnButtonComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
+    TnSliderComponent,
+    TnSliderThumbDirective,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    TestDirective,
     TranslateModule,
-    MatProgressSpinner,
+    TnSpinnerComponent,
   ],
 })
 export class ContainerLogsComponent implements OnInit {
@@ -46,15 +45,18 @@ export class ContainerLogsComponent implements OnInit {
   protected loader = inject(LoaderService);
   protected download = inject(DownloadService);
   private errorHandler = inject(ErrorHandlerService);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
   private logContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('logContainer', { read: ElementRef });
 
-  protected fontSize = signal(14);
+  protected readonly minFontSize = 10;
+  protected readonly maxFontSize = 20;
   protected isLoading = signal(false);
   protected autoScrollControl = new FormControl<boolean>(true);
+  protected fontSizeControl = new FormControl(14, { nonNullable: true });
+  protected fontSize = toSignal(this.fontSizeControl.valueChanges, { initialValue: this.fontSizeControl.value });
 
   protected train: string;
   protected appName: string;
@@ -86,7 +88,7 @@ export class ContainerLogsComponent implements OnInit {
       this.logsChangedListener.unsubscribe();
     }
 
-    this.logsChangedListener = this.matDialog.open(LogsDetailsDialog, { width: '400px' }).afterClosed().pipe(
+    this.logsChangedListener = this.tnDialog.open(LogsDetailsDialog, { width: '400px' }).closed.pipe(
       tap((value: LogsDetailsDialog['form']['value'] | undefined) => {
         if (!value) {
           this.router.navigate(['/apps/installed/', this.train, this.appName]);
@@ -132,9 +134,5 @@ export class ContainerLogsComponent implements OnInit {
     } catch {
       // Ignore error
     }
-  }
-
-  onFontSizeChanged(newSize: number): void {
-    this.fontSize.set(newSize);
   }
 }

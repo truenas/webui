@@ -1,46 +1,46 @@
-<h3>{{ 'Available Resources' | translate }}</h3>
-
-<div class="app-list-item">
-  <span class="label">{{ 'CPU Usage' | translate }}:</span>
-  @if (isLoading()) {
-    <ngx-skeleton-loader></ngx-skeleton-loader>
-  } @else {
-    <div>{{ "{cpuPercentage}% Avg. Usage" | translate: { cpuPercentage: cpuPercentage() } }}</div>
-  }
-</div>
-<div class="app-list-item">
-  <span class="label">{{ 'Memory Usage' | translate }}:</span>
-  @if (isLoading()) {
-    <ngx-skeleton-loader></ngx-skeleton-loader>
-  } @else {
-    @if (memoryUsed() && memoryTotal()) {
-      {{ memoryUsed() | ixFileSize }} / {{ memoryTotal() | ixFileSize }}
+<tn-card padding="small" elevation="none" [title]="'Available Resources' | translate">
+  <div class="app-list-item">
+    <span class="label">{{ 'CPU Usage' | translate }}:</span>
+    @if (isLoading()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      {{ 'N/A' | translate }}
+      <div>{{ "{cpuPercentage}% Avg. Usage" | translate: { cpuPercentage: cpuPercentage() } }}</div>
     }
-  }
-</div>
-<div class="app-list-item">
-  <span class="label">{{ 'Pool' | translate }}:</span>
-  @if (isLoading()) {
-    <ngx-skeleton-loader></ngx-skeleton-loader>
-  } @else {
-    @if (selectedPool()) {
-      {{ selectedPool() }}
+  </div>
+  <div class="app-list-item">
+    <span class="label">{{ 'Memory Usage' | translate }}:</span>
+    @if (isLoading()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      {{ 'N/A' | translate }}
+      @if (memoryUsed() && memoryTotal()) {
+        {{ memoryUsed() | ixFileSize }} / {{ memoryTotal() | ixFileSize }}
+      } @else {
+        {{ 'N/A' | translate }}
+      }
     }
-  }
-</div>
-<div class="app-list-item">
-  <span class="label">{{ 'Available Space' | translate }}:</span>
-  @if (isLoading()) {
-    <ngx-skeleton-loader></ngx-skeleton-loader>
-  } @else {
-    @if (selectedPool()) {
-      {{ availableSpace$ | async | ixFileSize }}
+  </div>
+  <div class="app-list-item">
+    <span class="label">{{ 'Pool' | translate }}:</span>
+    @if (isLoading()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      {{ 'N/A' | translate }}
+      @if (selectedPool()) {
+        {{ selectedPool() }}
+      } @else {
+        {{ 'N/A' | translate }}
+      }
     }
-  }
-</div>
+  </div>
+  <div class="app-list-item">
+    <span class="label">{{ 'Available Space' | translate }}:</span>
+    @if (isLoading()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      @if (selectedPool()) {
+        {{ availableSpace() | ixFileSize }}
+      } @else {
+        {{ 'N/A' | translate }}
+      }
+    }
+  </div>
+</tn-card>

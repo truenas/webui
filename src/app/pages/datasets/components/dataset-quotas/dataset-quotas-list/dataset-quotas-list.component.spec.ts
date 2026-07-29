@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -14,11 +13,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
@@ -43,17 +40,11 @@ const fakeQuotas = [{
   used_percent: 0,
 }] as DatasetQuota[];
 
-const slideInRef: SlideInRef<undefined, unknown> = {
-  close: jest.fn(),
-  requireConfirmationWhen: jest.fn(),
-  getData: jest.fn((): undefined => undefined),
-};
-
 describe('DatasetQuotasListComponent', () => {
   let spectator: Spectator<DatasetQuotasListComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: DatasetQuotasListComponent,
@@ -83,14 +74,13 @@ describe('DatasetQuotasListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockApi([
         mockCall('pool.dataset.get_quota', fakeQuotas),
         mockCall('pool.dataset.set_quota'),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -99,7 +89,7 @@ describe('DatasetQuotasListComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
@@ -113,20 +103,21 @@ describe('DatasetQuotasListComponent', () => {
       ['Test', DatasetQuotaType.User, [['name', '=', null]]],
     );
 
-    const cells = await table.getCellTexts();
-
-    const expectedRows = [
+    expect(await table.getHeaderTexts()).toEqual(
       ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
+    );
+    expect(await table.getRowCount()).toBe(2);
+    expect(await table.getRowTexts(0)).toEqual(
       ['daemon', '1', '500 KiB', '—', '25%', '5', '55', '11%', ''],
+    );
+    expect(await table.getRowTexts(1)).toEqual(
       ['bin', '2', '500 KiB', '—', '0%', '—', '33', '—', ''],
-    ];
-
-    expect(cells).toEqual(expectedRows);
+    );
   });
 
   it('should delete user quota when click delete button', async () => {
-    const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 8);
-    await deleteIcon.click();
+    const deleteButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-delete' }));
+    await deleteButtons[0].click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -147,23 +138,29 @@ describe('DatasetQuotasListComponent', () => {
     );
   });
 
-  it('should open slide to edit user quota when click a row', async () => {
-    const editIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 2, 8);
-    await editIcon.click();
+  it('opens side panel to edit user quota when edit button is pressed', async () => {
+    const editButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-pencil' }));
+    await editButtons[1].click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       DatasetQuotaEditFormComponent,
-      { data: { datasetId: 'Test', id: 2, quotaType: 'USER' } },
+      {
+        title: 'Edit User Quota',
+        inputs: { datasetId: 'Test', quotaType: DatasetQuotaType.User, quotaId: 2 },
+      },
     );
   });
 
-  it('opens form when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+  it('opens side panel when "Add" button is pressed', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       DatasetQuotaAddFormComponent,
-      { data: { datasetId: 'Test', quotaType: 'USER' } },
+      {
+        title: 'Add User Quotas',
+        inputs: { datasetId: 'Test', quotaType: DatasetQuotaType.User },
+      },
     );
   });
 });

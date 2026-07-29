@@ -1,15 +1,17 @@
 import { ComponentType } from '@angular/cdk/portal';
+import { AsyncPipe } from '@angular/common';
 import {
   Component, forwardRef, inject, ChangeDetectionStrategy, input,
 } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { Observable, map } from 'rxjs';
 import { CloudSyncProviderName, cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
-import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
+import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 
@@ -24,12 +26,9 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
     },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IxSelectComponent],
+  imports: [TnFormFieldComponent, TnSelectComponent, ReactiveFormsModule, AsyncPipe],
 })
 export class CloudCredentialsSelectComponent extends IxSelectWithNewOption<CloudSyncCredential> {
-  readonly label = input<TranslatedString>();
-  readonly tooltip = input<TranslatedString>();
-  readonly required = input<boolean>(false);
   readonly filterByProviders = input<CloudSyncProviderName[]>();
 
   private cloudCredentialService = inject(CloudCredentialService);
@@ -59,8 +58,12 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption<Cloud
     return CloudCredentialsFormComponent;
   }
 
-  override getFormInputData(): { providers: CloudSyncProviderName[] } | undefined {
+  getFormTitle(): string {
+    return this.translateService.instant('Add Cloud Credential');
+  }
+
+  override getFormInputData(): { editInput: { providers: CloudSyncProviderName[] } } | undefined {
     const providers = this.filterByProviders();
-    return providers?.length ? { providers } : undefined;
+    return providers?.length ? { editInput: { providers } } : undefined;
   }
 }

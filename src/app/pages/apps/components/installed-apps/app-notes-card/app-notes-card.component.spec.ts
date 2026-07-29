@@ -75,7 +75,7 @@ describe('AppNotesCardComponent', () => {
   });
 
   it('shows header', () => {
-    expect(spectator.query('mat-card-header h3')).toHaveText('Notes');
+    expect(spectator.query('.card-header h3')).toHaveText('Notes');
   });
 
   it('shows titles', () => {

@@ -1,11 +1,12 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -15,11 +16,8 @@ import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/clouds
 import { CloudSyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -30,16 +28,16 @@ import { FilesystemService } from 'app/services/filesystem.service';
   styleUrls: ['./cloudsync-restore-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    AsyncPipe,
+    TnDialogShellComponent,
     ReactiveFormsModule,
-    IxInputComponent,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
     TransferModeExplanationComponent,
     IxExplorerComponent,
     FormActionsComponent,
-    MatButton,
-    MatDialogClose,
-    TestDirective,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -49,10 +47,10 @@ export class CloudSyncRestoreDialog {
   private formBuilder = inject(FormBuilder);
   private filesystem = inject(FilesystemService);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<CloudSyncRestoreDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, CloudSyncRestoreDialog>>(DialogRef);
   private errorHandler = inject(FormErrorHandlerService);
   private loader = inject(LoaderService);
-  private parentTaskId = inject(MAT_DIALOG_DATA);
+  private parentTaskId = inject(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];

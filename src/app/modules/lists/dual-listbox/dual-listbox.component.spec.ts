@@ -1,8 +1,8 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { TnIconButtonHarness } from '@truenas/ui-components';
 import { DualListBoxComponent } from './dual-listbox.component';
 
 describe('DualListBoxComponent', () => {
@@ -45,14 +45,14 @@ describe('DualListBoxComponent', () => {
   });
 
   it('should select an item when clicked', () => {
-    const listItems = spectator.queryAll('mat-list-item');
+    const listItems = spectator.queryAll('tn-list-item');
     spectator.click(listItems[0]);
 
     expect(spectator.component.availableList().selectedIndices.has(0)).toBe(true);
   });
 
   it('should toggle selection with Ctrl key', () => {
-    const listItems = spectator.queryAll('mat-list-item');
+    const listItems = spectator.queryAll('tn-list-item');
 
     // First click - select item 0
     spectator.click(listItems[0]);
@@ -72,7 +72,7 @@ describe('DualListBoxComponent', () => {
   });
 
   it('should select range with Shift key', () => {
-    const listItems = spectator.queryAll('mat-list-item');
+    const listItems = spectator.queryAll('tn-list-item');
 
     // First click - select item 0
     spectator.click(listItems[0]);
@@ -88,12 +88,12 @@ describe('DualListBoxComponent', () => {
 
   it('should move selected items from available to selected', async () => {
     // Select first item
-    const listItems = spectator.queryAll('mat-list-item');
+    const listItems = spectator.queryAll('tn-list-item');
     spectator.click(listItems[0]);
 
     // Click move right button
     const moveRightButton = await loader.getHarness(
-      MatButtonHarness.with({ selector: '[ixTest="move-selected-right"]' }),
+      TnIconButtonHarness.with({ name: 'chevron-right' }),
     );
     await moveRightButton.click();
 
@@ -110,13 +110,13 @@ describe('DualListBoxComponent', () => {
     spectator.detectChanges();
 
     // Select first item in selected list
-    const listItems = spectator.queryAll('mat-list-item');
+    const listItems = spectator.queryAll('tn-list-item');
     const selectedListItems = listItems.slice(2); // Skip available list items
     spectator.click(selectedListItems[0]);
 
     // Click move left button
     const moveLeftButton = await loader.getHarness(
-      MatButtonHarness.with({ selector: '[ixTest="move-selected-left"]' }),
+      TnIconButtonHarness.with({ name: 'chevron-left' }),
     );
     await moveLeftButton.click();
 
@@ -128,7 +128,7 @@ describe('DualListBoxComponent', () => {
 
   it('should move all items from available to selected', async () => {
     const moveAllRightButton = await loader.getHarness(
-      MatButtonHarness.with({ selector: '[ixTest="move-all-right"]' }),
+      TnIconButtonHarness.with({ name: 'chevron-double-right' }),
     );
     await moveAllRightButton.click();
 
@@ -144,7 +144,7 @@ describe('DualListBoxComponent', () => {
     spectator.detectChanges();
 
     const moveAllLeftButton = await loader.getHarness(
-      MatButtonHarness.with({ selector: '[ixTest="move-all-left"]' }),
+      TnIconButtonHarness.with({ name: 'chevron-double-left' }),
     );
     await moveAllLeftButton.click();
 
@@ -156,10 +156,10 @@ describe('DualListBoxComponent', () => {
 
   it('should disable move buttons when there is no selection', async () => {
     const moveRightButton = await loader.getHarness(
-      MatButtonHarness.with({ selector: '[ixTest="move-selected-right"]' }),
+      TnIconButtonHarness.with({ name: 'chevron-right' }),
     );
     const moveLeftButton = await loader.getHarness(
-      MatButtonHarness.with({ selector: '[ixTest="move-selected-left"]' }),
+      TnIconButtonHarness.with({ name: 'chevron-left' }),
     );
 
     expect(await moveRightButton.isDisabled()).toBe(true);
@@ -168,12 +168,12 @@ describe('DualListBoxComponent', () => {
 
   it('should enable move right button when items are selected in available list', async () => {
     // Select first item
-    const listItems = spectator.queryAll('mat-list-item');
+    const listItems = spectator.queryAll('tn-list-item');
     spectator.click(listItems[0]);
     spectator.detectChanges();
 
     const moveRightButton = await loader.getHarness(
-      MatButtonHarness.with({ selector: '[ixTest="move-selected-right"]' }),
+      TnIconButtonHarness.with({ name: 'chevron-right' }),
     );
 
     expect(await moveRightButton.isDisabled()).toBe(false);
@@ -181,11 +181,11 @@ describe('DualListBoxComponent', () => {
 
   it('should update destination model when items are moved', async () => {
     // Select and move first item
-    const listItems = spectator.queryAll('mat-list-item');
+    const listItems = spectator.queryAll('tn-list-item');
     spectator.click(listItems[0]);
 
     const moveRightButton = await loader.getHarness(
-      MatButtonHarness.with({ selector: '[ixTest="move-selected-right"]' }),
+      TnIconButtonHarness.with({ name: 'chevron-right' }),
     );
     await moveRightButton.click();
 
@@ -339,7 +339,7 @@ describe('DualListBoxComponent', () => {
     });
 
     it('should handle Enter key on item', () => {
-      const listItems = spectator.queryAll('mat-list-item');
+      const listItems = spectator.queryAll('tn-list-item');
       const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
 
       listItems[0].dispatchEvent(enterEvent);
@@ -349,7 +349,7 @@ describe('DualListBoxComponent', () => {
     });
 
     it('should ignore other keys', () => {
-      const listItems = spectator.queryAll('mat-list-item');
+      const listItems = spectator.queryAll('tn-list-item');
       const spaceEvent = new KeyboardEvent('keydown', { key: ' ' });
 
       listItems[0].dispatchEvent(spaceEvent);
@@ -405,18 +405,18 @@ describe('DualListBoxComponent', () => {
       spectator.detectChanges();
 
       // Select first item (Apple after sorting)
-      const listItems = spectator.queryAll('mat-list-item');
+      const listItems = spectator.queryAll('tn-list-item');
       spectator.click(listItems[0]);
 
       // Move to selected
       const moveRightButton = await loader.getHarness(
-        MatButtonHarness.with({ selector: '[ixTest="move-selected-right"]' }),
+        TnIconButtonHarness.with({ name: 'chevron-right' }),
       );
       await moveRightButton.click();
       spectator.detectChanges();
 
       // Select second item (Zebra)
-      const availableItems = spectator.queryAll('mat-list-item');
+      const availableItems = spectator.queryAll('tn-list-item');
       spectator.click(availableItems[0]);
 
       await moveRightButton.click();
@@ -451,7 +451,7 @@ describe('DualListBoxComponent', () => {
       const items = customSpectator.component.availableList().items;
       expect(items).toHaveLength(2);
 
-      const displayText = customSpectator.queryAll('mat-list-item label');
+      const displayText = customSpectator.queryAll('tn-list-item label');
       expect(displayText[0]).toHaveText('First');
       expect(displayText[1]).toHaveText('Second');
     });
@@ -493,7 +493,7 @@ describe('DualListBoxComponent', () => {
 
   describe('Accessibility', () => {
     it('should announce changes to screen readers', async () => {
-      const listItems = spectator.queryAll('mat-list-item');
+      const listItems = spectator.queryAll('tn-list-item');
       spectator.click(listItems[0]);
 
       spectator.component.moveSelectedRight();
@@ -515,7 +515,7 @@ describe('DualListBoxComponent', () => {
     });
 
     it('should have proper ARIA labels on lists', () => {
-      const lists = spectator.queryAll('mat-list');
+      const lists = spectator.queryAll('tn-list');
       expect(lists[0].getAttribute('aria-label')).toBe('Available Items');
       expect(lists[1].getAttribute('aria-label')).toBe('Selected Items');
     });

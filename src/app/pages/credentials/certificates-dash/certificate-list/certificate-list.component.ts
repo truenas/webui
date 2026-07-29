@@ -3,11 +3,19 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, effect, input, output, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  type TnSortEvent,
+  TnTableColumnDirective,
+  TnTableComponent,
+} from '@truenas/ui-components';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -19,19 +27,15 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableActionsCellComponent,
+} from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateEditComponent,
@@ -49,19 +53,18 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./certificate-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    UiSearchDirective,
-    MatCardContent,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableCellDirective,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
+    TnButtonComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnEmptyComponent,
+    TableActionsCellComponent,
     IxTablePagerShowMoreComponent,
+    RequiresRolesDirective,
+    UiSearchDirective,
     TranslateModule,
     FormatDateTimePipe,
     AsyncPipe,
@@ -69,7 +72,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class CertificateListComponent {
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
   protected emptyService = inject(EmptyService);
@@ -86,45 +89,44 @@ export class CertificateListComponent {
   protected readonly requiredRoles = [Role.CertificateWrite];
   protected readonly searchableElements = certificateListElements;
 
-  dataProvider = new ArrayDataProvider<Certificate>();
+  protected dataProvider = new ArrayDataProvider<Certificate>();
 
-  columns = createTable<Certificate>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    textColumn({
-      title: this.translate.instant('Date'),
-      propertyName: 'from',
-    }),
-    textColumn({
-      title: this.translate.instant('CN'),
-      propertyName: 'common',
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('download', 'mdi'),
-          tooltip: this.translate.instant('Download'),
-          onClick: (row) => this.doDownload(row),
-        },
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.doEdit(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'cert-' + row.name,
-    ariaLabels: (row) => [row.name, this.translate.instant('Certificate')],
-  });
+  // Column keys double as sort keys, so the aggregate Date/CN columns key on the
+  // property they sort by (master sorted Date by `from`, CN by `common`).
+  protected readonly displayedColumns = ['name', 'from', 'common', 'actions'];
+
+  protected readonly trackBy = (_: number, row: Certificate): number => row.id;
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<Certificate>(event, this.displayedColumns));
+  }
+
+  protected readonly actions: IconActionConfig<Certificate>[] = [
+    {
+      iconName: tnIconMarker('download', 'mdi'),
+      tooltip: this.translate.instant('Download'),
+      onClick: (row) => this.doDownload(row),
+    },
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.doEdit(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      requiredRoles: this.requiredRoles,
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+    },
+  ];
+
+  protected uniqueRowTag(row: Certificate): string {
+    return 'cert-' + row.name;
+  }
+
+  protected ariaLabel(row: Certificate): string {
+    return [row.name, this.translate.instant('Certificate')].join(' ');
+  }
 
   constructor() {
     this.setDefaultSort();
@@ -149,14 +151,19 @@ export class CertificateListComponent {
   }
 
   protected doImport(): void {
-    this.slideIn.open(ImportCertificateComponent)
-      .onSuccess(() => this.certificatesUpdated.emit(), this.destroyRef);
+    this.formPanel.open(ImportCertificateComponent, {
+      title: this.translate.instant('Import Certificate'),
+      saveLabel: this.translate.instant('Import'),
+    }).onSuccess(() => this.certificatesUpdated.emit(), this.destroyRef);
   }
 
   protected doEdit(certificate: Certificate): void {
-    this.slideIn.open(CertificateEditComponent, {
+    this.formPanel.open(CertificateEditComponent, {
       wide: true,
-      data: certificate,
+      title: certificate.cert_type_CSR
+        ? this.translate.instant('Edit CSR')
+        : this.translate.instant('Edit Certificate'),
+      inputs: { editingCertificate: certificate },
     }).onSuccess(() => this.certificatesUpdated.emit(), this.destroyRef);
   }
 

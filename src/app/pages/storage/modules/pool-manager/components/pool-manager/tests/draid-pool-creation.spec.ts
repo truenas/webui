@@ -159,11 +159,10 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
       'Data:': '1 × DRAID1 | 5 × 20 GiB (HDD)',
     });
 
-    const stepper = await wizard.getStepper();
-    const stepLabels = await Promise.all((await stepper.getSteps()).map((step) => step.getLabel()));
+    const stepLabels = await (await wizard.getStepper()).getStepLabels();
     expect(stepLabels).toContain('Spare (Optional)');
 
-    await stepper.selectStep({ label: 'Review' });
+    await wizard.goToStep('Review');
 
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Review');
 
@@ -252,11 +251,10 @@ describe('PoolManagerComponent – creating dRAID pool with a dedicated spare', 
       'Number of VDEVs': '1',
     });
 
-    const stepper = await wizard.getStepper();
-    const stepLabels = await Promise.all((await stepper.getSteps()).map((step) => step.getLabel()));
+    const stepLabels = await (await wizard.getStepper()).getStepLabels();
     expect(stepLabels).toContain('Spare (Optional)');
 
-    await stepper.selectStep({ label: 'Spare (Optional)' });
+    await wizard.goToStep('Spare (Optional)');
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Spare (Optional)');
 
     await wizard.fillStep({
@@ -264,7 +262,7 @@ describe('PoolManagerComponent – creating dRAID pool with a dedicated spare', 
       Width: '1',
     });
 
-    await stepper.selectStep({ label: 'Review' });
+    await wizard.goToStep('Review');
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Review');
 
     await wizard.clickCreatePoolButton();

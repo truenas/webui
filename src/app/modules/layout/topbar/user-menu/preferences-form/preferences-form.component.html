@@ -1,75 +1,85 @@
-<ix-modal-header
-  [title]="'Preferences' | translate"
-></ix-modal-header>
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset [title]="'GUI' | translate">
-        <ix-checkbox
-          formControlName="syncThemeWithOS"
-          [label]="'Sync Theme With OS' | translate"
-          [tooltip]="'Automatically switch to the preferred theme based on the OS appearance' | translate"
-        ></ix-checkbox>
-        @if (!isSyncWithOs()) {
-          <ix-select
-            formControlName="theme"
-            [label]="'Theme' | translate"
-            [options]="themeOptions"
-            [required]="true"
-          ></ix-select>
-        } @else {
-          <ix-select
-            formControlName="lightTheme"
-            [label]="'Light Theme' | translate"
-            [options]="lightThemeOptions"
-            [required]="true"
-          ></ix-select>
-          <ix-select
-            formControlName="darkTheme"
-            [label]="'Dark Theme' | translate"
-            [options]="darkThemeOptions"
-            [required]="true"
-          ></ix-select>
-        }
-        <ix-input
-          id="session-timeout"
-          formControlName="token_lifetime"
-          type="number"
-          [label]="'Session Timeout' | translate"
-          [tooltip]="'Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.' | translate"
-        ></ix-input>
-      </ix-fieldset>
+@if (slideInRef) {
+  <ix-modal-header
+    [title]="'Preferences' | translate"
+  ></ix-modal-header>
+}
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <tn-form-section [heading]="'GUI' | translate">
+    <tn-form-field
+      [tooltip]="'Automatically switch to the preferred theme based on the OS appearance' | translate"
+    >
+      <tn-checkbox
+        formControlName="syncThemeWithOS"
+        [label]="'Sync Theme With OS' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+    @if (!isSyncWithOs()) {
+      <tn-form-field [label]="'Theme' | translate" [required]="true">
+        <tn-select
+          formControlName="theme"
+          [options]="themeOptions"
+        ></tn-select>
+      </tn-form-field>
+    } @else {
+      <tn-form-field [label]="'Light Theme' | translate" [required]="true">
+        <tn-select
+          formControlName="lightTheme"
+          [options]="lightThemeOptions"
+        ></tn-select>
+      </tn-form-field>
+      <tn-form-field [label]="'Dark Theme' | translate" [required]="true">
+        <tn-select
+          formControlName="darkTheme"
+          [options]="darkThemeOptions"
+        ></tn-select>
+      </tn-form-field>
+    }
+    <tn-form-field
+      [label]="'Session Timeout' | translate"
+      [tooltip]="'Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.' | translate"
+    >
+      <tn-input
+        id="session-timeout"
+        formControlName="token_lifetime"
+        [inputType]="InputType.Number"
+        [allowDecimals]="false"
+      ></tn-input>
+    </tn-form-field>
+  </tn-form-section>
 
-      <ix-fieldset [title]="'Localization' | translate">
-        <ix-combobox
-          formControlName="language"
-          [label]="'Language' | translate"
-          [provider]="languageProvider"
-          [required]="true"
-        ></ix-combobox>
-        <ix-select
-          formControlName="date_format"
-          [label]="'Date Format' | translate"
-          [options]="dateFormatOptions"
-        ></ix-select>
-        <ix-select
-          formControlName="time_format"
-          [label]="'Time Format' | translate"
-          [options]="timeFormatOptions"
-        ></ix-select>
-      </ix-fieldset>
+  <tn-form-section [heading]="'Localization' | translate">
+    <tn-form-field [label]="'Language' | translate" [required]="true">
+      <tn-autocomplete
+        formControlName="language"
+        [testId]="'language'"
+        [options]="languageOptions()"
+        [requireSelection]="true"
+        [noResultsText]="'No results found' | translate"
+      ></tn-autocomplete>
+    </tn-form-field>
+    <tn-form-field [label]="'Date Format' | translate">
+      <tn-select
+        formControlName="date_format"
+        [options]="dateFormatOptions()"
+      ></tn-select>
+    </tn-form-field>
+    <tn-form-field [label]="'Time Format' | translate">
+      <tn-select
+        formControlName="time_format"
+        [options]="timeFormatOptions()"
+      ></tn-select>
+    </tn-form-field>
+  </tn-form-section>
 
-      <ix-form-actions>
-        <button
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+  @if (slideInRef) {
+    <ix-form-actions>
+      <tn-button
+        color="primary"
+        [testId]="'save'"
+        [label]="'Save' | translate"
+        [disabled]="!canSubmit()"
+        (onClick)="onSubmit()"
+      ></tn-button>
+    </ix-form-actions>
+  }
+</form>

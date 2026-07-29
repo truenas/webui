@@ -1,23 +1,24 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  InputType,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
@@ -30,13 +31,12 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   styleUrls: ['./bootenv-stats-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
     ReactiveFormsModule,
-    IxInputComponent,
     FormActionsComponent,
-    MatButton,
-    MatDialogClose,
-    TestDirective,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
     FileSizePipe,
@@ -45,10 +45,11 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   ],
 })
 export class BootenvStatsDialog implements OnInit {
+  protected readonly InputType = InputType;
   private api = inject(ApiService);
   private loader = inject(LoaderService);
   private store$ = inject<Store<AppState>>(Store);
-  private dialogRef = inject<MatDialogRef<BootenvStatsDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, BootenvStatsDialog>>(DialogRef);
   private translate = inject(TranslateService);
   private fb = inject(NonNullableFormBuilder);
   private errorHandler = inject(ErrorHandlerService);

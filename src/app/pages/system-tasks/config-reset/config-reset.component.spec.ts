@@ -1,6 +1,5 @@
 import { Location } from '@angular/common';
 import { fakeAsync, tick } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -30,7 +29,6 @@ describe('ConfigResetComponent', () => {
       mockApi([
         mockJob('config.reset', fakeSuccessfulJob()),
       ]),
-      mockProvider(MatDialog),
       mockProvider(Location),
       mockProvider(WebSocketHandlerService, {
         prepareShutdown: jest.fn(),
@@ -39,6 +37,7 @@ describe('ConfigResetComponent', () => {
         isConnected$,
       }),
       mockProvider(DialogService, {
+        closeAllDialogs: jest.fn(),
         jobDialog: jest.fn(() => ({
           afterClosed: () => of({}),
         })),
@@ -55,7 +54,7 @@ describe('ConfigResetComponent', () => {
   }));
 
   it('closes on dialogs when user navigates to this page', () => {
-    expect(spectator.inject(MatDialog).closeAll).toHaveBeenCalled();
+    expect(spectator.inject(DialogService).closeAllDialogs).toHaveBeenCalled();
   });
 
   it('replaces location state to avoid resetting config again if user visits the page again', () => {

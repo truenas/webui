@@ -1,15 +1,5 @@
 @import 'scss-imports/cssvars';
 
-// TEMP: until @truenas/ui-components ships the tn-empty `iconSize` input
-// (feat/empty-icon-size). The empty-state icon defaults to the inline icon
-// scale (~24px), too small for the card empty states. Remove this block and
-// use [iconSize]="'56px'" on each <tn-empty> once the library publishes.
-:host ::ng-deep tn-empty tn-icon {
-  width: 56px;
-  height: 56px;
-  font-size: 56px;
-}
-
 .cards {
   display: grid;
   gap: 8px;

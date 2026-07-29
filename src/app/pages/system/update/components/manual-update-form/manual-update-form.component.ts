@@ -1,14 +1,23 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent,
+  TnCardComponent,
+  TnCardFooterActionsDirective,
+  TnCheckboxComponent,
+  TnFileInputComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnProgressBarComponent,
+  TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   finalize, noop, Observable, of,
 } from 'rxjs';
@@ -27,12 +36,7 @@ import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { systemManualUpdateFormElements } from 'app/pages/system/update/components/manual-update-form/manual-update-form.elements';
@@ -52,25 +56,26 @@ import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/sys
   styleUrls: ['manual-update-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    AsyncPipe,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     UiSearchDirective,
-    MatCardContent,
-    MatProgressBar,
+    TnProgressBarComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxFileInputComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnFileInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
 export class ManualUpdateFormComponent implements OnInit {
   private dialogService = inject(DialogService);
   protected router = inject(Router);
-  systemService = inject(SystemGeneralService);
+  private systemService = inject(SystemGeneralService);
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
@@ -87,11 +92,11 @@ export class ManualUpdateFormComponent implements OnInit {
 
   form = this.formBuilder.group({
     filelocation: ['', Validators.required],
-    updateFile: [null as FileList | null],
+    updateFile: [null as File | null, Validators.required],
     rebootAfterManualUpdate: [false],
   }) as FormGroup<{
     filelocation?: FormControl<string | null>;
-    updateFile: FormControl<FileList | null>;
+    updateFile: FormControl<File | null>;
     rebootAfterManualUpdate: FormControl<boolean>;
   }>;
 
@@ -207,20 +212,20 @@ export class ManualUpdateFormComponent implements OnInit {
     this.setupAndOpenUpdateJobDialog(value.updateFile, value.filelocation);
   }
 
-  private setupAndOpenUpdateJobDialog(files: FileList, fileLocation: string): void {
-    if (!files.length) {
+  private setupAndOpenUpdateJobDialog(file: File | null, fileLocation: string): void {
+    if (!file) {
       return;
     }
 
     const params: UploadOptions = this.isHaLicensed
       ? {
           method: 'failover.upgrade',
-          file: files[0],
+          file,
         }
       : {
           method: 'update.file',
           params: [{ destination: fileLocation }],
-          file: files[0],
+          file,
         };
 
     const job$ = this.upload.uploadAsJob(params);

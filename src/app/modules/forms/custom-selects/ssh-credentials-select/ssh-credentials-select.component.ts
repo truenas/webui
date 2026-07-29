@@ -1,16 +1,17 @@
 import { ComponentType } from '@angular/cdk/portal';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  Component, forwardRef, inject, input,
+  Component, forwardRef, inject,
 } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
-import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
+import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
@@ -25,13 +26,9 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
     },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IxSelectComponent],
+  imports: [TnFormFieldComponent, TnSelectComponent, ReactiveFormsModule, AsyncPipe],
 })
 export class SshCredentialsSelectComponent extends IxSelectWithNewOption<KeychainCredential> {
-  readonly label = input<TranslatedString>();
-  readonly tooltip = input<TranslatedString>();
-  readonly required = input<boolean>(false);
-
   private keychainCredentialsService = inject(KeychainCredentialService);
 
   fetchOptions(): Observable<Option[]> {
@@ -46,5 +43,9 @@ export class SshCredentialsSelectComponent extends IxSelectWithNewOption<Keychai
 
   getFormComponentType(): ComponentType<SshConnectionFormComponent> {
     return SshConnectionFormComponent;
+  }
+
+  getFormTitle(): string {
+    return this.translateService.instant('New SSH Connection');
   }
 }

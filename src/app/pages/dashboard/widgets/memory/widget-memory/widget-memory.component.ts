@@ -1,20 +1,16 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TinyColor } from '@ctrl/tinycolor';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconButtonComponent } from '@truenas/ui-components';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -28,13 +24,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   styleUrl: './widget-memory.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
-    MatIconButton,
-    TestDirective,
-    MatTooltip,
-    RouterLink,
-    TnIconComponent,
+    TnCardComponent,
+    TnIconButtonComponent,
     NgxSkeletonLoaderModule,
     BaseChartDirective,
     TranslateModule,
@@ -44,6 +35,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 })
 export class WidgetMemoryComponent {
   private store$ = inject<Store<AppState>>(Store);
+  private router = inject(Router);
   private resources = inject(WidgetResourcesService);
   private theme = inject(ThemeService);
   private translate = inject(TranslateService);
@@ -122,5 +114,9 @@ export class WidgetMemoryComponent {
 
   protected formatUnit(bytes: number): string {
     return (bytes / GiB).toFixed(1);
+  }
+
+  protected goToReports(): void {
+    this.router.navigate(['/reportsdashboard', 'memory']);
   }
 }

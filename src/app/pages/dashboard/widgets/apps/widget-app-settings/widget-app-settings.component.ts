@@ -3,9 +3,9 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { map, startWith } from 'rxjs';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -19,7 +19,8 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     TranslateModule,
   ],
 })
@@ -37,6 +38,8 @@ export class WidgetAppSettingsComponent implements WidgetSettingsComponent<Widge
     startWith([]),
     idNameArrayToOptions(),
   );
+
+  protected installedApps = toSignal(this.installedApps$, { initialValue: [] });
 
   private firstOption = toSignal(this.installedApps$.pipe(map((opts) => opts[0]?.value)));
 

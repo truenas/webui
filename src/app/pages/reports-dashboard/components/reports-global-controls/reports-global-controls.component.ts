@@ -1,24 +1,33 @@
-import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { debounceTime, take } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnSelectComponent, TnSlideToggleComponent } from '@truenas/ui-components';
+import { BehaviorSubject, debounceTime, take } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SelectOption } from 'app/interfaces/option.interface';
 import { reportingGlobalControlsElements } from 'app/pages/reports-dashboard/components/reports-global-controls/reports-global-controls.elements';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { AppState } from 'app/store';
 import { autoRefreshReportsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
+
+/**
+ * these were the only supported report types before migration and were
+ * hard-coded into the HTML template.
+ */
+const supportedReportTypes = [
+  ReportType.Cpu,
+  ReportType.Disk,
+  ReportType.Memory,
+  ReportType.Network,
+  ReportType.System,
+  ReportType.Ups,
+  ReportType.Zfs,
+];
 
 @Component({
   selector: 'ix-reports-global-controls',
@@ -27,27 +36,23 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxSelectComponent,
-    IxSlideToggleComponent,
-    MatButton,
-    TestDirective,
-    MatMenuTrigger,
-    UiSearchDirective,
-    TnIconComponent,
-    MatMenu,
-    NgTemplateOutlet,
-    MatMenuItem,
-    TranslateModule,
+    TnButtonComponent,
+    TnSelectComponent,
+    TnSlideToggleComponent,
     RouterLink,
+    UiSearchDirective,
+    TranslateModule,
   ],
 })
 export class ReportsGlobalControlsComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private store$ = inject<Store<AppState>>(Store);
   private reportsService = inject(ReportsService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   readonly diskOptionsChanged = output<{ devices: string[]; metrics: string[] }>();
 
@@ -55,12 +60,18 @@ export class ReportsGlobalControlsComponent implements OnInit {
     autoRefresh: [false],
     devices: [[] as string[]],
     metrics: [[] as string[]],
+    tab: [undefined as ReportType | undefined],
   });
+
+  protected tabOptions$ = new BehaviorSubject<SelectOption[]>([]);
 
   protected activeTab: ReportTab | undefined;
   protected allTabs: ReportTab[];
-  protected diskDevices$ = this.reportsService.getDiskDevices();
-  protected diskMetrics$ = this.reportsService.getDiskMetrics();
+  private diskDevices$ = this.reportsService.getDiskDevices();
+  private diskMetrics$ = this.reportsService.getDiskMetrics();
+  protected diskDevices = toSignal(this.diskDevices$, { initialValue: [] });
+  protected diskMetrics = toSignal(this.diskMetrics$, { initialValue: [] });
+  protected tabOptions = toSignal(this.tabOptions$, { initialValue: [] });
 
   protected readonly ReportType = ReportType;
   protected readonly searchableElements = reportingGlobalControlsElements;
@@ -71,14 +82,6 @@ export class ReportsGlobalControlsComponent implements OnInit {
     this.setupDisksTab();
   }
 
-  protected isActiveTab(tab: ReportTab): boolean {
-    return this.activeTab?.value === tab.value;
-  }
-
-  protected typeTab(tab: ReportTab): ReportTab {
-    return tab;
-  }
-
   private setupTabs(): void {
     this.reportsService.getReportGraphs()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -87,8 +90,28 @@ export class ReportsGlobalControlsComponent implements OnInit {
         this.activeTab = this.allTabs.find((tab) => {
           return tab.value === (this.route.routeConfig?.path as ReportType);
         });
+
+        /**
+         * set `tabOptions$` by filtering on `supportedReportTypes` - unsupported report
+         * types should be excluded from the list since they'll just navigate the user to the
+         * dashboard.
+         */
+        this.tabOptions$.next(
+          this.allTabs
+            .filter((tab) => supportedReportTypes.includes(tab.value))
+            .map((tab) => ({ label: this.translate.instant(tab.label), value: tab.value })),
+        );
+        this.form.patchValue({ tab: this.activeTab?.value }, { emitEvent: false });
         this.cdr.markForCheck();
       });
+
+    this.form.controls.tab.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((value) => {
+      if (value) {
+        this.router.navigate(['/reportsdashboard', value]);
+      }
+    });
   }
 
   private setupDisksTab(): void {

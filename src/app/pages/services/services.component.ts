@@ -1,36 +1,44 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef, Type,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnCardComponent, TnCellDefDirective, TnHeaderCellDefDirective,
+  TnSlideToggleComponent, TnTableColumnDirective, TnTableComponent, TnTestIdDirective,
+  TnTooltipDirective, type TnSortEvent,
+} from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, take,
 } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { serviceNames } from 'app/enums/service-name.enum';
+import { serviceNames, ServiceName } from 'app/enums/service-name.enum';
 import { serviceStatusLabels } from 'app/enums/service-status.enum';
-import { ServiceRow } from 'app/interfaces/service.interface';
+import { Service, ServiceRow } from 'app/interfaces/service.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceActionsCellComponent } from 'app/pages/services/components/service-actions-cell/service-actions-cell.component';
+import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
+import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
+import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
+import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
+import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceStatusCellComponent } from 'app/pages/services/components/service-status-cell/service-status-cell.component';
+import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
+import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import { servicesElements } from 'app/pages/services/services.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServicesService } from 'app/services/services.service';
@@ -45,18 +53,21 @@ import { waitForServices } from 'app/store/services/services.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BasicSearchComponent,
-    MatCard,
+    TnCardComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnSlideToggleComponent,
+    TnTestIdDirective,
+    TnTooltipDirective,
+    RequiresRolesDirective,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableCellDirective,
     PageHeaderComponent,
     ServiceStatusCellComponent,
+    ServiceActionsCellComponent,
     TranslateModule,
     AsyncPipe,
-    ServiceActionsCellComponent,
   ],
 })
 export class ServicesComponent implements OnInit {
@@ -68,34 +79,13 @@ export class ServicesComponent implements OnInit {
   private store$ = inject<Store<ServicesState>>(Store);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
+  private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = servicesElements;
   protected readonly requiredRoles = [Role.ServiceWrite];
 
-  columns = createTable<ServiceRow>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-    }),
-    templateColumn({
-      title: this.translate.instant('Status'),
-      sortBy: (row) => row.state,
-      propertyName: 'state',
-    }),
-    toggleColumn({
-      title: this.translate.instant('Start Automatically'),
-      propertyName: 'enable',
-      onRowToggle: (row) => this.enableToggle(row),
-      dynamicRequiredRoles: (row) => of(this.servicesService.getRolesRequiredToManage(row.service)),
-    }),
-    templateColumn({
-      cssClass: 'actions-column',
-    }),
-  ], {
-    uniqueRowTag: (row) => 'service-' + row.name.replace(/\./g, ''),
-    ariaLabels: (row) => [row.name, this.translate.instant('Service')],
-  });
+  protected readonly displayedColumns = ['name', 'state', 'enable', 'actions'];
 
   dataProvider = new ArrayDataProvider<ServiceRow>();
   searchQuery = signal('');
@@ -104,6 +94,18 @@ export class ServicesComponent implements OnInit {
 
   error = false;
   loading = true;
+
+  // Maps each service to its config form. Two-column forms (`wide`) get the wider panel,
+  // matching the legacy SlideIn `wide` width.
+  private readonly configForms = new Map<ServiceName, { component: Type<SidePanelForm>; wide?: boolean }>([
+    [ServiceName.Ftp, { component: ServiceFtpComponent, wide: true }],
+    [ServiceName.Nfs, { component: ServiceNfsComponent, wide: true }],
+    [ServiceName.Cifs, { component: ServiceSmbComponent }],
+    [ServiceName.Snmp, { component: ServiceSnmpComponent, wide: true }],
+    [ServiceName.Ssh, { component: ServiceSshComponent }],
+    [ServiceName.Ups, { component: ServiceUpsComponent, wide: true }],
+    [ServiceName.WebShare, { component: ServiceWebshareComponent }],
+  ]);
 
   protected get emptyConfig(): EmptyType {
     switch (true) {
@@ -120,6 +122,35 @@ export class ServicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getData();
+  }
+
+  protected readonly trackByServiceId = (_index: number, row: ServiceRow): number => row.id;
+
+  protected uniqueRowTag(row: ServiceRow): string {
+    return 'service-' + row.name.replace(/\./g, '');
+  }
+
+  protected rolesToManage(row: ServiceRow): Role[] {
+    return this.servicesService.getRolesRequiredToManage(row.service);
+  }
+
+  protected emptyMessage(): string {
+    return this.translate.instant(this.emptyService.defaultEmptyConfig(this.emptyConfig).title);
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<ServiceRow>(event, this.displayedColumns));
+  }
+
+  protected openConfig(service: Service): void {
+    const config = this.configForms.get(service.service);
+    if (!config) {
+      return;
+    }
+    this.formPanel.open(config.component, {
+      title: serviceNames.get(service.service) ?? service.service,
+      wide: config.wide,
+    });
   }
 
   protected onListFiltered(query: string): void {
@@ -161,7 +192,7 @@ export class ServicesComponent implements OnInit {
     });
   }
 
-  private enableToggle(service: ServiceRow): void {
+  protected enableToggle(service: ServiceRow): void {
     this.store$.dispatch(serviceChanged({ service: { ...service, enable: !service.enable } }));
 
     this.api.call('service.update', [service.id, { enable: !service.enable }])

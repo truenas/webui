@@ -1,14 +1,10 @@
 :host {
   display: block;
   min-width: 340px;
+  max-width: 560px;
 }
 
 .general-dialog-content-container {
   height: calc(100% - 100px);
   overflow: auto !important;
-}
-
-.mat-mdc-dialog-title {
-  align-items: center;
-  gap: 4px;
 }

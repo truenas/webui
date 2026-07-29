@@ -13,10 +13,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
 
 const fakeJbofDataSource: Jbof[] = [
@@ -58,8 +57,8 @@ describe('JbofListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.empty()),
       }),
       mockAuth(),
     ],
@@ -86,8 +85,9 @@ describe('JbofListComponent', () => {
     const editButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'description 1');
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(JbofFormComponent, {
-      data: fakeJbofDataSource[0],
+    expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(expect.anything(), {
+      title: 'Edit Expansion Shelf',
+      editData: fakeJbofDataSource[0],
     });
   });
 

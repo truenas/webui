@@ -1,11 +1,10 @@
 import { ComponentHarness } from '@angular/cdk/testing';
-import { MatInputHarness } from '@angular/material/input/testing';
+import { TnInputHarness } from '@truenas/ui-components';
 
 export class BasicSearchHarness extends ComponentHarness {
   static readonly hostSelector = 'ix-basic-search';
 
-  getResetIcon = this.locatorFor('.reset-icon');
-  getInput = this.locatorFor(MatInputHarness);
+  getInput = this.locatorFor(TnInputHarness);
   getSwitchLink = this.locatorForOptional('.switch-link');
 
   async getValue(): Promise<string> {
@@ -14,6 +13,10 @@ export class BasicSearchHarness extends ComponentHarness {
 
   async setValue(value: string): Promise<void> {
     return (await this.getInput()).setValue(value);
+  }
+
+  async clearInput(): Promise<void> {
+    return (await this.getInput()).clickSuffixAction();
   }
 
   async clickSwitchToAdvanced(): Promise<void> {

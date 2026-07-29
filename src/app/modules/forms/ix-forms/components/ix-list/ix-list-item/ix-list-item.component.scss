@@ -2,12 +2,18 @@
   background: rgba(0, 0, 0, 0.1);
   border: 1.5px solid var(--lines);
   margin: 10px 0;
-  padding: 5px 10px 0;
+  // Bottom padding (was 0) so the last control isn't flush against the card edge. The 0 relied on
+  // ix-* children's own `margin-bottom`; migrated tn-* controls drop that, so the card owns it.
+  padding: 5px 10px 10px;
 }
 
 .list-item {
   display: flex;
   flex-direction: column;
+  // Space the stacked controls within a card. Migrated tn-* controls (tn-form-field/tn-select)
+  // carry no margin of their own, so without this the iSCSI-group / ACL-entry card fields sit
+  // tight against each other.
+  gap: 1rem;
   width: 100%;
 }
 

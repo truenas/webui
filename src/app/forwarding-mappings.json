@@ -1,0 +1,19 @@
+[
+  {
+    "selector": "tn-button",
+    "iconSlots": [
+      {
+        "iconAttribute": "icon"
+      }
+    ]
+  },
+  {
+    "selector": "tn-menu-item",
+    "iconSlots": [
+      {
+        "iconAttribute": "icon",
+        "libraryAttribute": "iconLibrary"
+      }
+    ]
+  }
+]

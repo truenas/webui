@@ -1,27 +1,31 @@
-<div>
-  <h1 mat-dialog-title>{{ 'Create Dataset' | translate }}</h1>
+<tn-dialog-shell testId="create-dataset" [title]="'Create Dataset' | translate">
   @if (isLoading$ | async) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <tn-progress-bar mode="indeterminate"></tn-progress-bar>
   }
-</div>
-<form [formGroup]="form">
-  <ix-input
-    class="dataset-name"
-    formControlName="name"
-    [label]="'Name' | translate"
-    [required]="true"
-  ></ix-input>
-</form>
-<ix-form-actions mat-dialog-actions class="form-actions">
-  <button mat-button matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
-  <button
-    *ixRequiresRoles="requiredRoles"
-    mat-button
-    color="primary"
-    ixTest="create-dataset"
-    [disabled]="form.invalid || (isLoading$ | async)"
-    (click)="createDataset()"
-  >
-    {{ 'Create' | translate }}
-  </button>
-</ix-form-actions>
+  <form [formGroup]="form">
+    <tn-form-field [label]="'Name' | translate">
+      <tn-input
+        class="dataset-name"
+        testId="name"
+        formControlName="name"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
+  </form>
+  <ix-form-actions tnDialogAction class="form-actions">
+    <tn-button
+      variant="outline"
+      testId="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close()"
+    ></tn-button>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      testId="create-dataset"
+      [label]="'Create' | translate"
+      [disabled]="form.invalid || (isLoading$ | async) || false"
+      (onClick)="createDataset()"
+    ></tn-button>
+  </ix-form-actions>
+</tn-dialog-shell>

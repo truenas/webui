@@ -1,19 +1,15 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -23,15 +19,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./delete-extent-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     ReactiveFormsModule,
-    IxCheckboxComponent,
+    TnCheckboxComponent, TnFormFieldComponent,
     FormActionsComponent,
-    MatDialogActions,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -42,8 +34,8 @@ export class DeleteExtentDialog {
   private errorHandler = inject(ErrorHandlerService);
   private formBuilder = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
-  extent = inject<IscsiExtent>(MAT_DIALOG_DATA);
-  private dialogRef = inject<MatDialogRef<DeleteExtentDialog>>(MatDialogRef);
+  extent = inject<IscsiExtent>(DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<unknown, DeleteExtentDialog>>(DialogRef);
 
   protected readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,

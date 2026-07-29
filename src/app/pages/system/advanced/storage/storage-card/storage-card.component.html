@@ -1,42 +1,40 @@
-<mat-card [ixUiSearch]="searchableElements.elements.storage">
-  <mat-toolbar-row>
-    <h3>{{ 'Storage' | translate }}</h3>
-    <div class="actions action-icon">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['storage', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
-        (click)="onConfigurePressed()"
-      >
-        {{ 'Configure' | translate }}
-      </button>
+<tn-card
+  padding="small"
+  [title]="'Storage' | translate"
+  [ixUiSearch]="searchableElements.elements.storage"
+>
+  <div class="details">
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.systemPool">
+      <span class="label">{{ 'System Dataset Pool' | translate }}:</span>
+      <span class="value">
+        @if (isLoading()) {
+          <ngx-skeleton-loader></ngx-skeleton-loader>
+        } @else {
+          {{ systemDatasetPool() }}
+        }
+      </span>
     </div>
-  </mat-toolbar-row>
 
-  <mat-card-content>
-    <mat-list>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.systemPool">
-        <span class="label">{{ 'System Dataset Pool' | translate }}:</span>
-        <span class="value">
-          @if (isLoading()) {
-            <ngx-skeleton-loader></ngx-skeleton-loader>
-          } @else {
-            {{ systemDatasetPool() }}
-          }
-        </span>
-      </mat-list-item>
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.priorityResilver">
+      <span class="label">{{ 'Resilvering At Higher Priority' | translate }}:</span>
+      <span class="value">
+        @if (isLoading()) {
+          <ngx-skeleton-loader></ngx-skeleton-loader>
+        } @else {
+          {{ priorityResilverSummary() }}
+        }
+      </span>
+    </div>
+  </div>
 
-      <mat-list-item [ixUiSearch]="searchableElements.elements.priorityResilver">
-        <span class="label">{{ 'Resilvering At Higher Priority' | translate }}:</span>
-        <span class="value">
-          @if (isLoading()) {
-            <ngx-skeleton-loader></ngx-skeleton-loader>
-          } @else {
-            {{ priorityResilverSummary() }}
-          }
-        </span>
-      </mat-list-item>
-    </mat-list>
-  </mat-card-content>
-</mat-card>
+  <ng-template tnCardFooterActions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="['storage', 'configure']"
+      [ixUiSearch]="searchableElements.elements.configure"
+      [label]="'Configure' | translate"
+      (onClick)="onConfigurePressed()"
+    ></tn-button>
+  </ng-template>
+</tn-card>

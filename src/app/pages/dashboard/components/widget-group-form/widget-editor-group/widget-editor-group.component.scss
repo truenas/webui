@@ -14,7 +14,14 @@
 
   .slot {
     appearance: none;
+    // Matches .tn-card's border radius so the selection/focus outline hugs the card.
+    border-radius: 8px;
+    // Mirror the body/group-container context widgets render in on the live
+    // dashboard — otherwise UA button defaults (white bg, black text) leak
+    // through the rounded tn-card corners and into inherited text color.
+    background: var(--bg1);
     border-style: none;
+    color: var(--fg1);
     cursor: pointer;
     height: 100%;
     outline-color: transparent;
@@ -27,7 +34,9 @@
       outline: 2px solid var(--primary);
     }
 
-    &:focus {
+    // :focus-visible (not :focus) so pointer clicks show the blue selection
+    // outline immediately; keyboard navigation still gets the focus ring.
+    &:focus-visible {
       outline: 2px solid var(--fg2);
     }
 

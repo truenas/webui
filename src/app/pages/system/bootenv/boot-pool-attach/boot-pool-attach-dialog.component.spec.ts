@@ -1,9 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -49,7 +49,7 @@ describe('BootPoolAttachDialogComponent', () => {
           return { afterClosed: jest.fn(() => of(null)) };
         }),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockAuth(),
       mockProvider(SnackbarService),
     ],
@@ -65,10 +65,12 @@ describe('BootPoolAttachDialogComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Member Disk': 'sdb (10 GiB)',
-      'Use all disk space': true,
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const expand = await loader.getHarness(TnCheckboxHarness.with({ label: 'Use all disk space' }));
+    await expand.check();
+
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.job).toHaveBeenCalledWith('boot.attach', ['sdb', { expand: true }]);

@@ -1,17 +1,14 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, inject, input, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  ControlValueAccessor, NgControl, ReactiveFormsModule, FormsModule,
+  ControlValueAccessor, NgControl, ReactiveFormsModule, FormControl, Validators,
 } from '@angular/forms';
-import { MatOptionSelectionChange, MatOption } from '@angular/material/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSelect } from '@angular/material/select';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import {
+  TnDialog, TnFormFieldComponent, TnSelectComponent, TnSelectOption,
+} from '@truenas/ui-components';
 import {
   SchedulerModalConfig,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal-config.interface';
@@ -19,31 +16,27 @@ import {
   SchedulerModalComponent,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
-import { CronPresetValue, getDefaultCrontabPresets } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
-import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
+import { getDefaultCrontabPresets } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
   selector: 'ix-scheduler',
   templateUrl: './scheduler.component.html',
   styleUrls: ['./scheduler.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [CrontabExplanationPipe],
   imports: [
-    IxLabelComponent,
-    MatSelect,
+    TnFormFieldComponent,
+    TnSelectComponent,
     ReactiveFormsModule,
-    TestDirective,
-    FormsModule,
-    MatOption,
-    IxErrorsComponent,
     TranslateModule,
-    CrontabExplanationPipe,
   ],
 })
 export class SchedulerComponent implements ControlValueAccessor {
   controlDirective = inject(NgControl);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
+  private crontabExplanation = inject(CrontabExplanationPipe);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
@@ -52,6 +45,7 @@ export class SchedulerComponent implements ControlValueAccessor {
   readonly required = input(false);
   readonly hideMinutes = input(false);
 
+  /** Sentinel value of the "Create Custom schedule" action option (opens the cron-builder dialog). */
   protected readonly customValue = 'custom';
   /**
    * Optional extra time boundaries for every day, i.e. "15:30" - "23:30"
@@ -59,17 +53,41 @@ export class SchedulerComponent implements ControlValueAccessor {
   readonly startTime = input<string>();
   readonly endTime = input<string>();
 
-  readonly defaultPresets = getDefaultCrontabPresets(this.translate);
+  private readonly defaultPresets = getDefaultCrontabPresets(this.translate);
+
+  /** Drives the inner `<tn-select>`. The component mediates between it and the host's form control. */
+  protected readonly selectControl = new FormControl<string>('');
+  /** Set when the current value is a non-preset crontab; surfaces it as a selectable "Custom" option. */
+  protected readonly customCrontab = signal<string | null>(null);
+
+  /** Preset options + an optional "Custom" entry + the "Create Custom schedule" action, fed to `<tn-select>`. */
+  protected readonly options = signal<TnSelectOption<string>[]>([]);
 
   isDisabled = false;
-  crontab: string;
-  customCrontab: string | null;
+  private crontab: string;
+  /** Last real (non-action) value, used to restore the selection when the dialog is cancelled. */
+  private previousValue: string | null = null;
 
-  onTouched: () => void;
-  onChange: (crontab: string) => void;
+  onTouched: () => void = () => {};
+  onChange: (crontab: string) => void = () => {};
 
   constructor() {
     this.controlDirective.valueAccessor = this;
+
+    // Mirror the host's required state onto the inner control so `<tn-form-field>` renders the inline
+    // "required" indicator/error: the field reads validity from the `<tn-select>` it wraps, not from
+    // the host's form control (which carries the actual validator).
+    effect(() => {
+      this.selectControl.setValidators(this.required() ? [Validators.required] : []);
+      this.selectControl.updateValueAndValidity({ emitEvent: false });
+    });
+
+    // Rebuild the options whenever the custom crontab changes (signal-driven, so it stays in sync under OnPush).
+    effect(() => this.options.set(this.buildOptions(this.customCrontab())));
+
+    this.selectControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
+      this.onSelectionChange(value ?? '');
+    });
   }
 
   registerOnChange(onChange: (crontab: string) => void): void {
@@ -82,59 +100,87 @@ export class SchedulerComponent implements ControlValueAccessor {
 
   setDisabledState(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
+    if (isDisabled) {
+      this.selectControl.disable({ emitEvent: false });
+    } else {
+      this.selectControl.enable({ emitEvent: false });
+    }
   }
 
   writeValue(crontab: string): void {
     this.crontab = crontab;
+    this.previousValue = crontab;
     const isDefaultPreset = this.defaultPresets.some((preset) => preset.value === crontab);
-    if (!isDefaultPreset && crontab) {
-      this.customCrontab = crontab;
-    }
-
+    this.customCrontab.set(!isDefaultPreset && crontab ? crontab : null);
+    this.selectControl.setValue(crontab, { emitEvent: false });
     this.cdr.markForCheck();
   }
 
+  private onSelectionChange(value: string): void {
+    if (value === this.customValue) {
+      // Seed the cron builder with the current custom schedule (if any) so editing starts from it,
+      // rather than a blank form. Falls back to a fresh form when no custom value is set.
+      this.onCustomOptionSelected(this.customCrontab() ?? undefined);
+      return;
+    }
+
+    this.crontab = value;
+    this.previousValue = value;
+    const isDefaultPreset = this.defaultPresets.some((preset) => preset.value === value);
+    this.customCrontab.set(!isDefaultPreset && value ? value : null);
+    this.onChange(value);
+    this.onTouched();
+  }
+
   private onCustomOptionSelected(previousValue: string | undefined): void {
-    this.matDialog.open(SchedulerModalComponent, {
+    const restoreTo = this.previousValue;
+    this.tnDialog.open<SchedulerModalComponent, SchedulerModalConfig, string>(SchedulerModalComponent, {
+      width: '760px',
       data: {
         startTime: this.startTime(),
         endTime: this.endTime(),
         hideMinutes: this.hideMinutes(),
         crontab: previousValue,
-      } as SchedulerModalConfig,
+      },
     })
-      .afterClosed()
-      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-      .subscribe((newCrontab: string) => {
-        if (Object.values(CronPresetValue).includes(newCrontab as CronPresetValue)) {
-          this.customCrontab = null;
-        } else {
-          this.customCrontab = newCrontab;
+      .closed
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((newCrontab: string | undefined) => {
+        if (!newCrontab) {
+          // Cancelled — restore the previously selected value (the select transiently shows the action option).
+          this.selectControl.setValue(restoreTo ?? '', { emitEvent: false });
+          return;
         }
-        this.cdr.markForCheck();
+        const isDefaultPreset = this.defaultPresets.some((preset) => preset.value === newCrontab);
+        this.customCrontab.set(isDefaultPreset ? null : newCrontab);
         this.crontab = newCrontab;
+        this.previousValue = newCrontab;
+        this.selectControl.setValue(newCrontab, { emitEvent: false });
         this.onChange(newCrontab);
         this.cdr.markForCheck();
       });
   }
 
-  onOptionSelectionChange(value: MatOptionSelectionChange<string>): void {
-    if (!value.source.selected) {
-      return;
-    }
-    if (!value.isUserInput) {
-      return;
-    }
-    const selection = value.source.value as CronPresetValue;
-    if (selection.toString() === this.customValue) {
-      this.onCustomOptionSelected(undefined);
-    } else if (!Object.values(CronPresetValue).includes(selection)) {
-      this.onCustomOptionSelected(selection);
-    } else {
-      this.crontab = selection;
-      this.customCrontab = null;
-      this.onChange(selection);
-      this.cdr.markForCheck();
-    }
+  private buildOptions(customCrontab: string | null): TnSelectOption<string>[] {
+    const presetOptions = this.defaultPresets.map((preset) => ({
+      label: ignoreTranslation(preset.description ? `${preset.label} ${preset.description}` : preset.label),
+      value: preset.value,
+    }));
+
+    const customOption: TnSelectOption<string>[] = customCrontab
+      ? [{
+          label: this.translate.instant('Custom {schedule}', {
+            schedule: this.crontabExplanation.transform(customCrontab),
+          }),
+          value: customCrontab,
+        }]
+      : [];
+
+    const createCustomOption: TnSelectOption<string> = {
+      label: this.translate.instant('Create Custom schedule'),
+      value: this.customValue,
+    };
+
+    return [...presetOptions, ...customOption, createCustomOption];
   }
 }

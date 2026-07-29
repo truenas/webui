@@ -1,7 +1,6 @@
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
@@ -17,12 +16,6 @@ describe('AddSubsystemNamespaceComponent', () => {
     imports: [
       MockComponent(BaseNamespaceFormComponent),
     ],
-    providers: [
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      }),
-    ],
   });
 
   beforeEach(() => {
@@ -33,19 +26,17 @@ describe('AddSubsystemNamespaceComponent', () => {
     expect(spectator.query(BaseNamespaceFormComponent)).toBeTruthy();
   });
 
-  it('closes the slide-in when BaseNamespaceFormComponent is submitted', () => {
-    const component = spectator.query(BaseNamespaceFormComponent);
-    const slideInRef = spectator.inject(SlideInRef);
+  it('emits the new namespace through `closed` when BaseNamespaceFormComponent is submitted', () => {
+    const emitSpy = jest.fn();
+    spectator.component.closed.subscribe(emitSpy);
 
     const newNamespace: NamespaceChanges = {
       device_path: '/mnt/dozer/file',
       device_type: NvmeOfNamespaceType.File,
       filesize: 1024,
     };
-    component.submitted.emit(newNamespace);
+    spectator.query(BaseNamespaceFormComponent).submitted.emit(newNamespace);
 
-    expect(slideInRef.close).toHaveBeenCalledWith({
-      response: newNamespace,
-    });
+    expect(emitSpy).toHaveBeenCalledWith(newNamespace);
   });
 });

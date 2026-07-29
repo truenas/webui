@@ -1,20 +1,16 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
-} from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { IscsiTarget, IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -25,15 +21,11 @@ import { IscsiService } from 'app/services/iscsi.service';
   styleUrls: ['./delete-target-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
+    TnDialogShellComponent,
     ReactiveFormsModule,
-    IxCheckboxComponent,
-    MatDialogActions,
+    TnCheckboxComponent, TnFormFieldComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
   ],
@@ -41,18 +33,19 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class DeleteTargetDialog implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
-  private dialogRef = inject<MatDialogRef<DeleteTargetDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<unknown, DeleteTargetDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private iscsiService = inject(IscsiService);
   private translate = inject(TranslateService);
-  target = inject<IscsiTarget>(MAT_DIALOG_DATA);
+  target = inject<IscsiTarget>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SharingIscsiTargetWrite];
 
   readonly targetExtents = signal<IscsiTargetExtent[]>([]);
   protected warningMessage = signal<string>('');
+  protected get title(): string { return this.translate.instant('Delete Target "{name}"', { name: this.target.name }); }
 
   form = this.formBuilder.group({
     delete_extents: [false],

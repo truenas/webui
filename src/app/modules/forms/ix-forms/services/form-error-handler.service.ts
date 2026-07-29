@@ -35,15 +35,17 @@ export class FormErrorHandlerService {
   ): void {
     // Clear any existing errors when handling new validation
     this.unhandledErrors = [];
-    const isValidationError = isApiCallError(error)
-      && isApiErrorDetails(error.error.data)
-      && error.error.data.errname === ApiErrorName.Validation
-      && error.error.data.extra;
 
     // Normalize input to array for consistent handling
     const formGroups = Array.isArray(formGroupOrGroups) ? formGroupOrGroups : [formGroupOrGroups];
 
-    if (isValidationError) {
+    // Inlined (not precomputed) so the type guards narrow `error.error.data` for the call below.
+    if (
+      isApiCallError(error)
+      && isApiErrorDetails(error.error.data)
+      && error.error.data.errname === ApiErrorName.Validation
+      && error.error.data.extra
+    ) {
       this.handleValidationError(error.error.data, formGroups, fieldsMap, triggerAnchor, error);
       return;
     }
@@ -94,7 +96,8 @@ export class FormErrorHandlerService {
 
       const errorMessage = extraItem[1];
 
-      const control = this.getFormField(formGroups, field, fieldsMap);
+      const control = this.getFormField(formGroups, field, fieldsMap)
+        ?? this.getFormFieldByErrorPath(formGroups, fullFieldPath);
 
 
       const mappedFieldName = fieldsMap[field] ?? field; // Get the mapped field name
@@ -169,7 +172,7 @@ export class FormErrorHandlerService {
     if (!element && this.document?.querySelector) {
       // Fallback: try to find element by formControlName attribute
       const foundElement = this.document.querySelector(`[formControlName="${field}"]`);
-      element = foundElement instanceof HTMLElement ? foundElement : null;
+      element = foundElement instanceof HTMLElement ? foundElement : undefined;
     }
 
     if (!element) {
@@ -205,6 +208,32 @@ export class FormErrorHandlerService {
     // Search through all form groups to find the control
     for (const formGroup of formGroups) {
       const control = formGroup.get(fieldName);
+      if (control) {
+        return control;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Fallback lookup for controls nested in sub-groups, where the leaf name alone can't find them
+   * (`watch_list` won't resolve when the control lives at `audit.watch_list`). The API error path
+   * carries the full location: drop the schema prefix (`sharingsmb_update.`) and any numeric
+   * indices (`.0`), then resolve the rest as a dot-path against the form.
+   */
+  private getFormFieldByErrorPath(
+    formGroups: UntypedFormGroup[],
+    fullFieldPath: string,
+  ): AbstractControl | null {
+    const pathParts = fullFieldPath.split('.').slice(1).filter((part) => !/^\d+$/.test(part));
+    if (pathParts.length < 2) {
+      // A single segment is just the leaf name — getFormField already tried that.
+      return null;
+    }
+
+    const path = pathParts.join('.');
+    for (const formGroup of formGroups) {
+      const control = formGroup.get(path);
       if (control) {
         return control;
       }

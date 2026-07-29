@@ -1,9 +1,13 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule,
+} from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnRadioComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { fromPairs } from 'lodash-es';
-import { of } from 'rxjs';
 import {
   NfsAclTag, nfsAclTagLabels, NfsAclType,
   nfsAclTypeLabels, NfsAdvancedFlag, nfsAdvancedFlagLabels,
@@ -21,11 +25,7 @@ import {
   BasicNfsPermissions,
   NfsAclItem,
 } from 'app/interfaces/acl.interface';
-import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { newNfsAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
@@ -36,6 +36,27 @@ import {
   nfsFormPermsTypeLabels,
 } from './edit-nfs-ace-form.types';
 
+/** Builds a FormGroup with one boolean control per key of the given label map. */
+function booleanGroupFromLabels<T extends string>(labels: Map<T, string>): FormGroup<Record<T, FormControl<boolean>>> {
+  const controls = {} as Record<T, FormControl<boolean>>;
+  for (const key of labels.keys()) {
+    controls[key] = new FormControl(false, { nonNullable: true });
+  }
+  return new FormGroup(controls);
+}
+
+/** Builds a full boolean record for every key of the label map, reading truthiness from `source`. */
+function booleanRecordFromLabels<T extends string>(
+  labels: Map<T, string>,
+  source: Partial<Record<T, boolean>>,
+): Record<T, boolean> {
+  const record = {} as Record<T, boolean>;
+  for (const key of labels.keys()) {
+    record[key] = !!source[key];
+  }
+  return record;
+}
+
 @Component({
   selector: 'ix-edit-nfs-ace',
   templateUrl: './edit-nfs-ace.component.html',
@@ -43,12 +64,13 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     IxUserComboboxComponent,
     IxGroupComboboxComponent,
-    IxRadioGroupComponent,
-    IxCheckboxListComponent,
+    TnRadioComponent,
+    TnCheckboxComponent,
     TranslateModule,
   ],
 })
@@ -67,20 +89,20 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     type: [NfsAclType.Allow],
     permissionType: [NfsFormPermsType.Basic],
     basicPermission: [newNfsAce.perms.BASIC],
-    advancedPermissions: [[] as NfsAdvancedPermission[]],
+    advancedPermissions: booleanGroupFromLabels(nfsAdvancedPermissionLabels),
     flagsType: [NfsFormFlagsType.Basic],
     basicFlag: [NfsBasicFlag.Inherit],
-    advancedFlags: [[] as NfsAdvancedFlag[]],
+    advancedFlags: booleanGroupFromLabels(nfsAdvancedFlagLabels),
   });
 
-  readonly tags$ = of(mapToOptions(nfsAclTagLabels, this.translate));
-  readonly aclTypes$ = of(mapToOptions(nfsAclTypeLabels, this.translate));
-  readonly permissionTypes$ = of(mapToOptions(nfsFormPermsTypeLabels, this.translate));
-  readonly basicPermissions$ = of(mapToOptions(nfsBasicPermissionLabels, this.translate));
-  readonly advancedPermissions$ = of(mapToOptions(nfsAdvancedPermissionLabels, this.translate));
-  readonly flagTypes$ = of(mapToOptions(nfsFormFlagsTypeLabels, this.translate));
-  readonly basicFlags$ = of(mapToOptions(nfsBasicFlagLabels, this.translate));
-  readonly advancedFlags$ = of(mapToOptions(nfsAdvancedFlagLabels, this.translate));
+  readonly tags = mapToOptions(nfsAclTagLabels, this.translate);
+  readonly aclTypes = mapToOptions(nfsAclTypeLabels, this.translate);
+  readonly permissionTypes = mapToOptions(nfsFormPermsTypeLabels, this.translate);
+  readonly basicPermissions = mapToOptions(nfsBasicPermissionLabels, this.translate);
+  readonly advancedPermissionOptions = mapToOptions(nfsAdvancedPermissionLabels, this.translate);
+  readonly flagTypes = mapToOptions(nfsFormFlagsTypeLabels, this.translate);
+  readonly basicFlags = mapToOptions(nfsBasicFlagLabels, this.translate);
+  readonly advancedFlagOptions = mapToOptions(nfsAdvancedFlagLabels, this.translate);
 
   readonly tooltips = {
     tag: helptextAcl.tagTooltip,
@@ -164,8 +186,10 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
       } else {
         ace.perms = { BASIC: formValues.basicPermission } as BasicNfsPermissions;
       }
-    } else if (Array.isArray(formValues.advancedPermissions)) {
-      ace.perms = fromPairs(formValues.advancedPermissions.map((key) => [key, true])) as AdvancedNfsPermissions;
+    } else {
+      ace.perms = fromPairs(
+        Object.entries(formValues.advancedPermissions ?? {}).filter(([, isOn]) => isOn).map(([key]) => [key, true]),
+      ) as AdvancedNfsPermissions;
     }
 
     if (formValues.flagsType === NfsFormFlagsType.Basic) {
@@ -174,8 +198,10 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
       } else {
         ace.flags = { BASIC: formValues.basicFlag } as BasicNfsFlags;
       }
-    } else if (Array.isArray(formValues.advancedFlags)) {
-      ace.flags = fromPairs(formValues.advancedFlags.map((key) => [key, true])) as AdvancedNfsFlags;
+    } else {
+      ace.flags = fromPairs(
+        Object.entries(formValues.advancedFlags ?? {}).filter(([, isOn]) => isOn).map(([key]) => [key, true]),
+      ) as AdvancedNfsFlags;
     }
 
     return ace;
@@ -211,24 +237,26 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     if (areNfsPermissionsBasic(permissions)) {
       formValues.permissionType = NfsFormPermsType.Basic;
       formValues.basicPermission = permissions.BASIC;
-      formValues.advancedPermissions = [];
+      formValues.advancedPermissions = booleanRecordFromLabels(nfsAdvancedPermissionLabels, {});
     } else {
       formValues.permissionType = NfsFormPermsType.Advanced;
-      formValues.advancedPermissions = Object.entries(permissions)
-        .filter(([, isOn]) => isOn)
-        .map(([permission]) => permission as NfsAdvancedPermission);
+      formValues.advancedPermissions = booleanRecordFromLabels(
+        nfsAdvancedPermissionLabels,
+        permissions as Partial<Record<NfsAdvancedPermission, boolean>>,
+      );
     }
 
     const flags = this.ace().flags;
     if (areNfsFlagsBasic(flags)) {
       formValues.flagsType = NfsFormFlagsType.Basic;
       formValues.basicFlag = flags.BASIC;
-      formValues.advancedFlags = [];
+      formValues.advancedFlags = booleanRecordFromLabels(nfsAdvancedFlagLabels, {});
     } else {
       formValues.flagsType = NfsFormFlagsType.Advanced;
-      formValues.advancedFlags = Object.entries(flags)
-        .filter(([, isOn]) => isOn)
-        .map(([flag]) => flag as NfsAdvancedFlag);
+      formValues.advancedFlags = booleanRecordFromLabels(
+        nfsAdvancedFlagLabels,
+        flags as Partial<Record<NfsAdvancedFlag, boolean>>,
+      );
     }
 
     this.form.patchValue(formValues, { emitEvent: false });

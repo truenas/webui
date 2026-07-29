@@ -24,13 +24,16 @@
       }
     </ix-list>
   } @else {
-    <ix-select
-      formControlName="portal"
+    <tn-form-field
       [label]="helptextSharingIscsi.portalLabel | translate"
       [tooltip]="helptextSharingIscsi.portalTooltip | translate"
-      [options]="portalOptions$"
       [required]="true"
-    ></ix-select>
+    >
+      <tn-select
+        formControlName="portal"
+        [options]="(portalOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
     @if (isNewPortal) {
       <ix-list
         formArrayName="listen"
@@ -46,20 +49,27 @@
             [label]="helptextSharingIscsi.portal.ipLabel | translate"
             (delete)="removeAddress(i)"
             >
-            <ix-select
-              [formControlName]="i"
-              [label]="helptextSharingIscsi.portal.ipLabel  | translate"
-              [options]="addressOptions$"
+            <tn-form-field
+              [label]="helptextSharingIscsi.portal.ipLabel | translate"
               [required]="true"
-            ></ix-select>
+            >
+              <tn-select
+                [formControlName]="i"
+                [options]="(addressOptions$ | async) ?? []"
+              ></tn-select>
+            </tn-form-field>
           </ix-list-item>
         }
       </ix-list>
     }
-    <ix-chips
-      formControlName="initiators"
+    <tn-form-field
       [label]="helptextSharingIscsi.initiatorsLabel | translate"
       [tooltip]="helptextSharingIscsi.initiatorsTooltip | translate"
-    ></ix-chips>
+    >
+      <tn-chip-input
+        formControlName="initiators"
+        [allowCustomValue]="true"
+      ></tn-chip-input>
+    </tn-form-field>
   }
 </ng-container>

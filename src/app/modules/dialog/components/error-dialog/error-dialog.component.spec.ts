@@ -1,12 +1,11 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnIconHarness, tnIconMarker } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconHarness, tnIconMarker } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
@@ -38,7 +37,7 @@ describe('ErrorDialog', () => {
         streamDownloadFile: jest.fn(() => of(new Blob())),
         downloadBlob: jest.fn(),
       }),
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(Router),
       provideMockStore({
         selectors: [
@@ -58,7 +57,7 @@ describe('ErrorDialog', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: baseError,
           },
         ],
@@ -67,8 +66,7 @@ describe('ErrorDialog', () => {
     });
 
     it('shows error title', () => {
-      const title = spectator.query('.err-title');
-      expect(title).toHaveText(baseError.title);
+      expect(spectator.query('.err-title')).toHaveText(baseError.title);
     });
 
     it('shows error message', () => {
@@ -98,7 +96,7 @@ describe('ErrorDialog', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: baseError,
           },
         ],
@@ -107,7 +105,7 @@ describe('ErrorDialog', () => {
     });
 
     it('shows button to download logs when logs is available in the error report', async () => {
-      const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Logs' }));
+      const downloadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Download Logs' }));
       await downloadButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.job_download_logs', [1, '1.log']);
@@ -126,7 +124,7 @@ describe('ErrorDialog', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: errorWithIcon,
           },
         ],
@@ -149,7 +147,7 @@ describe('ErrorDialog', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: errorWithHint,
           },
         ],
@@ -173,7 +171,7 @@ describe('ErrorDialog', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: errorWithActions,
           },
         ],
@@ -181,9 +179,9 @@ describe('ErrorDialog', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
       const router = spectator.inject(Router);
-      const dialogRef = spectator.inject(MatDialogRef);
+      const dialogRef = spectator.inject(DialogRef);
 
-      const actionButton = await loader.getHarness(MatButtonHarness.with({ text: 'Network Settings' }));
+      const actionButton = await loader.getHarness(TnButtonHarness.with({ label: 'Network Settings' }));
       await actionButton.click();
 
       expect(router.navigate).toHaveBeenCalledWith(['/system/network'], { queryParams: undefined });
@@ -203,16 +201,16 @@ describe('ErrorDialog', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: errorWithActions,
           },
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const dialogRef = spectator.inject(MatDialogRef);
+      const dialogRef = spectator.inject(DialogRef);
 
-      const actionButton = await loader.getHarness(MatButtonHarness.with({ text: 'Custom Action' }));
+      const actionButton = await loader.getHarness(TnButtonHarness.with({ label: 'Custom Action' }));
       await actionButton.click();
 
       expect(customAction).toHaveBeenCalled();
@@ -235,7 +233,7 @@ describe('ErrorDialog', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: errorWithDetails,
           },
         ],
@@ -335,7 +333,7 @@ describe('ErrorDialog', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: errorWithLogsExcerpt,
           },
         ],

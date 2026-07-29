@@ -1,6 +1,5 @@
 import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateService } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective, tnIconMarker } from '@truenas/ui-components';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,7 +14,6 @@ import { NetworkInterfaceReport } from 'app/interfaces/reporting.interface';
   styleUrls: ['./interface-status-icon.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatTooltipModule,
     TnIconComponent,
     TnTooltipDirective,
     NgClass,

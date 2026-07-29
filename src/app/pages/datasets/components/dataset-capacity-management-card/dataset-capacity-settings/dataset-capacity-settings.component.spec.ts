@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -11,9 +11,6 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { fillControlValues, getControlValues } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -84,59 +81,37 @@ describe('DatasetCapacitySettingsComponent', () => {
     ],
   });
 
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const clickSave = async (): Promise<void> => {
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+  };
+
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  /**
-   * Working around labels with duplicate names.
-   */
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  async function getControls() {
-    return {
-      refquota: await loader.getHarness(IxInputHarness.with({ label: 'Quota for this dataset' })),
-      quota: await loader.getHarness(IxInputHarness.with({ label: 'Quota for this dataset and all children' })),
-      refreservation: await loader.getHarness(IxInputHarness.with({ label: 'Reserved space for this dataset' })),
-      reservation: await loader.getHarness(IxInputHarness.with({ label: 'Reserved space for this dataset and all children' })),
-      refquotaWarning: await loader.getHarness(IxInputHarness.with({
-        label: 'Quota warning alert at, %',
-        ancestor: '.refquota-warning-fields',
-      })),
-      refquotaWarningInherit: await loader.getHarness(IxCheckboxHarness.with({
-        label: 'Inherit',
-        ancestor: '.refquota-warning-fields',
-      })),
-      refquotaCritical: await loader.getHarness(IxInputHarness.with({
-        label: 'Quota critical alert at, %',
-        ancestor: '.refquota-critical-fields',
-      })),
-      refquotaCriticalInherit: await loader.getHarness(IxCheckboxHarness.with({
-        label: 'Inherit',
-        ancestor: '.refquota-critical-fields',
-      })),
-      quotaWarning: await loader.getHarness(IxInputHarness.with({
-        label: 'Quota warning alert at, %',
-        ancestor: '.quota-warning-fields',
-      })),
-      quotaWarningInherit: await loader.getHarness(IxCheckboxHarness.with({
-        label: 'Inherit',
-        ancestor: '.quota-warning-fields',
-      })),
-      quotaCritical: await loader.getHarness(IxInputHarness.with({
-        label: 'Quota critical alert at, %',
-        ancestor: '.quota-critical-fields',
-      })),
-      quotaCriticalInherit: await loader.getHarness(IxCheckboxHarness.with({
-        label: 'Inherit',
-        ancestor: '.quota-critical-fields',
-      })),
-    };
-  }
-
   it('shows current capacity settings for a dataset', async () => {
-    const controls = await getControls();
-    const values = await getControlValues(controls);
+    const values = {
+      refquota: await (await getInput('refquota')).getValue(),
+      quota: await (await getInput('quota')).getValue(),
+      refreservation: await (await getInput('refreservation')).getValue(),
+      reservation: await (await getInput('reservation')).getValue(),
+      refquotaWarning: await (await getInput('refquota_warning')).getValue(),
+      refquotaCritical: await (await getInput('refquota_critical')).getValue(),
+      quotaWarning: await (await getInput('quota_warning')).getValue(),
+      quotaCritical: await (await getInput('quota_critical')).getValue(),
+      refquotaWarningInherit: await (await getCheckbox('refquota_warning_inherit')).isChecked(),
+      refquotaCriticalInherit: await (await getCheckbox('refquota_critical_inherit')).isChecked(),
+      quotaWarningInherit: await (await getCheckbox('quota_warning_inherit')).isChecked(),
+      quotaCriticalInherit: await (await getCheckbox('quota_critical_inherit')).isChecked(),
+    };
 
     expect(values).toEqual({
       quota: '100 GiB',
@@ -155,29 +130,24 @@ describe('DatasetCapacitySettingsComponent', () => {
   });
 
   it('disables quota fields when inherit is checked', async () => {
-    const controls = await getControls();
-    await controls.quotaWarningInherit.setValue(true);
-    expect(await controls.quotaWarning.isDisabled()).toBe(true);
+    await (await getCheckbox('quota_warning_inherit')).check();
+    expect(await (await getInput('quota_warning')).isDisabled()).toBe(true);
   });
 
   it('saves updated capacity settings when form is submitted', async () => {
-    const controls = await getControls();
-    await fillControlValues(controls, {
-      quota: '110 GiB',
-      quotaCriticalInherit: false,
-      quotaWarning: 50,
-      refquota: '',
-      refquotaCriticalInherit: true,
-      refquotaWarningInherit: true,
-      refreservation: '15 GiB',
-      reservation: '25 GiB',
-    });
-    await fillControlValues(controls, {
-      quotaCritical: 90,
-    });
+    await (await getCheckbox('quota_critical_inherit')).uncheck();
+    await (await getCheckbox('refquota_critical_inherit')).check();
+    await (await getCheckbox('refquota_warning_inherit')).check();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    await (await getInput('quota')).setValue('110 GiB');
+    await (await getInput('quota_warning')).setValue('50');
+    await (await getInput('quota_critical')).setValue('90');
+    await (await getInput('refreservation')).setValue('15 GiB');
+    await (await getInput('reservation')).setValue('25 GiB');
+    // Harness rejects an empty setValue, so clear the control directly.
+    spectator.component.form.controls.refquota.setValue(null);
+
+    await clickSave();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', [
       'root/path',
@@ -196,15 +166,11 @@ describe('DatasetCapacitySettingsComponent', () => {
   });
 
   it('only sends updated properties on form submit', async () => {
-    const controls = await getControls();
-    await fillControlValues(controls, {
-      quota: '105 GiB',
-      quotaCriticalInherit: false,
-      quotaCritical: 93,
-    });
+    await (await getCheckbox('quota_critical_inherit')).uncheck();
+    await (await getInput('quota')).setValue('105 GiB');
+    await (await getInput('quota_critical')).setValue('93');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    await clickSave();
 
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
       'root/path',

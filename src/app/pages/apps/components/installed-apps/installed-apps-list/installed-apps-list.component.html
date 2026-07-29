@@ -3,7 +3,7 @@
 
   @if (hasCheckedApps) {
     <ix-installed-apps-list-bulk-actions
-      [checkedApps]="checkedApps"
+      [checkedApps]="checkedApps()"
       (bulkStart)="onBulkStart()"
       (bulkStop)="onBulkStop()"
       (bulkUpdate)="onBulkUpdate()"
@@ -24,97 +24,177 @@
   ></ix-basic-search>
 </div>
 
-@if ((dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading())) {
+<!--
+  Deliberate divergence from the docker-images/docker-registries siblings, which fold their
+  empty state into tn-table's [emptyMessage]/[emptyIcon] inputs. This list's empty states are
+  actionable — FirstUse/NoPageData show a "Check Available Apps" CTA and NoSearchResults shows
+  a "Reset Search" CTA (see showLoadStatus()). tn-table's empty slot is text-only (no projected
+  content / action button), so ix-empty is kept here to preserve those buttons. Revisit once
+  tn-table exposes a projectable empty-state slot (NAS-141021 library follow-up).
+-->
+@if ((dataSource().length && !filteredApps().length) || (!dataSource().length && !isLoading())) {
   <ix-empty [conf]="entityEmptyConf"></ix-empty>
 } @else {
-  <div
-    class="sticky-header"
-    matSort
-    matSortDisableClear
-    [matSortActive]="sortingInfo().active"
-    [matSortDirection]="sortingInfo().direction"
-    (matSortChange)="setDatasourceWithSort($event)"
+  <tn-table
+    class="apps-table"
+    [dataSource]="filteredApps()"
+    [displayedColumns]="displayedColumns"
+    [trackBy]="trackByAppId"
+    [selectable]="true"
+    [clickable]="true"
+    [activeRow]="selectedApp ?? null"
+    [loading]="isLoading()"
+    (sortChange)="onSortChange($event)"
+    (rowClick)="viewDetails($event)"
+    (selectionChange)="onSelectionChange($event)"
   >
-    <div class="app-header-row">
-      <div>
-        <span class="name-header">
-          @if (dataSource.length) {
-            <mat-checkbox
-              color="primary"
-              ixTest="select-all-app"
-              [checked]="allAppsChecked"
-              [indeterminate]="!allAppsChecked && !!selection.selected.length"
-              (change)="toggleAppsChecked($event.checked)"
-            ></mat-checkbox>
+    <ng-container [tnColumnDef]="sortableField.Application" [sortable]="true" [width]="'20%'">
+      <ng-template tnHeaderCellDef>{{ 'Application' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <div class="name-cell">
+          <div class="app-logo">
+            <img [src]="row.metadata.icon" [src-fallback]="imagePlaceholder" />
+          </div>
+          <div class="app-name">{{ row.name }}</div>
+          <ix-app-action-required-badge
+            [app]="row"
+            (actionRequiredClicked)="showActionRequired(row)"
+          ></ix-app-action-required-badge>
+        </div>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="sortableField.State" [sortable]="true" [width]="'12%'">
+      <ng-template tnHeaderCellDef>{{ 'Status' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-app-state-cell
+          [app]="row"
+          [job]="appJobs.get(row.name)"
+          (click)="openStatusDialog(row.name); $event.stopPropagation()"
+        ></ix-app-state-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'cpu'" [width]="'6%'">
+      <ng-template tnHeaderCellDef>{{ 'CPU' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        @let cpuStats = getAppStats(row.name) | async;
+        <span [tnTooltip]="'Percentage of total core utilization' | translate">
+          @if (hasStats(row, cpuStats)) {
+            {{ cpuStats.cpu_usage.toFixed(0) }}%
+          } @else {
+            {{ 'N/A' | translate }}
           }
         </span>
-      </div>
-      <div
-        [matColumnDef]="sortableField.Application"
-        [mat-sort-header]="sortableField.Application"
-      >
-        {{ 'Application' | translate }}
-      </div>
-      <div
-        [matColumnDef]="sortableField.State"
-        [mat-sort-header]="sortableField.State"
-      >
-        {{ 'Status' | translate }}
-      </div>
-      <div>{{ 'CPU' | translate }}</div>
-      <div>{{ 'RAM' | translate }}</div>
-      <div>{{ 'Block I/O' | translate }}</div>
-      <div>{{ 'Network' | translate }}</div>
-      <div
-        class="app-update-header"
-        [matColumnDef]="sortableField.Updates"
-        [mat-sort-header]="hasUpdates ? sortableField.Updates : ''"
-        [disabled]="!hasUpdates"
-      >
-        <span>{{ 'Updates' | translate }}</span>
-        @if (hasUpdates) {
-          <tn-icon
-            class="has-updates-icon"
-            name="alert-circle"
-            library="mdi"
-            customSize="18px"
-            [tnTooltip]="'Updates available' | translate"
-          ></tn-icon>
-        }
-      </div>
-      <div>{{ 'Controls' | translate }}</div>
-    </div>
-  </div>
+      </ng-template>
+    </ng-container>
 
-  <div
-    matSort
-    matSortDisableClear
-    class="app-wrapper"
-    [matSortActive]="sortingInfo().active"
-    [matSortDirection]="sortingInfo().direction"
-    (matSortChange)="setDatasourceWithSort($event)"
-  >
-    <div class="app-inner">
-      <div class="apps-rows">
-        @for (app of filteredApps; track app.name) {
-          <ix-app-row
-            tabindex="0"
-            [app]="app"
-            [stats]="getAppStats(app.name) | async"
-            [class.selected]="selectedApp?.id === app.id"
-            [selected]="selection.isSelected(app.id)"
-            [job]="appJobs.get(app.name)"
-            (startApp)="start(app.name)"
-            (stopApp)="stop(app.name)"
-            (restartApp)="restart(app.name)"
-            (clickStatus)="openStatusDialog(app.name)"
-            (selectionChange)="selection.toggle(app.id)"
-            (actionRequiredClicked)="showActionRequired(app)"
-            (click)="viewDetails(app)"
-            (keydown.enter)="viewDetails(app)"
-          ></ix-app-row>
-        }
-      </div>
-    </div>
-  </div>
+    <ng-container [tnColumnDef]="'ram'" [width]="'8%'">
+      <ng-template tnHeaderCellDef>{{ 'RAM' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        @let ramStats = getAppStats(row.name) | async;
+        <span [tnTooltip]="'Memory usage of app' | translate">
+          @if (hasStats(row, ramStats)) {
+            {{ ramStats.memory | ixFileSize }}
+          } @else {
+            {{ 'N/A' | translate }}
+          }
+        </span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'io'" [width]="'11%'">
+      <ng-template tnHeaderCellDef>{{ 'Block I/O' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        @let ioStats = getAppStats(row.name) | async;
+        <span [tnTooltip]="'Block I/O read and writes' | translate">
+          @if (hasStats(row, ioStats)) {
+            {{ ioStats.blkio.read | ixFileSize }} - {{ ioStats.blkio.write | ixFileSize }}
+          } @else {
+            {{ 'N/A' | translate }}
+          }
+        </span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'network'" [width]="'11%'">
+      <ng-template tnHeaderCellDef>{{ 'Network' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        @let networkStats = getAppStats(row.name) | async;
+        <span [tnTooltip]="'Incoming / Outgoing network traffic' | translate">
+          @if (hasStats(row, networkStats) && networkStats.networks?.length) {
+            {{ incomingTrafficBits(networkStats) | ixNetworkSpeed }} - {{ outgoingTrafficBits(networkStats) | ixNetworkSpeed }}
+          } @else {
+            {{ 'N/A' | translate }}
+          }
+        </span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="sortableField.Updates" [sortable]="hasUpdates" [width]="'14%'">
+      <ng-template tnHeaderCellDef>
+        <span class="updates-header">
+          {{ 'Updates' | translate }}
+          @if (hasUpdates) {
+            <tn-icon
+              class="has-updates-icon"
+              name="alert-circle"
+              library="mdi"
+              customSize="14px"
+              [tnTooltip]="'Updates available' | translate"
+            ></tn-icon>
+          }
+        </span>
+      </ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-app-update-cell [app]="row" [showIcon]="true"></ix-app-update-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'controls'" [width]="'12%'">
+      <ng-template tnHeaderCellDef>{{ 'Controls' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <div class="controls-cell">
+          @if (isAppStopped(row)) {
+            <tn-icon-button
+              *ixRequiresRoles="requiredRoles"
+              name="play-circle"
+              library="mdi"
+              tooltipPosition="above"
+              [dense]="true"
+              [testId]="[row.name, 'start']"
+              [ariaLabel]="'Start' | translate"
+              [tooltip]="'Start' | translate"
+              [disabled]="inProgress(row)"
+              (onClick)="start(row.name); $event.stopPropagation()"
+            ></tn-icon-button>
+          } @else {
+            <tn-icon-button
+              *ixRequiresRoles="requiredRoles"
+              name="restart"
+              library="mdi"
+              tooltipPosition="above"
+              [dense]="true"
+              [testId]="[row.name, 'restart']"
+              [ariaLabel]="'Restart App' | translate"
+              [tooltip]="'Restart App' | translate"
+              (onClick)="restart(row.name); $event.stopPropagation()"
+            ></tn-icon-button>
+
+            <tn-icon-button
+              *ixRequiresRoles="requiredRoles"
+              name="stop-circle"
+              library="mdi"
+              tooltipPosition="above"
+              [dense]="true"
+              [testId]="[row.name, 'stop']"
+              [ariaLabel]="'Stop' | translate"
+              [tooltip]="'Stop' | translate"
+              (onClick)="stop(row.name); $event.stopPropagation()"
+            ></tn-icon-button>
+          }
+        </div>
+      </ng-template>
+    </ng-container>
+  </tn-table>
 }

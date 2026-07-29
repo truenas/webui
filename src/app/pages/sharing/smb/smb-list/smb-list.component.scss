@@ -1,3 +1,34 @@
-@import '../../components/storage-tier-cell/tier-cell-host';
+@import '../../components/tn-table-in-card';
 
-@include tier-cell-host;
+@include tn-table-in-card;
+
+:host {
+  display: block;
+  max-width: 1080px;
+}
+
+.sessions-link {
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
+}
+
+.header-title {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}

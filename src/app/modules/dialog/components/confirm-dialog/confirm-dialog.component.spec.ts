@@ -1,10 +1,9 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness, TnDialogHarness } from '@truenas/ui-components';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { ConfirmDialog } from 'app/modules/dialog/components/confirm-dialog/confirm-dialog.component';
 
@@ -25,10 +24,10 @@ describe('ConfirmDialogComponent', () => {
     ],
     providers: [
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: options,
       },
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
     ],
   });
 
@@ -38,8 +37,9 @@ describe('ConfirmDialogComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('shows dialog title', () => {
-      expect(spectator.query('h1')).toHaveText(options.title!);
+    it('shows dialog title', async () => {
+      const dialog = await loader.getHarness(TnDialogHarness);
+      expect(await dialog.getTitle()).toBe(options.title!);
     });
 
     it('shows dialog message', () => {
@@ -47,33 +47,33 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('shows a submit button', async () => {
-      const button = await loader.getHarness(MatButtonHarness.with({ text: options.buttonText }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: options.buttonText }));
       expect(button).toBeTruthy();
     });
 
     it('shows a cancel button', async () => {
-      const button = await loader.getHarness(MatButtonHarness.with({ text: options.cancelText }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: options.cancelText }));
       expect(button).toBeTruthy();
     });
 
     it('shows a confirmation checkbox', async () => {
-      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: options.confirmationCheckboxText }));
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: options.confirmationCheckboxText }));
       expect(checkbox).toBeTruthy();
     });
 
     it('closes dialog with false when Close button is pressed', async () => {
-      const button = await loader.getHarness(MatButtonHarness.with({ text: options.cancelText }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: options.cancelText }));
       await button.click();
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(false);
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(false);
     });
 
     it('closes dialog with true when confirmation checkbox is ticked and Submit button is pressed', async () => {
-      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: options.confirmationCheckboxText }));
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: options.confirmationCheckboxText }));
       await checkbox.check();
 
-      const button = await loader.getHarness(MatButtonHarness.with({ text: options.buttonText }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: options.buttonText }));
       await button.click();
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     });
   });
 
@@ -82,7 +82,7 @@ describe('ConfirmDialogComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               ...options,
               hideCheckbox: true,
@@ -95,20 +95,20 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('does not show a confirmation checkbox if hideCheckbox is true', async () => {
-      const checkbox = await loader.getHarnessOrNull(MatCheckboxHarness.with({
+      const checkbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({
         label: options.confirmationCheckboxText,
       }));
       expect(checkbox).toBeNull();
     });
 
     it('allows submit button to be pressed when hideCheckbox is set to false', async () => {
-      const button = await loader.getHarness(MatButtonHarness.with({ text: options.buttonText }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: options.buttonText }));
       await button.click();
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     });
 
     it('does not show a cancel button if hideCancel is true', async () => {
-      const button = await loader.getHarnessOrNull(MatButtonHarness.with({ text: options.cancelText }));
+      const button = await loader.getHarnessOrNull(TnButtonHarness.with({ label: options.cancelText }));
       expect(button).toBeNull();
     });
   });
@@ -124,7 +124,7 @@ describe('ConfirmDialogComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: secondaryCheckboxOptions,
           },
         ],
@@ -133,33 +133,47 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('shows a secondary checkbox', async () => {
-      const checkbox = await loader.getHarness(MatCheckboxHarness.with({
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({
         label: secondaryCheckboxOptions.secondaryCheckboxText,
       }));
       expect(checkbox).toBeTruthy();
     });
 
     it('closes dialog with an object when confirmation checkbox is ticked and Submit button is pressed', async () => {
-      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: options.confirmationCheckboxText }));
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: options.confirmationCheckboxText }));
       await checkbox.check();
 
-      const secondaryCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+      const secondaryCheckbox = await loader.getHarness(TnCheckboxHarness.with({
         label: secondaryCheckboxOptions.secondaryCheckboxText,
       }));
       await secondaryCheckbox.check();
 
-      const button = await loader.getHarness(MatButtonHarness.with({ text: options.buttonText }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: options.buttonText }));
       await button.click();
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
         confirmed: true,
         secondaryCheckbox: true,
       });
     });
 
     it('closes dialog with an object when cancel button is pressed', async () => {
-      const button = await loader.getHarness(MatButtonHarness.with({ text: options.cancelText }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: options.cancelText }));
       await button.click();
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
+        confirmed: false,
+        secondaryCheckbox: false,
+      });
+    });
+
+    it('reports secondaryCheckbox as false on cancel even when the secondary checkbox is checked', async () => {
+      const secondaryCheckbox = await loader.getHarness(TnCheckboxHarness.with({
+        label: secondaryCheckboxOptions.secondaryCheckboxText,
+      }));
+      await secondaryCheckbox.check();
+
+      const button = await loader.getHarness(TnButtonHarness.with({ label: options.cancelText }));
+      await button.click();
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
         confirmed: false,
         secondaryCheckbox: false,
       });
@@ -178,7 +192,7 @@ describe('ConfirmDialogComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: optionsWithoutTitle,
           },
         ],
@@ -186,8 +200,9 @@ describe('ConfirmDialogComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('shows default title when none is provided', () => {
-      expect(spectator.query('h1')).toHaveText('Please confirm');
+    it('shows default title when none is provided', async () => {
+      const dialog = await loader.getHarness(TnDialogHarness);
+      expect(await dialog.getTitle()).toBe('Please confirm');
     });
   });
 
@@ -202,7 +217,7 @@ describe('ConfirmDialogComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: secondaryCheckboxOptions,
           },
         ],
@@ -211,12 +226,12 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('closes dialog with an object even when `secondaryCheckbox` is false, but present in options', async () => {
-      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: options.confirmationCheckboxText }));
+      const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: options.confirmationCheckboxText }));
       await checkbox.check();
 
-      const button = await loader.getHarness(MatButtonHarness.with({ text: options.buttonText }));
+      const button = await loader.getHarness(TnButtonHarness.with({ label: options.buttonText }));
       await button.click();
-      expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith({
         confirmed: true,
         secondaryCheckbox: false,
       });
@@ -235,7 +250,7 @@ describe('ConfirmDialogComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: secondaryCheckboxOptions,
           },
         ],
@@ -249,7 +264,7 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('shows secondary message when secondary checkbox is checked', async () => {
-      const secondaryCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+      const secondaryCheckbox = await loader.getHarness(TnCheckboxHarness.with({
         label: secondaryCheckboxOptions.secondaryCheckboxText,
       }));
       await secondaryCheckbox.check();
@@ -263,7 +278,7 @@ describe('ConfirmDialogComponent', () => {
     });
 
     it('hides secondary message when secondary checkbox is unchecked after being checked', async () => {
-      const secondaryCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+      const secondaryCheckbox = await loader.getHarness(TnCheckboxHarness.with({
         label: secondaryCheckboxOptions.secondaryCheckboxText,
       }));
 
@@ -284,7 +299,7 @@ describe('ConfirmDialogComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: MAT_DIALOG_DATA,
+            provide: DIALOG_DATA,
             useValue: {
               ...options,
               secondaryCheckbox: true,

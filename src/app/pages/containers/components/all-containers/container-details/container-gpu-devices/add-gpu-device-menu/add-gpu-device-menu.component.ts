@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnMenuComponent, TnMenuItem, TnMenuTriggerDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -12,7 +13,6 @@ import { Role } from 'app/enums/role.enum';
 import { ContainerGpuDevice } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -32,12 +32,10 @@ interface GpuMenuItem {
   styleUrls: ['./add-gpu-device-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatMenu,
-    MatMenuItem,
-    TestDirective,
+    TnButtonComponent,
+    TnMenuComponent,
+    TnMenuTriggerDirective,
     TranslateModule,
-    MatMenuTrigger,
     NgxSkeletonLoaderModule,
     RequiresRolesDirective,
   ],
@@ -99,6 +97,15 @@ export class AddGpuDeviceMenuComponent {
 
   protected readonly hasDevicesToAdd = computed(() => {
     return this.availableGpuDevices().length > 0;
+  });
+
+  protected readonly menuItems = computed<TnMenuItem[]>(() => {
+    return this.availableGpuDevices().map((gpu) => ({
+      id: gpu.pciAddress,
+      label: gpu.description,
+      testId: ['add-gpu-device', gpu.description],
+      action: () => this.addGpu(gpu),
+    }));
   });
 
   protected addGpu(gpu: GpuMenuItem): void {

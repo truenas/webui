@@ -1,10 +1,10 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DestroyRef, Injectable, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { TnDrawerComponent, TnDrawerMode } from '@truenas/ui-components';
 import { take, filter, distinctUntilChanged } from 'rxjs';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
@@ -13,6 +13,8 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 import { sidenavIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
 
 export const collapsedMenuClass = 'collapsed-menu';
+
+const mobileBreakpoints = [Breakpoints.XSmall, Breakpoints.Small];
 
 @Injectable({
   providedIn: 'root',
@@ -24,21 +26,26 @@ export class SidenavService {
   private actions$ = inject(Actions);
   private destroyRef = inject(DestroyRef);
 
-  sidenav: MatSidenav;
+  sidenav: TnDrawerComponent;
   isOpen = true;
   // TODO: How is this different from isMenuCollapsed?
   isCollapsed = false;
-  mode: MatDrawerMode = 'over';
+  mode: TnDrawerMode = 'over';
   isOpenSecondaryMenu = false;
   menuName: string;
   subs: SubMenuItem[];
 
   get sidenavWidth(): string {
+    // In 'over' (mobile) mode the drawer overlays content at full menu width;
+    // the open/closed state is what shows or hides it.
+    if (this.mode === 'over') {
+      return '240px';
+    }
     const iconified = this.isMenuCollapsed;
-    if (this.isOpen && iconified && this.mode === 'side') {
+    if (this.isOpen && iconified) {
       return '48px';
     }
-    if (this.isOpen && !iconified && this.mode === 'side') {
+    if (this.isOpen && !iconified) {
       return '240px';
     }
     return '0px';
@@ -65,12 +72,20 @@ export class SidenavService {
   }
 
   constructor() {
+    // Seed from the current breakpoint synchronously so the first paint lays out in the
+    // correct mode — waiting for the observer's first emission briefly renders the mobile
+    // 'over' drawer on desktop and resizes the content area after load.
+    const isMobile = this.breakpointObserver.isMatched(mobileBreakpoints);
+    this.isMobile.set(isMobile);
+    this.isOpen = !isMobile;
+    this.mode = isMobile ? 'over' : 'side';
+
     this.listenForScreenSizeChanges();
     this.listenForRouteChanges();
     this.listenForSidenavIndicatorPressed();
   }
 
-  setSidenav(sidenav: MatSidenav): void {
+  setSidenav(sidenav: TnDrawerComponent): void {
     this.sidenav = sidenav;
   }
 
@@ -98,7 +113,7 @@ export class SidenavService {
 
   private listenForScreenSizeChanges(): void {
     this.breakpointObserver
-      .observe([Breakpoints.XSmall, Breakpoints.Small])
+      .observe(mobileBreakpoints)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((state) => {
         const isMobile = state.matches;
@@ -144,8 +159,8 @@ export class SidenavService {
     }
 
     const data: SidenavStatusData = {
-      isOpen: this.sidenav.opened,
-      mode: this.sidenav.mode,
+      isOpen: this.sidenav.opened(),
+      mode: this.sidenav.mode(),
       isCollapsed: this.isMenuCollapsed,
     };
 

@@ -1,5 +1,5 @@
-<mat-card class="card">
-  <mat-card-content *ixWithLoadingState="app() as application" class="card-content">
+<tn-card class="card" [padContent]="false">
+  <div *ixWithLoadingState="app() as application" class="card-content">
     <div class="header">
       <h3>{{ 'App Network' | translate }}</h3>
       <ix-app-controls [app]="app() | async"></ix-app-controls>
@@ -9,7 +9,7 @@
       <ix-app-card-logo [url]="application?.metadata?.icon"></ix-app-card-logo>
       <ix-app-network-info [stats]="stats() | async"></ix-app-network-info>
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>
 
 

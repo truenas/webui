@@ -1,12 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardActions } from '@angular/material/card';
-import { MatDivider } from '@angular/material/divider';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCardComponent, TnDividerComponent } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { eulaElements } from 'app/pages/system/general-settings/support/eula/eula.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -17,12 +14,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./eula.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
+    TnCardComponent,
+    TnDividerComponent,
+    TnButtonComponent,
     UiSearchDirective,
-    MatDivider,
-    MatCardActions,
-    MatButton,
-    TestDirective,
     RouterLink,
     TranslateModule,
   ],

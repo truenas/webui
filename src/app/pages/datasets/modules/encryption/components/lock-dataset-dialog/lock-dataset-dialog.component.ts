@@ -1,20 +1,16 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
-} from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -24,14 +20,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./lock-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     TranslateModule,
     ReactiveFormsModule,
-    IxCheckboxComponent,
+    TnCheckboxComponent, TnFormFieldComponent,
     FormActionsComponent,
-    MatButton,
-    TestDirective,
-    MatDialogClose,
+    TnButtonComponent,
     RequiresRolesDirective,
   ],
 })
@@ -40,17 +34,17 @@ export class LockDatasetDialog {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
-  private dialogRef = inject<MatDialogRef<LockDatasetDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef>(DialogRef);
   private dialogService = inject(DialogService);
-  dataset = inject<Dataset>(MAT_DIALOG_DATA);
+  dataset = inject<Dataset>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   forceCheckbox = new FormControl(false, { nonNullable: true });
 
-  onSubmit($event: SubmitEvent): void {
-    $event.preventDefault();
+  onSubmit($event?: SubmitEvent): void {
+    $event?.preventDefault();
 
     const force = this.forceCheckbox.value;
     this.dialogService.jobDialog(

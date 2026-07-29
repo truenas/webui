@@ -69,11 +69,11 @@ describe('AuditListComponent', () => {
     expect(spectator.query(AuditSearchComponent)).toExist();
   });
 
-  it('loads and shows a table with audit entries', async () => {
+  it('shows the raw event token verbatim so it matches what is recorded in remote logs', async () => {
     expect(await table.getHeaderTexts()).toEqual(['Service', 'User', 'Timestamp', 'Event', 'Event Data']);
     expect(await table.getAllRowTexts()).toEqual([
-      ['SMB', 'Administrator', '2024-04-12 07:34:00', 'Authentication', 'Account: Administrator'],
-      ['SMB', 'bob', '2024-04-12 07:42:32', 'Create', 'File: test.txt'],
+      ['SMB', 'Administrator', '2024-04-12 07:34:00', 'AUTHENTICATION', 'Account: Administrator'],
+      ['SMB', 'bob', '2024-04-12 07:42:32', 'CREATE', 'File: test.txt'],
     ]);
   });
 

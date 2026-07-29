@@ -1,14 +1,14 @@
+import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
-import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
-} from '@angular/material/dialog';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
+import { TnButtonComponent, TnCheckboxComponent, TnCheckboxLabelDirective, TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult,
+} from 'app/interfaces/dialog.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+
+type ConfirmDialogResult = boolean | DialogWithSecondaryCheckboxResult;
 
 @Component({
   selector: 'ix-confirm-dialog',
@@ -16,20 +16,18 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./confirm-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
-    MatDialogContent,
-    MatCheckbox,
+    TnDialogShellComponent,
+    TnButtonComponent,
+    TnCheckboxComponent,
+    TnCheckboxLabelDirective,
     ReactiveFormsModule,
     FormsModule,
     FormActionsComponent,
-    MatDialogActions,
-    MatButton,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class ConfirmDialog {
-  private dialogRef = inject<MatDialogRef<ConfirmDialog>>(MatDialogRef);
+  private dialogRef = inject<DialogRef<ConfirmDialogResult, ConfirmDialog>>(DialogRef);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
 
@@ -47,21 +45,20 @@ export class ConfirmDialog {
   } as ConfirmOptions;
 
   constructor() {
-    const options = inject<ConfirmOptionsWithSecondaryCheckbox>(MAT_DIALOG_DATA);
+    const options = inject<ConfirmOptionsWithSecondaryCheckbox>(DIALOG_DATA);
 
     this.options = { ...this.defaultOptions, ...options };
+    // Only block dismissal when there is no Cancel button (the user must make an
+    // explicit choice). Otherwise the dialog stays closable via ESC/backdrop —
+    // a dismiss resolves to `false` (see DialogService.confirm), so callers
+    // reading `.confirmed` are unaffected even with a secondary checkbox.
     if (options.hideCancel) {
       this.dialogRef.disableClose = options.hideCancel;
     }
-
-    if (this.withSecondaryCheckbox) {
-      // Don't allow user to close via backdrop to ensure that object is returned.
-      this.dialogRef.disableClose = true;
-    }
   }
 
-  toggleSubmit(data: MatCheckboxChange): void {
-    this.isSubmitEnabled = data.checked;
+  toggleSubmit(checked: boolean): void {
+    this.isSubmitEnabled = checked;
   }
 
   onSecondaryCheckboxChange(): void {
@@ -77,22 +74,27 @@ export class ConfirmDialog {
   }
 
   onCancel(): void {
-    const result = this.withSecondaryCheckbox
+    // A not-confirmed result carries no meaningful checkbox state, so report
+    // `secondaryCheckbox: false`. This matches the ESC/backdrop dismiss path
+    // (DialogService.confirm normalizes a dismiss to the same shape), so Cancel
+    // and dismiss produce an identical "not confirmed" result and no caller can
+    // accidentally read a stale checkbox value off a cancelled dialog.
+    const result: ConfirmDialogResult = this.withSecondaryCheckbox
       ? {
           confirmed: false,
-          secondaryCheckbox: this.isSecondaryCheckboxChecked,
-        } as DialogWithSecondaryCheckboxResult
+          secondaryCheckbox: false,
+        }
       : false;
 
     this.dialogRef.close(result);
   }
 
   onSubmit(): void {
-    const result = this.withSecondaryCheckbox
+    const result: ConfirmDialogResult = this.withSecondaryCheckbox
       ? {
           confirmed: true,
           secondaryCheckbox: this.isSecondaryCheckboxChecked,
-        } as DialogWithSecondaryCheckboxResult
+        }
       : true;
 
     this.dialogRef.close(result);

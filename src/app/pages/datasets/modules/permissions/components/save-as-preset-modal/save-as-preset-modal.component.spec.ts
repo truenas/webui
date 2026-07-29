@@ -1,15 +1,14 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnIconButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, AclTemplateByPath, PosixAclItem } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SaveAsPresetModalComponent } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
@@ -26,7 +25,7 @@ describe('SaveAsPresetModalComponent', () => {
     ],
     providers: [
       DatasetAclEditorStore,
-      mockProvider(MatDialogRef),
+      mockProvider(DialogRef),
       mockProvider(DialogService),
       mockProvider(UserService, {
         getUserByNameCached: jest.fn(() => of({ username: 'testuser', uid: 1000 } as User)),
@@ -57,7 +56,7 @@ describe('SaveAsPresetModalComponent', () => {
         mockCall('filesystem.acltemplate.create'),
       ]),
       {
-        provide: MAT_DIALOG_DATA,
+        provide: DIALOG_DATA,
         useValue: {},
       },
     ],
@@ -67,7 +66,7 @@ describe('SaveAsPresetModalComponent', () => {
     spectator = createComponent({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
+          provide: DIALOG_DATA,
           useValue: {
             aclType: AclType.Posix1e,
             datasetPath: '/mnt/pool/dataset',
@@ -110,14 +109,14 @@ describe('SaveAsPresetModalComponent', () => {
       acl: [] as PosixAclItem[],
       acltype: AclType.Posix1e,
     } as Acl));
-    const actionsInput = await loader.getHarness(IxInputHarness);
+    const actionsInput = await loader.getHarness(TnInputHarness);
     await actionsInput.setValue('New Preset');
     spectator.component.acl = {
       acl: [] as PosixAclItem[],
       acltype: AclType.Posix1e,
     } as Acl;
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('filesystem.acltemplate.create', [{
@@ -126,15 +125,13 @@ describe('SaveAsPresetModalComponent', () => {
       acl: [],
     }]);
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 
-  it('removes a non-builtin preset when Remove icon is pressed', () => {
-    const preset = spectator.queryAll('.preset');
-    const removeButton = preset[2].querySelector('.preset-remove')!;
-    spectator.click(removeButton);
+  it('removes a non-builtin preset when Remove icon is pressed', async () => {
+    const removeButtons = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'close-circle' }));
+    await removeButtons[2].click();
 
-    expect(removeButton).toHaveAttribute('aria-label', 'Remove preset');
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.acltemplate.delete', [4]);
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('filesystem.acltemplate.by_path', expect.anything());
   });

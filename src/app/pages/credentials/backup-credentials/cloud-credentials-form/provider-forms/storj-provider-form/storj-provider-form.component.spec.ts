@@ -1,15 +1,17 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness } from '@truenas/ui-components';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import {
   StorjProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
 
 describe('StorjProviderFormComponent', () => {
   let spectator: Spectator<StorjProviderFormComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   let details: DetailsTableHarness;
   const createComponent = createComponentFactory({
     component: StorjProviderFormComponent,
@@ -18,9 +20,19 @@ describe('StorjProviderFormComponent', () => {
     ],
   });
 
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  async function setEditable(label: string, controlName: string, value: string): Promise<void> {
+    const editable = await details.getHarnessForItem(label, EditableHarness);
+    await editable.open();
+    await (await getInput(controlName)).setValue(value);
+  }
+
   beforeEach(async () => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     details = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, DetailsTableHarness);
   });
 
@@ -30,11 +42,8 @@ describe('StorjProviderFormComponent', () => {
       secret_access_key: 'my-secret-key',
     });
 
-    const formValues = await form.getValues();
-    expect(formValues).toEqual({
-      'Access Key ID': 'my-key-id',
-      'Secret Access Key': 'my-secret-key',
-    });
+    expect(await (await getInput('access_key_id')).getValue()).toBe('my-key-id');
+    expect(await (await getInput('secret_access_key')).getValue()).toBe('my-secret-key');
 
     const detailValues = await details.getValues();
     expect(detailValues).toEqual({
@@ -43,14 +52,10 @@ describe('StorjProviderFormComponent', () => {
   });
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
-    await form.fillForm({
-      'Access Key ID': 'updated-key-id',
-      'Secret Access Key': 'updated-secret-key',
-    });
+    await (await getInput('access_key_id')).setValue('updated-key-id');
+    await (await getInput('secret_access_key')).setValue('updated-secret-key');
 
-    await details.setValues({
-      Endpoint: 'https://us1.storj.io',
-    });
+    await setEditable('Endpoint', 'endpoint', 'https://us1.storj.io');
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toEqual({

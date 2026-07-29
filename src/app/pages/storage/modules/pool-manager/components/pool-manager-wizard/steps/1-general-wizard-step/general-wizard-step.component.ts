@@ -2,10 +2,9 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatStepperNext } from '@angular/material/stepper';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnStepperNextDirective } from '@truenas/ui-components';
 import {
   combineLatest, map, Observable,
 } from 'rxjs';
@@ -22,7 +21,6 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
@@ -46,9 +44,8 @@ const defaultEncryptionStandard = 'AES-256-GCM';
     IxSelectComponent,
     PoolWarningsComponent,
     FormActionsComponent,
-    MatButton,
-    MatStepperNext,
-    TestDirective,
+    TnButtonComponent,
+    TnStepperNextDirective,
     TranslateModule,
     WarningComponent,
   ],

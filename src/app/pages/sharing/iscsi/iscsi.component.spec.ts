@@ -1,16 +1,15 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatTabNavBarHarness } from '@angular/material/tabs/testing';
+import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnTabsHarness } from '@truenas/ui-components';
 import { MockComponent, MockComponents } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { LicenseService } from 'app/services/license.service';
@@ -27,7 +26,6 @@ describe('IscsiComponent', () => {
       MockComponents(GlobalTargetConfigurationComponent),
     ],
     imports: [
-      MatTabsModule,
       MockComponent(PageHeaderComponent),
     ],
     providers: [
@@ -36,7 +34,7 @@ describe('IscsiComponent', () => {
       }),
       mockAuth(),
       mockApi(),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
@@ -48,32 +46,44 @@ describe('IscsiComponent', () => {
   });
 
   it('has a Global Target Configuration button that opens the settings form', async () => {
-    const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Target Configuration' }));
+    const configurationButton = await loader.getHarness(TnButtonHarness.with({ label: 'Global Target Configuration' }));
     await configurationButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent, {
+      title: 'iSCSI Global Configuration',
+    });
   });
 
   it('shows a navtab with supported links', async () => {
-    const navbar = await loader.getHarness(MatTabNavBarHarness);
-    const links = await navbar.getLinks();
+    const tabs = await loader.getHarness(TnTabsHarness);
 
-    expect(links).toHaveLength(5);
-    expect(await links[0].getLabel()).toBe('Targets');
-    expect(await links[1].getLabel()).toBe('Extents');
-    expect(await links[2].getLabel()).toBe('Initiators');
-    expect(await links[3].getLabel()).toBe('Portals');
-    expect(await links[4].getLabel()).toBe('Authorized Access');
+    expect(await tabs.getTabLabels()).toEqual([
+      'Targets',
+      'Extents',
+      'Initiators',
+      'Portals',
+      'Authorized Access',
+    ]);
   });
 
   it('shows fibre channel link navtab on a fibre channel capable system', async () => {
     hasFibreChannel$.next(true);
     spectator.detectChanges();
 
-    const navbar = await loader.getHarness(MatTabNavBarHarness);
-    const links = await navbar.getLinks();
+    const tabs = await loader.getHarness(TnTabsHarness);
+    const labels = await tabs.getTabLabels();
 
-    expect(links).toHaveLength(6);
-    expect(await links[5].getLabel()).toBe('Fibre Channel Ports');
+    expect(labels).toHaveLength(6);
+    expect(labels[5]).toBe('Fibre Channel Ports');
+  });
+
+  it('navigates to the tab route when a tab is selected', async () => {
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    const tabs = await loader.getHarness(TnTabsHarness);
+    await tabs.selectTab({ label: 'Extents' });
+
+    expect(router.navigate).toHaveBeenCalledWith(['/sharing/iscsi/extents']);
   });
 });

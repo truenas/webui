@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -41,7 +41,8 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
@@ -88,7 +89,7 @@ export class SnapshotTaskListComponent implements OnInit {
   private snapshotTaskService = inject(SnapshotTaskService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private loader = inject(LoaderService);
@@ -227,14 +228,23 @@ export class SnapshotTaskListComponent implements OnInit {
     this.dataProvider.setFilter({ list: this.snapshotTasks, query, columnKeys: ['dataset', 'naming_schema'] });
   }
 
+  // SnapshotTaskFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
+  private readonly snapshotTaskForm = SnapshotTaskFormComponent as unknown as Type<SidePanelForm>;
+
   protected doAdd(): void {
-    this.slideIn.open(SnapshotTaskFormComponent, { wide: true })
-      .onSuccess(() => this.getSnapshotTasks(), this.destroyRef);
+    this.formPanel.open(this.snapshotTaskForm, {
+      title: this.translate.instant('Add Periodic Snapshot Task'),
+      wide: true,
+    }).onSuccess(() => this.getSnapshotTasks(), this.destroyRef);
   }
 
   protected doEdit(row: PeriodicSnapshotTaskUi): void {
-    this.slideIn.open(SnapshotTaskFormComponent, { wide: true, data: row })
-      .onSuccess(() => this.getSnapshotTasks(), this.destroyRef);
+    this.formPanel.open(this.snapshotTaskForm, {
+      title: this.translate.instant('Edit Periodic Snapshot Task'),
+      wide: true,
+      inputs: { taskToEdit: row },
+    }).onSuccess(() => this.getSnapshotTasks(), this.destroyRef);
   }
 
   protected doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {

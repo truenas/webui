@@ -48,7 +48,7 @@ describe('AppMetadataCardComponent', () => {
   });
 
   it('shows header', () => {
-    expect(spectator.query('mat-card-header h3')).toHaveText('Application Metadata');
+    expect(spectator.query('.card-header h3')).toHaveText('Application Metadata');
   });
 
   it('renders the metadata list with the expandable layout', () => {

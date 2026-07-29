@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, Type, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
@@ -41,7 +41,8 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -76,7 +77,7 @@ import { TaskService } from 'app/services/task.service';
 export class RsyncTaskListComponent implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private crontabExplanation = inject(CrontabExplanationPipe);
   private taskService = inject(TaskService);
@@ -240,14 +241,21 @@ export class RsyncTaskListComponent implements OnInit {
       .subscribe(() => this.refresh());
   }
 
+  // RsyncTaskFormComponent structurally provides the host surface (closed/canSubmit/submit/
+  // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
+  private readonly rsyncTaskForm = RsyncTaskFormComponent as unknown as Type<SidePanelForm>;
+
   protected add(): void {
-    this.slideIn.open(RsyncTaskFormComponent, { wide: true })
+    this.formPanel.open(this.rsyncTaskForm, { title: this.translate.instant('Add Rsync Task'), wide: true })
       .onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected edit(row: RsyncTask): void {
-    this.slideIn.open(RsyncTaskFormComponent, { wide: true, data: row })
-      .onSuccess(() => this.refresh(), this.destroyRef);
+    this.formPanel.open(this.rsyncTaskForm, {
+      title: this.translate.instant('Edit Rsync Task'),
+      wide: true,
+      inputs: { taskToEdit: row },
+    }).onSuccess(() => this.refresh(), this.destroyRef);
   }
 
   protected delete(row: RsyncTask): void {

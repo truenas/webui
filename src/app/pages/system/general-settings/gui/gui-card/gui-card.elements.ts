@@ -8,12 +8,12 @@ export const guiCardElements = {
     gui: {
       anchor: 'gui-card',
     },
-    sslCertificate: {
-      hierarchy: [T('SSL Certificate')],
-    },
     settings: {
       anchor: 'gui-settings',
       hierarchy: [T('GUI Settings')],
+    },
+    sslCertificate: {
+      hierarchy: [T('SSL Certificate')],
     },
     ipv4Address: {
       hierarchy: [T('IPv4 Address')],

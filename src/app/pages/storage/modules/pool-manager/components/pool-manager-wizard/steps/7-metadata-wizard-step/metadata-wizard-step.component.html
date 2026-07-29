@@ -15,43 +15,35 @@
 }
 
 <ix-form-actions>
-  <button
-    mat-button
-    matStepperPrevious
-    color="accent"
+  <tn-button
+    tnStepperPrevious
+    color="secondary"
     type="button"
-    ixTest="back-metadata"
-  >
-    {{ 'Back' | translate }}
-  </button>
-  <button
-    mat-button
-    matStepperNext
+    [testId]="'back-metadata'"
+    [label]="'Back' | translate"
+  ></tn-button>
+  <tn-button
+    tnStepperNext
     color="primary"
     type="button"
-    ixTest="next-metadata"
-  >
-    {{ 'Next' | translate }}
-  </button>
+    [testId]="'next-metadata'"
+    [label]="'Next' | translate"
+  ></tn-button>
 
-  <button
-    mat-button
-    color="error"
+  <tn-button
+    color="warn"
     type="button"
-    ixTest="reset-fields-in-metadata-step"
-    (click)="resetStep()"
-  >
-    {{ 'Reset Step' | translate }}
-  </button>
+    [testId]="'reset-fields-in-metadata-step'"
+    [label]="'Reset Step' | translate"
+    (onClick)="resetStep()"
+  ></tn-button>
 
-  <button
-    mat-button
-    color="accent"
+  <tn-button
+    color="secondary"
     type="button"
-    ixTest="save-and-go-to-review-metadata"
-    (click)="goToReviewStep()"
-  >
-    {{ 'Save And Go To Review' | translate }}
-  </button>
+    [testId]="'save-and-go-to-review-metadata'"
+    [label]="'Save And Go To Review' | translate"
+    (onClick)="goToReviewStep()"
+  ></tn-button>
 </ix-form-actions>
 

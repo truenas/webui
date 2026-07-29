@@ -1,6 +1,11 @@
 :host {
   display: block;
   min-width: 330px;
+  max-width: 480px;
+
+  // The empty shell header is collapsed globally via the
+  // `ix-info-dialog .tn-dialog__header` rule in _tn-styles.scss — the
+  // component-scoped ::ng-deep did not pierce into tn-dialog-shell reliably.
 }
 
 .info-panel {
@@ -35,6 +40,9 @@
 h1 {
   align-items: center;
   display: flex;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 12px;
 }
 
 .information-icon {

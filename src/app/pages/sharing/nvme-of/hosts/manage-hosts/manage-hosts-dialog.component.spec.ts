@@ -1,15 +1,13 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfHost, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
@@ -20,7 +18,7 @@ import { SubsystemPortOrHostDeleteDialogComponent } from 'app/pages/sharing/nvme
 describe('ManageHostsDialog', () => {
   let spectator: Spectator<ManageHostsDialog>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const hosts = [
     {
@@ -41,9 +39,9 @@ describe('ManageHostsDialog', () => {
       mockApi([
         mockCall('nvmet.host.delete'),
       ]),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of({ confirmed: true, force: true }),
+          closed: of({ confirmed: true, force: true }),
         })),
       }),
       mockProvider(NvmeOfStore, {
@@ -66,10 +64,10 @@ describe('ManageHostsDialog', () => {
         }),
         reloadHosts: jest.fn(),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success({})),
       }),
-      mockProvider(MatDialogRef, {
+      mockProvider(DialogRef, {
         close: jest.fn(),
       }),
       mockAuth(),
@@ -79,33 +77,34 @@ describe('ManageHostsDialog', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('shows a list of hosts', async () => {
-    expect(await table.getCellTexts()).toEqual([
-      ['NQN', 'Description', 'Has Host Authentication', 'Used In Subsystems', ''],
+    expect(await table.getHeaderTexts()).toEqual(['NQN', 'Description', 'Has Host Authentication', 'Used In Subsystems', '']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['nqn.2014-08.org.nvmexpress', '', 'Yes', '2', ''],
       ['nqn.2014-09.org.nvmexpress', '', 'No', '1', ''],
     ]);
   });
 
   it('opens host form when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'nqn.2014-08.org.nvmexpress');
+    // TODO: switch to a row-scoped lookup once TnTableHarness ships getHarnessInCell (library follow-up).
+    const editButton = (await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-pencil' })))[0];
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       HostFormComponent,
-      { data: expect.objectContaining(hosts[0]) },
+      { title: 'Edit Host', inputs: { host: expect.objectContaining(hosts[0]) } },
     );
     expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
   });
 
   it('deletes the port with correct force flag based on subsystem usage', async () => {
-    const deleteButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'nqn.2014-08.org.nvmexpress');
+    const deleteButton = (await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'mdi-delete' })))[0];
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SubsystemPortOrHostDeleteDialogComponent, {
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SubsystemPortOrHostDeleteDialogComponent, {
       data: {
         type: PortOrHostDeleteType.Host,
         item: {
@@ -124,10 +123,10 @@ describe('ManageHostsDialog', () => {
   });
 
   it('opens a form to add a new host when Add New is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add New' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add New' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(HostFormComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(HostFormComponent, { title: 'Add Host' });
     expect(spectator.inject(NvmeOfStore).reloadHosts).toHaveBeenCalled();
   });
 });

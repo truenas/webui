@@ -1,8 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -11,7 +13,6 @@ import { Group } from 'app/interfaces/group.interface';
 import { SshConfig } from 'app/interfaces/ssh-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -37,6 +38,22 @@ describe('ServiceSshComponent', () => {
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn((): undefined => undefined),
   };
+
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const hasInput = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  )).length > 0;
+  const hasSelect = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  )).length > 0;
 
   const createComponent = createRoutingFactory({
     component: ServiceSshComponent,
@@ -97,53 +114,39 @@ describe('ServiceSshComponent', () => {
     api = spectator.inject(ApiService);
   });
 
-  it('loads and shows current settings for S3 service when form is opened', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
-
+  it('loads and shows current settings for SSH service when form is opened', async () => {
     expect(api.call).toHaveBeenCalledWith('ssh.config');
-    expect(values).toEqual({
-      'TCP Port': '22',
-      'Password Login Groups': ['dummy-group'],
-      'Allow Password Authentication': true,
-      'Allow Kerberos Authentication': false,
-      'Allow TCP Port Forwarding': false,
-    });
+
+    expect(await (await getInput('tcpport')).getValue()).toBe('22');
+    expect(await (await getCheckbox('passwordauth')).isChecked()).toBe(true);
+    expect(await (await getCheckbox('kerberosauth')).isChecked()).toBe(false);
+    expect(await (await getCheckbox('tcpfwd')).isChecked()).toBe(false);
   });
 
   it('shows advanced settings when Advanced Settings button is pressed', async () => {
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
     await advancedButton.click();
 
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
+    expect(await (await getInput('tcpport')).getValue()).toBe('22');
+    expect(await (await getCheckbox('passwordauth')).isChecked()).toBe(true);
+    expect(await (await getCheckbox('kerberosauth')).isChecked()).toBe(false);
+    expect(await (await getCheckbox('tcpfwd')).isChecked()).toBe(false);
 
-    expect(values).toEqual({
-      'TCP Port': '22',
-      'Allow Password Authentication': true,
-      'Allow Kerberos Authentication': false,
-      'Allow TCP Port Forwarding': false,
-      'Password Login Groups': ['dummy-group'],
-      'Bind Interfaces': ['enp0s3'],
-      'Compress Connections': true,
-      'SFTP Log Level': 'Error',
-      'SFTP Log Facility': 'User',
-      'Weak Ciphers': [SshWeakCipher.Aes128Cbc],
-      'Auxiliary Parameters': 'options',
-    });
+    expect(await (await getSelect('bindiface')).getDisplayText()).toBe('enp0s3');
+    expect(await (await getCheckbox('compression')).isChecked()).toBe(true);
+    expect(await (await getSelect('sftp_log_level')).getDisplayText()).toBe('Error');
+    expect(await (await getSelect('sftp_log_facility')).getDisplayText()).toBe('User');
+    expect(await (await getSelect('weak_ciphers')).getDisplayText()).toBe('AES128-CBC');
+    expect(await (await getInput('options')).getValue()).toBe('options');
   });
 
   it('sends an update payload to websocket when basic form is filled and saved', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'TCP Port': 23,
-      'Allow Password Authentication': false,
-      'Password Login Groups': ['dummy-group'],
-      'Allow Kerberos Authentication': true,
-      'Allow TCP Port Forwarding': true,
-    });
+    await (await getInput('tcpport')).setValue('23');
+    await (await getCheckbox('passwordauth')).uncheck();
+    await (await getCheckbox('kerberosauth')).check();
+    await (await getCheckbox('tcpfwd')).check();
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('ssh.update', [{
@@ -165,21 +168,18 @@ describe('ServiceSshComponent', () => {
   });
 
   it('sends an update payload to websocket when advanced form is filled and saved', async () => {
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
     await advancedButton.click();
 
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Bind Interfaces': ['enp0s3', 'macvtap0'],
-      'Password Login Groups': ['dummy-group'],
-      'Compress Connections': false,
-      'SFTP Log Level': 'Info',
-      'SFTP Log Facility': 'Local 0',
-      'Weak Ciphers': ['None'],
-      'Auxiliary Parameters': 'new-params',
-    });
+    await (await getSelect('bindiface')).selectOption('macvtap0');
+    await (await getCheckbox('compression')).uncheck();
+    await (await getSelect('sftp_log_level')).selectOption('Info');
+    await (await getSelect('sftp_log_facility')).selectOption('Local 0');
+    await (await getSelect('weak_ciphers')).selectOption('None');
+    await (await getSelect('weak_ciphers')).selectOption('AES128-CBC');
+    await (await getInput('options')).setValue('new-params');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('ssh.update', [{
@@ -198,5 +198,25 @@ describe('ServiceSshComponent', () => {
       weak_ciphers: [SshWeakCipher.None],
       options: 'new-params',
     }]);
+  });
+
+  it('submits an empty SFTP log level when the selection is cleared', async () => {
+    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
+    await advancedButton.click();
+
+    await (await getSelect('sftp_log_level')).selectOption('--');
+
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+
+    expect(api.call).toHaveBeenCalledWith('ssh.update', [
+      expect.objectContaining({ sftp_log_level: '' }),
+    ]);
+  });
+
+  it('does not show advanced fields while in basic mode', async () => {
+    expect(await hasInput('options')).toBe(false);
+    expect(await hasSelect('bindiface')).toBe(false);
+    expect(await hasSelect('weak_ciphers')).toBe(false);
   });
 });

@@ -46,7 +46,12 @@
   <ng-container [tnColumnDef]="'event'" [sortable]="true">
     <ng-template tnHeaderCellDef>{{ 'Event' | translate }}</ng-template>
     <ng-template let-row tnCellDef>
-      <span class="cell-clamp">{{ row.event | auditEventLabel | translate }}</span>
+      <!--
+        Show the raw event token verbatim (e.g. SET_ACL) rather than a friendly label.
+        This is the exact value recorded in the audit database and forwarded to remote
+        syslog, so users see the same string here that they search for remotely.
+      -->
+      <span class="cell-clamp">{{ row.event || '-' }}</span>
     </ng-template>
   </ng-container>
 

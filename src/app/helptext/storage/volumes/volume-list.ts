@@ -24,7 +24,7 @@ export const helptextVolumes = {
       tooltip: T('Delete all TrueNAS configurations that depend on the exported pool. Impacted configurations\
  may include services (listed above if applicable), applications, shares, and scheduled data protection tasks.'),
     },
-    enterName: T('Enter <strong>{pool}</strong> below to confirm'),
+    enterName: T('Enter **{pool}** below to confirm'),
   },
 
   exporting: T('Exporting Pool'),

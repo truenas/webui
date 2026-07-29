@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService } from '@ngx-translate/core';
+import { TnTooltipDirective } from '@truenas/ui-components';
 import { isValid } from 'date-fns';
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { invalidDate } from 'app/constants/invalid-date';
@@ -14,7 +14,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-cell-relative-date',
   templateUrl: './ix-cell-relative-date.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatTooltip, TestDirective],
+  imports: [TnTooltipDirective, TestDirective],
   providers: [FormatDateTimePipe],
 })
 export class IxCellRelativeDateComponent<T> extends ColumnComponent<T> {

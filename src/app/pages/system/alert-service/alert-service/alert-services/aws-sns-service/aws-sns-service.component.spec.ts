@@ -1,14 +1,15 @@
+import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnInputHarness } from '@truenas/ui-components';
 import {
   AwsSnsServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/aws-sns-service/aws-sns-service.component';
 
 describe('AwsSnsServiceComponent', () => {
   let spectator: Spectator<AwsSnsServiceComponent>;
-  let form: IxFormHarness;
+  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: AwsSnsServiceComponent,
     imports: [
@@ -16,9 +17,13 @@ describe('AwsSnsServiceComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent();
-    form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('renders a form with alert service values', async () => {
@@ -29,22 +34,17 @@ describe('AwsSnsServiceComponent', () => {
       aws_secret_access_key: 'wJalEXAMPLEKEY',
     });
 
-    const values = await form.getValues();
-    expect(values).toEqual({
-      ARN: 'arn:aws:sns:us-east-1:123456789012:MyTopic',
-      'AWS Region': 'us-east-1',
-      'Key ID': 'AKIAEXAMPLE',
-      'Secret Key': 'wJalEXAMPLEKEY',
-    });
+    expect(await (await getInput('region')).getValue()).toBe('us-east-1');
+    expect(await (await getInput('topic_arn')).getValue()).toBe('arn:aws:sns:us-east-1:123456789012:MyTopic');
+    expect(await (await getInput('aws_access_key_id')).getValue()).toBe('AKIAEXAMPLE');
+    expect(await (await getInput('aws_secret_access_key')).getValue()).toBe('wJalEXAMPLEKEY');
   });
 
   it('returns alert service form values when getSubmitAttributes is called', async () => {
-    await form.fillForm({
-      ARN: 'arn:aws:newarn',
-      'AWS Region': 'us-west-1',
-      'Key ID': 'NEWKEYID',
-      'Secret Key': 'NEWSECRETKEY',
-    });
+    await (await getInput('region')).setValue('us-west-1');
+    await (await getInput('topic_arn')).setValue('arn:aws:newarn');
+    await (await getInput('aws_access_key_id')).setValue('NEWKEYID');
+    await (await getInput('aws_secret_access_key')).setValue('NEWSECRETKEY');
 
     const submittedValues = spectator.component.getSubmitAttributes();
     expect(submittedValues).toEqual({

@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnTooltipDirective, TnIconComponent } from '@truenas/ui-components';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
@@ -21,7 +20,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PermissionsItemComponent,
-    MatTooltip,
+    TnTooltipDirective,
     TnIconComponent,
     TranslateModule,
   ],

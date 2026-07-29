@@ -1,41 +1,88 @@
-<mat-card>
-  <ix-fake-progress-bar [loading]="!!(isLoading$ | async)"></ix-fake-progress-bar>
-  <mat-toolbar-row>
-    <h3>{{ 'Reporting Exporters' | translate }}</h3>
-    <div class="actions action-icon">
-      <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        color="primary"
-        ixTest="add-reporting-exporter"
-        [ixUiSearch]="searchableElements.elements.add"
-        (click)="doAdd()"
-      >
-        {{ 'Add' | translate }}
-      </button>
-    </div>
-  </mat-toolbar-row>
-  <mat-card-content>
-    <ix-table
-      [ixUiSearch]="searchableElements.elements.exporters"
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
-    >
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(isLoading$ | async)"
-      ></tbody>
-    </ix-table>
-    <tn-table-pager
-      [dataProvider]="dataProvider"
-    ></tn-table-pager>
-  </mat-card-content>
-</mat-card>
+<tn-card [padContent]="false">
+  <h3 tnCardHeader class="tn-card__title">{{ 'Reporting Exporters' | translate }}</h3>
+
+  <div class="actions action-icon">
+    <tn-input
+      testId="search"
+      [ngModel]="searchQuery()"
+      [placeholder]="'Filter exporters...' | translate"
+      [ariaLabel]="'Filter exporters' | translate"
+      (ngModelChange)="onListFiltered($event)"
+    ></tn-input>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      testId="add-reporting-exporter"
+      [label]="'Add' | translate"
+      [ixUiSearch]="searchableElements.elements.add"
+      (onClick)="doAdd()"
+    ></tn-button>
+  </div>
+
+  <tn-table
+    [ixUiSearch]="searchableElements.elements.exporters"
+    [dataSource]="currentPage()"
+    [displayedColumns]="displayedColumns"
+    [trackBy]="trackById"
+    [loading]="isLoading()"
+    [emptyMessage]="emptyMessage()"
+    (sortChange)="onSortChange($event)"
+  >
+    <ng-container tnColumnDef="name" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.name }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="type">
+      <ng-template tnHeaderCellDef>{{ 'Type' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Type' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.attributes['exporter_type'] }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="enabled">
+      <ng-template tnHeaderCellDef>{{ 'Enabled' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <tn-slide-toggle
+          *ixRequiresRoles="requiredRoles"
+          [testId]="[('Enabled' | translate), uniqueRowTag(row), 'row-toggle']"
+          [checked]="row.enabled"
+          [ariaLabel]="('Toggle enabled for ' | translate) + row.name"
+          (change)="onToggle(row, $event)"
+        ></tn-slide-toggle>
+      </ng-template>
+    </ng-container>
+
+    <ng-container tnColumnDef="actions">
+      <ng-template tnHeaderCellDef></ng-template>
+      <ng-template let-row tnCellDef>
+        <div class="row-actions">
+          <tn-icon-button
+            name="mdi-pencil"
+            [testId]="['edit', uniqueRowTag(row), 'row-action']"
+            [ariaLabel]="'Edit' | translate"
+            [tooltip]="'Edit' | translate"
+            (onClick)="doEdit(row)"
+          ></tn-icon-button>
+          <tn-icon-button
+            *ixRequiresRoles="requiredRoles"
+            name="mdi-delete"
+            [testId]="['delete', uniqueRowTag(row), 'row-action']"
+            [ariaLabel]="'Delete' | translate"
+            [tooltip]="'Delete' | translate"
+            (onClick)="doDelete(row)"
+          ></tn-icon-button>
+        </div>
+      </ng-template>
+    </ng-container>
+  </tn-table>
+  <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
+</tn-card>

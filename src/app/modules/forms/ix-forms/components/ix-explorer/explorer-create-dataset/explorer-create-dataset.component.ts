@@ -2,9 +2,8 @@ import { ChangeDetectionStrategy, Component, DestroyRef, input, computed, signal
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnDialog, TnIconComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
@@ -34,7 +33,7 @@ export const genericCreateDatasetProps: Omit<DatasetCreate, 'name'> = {
 })
 export class ExplorerCreateDatasetComponent implements AfterViewInit {
   private explorer = inject(IxExplorerComponent);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private ngControl = inject(NgControl);
   private destroyRef = inject(DestroyRef);
 
@@ -98,12 +97,12 @@ export class ExplorerCreateDatasetComponent implements AfterViewInit {
 
   protected onCreateDataset(): void {
     const parentPath = this.parentPath();
-    this.matDialog.open(CreateDatasetDialog, {
+    this.tnDialog.open<CreateDatasetDialog, unknown, Dataset>(CreateDatasetDialog, {
       data: {
         parentId: this.parent(),
         dataset: this.datasetProperties(),
       },
-    }).afterClosed().pipe(
+    }).closed.pipe(
       filter(Boolean),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((dataset: Dataset) => {

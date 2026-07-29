@@ -1,8 +1,9 @@
+import { DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-form/change-password-form.component';
 
 @Component({
@@ -11,14 +12,14 @@ import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-pa
   styleUrls: ['./change-password-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatDialogTitle,
+    TnDialogShellComponent,
     ReactiveFormsModule,
     TranslateModule,
-    TnIconButtonComponent,
-    MatDialogClose,
     ChangePasswordFormComponent,
+    FormActionsComponent,
+    TnButtonComponent,
   ],
 })
 export class ChangePasswordDialog {
-  dialogRef = inject<MatDialogRef<ChangePasswordDialog>>(MatDialogRef);
+  protected dialogRef = inject<DialogRef<boolean, ChangePasswordDialog>>(DialogRef);
 }

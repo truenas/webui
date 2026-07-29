@@ -1,8 +1,8 @@
-import { MatDialog } from '@angular/material/dialog';
 import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -32,9 +32,9 @@ describe('HardwareDiskEncryptionComponent', () => {
         mockCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockProvider(NavigateAndHighlightService),
-      mockProvider(MatDialog, {
+      mockProvider(TnDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(false),
+          closed: of(false),
         })),
       }),
       mockAuth(),
@@ -60,13 +60,14 @@ describe('HardwareDiskEncryptionComponent', () => {
 
   describe('no SED support', () => {
     beforeEach(() => {
-      store$.overrideSelector(selectIsEnterprise, true);
+      // Non-enterprise with no per-disk and no global SED password => hasSedSupport() is false.
+      store$.overrideSelector(selectIsEnterprise, false);
       store$.refreshState();
       spectator.detectChanges();
     });
 
     it('checks no hardware disk encryption support', () => {
-      expect(spectator.query('.mat-card')).not.toExist();
+      expect(spectator.query('tn-card')).not.toExist();
     });
   });
 
@@ -95,7 +96,7 @@ describe('HardwareDiskEncryptionComponent', () => {
     it('shows a link to manage SED password and opens dialog', () => {
       const manageSedPassword = spectator.query(byText('Manage SED Password'))!;
       spectator.click(manageSedPassword);
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManageDiskSedDialog, { data: 'sda' });
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ManageDiskSedDialog, { data: 'sda' });
     });
 
     it('shows a link to manage global SED password', () => {

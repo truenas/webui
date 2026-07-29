@@ -1,8 +1,9 @@
-table {
-  table-layout: fixed;
+.title-group {
+  align-items: center;
+  display: flex;
+  gap: 4px;
 }
 
-p {
-  margin: 0;
-  padding: 13px;
+:host tn-card {
+  height: auto;
 }

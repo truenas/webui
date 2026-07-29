@@ -1,12 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, output, viewChild,
+} from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -15,14 +18,11 @@ import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form
 import { newOption } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -31,10 +31,7 @@ import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -45,25 +42,21 @@ import { FilesystemService } from 'app/services/filesystem.service';
   styleUrls: ['./rsync-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    IxFormComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
+    TnChipInputComponent,
+    IxSlideToggleComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     IxUserComboboxComponent,
-    IxSelectComponent,
-    IxInputComponent,
-    IxSlideToggleComponent,
     SshCredentialsSelectComponent,
-    IxCheckboxComponent,
     SchedulerComponent,
-    IxChipsComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
   ],
 })
@@ -71,24 +64,31 @@ export class RsyncTaskFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);
-  private snackbar = inject(SnackbarService);
   private validatorsService = inject(IxValidatorsService);
-  slideInRef = inject<SlideInRef<RsyncTask | undefined, RsyncTask>>(SlideInRef);
+  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
+  // `<tn-side-panel>` form panel, where data arrives via {@link taskToEdit}.
+  private slideInRef = inject<SlideInRef<RsyncTask | undefined, boolean>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.SnapshotTaskWrite];
+  /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
+  readonly taskToEdit = input<RsyncTask | undefined>(undefined);
+
+  // This form hosts `<ix-form>` directly and forwards its submit()/canSubmit()/isBusy()/closed, so it
+  // follows the ix-form dual-host recipe rather than extending `SidePanelForm` (whose `submit()` drives a
+  // subclass-owned form group + `canSubmit` signal — incompatible with delegating to the inner ix-form).
+  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
+  readonly closed = output<boolean>();
+
+  /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
+  private readonly ixForm = viewChild(IxFormComponent);
+
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
+  protected readonly InputType = InputType;
 
   get isNew(): boolean {
     return !this.editingTask;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add Rsync Task')
-      : this.translate.instant('Edit Rsync Task');
   }
 
   form = this.formBuilder.group({
@@ -125,8 +125,6 @@ export class RsyncTaskFormComponent implements OnInit {
     ssh_credentials: new FormControl(null as number | typeof newOption | null),
   });
 
-  protected isLoading = signal(false);
-
   readonly helptext = helptextRsyncForm;
 
   readonly directions$ = of([
@@ -146,13 +144,26 @@ export class RsyncTaskFormComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
-  private editingTask: RsyncTask | undefined;
+  protected editingTask: RsyncTask | undefined;
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.editingTask = this.slideInRef.getData();
+  /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */
+  submit(): void {
+    this.ixForm()?.submit();
+  }
+
+  /** Whether the form may be submitted right now; the `<tn-side-panel>` host reads this for its Save action. */
+  canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  /** Whether the form is currently submitting; the host shows a progress bar while true. */
+  isBusy(): boolean {
+    return this.ixForm()?.isLoading() ?? false;
+  }
+
+  /** Host hook (`<tn-side-panel>` closeGuard) to confirm before discarding unsaved edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty;
   }
 
   get isModuleMode(): boolean {
@@ -168,6 +179,8 @@ export class RsyncTaskFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.editingTask = this.slideInRef?.getData() ?? this.taskToEdit();
+
     if (this.editingTask) {
       this.setTaskForEdit(this.editingTask);
     }
@@ -182,7 +195,7 @@ export class RsyncTaskFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected handleSubmit = (): SubmitResult => {
     const values = {
       ...this.form.value,
       schedule: crontabToSchedule(this.form.value.schedule),
@@ -206,33 +219,21 @@ export class RsyncTaskFormComponent implements OnInit {
     }
     delete values.sshconnectmode;
 
-    this.isLoading.set(true);
-    let request$: Observable<RsyncTask>;
-    if (this.editingTask) {
-      request$ = this.api.call('rsynctask.update', [
-        this.editingTask.id,
-        values as RsyncTaskUpdate,
-      ]);
-    } else {
-      request$ = this.api.call('rsynctask.create', [values as RsyncTaskUpdate]);
-    }
+    const request$: Observable<RsyncTask> = this.editingTask
+      ? this.api.call('rsynctask.update', [this.editingTask.id, values as RsyncTaskUpdate])
+      : this.api.call('rsynctask.create', [values as RsyncTaskUpdate]);
 
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (task) => {
-        if (this.isNew) {
-          this.snackbar.success(this.translate.instant('Task created'));
-        } else {
-          this.snackbar.success(this.translate.instant('Task updated'));
-        }
-        this.isLoading.set(false);
-        this.slideInRef.close({ response: task });
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
+    return {
+      request$,
+      successMessage: this.isNew
+        ? this.translate.instant('Task created')
+        : this.translate.instant('Task updated'),
+      onError: (error: unknown): boolean => {
         this.errorHandler.handleValidationErrors(error, this.form, {
           remotehost: 'remotepath',
         });
+        return true;
       },
-    });
-  }
+    };
+  };
 }

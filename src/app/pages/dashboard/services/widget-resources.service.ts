@@ -52,6 +52,7 @@ export class WidgetResourcesService {
     this.api.call('replication.query'),
     this.api.call('rsynctask.query'),
     this.api.call('cloudsync.query'),
+    this.api.call('cloud_backup.query'),
   ]).pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );

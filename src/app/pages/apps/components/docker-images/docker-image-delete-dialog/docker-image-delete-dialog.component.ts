@@ -1,25 +1,22 @@
+import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { KeyValue, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, TrackByFunction,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
-} from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ContainerImage, DeleteContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -29,16 +26,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./docker-image-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnDialogShellComponent,
     ReactiveFormsModule,
     BulkListItemComponent,
-    IxCheckboxComponent,
+    TnCheckboxComponent,
+    TnFormFieldComponent,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
+    FormActionsComponent,
     TranslateModule,
-    TestDirective,
     KeyValuePipe,
-    MatDialogTitle,
-    MatDialogClose,
   ],
 })
 export class DockerImageDeleteDialog {
@@ -46,8 +43,8 @@ export class DockerImageDeleteDialog {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
-  private dialogRef = inject<MatDialogRef<DockerImageDeleteDialog>>(MatDialogRef);
-  images = inject<ContainerImage[]>(MAT_DIALOG_DATA);
+  protected dialogRef = inject<DialogRef<unknown, DockerImageDeleteDialog>>(DialogRef);
+  images = inject<ContainerImage[]>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];

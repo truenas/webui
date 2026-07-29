@@ -1,43 +1,30 @@
-<span class="prefix-icon">
-  <tn-icon name="magnify" library="mdi"></tn-icon>
-</span>
-
-<input
-  #searchControl
-  matInput
-  ixTest="search"
-  class="input"
+<tn-input
+  class="search-field"
+  prefixIcon="magnify"
+  prefixIconLibrary="mdi"
+  suffixIconLibrary="mdi"
+  [testId]="'search'"
   [placeholder]="placeholder() || ('Search' | translate)"
+  [ariaLabel]="placeholder() || ('Search' | translate)"
+  [suffixIcon]="query() ? 'close-circle' : undefined"
+  [suffixIconAriaLabel]="'Clear search' | translate"
+  [suffixActionTestId]="'clear-search'"
   [ngModel]="query()"
   (ngModelChange)="queryChange.emit($event)"
+  (onSuffixAction)="resetInput()"
   (keydown.enter)="runSearch.emit()"
-/>
+></tn-input>
 
 @if (allowAdvanced()) {
-  <span
+  <button
     class="switch-link"
-    ixTest="switch-to-advanced"
-    tabindex="0"
-    [matTooltip]="'Switch To Advanced' | translate"
+    type="button"
+    tnTestIdType="button"
+    [tnTestId]="'switch-to-advanced'"
+    [tnTooltip]="'Switch To Advanced' | translate"
     (click)="switchToAdvanced.emit()"
-    (keydown.enter)="$event.preventDefault(); switchToAdvanced.emit()"
   >
     <tn-icon name="tune" library="mdi" size="sm"></tn-icon>
     {{ 'Advanced' | translate }}
-  </span>
-}
-
-@if (searchControl.value) {
-  <span
-    class="reset-icon reset-input"
-    role="button"
-    tabindex="0"
-    ixTest="clear-search"
-    [attr.aria-label]="'Clear search' | translate"
-    [matTooltip]="'Clear search' | translate"
-    (click)="resetInput()"
-    (keydown.enter)="$event.preventDefault(); resetInput()"
-  >
-    <tn-icon name="close-circle" library="mdi"></tn-icon>
-  </span>
+  </button>
 }

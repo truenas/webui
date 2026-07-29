@@ -53,6 +53,28 @@ describe('provideTnFormFieldErrors', () => {
     expect(resolve('someUnknownKey', true, null)).toBeNull();
   });
 
+  it('surfaces the server message for a manual validation error, read from its sibling keys', () => {
+    const resolve = setup();
+    const control = new FormControl(null);
+    // Mirrors FormErrorHandlerService.showValidationError: the active key is the
+    // bare boolean flag; the message lives in the sibling object/string keys.
+    control.setErrors({
+      manualValidateError: true,
+      manualValidateErrorMsg: 'Server says no',
+      ixManualValidateError: { message: 'Server says no' },
+    });
+
+    expect(resolve('manualValidateError', true, control)).toBe('Server says no');
+  });
+
+  it('falls back to the manualValidateErrorMsg string when no object message is present', () => {
+    const resolve = setup();
+    const control = new FormControl(null);
+    control.setErrors({ manualValidateError: true, manualValidateErrorMsg: 'Plain message' });
+
+    expect(resolve('manualValidateError', true, control)).toBe('Plain message');
+  });
+
   it('ignores a blank custom message and falls through to the translated default', () => {
     const resolve = setup();
 

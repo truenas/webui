@@ -304,3 +304,17 @@ export const roleNames = new Map<Role, string>([
   [Role.ZfsResourceRead, T('ZFS Resource Read')],
   [Role.ZfsResourceDelete, T('ZFS Resource Delete')],
 ]);
+
+/**
+ * Formats a group/user's `roles` into a comma-separated, translated label.
+ *
+ * Falsy entries are dropped first: custom (non-builtin) privileges carry a `null` `builtin_name`,
+ * which can land in `roles`, and `translate(...)` throws `Parameter "key" required` on an empty
+ * key. `translate` is passed in (rather than importing `TranslateService` here) to keep this
+ * enums module free of Angular service dependencies.
+ */
+export function formatRoleNames(roles: (Role | null)[], translate: (key: string) => string): string {
+  return (roles.filter(Boolean) as Role[])
+    .map((role) => translate(roleNames.get(role) || role))
+    .join(', ');
+}

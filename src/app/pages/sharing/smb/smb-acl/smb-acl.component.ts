@@ -1,18 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnAutocompleteComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import { isNumber } from 'lodash-es';
 import {
-  concatMap, firstValueFrom, mergeMap, Observable, of, from,
+  BehaviorSubject, catchError, combineLatest, concatMap, debounceTime, distinctUntilChanged, firstValueFrom, from,
+  map, mergeMap, Observable, of, shareReplay, switchMap, tap, toArray,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
@@ -23,20 +24,15 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
@@ -59,24 +55,20 @@ interface FormAclEntry {
   styleUrls: ['./smb-acl.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    IxFormComponent,
+    TnFormFieldComponent,
+    TnFormSectionComponent,
+    TnSelectComponent,
     IxListComponent,
     IxListItemComponent,
-    IxSelectComponent,
-    IxComboboxComponent,
+    TnAutocompleteComponent,
     IxErrorsComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
   ],
 })
-export class SmbAclComponent implements OnInit {
+export class SmbAclComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -84,19 +76,21 @@ export class SmbAclComponent implements OnInit {
   private translate = inject(TranslateService);
   private userService = inject(UserService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<string, boolean>>(SlideInRef);
+
+  /** Share name supplied by the `<tn-side-panel>` host. */
+  readonly shareName = input<string | undefined>(undefined);
 
   form = this.formBuilder.group({
     entries: this.formBuilder.array<FormAclEntry>([]),
   });
 
   protected isLoading = signal(false);
-  protected shareName: string;
 
+  private resolvedShareName: string | undefined;
   private shareAclName: string;
 
   readonly tags$ = of(mapToOptions(smbAclTagLabels, this.translate));
-  protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   readonly permissions$ = of([
     {
       label: 'FULL',
@@ -125,30 +119,84 @@ export class SmbAclComponent implements OnInit {
 
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
-  readonly userProvider = new UserComboboxProvider(
-    this.userService,
-    { valueField: 'uid', queryType: ComboboxQueryType.Smb },
+
+  // Options seeded from the loaded ACL so existing uid/gid values display as
+  // names (the search query below only covers what the user has typed).
+  private readonly initialUserOptions$ = new BehaviorSubject<Option[]>([]);
+  private readonly initialGroupOptions$ = new BehaviorSubject<Option[]>([]);
+
+  // Server-searched option streams for the per-entry user/group autocompletes.
+  // All entries share one stream per kind — options only matter while that
+  // dropdown is open — and shareReplay collapses the `async` subscribers into a
+  // single SMB directory query per search. Option values are uid/gid numbers;
+  // free-typed names commit as strings and are resolved to ids on submit
+  // (see `getAclEntriesFromForm`), matching the old combobox behavior.
+  // On a failed fetch the stream stays alive with empty options and the dropdown
+  // shows "Options cannot be loaded" via [noResultsText] — the same in-panel
+  // signal the old ix-combobox rendered (a modal per failed keystroke query
+  // would be far noisier than the transient panel notice).
+  protected readonly usersFetchFailed = signal(false);
+  protected readonly usersLoading = signal(false);
+  protected readonly userSearch$ = new BehaviorSubject('');
+  protected readonly userOptions$ = combineLatest([
+    this.userSearch$.pipe(
+      debounceTime(defaultDebounceTimeMs),
+      distinctUntilChanged(),
+      tap(() => this.usersLoading.set(true)),
+      switchMap((query) => this.userService.smbUserQueryDsCache(query).pipe(
+        tap(() => this.usersFetchFailed.set(false)),
+        catchError((error: unknown) => {
+          console.error('SMB user autocomplete fetch failed:', error);
+          this.usersFetchFailed.set(true);
+          return of([] as User[]);
+        }),
+      )),
+      map((users) => users.map((user) => ({ label: user.username, value: user.uid }))),
+      tap(() => this.usersLoading.set(false)),
+    ),
+    this.initialUserOptions$,
+  ]).pipe(
+    map(([options, initial]) => [
+      ...initial.filter((item) => !options.some((option) => option.value === item.value)),
+      ...options,
+    ]),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  protected groupProvider: GroupComboboxProvider;
-
-  constructor() {
-    const slideInRef = this.slideInRef;
-
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.shareName = slideInRef.getData();
-  }
+  protected readonly groupsFetchFailed = signal(false);
+  protected readonly groupsLoading = signal(false);
+  protected readonly groupSearch$ = new BehaviorSubject('');
+  protected readonly groupOptions$ = combineLatest([
+    this.groupSearch$.pipe(
+      debounceTime(defaultDebounceTimeMs),
+      distinctUntilChanged(),
+      tap(() => this.groupsLoading.set(true)),
+      switchMap((query) => this.userService.smbGroupQueryDsCache(query, false).pipe(
+        tap(() => this.groupsFetchFailed.set(false)),
+        catchError((error: unknown) => {
+          console.error('SMB group autocomplete fetch failed:', error);
+          this.groupsFetchFailed.set(true);
+          return of([] as Group[]);
+        }),
+      )),
+      map((groups) => groups.map((group) => ({ label: group.group, value: group.gid }))),
+      tap(() => this.groupsLoading.set(false)),
+    ),
+    this.initialGroupOptions$,
+  ]).pipe(
+    map(([options, initial]) => [
+      ...initial.filter((item) => !options.some((option) => option.value === item.value)),
+      ...options,
+    ]),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   ngOnInit(): void {
-    if (this.shareName) {
-      this.setSmbShareName();
+    // Share name arrives via the `shareName` input from the side-panel host.
+    this.resolvedShareName = this.shareName();
+    if (this.resolvedShareName) {
+      this.loadSmbAcl(this.resolvedShareName);
     }
-  }
-
-  private setSmbShareName(): void {
-    this.loadSmbAcl(this.shareName);
   }
 
   addAce(): void {
@@ -169,24 +217,21 @@ export class SmbAclComponent implements OnInit {
     this.form.controls.entries.removeAt(index);
   }
 
-  onSubmit(): void {
-    this.isLoading.set(true);
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
+    const request$ = of(undefined).pipe(
+      mergeMap(() => this.getAclEntriesFromForm()),
+      mergeMap((acl) => this.api.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])),
+    );
 
-    of(undefined)
-      .pipe(mergeMap(() => this.getAclEntriesFromForm()))
-      .pipe(mergeMap((acl) => this.api.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])))
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isLoading.set(false);
-          this.slideInRef.close({ response: true });
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    return {
+      request$,
+      successMessage: this.translate.instant('Share ACL updated'),
+      onError: (error: unknown) => {
+        this.formErrorHandler.handleValidationErrors(error, this.form);
+        return true;
+      },
+    };
+  };
 
   private loadSmbAcl(shareName: string): void {
     this.isLoading.set(true);
@@ -277,38 +322,26 @@ export class SmbAclComponent implements OnInit {
         concatMap((ace: SmbSharesecAce) => {
           return this.initialValueDataFromAce(ace);
         }),
+        toArray(),
+        takeUntilDestroyed(this.destroyRef),
       )
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((aceData: unknown[]) => {
-        const initialOptions: Option[] = [];
+      .subscribe((aceData) => {
+        const userOptions: Option[] = [];
+        const groupOptions: Option[] = [];
 
-        if (aceData.length) {
-          const firstItem = aceData[0] as Group | User;
-          let option: Option;
-
-          if ('gid' in firstItem) {
-            option = {
-              label: ignoreTranslation(firstItem.group),
-              value: firstItem.gid,
-            };
-          } else if ('uid' in firstItem || (firstItem as User).uid?.toString() === '0') {
-            option = {
-              label: ignoreTranslation(firstItem.username),
-              value: firstItem.uid,
-            };
-          } else {
+        aceData.flat().forEach((item) => {
+          if (typeof item === 'string') {
             return;
           }
-
-          initialOptions.push(option);
-        }
-
-        this.groupProvider = new GroupComboboxProvider(this.userService, {
-          initialOptions,
-          valueField: 'gid',
-          queryType: ComboboxQueryType.Smb,
+          if ('gid' in item) {
+            groupOptions.push({ label: item.group, value: item.gid } as Option);
+          } else if ('uid' in item) {
+            userOptions.push({ label: item.username, value: item.uid } as Option);
+          }
         });
 
+        this.initialUserOptions$.next(userOptions);
+        this.initialGroupOptions$.next(groupOptions);
         this.isLoading.set(false);
       });
   }

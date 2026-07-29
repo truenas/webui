@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton, MatAnchor } from '@angular/material/button';
-import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnDialog,
+  TnFormFieldComponent, TnSpinnerComponent,
+} from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -15,11 +14,9 @@ import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl, NfsAclItem, PosixAclItem } from 'app/interfaces/acl.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { CanComponentDeactivate } from 'app/modules/unsaved-changes/unsaved-form.guard';
 import { AclEditorListComponent } from 'app/pages/datasets/modules/permissions/components/acl-editor-list/acl-editor-list.component';
@@ -47,20 +44,16 @@ import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-e
   styleUrls: ['./dataset-acl-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatProgressSpinner,
-    MatCardHeader,
-    MatCardTitle,
+    TnCardComponent,
+    TnSpinnerComponent,
     ReactiveFormsModule,
     IxUserComboboxComponent,
     IxGroupComboboxComponent,
-    IxCheckboxComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
     AclEditorListComponent,
-    MatButton,
-    TestDirective,
-    TnIconComponent,
+    TnButtonComponent,
     AclEditorSaveControlsComponent,
-    MatAnchor,
     RouterLink,
     RequiresRolesDirective,
     EditNfsAceComponent,
@@ -74,7 +67,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
-  private matDialog = inject(MatDialog);
+  private tnDialog = inject(TnDialog);
   private formBuilder = inject(NonNullableFormBuilder);
   private destroyRef = inject(DestroyRef);
   private unsavedChangesService = inject(UnsavedChangesService);
@@ -190,12 +183,12 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   }
 
   onStripAclPressed(): void {
-    this.matDialog.open(StripAclModalComponent, {
+    this.tnDialog.open(StripAclModalComponent, {
       data: {
         path: this.datasetPath,
       } as StripAclModalData,
     })
-      .afterClosed()
+      .closed
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((wasStripped) => {
         if (!wasStripped) {
@@ -210,7 +203,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   }
 
   onSavePreset(): void {
-    this.matDialog.open(SaveAsPresetModalComponent, {
+    this.tnDialog.open(SaveAsPresetModalComponent, {
       data: {
         aclType: this.acl.acltype,
         datasetPath: this.datasetPath,
@@ -219,7 +212,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   }
 
   onUsePresetPressed(): void {
-    this.matDialog.open(SelectPresetModalComponent, {
+    this.tnDialog.open(SelectPresetModalComponent, {
       data: {
         allowCustom: false,
         datasetPath: this.datasetPath,
@@ -250,7 +243,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
       return;
     }
 
-    this.matDialog.open(SelectPresetModalComponent, {
+    this.tnDialog.open(SelectPresetModalComponent, {
       data: {
         allowCustom: true,
         datasetPath: this.datasetPath,

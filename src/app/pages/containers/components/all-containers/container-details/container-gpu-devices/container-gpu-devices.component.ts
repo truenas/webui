@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnBannerActionDirective, TnBannerComponent, TnButtonComponent,
+  TnCardComponent, TnCardFooterActionsDirective,
+} from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { ContainerDeviceType, containerGpuType, ContainerStatus } from 'app/enums/container.enum';
@@ -13,7 +14,6 @@ import {
 } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddGpuDeviceMenuComponent,
@@ -34,16 +34,15 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   styleUrls: ['./container-gpu-devices.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
+    TnCardComponent,
+    TnCardFooterActionsDirective,
     TranslateModule,
-    MatCardContent,
     NgxSkeletonLoaderModule,
     DeviceActionsMenuComponent,
     AddGpuDeviceMenuComponent,
-    TnIconComponent,
-    MatButton,
-    TestDirective,
+    TnBannerComponent,
+    TnBannerActionDirective,
+    TnButtonComponent,
   ],
 })
 export class ContainerGpuDevicesComponent {

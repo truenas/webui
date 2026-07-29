@@ -1,6 +1,7 @@
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { MockComponents } from 'ng-mocks';
+import { MockComponents, MockInstance } from 'ng-mocks';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -92,6 +93,27 @@ describe('AdvancedSettingsComponent', () => {
   });
 
   beforeEach(() => {
+    // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
+    // ng-mocks does not initialize signal-based viewChild queries on mocked components.
+    MockInstance(AccessCardComponent, 'configForm', signal(undefined));
+    MockInstance(AllowedAddressesCardComponent, 'configForm', signal(undefined));
+    MockInstance(AuditCardComponent, 'configForm', signal(undefined));
+    MockInstance(ConsoleCardComponent, 'configForm', signal(undefined));
+    MockInstance(CronCardComponent, 'configForm', signal(undefined));
+    MockInstance(FailoverCardComponent, 'configForm', signal(undefined));
+    MockInstance(GlobalTwoFactorAuthCardComponent, 'configForm', signal(undefined));
+    MockInstance(InitShutdownCardComponent, 'configForm', signal(undefined));
+    MockInstance(IsolatedGpusCardComponent, 'configForm', signal(undefined));
+    MockInstance(KernelCardComponent, 'configForm', signal(undefined));
+    MockInstance(NtpServersCardComponent, 'configForm', signal(undefined));
+    MockInstance(NvidiaDriversCardComponent, 'configForm', signal(undefined));
+    MockInstance(SyslogCardComponent, 'configForm', signal(undefined));
+    MockInstance(ReplicationSettingsCardComponent, 'configForm', signal(undefined));
+    MockInstance(SelfEncryptingDriveCardComponent, 'configForm', signal(undefined));
+    MockInstance(StorageCardComponent, 'configForm', signal(undefined));
+    MockInstance(SystemSecurityCardComponent, 'configForm', signal(undefined));
+    MockInstance(TunableCardComponent, 'configForm', signal(undefined));
+
     spectator = createComponent();
   });
 

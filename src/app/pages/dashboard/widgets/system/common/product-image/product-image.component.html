@@ -2,11 +2,11 @@
   @if (systemProduct()) {
     @if (isIxHardware() && productImage()) {
       <img
-        matTooltipPosition="above"
-        [matTooltip]="'View Enclosure' | translate"
+        tnTooltipPosition="above"
+        [tnTooltip]="'View Enclosure' | translate"
         [id]="product()"
         [class.clickable]="hasEnclosureSupport()"
-        [matTooltipDisabled]="!hasEnclosureSupport()"
+        [tnTooltipDisabled]="!hasEnclosureSupport()"
         [src]="productImage()"
         (click)="goToEnclosure()"
       />

@@ -310,6 +310,41 @@ describe('AuthService', () => {
     });
   });
 
+  describe('hasWebShellAccess$', () => {
+    async function setWebShell(webShell: boolean): Promise<void> {
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('auth.me', {
+        ...authMeUser,
+        privilege: { ...authMeUser.privilege, web_shell: webShell },
+      });
+      await firstValueFrom(spectator.service.refreshUser());
+    }
+
+    it('emits true when the resolved user has the web_shell privilege', async () => {
+      await setWebShell(true);
+      expect(await firstValueFrom(spectator.service.hasWebShellAccess$)).toBe(true);
+    });
+
+    it('emits false when the resolved user lacks the web_shell privilege', async () => {
+      await setWebShell(false);
+      expect(await firstValueFrom(spectator.service.hasWebShellAccess$)).toBe(false);
+    });
+
+    it('does not emit for an unresolved (null) user, then emits once the user resolves', async () => {
+      const emissions: boolean[] = [];
+      const subscription = spectator.service.hasWebShellAccess$.subscribe((value) => emissions.push(value));
+
+      // User is still null (not yet resolved) - the stream must hold rather than
+      // snapshot a premature `false`, which would permanently deny take(1) consumers.
+      expect(emissions).toEqual([]);
+
+      await setWebShell(true);
+      expect(emissions).toEqual([true]);
+
+      subscription.unsubscribe();
+    });
+  });
+
   describe('setQueryToken', () => {
     it('does not set the token if the token is null', async () => {
       spectator.service.setQueryToken(null);

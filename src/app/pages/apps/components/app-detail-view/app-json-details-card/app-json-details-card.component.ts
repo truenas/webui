@@ -3,6 +3,7 @@ import {
   input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 
@@ -14,6 +15,7 @@ import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.he
   imports: [
     NgxSkeletonLoaderModule,
     TranslateModule,
+    TnCardComponent,
   ],
 })
 export class AppJsonDetailsCardComponent<T extends object> {

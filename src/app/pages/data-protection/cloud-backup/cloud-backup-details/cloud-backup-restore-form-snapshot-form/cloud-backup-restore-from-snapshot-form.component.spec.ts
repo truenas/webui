@@ -1,21 +1,27 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnInputHarness, TnRadioHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { firstValueFrom, of } from 'rxjs';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
+import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import {
+  CloudBackup,
+  CloudBackupSnapshot,
+  CloudBackupSnapshotDirectoryFileType,
+  CloudBackupSnapshotDirectoryListing,
+} from 'app/interfaces/cloud-backup.interface';
+import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -50,12 +56,14 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       }),
       mockApi([
         mockJob('cloud_backup.restore'),
+        mockCall('cloud_backup.list_snapshot_directory', [
+          { name: 'sub', path: '/sub', type: CloudBackupSnapshotDirectoryFileType.Dir },
+          { name: 'file.txt', path: '/file.txt', type: CloudBackupSnapshotDirectoryFileType.File },
+        ] as CloudBackupSnapshotDirectoryListing[]),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(FilesystemService),
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
     ],
   });
 
@@ -66,12 +74,12 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
     });
 
     it('submits backup restore from snapshot with `Include Everything`', async () => {
-      spectator.component.form.patchValue({
-        target: '/mnt/bulldozer',
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Target: '/mnt/bulldozer',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
@@ -83,15 +91,16 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
     });
 
     it('submits backup restore from snapshot with `Select paths to exclude`', async () => {
+      const includeExclude = await loader.getHarness(TnRadioHarness.with({ label: 'Select paths to exclude' }));
+      await includeExclude.check();
+
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Target: '/mnt/bulldozer',
-        'Include/Exclude': 'Select paths to exclude',
         'Excluded Paths': '/mnt/dozer/another',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
@@ -107,16 +116,17 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
     });
 
     it('submits backup restore from snapshot with `Include from subfolder`', async () => {
+      const includeExclude = await loader.getHarness(TnRadioHarness.with({ label: 'Include from subfolder' }));
+      await includeExclude.check();
+
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Target: '/mnt/bulldozer',
-        'Include/Exclude': 'Include from subfolder',
         Subfolder: '/mnt/dozer',
         'Included Paths': '/mnt/dozer/a',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
@@ -131,17 +141,44 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       ]);
     });
 
-    it('submits backup restore from snapshot with `Include from subfolder` matches paths', async () => {
+    it('forwards a selected file path as-is through include params', async () => {
+      const includeExclude = await loader.getHarness(TnRadioHarness.with({ label: 'Include from subfolder' }));
+      await includeExclude.check();
+
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Target: '/mnt/bulldozer',
-        'Include/Exclude': 'Include from subfolder',
+        Subfolder: '/mnt/dozer',
+        'Included Paths': '/mnt/dozer/file.txt',
+      });
+
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+        1,
+        1,
+        '/mnt/dozer',
+        '/mnt/bulldozer',
+        {
+          include: [
+            '/file.txt',
+          ],
+        },
+      ]);
+    });
+
+    it('submits backup restore from snapshot with `Include from subfolder` matches paths', async () => {
+      const includeExclude = await loader.getHarness(TnRadioHarness.with({ label: 'Include from subfolder' }));
+      await includeExclude.check();
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Target: '/mnt/bulldozer',
         Subfolder: '/mnt/dozer/a',
         'Included Paths': '/mnt/dozer/a',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
@@ -157,15 +194,18 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
     });
 
     it('submits backup restore from snapshot with `Exclude by pattern`', async () => {
+      const includeExclude = await loader.getHarness(TnRadioHarness.with({ label: 'Exclude by pattern' }));
+      await includeExclude.check();
+
+      const pattern = await loader.getHarness(TnInputHarness.with({ name: 'excludePattern' }));
+      await pattern.setValue('pattern');
+
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Target: '/mnt/bulldozer',
-        'Include/Exclude': 'Exclude by pattern',
-        Pattern: 'pattern',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
@@ -177,6 +217,31 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
             'pattern',
           ],
         },
+      ]);
+    });
+  });
+
+  describe('snapshot node provider', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+    });
+
+    it('lists both directories and files from a snapshot directory', async () => {
+      const node = { data: { path: '/' } } as TreeNode<ExplorerNodeData>;
+      const nodes = await firstValueFrom(spectator.component.snapshotNodeProvider(node));
+
+      expect(nodes).toEqual([
+        expect.objectContaining({ path: '/sub', type: ExplorerNodeType.Directory, hasChildren: true }),
+        expect.objectContaining({ path: '/file.txt', type: ExplorerNodeType.File, hasChildren: false }),
+      ]);
+    });
+
+    it('lists only directories for the subfolder selector', async () => {
+      const node = { data: { path: '/' } } as TreeNode<ExplorerNodeData>;
+      const nodes = await firstValueFrom(spectator.component.subFolderNodeProvider(node));
+
+      expect(nodes).toEqual([
+        expect.objectContaining({ path: '/sub', type: ExplorerNodeType.Directory, hasChildren: true }),
       ]);
     });
   });
@@ -198,9 +263,11 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
     });
 
     it('updates includedPathsRootNodes when subfolder changes', async () => {
+      const includeExclude = await loader.getHarness(TnRadioHarness.with({ label: 'Include from subfolder' }));
+      await includeExclude.check();
+
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        'Include/Exclude': 'Include from subfolder',
         Subfolder: '/mnt/dozer/subfolder',
       });
 
@@ -218,13 +285,48 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
         includedPaths: ['/mnt/dozer/path1', '/mnt/dozer/path2'],
       });
 
+      const includeExclude = await loader.getHarness(TnRadioHarness.with({ label: 'Include from subfolder' }));
+      await includeExclude.check();
+
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        'Include/Exclude': 'Include from subfolder',
         Subfolder: '/mnt/dozer/new-subfolder',
       });
 
       expect(spectator.component.form.controls.includedPaths.value).toEqual([]);
+    });
+  });
+
+  describe('side panel host (no SlideInRef)', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          { provide: SlideInRef, useValue: null },
+        ],
+        props: {
+          restoreData: data,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('resolves data from the restoreData input and emits closed on save', async () => {
+      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Target: '/mnt/bulldozer',
+      });
+      spectator.component.submit();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+        1,
+        1,
+        '/mnt/dozer',
+        '/mnt/bulldozer',
+        {},
+      ]);
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 });

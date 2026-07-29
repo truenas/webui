@@ -5,6 +5,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { settleDeferredTree } from 'app/core/testing/utils/settle-deferred-tree.utils';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -229,10 +230,10 @@ describe('VDevsComponent', () => {
     spectator = createComponent();
   });
 
-  it('shows the devices and details', () => {
+  it('shows the devices and details', async () => {
+    await settleDeferredTree(spectator.fixture);
     const rows = spectator.queryAll('.cell-name');
     expect(rows.map((row) => row.textContent)).toEqual(['MIRROR', 'sdc', 'sdd']);
-    expect(console.warn).toHaveBeenCalled();
     const headerContainer = spectator.query('.header-container')!;
     expect(headerContainer.textContent).toBe('Details for  sdc ');
     const zfsInfoCard = spectator.query('ix-zfs-info-card');

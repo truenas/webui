@@ -1,0 +1,9 @@
+// The per-type Settings forms are projected into the parent's `tn-form-section`
+// via a ViewContainerRef, so their fields are not direct children of the
+// section body and miss its inter-field gap. Lay the host out as a flex column
+// with the same 1.25rem gap the section uses between fields.
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}

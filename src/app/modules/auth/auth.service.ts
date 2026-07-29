@@ -70,6 +70,23 @@ export class AuthService implements OnDestroy {
     map((user) => user.account_attributes.includes(AccountAttribute.Local)),
   );
 
+  /**
+   * Whether the current user is allowed to open a Web Shell. Every shell
+   * (system, VM serial, container console) connects through the same
+   * `/websocket/shell/` endpoint, which is gated by the `web_shell` privilege.
+   *
+   * Only emits for a resolved (non-null) user. `take(1)`-gated consumers (e.g.
+   * the terminal access check) rely on this: shell routes sit behind AuthGuard,
+   * so a user is always resolved by the time they activate. Filtering out the
+   * transient nulls (initial seed, refreshUser, reconnect) means we wait for the
+   * re-resolved user instead of snapshotting a premature `false` and denying
+   * access permanently.
+   */
+  readonly hasWebShellAccess$: Observable<boolean> = this.user$.pipe(
+    filter(Boolean),
+    map((user) => Boolean(user.privilege?.web_shell)),
+  );
+
   private readonly hasPasswordChangedSinceLastLogin$ = new BehaviorSubject(false);
   readonly isPasswordChangeRequired$: Observable<boolean> = combineLatest([
     this.user$.pipe(

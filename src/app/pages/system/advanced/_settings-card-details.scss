@@ -1,0 +1,28 @@
+// Shared label/value row styling for the migrated advanced-settings `tn-card`
+// summary cards (replaces the `mat-list-item` rows previously styled by
+// `general-settings/common-settings-card.scss`).
+@mixin settings-card-details {
+  .details-item {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .label {
+      font-weight: bold;
+      line-height: initial;
+      margin-right: 8px;
+    }
+
+    .value {
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}

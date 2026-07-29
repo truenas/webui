@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -15,9 +13,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
-    MatButton,
+    TnButtonComponent,
     TranslateModule,
-    TestDirective,
   ],
 })
 export class SmbExtensionsWarningComponent {

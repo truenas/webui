@@ -5,4 +5,15 @@
 
 .addresses {
   margin-bottom: 0;
+
+  // TEMP: ix-list / ix-list-item are still Angular Material (owned by
+  // NAS-141028). The list-item host drops its bottom padding (`padding: 5px 10px
+  // 0`), so the delete button (its own top row) sits near the top border and the
+  // input sits flush against the bottom one once tn-form-field's reserved
+  // subscript is collapsed. Even out the box. Remove once NAS-141028 migrates
+  // ix-list to a tn-* list.
+  ::ng-deep ix-list-item {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
 }

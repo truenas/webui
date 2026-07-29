@@ -1,7 +1,11 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, output, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
 import {
   delay, merge, of,
 } from 'rxjs';
@@ -14,10 +18,6 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
   forbiddenValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -30,14 +30,16 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
   styleUrls: ['./name-and-options-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxFieldsetComponent,
     ReactiveFormsModule,
     DetailsTableComponent,
     DetailsItemComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
-    IxInputComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     TranslateModule,
+    AsyncPipe,
   ],
 })
 export class NameAndOptionsSectionComponent implements OnInit, OnChanges {

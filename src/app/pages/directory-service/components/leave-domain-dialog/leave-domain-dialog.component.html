@@ -1,4 +1,4 @@
-<h1 matDialogTitle>{{ 'Leave Domain' | translate }}</h1>
+<tn-dialog-shell testId="leave-domain" [title]="'Leave Domain' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div class="warning-section">
     <p><strong>{{ 'Warning:' | translate }}</strong> {{ 'This action will:' | translate }}</p>
@@ -13,32 +13,40 @@
     {{ 'Leaving the domain requires sufficient privileges. Enter your credentials below.' | translate }}
   </p>
 
-  <ix-input
-    formControlName="username"
-    [required]="true"
-    [label]="'Username' | translate"
-  ></ix-input>
+  <tn-form-field [label]="'Username' | translate">
+    <tn-input
+      testId="username"
+      name="username"
+      formControlName="username"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-input
-    formControlName="password"
-    [required]="true"
-    [label]="'Password' | translate"
-    [type]="'password'"
-  ></ix-input>
+  <tn-form-field [label]="'Password' | translate">
+    <tn-input
+      testId="password"
+      name="password"
+      formControlName="password"
+      [inputType]="InputType.Password"
+      [required]="true"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-form-actions>
-    <button mat-button type="button" matDialogClose ixTest="cancel">
-      {{ 'Cancel' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="[Role.DirectoryServiceWrite]"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="leave-domain"
-      [disabled]="form.invalid"
-    >
-      {{ 'Leave Domain' | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+  </form>
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="'Cancel' | translate"
+    (onClick)="dialogRef.close()"
+  ></tn-button>
+  <tn-button
+    *ixRequiresRoles="[Role.DirectoryServiceWrite]"
+    color="primary"
+    testId="leave-domain"
+    [label]="'Leave Domain' | translate"
+    [disabled]="form.invalid"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>

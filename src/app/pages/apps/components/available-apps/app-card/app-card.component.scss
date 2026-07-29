@@ -1,21 +1,32 @@
 @import 'mixins/text';
 
 :host {
-  background-color: var(--bg2);
   color: var(--fg2);
   cursor: pointer;
+  display: block;
+  position: relative;
+}
+
+// TEMP (NAS-141021): tn-card uses a preset content padding; restore the original card's
+// padding. Keep tn-card's 14px content base (matches the app's body font), which
+// the projected em-based title/description sizes are tuned against. Remove once
+// tn-card exposes a padding input.
+:host ::ng-deep .tn-card__content {
+  padding: 20px 25px 15px 10px;
+}
+
+.card-content {
   display: flex;
   flex-direction: row;
-  padding: 20px 25px 15px 10px;
-  position: relative;
-  transition: 50ms background-color;
 }
 
 :host-context(a:focus) :host {
   outline: var(--primary) auto 1px;
 }
 
-:host-context(a:hover) :host {
+// TEMP (NAS-141021): tn-card owns its background, so the hover state must reach the
+// library's inner element. Drop once tn-card exposes a hover/interactive input.
+:host-context(a:hover) ::ng-deep .app-card .tn-card {
   background-color: var(--contrast-lighter);
 }
 
@@ -58,9 +69,9 @@
       color: var(--fg1);
       display: flex;
       font-family: var(--font-family-header);
-      font-size: 1.3em;
+      font-size: 1.2em;
       gap: 8px;
-      line-height: 1.3em;
+      line-height: 1.2em;
       margin-top: 1px;
       text-transform: capitalize;
     }
@@ -85,7 +96,7 @@
 
   .description {
     @include line-clamp(4);
-    font-size: 1.2em;
+    font-size: 1.1em;
     line-height: 1.2em;
     margin-bottom: 0;
   }
