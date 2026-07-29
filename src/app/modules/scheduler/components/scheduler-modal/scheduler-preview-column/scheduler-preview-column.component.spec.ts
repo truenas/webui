@@ -1,7 +1,7 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCalendarHarness } from '@truenas/ui-components';
+import { TnCalendarHarness, TnIconButtonHarness } from '@truenas/ui-components';
 import { parse } from 'date-fns';
 import { MockComponent } from 'ng-mocks';
 import { LanguageService } from 'app/modules/language/language.service';
@@ -107,6 +107,15 @@ describe('SchedulerPreviewColumnComponent', () => {
 
     expect(await calendar.getCurrentViewLabel()).toBe('FEB 2022');
     expect(await getHighlightedCalendarDays()).toEqual(['28']);
+  });
+
+  it('asks to be closed when the close button is clicked', async () => {
+    jest.spyOn(spectator.component.closeRequested, 'emit');
+
+    const closeButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'close' }));
+    await closeButton.click();
+
+    expect(spectator.component.closeRequested.emit).toHaveBeenCalled();
   });
 
   it('shows current system timezone', () => {

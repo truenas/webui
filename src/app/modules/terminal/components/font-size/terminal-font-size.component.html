@@ -6,7 +6,7 @@
     testId="decrease-font-size"
     [ariaLabel]="'Decrease font size' | translate"
     [disabled]="fontSize() <= minFontSize"
-    (click)="change(-1)"
+    (onClick)="change(-1)"
   ></tn-icon-button>
   <tn-icon-button
     name="plus"
@@ -14,6 +14,6 @@
     testId="increase-font-size"
     [ariaLabel]="'Increase font size' | translate"
     [disabled]="fontSize() >= maxFontSize"
-    (click)="change(1)"
+    (onClick)="change(1)"
   ></tn-icon-button>
 </div>
