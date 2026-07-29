@@ -4,6 +4,13 @@ import {
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 
 /**
+ * Returned by {@link TnFormControlHarness.getValue} for a `tn-form-field` holding a control the
+ * harness cannot read. Whole-form readers (`getControlValues`) leave such a control out of their
+ * result rather than reporting a made-up value for it.
+ */
+export const unreadableControlValue = Symbol('unreadableControlValue');
+
+/**
  * Adapter that lets a `tn-form-field`-wrapped tn-* control be driven through the same
  * {@link IxFormControlHarness} contract the ix-* control harnesses implement, so a form
  * part-way through the tn-* migration — with ix-* and tn-* controls side by side — can still
@@ -15,11 +22,12 @@ import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-f
  *
  * **Supported controls: `tn-input`, `tn-select`, `tn-checkbox`, `tn-radio`.** A field wrapping
  * anything else (`tn-autocomplete`, `tn-chip-input`, `tn-file-input`, …) still indexes by label,
- * but reads back as `''`/`false` — the {@link IxFormControlHarness} contract has no "unsupported"
- * value, and whole-form readers like `getControlValues` walk every control at once, so a throw
- * there would take the rest of the form's values down with it. {@link setValue} targets one
- * control and does throw. Extend the branches below when a form needs one of those, or drive that
- * control through its own tn-* harness.
+ * but {@link getValue} returns {@link unreadableControlValue} — whole-form readers like
+ * `getControlValues` walk every control at once, so a throw there would take the rest of the
+ * form's values down with it, while returning `''` would let an assertion pass while reading
+ * nothing. The sentinel does neither: readers drop the entry, so a form-wide `toEqual` fails on
+ * the missing key. {@link setValue} targets one control and does throw. Extend the branches below
+ * when a form needs one of those, or drive that control through its own tn-* harness.
  */
 export class TnFormControlHarness extends TnFormFieldHarness implements IxFormControlHarness {
   static override readonly hostSelector = 'tn-form-field';
@@ -71,12 +79,16 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
       return checkbox.isChecked();
     }
     const radios = await this.radios();
-    for (const radio of radios) {
-      if (await radio.isChecked()) {
-        return radio.getLabelText();
+    if (radios.length) {
+      for (const radio of radios) {
+        if (await radio.isChecked()) {
+          return radio.getLabelText();
+        }
       }
+      // A group with nothing picked, which is a real value — not an unreadable control.
+      return '';
     }
-    return '';
+    return unreadableControlValue;
   }
 
   async setValue(value: unknown): Promise<void> {

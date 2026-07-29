@@ -22,7 +22,7 @@ import { IxStarRatingHarness } from 'app/modules/forms/ix-forms/components/ix-st
 import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxUserPickerHarness } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.harness';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
-import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
+import { TnFormControlHarness, unreadableControlValue } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 
 export const supportedFormControlSelectors = [
@@ -104,8 +104,8 @@ export async function indexControlsByLabel<T extends IxFormControlHarness>(
   // could pass to reach a specific one, so handing back whichever happened to be last is a
   // silently wrong answer. Drop the ambiguous entry instead of throwing: the index backs whole
   // forms, and a form is allowed to contain an unreachable control alongside perfectly
-  // addressable ones. Only the '' lookup then fails, with `fillControlValues`'
-  // "Could not find control with label ." — every sibling keeps working.
+  // addressable ones. Only the '' lookup then fails, and `fillControlValues` explains why —
+  // every sibling keeps working.
   if (unlabelledCount > 1) {
     delete result[''];
   }
@@ -119,7 +119,13 @@ export async function getControlValues(
   const result: Record<string, IxFormBasicValueType> = {};
   // eslint-disable-next-line guard-for-in,no-restricted-syntax
   for (const label in controlsDict) {
-    result[label] = await controlsDict[label].getValue() as IxFormBasicValueType;
+    const value = await controlsDict[label].getValue();
+    // Leave a control the harness can't read out of the result entirely, rather than reporting a
+    // stand-in value for it — a form-wide `toEqual` then fails on the missing key instead of
+    // passing against a `''` that was never read from anything.
+    if (value !== unreadableControlValue) {
+      result[label] = value as IxFormBasicValueType;
+    }
   }
 
   return result;
@@ -134,7 +140,16 @@ export async function fillControlValues(
     const control = controlsDict[label];
 
     if (!control) {
-      throw new Error(`Could not find control with label ${label}.`);
+      // An empty label is never a typo, so say what it actually means: controls with no label
+      // index under '', and `indexControlsByLabel` drops that entry once a form holds more than
+      // one of them, because no label could pick between them.
+      throw new Error(
+        label
+          ? `Could not find control with label ${label}.`
+          : 'No control is indexed under an empty label. Unlabelled controls index under \'\', and '
+            + 'that entry is dropped when a form holds more than one of them — reach those through '
+            + 'their own ix-*/tn-* harness instead.',
+      );
     }
 
     await control.setValue(values[label]);

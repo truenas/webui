@@ -63,13 +63,13 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
 
   protected readonly requiredRoles = [Role.PoolWrite];
 
-  readonly helptext = helptextImport;
+  protected readonly helptext = helptextImport;
   protected isLoading = signal(false);
   protected currentStep = signal<ImportStep>('loading');
   protected lockedSedDisks = signal<LockedSedDisk[]>([]);
   protected globalSedPassword = signal('');
 
-  importablePools: {
+  private importablePools: {
     name: string;
     guid: string;
   }[] = [];

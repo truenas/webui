@@ -1,3 +1,16 @@
 :host {
   display: block;
 }
+
+.inline {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+
+  // Cancels the global `tn-radio + tn-radio { margin-top: 8px }` stacking rule from
+  // _tn-styles.scss, which would otherwise push every option after the first down within the row.
+  tn-radio + tn-radio {
+    margin-top: 0;
+  }
+}

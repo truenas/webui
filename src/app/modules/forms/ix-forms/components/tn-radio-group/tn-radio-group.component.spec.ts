@@ -150,6 +150,39 @@ describe('TnRadioGroupComponent', () => {
     expect(await (await getRadio('Beta')).isDisabled()).toBe(true);
   });
 
+  it('stacks the options by default', () => {
+    setup();
+
+    expect(spectator.query('[role="radiogroup"]')).not.toHaveClass('inline');
+  });
+
+  it('lays the options out in a row when inline', () => {
+    setup(`
+      <ix-tn-radio-group
+        name="letter"
+        [formControl]="control"
+        [options]="options"
+        [inline]="true"
+      ></ix-tn-radio-group>
+    `);
+
+    expect(spectator.query('[role="radiogroup"]')).toHaveClass('inline');
+  });
+
+  it('gives each rendered group its own native name so two never fuse into one', () => {
+    setup(`
+      <ix-tn-radio-group name="letter" [formControl]="control" [options]="options"></ix-tn-radio-group>
+      <ix-tn-radio-group name="letter" [formControl]="control" [options]="options"></ix-tn-radio-group>
+    `);
+
+    // From the fixture, not `spectator.queryAll` — the latter is scoped to the first group.
+    const inputs = spectator.fixture.nativeElement.querySelectorAll('input[type="radio"]') as NodeListOf<HTMLInputElement>;
+    const names = Array.from(inputs).map((input) => input.name);
+
+    expect(new Set(names)).toHaveProperty('size', 2);
+    expect(names.every((name) => name.startsWith('letter-'))).toBe(true);
+  });
+
   it('composes a per-option test id from the base and the option label', () => {
     setup();
     expect(spectator.query('[data-test="radio-button-letter-alpha"]')).toExist();

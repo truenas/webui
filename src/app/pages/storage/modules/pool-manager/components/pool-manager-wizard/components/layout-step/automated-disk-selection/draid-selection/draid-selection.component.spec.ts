@@ -210,7 +210,7 @@ describe('DraidSelectionComponent', () => {
     );
   });
 
-  it('resets to default values when store emits a reset event', async () => {
+  it('clears every control when store emits a reset event', async () => {
     await form.fillForm(
       {
         'Disk Size': '10 GiB (HDD)',
@@ -223,15 +223,23 @@ describe('DraidSelectionComponent', () => {
 
     startOver$.next();
 
-    // Start Over clears the disk selection and restores the form defaults. `tn-select` renders
-    // a value verbatim even when no option matches it (`ix-select` used to blank it), so these
-    // assertions read exactly what the user sees: the defaults the reset writes back, and an
-    // empty Children — there is no optimal width to default to without disks.
+    // Start Over clears the disk selection, so none of the dRAID selects has any option left to
+    // offer. `tn-select` renders a value verbatim even when no option matches it (`ix-select`
+    // used to blank it), so the reset has to blank the restored defaults itself — these
+    // assertions read exactly what the user sees.
     const controls = await getControls();
     expect(await controls['Disk Size'].getValue()).toBe('');
-    expect(await controls['Data Devices'].getValue()).toBe('8');
-    expect(await controls['Distributed Hot Spares'].getValue()).toBe('0');
+    expect(await controls['Data Devices'].getValue()).toBe('');
+    expect(await controls['Distributed Hot Spares'].getValue()).toBe('');
     expect(await controls.Children.getValue()).toBe('');
-    expect(await controls['Number of VDEVs'].getValue()).toBe('1');
+    expect(await controls['Number of VDEVs'].getValue()).toBe('');
+  });
+
+  it('blanks Distributed Hot Spares while no disks are selected', async () => {
+    // 0 is a legitimate spare count, but only once the selected disks cover parity and data
+    // devices — with nothing selected it is a stale default over a "No options" dropdown.
+    const controls = await getControls();
+
+    expect(await controls['Distributed Hot Spares'].getValue()).toBe('');
   });
 });

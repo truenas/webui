@@ -9,6 +9,9 @@ import {
 import { TnFormFieldComponent, TnRadioComponent } from '@truenas/ui-components';
 import { Option } from 'app/interfaces/option.interface';
 
+/** Feeds the per-instance discriminator in {@link TnRadioGroupComponent.nativeName}. */
+let nextInstanceId = 0;
+
 /**
  * A `role="radiogroup"` wrapper around a set of `<tn-radio>`s.
  *
@@ -50,7 +53,16 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private injector = inject(Injector);
 
+  private readonly instanceId = nextInstanceId++;
+
   readonly options = input<Option<unknown>[]>([]);
+
+  /**
+   * Lays the options out in a wrapping row instead of stacking them, matching what
+   * `ix-radio-group`'s `inlineFields` did. Opt-in: stacked is the right default for anything
+   * longer than a two-option yes/no, which is the only shape a row reads well at.
+   */
+  readonly inline = input<boolean>(false);
 
   /**
    * Accessible name for the group, overriding the enclosing `tn-form-field`'s label. Required
@@ -60,13 +72,14 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
   readonly ariaLabel = input<string>('');
 
   /**
-   * Native `name` shared by every option's `<input type="radio">`, which is what makes the
-   * browser treat them as one group for arrow-key navigation.
+   * Base for the native `name` shared by every option's `<input type="radio">`, which is what
+   * makes the browser treat them as one group for arrow-key navigation.
    *
-   * **Must be unique per rendered group.** The native `name` scope is the whole document, so two
-   * groups sharing one — the same call site repeated in a list, or a step reused per vdev type —
-   * fuse into a single native group and break arrow-key navigation between them. Derive a
-   * discriminator into the name (e.g. the row id) when a group can render more than once.
+   * Need not be unique: the native `name` scope is the whole document, so two groups sharing one
+   * — the same call site repeated in a list, or a step reused per vdev type — would fuse into a
+   * single native group and break arrow-key navigation between them. {@link nativeName} appends
+   * a per-instance discriminator so that can't happen. The name is never surfaced to the user
+   * (it isn't a test id and isn't part of the accessible name), so nothing is lost by mangling it.
    */
   readonly name = input.required<string>();
 
@@ -83,6 +96,12 @@ export class TnRadioGroupComponent implements ControlValueAccessor {
    * leaves the missing name visible to an axe/a11y-lint pass.
    */
   protected readonly resolvedAriaLabel = computed(() => this.ariaLabel() || this.formField?.label() || null);
+
+  /**
+   * {@link name} plus a per-instance discriminator, so two groups built from the same call site
+   * never share a native `name` — see {@link name}.
+   */
+  protected readonly nativeName = computed(() => `${this.name()}-${this.instanceId}`);
 
   /**
    * Drives the `<tn-radio>` accessors. Kept separate from the outer control so a model write

@@ -11,6 +11,7 @@
           name="allowNonUniqueSerialDisks"
           formControlName="allowNonUniqueSerialDisks"
           [options]="(allowNonUniqueSerialDisksOptions$ | async) ?? []"
+          [inline]="true"
           [testId]="['radio-button', 'allow-non-unique-serial-disks']"
         ></ix-tn-radio-group>
       </tn-form-field>
