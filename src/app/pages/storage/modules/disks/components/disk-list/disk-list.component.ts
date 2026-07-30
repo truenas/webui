@@ -59,20 +59,26 @@ interface DiskRow extends Disk {
 
 /**
  * Sort key for HDD Standby: minutes, with "Always On" (never spins down) after every interval and
- * a disk that reports nothing at all (NVMe) before them. Both sentinels are finite-ordered rather
- * than left as `NaN`, which lodash `sortBy` places arbitrarily.
+ * a disk that reports no value at all (NVMe) before every one. The missing case is checked
+ * explicitly — left to `Number`, `null` would coerce to `0` and `undefined` to `NaN`, which lodash
+ * `sortBy` places arbitrarily.
  */
 function toStandbyOrder(value: DiskStandby | null | undefined): number {
   if (value === DiskStandby.AlwaysOn) {
     return Infinity;
   }
+  // `!value` covers null, undefined and '': every real standby value is a non-empty string.
+  if (!value) {
+    return -1;
+  }
   const minutes = Number(value);
   return Number.isFinite(minutes) ? minutes : -1;
 }
 
-/** Sort key for Adv. Power Management: level, with "Disabled" and a missing value below all. */
+/** Sort key for Adv. Power Management: level, with "Disabled" and a missing value below every one. */
 function toPowerLevelOrder(value: DiskPowerLevel | null | undefined): number {
-  if (value === DiskPowerLevel.Disabled) {
+  // `!value` covers null, undefined and '': every real power level is a non-empty string.
+  if (value === DiskPowerLevel.Disabled || !value) {
     return -1;
   }
   const level = Number(value);
@@ -212,6 +218,22 @@ export class DiskListComponent {
     { n: this.selectedDisks().length },
   ));
 
+  /** Flipped by the first selection and never reset — see {@link selectionAnnouncement}. */
+  private readonly hasSelectedBefore = signal(false);
+
+  /**
+   * What the live region says. Silent until the first selection, because a region that enters
+   * the DOM already populated isn't announced — after that it closes the loop in both
+   * directions, naming the count and saying so when the last disk is deselected (or when a
+   * search or page drops the selection) rather than going quiet with nothing explaining why.
+   */
+  protected readonly selectionAnnouncement = computed(() => {
+    if (this.selectedDisks().length) {
+      return this.selectionCountText();
+    }
+    return this.hasSelectedBefore() ? this.translate.instant('No disks selected') : '';
+  });
+
   // The ix-table column model is retained purely as picker metadata (visibility + saved
   // preferences) and to drive the hidden-column readout inside the expanded detail row;
   // tn-table renders its own cells from the templates below.
@@ -337,6 +359,9 @@ export class DiskListComponent {
   }
 
   protected onSelectionChange(disks: DiskRow[]): void {
+    if (disks.length) {
+      this.hasSelectedBefore.set(true);
+    }
     this.selectedIdentifiers.set(new Set(disks.map((disk) => disk.identifier)));
   }
 
@@ -376,11 +401,16 @@ export class DiskListComponent {
 
   /**
    * Drops the selection the moment the displayed rows change — a search, a page, a sort, a
-   * reload. tn-table does the same to its own checkboxes on every `[dataSource]` swap, so
-   * anything less would let the two disagree: because the selection is held by identifier,
-   * a row that leaves the page and comes back (search then clear, page 2 then page 1) would
-   * otherwise return already selected in the batch bar while its checkbox sits unticked, and
-   * Edit would then act on a disk the user never picked.
+   * reload, or the optimistic `setRows` after a save.
+   *
+   * tn-table does the same to its own checkboxes: an internal effect on its `data()` computed
+   * clears its `SelectionModel` and emits `(selectionChange)` with an empty list whenever the
+   * `[dataSource]` reference changes. That model holds row *references*, not `[trackBy]` keys,
+   * so rebuilding the rows with the same identifiers unticks them too. This mirrors that in our
+   * own state rather than depending on the emission: the selection is held by identifier, and a
+   * row that left the page and came back (search then Reset, page 2 then page 1) would otherwise
+   * return already selected in the batch bar with its checkbox unticked — and Edit would act on
+   * a disk the user never picked.
    */
   private clearSelectionWhenRowsChange(): void {
     effect(() => {

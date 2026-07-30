@@ -20,7 +20,6 @@ import { Group } from 'app/interfaces/group.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -76,9 +75,16 @@ export class GroupListComponent implements OnInit {
   protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
   protected readonly trackById = (_: number, row: Group): number => row.id;
 
-  // Seeded with the default sort `setDefaultSort` applies to the data provider, so the header
-  // arrow shows it from the start and survives a table rebuild; see `reflectSortIntoTable`.
-  private readonly activeSort = signal<TnSortEvent | null>({ column: 'gid', direction: 'asc' });
+  /**
+   * The sort the list opens with. One declaration for both halves of it — `setDefaultSort` maps
+   * it into the data provider and `activeSort` seeds the header arrow from it — so the arrow
+   * can't end up pointing at a column the provider isn't sorting by.
+   */
+  private readonly defaultSort: TnSortEvent = { column: 'gid', direction: 'asc' };
+
+  // Remembered so the arrow shows from the start and survives a table rebuild; see
+  // `reflectSortIntoTable`.
+  private readonly activeSort = signal<TnSortEvent | null>(this.defaultSort);
 
   constructor() {
     restrictToSingleExpandedRow(this.table);
@@ -195,10 +201,6 @@ export class GroupListComponent implements OnInit {
   }
 
   private setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 1,
-      direction: SortDirection.Asc,
-      propertyName: 'gid',
-    });
+    this.dataProvider.setSorting(mapTnSortToTableSort(this.defaultSort, this.displayedColumns));
   }
 }

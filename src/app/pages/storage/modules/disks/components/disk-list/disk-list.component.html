@@ -12,16 +12,12 @@
 </ix-page-header>
 
 <!--
-  Outside the `@if`, and empty until something is selected: a live region that enters the DOM
+  Outside the `@if`, and empty until the first selection: a live region that enters the DOM
   already populated isn't announced, so the 0 → 1 transition — the one that tells a screen-reader
   user the batch bar just appeared — would be the one announcement missed. The visible copy below
   is `aria-hidden` so this is the single spoken source of the count.
 -->
-<span class="sr-only" aria-live="polite">
-  @if (selectedDisks().length) {
-    {{ selectionCountText() }}
-  }
-</span>
+<span class="sr-only" aria-live="polite">{{ selectionAnnouncement() }}</span>
 
 @if (selectedDisks().length) {
   <div

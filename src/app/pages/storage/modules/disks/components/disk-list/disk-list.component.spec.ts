@@ -252,6 +252,9 @@ describe('DiskListComponent', () => {
     await (await loader.getHarness(TnButtonHarness.with({ label: 'Wipe' }))).click();
 
     expect(spectator.query('.batch-actions-toolbar')).not.toExist();
+    // Both halves, not just ours: tn-table clears its own SelectionModel on a `[dataSource]`
+    // swap, and the batch bar disappearing while the boxes stay ticked is the same desync.
+    expect(await table.getSelectedRowCount()).toBe(0);
   });
 
   it('drops the selection when the rows change, so a row cannot come back pre-selected', async () => {
@@ -268,8 +271,10 @@ describe('DiskListComponent', () => {
     await (await loader.getHarness(TnButtonHarness.with({ label: 'Reset' }))).click();
     spectator.detectChanges();
 
-    expect(await (await loader.getHarness(TnTableHarness)).getRowCount()).toBe(3);
+    const rebuilt = await loader.getHarness(TnTableHarness);
+    expect(await rebuilt.getRowCount()).toBe(3);
     expect(spectator.query('.batch-actions-toolbar')).not.toExist();
+    expect(await rebuilt.getSelectedRowCount()).toBe(0);
   });
 
   it('names how many disks the batch bar is acting on', async () => {
@@ -294,6 +299,12 @@ describe('DiskListComponent', () => {
     await table.toggleRowSelection(0);
 
     expect(liveRegion.textContent).toContain('1 disk selected');
+
+    // And closes the loop the other way: deselecting the last disk says so instead of the
+    // region simply going quiet.
+    await table.toggleRowSelection(0);
+
+    expect(liveRegion.textContent).toContain('No disks selected');
   });
 
   it('opens bulk edit form when multiple disks are selected and Edit is pressed', async () => {
@@ -503,8 +514,11 @@ describe('DiskListComponent', () => {
     await spectator.fixture.whenStable();
 
     // A save invalidates the selection it was made from, so the batch bar (and with it the
-    // stale disks it would have edited) goes away.
+    // stale disks it would have edited) goes away. The checkboxes go with it: the optimistic
+    // `setRows` hands tn-table a fresh array, whose reference change clears its own
+    // SelectionModel — it keys on row references, not on the `[trackBy]` identifiers.
     expect(await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Edit Disks' }))).toHaveLength(0);
+    expect(await (await loader.getHarness(TnTableHarness)).getSelectedRowCount()).toBe(0);
   });
 });
 

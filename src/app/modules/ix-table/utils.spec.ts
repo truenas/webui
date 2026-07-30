@@ -176,7 +176,7 @@ describe('mapTnSortToTableSort', () => {
       expect(sorting.sortBy?.(row)).toBe(1024);
     });
 
-    it('reports an accessor lodash sortBy cannot order, once, without breaking the sort', () => {
+    it('coerces an accessor lodash sortBy cannot order, and reports it once', () => {
       const error = jest.spyOn(console, 'error').mockImplementation();
       const arrayColumn = {
         propertyName: 'size',
@@ -191,7 +191,8 @@ describe('mapTnSortToTableSort', () => {
         { columns: [arrayColumn] },
       );
 
-      // Degraded rather than fatal: one sloppy column shouldn't take the whole table down.
+      // Degraded rather than fatal, and coerced in every build so dev and production agree —
+      // only the console.error is dev-only.
       expect(sorting.sortBy?.(row)).toBe('a,b');
       expect(sorting.sortBy?.(row)).toBe('a,b');
       expect(error).toHaveBeenCalledTimes(1);

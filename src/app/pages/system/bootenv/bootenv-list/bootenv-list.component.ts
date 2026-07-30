@@ -29,7 +29,6 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -107,9 +106,16 @@ export class BootEnvironmentListComponent implements OnInit {
 
   private readonly tnTable = viewChild(TnTableComponent);
 
-  // Seeded with the default sort `setDefaultSort` applies to the data provider, so the header
-  // arrow shows it from the start and survives a table rebuild; see `reflectSortIntoTable`.
-  private readonly activeSort = signal<TnSortEvent | null>({ column: 'created', direction: 'desc' });
+  /**
+   * The sort the list opens with. One declaration for both halves of it — `setDefaultSort` maps
+   * it into the data provider (accessors included) and `activeSort` seeds the header arrow from
+   * it — so the arrow can't end up pointing at a column the provider isn't sorting by.
+   */
+  private readonly defaultSort: TnSortEvent = { column: 'created', direction: 'desc' };
+
+  // Remembered so the arrow shows from the start and survives a table rebuild; see
+  // `reflectSortIntoTable`.
+  private readonly activeSort = signal<TnSortEvent | null>(this.defaultSort);
 
   constructor() {
     reflectSortIntoTable(this.tnTable, this.activeSort);
@@ -297,12 +303,9 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   private setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: this.displayedColumns.indexOf('created'),
-      direction: SortDirection.Desc,
-      propertyName: 'created',
-      sortBy: this.sortByCreated,
-    });
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort(this.defaultSort, this.displayedColumns, { sortAccessors: this.sortAccessors }),
+    );
   }
 
   private refresh(): void {

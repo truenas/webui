@@ -62,7 +62,7 @@ export interface TnSortAccessors<T> {
    *
    * A column here must resolve to something lodash can order — its `getValue` is typed `unknown`,
    * and an array or object sorts meaninglessly. Give such a column an explicit `sortBy` (which
-   * wins over `getValue`); dev mode reports it to the console either way.
+   * wins over `getValue`); dev mode reports the column to the console either way.
    */
   columns?: Column<T, ColumnComponent<T>>[];
 
@@ -105,19 +105,20 @@ export function mapTnSortToTableSort<T>(
   const columnIndex = displayedColumns.indexOf(event.column);
   return {
     propertyName: direction ? (event.column as keyof T) : null,
-    sortBy: sortBy && isDevMode() ? assertPrimitiveAccessor(sortBy, event.column) : sortBy,
+    sortBy: sortBy && guardSortValue(sortBy, event.column),
     direction,
     active: direction && columnIndex >= 0 ? columnIndex : null,
   };
 }
 
 /**
- * Dev-only guard for what {@link TnSortAccessors.columns} can only document: a column's `getValue`
- * is typed `unknown`, so one rendering an array or object sorts arbitrarily with nothing on screen
- * to explain it. Reports the first offender through `console.error` (a `warn` gets lost) and sorts
- * by its `String()` form, degrading that one column rather than taking the page down.
+ * Guards what {@link TnSortAccessors.columns} can only document: a column's `getValue` is typed
+ * `unknown`, so one rendering an array or object sorts arbitrarily with nothing on screen to
+ * explain it. Sorts by its `String()` form instead — in every build, so dev and production order
+ * the rows the same way — and, in dev only, names the column through `console.error` (a `warn`
+ * gets lost). The report fires at most once per sort click, not once per column per session.
  */
-function assertPrimitiveAccessor<T>(
+function guardSortValue<T>(
   accessor: (row: T) => SortValue,
   column: string,
 ): (row: T) => SortValue {
@@ -127,7 +128,7 @@ function assertPrimitiveAccessor<T>(
     if (value == null || ['string', 'number', 'boolean'].includes(typeof value)) {
       return value;
     }
-    if (!reported) {
+    if (!reported && isDevMode()) {
       reported = true;
       const kind = Array.isArray(value) ? 'an array' : `a ${typeof value}`;
       console.error(

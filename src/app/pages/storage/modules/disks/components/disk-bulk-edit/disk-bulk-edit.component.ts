@@ -98,15 +98,20 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> impl
         take(1),
         // core.bulk reports per-disk failures in its result rather than failing the job, so keep
         // the per-disk errors alongside the entries that did apply for `onSuccess` to report.
+        // One result per request, in order — but read defensively in both places rather than
+        // trusting that and throwing mid-save if a response ever comes back short.
         //
         // core.bulk is not transactional: the disks that reported no error were already updated
         // on the backend, so resolve with just those — otherwise the list keeps showing pre-edit
         // values for disks that did change. An all-failed bulk resolves with an empty list, which
         // still reloads, matching what the pre-migration form closed with either way.
-        map((job) => ({
-          applied: req.filter((_, index) => job.result[index]?.error === null),
-          results: job.result,
-        })),
+        map((job) => {
+          const results = job.result ?? [];
+          return {
+            applied: req.filter((_, index) => results[index]?.error === null),
+            results,
+          };
+        }),
       ),
       // Both raised from `onSuccess` (the template suppresses `<ix-form>`'s own snackbar), which
       // runs as the panel closes — reporting from inside `request$` would put the error dialog
@@ -134,7 +139,7 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> impl
    */
   private reportFailures(results: CoreBulkResponse[]): void {
     const messages = [...new Set(
-      results.map((result) => result.error).filter((error): error is string => error !== null),
+      results.map((result) => result?.error).filter((error): error is string => Boolean(error)),
     )];
     if (!messages.length) {
       return;
