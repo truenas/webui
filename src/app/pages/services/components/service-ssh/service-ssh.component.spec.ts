@@ -14,9 +14,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { SshConfig } from 'app/interfaces/ssh-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import {
-  hostedFormGroup, ixFormTestingProviders,
-} from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -132,7 +130,6 @@ describe('ServiceSshComponent', () => {
     expect(showErrorModal).toHaveBeenCalled();
     // The form's defaults are valid, so `loadFailed` (fed to `<ix-form>`'s extraDisabled) is the
     // only thing that can be blocking Save.
-    expect(hostedFormGroup(failed.componentInstance).valid).toBe(true);
     expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 

@@ -20,6 +20,29 @@
     signal, so it appears exactly when the progress bar does; forms without `isBusy` never show it.
   -->
   <div class="panel-content">
+    <!--
+      The hosted form reports a failed initial load through `hasLoadFailed`. Its own error modal is
+      one-shot, so without this the panel is left showing untouched defaults behind a greyed-out
+      Save with nothing explaining why. Retry is offered only when the form exposes `retryLoad`.
+    -->
+    @if (form()?.hasLoadFailed?.()) {
+      <tn-banner
+        class="load-failure-banner"
+        type="error"
+        [heading]="'Settings could not be loaded' | translate"
+        [message]="'The fields below show defaults, not the current configuration, so saving is disabled.' | translate"
+      >
+        @if (form()?.retryLoad) {
+          <tn-button
+            tnBannerAction
+            [testId]="'retry-load'"
+            [label]="'Retry' | translate"
+            (onClick)="form()?.retryLoad?.()"
+          ></tn-button>
+        }
+      </tn-banner>
+    }
+
     <ng-template
       [cdkPortalOutlet]="portal()"
       (attached)="onPortalAttached($event)"

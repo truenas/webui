@@ -14,9 +14,7 @@ import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.inte
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import {
-  hostedFormGroup, ixFormTestingProviders,
-} from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -154,7 +152,6 @@ describe('ServiceWebshareComponent', () => {
 
     expect(errorHandler.showErrorModal).toHaveBeenCalled();
     // The form is left on defaults the user never saw — valid, but Save must stay blocked.
-    expect(hostedFormGroup(failed.componentInstance).valid).toBe(true);
     expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 

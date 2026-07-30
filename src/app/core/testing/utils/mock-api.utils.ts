@@ -199,7 +199,15 @@ export function failApiCall(
   error: unknown = new Error(`Mocked failure of ${method}`),
 ): void {
   const call = api.call as unknown as jest.Mock<Observable<unknown>, [string, unknown?]>;
-  const respond = call.getMockImplementation() as (method: string, params?: unknown) => Observable<unknown>;
+  const respond = call.getMockImplementation();
+  if (!respond) {
+    // Without this the missing implementation surfaces later as "respond is not a function",
+    // thrown from inside whichever component happened to call through.
+    throw new Error(
+      'failApiCall needs an ApiService whose `call` has a mock implementation to delegate the '
+      + 'other methods to — provide mockApi() rather than a bare mockProvider(ApiService).',
+    );
+  }
   call.mockImplementation((calledMethod, params) => {
     return calledMethod === method ? throwError(() => error) : respond(calledMethod, params);
   });

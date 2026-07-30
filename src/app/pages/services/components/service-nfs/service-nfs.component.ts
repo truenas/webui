@@ -1,6 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, OnInit, computed, signal, inject, DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -35,12 +37,8 @@ import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-/**
- * Built out here rather than inline in the component so {@link NfsFormValue} can be derived from
- * it while the component's own `form` stays `protected`.
- */
-// The inferred FormGroup IS the contract the value-shape alias below reads; an explicit return
-// type would just restate every control.
+// Built here rather than inline in the component, and left with an inferred return type — see
+// the `V` type parameter on IxFormHostForm for why.
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createNfsForm(fb: NonNullableFormBuilder, validatorsService: IxValidatorsService) {
   return fb.group({
@@ -104,6 +102,21 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
   protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
 
   protected readonly form = createNfsForm(this.fb, this.validatorsService);
+
+  private readonly isKerberosRequired = toSignal(this.form.controls.v4_krb.valueChanges, {
+    initialValue: this.form.controls.v4_krb.value,
+  });
+
+  /**
+   * Add SPN only applies to a Kerberos-secured NFSv4 server that doesn't already have an SPN, and
+   * only once Active Directory is healthy. Declarative rather than a getter reading
+   * `form.getRawValue()`, so it recomputes when its inputs change instead of on every CD pass.
+   */
+  protected readonly isAddSpnVisible = computed(() => {
+    return !this.hasNfsStatus()
+      && this.isKerberosRequired()
+      && this.activeDirectoryState() === DirectoryServiceStatus.Healthy;
+  });
 
   readonly tooltips = {
     allow_nonroot: helptextServiceNfs.allowNonrootTooltip,
@@ -222,13 +235,7 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
     });
   }
 
-  get isAddSpnVisible(): boolean {
-    return !this.hasNfsStatus()
-      && this.form.getRawValue().v4_krb
-      && this.activeDirectoryState() === DirectoryServiceStatus.Healthy;
-  }
-
-  addSpn(): void {
+  protected addSpn(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Add Kerberos SPN Entry'),
       message: this.translate.instant('Would you like to add a Service Principal Name (SPN) now?'),

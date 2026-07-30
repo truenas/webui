@@ -186,6 +186,29 @@ describe('ServiceUpsComponent', () => {
     } as UpsConfigUpdate]);
   });
 
+  // Slave mode is the mirror image of the payload above, and the branch of `handleSubmit` the
+  // master-mode test never reaches: the mode watcher enables the remote fields and disables
+  // `driver`, and the handler drops whichever key belongs to the other mode.
+  it('sends the remote host and port, and no driver, when saved in slave mode', async () => {
+    await (await getSelect('mode')).selectOption('Slave');
+
+    await (await getInput('remotehost')).setValue('10.0.0.5');
+    await (await getInput('remoteport')).setValue('3493');
+
+    spectator.component.submit();
+
+    expect(api.call).toHaveBeenCalledWith('ups.update', [
+      expect.objectContaining({
+        mode: UpsMode.Slave,
+        remotehost: '10.0.0.5',
+        remoteport: 3493,
+      }) as UpsConfigUpdate,
+    ]);
+    expect(api.call).toHaveBeenCalledWith('ups.update', [
+      expect.not.objectContaining({ driver: expect.anything() }) as UpsConfigUpdate,
+    ]);
+  });
+
   it('allow custom values to be saved as form value for the port autocomplete', async () => {
     const port = await loader.getHarness(TnAutocompleteHarness.with({ selector: '[formControlName="port"]' }));
 

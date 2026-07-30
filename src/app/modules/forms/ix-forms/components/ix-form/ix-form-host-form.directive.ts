@@ -29,8 +29,22 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
  * @typeParam V the {@link form}'s raw value shape, which types {@link initialFormSnapshot} so it
  * lines up with the `<ix-form>` it is bound to. Passed explicitly (rather than derived from
  * `this['form']`) so {@link form} can stay `protected` — an indexed access can only reach a public
- * member. Config forms declare it as the raw value of their form-group factory; forms that don't
- * bind `initialFormSnapshot` can leave it at the default.
+ * member. Forms that don't bind `initialFormSnapshot` can leave it at the default.
+ *
+ * Deriving `V` therefore can't go through the component either, which is why the config forms
+ * build their group in a module-level factory and read the shape off that:
+ *
+ * ```ts
+ * // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+ * function createFooForm(fb: FormBuilder) { return fb.group({ … }); }
+ * type FooFormValue = ReturnType<ReturnType<typeof createFooForm>['getRawValue']>;
+ *
+ * export class FooComponent extends IxFormHostForm<boolean, FooFormValue> { … }
+ * ```
+ *
+ * The factory's return type is deliberately left inferred (hence the lint suppression): the
+ * inferred `FormGroup` IS the contract the alias reads, and writing it out would restate every
+ * control.
  */
 @Directive()
 export abstract class IxFormHostForm<R = boolean, V extends object = Record<string, unknown>>
@@ -60,15 +74,37 @@ implements SidePanelHostForm<R> {
    * user never saw. Bind to `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's)
    * can't submit them. Cleared by a subsequent {@link loadFormConfig} — see its re-entrancy note.
    *
-   * KNOWN GAP: once the one-shot error modal is dismissed, the panel shows defaults with a greyed
-   * Save and no in-body explanation, so the only way out is to close and reopen. An in-panel
-   * notice (and ideally a retry) belongs here; it needs a place to render, which the base — being
-   * template-less — doesn't have, so it is tracked separately rather than bolted onto `<ix-form>`
-   * (whose input surface is frozen).
+   * Also read by the `<tn-side-panel>` host (through {@link hasLoadFailed}) to explain the state:
+   * once the one-shot error modal is dismissed there is nothing on screen saying why Save is
+   * greyed out, so the container renders a banner offering {@link retryLoad}.
    */
   protected readonly loadFailed = signal(false);
 
+  /**
+   * Whether the initial config load failed. Host hook — `FormSidePanelContainerComponent` reads it
+   * to show its "couldn't load" banner. Public because the host reads it off the instance.
+   */
+  hasLoadFailed(): boolean {
+    return this.loadFailed();
+  }
+
   private readonly loadedSnapshot = signal<object | null>(null);
+
+  // The arguments of the most recent loadFormConfig call, replayed by retryLoad. The observable is
+  // re-subscribed rather than rebuilt: `ApiService.call` is cold, so a fresh subscription issues a
+  // fresh request.
+  private lastLoad: { config$: Observable<unknown>; patch: (config: never) => void } | null = null;
+
+  /**
+   * Runs the last {@link loadFormConfig} again. Host hook — the container's load-failure banner
+   * calls it, so a transient WebSocket hiccup on open no longer means closing and reopening the
+   * panel. A no-op if no load has been started.
+   */
+  retryLoad(): void {
+    if (this.lastLoad) {
+      this.loadFormConfig(this.lastLoad.config$, this.lastLoad.patch);
+    }
+  }
 
   /**
    * The post-load baseline `<ix-form>` diffs `changedValues` against, captured by
@@ -86,9 +122,11 @@ implements SidePanelHostForm<R> {
    * Save can never submit the defaults the user never saw.
    *
    * Re-entrant: both {@link loadFailed} and the snapshot are cleared on entry, so a retry (or a
-   * second load) starts clean rather than inheriting the previous attempt's latched failure.
+   * second load) starts clean rather than inheriting the previous attempt's latched failure. The
+   * arguments are kept so {@link retryLoad} can replay them.
    */
   protected loadFormConfig<C>(config$: Observable<C>, patch: (config: C) => void): void {
+    this.lastLoad = { config$, patch: patch as (config: never) => void };
     this.loadFailed.set(false);
     this.loadedSnapshot.set(null);
     this.dataLoading.set(true);

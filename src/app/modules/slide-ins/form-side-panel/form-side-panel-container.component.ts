@@ -5,6 +5,8 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
+  TnBannerActionDirective,
+  TnBannerComponent,
   TnButtonComponent,
   TnIconButtonComponent,
   TnMenuComponent,
@@ -52,6 +54,17 @@ export type HostedSidePanelForm = SidePanelHostForm & {
    * not `isBusy` — to switch Save to "Saving…", so a load never mislabels Save. Optional.
    */
   readonly isSubmitting?: () => boolean;
+  /**
+   * Whether the form's initial data load failed, leaving it on defaults the user never saw. The
+   * host renders a banner saying so, because the form's own one-shot error modal is gone as soon
+   * as it is dismissed and a greyed-out Save alone doesn't explain itself. Optional.
+   */
+  readonly hasLoadFailed?: () => boolean;
+  /**
+   * Re-runs the failed load. Paired with {@link hasLoadFailed} — the banner only offers Retry when
+   * a form exposes this. Optional.
+   */
+  readonly retryLoad?: () => void;
 };
 
 /**
@@ -70,6 +83,8 @@ export type HostedSidePanelForm = SidePanelHostForm & {
   imports: [
     TnSidePanelComponent,
     TnSidePanelActionDirective,
+    TnBannerComponent,
+    TnBannerActionDirective,
     TnButtonComponent,
     TnIconButtonComponent,
     TnMenuComponent,

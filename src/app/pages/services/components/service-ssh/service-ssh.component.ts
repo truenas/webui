@@ -21,12 +21,8 @@ import {
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-/**
- * Built out here rather than inline in the component so {@link SshFormValue} can be derived from
- * it while the component's own `form` stays `protected`.
- */
-// The inferred FormGroup IS the contract the value-shape alias below reads; an explicit return
-// type would just restate every control.
+// Built here rather than inline in the component, and left with an inferred return type — see
+// the `V` type parameter on IxFormHostForm for why.
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createSshForm(fb: NonNullableFormBuilder) {
   return fb.group({

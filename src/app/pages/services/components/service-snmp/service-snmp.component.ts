@@ -15,12 +15,8 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-/**
- * Built out here rather than inline in the component so {@link SnmpFormValue} can be derived from
- * it while the component's own `form` stays `protected`.
- */
-// The inferred FormGroup IS the contract the value-shape alias below reads; an explicit return
-// type would just restate every control.
+// Built here rather than inline in the component, and left with an inferred return type — see
+// the `V` type parameter on IxFormHostForm for why.
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createSnmpForm(fb: FormBuilder, validation: IxValidatorsService) {
   return fb.group({

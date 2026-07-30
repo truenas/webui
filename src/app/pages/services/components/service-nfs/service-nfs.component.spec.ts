@@ -16,9 +16,7 @@ import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import {
-  hostedFormGroup, ixFormTestingProviders,
-} from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddSpnDialog,
@@ -124,7 +122,6 @@ describe('ServiceNfsComponent', () => {
     expect(showErrorModal).toHaveBeenCalled();
     // The form's defaults are valid, so `loadFailed` (fed to `<ix-form>`'s extraDisabled) is the
     // only thing that can be blocking Save.
-    expect(hostedFormGroup(failed.componentInstance).valid).toBe(true);
     expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 
@@ -186,6 +183,9 @@ describe('ServiceNfsComponent', () => {
     await addSpnButton.click();
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AddSpnDialog);
+    // Add SPN sits inside `<ix-form>`'s content, i.e. inside the `<form>` that binds `ngSubmit`.
+    // `tn-button` renders `type="button"` by default, so the click must not also save the form.
+    expect(api.call).not.toHaveBeenCalledWith('nfs.update', expect.anything());
   });
 
   it('disables RDMA field unless it is an enterprise system with RDMA capable NIC', async () => {

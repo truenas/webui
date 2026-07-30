@@ -119,7 +119,7 @@
     swallows pointer events). Keeping the pair together beats a disabled footer button with no
     explanation.
   -->
-  @if (isAddSpnVisible) {
+  @if (isAddSpnVisible()) {
     <!-- The role check gates the whole block, not just the button: a read-only user would
          otherwise get an empty (or tooltip-only) container plus its top margin — a stray gap
          at the end of the form. -->

@@ -44,12 +44,8 @@ interface BindIp {
   bindIp: string;
 }
 
-/**
- * Built out here rather than inline in the component so {@link SmbFormValue} can be derived from
- * it while the component's own `form` stays `protected`.
- */
-// The inferred FormGroup IS the contract the value-shape alias below reads; an explicit return
-// type would just restate every control.
+// Built here rather than inline in the component, and left with an inferred return type — see
+// the `V` type parameter on IxFormHostForm for why.
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createSmbForm(fb: FormBuilder, validatorsService: IxValidatorsService, translate: TranslateService) {
   return fb.group({

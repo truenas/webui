@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { EMPTY, NEVER, Observable, of, throwError } from 'rxjs';
+import {
+  defer, EMPTY, NEVER, Observable, of, throwError,
+} from 'rxjs';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -35,10 +37,6 @@ class TestFormHostComponent extends IxFormHostForm<boolean, { name: string }> {
 
   isLoading(): boolean {
     return this.dataLoading();
-  }
-
-  hasLoadFailed(): boolean {
-    return this.loadFailed();
   }
 }
 
@@ -134,6 +132,33 @@ describe('IxFormHostForm', () => {
 
       expect(spectator.component.readSnapshot()).toBeNull();
       expect(spectator.component.isLoading()).toBe(true);
+    });
+  });
+
+  describe('retryLoad', () => {
+    it('re-subscribes to the last load, so a transient failure can recover', () => {
+      let attempt = 0;
+      // Cold, like `ApiService.call`: each subscription is a fresh request. The first fails, the
+      // retry succeeds.
+      const config$ = defer(() => {
+        attempt += 1;
+        return attempt === 1 ? throwError(() => new Error('Failed to load config')) : of({ name: 'loaded' });
+      });
+
+      spectator.component.load(config$);
+      expect(spectator.component.hasLoadFailed()).toBe(true);
+
+      spectator.component.retryLoad();
+
+      expect(attempt).toBe(2);
+      expect(spectator.component.hasLoadFailed()).toBe(false);
+      expect(spectator.component.readFormValue()).toEqual({ name: 'loaded' });
+      expect(spectator.component.readSnapshot()).toEqual({ name: 'loaded' });
+    });
+
+    it('does nothing when no load has been started', () => {
+      expect(() => spectator.component.retryLoad()).not.toThrow();
+      expect(spectator.component.isLoading()).toBe(false);
     });
   });
 });

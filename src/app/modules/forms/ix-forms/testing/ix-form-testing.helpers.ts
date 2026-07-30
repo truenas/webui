@@ -1,6 +1,7 @@
 import { FormGroup } from '@angular/forms';
 import { mockProvider } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 
@@ -26,13 +27,13 @@ export function ixFormTestingProviders(): unknown[] {
 }
 
 /**
- * The `form` an `IxFormHostForm` subclass renders inside its `<ix-form>`.
+ * The `form` a side-panel-hosted form renders inside its `<ix-form>`.
  *
- * `form` is `protected`, so this casts to reach it. Prefer driving the rendered controls through
- * their `tn-*` harnesses; this is for the cases a harness genuinely cannot express — chiefly
- * seeding a form whose config load was made to fail, so an assertion about `loadFailed` isn't
- * confounded by unfilled required fields.
+ * `form` is `protected`, so this casts to reach it — an escape hatch, not the default. Drive the
+ * rendered controls through their `tn-*` harnesses wherever a harness can express the same thing.
+ * The case it exists for is seeding a form whose config load was made to fail, so that the
+ * assertion is about `loadFailed` and not about unfilled required fields.
  */
-export function hostedFormGroup(host: object): FormGroup {
-  return (host as { form: FormGroup }).form;
+export function hostedFormGroup<R>(host: SidePanelHostForm<R>): FormGroup {
+  return (host as unknown as { form: FormGroup }).form;
 }

@@ -7,7 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonHarness, TnIconButtonHarness, TnIconTesting, TnMenuHarness, TnMenuTesting,
+  TnBannerHarness, TnButtonHarness, TnIconButtonHarness, TnIconTesting, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -140,6 +140,7 @@ describe('FormSidePanelContainerComponent footer menu', () => {
 
 const backClick = jest.fn();
 const nextClick = jest.fn();
+const retryLoadSpy = jest.fn();
 
 @Component({
   selector: 'ix-actions-test-form',
@@ -158,6 +159,19 @@ class ActionsTestFormComponent extends SidePanelForm {
   // Signal-backed action, the shape `advancedModeFooterAction` produces — asserts the container
   // re-reads `footerActions` so a label change reaches the rendered button.
   private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
+
+  // The load-failure surface `IxFormHostForm` exposes; here driven directly so the container's
+  // banner can be asserted without an inner `<ix-form>`.
+  readonly loadFailed = signal(false);
+
+  hasLoadFailed(): boolean {
+    return this.loadFailed();
+  }
+
+  retryLoad(): void {
+    retryLoadSpy();
+    this.loadFailed.set(false);
+  }
 
   get footerActions(): SidePanelFooterAction[] {
     return [
@@ -192,6 +206,7 @@ describe('FormSidePanelContainerComponent footer actions', () => {
   beforeEach(() => {
     backClick.mockClear();
     nextClick.mockClear();
+    retryLoadSpy.mockClear();
 
     TestBed.configureTestingModule({
       imports: [FormSidePanelContainerComponent, ActionsTestFormComponent, TranslateModule.forRoot()],
@@ -254,6 +269,31 @@ describe('FormSidePanelContainerComponent footer actions', () => {
 
   it('leaves aria-label off actions that do not declare one', () => {
     expect(footerActionAriaLabel('Next')).toBeNull();
+  });
+
+  describe('failed initial load', () => {
+    it('shows no banner while the form loaded fine', async () => {
+      const loader = TnMenuTesting.rootLoader(fixture);
+
+      expect(await loader.getAllHarnesses(TnBannerHarness)).toHaveLength(0);
+    });
+
+    it('explains the failure and offers a retry once the form reports one', async () => {
+      getForm().loadFailed.set(true);
+      fixture.detectChanges();
+
+      const loader = TnMenuTesting.rootLoader(fixture);
+      const banner = await loader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain('Settings could not be loaded');
+
+      const retryButton = await loader.getHarness(TnButtonHarness.with({ label: 'Retry' }));
+      await retryButton.click();
+      fixture.detectChanges();
+
+      expect(retryLoadSpy).toHaveBeenCalled();
+      // A successful retry clears the flag, so the banner goes away.
+      expect(await loader.getAllHarnesses(TnBannerHarness)).toHaveLength(0);
+    });
   });
 
   it('re-evaluates the reactive disabled predicate and invokes onClick', async () => {
