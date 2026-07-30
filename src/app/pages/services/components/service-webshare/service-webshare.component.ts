@@ -18,6 +18,9 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  serviceConfigSavedMessage,
+} from 'app/pages/services/components/service-config-forms.constants';
 
 // Built here rather than inline in the component, and left with an inferred return type — see
 // the `V` type parameter on IxFormHostForm for why.
@@ -102,6 +105,6 @@ export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFo
   // the API (as false) while it is disabled by the TrueNAS Connect guard.
   protected handleSubmit = ({ allValues }: FormSubmitEvent<WebShareFormValue>): SubmitResult => ({
     request$: this.api.call('webshare.update', [allValues]),
-    successMessage: this.translate.instant('Service configuration saved'),
+    successMessage: this.translate.instant(serviceConfigSavedMessage),
   });
 }

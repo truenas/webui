@@ -10,43 +10,46 @@ import { Role } from 'app/enums/role.enum';
  */
 
 /**
- * A secondary action rendered in the side-panel footer alongside the built-in Save (e.g. a form's
- * "Send Test Alert"). Listed in `HostedSidePanelForm.footerActions`; the container renders one
- * `tn-button` per entry, before Save.
+ * What every clickable footer entry declares, whether it renders as a button in the footer
+ * ({@link SidePanelFooterAction}) or as an item in the overflow menu
+ * ({@link SidePanelFooterMenuItem}). Shared so the two shapes can't drift apart.
  */
-export interface SidePanelFooterAction {
+interface SidePanelFooterEntry {
   /** Untranslated marker; the container pipes it through `translate`. */
   label: string;
   testId: TnTestIdValue;
-  /**
-   * Accessible name override (untranslated marker; the container pipes it through `translate`).
-   * For a disclosure-style action such as the Advanced/Basic toggle, whose visible label alone
-   * doesn't say what it does to the content above it — `tn-button` exposes no `aria-expanded`
-   * hook, so the state has to ride in the name. Must contain the visible {@link label} (WCAG
-   * 2.5.3, Label in Name).
-   */
-  ariaLabel?: string;
-  /** `tn-button` color; defaults to `'default'` (secondary). */
-  color?: 'primary' | 'secondary' | 'warn' | 'default';
-  /** Roles required to show the action (omit / empty = always shown). */
+  /** Roles required to show the entry (omit / empty = always shown). */
   requiredRoles?: Role[];
   /** Re-evaluated each change detection — read signals inside for reactive disabling. */
   disabled?: () => boolean;
   onClick: () => void;
 }
 
+/**
+ * A secondary action rendered in the side-panel footer alongside the built-in Save (e.g. a form's
+ * "Send Test Alert"). Listed in `HostedSidePanelForm.footerActions`; the container renders one
+ * `tn-button` per entry, before Save.
+ */
+export interface SidePanelFooterAction extends SidePanelFooterEntry {
+  /**
+   * Accessible name override (untranslated marker; the container pipes it through `translate`).
+   * For a disclosure-style action such as the Advanced/Basic toggle, whose visible label alone
+   * doesn't say what it does to the content above it — `tn-button` exposes no `aria-expanded`
+   * hook, so the state has to ride in the name. Must contain the visible {@link label} (WCAG
+   * 2.5.3, Label in Name).
+   *
+   * Deliberately not on {@link SidePanelFooterEntry}: `tn-menu-item` has no `ariaLabel` input, so
+   * a menu item declaring one would be silently ignored.
+   */
+  ariaLabel?: string;
+  /** `tn-button` color; defaults to `'default'` (secondary). */
+  color?: 'primary' | 'secondary' | 'warn' | 'default';
+}
+
 /** A single action inside a {@link SidePanelFooterMenu}. */
-export interface SidePanelFooterMenuItem {
-  /** Untranslated marker; the container pipes it through `translate`. */
-  label: string;
-  testId: TnTestIdValue;
+export interface SidePanelFooterMenuItem extends SidePanelFooterEntry {
   icon?: string;
   iconLibrary?: 'material' | 'mdi' | 'custom' | 'lucide';
-  /** Roles required to show the item (omit / empty = always shown). */
-  requiredRoles?: Role[];
-  /** Re-evaluated each change detection — read signals inside for reactive disabling. */
-  disabled?: () => boolean;
-  onClick: () => void;
 }
 
 /**

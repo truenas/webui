@@ -36,6 +36,9 @@ import {
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  serviceConfigSavedMessage,
+} from 'app/pages/services/components/service-config-forms.constants';
 import { UserService } from 'app/services/user.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -340,7 +343,7 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
 
     return {
       request$: this.api.call('smb.update', [values]),
-      successMessage: this.translate.instant('Service configuration saved'),
+      successMessage: this.translate.instant(serviceConfigSavedMessage),
     };
   };
 }

@@ -20,9 +20,7 @@ import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
-import {
-  hostedFormGroup, ixFormTestingProviders,
-} from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -149,13 +147,11 @@ describe('ServiceFtpComponent', () => {
     // so the assertion would hinge on double-init being harmless.
     const failed = TestBed.createComponent(ServiceFtpComponent);
     failed.detectChanges();
-    // Fill in what the failed load never did, so `loadFailed` (fed to `<ix-form>`'s
-    // extraDisabled) is the only thing that can still be blocking Save.
-    hostedFormGroup(failed.componentInstance).patchValue(existingFtpConfig);
-    failed.detectChanges();
 
     expect(showErrorModal).toHaveBeenCalled();
-    expect(hostedFormGroup(failed.componentInstance).valid).toBe(true);
+    // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
+    // extraDisabled is bound to; that binding blocking Save is covered in the ix-form spec.
+    expect(failed.componentInstance.hasLoadFailed()).toBe(true);
     expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 

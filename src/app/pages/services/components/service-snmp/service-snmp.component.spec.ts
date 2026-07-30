@@ -85,8 +85,9 @@ describe('ServiceSnmpComponent', () => {
     failed.detectChanges();
 
     expect(showErrorModal).toHaveBeenCalled();
-    // The form's defaults are valid, so `loadFailed` (fed to `<ix-form>`'s extraDisabled) is the
-    // only thing that can be blocking Save.
+    // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
+    // extraDisabled is bound to; that binding blocking Save is covered in the ix-form spec.
+    expect(failed.componentInstance.hasLoadFailed()).toBe(true);
     expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 

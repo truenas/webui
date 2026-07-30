@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { IxFormComponent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -95,6 +95,9 @@ implements SidePanelHostForm<R> {
   // fresh request.
   private lastLoad: { config$: Observable<unknown>; patch: (config: never) => void } | null = null;
 
+  // The in-flight load, so a second loadFormConfig can cancel it rather than race it.
+  private loadSubscription: Subscription | null = null;
+
   /**
    * Runs the last {@link loadFormConfig} again. Host hook — the container's load-failure banner
    * calls it, so a transient WebSocket hiccup on open no longer means closing and reopening the
@@ -121,19 +124,19 @@ implements SidePanelHostForm<R> {
    * request erroring OR `patch` throwing — it reports the error and latches {@link loadFailed}, so
    * Save can never submit the defaults the user never saw.
    *
-   * Re-entrant: both {@link loadFailed} and the snapshot are cleared on entry, so a retry (or a
-   * second load) starts clean rather than inheriting the previous attempt's latched failure. The
-   * arguments are kept so {@link retryLoad} can replay them.
+   * Re-entrant: any load still in flight is unsubscribed, and both {@link loadFailed} and the
+   * snapshot are cleared, so a retry (or a second load) starts clean rather than racing the
+   * previous attempt — a late stale response could otherwise re-latch a failure over a successful
+   * retry. The arguments are kept so {@link retryLoad} can replay them.
    */
   protected loadFormConfig<C>(config$: Observable<C>, patch: (config: C) => void): void {
+    this.loadSubscription?.unsubscribe();
     this.lastLoad = { config$, patch: patch as (config: never) => void };
     this.loadFailed.set(false);
     this.loadedSnapshot.set(null);
     this.dataLoading.set(true);
-    let handled = false;
-    config$.pipe(takeUntilDestroyed(this.hostDestroyRef)).subscribe({
+    this.loadSubscription = config$.pipe(takeUntilDestroyed(this.hostDestroyRef)).subscribe({
       next: (config) => {
-        handled = true;
         try {
           // Wrapped so a throwing `patch` takes the same path as a failed request, instead of
           // escaping as an unhandled RxJS error that leaves the form enabled on defaults.
@@ -145,18 +148,12 @@ implements SidePanelHostForm<R> {
         this.loadedSnapshot.set(this.form.getRawValue() as object);
         this.dataLoading.set(false);
       },
-      error: (error: unknown) => {
-        handled = true;
-        this.handleLoadFailure(error);
-      },
-      // Safety net, mirroring `IxFormComponent.onFormSubmit`: a source that completes without
-      // emitting (EMPTY) would otherwise leave `dataLoading` stuck true — a permanent panel
-      // progress bar and a Save that never enables.
-      complete: () => {
-        if (!handled) {
-          this.dataLoading.set(false);
-        }
-      },
+      error: (error: unknown) => this.handleLoadFailure(error),
+      // Safety net, in the spirit of `IxFormComponent.onFormSubmit`: a source that completes
+      // without emitting (EMPTY) would otherwise leave `dataLoading` stuck true — a permanent
+      // panel progress bar and a Save that never enables. Unconditional because completion always
+      // means the load is over, and the emit/error paths have already cleared the flag.
+      complete: () => this.dataLoading.set(false),
     });
   }
 

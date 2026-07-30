@@ -20,6 +20,9 @@ import {
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  serviceConfigSavedMessage,
+} from 'app/pages/services/components/service-config-forms.constants';
 
 // Built here rather than inline in the component, and left with an inferred return type — see
 // the `V` type parameter on IxFormHostForm for why.
@@ -119,7 +122,7 @@ export class ServiceSshComponent extends IxFormHostForm<boolean, SshFormValue> i
 
     return {
       request$: this.api.call('ssh.update', [values]),
-      successMessage: this.translate.instant('Service configuration saved'),
+      successMessage: this.translate.instant(serviceConfigSavedMessage),
     };
   };
 }

@@ -28,6 +28,9 @@ import {
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { ignoreTranslation, translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  serviceConfigSavedMessage,
+} from 'app/pages/services/components/service-config-forms.constants';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -163,7 +166,7 @@ export class ServiceFtpComponent extends IxFormHostForm<boolean, FtpFormValue> i
 
     return {
       request$: this.api.call('ftp.update', [values]),
-      successMessage: this.translate.instant('Service configuration saved'),
+      successMessage: this.translate.instant(serviceConfigSavedMessage),
     };
   };
 

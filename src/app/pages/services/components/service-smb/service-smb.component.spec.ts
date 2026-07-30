@@ -22,9 +22,7 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
-import {
-  hostedFormGroup, ixFormTestingProviders,
-} from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -163,13 +161,11 @@ describe('ServiceSmbComponent', () => {
     // re-push this form's `bindip` rows, so the assertion would hinge on that being harmless.
     const failed = TestBed.createComponent(ServiceSmbComponent);
     failed.detectChanges();
-    // Fill in what the failed load never did, so `loadFailed` (fed to `<ix-form>`'s
-    // extraDisabled) is the only thing that can still be blocking Save.
-    hostedFormGroup(failed.componentInstance).patchValue({ netbiosname: 'truenas', workgroup: 'WORKGROUP' });
-    failed.detectChanges();
 
     expect(showErrorModal).toHaveBeenCalled();
-    expect(hostedFormGroup(failed.componentInstance).valid).toBe(true);
+    // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
+    // extraDisabled is bound to; that binding blocking Save is covered in the ix-form spec.
+    expect(failed.componentInstance.hasLoadFailed()).toBe(true);
     expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 

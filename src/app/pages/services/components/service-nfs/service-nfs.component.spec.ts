@@ -7,7 +7,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { catchError, EMPTY, Observable, of } from 'rxjs';
 import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
@@ -93,6 +93,12 @@ describe('ServiceNfsComponent', () => {
         })),
       }),
       mockAuth(),
+      // `mockAuth()` stubs `withErrorHandler` as a pass-through, which would let an erroring
+      // enrichment call leak as an unhandled RxJS error. Restore the real shape: report, swallow.
+      mockProvider(ErrorHandlerService, {
+        showErrorModal: jest.fn(() => of(true)),
+        withErrorHandler: <T>() => (source$: Observable<T>) => source$.pipe(catchError(() => EMPTY)),
+      }),
     ],
   });
 
@@ -108,10 +114,9 @@ describe('ServiceNfsComponent', () => {
 
     const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
       .mockReturnValue(of(true));
-    // The initial load is a forkJoin, so failing any one leg fails it. `directoryservices.status`
-    // is the leg the template doesn't also subscribe to — failing `nfs.config` would additionally
-    // break the `ipChoices$` async pipe, which is a different failure.
-    failApiCall(api, 'directoryservices.status');
+    // Only `nfs.config` gates the form; the RDMA / directory-services enrichments fail soft (see
+    // the test below).
+    failApiCall(api, 'nfs.config');
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
@@ -120,9 +125,23 @@ describe('ServiceNfsComponent', () => {
     failed.detectChanges();
 
     expect(showErrorModal).toHaveBeenCalled();
-    // The form's defaults are valid, so `loadFailed` (fed to `<ix-form>`'s extraDisabled) is the
-    // only thing that can be blocking Save.
+    // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
+    // extraDisabled is bound to; that binding blocking Save is covered in the ix-form spec.
+    expect(failed.componentInstance.hasLoadFailed()).toBe(true);
     expect(failed.componentInstance.canSubmit()).toBe(false);
+  });
+
+  it('keeps the form usable when only an enrichment call fails', () => {
+    // `directoryservices.status` only decides whether Add SPN is offered. Failing it must not
+    // block Save over a form that holds the real configuration `nfs.config` returned.
+    failApiCall(api, 'directoryservices.status');
+
+    const loaded = TestBed.createComponent(ServiceNfsComponent);
+    loaded.detectChanges();
+
+    expect(api.call).toHaveBeenCalledWith('directoryservices.status');
+    expect(loaded.componentInstance.hasLoadFailed()).toBe(false);
+    expect(loaded.componentInstance.canSubmit()).toBe(true);
   });
 
   it('shows current settings for NFS service when form is opened', async () => {

@@ -151,7 +151,9 @@ describe('ServiceWebshareComponent', () => {
     const failed = createSecondFixture();
 
     expect(errorHandler.showErrorModal).toHaveBeenCalled();
-    // The form is left on defaults the user never saw — valid, but Save must stay blocked.
+    // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
+    // extraDisabled is bound to; that binding blocking Save is covered in the ix-form spec.
+    expect(failed.componentInstance.hasLoadFailed()).toBe(true);
     expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 

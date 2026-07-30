@@ -18,6 +18,9 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  serviceConfigSavedMessage,
+} from 'app/pages/services/components/service-config-forms.constants';
 
 // Built here rather than inline in the component, and left with an inferred return type — see
 // the `V` type parameter on IxFormHostForm for why.
@@ -179,7 +182,7 @@ export class ServiceUpsComponent extends IxFormHostForm<boolean, UpsFormValue> i
 
     return {
       request$: this.api.call('ups.update', [params as UpsConfigUpdate]),
-      successMessage: this.translate.instant('Service configuration saved'),
+      successMessage: this.translate.instant(serviceConfigSavedMessage),
     };
   };
 }

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -14,6 +15,9 @@ import {
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  serviceConfigSavedMessage,
+} from 'app/pages/services/components/service-config-forms.constants';
 
 // Built here rather than inline in the component, and left with an inferred return type — see
 // the `V` type parameter on IxFormHostForm for why.
@@ -93,9 +97,10 @@ export class ServiceSnmpComponent extends IxFormHostForm<boolean, SnmpFormValue>
   readonly authtypeOptions = helptextServiceSnmp.v3.authTypeOptions;
   readonly privprotoOptions = helptextServiceSnmp.v3.privprotoOptions;
 
-  protected get isV3SupportEnabled(): boolean {
-    return this.form?.value?.v3 || false;
-  }
+  /** Drives the `@if` around the v3 credential fields; the validator reads the control directly. */
+  protected readonly isV3SupportEnabled = toSignal(this.form.controls.v3.valueChanges, {
+    initialValue: this.form.controls.v3.value,
+  });
 
   ngOnInit(): void {
     this.loadFormConfig(this.api.call('snmp.config'), (config) => this.form.patchValue(config));
@@ -117,7 +122,7 @@ export class ServiceSnmpComponent extends IxFormHostForm<boolean, SnmpFormValue>
 
     return {
       request$: this.api.call('snmp.update', [values]),
-      successMessage: this.translate.instant('Service configuration saved'),
+      successMessage: this.translate.instant(serviceConfigSavedMessage),
     };
   };
 }

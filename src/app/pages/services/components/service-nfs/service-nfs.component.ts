@@ -13,7 +13,7 @@ import {
 import {
   combineLatest, forkJoin, Observable, of, tap,
 } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { catchError, map, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
@@ -33,7 +33,11 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  serviceConfigSavedMessage,
+} from 'app/pages/services/components/service-config-forms.constants';
 import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -94,6 +98,7 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
   private dialogService = inject(DialogService);
   private tnDialog = inject(TnDialog);
   private validatorsService = inject(IxValidatorsService);
+  private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly InputType = InputType;
@@ -134,12 +139,18 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
 
   readonly ipChoices$ = combineLatest([
     this.api.call('nfs.bindip_choices').pipe(choicesToOptions()),
-    this.api.call('nfs.config'),
+    // Read only to fold already-selected addresses into the option list. The gated load reports a
+    // `nfs.config` failure already, so fall back to no extras rather than letting the error reach
+    // the template's async pipe and take the whole select down with it.
+    this.api.call('nfs.config').pipe(
+      map((config) => config.bindip),
+      catchError(() => of([] as string[])),
+    ),
   ]).pipe(
-    map(([options, config]) => {
+    map(([options, selectedIps]) => {
       return [
         ...new Set<string>([
-          ...config.bindip,
+          ...selectedIps,
           ...options.map((option) => String(option.value)),
         ]),
       ].map((value) => ({ label: value, value }));
@@ -152,10 +163,19 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
   ngOnInit(): void {
-    this.loadFormConfig(
-      forkJoin([this.loadConfig(), this.checkForRdmaSupport(), this.loadActiveDirectoryState()]),
-      () => this.setFieldDependencies(),
-    );
+    // Only `nfs.config` gates the form: it is what populates the controls, so its failure is what
+    // leaves them on defaults the user must not save. The other two calls merely enrich the UI
+    // (RDMA availability, Add SPN visibility) and fail soft below — folding them into the same
+    // load would let a `directoryservices.status` hiccup disable Save over a form that actually
+    // holds the real configuration.
+    this.loadFormConfig(this.loadConfig(), () => this.setFieldDependencies());
+
+    forkJoin([this.checkForRdmaSupport(), this.loadActiveDirectoryState()]).pipe(
+      // Both enrichments already default to the conservative option (RDMA disabled, Add SPN
+      // hidden), so a failure just leaves them there.
+      this.errorHandler.withErrorHandler(),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe();
   }
 
   // Reshapes the payload from `allValues` (the wrapper's own `getRawValue()` snapshot) rather than
@@ -168,7 +188,7 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
         ...params,
         servers: serversAuto ? null : params.servers,
       }]),
-      successMessage: this.translate.instant('Service configuration saved'),
+      successMessage: this.translate.instant(serviceConfigSavedMessage),
     };
   };
 
