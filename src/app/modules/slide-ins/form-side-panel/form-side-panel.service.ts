@@ -114,10 +114,14 @@ export class FormSidePanelService {
   /**
    * Opens `component` in a `<tn-side-panel>` and resolves with whatever it emits through `closed`.
    *
-   * Only a TRUTHY `closed` payload resolves as a success — anything falsy becomes `undefined`, i.e.
+   * CANONICAL RULE for what counts as a save under this host — `SubmitResult.closeWith` and
+   * `SidePanelForm.closeWith` both defer here rather than restating it:
+   *
+   * Only a TRUTHY `closed` payload resolves as a success. Anything falsy becomes `undefined`, i.e.
    * a cancel, which is how a plain boolean form reports "closed without saving". That is narrower
-   * than {@link SlideInResult}'s own `=== undefined` rule, so a form whose payload could
-   * legitimately be `0`, `''`, `null` or `false` must wrap it (see `SubmitResult.closeWith`).
+   * than {@link SlideInResult}'s own `=== undefined` rule, so a form must never close with `0`,
+   * `''`, `null` or `false` to mean success — hand back the record, or a non-empty wrapper. (An
+   * empty array is truthy, so a bulk save that changed nothing still resolves as a success.)
    */
   open<R = boolean>(component: Type<SidePanelHostCloseable<R>>, options: FormSidePanelOptions = {}): SlideInResult<R> {
     const top = this.stack[this.stack.length - 1];

@@ -199,6 +199,24 @@ describe('mapTnSortToTableSort', () => {
       error.mockRestore();
     });
 
+    it('leaves a boolean accessor alone — lodash orders false before true', () => {
+      const error = jest.spyOn(console, 'error').mockImplementation();
+      const booleanColumn = {
+        propertyName: 'size',
+        getValue: (item: Row) => item.size > 0,
+      } as unknown as Column<Row, ColumnComponent<Row>>;
+
+      const sorting = mapTnSortToTableSort<Row>(
+        { column: 'size', direction: 'asc' },
+        columns,
+        { columns: [booleanColumn] },
+      );
+
+      expect(sorting.sortBy?.(row)).toBe(true);
+      expect(error).not.toHaveBeenCalled();
+      error.mockRestore();
+    });
+
     it('passes a primitive accessor through untouched', () => {
       const error = jest.spyOn(console, 'error').mockImplementation();
 

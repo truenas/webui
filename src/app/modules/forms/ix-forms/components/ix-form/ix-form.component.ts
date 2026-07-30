@@ -96,13 +96,9 @@ interface SubmitResultBase<R, TResult> {
    * {@link IxFormComponent.closed}, which is how a panel-hosted form hands the saved record back
    * to its opener — without it that output carries a bare `true`.
    *
-   * IMPORTANT — under the `<tn-side-panel>` host, only a TRUTHY payload counts as a save:
-   * `FormSidePanelService` coerces a falsy `closed` payload to `undefined`, i.e. a cancel, so the
-   * opener's `SlideInResult.onSuccess` never runs. That deliberately diverges from
-   * {@link SlideInResult}'s own `=== undefined` rule, because a boolean form emitting `false` is
-   * how it reports "closed without saving". So do not return `0`, `''`, `null` or `false` from
-   * `closeWith` to mean success — return the record, or a non-empty wrapper. (An empty array is
-   * truthy, so a bulk operation that saved nothing still resolves as a success.)
+   * IMPORTANT — under the `<tn-side-panel>` host, only a TRUTHY payload counts as a save; never
+   * return `0`, `''`, `null` or `false` to mean one. `FormSidePanelService.open` documents the
+   * rule and owns the coercion.
    */
   closeWith?: (result: TResult) => R;
 }
@@ -110,15 +106,11 @@ interface SubmitResultBase<R, TResult> {
 /**
  * Descriptor a `submitHandler` returns: the request plus how to report and close.
  *
- * `closeWith` is optional only while `R` admits `boolean` — the default "saved, nothing to hand
- * back" case, where the wrapper closes with a bare `true`. Declare a richer `R` and the compiler
- * requires a `closeWith` to produce it, so a form can't promise its opener a record and silently
- * deliver `true`.
+ * `closeWith` is optional only while `R` admits `boolean` — declare a richer `R` and the compiler
+ * demands one, so a form can't promise its opener a record and silently deliver `true`.
  *
- * @typeParam R payload the form closes with; defaults to `boolean`, i.e. "saved" with nothing to
- *   hand back.
- * @typeParam TResult what `request$` emits — set it to type `onSuccess`/`closeWith`'s argument
- *   instead of casting inside them.
+ * @typeParam R payload the form closes with; defaults to `boolean` ("saved", nothing to hand back).
+ * @typeParam TResult what `request$` emits — types `onSuccess`/`closeWith`'s argument.
  */
 export type SubmitResult<R = boolean, TResult = unknown> = boolean extends R
   ? SubmitResultBase<R, TResult>

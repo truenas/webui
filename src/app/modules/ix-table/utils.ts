@@ -8,7 +8,7 @@ import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-pr
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
-import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
+import { SortValue, TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
 
 export function convertStringToId(inputString: string): string {
   let result = inputString;
@@ -56,15 +56,13 @@ export interface TnSortAccessors<T> {
    * The column model the table already keeps for its picker. A column missing from it sorts by
    * its raw value.
    *
-   * Matched by `propertyName` against the tn-table column name, across the whole model rather
-   * than only the visible columns — so hidden columns keep their accessors when the picker brings
-   * them back. Two columns sharing a `propertyName` therefore both resolve to the first one; give
-   * such a column a {@link sortAccessors} entry keyed by its tn-table column name instead.
+   * Matched by `propertyName` across the whole model, hidden columns included, so the picker can
+   * bring one back with its accessor intact. Two columns sharing a `propertyName` both resolve to
+   * the first; give the loser a {@link sortAccessors} entry instead.
    *
-   * A sortable column listed here must resolve to a primitive: its `getValue` is typed `unknown`
-   * and goes straight to lodash `sortBy`, so a column rendering an array or object would sort by
-   * something meaningless. Give it an explicit `sortBy` (which wins over `getValue`) instead —
-   * {@link mapTnSortToTableSort} reports this to the console in dev mode.
+   * A column here must resolve to something lodash can order — its `getValue` is typed `unknown`,
+   * and an array or object sorts meaninglessly. Give such a column an explicit `sortBy` (which
+   * wins over `getValue`); dev mode reports it to the console either way.
    */
   columns?: Column<T, ColumnComponent<T>>[];
 
@@ -74,7 +72,7 @@ export interface TnSortAccessors<T> {
    * over hand-writing partial `Column` literals just to carry a `sortBy`. Takes precedence over
    * {@link columns} for a column present in both.
    */
-  sortAccessors?: Record<string, (row: T) => string | number>;
+  sortAccessors?: Record<string, (row: T) => SortValue>;
 }
 
 /**
@@ -101,7 +99,7 @@ export function mapTnSortToTableSort<T>(
     ? accessors?.columns?.find((column) => String(column.propertyName) === event.column)
     : undefined;
   const columnAccessor = (sortedColumn?.sortBy || sortedColumn?.getValue) as
-    ((row: T) => string | number) | undefined;
+    ((row: T) => SortValue) | undefined;
   const sortBy = direction ? (accessors?.sortAccessors?.[event.column] ?? columnAccessor) : undefined;
 
   const columnIndex = displayedColumns.indexOf(event.column);
@@ -114,22 +112,19 @@ export function mapTnSortToTableSort<T>(
 }
 
 /**
- * Dev-only wrapper enforcing what {@link TnSortAccessors.columns} can only document: a `getValue`
- * is typed `unknown`, so a column rendering an array or an object hands that straight to lodash
- * `sortBy` and the rows come back in an arbitrary order with nothing to see. Reports the first
- * such column through `console.error` — loud enough to fail a CI log scan, unlike a `warn` — and
- * sorts by its `String()` form so the table still responds to the click instead of taking the
- * whole page down over one sloppy column out of twelve. In production the accessor is used
- * unwrapped and the rows sort arbitrarily, as they would have anyway.
+ * Dev-only guard for what {@link TnSortAccessors.columns} can only document: a column's `getValue`
+ * is typed `unknown`, so one rendering an array or object sorts arbitrarily with nothing on screen
+ * to explain it. Reports the first offender through `console.error` (a `warn` gets lost) and sorts
+ * by its `String()` form, degrading that one column rather than taking the page down.
  */
 function assertPrimitiveAccessor<T>(
-  accessor: (row: T) => string | number,
+  accessor: (row: T) => SortValue,
   column: string,
-): (row: T) => string | number {
+): (row: T) => SortValue {
   let reported = false;
   return (row: T) => {
     const value = accessor(row);
-    if (value == null || typeof value === 'string' || typeof value === 'number') {
+    if (value == null || ['string', 'number', 'boolean'].includes(typeof value)) {
       return value;
     }
     if (!reported) {
@@ -138,7 +133,7 @@ function assertPrimitiveAccessor<T>(
       console.error(
         `[mapTnSortToTableSort] the sort accessor for column "${column}" resolved to ${kind}, which lodash `
         + 'sortBy can\'t order — sorting by its String() form instead, which is unlikely to be the order '
-        + 'you want. Give the column an explicit `sortBy` returning a string or number.',
+        + 'you want. Give the column an explicit `sortBy` returning a string, number or boolean.',
       );
     }
     return String(value);

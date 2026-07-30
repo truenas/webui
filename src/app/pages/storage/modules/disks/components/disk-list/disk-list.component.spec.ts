@@ -254,6 +254,24 @@ describe('DiskListComponent', () => {
     expect(spectator.query('.batch-actions-toolbar')).not.toExist();
   });
 
+  it('drops the selection when the rows change, so a row cannot come back pre-selected', async () => {
+    // The selection is held by identifier: without clearing it when the row set changes, a disk
+    // filtered away and brought back would return selected in the batch bar with its checkbox
+    // unticked — and Edit would act on a disk the user never picked.
+    await table.toggleRowSelection(0);
+    expect(spectator.query('.batch-actions-toolbar')).toExist();
+
+    await (await loader.getHarness(BasicSearchHarness)).setValue('nonexistent-disk');
+    spectator.detectChanges();
+
+    // The no-results state's Reset clears the search and brings every row back.
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Reset' }))).click();
+    spectator.detectChanges();
+
+    expect(await (await loader.getHarness(TnTableHarness)).getRowCount()).toBe(3);
+    expect(spectator.query('.batch-actions-toolbar')).not.toExist();
+  });
+
   it('names how many disks the batch bar is acting on', async () => {
     // The selection only ever covers the rows on screen (tn-table clears it when the page or
     // search changes), so the count has to be visible rather than assumed.

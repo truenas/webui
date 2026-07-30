@@ -21,6 +21,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
@@ -126,12 +127,7 @@ export class GroupListComponent implements OnInit {
 
   protected onSortChange(event: TnSortEvent): void {
     this.activeSort.set(event);
-    const direction = event.direction === '' ? null : (event.direction as SortDirection);
-    this.dataProvider.setSorting({
-      propertyName: direction ? (event.column as keyof Group) : null,
-      direction,
-      active: null,
-    });
+    this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns));
   }
 
   ngOnInit(): void {

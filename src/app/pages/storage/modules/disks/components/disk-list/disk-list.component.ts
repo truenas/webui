@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, signal, untracked, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -198,6 +198,7 @@ export class DiskListComponent {
   // Behavior change: the pre-migration screen kept a page-1 selection alive while you paged or
   // searched, but tn-table clears its own selection whenever `[dataSource]` changes, so a
   // selection now covers only the rows on screen and the checkboxes and batch bar always agree.
+  // Keeping that true is the job of `clearSelectionWhenRowsChange`.
   private readonly selectedIdentifiers = signal<ReadonlySet<string>>(new Set());
 
   protected readonly selectedDisks = computed(
@@ -309,6 +310,7 @@ export class DiskListComponent {
   constructor() {
     restrictToSingleExpandedRow(this.table);
     reflectSortIntoTable(this.table, this.activeSort);
+    this.clearSelectionWhenRowsChange();
 
     this.dataProvider.load();
 
@@ -373,11 +375,21 @@ export class DiskListComponent {
   }
 
   /**
-   * Every path that reloads the list goes through here. tn-table clears its own checkboxes when
-   * `[dataSource]` is replaced but isn't relied on to emit `(selectionChange)` for it, and the
-   * rows a selection was made against are gone once they're rebuilt — so the two are cleared
-   * together, in one place, rather than each reload site re-deriving the invariant.
+   * Drops the selection the moment the displayed rows change — a search, a page, a sort, a
+   * reload. tn-table does the same to its own checkboxes on every `[dataSource]` swap, so
+   * anything less would let the two disagree: because the selection is held by identifier,
+   * a row that leaves the page and comes back (search then clear, page 2 then page 1) would
+   * otherwise return already selected in the batch bar while its checkbox sits unticked, and
+   * Edit would then act on a disk the user never picked.
    */
+  private clearSelectionWhenRowsChange(): void {
+    effect(() => {
+      this.rows();
+      untracked(() => this.selectedIdentifiers.set(new Set()));
+    });
+  }
+
+  /** Reloads the list. The selection goes with it — see {@link clearSelectionWhenRowsChange}. */
   private reload(): void {
     this.selectedIdentifiers.set(new Set());
     this.dataProvider.load();

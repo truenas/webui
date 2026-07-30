@@ -106,11 +106,11 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implemen
   protected isHddStandbyRequired = false;
   protected isAdvPowerManagementRequired = false;
 
-  private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  protected readonly showSedSection = computed(() => {
-    const disk = this.diskToEdit();
-    return this.isEnterprise() || (!!disk?.passwd && disk.passwd !== '');
-  });
+  // `requireSync`, like the disk list's `hasSed`: this is a store selector, so it resolves at
+  // field init — and `showSedSection()` is read in `ngOnInit`, where an async signal would still
+  // be `undefined` and quietly skip the SED wiring.
+  private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise), { requireSync: true });
+  protected readonly showSedSection = computed(() => this.isEnterprise() || !!this.diskToEdit()?.passwd);
 
   ngOnInit(): void {
     const disk = this.diskToEdit();
