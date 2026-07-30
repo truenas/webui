@@ -241,6 +241,19 @@ describe('DiskListComponent', () => {
     });
   });
 
+  it('drops the selection when a row action reloads the list', async () => {
+    // The reload rebuilds every row and tn-table drops its own checkboxes with them; the batch
+    // bar has to go with them, or it sits there claiming disks that are no longer ticked.
+    await table.toggleRowSelection(0);
+    await table.toggleRowSelection(1);
+    expect(spectator.query('.batch-actions-toolbar')).toExist();
+
+    await table.toggleRowExpansion(1);
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Wipe' }))).click();
+
+    expect(spectator.query('.batch-actions-toolbar')).not.toExist();
+  });
+
   it('names how many disks the batch bar is acting on', async () => {
     // The selection only ever covers the rows on screen (tn-table clears it when the page or
     // search changes), so the count has to be visible rather than assumed.
@@ -424,6 +437,19 @@ describe('DiskListComponent', () => {
 
     expect((await rebuiltTable.getAllRowTexts()).map((row) => row[2])).toEqual(['5 GiB', '5 GiB', '40 GiB']);
     expect(await rebuiltTable.getSortDirection('size')).toBe('ascending');
+  });
+
+  it('searches Disk Size by a human size, not only by the raw byte count', async () => {
+    // The filter keys on `size` (the raw number), which `filterTableRows` special-cases: it
+    // parses the query as a disk size and matches within 5%. So the formatted text the cell
+    // shows is searchable without keying the filter on `sizeText`.
+    const search = await loader.getHarness(BasicSearchHarness);
+    await search.setValue('40 GiB');
+    spectator.detectChanges();
+
+    expect(await table.getAllRowTexts()).toEqual([
+      expect.arrayContaining(['sda', '40 GiB']),
+    ]);
   });
 
   it('replaces the table with a no-results empty state, whose action resets the search', async () => {

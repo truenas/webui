@@ -34,11 +34,12 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
-import { mapTnSortToTableSort, restrictToSingleExpandedRow } from 'app/modules/ix-table/utils';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { getMachineTime, LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';

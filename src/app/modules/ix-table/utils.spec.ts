@@ -1,13 +1,12 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { TnSortEvent, TnTableComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
   dataProviderLoading, dataProviderRows, filterTableRows, mapTnSortToProviderSorting,
-  mapTnSortToTableSort, reflectSortIntoTable, restrictToSingleExpandedRow, toDisplayedColumns,
+  mapTnSortToTableSort, toDisplayedColumns,
 } from './utils';
 
 describe('dataProviderRows / dataProviderLoading', () => {
@@ -177,7 +176,8 @@ describe('mapTnSortToTableSort', () => {
       expect(sorting.sortBy?.(row)).toBe(1024);
     });
 
-    it('throws in dev mode when an accessor resolves to something lodash sortBy cannot order', () => {
+    it('reports an accessor lodash sortBy cannot order, once, without breaking the sort', () => {
+      const error = jest.spyOn(console, 'error').mockImplementation();
       const arrayColumn = {
         propertyName: 'size',
         // A cell rendering a list: `getValue` is typed `unknown`, so nothing but this guard
@@ -191,10 +191,17 @@ describe('mapTnSortToTableSort', () => {
         { columns: [arrayColumn] },
       );
 
-      expect(() => sorting.sortBy?.(row)).toThrow('column "size" resolved to an array');
+      // Degraded rather than fatal: one sloppy column shouldn't take the whole table down.
+      expect(sorting.sortBy?.(row)).toBe('a,b');
+      expect(sorting.sortBy?.(row)).toBe('a,b');
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(error).toHaveBeenCalledWith(expect.stringContaining('column "size" resolved to an array'));
+      error.mockRestore();
     });
 
     it('passes a primitive accessor through untouched', () => {
+      const error = jest.spyOn(console, 'error').mockImplementation();
+
       const sorting = mapTnSortToTableSort<Row>(
         { column: 'size', direction: 'asc' },
         columns,
@@ -202,6 +209,8 @@ describe('mapTnSortToTableSort', () => {
       );
 
       expect(sorting.sortBy?.(row)).toBe(1024);
+      expect(error).not.toHaveBeenCalled();
+      error.mockRestore();
     });
 
     it('prefers an explicit accessor over the one derived from the column model', () => {
@@ -229,117 +238,6 @@ describe('mapTnSortToTableSort', () => {
         { sortAccessors },
       ).sortBy).toBeUndefined();
     });
-  });
-});
-
-describe('restrictToSingleExpandedRow', () => {
-  function newTable(): TnTableComponent<string> {
-    return { expandedRows: signal(new Set<unknown>()) } as TnTableComponent<string>;
-  }
-
-  function setUpTable(): TnTableComponent<string> {
-    const table = newTable();
-    TestBed.runInInjectionContext(() => restrictToSingleExpandedRow(signal(table)));
-    TestBed.tick();
-    return table;
-  }
-
-  it('leaves a single expanded row alone', () => {
-    const table = setUpTable();
-
-    table.expandedRows.set(new Set(['a']));
-    TestBed.tick();
-
-    expect([...table.expandedRows()]).toEqual(['a']);
-  });
-
-  it('collapses back to the newly opened row when a second one opens', () => {
-    const table = setUpTable();
-
-    table.expandedRows.set(new Set(['a']));
-    TestBed.tick();
-    table.expandedRows.set(new Set(['a', 'b']));
-    TestBed.tick();
-
-    expect([...table.expandedRows()]).toEqual(['b']);
-  });
-
-  it('keeps at most one row expanded when a reload swaps in fresh row objects', () => {
-    const table = setUpTable();
-    const rowA = { id: 'a' };
-
-    table.expandedRows.set(new Set([rowA]));
-    TestBed.tick();
-
-    // A reload replaces every row object; the previously expanded reference is gone.
-    const reloadedA = { id: 'a' };
-    const reloadedB = { id: 'b' };
-    table.expandedRows.set(new Set([reloadedA, reloadedB]));
-    TestBed.tick();
-
-    expect([...table.expandedRows()]).toEqual([reloadedA]);
-  });
-
-  it('forgets the previous table instance, so a rebuilt table starts clean', () => {
-    // The table is destroyed and rebuilt whenever the list empties out (search down to no
-    // results and back), and rows the dead instance held must not pick the survivor.
-    const tableSignal = signal(newTable());
-    TestBed.runInInjectionContext(() => restrictToSingleExpandedRow(tableSignal));
-    TestBed.tick();
-
-    tableSignal().expandedRows.set(new Set(['a']));
-    TestBed.tick();
-
-    const rebuilt = newTable();
-    tableSignal.set(rebuilt);
-    TestBed.tick();
-
-    // 'a' would have been treated as already-seen (and so pruned in favor of 'b') had the
-    // tracking survived the swap.
-    rebuilt.expandedRows.set(new Set(['a', 'b']));
-    TestBed.tick();
-
-    expect([...rebuilt.expandedRows()]).toEqual(['a']);
-  });
-});
-
-describe('reflectSortIntoTable', () => {
-  function newTable(): TnTableComponent<string> {
-    return {
-      sortColumn: signal(''),
-      sortDirection: signal('' as TnSortEvent['direction']),
-    } as TnTableComponent<string>;
-  }
-
-  it('reflects the remembered sort into a table mounted after it was set', () => {
-    // The list empties out (tn-empty replaces the table), then fills again: the data provider
-    // kept its sorting, so the fresh header has to show the arrow again.
-    const table = signal<TnTableComponent<string> | undefined>(undefined);
-    const sort = signal<TnSortEvent | null>({ column: 'name', direction: 'desc' });
-    TestBed.runInInjectionContext(() => reflectSortIntoTable(table, sort));
-    TestBed.tick();
-
-    const mounted = newTable();
-    table.set(mounted);
-    TestBed.tick();
-
-    expect(mounted.sortColumn()).toBe('name');
-    expect(mounted.sortDirection()).toBe('desc');
-  });
-
-  it('leaves a table alone until a sort is remembered', () => {
-    const mounted = newTable();
-    const sort = signal<TnSortEvent | null>(null);
-    TestBed.runInInjectionContext(() => reflectSortIntoTable(signal(mounted), sort));
-    TestBed.tick();
-
-    expect(mounted.sortColumn()).toBe('');
-
-    sort.set({ column: 'size', direction: 'asc' });
-    TestBed.tick();
-
-    expect(mounted.sortColumn()).toBe('size');
-    expect(mounted.sortDirection()).toBe('asc');
   });
 });
 

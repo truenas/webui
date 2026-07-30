@@ -106,6 +106,10 @@ describe('HardwareDiskEncryptionComponent', () => {
         .toHaveBeenCalledWith(['/system', 'advanced'], 'sed-card', { inset: false });
     });
 
+    // The one place a `data-test` selector is the right tool, despite CLAUDE.md's rule against
+    // locating elements by them: the resolved id *is* what's under test here. Both links moved
+    // from `[ixTest]` to the library's directive, and e2e locators still key on these exact
+    // values — the tests above locate by text, as everything else should.
     it('keeps the legacy link test ids after moving to the library test-id directive', () => {
       expect(spectator.query('[data-test="link-manage-sed-password"]')).toExist();
       expect(spectator.query('[data-test="link-manage-global-sed-password"]')).toExist();

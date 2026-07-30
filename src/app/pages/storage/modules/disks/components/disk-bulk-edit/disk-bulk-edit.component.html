@@ -21,9 +21,15 @@
           [tooltip]="disksTooltip"
         ></tn-icon>
       </div>
+      <!--
+        `tabindex="0"`: the list scrolls once a bulk edit covers more disks than fit, and a
+        scrollable region that can't be focused can't be scrolled from the keyboard at all
+        (WCAG 2.1.1). Focusable, it takes arrow keys like any other scroll container.
+      -->
       <div
         class="disk-list"
         role="list"
+        tabindex="0"
         [attr.aria-label]="'Disks to be edited' | translate"
       >
         @for (diskName of form.controls.disknames.value; track diskName) {

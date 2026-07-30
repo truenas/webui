@@ -1,8 +1,6 @@
-import {
-  effect, isDevMode, isSignal, Signal,
-} from '@angular/core';
+import { isDevMode, isSignal, Signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import type { TnSortEvent, TnTableComponent } from '@truenas/ui-components';
+import type { TnSortEvent } from '@truenas/ui-components';
 import { get } from 'lodash-es';
 import { Observable, switchMap } from 'rxjs';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
@@ -48,73 +46,6 @@ export function createTable<T>(
 }
 
 /**
- * TEMP (NAS-141021): restores ix-table's single-expanded-row behavior on a `tn-table`, which
- * allows several rows open at once and exposes no single-expand input or row-expand output to
- * hook into — so we prune the library-owned `expandedRows` signal from an effect instead. Drop
- * this and bind the input once `@truenas/ui-components` grows a `[singleExpand]`.
- *
- * Tracking is by diff against the previous set (not a cached row reference) so a data reload,
- * which swaps in fresh row objects, can't leave a stale reference behind. After such a reload
- * no row is recognized, and "newest" falls back to insertion order.
- *
- * Must be called from an injection context (e.g. a component constructor).
- */
-export function restrictToSingleExpandedRow<T>(table: Signal<TnTableComponent<T> | undefined>): void {
-  let trackedTable: TnTableComponent<T> | undefined;
-  let previousExpandedRows = new Set<unknown>();
-
-  effect(() => {
-    const instance = table();
-    if (instance !== trackedTable) {
-      // The table is destroyed and rebuilt whenever the list empties out (the empty state replaces
-      // it in the template), so rows from the dead instance must not decide what the new one keeps.
-      trackedTable = instance;
-      previousExpandedRows = new Set();
-    }
-    if (!instance) {
-      return;
-    }
-    const expanded = instance.expandedRows();
-    if (expanded.size <= 1) {
-      previousExpandedRows = new Set(expanded);
-      return;
-    }
-    // `previousExpandedRows` holds at most one row and this branch only runs with two or more
-    // expanded, so there is always at least one row we haven't seen — the fallback only keeps
-    // the type non-optional.
-    const newest = [...expanded].find((row) => !previousExpandedRows.has(row)) ?? [...expanded][0];
-    const collapsed = new Set<unknown>([newest]);
-    previousExpandedRows = collapsed;
-    instance.expandedRows.set(collapsed);
-  });
-}
-
-/**
- * TEMP (NAS-141021): keeps the sort arrow on whichever `tn-table` instance is currently mounted.
- * The data provider holds the sorting, but tn-table tracks its own header state and is destroyed
- * and rebuilt whenever the list empties out (the empty state replaces it in the template) — so
- * searching down to zero results and back leaves a fresh header with no arrow over rows that are
- * still sorted. Reflect the last `(sortChange)` into each new instance until the library grows a
- * two-way sort input to bind instead.
- *
- * Must be called from an injection context (e.g. a component constructor).
- */
-export function reflectSortIntoTable<T>(
-  table: Signal<TnTableComponent<T> | undefined>,
-  sort: Signal<TnSortEvent | null>,
-): void {
-  effect(() => {
-    const instance = table();
-    const activeSort = sort();
-    if (!instance || !activeSort) {
-      return;
-    }
-    instance.sortColumn.set(activeSort.column);
-    instance.sortDirection.set(activeSort.direction);
-  });
-}
-
-/**
  * Optional sort *semantics* for a table whose cells don't all show their raw row value. Restores
  * what the previous ix-table head did: sort by a column's `sortBy` or, failing that, by its
  * rendered `getValue`, so a derived, formatted or translated cell keeps sorting by what the user
@@ -133,7 +64,7 @@ export interface TnSortAccessors<T> {
    * A sortable column listed here must resolve to a primitive: its `getValue` is typed `unknown`
    * and goes straight to lodash `sortBy`, so a column rendering an array or object would sort by
    * something meaningless. Give it an explicit `sortBy` (which wins over `getValue`) instead —
-   * {@link mapTnSortToTableSort} asserts this in dev mode.
+   * {@link mapTnSortToTableSort} reports this to the console in dev mode.
    */
   columns?: Column<T, ColumnComponent<T>>[];
 
@@ -185,27 +116,32 @@ export function mapTnSortToTableSort<T>(
 /**
  * Dev-only wrapper enforcing what {@link TnSortAccessors.columns} can only document: a `getValue`
  * is typed `unknown`, so a column rendering an array or an object hands that straight to lodash
- * `sortBy` and the rows come back in an arbitrary order with nothing to see. Throws on the first
- * non-primitive, naming the column to fix — a `console.warn` is easy to miss among the noise, and
- * specs run in dev mode, so failing outright keeps the mistake from reaching a review at all. In
- * production the accessor is used unwrapped and the rows just sort arbitrarily, as they would
- * have anyway.
+ * `sortBy` and the rows come back in an arbitrary order with nothing to see. Reports the first
+ * such column through `console.error` — loud enough to fail a CI log scan, unlike a `warn` — and
+ * sorts by its `String()` form so the table still responds to the click instead of taking the
+ * whole page down over one sloppy column out of twelve. In production the accessor is used
+ * unwrapped and the rows sort arbitrarily, as they would have anyway.
  */
 function assertPrimitiveAccessor<T>(
   accessor: (row: T) => string | number,
   column: string,
 ): (row: T) => string | number {
+  let reported = false;
   return (row: T) => {
     const value = accessor(row);
-    if (value != null && typeof value !== 'string' && typeof value !== 'number') {
+    if (value == null || typeof value === 'string' || typeof value === 'number') {
+      return value;
+    }
+    if (!reported) {
+      reported = true;
       const kind = Array.isArray(value) ? 'an array' : `a ${typeof value}`;
-      throw new Error(
+      console.error(
         `[mapTnSortToTableSort] the sort accessor for column "${column}" resolved to ${kind}, which lodash `
-        + 'sortBy can\'t order — the rows would come back in an arbitrary order. Give the column an explicit '
-        + '`sortBy` returning a string or number.',
+        + 'sortBy can\'t order — sorting by its String() form instead, which is unlikely to be the order '
+        + 'you want. Give the column an explicit `sortBy` returning a string or number.',
       );
     }
-    return value;
+    return String(value);
   };
 }
 

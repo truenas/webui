@@ -29,11 +29,11 @@ import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-t
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
-  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, reflectSortIntoTable,
-  restrictToSingleExpandedRow, toDisplayedColumns,
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -369,6 +369,17 @@ export class DiskListComponent {
       return;
     }
 
+    this.reload();
+  }
+
+  /**
+   * Every path that reloads the list goes through here. tn-table clears its own checkboxes when
+   * `[dataSource]` is replaced but isn't relied on to emit `(selectionChange)` for it, and the
+   * rows a selection was made against are gone once they're rebuilt — so the two are cleared
+   * together, in one place, rather than each reload site re-deriving the invariant.
+   */
+  private reload(): void {
+    this.selectedIdentifiers.set(new Set());
     this.dataProvider.load();
   }
 
@@ -388,12 +399,7 @@ export class DiskListComponent {
       // this gets the updated disk data from the disk edit form (both single and bulk)
       // and emits it over `diskUpdates$`.
       response.forEach((upd) => this.diskUpdates$.next(upd));
-      // A save invalidates the selection it was made from: the rows are rebuilt, so the
-      // pre-edit data behind it is gone. tn-table also clears its own checkboxes when the
-      // data source is replaced, but don't depend on it emitting `(selectionChange)` for
-      // that — clear here so the batch bar and the checkboxes can't disagree.
-      this.selectedIdentifiers.set(new Set());
-      this.dataProvider.load();
+      this.reload();
     }, this.destroyRef);
   }
 
@@ -406,7 +412,7 @@ export class DiskListComponent {
       },
     });
     dialog.closed.pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.dataProvider.load();
+      this.reload();
     });
   }
 
@@ -414,7 +420,7 @@ export class DiskListComponent {
     this.tnDialog.open(UnlockSedDialog, {
       data: { diskName: disk.name },
     }).closed.pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.dataProvider.load();
+      this.reload();
     });
   }
 
@@ -422,7 +428,7 @@ export class DiskListComponent {
     this.tnDialog.open(ResetSedDialog, {
       data: { diskName: disk.name },
     }).closed.pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.dataProvider.load();
+      this.reload();
     });
   }
 

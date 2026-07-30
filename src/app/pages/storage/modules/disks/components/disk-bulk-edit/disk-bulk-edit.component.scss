@@ -23,6 +23,12 @@
   border-radius: 4px;
   max-height: 200px;
   overflow-y: auto;
+
+  // The list is focusable so it can be scrolled from the keyboard; say so when it is.
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
 }
 
 // Sized to its content instead of a fixed 25%: the side panel is much narrower than the
