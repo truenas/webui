@@ -195,7 +195,7 @@ describe('mapTnSortToTableSort', () => {
       sorting.sortBy?.(row);
 
       expect(warn).toHaveBeenCalledTimes(1);
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('column "size" resolved to a array'));
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('column "size" resolved to an array'));
       warn.mockRestore();
     });
 

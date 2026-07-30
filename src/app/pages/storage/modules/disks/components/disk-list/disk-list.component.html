@@ -23,9 +23,11 @@
         changes, so a selection only ever covers the rows on screen. Naming the number makes
         that visible instead of leaving the user to assume earlier pages are still included.
       -->
-      <span class="selection-count">
+      <!-- Announced too: the count changes with every checkbox, but nothing else tells a
+           screen-reader user how many rows the batch actions are about to apply to. -->
+      <span class="selection-count" aria-live="polite">
         {{
-          '{ n, plural, one {# disk selected} other {# disks selected} }'
+          '{n, plural, one {# disk selected} other {# disks selected}}'
             | translate: { n: selectedDisks().length }
         }}
       </span>

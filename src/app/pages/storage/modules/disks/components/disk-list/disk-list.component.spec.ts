@@ -3,7 +3,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnDialog, TnEmptyHarness, TnTableHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnEmptyHarness, TnSelectHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { NEVER, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -53,8 +55,8 @@ describe('DiskListComponent', () => {
       size: 42949672960,
       description: 'description1',
       transfermode: 'Auto',
-      hddstandby: 'ALWAYS ON',
-      advpowermgmt: 'DISABLED',
+      hddstandby: '120',
+      advpowermgmt: '64',
       model: 'Virtual_Disk_1',
       rotationrate: null,
       type: 'HDD',
@@ -68,8 +70,8 @@ describe('DiskListComponent', () => {
       size: 5368709120,
       description: 'description2',
       transfermode: 'Auto',
-      hddstandby: 'ALWAYS ON',
-      advpowermgmt: 'DISABLED',
+      hddstandby: '20',
+      advpowermgmt: '254',
       model: 'Virtual_Disk_2',
       rotationrate: null,
       type: 'SSD',
@@ -365,6 +367,33 @@ describe('DiskListComponent', () => {
 
     expect((await table.getAllRowTexts()).map((row) => row[4]))
       .toEqual(['Unsupported', 'Unsupported', 'Locked']);
+  });
+
+  it('sorts the timeout columns numerically, not by the digits they render', async () => {
+    // Both columns are hidden by default, so reveal them through the picker first.
+    const picker = await loader.getHarness(TnSelectHarness);
+    await picker.selectOption('HDD Standby');
+    await picker.selectOption('Adv. Power Management');
+    await picker.close();
+    spectator.detectChanges();
+
+    await table.clickSortHeader('hddstandby');
+
+    // The enum values are minute counts held as strings: as text '120' sorts before '20'.
+    expect((await table.getAllRowTexts()).map((row) => [row[0], row[4]])).toEqual([
+      ['sdb', '20'],
+      ['sda', '120'],
+      ['sdc', 'Always On'],
+    ]);
+
+    await table.clickSortHeader('advpowermgmt');
+
+    // Same for power levels — as text '254' sorts before '64'.
+    expect((await table.getAllRowTexts()).map((row) => [row[0], row[5]])).toEqual([
+      ['sdc', 'Disabled'],
+      ['sda', '64'],
+      ['sdb', '254'],
+    ]);
   });
 
   it('keeps the sort indicator after the list empties out and comes back', async () => {

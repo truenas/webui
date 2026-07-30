@@ -28,6 +28,9 @@ import {
   advPowerManagementOptionTestId, DiskFormResponse,
 } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 
+/** One `disk.update` argument pair, as `core.bulk` takes them. */
+type DiskBulkUpdate = [id: string, update: DiskUpdate];
+
 @Component({
   selector: 'ix-disk-bulk-edit',
   templateUrl: 'disk-bulk-edit.component.html',
@@ -78,7 +81,7 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> impl
     this.setFormDiskBulk(this.disksToEdit());
   }
 
-  protected readonly handleSubmit = (): SubmitResult<DiskFormResponse> => {
+  protected readonly handleSubmit = (): SubmitResult<DiskFormResponse, DiskBulkUpdate[]> => {
     const req = this.prepareDataSubmit();
     const successText = this.translate.instant(
       'Successfully saved {n, plural, one {Disk} other {Disks}} settings.',
@@ -105,12 +108,12 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> impl
       // that dialog would lie.
       successMessage: null,
       onSuccess: (result) => {
-        if ((result as unknown[]).length === req.length) {
+        if (result.length === req.length) {
           this.snackbar.success(successText);
         }
       },
       // The panel host forwards this to its opener, which reconciles the rows that changed.
-      closeWith: (result) => this.toResponse(result as [id: string, update: DiskUpdate][]),
+      closeWith: (result) => this.toResponse(result),
     };
   };
 
@@ -167,11 +170,11 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> impl
     this.form.controls.disknames.disable();
   }
 
-  private toResponse(entries: [id: string, update: DiskUpdate][]): DiskFormResponse {
+  private toResponse(entries: DiskBulkUpdate[]): DiskFormResponse {
     return entries.map(([identifier, diskUpdate]) => ({ identifier, ...diskUpdate }));
   }
 
-  private prepareDataSubmit(): [id: string, update: DiskUpdate][] {
+  private prepareDataSubmit(): DiskBulkUpdate[] {
     // `form.value` (not getRawValue) so the disabled, display-only `disknames`
     // control never leaks into the update payload.
     const data = { ...this.form.value };

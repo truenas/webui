@@ -88,7 +88,7 @@ export class DiskInfoCardComponent {
   });
 
   private onEdit(): void {
-    this.formPanel.open<DiskFormResponse | null>(DiskFormComponent, {
+    this.formPanel.open<DiskFormResponse>(DiskFormComponent, {
       title: this.translate.instant('Edit Disk'),
       inputs: { diskToEdit: this.disk() },
     })

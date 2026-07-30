@@ -81,6 +81,11 @@ export class SmbLockListComponent implements OnInit {
       getValue: (row) => {
         return Object.values(row.fileid).join(':');
       },
+      // The rendered id is a colon-joined numeric triple, so sorting the text puts "10:5:0"
+      // before "2:9:0". Order by the parts numerically, most significant first.
+      sortBy: (row) => [row.fileid.devid, row.fileid.inode, row.fileid.extid]
+        .map((part) => String(part).padStart(20, '0'))
+        .join(':'),
     }),
     textColumn({
       title: this.translate.instant('Open Files'),

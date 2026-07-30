@@ -236,12 +236,18 @@ export class DiskListComponent {
       title: this.translate.instant('HDD Standby'),
       propertyName: 'hddstandby',
       getValue: (row) => row.hddStandbyText,
+      // The enum's values are minute counts held as strings, so sorting the rendered text puts
+      // "120" before "20". Order by the number, with "Always On" (never spins down) last.
+      sortBy: (row) => (row.hddstandby === DiskStandby.AlwaysOn ? Infinity : Number(row.hddstandby)),
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Adv. Power Management'),
       propertyName: 'advpowermgmt',
       getValue: (row) => row.advPowerManagementText,
+      // Same as HDD Standby: numeric levels stored as strings would sort "64" after "254".
+      // "Disabled" (no power management at all) sorts below every level.
+      sortBy: (row) => (row.advpowermgmt === DiskPowerLevel.Disabled ? -1 : Number(row.advpowermgmt)),
       hidden: true,
     }),
     sedStatusColumn({

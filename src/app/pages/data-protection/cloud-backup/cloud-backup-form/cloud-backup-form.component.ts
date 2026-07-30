@@ -285,7 +285,7 @@ export class CloudBackupFormComponent implements OnInit {
     });
   }
 
-  protected handleSubmit = (): SubmitResult<CloudBackup> => {
+  protected handleSubmit = (): SubmitResult<CloudBackup, CloudBackup> => {
     const payload = this.prepareData(this.form.value);
     const request$: Observable<CloudBackup> = this.editingTask
       ? this.api.call('cloud_backup.update', [this.editingTask.id, payload])
@@ -297,7 +297,7 @@ export class CloudBackupFormComponent implements OnInit {
         ? this.translate.instant('Task created')
         : this.translate.instant('Task updated'),
       // Both hosts' listeners expect the saved record (slide-in close payload / panel `closed`).
-      closeWith: (response: unknown) => response as CloudBackup,
+      closeWith: (response) => response,
     };
   };
 

@@ -192,10 +192,11 @@ function assertPrimitiveAccessor<T>(
     const value = accessor(row);
     if (!warned && value != null && typeof value !== 'string' && typeof value !== 'number') {
       warned = true;
+      const kind = Array.isArray(value) ? 'an array' : `a ${typeof value}`;
       console.warn(
-        `[mapTnSortToTableSort] the sort accessor for column "${column}" resolved to a `
-        + `${Array.isArray(value) ? 'array' : typeof value}, which lodash sortBy can't order — the rows will come `
-        + 'back in an arbitrary order. Give the column an explicit `sortBy` returning a string or number.',
+        `[mapTnSortToTableSort] the sort accessor for column "${column}" resolved to ${kind}, which lodash `
+        + 'sortBy can\'t order — the rows will come back in an arbitrary order. Give the column an explicit '
+        + '`sortBy` returning a string or number.',
       );
     }
     return value;
