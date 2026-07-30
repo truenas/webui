@@ -1,3 +1,4 @@
+import { FormGroup } from '@angular/forms';
 import { mockProvider } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -22,4 +23,16 @@ export function ixFormTestingProviders(): unknown[] {
       openSlideIns: jest.fn(() => 1),
     }),
   ];
+}
+
+/**
+ * The `form` an `IxFormHostForm` subclass renders inside its `<ix-form>`.
+ *
+ * `form` is `protected`, so this casts to reach it. Prefer driving the rendered controls through
+ * their `tn-*` harnesses; this is for the cases a harness genuinely cannot express — chiefly
+ * seeding a form whose config load was made to fail, so an assertion about `loadFailed` isn't
+ * confounded by unfilled required fields.
+ */
+export function hostedFormGroup(host: object): FormGroup {
+  return (host as { form: FormGroup }).form;
 }

@@ -120,22 +120,23 @@
     explanation.
   -->
   @if (isAddSpnVisible) {
-    <div class="add-spn-container">
+    <!-- The role check gates the whole block, not just the button: a read-only user would
+         otherwise get an empty (or tooltip-only) container plus its top margin — a stray gap
+         at the end of the form. -->
+    <div *ixRequiresRoles="requiredRoles" class="add-spn-container">
       @if (isAddSpnDisabled()) {
         <ix-tooltip
           [header]="'Add SPN' | translate"
           [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SPN' | translate"
         ></ix-tooltip>
       }
-      <ng-container *ixRequiresRoles="requiredRoles">
-        <tn-button
-          color="primary"
-          [testId]="'add-spn'"
-          [label]="'Add SPN' | translate"
-          [disabled]="isAddSpnDisabled()"
-          (onClick)="addSpn()"
-        ></tn-button>
-      </ng-container>
+      <tn-button
+        color="primary"
+        [testId]="'add-spn'"
+        [label]="'Add SPN' | translate"
+        [disabled]="isAddSpnDisabled()"
+        (onClick)="addSpn()"
+      ></tn-button>
     </div>
   }
 </ix-form>

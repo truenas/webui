@@ -4,7 +4,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent } from '@truenas/ui-components';
@@ -22,7 +21,9 @@ import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
+import {
+  advancedModeFooterAction, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -107,16 +108,15 @@ export class DatasetFormComponent extends SidePanelForm<Dataset> implements OnIn
   readonly canSubmit = computed(() => this.baseCanSubmit() && this.areSubFormsValid());
 
   /**
-   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
-   * change detection, so the label flips with {@link isAdvancedMode}.
+   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). `testId`
+   * pins the `data-test` value this form's in-body toggle already ships with.
    */
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
+    testId: 'toggle-advanced',
+  });
+
   get footerActions(): SidePanelFooterAction[] {
-    // Labels are extraction markers — the panel container pipes them through `translate`.
-    return [{
-      label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
-      testId: 'toggle-advanced',
-      onClick: () => this.toggleAdvancedMode(),
-    }];
+    return this.advancedToggle();
   }
 
   protected readonly parentDataset = signal<Dataset | undefined>(undefined);

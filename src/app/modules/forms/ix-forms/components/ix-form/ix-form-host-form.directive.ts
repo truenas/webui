@@ -58,7 +58,13 @@ implements SidePanelHostForm<R> {
   /**
    * Latched when the initial config load fails, which leaves the form on untouched defaults the
    * user never saw. Bind to `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's)
-   * can't submit them.
+   * can't submit them. Cleared by a subsequent {@link loadFormConfig} — see its re-entrancy note.
+   *
+   * KNOWN GAP: once the one-shot error modal is dismissed, the panel shows defaults with a greyed
+   * Save and no in-body explanation, so the only way out is to close and reopen. An in-panel
+   * notice (and ideally a retry) belongs here; it needs a place to render, which the base — being
+   * template-less — doesn't have, so it is tracked separately rather than bolted onto `<ix-form>`
+   * (whose input surface is frozen).
    */
   protected readonly loadFailed = signal(false);
 
@@ -86,8 +92,10 @@ implements SidePanelHostForm<R> {
     this.loadFailed.set(false);
     this.loadedSnapshot.set(null);
     this.dataLoading.set(true);
+    let handled = false;
     config$.pipe(takeUntilDestroyed(this.hostDestroyRef)).subscribe({
       next: (config) => {
+        handled = true;
         try {
           // Wrapped so a throwing `patch` takes the same path as a failed request, instead of
           // escaping as an unhandled RxJS error that leaves the form enabled on defaults.
@@ -99,7 +107,18 @@ implements SidePanelHostForm<R> {
         this.loadedSnapshot.set(this.form.getRawValue() as object);
         this.dataLoading.set(false);
       },
-      error: (error: unknown) => this.handleLoadFailure(error),
+      error: (error: unknown) => {
+        handled = true;
+        this.handleLoadFailure(error);
+      },
+      // Safety net, mirroring `IxFormComponent.onFormSubmit`: a source that completes without
+      // emitting (EMPTY) would otherwise leave `dataLoading` stuck true — a permanent panel
+      // progress bar and a Save that never enables.
+      complete: () => {
+        if (!handled) {
+          this.dataLoading.set(false);
+        }
+      },
     });
   }
 

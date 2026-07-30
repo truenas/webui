@@ -1,18 +1,20 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { TestBed } from '@angular/core/testing';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { Observable, of, throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { of } from 'rxjs';
+import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SnmpConfig } from 'app/interfaces/snmp-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import {
+  hostedFormGroup, ixFormTestingProviders,
+} from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServiceSnmpComponent } from './service-snmp.component';
@@ -34,23 +36,6 @@ describe('ServiceSnmpComponent', () => {
   const hasInput = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   )).length > 0;
-  // `api.call` is already a jest mock, so `jest.spyOn` would hand back that same instance and the
-  // fall-through below would recurse — drive the mock directly instead, failing one method and
-  // delegating every other call to the stubs registered above.
-  const failApiCall = (apiService: ApiService, method: string): void => {
-    const call = apiService.call as unknown as jest.Mock<Observable<unknown>, [string, unknown?]>;
-    const respond = call.getMockImplementation() as (m: string, p?: unknown) => Observable<unknown>;
-    call.mockImplementation((calledMethod, params) => (
-      calledMethod === method
-        ? throwError(() => new Error('Failed to load config'))
-        : respond(calledMethod, params)
-    ));
-  };
-  // `form` is protected on the IxFormHostForm base — reaching it keeps the failed-load test's
-  // assertion about `loadFailed` rather than about unfilled required fields.
-  const formOf = (component: ServiceSnmpComponent): FormGroup => {
-    return (component as unknown as { form: FormGroup }).form;
-  };
 
   const createComponent = createRoutingFactory({
     component: ServiceSnmpComponent,
@@ -104,7 +89,7 @@ describe('ServiceSnmpComponent', () => {
     expect(showErrorModal).toHaveBeenCalled();
     // The form's defaults are valid, so `loadFailed` (fed to `<ix-form>`'s extraDisabled) is the
     // only thing that can be blocking Save.
-    expect(formOf(failed.componentInstance).valid).toBe(true);
+    expect(hostedFormGroup(failed.componentInstance).valid).toBe(true);
     expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 

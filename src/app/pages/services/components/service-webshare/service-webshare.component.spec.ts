@@ -1,12 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
-import { of, Subject, throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { of, Subject } from 'rxjs';
+import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
@@ -14,7 +14,9 @@ import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.inte
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import {
+  hostedFormGroup, ixFormTestingProviders,
+} from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -41,11 +43,6 @@ describe('ServiceWebshareComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  // `form` is protected on the IxFormHostForm base — reaching it keeps the failed-load test's
-  // assertion about `loadFailed` rather than about an invalid form.
-  const formOf = (component: ServiceWebshareComponent): FormGroup => {
-    return (component as unknown as { form: FormGroup }).form;
-  };
 
   const createComponent = createComponentFactory({
     component: ServiceWebshareComponent,
@@ -66,6 +63,20 @@ describe('ServiceWebshareComponent', () => {
       }),
     ],
   });
+
+  /**
+   * A second instance, for tests that need a different `webshare.config` response than the one
+   * `beforeEach` loaded. Always a fresh component rather than a second `ngOnInit()` on the shared
+   * one: re-initialising re-registers the form's valueChanges subscriptions on top of the guard
+   * effect already wired in the constructor, so the result would hinge on double-init being
+   * harmless. Repoints `loader` at the new fixture so `getCheckbox`/`getSelect` address it.
+   */
+  const createSecondFixture = (): ComponentFixture<ServiceWebshareComponent> => {
+    const fixture = TestBed.createComponent(ServiceWebshareComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
+    fixture.detectChanges();
+    return fixture;
+  };
 
   beforeEach(() => {
     tnConnectConfig.set({ status: TruenasConnectStatus.Configured } as TruenasConnectConfig);
@@ -107,63 +118,49 @@ describe('ServiceWebshareComponent', () => {
   it('reports isBusy() but not isSubmitting() while the config loads, and both while saving', () => {
     const config$ = new Subject<WebShareConfig>();
     const update$ = new Subject<WebShareConfig>();
-    const api = spectator.inject(ApiService);
-    jest.spyOn(api, 'call').mockImplementation((method) => {
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
       return method === 'webshare.config' ? config$ : update$;
     });
 
-    spectator.component.ngOnInit();
-    spectator.detectChanges();
+    const fixture = createSecondFixture();
+    const component = fixture.componentInstance;
 
-    expect(spectator.component.isBusy()).toBe(true);
-    expect(spectator.component.isSubmitting()).toBe(false);
+    expect(component.isBusy()).toBe(true);
+    expect(component.isSubmitting()).toBe(false);
 
     config$.next(mockWebShareConfig);
-    spectator.detectChanges();
+    fixture.detectChanges();
 
-    expect(spectator.component.isBusy()).toBe(false);
-    expect(spectator.component.isSubmitting()).toBe(false);
+    expect(component.isBusy()).toBe(false);
+    expect(component.isSubmitting()).toBe(false);
 
-    spectator.component.submit();
+    component.submit();
 
-    expect(spectator.component.isBusy()).toBe(true);
-    expect(spectator.component.isSubmitting()).toBe(true);
+    expect(component.isBusy()).toBe(true);
+    expect(component.isSubmitting()).toBe(true);
 
     update$.next(mockWebShareConfig);
     update$.complete();
 
-    expect(spectator.component.isBusy()).toBe(false);
-    expect(spectator.component.isSubmitting()).toBe(false);
+    expect(component.isBusy()).toBe(false);
+    expect(component.isSubmitting()).toBe(false);
   });
 
   it('handles error when loading config fails', () => {
-    const api = spectator.inject(ApiService);
     const errorHandler = spectator.inject(ErrorHandlerService);
-    jest.spyOn(api, 'call').mockReturnValue(throwError(() => new Error('Failed to load config')));
+    failApiCall(spectator.inject(ApiService), 'webshare.config');
 
-    // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
-    // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
-    // so the assertion would hinge on double-init being harmless.
-    const failed = TestBed.createComponent(ServiceWebshareComponent);
-    failed.detectChanges();
+    const failed = createSecondFixture();
 
     expect(errorHandler.showErrorModal).toHaveBeenCalled();
     // The form is left on defaults the user never saw — valid, but Save must stay blocked.
-    expect(formOf(failed.componentInstance).valid).toBe(true);
+    expect(hostedFormGroup(failed.componentInstance).valid).toBe(true);
     expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 
   it('handles error when saving config fails', () => {
-    const api = spectator.inject(ApiService);
-    jest.spyOn(api, 'call').mockImplementation((method) => {
-      if (method === 'webshare.config') {
-        return of(mockWebShareConfig);
-      }
-      return throwError(() => new Error('Validation error'));
-    });
-
-    spectator.component.ngOnInit();
-    spectator.detectChanges();
+    // The component from `beforeEach` already loaded its config; only the save needs to fail.
+    failApiCall(spectator.inject(ApiService), 'webshare.update', new Error('Validation error'));
 
     const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
     spectator.component.submit();
@@ -184,17 +181,15 @@ describe('ServiceWebshareComponent', () => {
   });
 
   it('initializes form with default values when config has search disabled', async () => {
-    const api = spectator.inject(ApiService);
-    jest.spyOn(api, 'call').mockImplementation((method) => {
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
       if (method === 'webshare.config') {
         return of({ id: 1, search: false, passkey: WebSharePasskey.Disabled } as WebShareConfig);
       }
       return of(null);
     });
 
-    spectator.component.ngOnInit();
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
+    const fixture = createSecondFixture();
+    await fixture.whenStable();
 
     expect(await (await getCheckbox('search')).isChecked()).toBe(false);
     expect(await (await getSelect('passkey')).getDisplayText()).toBe('Disabled');
@@ -234,16 +229,15 @@ describe('ServiceWebshareComponent', () => {
       return of(mockWebShareConfig);
     });
 
-    spectator.component.ngOnInit();
-    spectator.detectChanges();
+    const fixture = createSecondFixture();
 
     // Backend reports stale search=true after the effect already disabled the control.
     config$.next({ id: 1, search: true, passkey: WebSharePasskey.Enabled });
-    spectator.detectChanges();
+    fixture.detectChanges();
 
     expect(await (await getCheckbox('search')).isChecked()).toBe(false);
 
-    spectator.component.submit();
+    fixture.componentInstance.submit();
 
     expect(api.call).toHaveBeenCalledWith(
       'webshare.update',

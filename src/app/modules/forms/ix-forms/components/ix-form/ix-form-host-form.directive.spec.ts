@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { NEVER, Observable, of, throwError } from 'rxjs';
+import { EMPTY, NEVER, Observable, of, throwError } from 'rxjs';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -116,6 +116,14 @@ describe('IxFormHostForm', () => {
 
       expect(spectator.component.hasLoadFailed()).toBe(false);
       expect(spectator.component.readSnapshot()).toEqual({ name: 'loaded' });
+    });
+
+    it('clears dataLoading when the source completes without emitting', () => {
+      spectator.component.load(EMPTY);
+
+      expect(spectator.component.isLoading()).toBe(false);
+      expect(spectator.component.hasLoadFailed()).toBe(false);
+      expect(spectator.component.readSnapshot()).toBeNull();
     });
 
     it('drops the previous snapshot while a reload is in flight', () => {

@@ -108,11 +108,16 @@ export const advancedModeSettingLabels: AdvancedModeLabels = {
  * that it will be shown.
  *
  * @param options `labels` swaps the wording (see {@link advancedModeSettingLabels}); `testId`
- * overrides the default so a form that already shipped a different `data-test` value keeps it.
+ * overrides the default so a form that already shipped a different `data-test` value keeps it;
+ * `onToggle` runs after the flip, for forms that re-validate the fields the toggle reveals.
  */
 export function advancedModeFooterAction(
   isAdvancedMode: WritableSignal<boolean>,
-  options: { labels?: AdvancedModeLabels; testId?: TnTestIdValue } = {},
+  options: {
+    labels?: AdvancedModeLabels;
+    testId?: TnTestIdValue;
+    onToggle?: (isAdvancedMode: boolean) => void;
+  } = {},
 ): Signal<SidePanelFooterAction[]> {
   const labels = options.labels ?? advancedModeOptionLabels;
 
@@ -120,6 +125,9 @@ export function advancedModeFooterAction(
     label: isAdvancedMode() ? labels.basic : labels.advanced,
     ariaLabel: isAdvancedMode() ? labels.showBasic : labels.showAdvanced,
     testId: options.testId ?? 'toggle-advanced-options',
-    onClick: () => isAdvancedMode.update((isAdvanced) => !isAdvanced),
+    onClick: () => {
+      isAdvancedMode.update((isAdvanced) => !isAdvanced);
+      options.onToggle?.(isAdvancedMode());
+    },
   }]);
 }
