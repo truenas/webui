@@ -253,6 +253,18 @@ describe('DiskListComponent', () => {
     expect(spectator.query('.batch-actions-toolbar .title').textContent).toContain('2 disks selected');
   });
 
+  it('announces the count from a live region that predates the first selection', async () => {
+    // The region has to already be in the DOM and empty: one inserted with its text isn't
+    // announced, which would silently drop the 0 -> 1 announcement.
+    const liveRegion = spectator.query('[aria-live="polite"]');
+    expect(liveRegion).toExist();
+    expect(liveRegion.textContent.trim()).toBe('');
+
+    await table.toggleRowSelection(0);
+
+    expect(liveRegion.textContent).toContain('1 disk selected');
+  });
+
   it('opens bulk edit form when multiple disks are selected and Edit is pressed', async () => {
     await table.toggleRowSelection(0);
     await table.toggleRowSelection(1);

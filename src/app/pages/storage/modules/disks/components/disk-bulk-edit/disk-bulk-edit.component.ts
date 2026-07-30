@@ -6,9 +6,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import {
-  filter, map, take, tap,
-} from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -30,6 +28,12 @@ import {
 
 /** One `disk.update` argument pair, as `core.bulk` takes them. */
 type DiskBulkUpdate = [id: string, update: DiskUpdate];
+
+/** What a finished `core.bulk` leaves the form to act on: what applied, and every per-disk result. */
+interface DiskBulkResult {
+  applied: DiskBulkUpdate[];
+  results: CoreBulkResponse[];
+}
 
 @Component({
   selector: 'ix-disk-bulk-edit',
@@ -81,7 +85,7 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> impl
     this.setFormDiskBulk(this.disksToEdit());
   }
 
-  protected readonly handleSubmit = (): SubmitResult<DiskFormResponse, DiskBulkUpdate[]> => {
+  protected readonly handleSubmit = (): SubmitResult<DiskFormResponse, DiskBulkResult> => {
     const req = this.prepareDataSubmit();
     const successText = this.translate.instant(
       'Successfully saved {n, plural, one {Disk} other {Disks}} settings.',
@@ -92,28 +96,33 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> impl
       request$: this.api.job('core.bulk', ['disk.update', req]).pipe(
         filter((job) => job.state === JobState.Success),
         take(1),
-        // core.bulk reports per-disk failures in its result rather than failing the job. Report
-        // every distinct reason in one dialog — a disk-per-dialog storm was unusable, but so is
-        // showing only the first of three different failures.
-        tap((job) => this.reportFailures(job.result)),
+        // core.bulk reports per-disk failures in its result rather than failing the job, so keep
+        // the per-disk errors alongside the entries that did apply for `onSuccess` to report.
+        //
         // core.bulk is not transactional: the disks that reported no error were already updated
         // on the backend, so resolve with just those — otherwise the list keeps showing pre-edit
         // values for disks that did change. An all-failed bulk resolves with an empty list, which
         // still reloads, matching what the pre-migration form closed with either way.
-        map((job) => req.filter((_, index) => job.result[index]?.error === null)),
+        map((job) => ({
+          applied: req.filter((_, index) => job.result[index]?.error === null),
+          results: job.result,
+        })),
       ),
-      // Raised from `onSuccess` instead (the template suppresses `<ix-form>`'s own snackbar), and
-      // only when every disk was applied: a partial failure still resolves successfully, but it
-      // has already reported itself through the error dialog, and "Successfully saved" beside
-      // that dialog would lie.
+      // Both raised from `onSuccess` (the template suppresses `<ix-form>`'s own snackbar), which
+      // runs as the panel closes — reporting from inside `request$` would put the error dialog
+      // over a panel still held open by the submit feedback delay, which then slides away under
+      // it. The snackbar only when every disk was applied: a partial failure still resolves
+      // successfully, but it has already reported itself through the error dialog, and
+      // "Successfully saved" beside that dialog would lie.
       successMessage: null,
-      onSuccess: (result) => {
-        if (result.length === req.length) {
+      onSuccess: ({ applied, results }) => {
+        this.reportFailures(results);
+        if (applied.length === req.length) {
           this.snackbar.success(successText);
         }
       },
       // The panel host forwards this to its opener, which reconciles the rows that changed.
-      closeWith: (result) => this.toResponse(result),
+      closeWith: ({ applied }) => this.toResponse(applied),
     };
   };
 

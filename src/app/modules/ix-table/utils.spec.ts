@@ -177,8 +177,7 @@ describe('mapTnSortToTableSort', () => {
       expect(sorting.sortBy?.(row)).toBe(1024);
     });
 
-    it('warns once when an accessor resolves to something lodash sortBy cannot order', () => {
-      const warn = jest.spyOn(console, 'warn').mockImplementation();
+    it('throws in dev mode when an accessor resolves to something lodash sortBy cannot order', () => {
       const arrayColumn = {
         propertyName: 'size',
         // A cell rendering a list: `getValue` is typed `unknown`, so nothing but this guard
@@ -191,17 +190,11 @@ describe('mapTnSortToTableSort', () => {
         columns,
         { columns: [arrayColumn] },
       );
-      sorting.sortBy?.(row);
-      sorting.sortBy?.(row);
 
-      expect(warn).toHaveBeenCalledTimes(1);
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('column "size" resolved to an array'));
-      warn.mockRestore();
+      expect(() => sorting.sortBy?.(row)).toThrow('column "size" resolved to an array');
     });
 
     it('passes a primitive accessor through untouched', () => {
-      const warn = jest.spyOn(console, 'warn').mockImplementation();
-
       const sorting = mapTnSortToTableSort<Row>(
         { column: 'size', direction: 'asc' },
         columns,
@@ -209,8 +202,6 @@ describe('mapTnSortToTableSort', () => {
       );
 
       expect(sorting.sortBy?.(row)).toBe(1024);
-      expect(warn).not.toHaveBeenCalled();
-      warn.mockRestore();
     });
 
     it('prefers an explicit accessor over the one derived from the column model', () => {

@@ -125,6 +125,11 @@ export interface TnSortAccessors<T> {
    * The column model the table already keeps for its picker. A column missing from it sorts by
    * its raw value.
    *
+   * Matched by `propertyName` against the tn-table column name, across the whole model rather
+   * than only the visible columns — so hidden columns keep their accessors when the picker brings
+   * them back. Two columns sharing a `propertyName` therefore both resolve to the first one; give
+   * such a column a {@link sortAccessors} entry keyed by its tn-table column name instead.
+   *
    * A sortable column listed here must resolve to a primitive: its `getValue` is typed `unknown`
    * and goes straight to lodash `sortBy`, so a column rendering an array or object would sort by
    * something meaningless. Give it an explicit `sortBy` (which wins over `getValue`) instead —
@@ -180,22 +185,23 @@ export function mapTnSortToTableSort<T>(
 /**
  * Dev-only wrapper enforcing what {@link TnSortAccessors.columns} can only document: a `getValue`
  * is typed `unknown`, so a column rendering an array or an object hands that straight to lodash
- * `sortBy` and the rows come back in an arbitrary order with nothing to see. Warn on the first
- * non-primitive instead, naming the column to fix.
+ * `sortBy` and the rows come back in an arbitrary order with nothing to see. Throws on the first
+ * non-primitive, naming the column to fix — a `console.warn` is easy to miss among the noise, and
+ * specs run in dev mode, so failing outright keeps the mistake from reaching a review at all. In
+ * production the accessor is used unwrapped and the rows just sort arbitrarily, as they would
+ * have anyway.
  */
 function assertPrimitiveAccessor<T>(
   accessor: (row: T) => string | number,
   column: string,
 ): (row: T) => string | number {
-  let warned = false;
   return (row: T) => {
     const value = accessor(row);
-    if (!warned && value != null && typeof value !== 'string' && typeof value !== 'number') {
-      warned = true;
+    if (value != null && typeof value !== 'string' && typeof value !== 'number') {
       const kind = Array.isArray(value) ? 'an array' : `a ${typeof value}`;
-      console.warn(
+      throw new Error(
         `[mapTnSortToTableSort] the sort accessor for column "${column}" resolved to ${kind}, which lodash `
-        + 'sortBy can\'t order — the rows will come back in an arbitrary order. Give the column an explicit '
+        + 'sortBy can\'t order — the rows would come back in an arbitrary order. Give the column an explicit '
         + '`sortBy` returning a string or number.',
       );
     }

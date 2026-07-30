@@ -39,11 +39,9 @@ import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/component
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { ResetSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/reset-sed-dialog/reset-sed-dialog.component';
-import {
-  sedStatusColumn, sedStatusLabel,
-} from 'app/pages/storage/modules/disks/components/disk-list/sed-status-cell/sed-status-cell.component';
 import { UnlockSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/unlock-sed-dialog/unlock-sed-dialog.component';
 import { DiskWipeDialog } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
+import { sedStatusLabel } from 'app/pages/storage/modules/disks/utils/sed-status-label.utils';
 import { LicenseService } from 'app/services/license.service';
 
 /**
@@ -57,6 +55,28 @@ interface DiskRow extends Disk {
   sedStatusText: string;
   hddStandbyText: string;
   advPowerManagementText: string;
+}
+
+/**
+ * Sort key for HDD Standby: minutes, with "Always On" (never spins down) after every interval and
+ * a disk that reports nothing at all (NVMe) before them. Both sentinels are finite-ordered rather
+ * than left as `NaN`, which lodash `sortBy` places arbitrarily.
+ */
+function toStandbyOrder(value: DiskStandby | null | undefined): number {
+  if (value === DiskStandby.AlwaysOn) {
+    return Infinity;
+  }
+  const minutes = Number(value);
+  return Number.isFinite(minutes) ? minutes : -1;
+}
+
+/** Sort key for Adv. Power Management: level, with "Disabled" and a missing value below all. */
+function toPowerLevelOrder(value: DiskPowerLevel | null | undefined): number {
+  if (value === DiskPowerLevel.Disabled) {
+    return -1;
+  }
+  const level = Number(value);
+  return Number.isFinite(level) ? level : -1;
 }
 
 /**
@@ -184,6 +204,13 @@ export class DiskListComponent {
     () => this.rows().filter((disk) => this.selectedIdentifiers().has(disk.identifier)),
   );
 
+  // Rendered twice — visibly in the batch bar and, for screen readers, in the live region that
+  // outlives it — so the two can't word the count differently.
+  protected readonly selectionCountText = computed(() => this.translate.instant(
+    '{n, plural, one {# disk selected} other {# disks selected}}',
+    { n: this.selectedDisks().length },
+  ));
+
   // The ix-table column model is retained purely as picker metadata (visibility + saved
   // preferences) and to drive the hidden-column readout inside the expanded detail row;
   // tn-table renders its own cells from the templates below.
@@ -237,8 +264,10 @@ export class DiskListComponent {
       propertyName: 'hddstandby',
       getValue: (row) => row.hddStandbyText,
       // The enum's values are minute counts held as strings, so sorting the rendered text puts
-      // "120" before "20". Order by the number, with "Always On" (never spins down) last.
-      sortBy: (row) => (row.hddstandby === DiskStandby.AlwaysOn ? Infinity : Number(row.hddstandby)),
+      // "120" before "20". Order by the number, with "Always On" (never spins down) last and a
+      // disk that reports no standby value at all (NVMe) first — `Number(undefined)` is NaN,
+      // which lodash orders unpredictably.
+      sortBy: (row) => toStandbyOrder(row.hddstandby),
       hidden: true,
     }),
     textColumn({
@@ -246,14 +275,19 @@ export class DiskListComponent {
       propertyName: 'advpowermgmt',
       getValue: (row) => row.advPowerManagementText,
       // Same as HDD Standby: numeric levels stored as strings would sort "64" after "254".
-      // "Disabled" (no power management at all) sorts below every level.
-      sortBy: (row) => (row.advpowermgmt === DiskPowerLevel.Disabled ? -1 : Number(row.advpowermgmt)),
+      // "Disabled" (no power management at all) sorts below every level, as does a disk that
+      // reports no level (NaN otherwise).
+      sortBy: (row) => toPowerLevelOrder(row.advpowermgmt),
       hidden: true,
     }),
-    sedStatusColumn({
+    textColumn({
       title: this.translate.instant('Self-Encrypting Drive (SED)'),
       propertyName: 'sed_status',
-      // Sort by the translated status the cell renders, not by the raw SedStatus enum.
+      // The row's resolved status text, so the hidden-column readout in the details row shows
+      // exactly what the table cell does — a live `| translate` there would drift from the
+      // frozen cell text after a runtime language switch.
+      getValue: (row) => row.sedStatusText,
+      // Sort by that translated status, not by the raw SedStatus enum.
       sortBy: (row) => row.sedStatusText,
       hidden: !this.hasSed(),
     }),

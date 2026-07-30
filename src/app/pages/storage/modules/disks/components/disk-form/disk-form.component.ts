@@ -118,11 +118,16 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implemen
     this.isHddStandbyRequired = Boolean(disk?.hddstandby);
     if (this.isHddStandbyRequired) {
       this.form.controls.hddstandby.addValidators(Validators.required);
+      // `addValidators` deliberately doesn't re-run validation. Do it here rather than relying on
+      // `<ix-form>`'s own `ngOnInit` patch to revalidate as a side effect, which would make the
+      // control's validity depend on the order two components' hooks happen to run in.
+      this.form.controls.hddstandby.updateValueAndValidity({ emitEvent: false });
     }
 
     this.isAdvPowerManagementRequired = Boolean(disk?.advpowermgmt);
     if (this.isAdvPowerManagementRequired) {
       this.form.controls.advpowermgmt.addValidators(Validators.required);
+      this.form.controls.advpowermgmt.updateValueAndValidity({ emitEvent: false });
     }
 
     if (this.showSedSection()) {

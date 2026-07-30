@@ -11,6 +11,18 @@
   ></ix-table-column-picker>
 </ix-page-header>
 
+<!--
+  Outside the `@if`, and empty until something is selected: a live region that enters the DOM
+  already populated isn't announced, so the 0 → 1 transition — the one that tells a screen-reader
+  user the batch bar just appeared — would be the one announcement missed. The visible copy below
+  is `aria-hidden` so this is the single spoken source of the count.
+-->
+<span class="sr-only" aria-live="polite">
+  @if (selectedDisks().length) {
+    {{ selectionCountText() }}
+  }
+</span>
+
 @if (selectedDisks().length) {
   <div
     class="batch-actions-toolbar"
@@ -23,14 +35,7 @@
         changes, so a selection only ever covers the rows on screen. Naming the number makes
         that visible instead of leaving the user to assume earlier pages are still included.
       -->
-      <!-- Announced too: the count changes with every checkbox, but nothing else tells a
-           screen-reader user how many rows the batch actions are about to apply to. -->
-      <span class="selection-count" aria-live="polite">
-        {{
-          '{n, plural, one {# disk selected} other {# disks selected}}'
-            | translate: { n: selectedDisks().length }
-        }}
-      </span>
+      <span class="selection-count" aria-hidden="true">{{ selectionCountText() }}</span>
     </div>
     <div class="actions">
       <tn-button
