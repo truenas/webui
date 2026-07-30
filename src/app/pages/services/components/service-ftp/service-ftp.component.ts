@@ -25,54 +25,21 @@ import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/
 import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import {
   advancedModeFooterAction, SidePanelFooterAction,
-} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { ignoreTranslation, translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 /**
- * The form's own value shape, which is NOT `FtpConfigUpdate`: `filemask`/`dirmask` hold
- * pre-{@link invertUmask} values and the bandwidth controls are in bytes where the API takes KB
- * (all reshaped in {@link ServiceFtpComponent.handleSubmit}).
+ * Built out here rather than inline in the component so {@link FtpFormValue} can be derived from
+ * it while the component's own `form` stays `protected`.
  */
-type FtpFormValue = ReturnType<ServiceFtpComponent['form']['getRawValue']>;
-
-@Component({
-  selector: 'ix-service-ftp',
-  templateUrl: './service-ftp.component.html',
-  styleUrls: ['./service-ftp.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    IxFormComponent,
-    ReactiveFormsModule,
-    TnFormSectionComponent,
-    TnFormFieldComponent,
-    TnInputComponent,
-    TnCheckboxComponent,
-    IxExplorerComponent,
-    IxPermissionsComponent,
-    WithManageCertificatesLinkComponent,
-    TnSelectComponent,
-    TranslateModule,
-    AsyncPipe,
-    ExplorerCreateDatasetComponent,
-  ],
-})
-export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
-  private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
-  private systemGeneralService = inject(SystemGeneralService);
-  private filesystemService = inject(FilesystemService);
-  private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
-
-  readonly requiredRoles = [Role.SharingFtpWrite];
-  protected readonly InputType = InputType;
-
-  protected readonly isAdvancedMode = signal(false);
-
-  form = this.formBuilder.group({
+// The inferred FormGroup IS the contract the value-shape alias below reads; an explicit return
+// type would just restate every control.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createFtpForm(formBuilder: FormBuilder) {
+  return formBuilder.group({
     port: new FormControl(null as number | null, [portRangeValidator(), Validators.required]),
     clients: new FormControl(null as number | null, [rangeValidator(1, 10000), Validators.required]),
     ipconnections: new FormControl(null as number | null, [rangeValidator(0, 1000), Validators.required]),
@@ -113,6 +80,50 @@ export class ServiceFtpComponent extends IxFormHostForm implements OnInit {
     banner: [''],
     options: [''],
   });
+}
+
+/**
+ * The form's own value shape, which is NOT `FtpConfigUpdate`: `filemask`/`dirmask` hold
+ * pre-{@link invertUmask} values and the bandwidth controls are in bytes where the API takes KB
+ * (all reshaped in {@link ServiceFtpComponent.handleSubmit}).
+ */
+type FtpFormValue = ReturnType<ReturnType<typeof createFtpForm>['getRawValue']>;
+
+@Component({
+  selector: 'ix-service-ftp',
+  templateUrl: './service-ftp.component.html',
+  styleUrls: ['./service-ftp.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    IxFormComponent,
+    ReactiveFormsModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    IxExplorerComponent,
+    IxPermissionsComponent,
+    WithManageCertificatesLinkComponent,
+    TnSelectComponent,
+    TranslateModule,
+    AsyncPipe,
+    ExplorerCreateDatasetComponent,
+  ],
+})
+export class ServiceFtpComponent extends IxFormHostForm<boolean, FtpFormValue> implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private systemGeneralService = inject(SystemGeneralService);
+  private filesystemService = inject(FilesystemService);
+  private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
+
+  readonly requiredRoles = [Role.SharingFtpWrite];
+  protected readonly InputType = InputType;
+
+  protected readonly isAdvancedMode = signal(false);
+
+  protected readonly form = createFtpForm(this.formBuilder);
 
   readonly helptext = helptextServiceFtp;
 

@@ -19,36 +19,15 @@ import {
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-@Component({
-  selector: 'ix-service-ups',
-  templateUrl: './service-ups.component.html',
-  styleUrls: ['./service-ups.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    AsyncPipe,
-    IxFormComponent,
-    ReactiveFormsModule,
-    TnFormSectionComponent,
-    TnFormFieldComponent,
-    TnInputComponent,
-    TnSelectComponent,
-    TnCheckboxComponent,
-    TnAutocompleteComponent,
-    TranslateModule,
-  ],
-})
-export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
-  private api = inject(ApiService);
-  private fb = inject(NonNullableFormBuilder);
-  private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
-
-  readonly requiredRoles = [Role.SystemGeneralWrite];
-  protected readonly InputType = InputType;
-
-  protected readonly isMasterMode = signal(true);
-
-  form = this.fb.group({
+/**
+ * Built out here rather than inline in the component so {@link UpsFormValue} can be derived from
+ * it while the component's own `form` stays `protected`.
+ */
+// The inferred FormGroup IS the contract the value-shape alias below reads; an explicit return
+// type would just restate every control.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createUpsForm(fb: NonNullableFormBuilder) {
+  return fb.group({
     identifier: [null as string | null, [Validators.required, Validators.pattern(/^[\w|,|.|\-|_]+$/)]],
     mode: [null as UpsMode | null],
     remotehost: [null as string | null, Validators.required],
@@ -68,6 +47,41 @@ export class ServiceUpsComponent extends IxFormHostForm implements OnInit {
     options: [null as string | null],
     optionsupsd: [null as string | null],
   });
+}
+
+/** The form's own value shape, which is NOT `UpsConfigUpdate` — every control is nullable here. */
+type UpsFormValue = ReturnType<ReturnType<typeof createUpsForm>['getRawValue']>;
+
+@Component({
+  selector: 'ix-service-ups',
+  templateUrl: './service-ups.component.html',
+  styleUrls: ['./service-ups.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    AsyncPipe,
+    IxFormComponent,
+    ReactiveFormsModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
+    TnAutocompleteComponent,
+    TranslateModule,
+  ],
+})
+export class ServiceUpsComponent extends IxFormHostForm<boolean, UpsFormValue> implements OnInit {
+  private api = inject(ApiService);
+  private fb = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
+
+  readonly requiredRoles = [Role.SystemGeneralWrite];
+  protected readonly InputType = InputType;
+
+  protected readonly isMasterMode = signal(true);
+
+  protected readonly form = createUpsForm(this.fb);
 
   readonly helptext = helptextServiceUps;
   readonly labels = {

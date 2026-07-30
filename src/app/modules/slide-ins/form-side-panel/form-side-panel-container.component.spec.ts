@@ -12,11 +12,13 @@ import {
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  advancedModeFooterAction,
   FormSidePanelContainerComponent,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import {
+  advancedModeFooterAction,
   SidePanelFooterAction,
   SidePanelFooterMenu,
-} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
@@ -228,6 +230,30 @@ describe('FormSidePanelContainerComponent footer actions', () => {
 
     expect(await toggle.getLabel()).toBe('Basic Options');
     expect(getForm().isAdvancedMode()).toBe(true);
+  });
+
+  // TnButtonHarness exposes no aria-label getter, and the attribute sits on the <button>
+  // tn-button renders rather than on its host element — so read it off the DOM.
+  const footerActionAriaLabel = (label: string): string | null => {
+    const host = Array.from(document.querySelectorAll('tn-button'))
+      .find((element) => element.textContent?.trim() === label);
+    return host?.querySelector('button')?.getAttribute('aria-label') ?? null;
+  };
+
+  it('renders the action ariaLabel so a footer toggle announces what it will do', async () => {
+    const loader = TnMenuTesting.rootLoader(fixture);
+    const toggle = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
+
+    expect(footerActionAriaLabel('Advanced Options')).toBe('Show Advanced Options');
+
+    await toggle.click();
+    fixture.detectChanges();
+
+    expect(footerActionAriaLabel('Basic Options')).toBe('Show Basic Options');
+  });
+
+  it('leaves aria-label off actions that do not declare one', () => {
+    expect(footerActionAriaLabel('Next')).toBeNull();
   });
 
   it('re-evaluates the reactive disabled predicate and invokes onClick', async () => {

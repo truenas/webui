@@ -26,9 +26,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
  * handler when `R` is not `boolean`.
  *
  * @typeParam R success payload emitted through {@link closed} (defaults to `boolean`).
+ * @typeParam V the {@link form}'s raw value shape, which types {@link initialFormSnapshot} so it
+ * lines up with the `<ix-form>` it is bound to. Passed explicitly (rather than derived from
+ * `this['form']`) so {@link form} can stay `protected` — an indexed access can only reach a public
+ * member. Config forms declare it as the raw value of their form-group factory; forms that don't
+ * bind `initialFormSnapshot` can leave it at the default.
  */
 @Directive()
-export abstract class IxFormHostForm<R = boolean> implements SidePanelHostForm<R> {
+export abstract class IxFormHostForm<R = boolean, V extends object = Record<string, unknown>>
+implements SidePanelHostForm<R> {
   /** The inner `<ix-form>`, resolved once the subclass's view renders. */
   protected readonly ixForm = viewChild(IxFormComponent);
 
@@ -37,12 +43,8 @@ export abstract class IxFormHostForm<R = boolean> implements SidePanelHostForm<R
   private readonly hostDestroyRef = inject(DestroyRef);
   private readonly hostErrorHandler = inject(ErrorHandlerService);
 
-  /**
-   * The form group the subclass renders inside its `<ix-form>`. Public rather than protected
-   * because {@link initialFormSnapshot} types itself off it (`this['form']`), which TypeScript
-   * only permits for a public member.
-   */
-  abstract readonly form: FormGroup;
+  /** The form group the subclass renders inside its `<ix-form>`. */
+  protected abstract readonly form: FormGroup;
 
   /**
    * Emitted on a successful submit (or with the created record for a richer `R`) when hosted in a
@@ -64,33 +66,47 @@ export abstract class IxFormHostForm<R = boolean> implements SidePanelHostForm<R
 
   /**
    * The post-load baseline `<ix-form>` diffs `changedValues` against, captured by
-   * {@link loadFormConfig}. Bind to `<ix-form>`'s `initialFormSnapshot`. Typed through `this`, so
-   * each subclass sees its own form's raw value shape without re-declaring the signal.
+   * {@link loadFormConfig}. Bind to `<ix-form>`'s `initialFormSnapshot`. Typed as the subclass's
+   * own `V`, so it lines up with the `<ix-form>` generic the same subclass's `submitHandler` pins.
    */
-  protected initialFormSnapshot(): Partial<ReturnType<this['form']['getRawValue']>> | null {
-    return this.loadedSnapshot() as Partial<ReturnType<this['form']['getRawValue']>> | null;
+  protected initialFormSnapshot(): Partial<V> | null {
+    return this.loadedSnapshot() as Partial<V> | null;
   }
 
   /**
    * Runs a config form's initial load: raises {@link dataLoading}, hands the loaded value to
-   * `patch` to populate the controls, then captures {@link initialFormSnapshot}. On failure it
-   * reports the error and latches {@link loadFailed}, so Save can never submit the defaults the
-   * user never saw.
+   * `patch` to populate the controls, then captures {@link initialFormSnapshot}. On failure — the
+   * request erroring OR `patch` throwing — it reports the error and latches {@link loadFailed}, so
+   * Save can never submit the defaults the user never saw.
+   *
+   * Re-entrant: both {@link loadFailed} and the snapshot are cleared on entry, so a retry (or a
+   * second load) starts clean rather than inheriting the previous attempt's latched failure.
    */
-  protected loadFormConfig<V>(config$: Observable<V>, patch: (config: V) => void): void {
+  protected loadFormConfig<C>(config$: Observable<C>, patch: (config: C) => void): void {
+    this.loadFailed.set(false);
+    this.loadedSnapshot.set(null);
     this.dataLoading.set(true);
     config$.pipe(takeUntilDestroyed(this.hostDestroyRef)).subscribe({
       next: (config) => {
-        patch(config);
+        try {
+          // Wrapped so a throwing `patch` takes the same path as a failed request, instead of
+          // escaping as an unhandled RxJS error that leaves the form enabled on defaults.
+          patch(config);
+        } catch (error: unknown) {
+          this.handleLoadFailure(error);
+          return;
+        }
         this.loadedSnapshot.set(this.form.getRawValue() as object);
         this.dataLoading.set(false);
       },
-      error: (error: unknown) => {
-        this.dataLoading.set(false);
-        this.loadFailed.set(true);
-        this.hostErrorHandler.showErrorModal(error);
-      },
+      error: (error: unknown) => this.handleLoadFailure(error),
     });
+  }
+
+  private handleLoadFailure(error: unknown): void {
+    this.dataLoading.set(false);
+    this.loadFailed.set(true);
+    this.hostErrorHandler.showErrorModal(error);
   }
 
   /**

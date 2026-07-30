@@ -45,6 +45,7 @@
           [color]="action.color ?? 'default'"
           [testId]="action.testId"
           [label]="action.label | translate"
+          [ariaLabel]="action.ariaLabel ? (action.ariaLabel | translate) : undefined"
           [disabled]="action.disabled?.() ?? false"
           (onClick)="action.onClick()"
         ></tn-button>

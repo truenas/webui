@@ -1,9 +1,8 @@
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
 import {
-  ChangeDetectionStrategy, Component, ComponentRef, computed, inject, input, model, output, signal,
-  type Signal, type WritableSignal,
+  ChangeDetectionStrategy, Component, ComponentRef, inject, input, model, output, signal,
+  type Signal,
 } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -19,78 +18,11 @@ import {
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import {
+  SidePanelFooterAction, SidePanelFooterMenu,
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelHostCloseable, SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
-
-/**
- * A secondary action rendered in the side-panel footer alongside the built-in Save (e.g. a form's
- * "Send Test Alert"). Listed in {@link HostedSidePanelForm.footerActions}; the container renders one
- * `tn-button` per entry, before Save.
- */
-export interface SidePanelFooterAction {
-  /** Untranslated marker; the container pipes it through `translate`. */
-  label: string;
-  testId: TnTestIdValue;
-  /** `tn-button` color; defaults to `'default'` (secondary). */
-  color?: 'primary' | 'secondary' | 'warn' | 'default';
-  /** Roles required to show the action (omit / empty = always shown). */
-  requiredRoles?: Role[];
-  /** Re-evaluated each change detection — read signals inside for reactive disabling. */
-  disabled?: () => boolean;
-  onClick: () => void;
-}
-
-/**
- * The Advanced/Basic footer toggle that every long form otherwise re-implements: a single secondary
- * action whose label flips with `isAdvancedMode`, and whose click flips the signal.
- *
- * Returned as a `computed` rather than built inside a getter, so the container's per-change-detection
- * read of `footerActions` hands back the same array until the mode actually changes. Wire it as:
- *
- * ```ts
- * private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
- * get footerActions(): SidePanelFooterAction[] { return this.advancedToggle(); }
- * ```
- *
- * @param labels override for forms that say "Settings" rather than "Options"; extraction markers,
- * since the container pipes the label through `translate`.
- */
-export function advancedModeFooterAction(
-  isAdvancedMode: WritableSignal<boolean>,
-  labels: { advanced: string; basic: string } = { advanced: T('Advanced Options'), basic: T('Basic Options') },
-): Signal<SidePanelFooterAction[]> {
-  return computed(() => [{
-    label: isAdvancedMode() ? labels.basic : labels.advanced,
-    testId: 'toggle-advanced-options',
-    onClick: () => isAdvancedMode.update((isAdvanced) => !isAdvanced),
-  }]);
-}
-
-/** A single action inside a {@link SidePanelFooterMenu}. */
-export interface SidePanelFooterMenuItem {
-  /** Untranslated marker; the container pipes it through `translate`. */
-  label: string;
-  testId: TnTestIdValue;
-  icon?: string;
-  iconLibrary?: 'material' | 'mdi' | 'custom' | 'lucide';
-  /** Roles required to show the item (omit / empty = always shown). */
-  requiredRoles?: Role[];
-  /** Re-evaluated each change detection — read signals inside for reactive disabling. */
-  disabled?: () => boolean;
-  onClick: () => void;
-}
-
-/**
- * A dropdown of secondary actions rendered in the footer before Save. Use instead of a flat
- * {@link SidePanelFooterAction}[] when several actions would crowd the footer — the container
- * renders one `dots-vertical` icon-button trigger opening a `tn-menu` of the {@link items}.
- */
-export interface SidePanelFooterMenu {
-  /** Trigger button accessible name / tooltip (untranslated marker). */
-  label: string;
-  testId: TnTestIdValue;
-  items: SidePanelFooterMenuItem[];
-}
 
 /**
  * A {@link SidePanelHostForm} that may expose `requiredRoles` to gate its Save action, plus optional

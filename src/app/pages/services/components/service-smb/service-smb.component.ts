@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -33,8 +32,8 @@ import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.const
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import {
-  advancedModeFooterAction, SidePanelFooterAction,
-} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+  advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserService } from 'app/services/user.service';
@@ -46,11 +45,50 @@ interface BindIp {
 }
 
 /**
+ * Built out here rather than inline in the component so {@link SmbFormValue} can be derived from
+ * it while the component's own `form` stays `protected`.
+ */
+// The inferred FormGroup IS the contract the value-shape alias below reads; an explicit return
+// type would just restate every control.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createSmbForm(fb: FormBuilder, validatorsService: IxValidatorsService, translate: TranslateService) {
+  return fb.group({
+    netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
+    netbiosalias: [[] as string[], [
+      validatorsService.customValidator(
+        (control: AbstractControl<string[]>) => {
+          return control.value?.every((alias: string) => alias.length <= 15);
+        },
+        translate.instant('Aliases must be 15 characters or less.'),
+      ),
+    ]],
+    workgroup: ['', [Validators.required]],
+    description: ['', []],
+    minimum_protocol: [SmbMinProtocol.Smb2, [Validators.required]],
+    ntlmv1_auth: [false, []],
+    unixcharset: ['', []],
+    debug: [false, []],
+    syslog: [false, []],
+    localmaster: [false, []],
+    guest: ['nobody', []],
+    filemask: ['', []],
+    dirmask: ['', []],
+    admin_group: ['', [Validators.maxLength(120)]],
+    bindip: fb.array<BindIp>([]),
+    aapl_extensions: [false, []],
+    multichannel: [false, []],
+    encryption: [SmbEncryption.Default],
+    spotlight_search: [false, []],
+    stateful_failover: [false, []],
+  });
+}
+
+/**
  * The form's own value shape, which is deliberately NOT `SmbConfigUpdate`: `bindip` is a
  * FormArray of `{ bindIp }` rows and `spotlight_search` stands in for `search_protocols`
  * (both reshaped in {@link ServiceSmbComponent.handleSubmit}).
  */
-type SmbFormValue = ReturnType<ServiceSmbComponent['form']['getRawValue']>;
+type SmbFormValue = ReturnType<ReturnType<typeof createSmbForm>['getRawValue']>;
 
 @Component({
   selector: 'ix-service-smb',
@@ -73,7 +111,7 @@ type SmbFormValue = ReturnType<ServiceSmbComponent['form']['getRawValue']>;
     TranslateModule,
   ],
 })
-export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
+export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> implements OnInit {
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
@@ -139,42 +177,16 @@ export class ServiceSmbComponent extends IxFormHostForm implements OnInit {
 
   protected readonly isAdvancedMode = signal(false);
 
-  readonly form = this.fb.group({
-    netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
-    netbiosalias: [[] as string[], [
-      this.validatorsService.customValidator(
-        (control: AbstractControl<string[]>) => {
-          return control.value?.every((alias: string) => alias.length <= 15);
-        },
-        this.translate.instant('Aliases must be 15 characters or less.'),
-      ),
-    ]],
-    workgroup: ['', [Validators.required]],
-    description: ['', []],
-    minimum_protocol: [SmbMinProtocol.Smb2, [Validators.required]],
-    ntlmv1_auth: [false, []],
-    unixcharset: ['', []],
-    debug: [false, []],
-    syslog: [false, []],
-    localmaster: [false, []],
-    guest: ['nobody', []],
-    filemask: ['', []],
-    dirmask: ['', []],
-    admin_group: ['', [Validators.maxLength(120)]],
-    bindip: this.fb.array<BindIp>([]),
-    aapl_extensions: [false, []],
-    multichannel: [false, []],
-    encryption: [SmbEncryption.Default],
-    spotlight_search: [false, []],
-    stateful_failover: [false, []],
-  });
+  protected readonly form = createSmbForm(this.fb, this.validatorsService, this.translate);
 
   readonly requiredRoles = [Role.SharingSmbWrite];
 
   /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
   private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
-    advanced: T('Advanced Settings'),
-    basic: T('Basic Settings'),
+    labels: advancedModeSettingLabels,
+    // Keeps the `data-test` value the in-body toggle shipped with, so integration selectors
+    // targeting this form don't break on the move into the panel footer.
+    testId: 'toggle-advanced-settings',
   });
 
   get footerActions(): SidePanelFooterAction[] {

@@ -1,7 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { TestBed } from '@angular/core/testing';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, Subject, throwError } from 'rxjs';
@@ -40,6 +41,11 @@ describe('ServiceWebshareComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  // `form` is protected on the IxFormHostForm base — reaching it keeps the failed-load test's
+  // assertion about `loadFailed` rather than about an invalid form.
+  const formOf = (component: ServiceWebshareComponent): FormGroup => {
+    return (component as unknown as { form: FormGroup }).form;
+  };
 
   const createComponent = createComponentFactory({
     component: ServiceWebshareComponent,
@@ -135,12 +141,16 @@ describe('ServiceWebshareComponent', () => {
     const errorHandler = spectator.inject(ErrorHandlerService);
     jest.spyOn(api, 'call').mockReturnValue(throwError(() => new Error('Failed to load config')));
 
-    spectator.component.ngOnInit();
-    spectator.detectChanges();
+    // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
+    // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
+    // so the assertion would hinge on double-init being harmless.
+    const failed = TestBed.createComponent(ServiceWebshareComponent);
+    failed.detectChanges();
 
     expect(errorHandler.showErrorModal).toHaveBeenCalled();
-    // The form is left on defaults the user never saw, so Save must stay blocked.
-    expect(spectator.component.canSubmit()).toBe(false);
+    // The form is left on defaults the user never saw — valid, but Save must stay blocked.
+    expect(formOf(failed.componentInstance).valid).toBe(true);
+    expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 
   it('handles error when saving config fails', () => {

@@ -79,7 +79,7 @@ export class DatasetQuotaAddFormComponent extends IxFormHostForm {
       : this.translate.instant(helptextQuotas.groups.objectQuota.tooltip);
   }
 
-  form = this.formBuilder.nonNullable.group({
+  protected form = this.formBuilder.nonNullable.group({
     data_quota: [null as number | null],
     obj_quota: [null as number | null],
     users: [[] as string[]],

@@ -1,12 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { TestBed } from '@angular/core/testing';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
@@ -38,6 +39,23 @@ describe('ServiceNfsComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  // `api.call` is already a jest mock, so `jest.spyOn` would hand back that same instance and the
+  // fall-through below would recurse — drive the mock directly instead, failing one method and
+  // delegating every other call to the stubs registered above.
+  const failApiCall = (apiService: ApiService, method: string): void => {
+    const call = apiService.call as unknown as jest.Mock<Observable<unknown>, [string, unknown?]>;
+    const respond = call.getMockImplementation() as (m: string, p?: unknown) => Observable<unknown>;
+    call.mockImplementation((calledMethod, params) => (
+      calledMethod === method
+        ? throwError(() => new Error('Failed to load config'))
+        : respond(calledMethod, params)
+    ));
+  };
+  // `form` is protected on the IxFormHostForm base — reaching it keeps the failed-load test's
+  // assertion about `loadFailed` rather than about unfilled required fields.
+  const formOf = (component: ServiceNfsComponent): FormGroup => {
+    return (component as unknown as { form: FormGroup }).form;
+  };
 
   const createComponent = createRoutingFactory({
     component: ServiceNfsComponent,
@@ -107,15 +125,22 @@ describe('ServiceNfsComponent', () => {
 
     const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
       .mockReturnValue(of(true));
-    jest.spyOn(api, 'call').mockReturnValue(throwError(() => new Error('Failed to load config')));
+    // The initial load is a forkJoin, so failing any one leg fails it. `directoryservices.status`
+    // is the leg the template doesn't also subscribe to — failing `nfs.config` would additionally
+    // break the `ipChoices$` async pipe, which is a different failure.
+    failApiCall(api, 'directoryservices.status');
 
-    spectator.component.ngOnInit();
-    spectator.detectChanges();
+    // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
+    // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
+    // so the assertion would hinge on double-init being harmless.
+    const failed = TestBed.createComponent(ServiceNfsComponent);
+    failed.detectChanges();
 
     expect(showErrorModal).toHaveBeenCalled();
-    // The form keeps the values loaded above, so it is still valid — only `loadFailed`
-    // (fed to `<ix-form>`'s extraDisabled) keeps Save blocked.
-    expect(spectator.component.canSubmit()).toBe(false);
+    // The form's defaults are valid, so `loadFailed` (fed to `<ix-form>`'s extraDisabled) is the
+    // only thing that can be blocking Save.
+    expect(formOf(failed.componentInstance).valid).toBe(true);
+    expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 
   it('shows current settings for NFS service when form is opened', async () => {

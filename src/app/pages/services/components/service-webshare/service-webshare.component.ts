@@ -19,8 +19,22 @@ import {
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
+/**
+ * Built out here rather than inline in the component so {@link WebShareFormValue} can be derived
+ * from it while the component's own `form` stays `protected`.
+ */
+// The inferred FormGroup IS the contract the value-shape alias below reads; an explicit return
+// type would just restate every control.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createWebshareForm(fb: NonNullableFormBuilder) {
+  return fb.group({
+    search: [false],
+    passkey: [WebSharePasskey.Disabled, Validators.required],
+  });
+}
+
 /** The form's own value shape rather than `WebShareConfigUpdate`, which `search` can drift from. */
-type WebShareFormValue = ReturnType<ServiceWebshareComponent['form']['getRawValue']>;
+type WebShareFormValue = ReturnType<ReturnType<typeof createWebshareForm>['getRawValue']>;
 
 @Component({
   selector: 'ix-service-webshare',
@@ -38,7 +52,7 @@ type WebShareFormValue = ReturnType<ServiceWebshareComponent['form']['getRawValu
     TranslateModule,
   ],
 })
-export class ServiceWebshareComponent extends IxFormHostForm implements OnInit {
+export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFormValue> implements OnInit {
   readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
 
   private api = inject(ApiService);
@@ -46,10 +60,7 @@ export class ServiceWebshareComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
   private truenasConnectService = inject(TruenasConnectService);
 
-  readonly form = this.fb.group({
-    search: [false],
-    passkey: [WebSharePasskey.Disabled, Validators.required],
-  });
+  protected readonly form = createWebshareForm(this.fb);
 
   readonly helptext = helptextServiceWebshare;
   readonly passkeyOptions = mapToOptions(webSharePasskeyLabels, this.translate);

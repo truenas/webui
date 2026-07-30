@@ -16,10 +16,43 @@ import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-vali
 import { ApiService } from 'app/modules/websocket/api.service';
 
 /**
+ * Built out here rather than inline in the component so {@link SnmpFormValue} can be derived from
+ * it while the component's own `form` stays `protected`.
+ */
+// The inferred FormGroup IS the contract the value-shape alias below reads; an explicit return
+// type would just restate every control.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createSnmpForm(fb: FormBuilder, validation: IxValidatorsService) {
+  return fb.group({
+    location: [''],
+    contact: ['', emailValidator()],
+    community: ['', Validators.pattern(/^[\w_\-.\s]*$/)],
+
+    v3: [false],
+    v3_username: [''],
+    v3_authtype: [''],
+    v3_password: ['', [
+      Validators.minLength(8),
+      validation.validateOnCondition(
+        // Read off the sibling control rather than the component, so the group can be built
+        // outside it.
+        (control) => Boolean(control.parent?.get('v3')?.value),
+        Validators.required,
+      ),
+    ]],
+    v3_privproto: [''],
+    v3_privpassphrase: ['', Validators.minLength(8)],
+
+    options: [''],
+    zilstat: [false],
+  });
+}
+
+/**
  * The form's own value shape, which is NOT `SnmpConfigUpdate`: the v3 controls are blanked (and
  * `v3_privproto` nulled) for the API in {@link ServiceSnmpComponent.handleSubmit}.
  */
-type SnmpFormValue = ReturnType<ServiceSnmpComponent['form']['getRawValue']>;
+type SnmpFormValue = ReturnType<ReturnType<typeof createSnmpForm>['getRawValue']>;
 
 @Component({
   selector: 'ix-service-snmp',
@@ -37,7 +70,7 @@ type SnmpFormValue = ReturnType<ServiceSnmpComponent['form']['getRawValue']>;
     TranslateModule,
   ],
 })
-export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
+export class ServiceSnmpComponent extends IxFormHostForm<boolean, SnmpFormValue> implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private validation = inject(IxValidatorsService);
@@ -46,27 +79,7 @@ export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
   readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly InputType = InputType;
 
-  form = this.fb.group({
-    location: [''],
-    contact: ['', emailValidator()],
-    community: ['', Validators.pattern(/^[\w_\-.\s]*$/)],
-
-    v3: [false],
-    v3_username: [''],
-    v3_authtype: [''],
-    v3_password: ['', [
-      Validators.minLength(8),
-      this.validation.validateOnCondition(
-        () => this.isV3SupportEnabled,
-        Validators.required,
-      ),
-    ]],
-    v3_privproto: [''],
-    v3_privpassphrase: ['', Validators.minLength(8)],
-
-    options: [''],
-    zilstat: [false],
-  });
+  protected readonly form = createSnmpForm(this.fb, this.validation);
 
   readonly tooltips = {
     location: helptextServiceSnmp.locationTooltip,
@@ -84,7 +97,7 @@ export class ServiceSnmpComponent extends IxFormHostForm implements OnInit {
   readonly authtypeOptions = helptextServiceSnmp.v3.authTypeOptions;
   readonly privprotoOptions = helptextServiceSnmp.v3.privprotoOptions;
 
-  get isV3SupportEnabled(): boolean {
+  protected get isV3SupportEnabled(): boolean {
     return this.form?.value?.v3 || false;
   }
 

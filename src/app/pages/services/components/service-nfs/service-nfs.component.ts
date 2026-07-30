@@ -36,10 +36,37 @@ import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 /**
+ * Built out here rather than inline in the component so {@link NfsFormValue} can be derived from
+ * it while the component's own `form` stays `protected`.
+ */
+// The inferred FormGroup IS the contract the value-shape alias below reads; an explicit return
+// type would just restate every control.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createNfsForm(fb: NonNullableFormBuilder, validatorsService: IxValidatorsService) {
+  return fb.group({
+    allow_nonroot: [false],
+    bindip: [[] as string[]],
+    servers_auto: [true],
+    servers: [null as number | null, [rangeValidator(1, 256), validatorsService.validateOnCondition(
+      (control) => !control.parent?.get('servers_auto')?.value,
+      Validators.required,
+    )]],
+    protocols: [[NfsProtocol.V3], Validators.required],
+    v4_domain: [''],
+    v4_krb: [false],
+    mountd_port: [null as number | null, portRangeValidator()],
+    rpcstatd_port: [null as number | null, portRangeValidator()],
+    rpclockd_port: [null as number | null, portRangeValidator()],
+    userd_manage_gids: [false],
+    rdma: [false],
+  });
+}
+
+/**
  * The form's own value shape, which is NOT `NfsConfig`: `servers_auto` is a UI-only control
  * (mapped from `managed_nfsd` and dropped in {@link ServiceNfsComponent.handleSubmit}).
  */
-type NfsFormValue = ReturnType<ServiceNfsComponent['form']['getRawValue']>;
+type NfsFormValue = ReturnType<ReturnType<typeof createNfsForm>['getRawValue']>;
 
 @Component({
   selector: 'ix-service-nfs',
@@ -61,7 +88,7 @@ type NfsFormValue = ReturnType<ServiceNfsComponent['form']['getRawValue']>;
     TranslateModule,
   ],
 })
-export class ServiceNfsComponent extends IxFormHostForm implements OnInit {
+export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> implements OnInit {
   private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private store$ = inject<Store<AppState>>(Store);
@@ -76,23 +103,7 @@ export class ServiceNfsComponent extends IxFormHostForm implements OnInit {
   protected readonly hasNfsStatus = signal(false);
   protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
 
-  readonly form = this.fb.group({
-    allow_nonroot: [false],
-    bindip: [[] as string[]],
-    servers_auto: [true],
-    servers: [null as number | null, [rangeValidator(1, 256), this.validatorsService.validateOnCondition(
-      (control) => !control.parent?.get('servers_auto')?.value,
-      Validators.required,
-    )]],
-    protocols: [[NfsProtocol.V3], Validators.required],
-    v4_domain: [''],
-    v4_krb: [false],
-    mountd_port: [null as number | null, portRangeValidator()],
-    rpcstatd_port: [null as number | null, portRangeValidator()],
-    rpclockd_port: [null as number | null, portRangeValidator()],
-    userd_manage_gids: [false],
-    rdma: [false],
-  });
+  protected readonly form = createNfsForm(this.fb, this.validatorsService);
 
   readonly tooltips = {
     allow_nonroot: helptextServiceNfs.allowNonrootTooltip,

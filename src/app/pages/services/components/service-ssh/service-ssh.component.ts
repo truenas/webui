@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
@@ -17,17 +16,40 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
 import {
-  advancedModeFooterAction, SidePanelFooterAction,
-} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+  advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
+
+/**
+ * Built out here rather than inline in the component so {@link SshFormValue} can be derived from
+ * it while the component's own `form` stays `protected`.
+ */
+// The inferred FormGroup IS the contract the value-shape alias below reads; an explicit return
+// type would just restate every control.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createSshForm(fb: NonNullableFormBuilder) {
+  return fb.group({
+    tcpport: [null as number | null],
+    password_login_groups: [[] as string[]],
+    passwordauth: [false],
+    kerberosauth: [false],
+    tcpfwd: [false],
+    bindiface: [[] as string[]],
+    compression: [false],
+    sftp_log_level: [null as SshSftpLogLevel | null],
+    sftp_log_facility: [null as SshSftpLogFacility | null],
+    weak_ciphers: [[] as SshWeakCipher[]],
+    options: [''],
+  });
+}
 
 /**
  * The form's own value shape, which is NOT `SshConfigUpdate`: `tcpport` and the two SFTP log
  * controls are nullable here, and `sftp_log_level` is coerced to `''` for the API in
  * {@link ServiceSshComponent.handleSubmit}.
  */
-type SshFormValue = ReturnType<ServiceSshComponent['form']['getRawValue']>;
+type SshFormValue = ReturnType<ReturnType<typeof createSshForm>['getRawValue']>;
 
 @Component({
   selector: 'ix-service-ssh',
@@ -46,7 +68,7 @@ type SshFormValue = ReturnType<ServiceSshComponent['form']['getRawValue']>;
     TranslateModule,
   ],
 })
-export class ServiceSshComponent extends IxFormHostForm implements OnInit {
+export class ServiceSshComponent extends IxFormHostForm<boolean, SshFormValue> implements OnInit {
   private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
@@ -56,19 +78,7 @@ export class ServiceSshComponent extends IxFormHostForm implements OnInit {
 
   protected readonly isAdvancedMode = signal(false);
 
-  form = this.fb.group({
-    tcpport: [null as number | null],
-    password_login_groups: [[] as string[]],
-    passwordauth: [false],
-    kerberosauth: [false],
-    tcpfwd: [false],
-    bindiface: [[] as string[]],
-    compression: [false],
-    sftp_log_level: [null as SshSftpLogLevel | null],
-    sftp_log_facility: [null as SshSftpLogFacility | null],
-    weak_ciphers: [[] as SshWeakCipher[]],
-    options: [''],
-  });
+  protected readonly form = createSshForm(this.fb);
 
   readonly tooltips = {
     tcpport: helptextServiceSsh.tcpportTooltip,
@@ -93,8 +103,7 @@ export class ServiceSshComponent extends IxFormHostForm implements OnInit {
 
   /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
   private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
-    advanced: T('Advanced Settings'),
-    basic: T('Basic Settings'),
+    labels: advancedModeSettingLabels,
   });
 
   get footerActions(): SidePanelFooterAction[] {

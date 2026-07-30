@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { Observable, of, throwError } from 'rxjs';
+import { NEVER, Observable, of, throwError } from 'rxjs';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -14,15 +14,19 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-class TestFormHostComponent extends IxFormHostForm {
+class TestFormHostComponent extends IxFormHostForm<boolean, { name: string }> {
   private fb = inject(FormBuilder);
 
-  readonly form = this.fb.nonNullable.group({
+  protected readonly form = this.fb.nonNullable.group({
     name: [''],
   });
 
-  load(config$: Observable<{ name: string }>): void {
-    this.loadFormConfig(config$, (config) => this.form.patchValue(config));
+  load(config$: Observable<{ name: string }>, patch?: (config: { name: string }) => void): void {
+    this.loadFormConfig(config$, patch ?? ((config) => this.form.patchValue(config)));
+  }
+
+  readFormValue(): { name: string } {
+    return this.form.getRawValue();
   }
 
   readSnapshot(): Partial<{ name: string }> | null {
@@ -77,7 +81,7 @@ describe('IxFormHostForm', () => {
     it('patches the form and captures the snapshot the loaded values produce', () => {
       spectator.component.load(of({ name: 'loaded' }));
 
-      expect(spectator.component.form.getRawValue()).toEqual({ name: 'loaded' });
+      expect(spectator.component.readFormValue()).toEqual({ name: 'loaded' });
       expect(spectator.component.readSnapshot()).toEqual({ name: 'loaded' });
       expect(spectator.component.isLoading()).toBe(false);
       expect(spectator.component.hasLoadFailed()).toBe(false);
@@ -91,6 +95,37 @@ describe('IxFormHostForm', () => {
       expect(spectator.component.isLoading()).toBe(false);
       // No snapshot, so `<ix-form>` never treats the untouched defaults as loaded values.
       expect(spectator.component.readSnapshot()).toBeNull();
+    });
+
+    it('reports the error and latches loadFailed when patching the loaded config throws', () => {
+      spectator.component.load(of({ name: 'loaded' }), () => {
+        throw new Error('Bad config');
+      });
+
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+      expect(spectator.component.hasLoadFailed()).toBe(true);
+      expect(spectator.component.isLoading()).toBe(false);
+      expect(spectator.component.readSnapshot()).toBeNull();
+    });
+
+    it('clears a latched failure when the load is retried', () => {
+      spectator.component.load(throwError(() => new Error('Failed to load config')));
+      expect(spectator.component.hasLoadFailed()).toBe(true);
+
+      spectator.component.load(of({ name: 'loaded' }));
+
+      expect(spectator.component.hasLoadFailed()).toBe(false);
+      expect(spectator.component.readSnapshot()).toEqual({ name: 'loaded' });
+    });
+
+    it('drops the previous snapshot while a reload is in flight', () => {
+      spectator.component.load(of({ name: 'loaded' }));
+      expect(spectator.component.readSnapshot()).toEqual({ name: 'loaded' });
+
+      spectator.component.load(NEVER);
+
+      expect(spectator.component.readSnapshot()).toBeNull();
+      expect(spectator.component.isLoading()).toBe(true);
     });
   });
 });
