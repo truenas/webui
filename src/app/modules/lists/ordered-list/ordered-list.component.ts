@@ -62,12 +62,12 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   readonly minHeight = input('100px');
   readonly maxHeight = input('300px');
 
-  items: OrderedOption[];
+  protected items: OrderedOption[];
 
-  isDisabled = false;
+  protected isDisabled = false;
   value: BaseOptionValueType[];
 
-  get orderedValue(): BaseOptionValueType[] {
+  private get orderedValue(): BaseOptionValueType[] {
     return this.items.filter((item) => this.value.includes(item.value)).map((item) => item.value);
   }
 
@@ -96,11 +96,11 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
     this.cdr.markForCheck();
   }
 
-  isChecked(value: BaseOptionValueType): boolean {
+  protected isChecked(value: BaseOptionValueType): boolean {
     return this.value.includes(value);
   }
 
-  onCheckboxChanged(value: BaseOptionValueType): void {
+  protected onCheckboxChanged(value: BaseOptionValueType): void {
     if (this.isChecked(value)) {
       this.value = this.value.filter((item) => item !== value);
     } else {
@@ -121,7 +121,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
     });
   }
 
-  drop(event: CdkDragDrop<string[]>): void {
+  protected drop(event: CdkDragDrop<string[]>): void {
     moveItemInArray(this.items, event.previousIndex, event.currentIndex);
     this.onChange(this.orderedValue);
   }

@@ -306,28 +306,37 @@ See the full list in: `node_modules/@truenas/ui-components/assets/tn-icons/sprit
 ## Known Library Gaps
 
 Migration work under epic NAS-141021 turned up several places where
-`@truenas/ui-components` had to be worked around. The four below were **fixed
-upstream** on branch `fix-list-item-slots-and-full-width`; this app now uses the
-library APIs directly and carries no `::ng-deep` workaround for them.
+`@truenas/ui-components` had to be worked around.
 
-**This requires a `@truenas/ui-components` version that includes that branch.** Until
-it is released and the dependency is bumped, run against a local build of the library
-(see "Local library builds" below).
+### Fixed upstream
+
+The four gaps below were fixed in the library and **require
+`@truenas/ui-components` >= 0.4.7** (the version this app pins). This app now uses the
+library APIs directly and carries no `::ng-deep` workaround for them.
 
 | # | Library gap | Fix | Now used by |
 |---|---|---|---|
 | 1 | `tn-list-item`'s `[tnListIcon]` / `[tnListAvatar]` / `[tnListItemLine]` / `[tnListItemTrailing]` slots never rendered: the flags gating them were set from a `querySelector` in `ngAfterContentInit`, which cannot see content whose slot has not rendered yet. | Signal `contentChildren` queries | `dual-listbox`, `ordered-list`, `network-configuration-card` |
-| 2 | No dense / wrapping `tn-list-item` variant — fixed at 48px rows and single-line ellipsis. | `[dense]` and `[wrap]` inputs | `dual-listbox` (`[wrap]`) |
+| 2 | No dense / wrapping `tn-list-item` variant — fixed at 48px rows and single-line ellipsis. | `[dense]` and `[wrap]` inputs | `network-configuration-card` (`[dense]`), `dual-listbox` (`[wrap]`) |
 | 3 | No full-width `tn-button`. | `[fullWidth]` input | `ix-oauth-button`, which re-exposes its own `fullWidth` |
 | 4 | No full-width `tn-slide-toggle` — `inline-flex`, so it shrink-wraps its label and track. | `[fullWidth]` input | `ordered-list` |
 
-Still outstanding: `TnMenuHarness` exposes no per-item harness (and so no `getTestId()`),
-which is why `copy-button.component.spec.ts` reads `data-test` off `.tn-menu-item`
-directly.
+### Still outstanding
+
+| # | Library gap | Current workaround |
+|---|---|---|
+| 5 | No control over `tn-list-item`'s leading-slot gap. Three consumers now reach through `::ng-deep .tn-list-item__leading` to reset the library's standard 16px `margin-right` to a different value (`dual-listbox` 5px, `ordered-list` 2px, `network-configuration-card` 0). A `[leadingGap]` input — or having `[dense]` tighten the leading slot too — would remove all three. | `::ng-deep .tn-list-item__leading` per consumer |
+| 6 | No flat / embedded `tn-list` variant. `tn-list` ships a standalone card look (own background, rounded corners, vertical padding), so a list rendered inside an already-bordered container has to flatten it back out. | `ordered-list.component.scss` resets `background` / `border-radius` / `padding` on `tn-list` |
+| 7 | `TnMenuHarness` exposes no per-item harness, and so no `getTestId()`. | `copy-button.component.spec.ts` reads `data-test` off `.tn-menu-item` directly |
+| 8 | No `TnListHarness` / `TnListItemHarness` at all as of 0.4.7, so a spec cannot assert a `tn-list-item` slot rendered without selecting on the library's internal classes. | `dual-listbox.component.spec.ts` queries `.tn-list-item__leading` |
+
+Gaps 5 and 6 are the same signal that produced gaps 1–4: without them, every new
+`tn-list-item` consumer adds another `::ng-deep` override.
 
 ### Local library builds
 
-To run this app against an unreleased library build:
+Unrelated to the gaps above, but useful whenever a library fix has to be tried before
+it is published. To run this app against an unreleased library build:
 
 ```bash
 cd ../truenas-ui-components && yarn build

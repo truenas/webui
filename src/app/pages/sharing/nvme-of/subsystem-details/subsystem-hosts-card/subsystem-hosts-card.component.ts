@@ -5,7 +5,6 @@ import {
   TnBannerComponent, TnCardComponent, TnCardFooterActionsDirective, TnIconButtonComponent, TnIconComponent,
   TnTooltipDirective,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -15,6 +14,7 @@ import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfSubsystemDetails, NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -56,10 +56,8 @@ export class SubsystemHostsCardComponent {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
-  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
   protected hostTestIdSlug(host: NvmeOfHost): string {
-    return kebabCase(host.hostnqn);
+    return normalizeTestIdSegment(host.hostnqn);
   }
 
   protected hostAdded(host: NvmeOfHost): void {

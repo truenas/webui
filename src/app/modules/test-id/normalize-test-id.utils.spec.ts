@@ -37,6 +37,13 @@ describe('normalizeTestId', () => {
     expect(normalizeTestId(['device', null, undefined, '', 'add'])).toEqual(['device', 'add']);
   });
 
+  // Faithful `[ixTest]` parity: its filter is falsy-based, so a numeric 0 segment is
+  // dropped along with null/undefined/''. Pinned here so it is not "fixed" later —
+  // changing it would shift every id built from a zero-valued segment.
+  it('drops a numeric 0 segment, the way [ixTest] does', () => {
+    expect(normalizeTestId(['port', 0, 'edit'])).toEqual(['port', 'edit']);
+  });
+
   it('returns an empty array when there is nothing to normalize', () => {
     expect(normalizeTestId(undefined)).toEqual([]);
   });

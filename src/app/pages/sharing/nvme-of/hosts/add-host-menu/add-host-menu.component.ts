@@ -6,11 +6,12 @@ import {
   TnButtonComponent, TnDialog, TnDividerComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
   tnIconMarker,
 } from '@truenas/ui-components';
-import { kebabCase, sortBy } from 'lodash-es';
+import { sortBy } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -54,10 +55,8 @@ export class AddHostMenuComponent {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
-  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
   protected hostTestIdSlug(host: NvmeOfHost): string {
-    return kebabCase(host.hostnqn);
+    return normalizeTestIdSegment(host.hostnqn);
   }
 
   protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
