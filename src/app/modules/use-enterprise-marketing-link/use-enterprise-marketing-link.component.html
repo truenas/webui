@@ -3,9 +3,9 @@
 
 @if (href) {
   <a
-    ixTest="use-enterprise-marketing-link"
     target="_blank"
     rel="noopener noreferrer"
+    [tnTestId]="marketingLinkTestId"
     [href]="href"
   >
     <span class="text-above">
@@ -17,7 +17,7 @@
     </span>
   </a>
 } @else {
-  <div class="no-link" ixTest="use-enterprise-marketing-link">
+  <div class="no-link" [tnTestId]="marketingLinkTestId">
     <span class="text-above">
       {{ message.text | translate }}
     </span>

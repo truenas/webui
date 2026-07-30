@@ -1,8 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Spectator } from '@ngneat/spectator';
-import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -93,7 +92,7 @@ describe('DiskBulkEditComponent', () => {
     expect(await (await getSelect('hddstandby')).getDisplayText()).toBe('Select an option');
     expect(await (await getSelect('advpowermgmt')).getDisplayText()).toBe('Select an option');
 
-    const diskNames = spectator.queryAll('.disk-name').map((el) => el.textContent.trim());
+    const diskNames = spectator.queryAll('[role="listitem"]').map((el) => el.textContent.trim());
     expect(diskNames).toEqual(['sda', 'sdc']);
   });
 
@@ -160,7 +159,7 @@ describe('DiskBulkEditComponent', () => {
     expect(dialogService.error).toHaveBeenCalled();
   });
 
-  it('closes the slidein and handles validation errors on exception', async () => {
+  it('closes the slide-in and handles validation errors on exception', async () => {
     const errorHandler = spectator.inject(FormErrorHandlerService);
     const jobSpy = jest.spyOn(api, 'job');
 
@@ -182,5 +181,79 @@ describe('DiskBulkEditComponent', () => {
     expect(api.job).toHaveBeenCalledWith('core.bulk', expect.anything());
     expect(slideInRef.close).toHaveBeenCalled();
     expect(errorHandler.handleValidationErrors).toHaveBeenCalled();
+  });
+});
+
+// The only production caller is disk-list, which opens this form through FormSidePanelService
+// — a host that provides no SlideInRef. The suite above covers the legacy SlideIn host; this
+// one covers the path the page actually takes.
+describe('DiskBulkEditComponent - side panel host (no SlideInRef)', () => {
+  let spectator: Spectator<DiskBulkEditComponent>;
+  let loader: HarnessLoader;
+  let api: ApiService;
+
+  const dataDisk1 = {
+    name: 'sda',
+    identifier: '{serial}VB76b9dd9d-4e5d8cf2',
+    hddstandby: DiskStandby.AlwaysOn,
+    advpowermgmt: DiskPowerLevel.Disabled,
+  } as Disk;
+  const dataDisk2 = {
+    name: 'sdc',
+    identifier: '{serial}VB5a315293-ea077d3d',
+    hddstandby: DiskStandby.Minutes10,
+    advpowermgmt: DiskPowerLevel.Level64,
+  } as Disk;
+
+  const createComponent = createComponentFactory({
+    component: DiskBulkEditComponent,
+    imports: [ReactiveFormsModule],
+    providers: [
+      mockAuth(),
+      { provide: SlideInRef, useValue: null },
+      mockProvider(SnackbarService),
+      mockProvider(DialogService),
+      mockApi([
+        mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
+      ]),
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent({ props: { disksToEdit: [dataDisk1, dataDisk2] } });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    api = spectator.inject(ApiService);
+    await spectator.fixture.whenStable();
+  });
+
+  it('renders no in-form Save button, leaving it to the panel footer', async () => {
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Save' }))).toBeNull();
+  });
+
+  it('resolves disks from the disksToEdit input and emits closed when saved', async () => {
+    const closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
+
+    const diskNames = spectator.queryAll('[role="listitem"]').map((el) => el.textContent.trim());
+    expect(diskNames).toEqual(['sda', 'sdc']);
+
+    const hddstandby = await loader.getHarness(
+      TnSelectHarness.with({ selector: '[formControlName="hddstandby"]' }),
+    );
+    await hddstandby.selectOption('10');
+
+    const advpowermgmt = await loader.getHarness(
+      TnSelectHarness.with({ selector: '[formControlName="advpowermgmt"]' }),
+    );
+    await advpowermgmt.selectOption('Level 64 - Intermediate power usage with Standby');
+
+    expect(spectator.component.canSubmit()).toBe(true);
+    spectator.component.submit();
+
+    expect(api.job).toHaveBeenCalledWith('core.bulk', expect.anything());
+    expect(closedSpy).toHaveBeenCalledWith([
+      expect.objectContaining({ identifier: '{serial}VB76b9dd9d-4e5d8cf2' }),
+      expect.objectContaining({ identifier: '{serial}VB5a315293-ea077d3d' }),
+    ]);
   });
 });

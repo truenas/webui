@@ -65,7 +65,7 @@ export class DiskBulkEditComponent extends SidePanelForm<DiskFormResponse> imple
   readonly disksToEdit = input<Disk[]>([]);
 
   private diskIds: string[] = [];
-  readonly isLoading = signal(false);
+  protected readonly isLoading = signal(false);
   protected readonly form = this.fb.group({
     disknames: [[] as string[]],
     hddstandby: [null as DiskStandby | null],

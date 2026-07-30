@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, computed, effect, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnTestIdDirective } from '@truenas/ui-components';
 import { MarketingMessage, getMarketingMessages } from 'app/constants/marketing-messages.constant';
 import { hashMessage } from 'app/helpers/hash-message';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
 const lastShownDateKey = 'marketingMessageLastShownDate';
@@ -14,12 +14,20 @@ const lastMessageHashKey = 'marketingMessageLastHash';
   styleUrls: ['./use-enterprise-marketing-link.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })
 export class UseEnterpriseMarketingLinkComponent {
   private tnConnect = inject(TruenasConnectService);
+
+  /**
+   * Written verbatim (no `tnTestIdType`) on both the linked and non-linked branches, so the
+   * id stays stable across TrueNAS Connect tiers. An element-type prefix would resolve to
+   * `link-…` on the `<a>` but `text-…` on the `<div>`, silently breaking selectors when the
+   * message has no href.
+   */
+  protected readonly marketingLinkTestId = 'link-use-enterprise-marketing-link';
 
   // Snapshot the rotation state once at construction so message selection stays a
   // pure computed. The pool can still change when TrueNAS Connect config resolves

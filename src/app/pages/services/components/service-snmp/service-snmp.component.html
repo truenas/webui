@@ -56,7 +56,14 @@
           [required]="true"
           [tooltip]="tooltips.v3_password | translate"
         >
-          <tn-input formControlName="v3_password" [inputType]="InputType.Password"></tn-input>
+          <!-- Explicit testId: tn-input derives the password-toggle id from the raw
+               `testId` input, so without it both password fields on this form collide
+               on a single `button-toggle-password`. -->
+          <tn-input
+            testId="v3_password"
+            formControlName="v3_password"
+            [inputType]="InputType.Password"
+          ></tn-input>
         </tn-form-field>
 
         <tn-form-field
@@ -70,7 +77,11 @@
           [label]="'Privacy Passphrase' | translate"
           [tooltip]="tooltips.v3_privpassphrase | translate"
         >
-          <tn-input formControlName="v3_privpassphrase" [inputType]="InputType.Password"></tn-input>
+          <tn-input
+            testId="v3_privpassphrase"
+            formControlName="v3_privpassphrase"
+            [inputType]="InputType.Password"
+          ></tn-input>
         </tn-form-field>
       }
     </tn-form-section>

@@ -36,6 +36,8 @@
     [icon]="emptyService.iconForType(emptyType())"
     [title]="emptyConfig.title | translate"
     [description]="emptyConfig.message ? (emptyConfig.message | translate) : undefined"
+    [actionText]="emptyActionText()"
+    (onAction)="onEmptyAction()"
   ></tn-empty>
 } @else {
   <tn-table
@@ -115,8 +117,8 @@
           <dl class="table-hidden-columns">
             @for (detail of details; track detail.title) {
               <div>
-                <b>{{ detail.title | translate }}:</b>
-                <span>{{ detail.value }}</span>
+                <dt>{{ detail.title | translate }}:</dt>
+                <dd>{{ detail.value }}</dd>
               </div>
             }
           </dl>
@@ -126,7 +128,7 @@
 
       <div class="table-details-row-actions">
         <tn-button
-          [testId]="[disk.name, 'edit']"
+          [testId]="[diskTag(disk), 'edit']"
           [icon]="editIcon"
           [label]="'Edit' | translate"
           (onClick)="edit([disk])"
@@ -135,7 +137,7 @@
         @if (isUnusedDisk(disk)) {
           <tn-button
             *ixRequiresRoles="requiredRoles"
-            [testId]="[disk.name, 'wipe']"
+            [testId]="[diskTag(disk), 'wipe']"
             [icon]="wipeIcon"
             [label]="'Wipe' | translate"
             (onClick)="wipe(disk)"
@@ -145,7 +147,7 @@
         @if (isSedLocked(disk)) {
           <tn-button
             *ixRequiresRoles="requiredRoles"
-            [testId]="[disk.name, 'unlock']"
+            [testId]="[diskTag(disk), 'unlock']"
             [icon]="unlockIcon"
             [label]="'Unlock' | translate"
             (onClick)="unlock(disk)"
@@ -153,7 +155,7 @@
 
           <tn-button
             *ixRequiresRoles="requiredRoles"
-            [testId]="[disk.name, 'reset-sed']"
+            [testId]="[diskTag(disk), 'reset-sed']"
             [icon]="resetSedIcon"
             [label]="'SED Reset' | translate"
             (onClick)="resetSed(disk)"

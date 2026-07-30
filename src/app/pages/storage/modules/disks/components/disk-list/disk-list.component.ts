@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -17,6 +17,7 @@ import {
   TnHeaderCellDefDirective,
   tnIconMarker,
 } from '@truenas/ui-components';
+import { kebabCase } from 'lodash-es';
 import {
   filter, forkJoin, map, Subject, switchMap, take, tap,
 } from 'rxjs';
@@ -97,7 +98,7 @@ export class DiskListComponent implements OnInit {
   protected readonly unlockIcon = tnIconMarker('lock-open-variant', 'mdi');
   protected readonly resetSedIcon = tnIconMarker('restart', 'mdi');
 
-  protected diskUpdates$ = new Subject<DiskFormResponse[number]>();
+  private diskUpdates$ = new Subject<DiskFormResponse[number]>();
 
   protected readonly searchQuery = signal('');
   protected readonly selectedDisks = signal<Disk[]>([]);
@@ -138,10 +139,7 @@ export class DiskListComponent implements OnInit {
       getValue: (disk) => this.formatSedStatus(disk),
       hidden: true,
     }),
-  ], {
-    uniqueRowTag: (row) => `disk-${row.name}`,
-    ariaLabels: (row) => [row.name, this.translate.instant('Disk')],
-  }));
+  ]));
 
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
 
@@ -190,18 +188,31 @@ export class DiskListComponent implements OnInit {
     }),
   );
 
-  readonly dataProvider = new AsyncDataProvider<Disk>(this.request$);
+  protected readonly dataProvider = new AsyncDataProvider<Disk>(this.request$);
 
   protected readonly currentPage = dataProviderRows(this.dataProvider);
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
 
   protected readonly currentPageCount = computed(() => this.currentPage().length);
 
-  protected readonly emptyType = computed(() => {
-    if (this.isLoading()) {
-      return EmptyType.Loading;
+  /**
+   * Read from the provider rather than derived locally, so a failed `disk.query`
+   * still surfaces as {@link EmptyType.Errors} instead of "no records".
+   */
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$, {
+    initialValue: EmptyType.Loading,
+  });
+
+  /** Recovery action for the current empty state: clear the search, or retry the failed load. */
+  protected readonly emptyActionText = computed(() => {
+    switch (this.emptyType()) {
+      case EmptyType.NoSearchResults:
+        return this.translate.instant('Reset');
+      case EmptyType.Errors:
+        return this.translate.instant('Retry');
+      default:
+        return undefined;
     }
-    return this.searchQuery() ? EmptyType.NoSearchResults : EmptyType.NoPageData;
   });
 
   protected readonly editSelectedLabel = computed(() => {
@@ -236,6 +247,26 @@ export class DiskListComponent implements OnInit {
 
   protected trackByIdentifier(index: number, disk: Disk): string {
     return disk.identifier;
+  }
+
+  /** Clears the search (no results) or reloads (error), matching the empty state's action. */
+  protected onEmptyAction(): void {
+    if (this.emptyType() === EmptyType.NoSearchResults) {
+      this.searchQuery.set('');
+      this.onListFiltered('');
+      return;
+    }
+    this.dataProvider.load();
+  }
+
+  /**
+   * The library's `kebabTestSegment` splits only on case boundaries and non-alphanumerics,
+   * whereas lodash `kebabCase` also splits letter↔digit boundaries. Pre-kebabbing the disk
+   * name keeps digit-bearing names (`nvme0n1`, `ada0`, `da12`) resolving to the same
+   * `data-test` they had before the migration; it is idempotent through `kebabTestSegment`.
+   */
+  protected diskTag(disk: Disk): string {
+    return kebabCase(disk.name);
   }
 
   protected formatSize(disk: Disk): string {

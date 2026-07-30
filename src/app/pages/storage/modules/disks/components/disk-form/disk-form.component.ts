@@ -86,7 +86,7 @@ export class DiskFormComponent extends SidePanelForm<DiskFormResponse> implement
     helptextDisks.advancedPowerManagementOptions,
   );
 
-  readonly isLoading = signal<boolean>(false);
+  protected readonly isLoading = signal<boolean>(false);
   private readonly existingDisk = signal<Disk | null>(null);
 
   private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
@@ -151,7 +151,14 @@ export class DiskFormComponent extends SidePanelForm<DiskFormResponse> implement
   }
 
   protected onSubmit(): void {
-    const diskId = this.existingDisk().identifier;
+    const disk = this.existingDisk();
+    if (!disk) {
+      // Neither host supplied a disk, so there is nothing to update. Bail out before going
+      // busy — the base's submit() handles a synchronous return without latching.
+      return;
+    }
+
+    const diskId = disk.identifier;
     const valuesDiskUpdate: DiskUpdate = this.prepareUpdate(this.form.value);
 
     this.isLoading.set(true);

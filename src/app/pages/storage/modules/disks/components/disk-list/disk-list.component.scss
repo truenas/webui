@@ -27,6 +27,15 @@
     display: flex;
     gap: 6px;
   }
+
+  dt {
+    font-weight: bold;
+  }
+
+  dd {
+    // Drop the UA default indent; the flex row above owns the spacing.
+    margin-inline-start: 0;
+  }
 }
 
 .table-details-row-actions {

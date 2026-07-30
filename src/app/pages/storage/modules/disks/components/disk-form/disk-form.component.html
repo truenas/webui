@@ -44,7 +44,13 @@
         [label]="'SED Password' | translate"
         [tooltip]="helptext.passwordTooltip | translate"
       >
-        <tn-input formControlName="passwd" [inputType]="InputType.Password"></tn-input>
+        <!-- Explicit testId: tn-input derives the password-toggle id from the raw
+             `testId` input, not from the control-name fallback. -->
+        <tn-input
+          testId="passwd"
+          formControlName="passwd"
+          [inputType]="InputType.Password"
+        ></tn-input>
       </tn-form-field>
 
       <tn-form-field>

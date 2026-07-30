@@ -32,8 +32,11 @@
     min-height: calc(48px * 1.2);
   }
 
-  // tn-list-item truncates its primary text to a single line, but marketing messages are sentences.
-  ::ng-deep .tn-list-item__primary-text {
+  // TEMP: tn-list-item truncates its primary text to a single line and exposes no wrap
+  // mode, but marketing messages are full sentences. Reaches into a private BEM class;
+  // remove once @truenas/ui-components ships a multiline/wrap mode on tn-list-item
+  // (library follow-up owed under Epic NAS-141021).
+  :host ::ng-deep .tn-list-item__primary-text {
     overflow: visible;
     text-overflow: clip;
     white-space: normal;

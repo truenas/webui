@@ -192,3 +192,80 @@ describe('DiskFormComponent', () => {
     });
   });
 });
+
+// disk-list opens this form through FormSidePanelService, a host that provides no SlideInRef
+// and drives submission from its own footer. The legacy SlideIn host is still live (vdevs'
+// disk-info-card), so both paths need coverage.
+describe('DiskFormComponent - side panel host (no SlideInRef)', () => {
+  let spectator: Spectator<DiskFormComponent>;
+  let loader: HarnessLoader;
+
+  const dataDisk = {
+    name: 'sdc',
+    serial: 'VB9fbb6dfe-9cf26570',
+    advpowermgmt: DiskPowerLevel.Level127,
+    description: 'Some disk description',
+    hddstandby: DiskStandby.Minutes10,
+    passwd: '',
+    devname: 'sdc',
+    identifier: '{serial}VB9fbb6dfe-9cf26570',
+  } as Disk;
+
+  const createComponent = createComponentFactory({
+    component: DiskFormComponent,
+    imports: [
+      ReactiveFormsModule,
+    ],
+    providers: [
+      { provide: SlideInRef, useValue: null },
+      mockProvider(DialogService),
+      mockProvider(SnackbarService),
+      mockApi([
+        mockCall('disk.update', dataDisk),
+      ]),
+      mockAuth(),
+      provideMockStore({
+        selectors: [{
+          selector: selectIsEnterprise,
+          value: false,
+        }],
+      }),
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent({ props: { diskToEdit: dataDisk } });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    await spectator.fixture.whenStable();
+  });
+
+  it('renders no in-form Save button, leaving it to the panel footer', async () => {
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Save' }))).toBeNull();
+  });
+
+  it('resolves the disk from the diskToEdit input and emits closed on save', async () => {
+    const closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
+
+    const nameInput = await loader.getHarness(
+      TnInputHarness.with({ selector: '[formControlName="name"]' }),
+    );
+    expect(await nameInput.getValue()).toBe('sdc');
+
+    const descriptionInput = await loader.getHarness(
+      TnInputHarness.with({ selector: '[formControlName="description"]' }),
+    );
+    await descriptionInput.setValue('New disk description');
+
+    expect(spectator.component.canSubmit()).toBe(true);
+    spectator.component.submit();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', [
+      '{serial}VB9fbb6dfe-9cf26570',
+      expect.objectContaining({ description: 'New disk description' }),
+    ]);
+    expect(closedSpy).toHaveBeenCalledWith([
+      expect.objectContaining({ identifier: '{serial}VB9fbb6dfe-9cf26570' }),
+    ]);
+  });
+});

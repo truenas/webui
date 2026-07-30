@@ -4,9 +4,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnDialog, TnTableHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnEmptyHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SedStatus } from 'app/enums/sed-status.enum';
@@ -237,30 +239,143 @@ describe('DiskListComponent', () => {
     });
   });
 
-  it('updates disks when edit form is saved', async () => {
+  it('reconciles the edited disk into the table while the reload is still in flight', async () => {
     const api = spectator.inject(ApiService);
     const formPanel = spectator.inject(FormSidePanelService);
-    const fakeDisk = fakeDisks[0];
 
-    const mockUpd: DiskFormResponse = [fakeDisk];
+    const mockUpd: DiskFormResponse = [{
+      identifier: 'identifier1',
+      description: 'Updated description',
+    }];
 
     jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.success(mockUpd));
 
     await table.toggleRowExpansion(0);
+
+    // Hold the post-save reload open so this observes the optimistic reconcile rather than
+    // the reloaded server rows — the 5-10s window production users actually see. With a
+    // synchronous mock the reload would overwrite it instantly and the assertion would
+    // pass on data that never went through diskUpdates$.
+    jest.spyOn(api, 'call').mockReturnValue(NEVER);
 
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
     expect(formPanel.open).toHaveBeenCalledWith(DiskFormComponent, {
       title: 'Edit Disk',
-      inputs: { diskToEdit: fakeDisk },
+      inputs: { diskToEdit: fakeDisks[0] },
     });
 
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    expect(api.call).toHaveBeenCalledWith('disk.query', expect.anything());
-    expect(api.call).toHaveBeenCalledWith('disk.details');
+    // setRows() hands the table fresh row objects, which drops the expansion state.
+    await table.toggleRowExpansion(0);
+
+    // `description` is a hidden column, so the reconciled value surfaces in the detail row.
+    expect(await table.getDetailRowContent(0)).toContain('Updated description');
+  });
+
+  it('sorts by the clicked column', async () => {
+    await table.clickSortHeader('name');
+
+    expect(await table.getSortDirection('name')).toBe('ascending');
+    expect((await table.getAllRowTexts()).map((row) => row[0])).toEqual(['sda', 'sdb', 'sdc']);
+  });
+
+  it('shows hidden column values in the expanded detail row', async () => {
+    await table.toggleRowExpansion(0);
+
+    expect(await table.isRowExpanded(0)).toBe(true);
+
+    const details = await table.getDetailRowContent(0);
+    expect(details).toContain('description1');
+    expect(details).toContain('Virtual_Disk_1');
+  });
+});
+
+describe('DiskListComponent - empty states', () => {
+  let spectator: Spectator<DiskListComponent>;
+  let loader: HarnessLoader;
+
+  const makeFactory = (disks: Disk[]): ReturnType<typeof createComponentFactory<DiskListComponent>> => (
+    createComponentFactory({
+      component: DiskListComponent,
+      imports: [
+        MockComponent(PageHeaderComponent),
+        BasicSearchComponent,
+        TableColumnPickerComponent,
+      ],
+      providers: [
+        mockAuth(),
+        mockProvider(Router),
+        mockProvider(FormSidePanelService, {
+          open: jest.fn(() => SlideInResult.empty()),
+        }),
+        mockProvider(TnDialog),
+        mockProvider(LicenseService, {
+          hasSed$: of(false),
+        }),
+        provideMockStore({
+          selectors: [
+            {
+              selector: selectPreferences,
+              value: {},
+            },
+          ],
+        }),
+        mockApi([
+          mockCall('disk.query', disks),
+          mockCall('disk.details', { unused: [], used: [] }),
+        ]),
+      ],
+    })
+  );
+
+  describe('when the server returns no disks', () => {
+    const createComponent = makeFactory([]);
+
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+    });
+
+    it('shows the no-records empty state with no recovery action', async () => {
+      const empty = await loader.getHarness(TnEmptyHarness);
+
+      expect(await empty.getTitle()).toBe('No records have been added yet');
+      expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Reset' }))).toBeNull();
+    });
+  });
+
+  describe('when a search matches none of the loaded disks', () => {
+    const createComponent = makeFactory([
+      { identifier: 'identifier1', name: 'sda', pool: 'boot-pool' } as Disk,
+    ]);
+
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+
+      spectator.query(BasicSearchComponent).queryChange.emit('nonexistent-disk');
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+    });
+
+    it('offers a Reset action that clears the search and brings the table back', async () => {
+      const empty = await loader.getHarness(TnEmptyHarness);
+      expect(await empty.getTitle()).toBe('No Search Results.');
+
+      const resetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Reset' }));
+      await resetButton.click();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      expect(await loader.getHarnessOrNull(TnEmptyHarness)).toBeNull();
+      expect(await (await loader.getHarness(TnTableHarness)).getRowCount()).toBe(1);
+    });
   });
 });
 
