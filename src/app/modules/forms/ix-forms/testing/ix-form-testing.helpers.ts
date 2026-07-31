@@ -1,18 +1,21 @@
 import { mockProvider } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import {
+  defaultIxFormMinSubmitFeedbackMs, ixFormMinSubmitFeedbackMs,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 
 export interface IxFormTestingOptions {
   /**
-   * Opt out of the panel-mode minimum-submit-feedback hold, so a successful submit closes
-   * synchronously and the test can assert on `closed` right after calling `submit()`.
+   * Keep the panel-mode minimum-submit-feedback hold, which delays a successful close behind a
+   * `timer()` so a fast save still registers visually.
    *
-   * Needed by every spec that drives a side-panel-hosted `<ix-form>` to completion; without it
-   * the close is held behind a `timer()` that the assertion would race.
+   * Off by default: virtually every spec that drives a side-panel-hosted `<ix-form>` to
+   * completion asserts on `closed` right after `submit()`, and the hold makes that assertion
+   * race. Set this only when the hold itself is what's under test.
    */
-  synchronousSubmit?: boolean;
+  holdSubmitFeedback?: boolean;
 }
 
 /**
@@ -33,6 +36,12 @@ export function ixFormTestingProviders(options: IxFormTestingOptions = {}): unkn
     mockProvider(SlideIn, {
       openSlideIns: jest.fn(() => 1),
     }),
-    ...(options.synchronousSubmit ? [{ provide: ixFormMinSubmitFeedbackMs, useValue: 0 }] : []),
+    // Always provided, never merely omitted: a spec file with more than one Spectator factory
+    // registers every factory's providers, and the last one wins. Omitting here would let an
+    // outer factory's `0` leak into a nested factory that asked to keep the hold.
+    {
+      provide: ixFormMinSubmitFeedbackMs,
+      useValue: options.holdSubmitFeedback ? defaultIxFormMinSubmitFeedbackMs : 0,
+    },
   ];
 }

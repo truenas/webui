@@ -126,7 +126,12 @@ describe('BaseNamespaceFormComponent', () => {
 
     // The `*` is inferred from `Validators.required` on the control (tn-form-field) / the
     // explorer's own `[required]` input — NOT from `tn-input [required]`, which only renders the
-    // native attribute. Assert the rendered indicator so that distinction can't silently regress.
+    // native attribute. Asserting the rendered indicator is what pins that distinction: dropping
+    // the factory's validator removes the `*` while the tn-input attribute stays, and no other
+    // observable (aria-required, the native attribute) tells the two apart.
+    //
+    // `.required` is library-internal markup, so match on set membership + count rather than an
+    // exact ordered array — DOM order and sibling structure are not what this test is about.
     it.each([
       ['Zvol', ['Path To Zvol']],
       ['Existing File', ['Path To File']],
@@ -135,9 +140,10 @@ describe('BaseNamespaceFormComponent', () => {
       await selectNamespaceType(loader, type);
 
       const starredLabels = spectator.queryAll('.required')
-        .map((star) => star.parentElement?.textContent?.trim().replace(/\*$/, ''));
+        .map((star) => star.parentElement?.textContent?.replace('*', '').trim());
 
-      expect(starredLabels).toEqual(expectedLabels);
+      expect(starredLabels).toHaveLength(expectedLabels.length);
+      expectedLabels.forEach((label) => expect(starredLabels).toContain(label));
     });
 
     it('clears a previously chosen path when the device type changes', async () => {

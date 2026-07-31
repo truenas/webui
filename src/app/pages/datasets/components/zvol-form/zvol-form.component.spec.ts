@@ -202,7 +202,7 @@ describe('ZvolFormComponent', () => {
         }),
       ]),
       mockProvider(DialogService),
-      ...ixFormTestingProviders({ synchronousSubmit: true }),
+      ...ixFormTestingProviders(),
       mockAuth(),
       provideMockStore({
         initialState: {
@@ -414,7 +414,7 @@ describe('ZvolFormComponent', () => {
           }),
         ]),
         mockProvider(DialogService),
-        ...ixFormTestingProviders({ synchronousSubmit: true }),
+        ...ixFormTestingProviders(),
         mockAuth(),
       ],
     });
@@ -565,7 +565,7 @@ describe('ZvolFormComponent', () => {
             }),
           }),
           mockProvider(DialogService),
-          ...ixFormTestingProviders({ synchronousSubmit: true }),
+          ...ixFormTestingProviders(),
           mockProvider(ErrorHandlerService, {
             withErrorHandler: () => tap(),
           }),

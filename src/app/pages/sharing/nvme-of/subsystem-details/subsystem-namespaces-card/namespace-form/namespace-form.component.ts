@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, inject, input,
 } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -27,8 +27,12 @@ export interface NamespaceFormParams {
   templateUrl: './namespace-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    // Load-bearing, despite this template binding no form control directly: it is what makes
+    // `[formGroup]` on `<ix-form>` ALSO match Angular's `FormGroupDirective`. That directive is
+    // the only `ControlContainer` the projected `<ix-base-namespace-form>` can resolve — the one
+    // inside `<ix-form>`'s own template lives in a different view. Removing this as an "unused
+    // import" makes the projected controls fail with NullInjectorError at runtime.
     ReactiveFormsModule,
-    TranslateModule,
     IxFormComponent,
     BaseNamespaceFormComponent,
   ],

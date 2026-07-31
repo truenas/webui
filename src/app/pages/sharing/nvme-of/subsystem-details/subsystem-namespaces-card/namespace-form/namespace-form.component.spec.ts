@@ -44,7 +44,7 @@ describe('NamespaceFormComponent', () => {
         mockCall('nvmet.namespace.update'),
       ]),
       mockAuth(),
-      ...ixFormTestingProviders({ synchronousSubmit: true }),
+      ...ixFormTestingProviders(),
       mockProvider(FilesystemService),
     ],
   });

@@ -39,11 +39,13 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
  * Only the success path waits; errors surface immediately (see {@link IxFormComponent.onFormSubmit}).
  *
  * Injectable so specs that assert a synchronous close can set it to `0` (which skips the timer
- * entirely, restoring the un-delayed path).
+ * entirely, restoring the un-delayed path) — see `ixFormTestingProviders`.
  */
+export const defaultIxFormMinSubmitFeedbackMs = 500;
+
 export const ixFormMinSubmitFeedbackMs = new InjectionToken<number>('ixFormMinSubmitFeedbackMs', {
   providedIn: 'root',
-  factory: () => 500,
+  factory: () => defaultIxFormMinSubmitFeedbackMs,
 });
 
 export interface FormSubmitEvent<T = Record<string, unknown>> {

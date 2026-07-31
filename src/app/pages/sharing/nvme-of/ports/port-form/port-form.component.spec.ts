@@ -45,7 +45,7 @@ describe('PortFormComponent', () => {
           NvmeOfTransportType.Rdma,
         ])),
       }),
-      ...ixFormTestingProviders({ synchronousSubmit: true }),
+      ...ixFormTestingProviders(),
     ],
   });
 

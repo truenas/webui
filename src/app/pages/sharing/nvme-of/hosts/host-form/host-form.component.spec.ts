@@ -29,7 +29,7 @@ describe('HostFormComponent', () => {
         } as NvmeOfGlobalConfig),
       ]),
       mockAuth(),
-      ...ixFormTestingProviders({ synchronousSubmit: true }),
+      ...ixFormTestingProviders(),
     ],
   });
 

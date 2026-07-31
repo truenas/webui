@@ -39,7 +39,7 @@ describe('NvmeOfConfigurationComponent', () => {
           basenqn: 'iqn.2005-10.org.freenas:ctl',
         } as NvmeOfGlobalConfig),
       ]),
-      ...ixFormTestingProviders({ synchronousSubmit: true }),
+      ...ixFormTestingProviders(),
       provideMockStore({
         selectors: [
           {

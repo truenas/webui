@@ -1238,7 +1238,9 @@ describe('IxFormComponent', () => {
       component: TestHostComponent,
       imports: [ReactiveFormsModule],
       providers: [
-        ...ixFormTestingProviders(),
+        // The hold is what's under test here, so keep it — every other spec takes the helper's
+        // default, which zeroes it so a successful close is synchronous.
+        ...ixFormTestingProviders({ holdSubmitFeedback: true }),
         // Force the `<tn-side-panel>` host: no SlideInRef (the harness would otherwise auto-mock
         // one, taking the un-delayed legacy path). `null` is what `inject(…, {optional:true})` sees.
         { provide: SlideInRef, useValue: null },
