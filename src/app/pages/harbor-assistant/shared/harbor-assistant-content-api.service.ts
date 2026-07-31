@@ -28,7 +28,7 @@ export class HarborAssistantContentApiService {
   }
 
   search(payload: HarborAssistantSearchRequest): Observable<HarborAssistantSearchResponse> {
-    return this.http.post<HarborAssistantKnowledgeAnswerResponse>(this.apiUrl('/knowledge/answer'), payload).pipe(
+    return this.http.post<HarborAssistantKnowledgeAnswerResponse>(this.apiUrl('/knowledge/search'), payload).pipe(
       map((response) => ({
         ...response.search,
         conversation_id: response.conversation_id ?? payload.conversation_id,

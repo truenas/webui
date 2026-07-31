@@ -47,7 +47,7 @@ describe('Harbor Assistant content API service', () => {
     });
   });
 
-  it('posts questions to the same-origin Harbor Assistant answer endpoint', async () => {
+  it('posts questions to the same-origin Harbor Assistant search endpoint', async () => {
     const promise = firstValueFrom(spectator.service.search({
       query: '找到和春天相关的照片',
       limit: 24,
@@ -57,7 +57,7 @@ describe('Harbor Assistant content API service', () => {
       include_videos: true,
     }));
 
-    const req = httpMock.expectOne('/api/harbor-beacon/knowledge/answer');
+    const req = httpMock.expectOne('/api/harbor-beacon/knowledge/search');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({
       query: '找到和春天相关的照片',
@@ -216,7 +216,8 @@ describe('Harbor Assistant content API service', () => {
     ].map((path) => readFileSync(join(process.cwd(), path), 'utf8')).join('\n');
 
     expect(sources).toContain('harborAssistantBeaconApiUrl');
-    expect(sources).toContain("this.apiUrl('/knowledge/answer')");
+    expect(sources).toContain("this.apiUrl('/knowledge/search')");
+    expect(sources).not.toContain("this.apiUrl('/knowledge/answer')");
     expect(sources).toContain('harborAssistantBeaconApiUrl(`/knowledge/preview');
     expect(sources).toContain("this.apiUrl('/cameras/recordings/status')");
     expect(sources).toContain('this.apiUrl(`/cameras/${encodeURIComponent(deviceId)}/recordings/start`)');
