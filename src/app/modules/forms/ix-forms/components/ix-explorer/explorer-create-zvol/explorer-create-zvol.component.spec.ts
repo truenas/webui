@@ -8,7 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ExplorerCreateZvolComponent } from './explorer-create-zvol.component';
@@ -40,7 +40,7 @@ describe('ExplorerCreateZvolComponent', () => {
     component: ExplorerCreateZvolComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success({ id: 'test-pool/test-zvol' })),
       }),
       {
@@ -68,10 +68,13 @@ describe('ExplorerCreateZvolComponent', () => {
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Zvol' }));
     await createButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ZvolFormComponent, {
-      data: {
-        isNew: true,
-        parentOrZvolId: 'test-pool',
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ZvolFormComponent, {
+      title: 'Add Zvol',
+      inputs: {
+        params: {
+          isNew: true,
+          parentOrZvolId: 'test-pool',
+        },
       },
     });
 

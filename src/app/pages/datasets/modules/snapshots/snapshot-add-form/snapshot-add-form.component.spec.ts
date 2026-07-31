@@ -1,23 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
-} from '@truenas/ui-components';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
-
-const slideInRef: SlideInRef<string | undefined, unknown> = {
-  close: jest.fn(),
-  requireConfirmationWhen: jest.fn(),
-  getData: jest.fn((): undefined => undefined),
-};
 
 const mockNamingSchema = ['%Y %H %d %M %m'];
 
@@ -39,9 +30,9 @@ describe('SnapshotAddFormComponent', () => {
         mockCall('replication.list_naming_schemas', mockNamingSchema),
         mockCall('vmware.dataset_has_vms', true),
       ]),
-      mockProvider(SlideIn),
-      mockProvider(FormErrorHandlerService),
-      mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
+      // Panel host: skip the minimum-feedback delay so the close is observable synchronously.
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
     ],
   });
 
@@ -54,10 +45,8 @@ describe('SnapshotAddFormComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  const clickSave = async (): Promise<void> => {
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
-  };
+  // The `<tn-side-panel>` host owns the Save button and drives submission through `submit()`.
+  const clickSave = (): void => spectator.component.submit();
 
   beforeEach(() => {
     spectator = createComponent();
@@ -80,7 +69,11 @@ describe('SnapshotAddFormComponent', () => {
 
     await (await getCheckbox('vmware_sync')).check();
 
-    await clickSave();
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    const closed = jest.fn();
+    spectator.component.closed.subscribe(closed);
+    clickSave();
 
     expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
       {
@@ -90,6 +83,7 @@ describe('SnapshotAddFormComponent', () => {
         vmware_sync: true,
       },
     ]);
+    expect(closed).toHaveBeenCalledWith(true);
   });
 
   it('checks when form is submitted with naming schema', async () => {
@@ -100,7 +94,7 @@ describe('SnapshotAddFormComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', true]);
 
-    await clickSave();
+    clickSave();
 
     expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
       {
@@ -117,9 +111,10 @@ describe('SnapshotAddFormComponent', () => {
     await (await getInput('name')).setValue('snapshot-name');
     await (await getSelect('naming_schema')).selectOption('%Y %H %d %M %m');
 
-    await clickSave();
+    clickSave();
 
-    expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create');
+    expect(spectator.component.canSubmit()).toBe(false);
+    expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create', expect.anything());
   });
 
   it('re-checks for VMs in dataset when recursive checkbox is toggled or dataset changed', async () => {

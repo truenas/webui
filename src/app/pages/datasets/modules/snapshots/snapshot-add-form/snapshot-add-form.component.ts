@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { format } from 'date-fns';
@@ -16,20 +16,21 @@ import {
   combineLatest, merge, Observable, of,
 } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { Option } from 'app/interfaces/option.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/forms/ix-forms/validators/required-empty-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { StorageService } from 'app/services/storage.service';
@@ -39,21 +40,18 @@ import { StorageService } from 'app/services/storage.service';
   templateUrl: './snapshot-add-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    RequiresRolesDirective,
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnSelectComponent,
     TnInputComponent,
     TnCheckboxComponent,
-    FormActionsComponent,
-    TnButtonComponent,
     TranslateModule,
     AsyncPipe,
   ],
 })
-export class SnapshotAddFormComponent extends SidePanelForm implements OnInit {
+export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
@@ -64,15 +62,20 @@ export class SnapshotAddFormComponent extends SidePanelForm implements OnInit {
   private storageService = inject(StorageService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.SnapshotWrite];
+  /** Read by the `<tn-side-panel>` host to role-gate its footer Save. */
+  readonly requiredRoles = [Role.SnapshotWrite];
 
+  /** Initial options load. Drives the panel's progress bar and busy overlay. */
   protected isFormLoading = signal(true);
-  protected datasetId: string | undefined;
 
   /**
-   * Dataset to preset when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
-   * carry data). Unused in the legacy SlideIn host (which supplies it via `slideInRef.getData()`).
+   * The background `vmware.dataset_has_vms` lookup, re-run on every dataset/recursive change. Only
+   * gates Save — routing it through the panel's busy state would dim and lock the whole form
+   * mid-edit each time either field is touched.
    */
+  protected isCheckingVms = signal(false);
+
+  /** Dataset to preset, supplied by the `<tn-side-panel>` host. */
   readonly presetDatasetId = input<string | undefined>(undefined);
 
   form = this.fb.nonNullable.group({
@@ -92,8 +95,6 @@ export class SnapshotAddFormComponent extends SidePanelForm implements OnInit {
     vmware_sync: [false],
   });
 
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
-
   datasetOptions$: Observable<Option[]>;
   namingSchemaOptions$: Observable<Option[]>;
   hasVmsInDataset = false;
@@ -101,10 +102,6 @@ export class SnapshotAddFormComponent extends SidePanelForm implements OnInit {
   readonly helptext = helptextSnapshots;
 
   ngOnInit(): void {
-    this.datasetId = this.slideInRef
-      ? this.slideInRef.getData() as string | undefined
-      : this.presetDatasetId();
-
     combineLatest([
       this.getDatasetOptions(),
       this.getNamingSchemaOptions(),
@@ -129,12 +126,13 @@ export class SnapshotAddFormComponent extends SidePanelForm implements OnInit {
       this.form.controls.dataset.valueChanges,
     ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.checkForVmsInDataset());
 
-    if (this.datasetId) {
-      this.form.controls.dataset.setValue(this.datasetId);
+    const presetDatasetId = this.presetDatasetId();
+    if (presetDatasetId) {
+      this.form.controls.dataset.setValue(presetDatasetId);
     }
   }
 
-  protected onSubmit(): void {
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const values = this.form.getRawValue();
     const params: CreateZfsSnapshot = {
       dataset: values.dataset,
@@ -150,21 +148,14 @@ export class SnapshotAddFormComponent extends SidePanelForm implements OnInit {
       params.vmware_sync = values.vmware_sync;
     }
 
-    this.isFormLoading.set(true);
-    this.api.call('pool.snapshot.create', [params]).pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.isFormLoading.set(false);
-        this.close(true);
-        this.datasetStore.datasetUpdated();
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    return {
+      request$: this.api.call('pool.snapshot.create', [params]),
+      // Never rendered — the wrapper's snackbar is suppressed (creating a snapshot has never
+      // announced), so don't mint a translation key for it.
+      successMessage: ignoreTranslation(''),
+      onSuccess: () => this.datasetStore.datasetUpdated(),
+    };
+  };
 
   private getDefaultSnapshotName(): string {
     const datetime = format(new Date(), 'yyyy-MM-dd_HH-mm');
@@ -190,17 +181,17 @@ export class SnapshotAddFormComponent extends SidePanelForm implements OnInit {
   }
 
   private checkForVmsInDataset(): void {
-    this.isFormLoading.set(true);
+    this.isCheckingVms.set(true);
     this.api.call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (hasVmsInDataset) => {
           this.hasVmsInDataset = hasVmsInDataset;
-          this.isFormLoading.set(false);
+          this.isCheckingVms.set(false);
         },
         error: (error: unknown) => {
           this.errorHandler.handleValidationErrors(error, this.form);
-          this.isFormLoading.set(false);
+          this.isCheckingVms.set(false);
         },
       });
   }

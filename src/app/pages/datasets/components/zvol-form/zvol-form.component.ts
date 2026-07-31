@@ -51,7 +51,6 @@ import {
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
@@ -96,19 +95,13 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private licenseService = inject(LicenseService);
-  slideInRef = inject<SlideInRef<{
-    isNew: boolean;
-    parentOrZvolId: string;
-  }, Dataset>>(SlideInRef, { optional: true });
 
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.DatasetWrite];
+  /** Read by the `<tn-side-panel>` host to role-gate its footer Save. */
+  readonly requiredRoles = [Role.DatasetWrite];
 
-  /**
-   * Edit/create parameters when hosted in a `<tn-side-panel>` (no `SlideInRef` to carry
-   * data). Unused in the legacy SlideIn host (which supplies them via `slideInRef.getData()`).
-   */
+  /** Edit/create parameters supplied by the `<tn-side-panel>` host. */
   readonly params = input<{ isNew: boolean; parentOrZvolId: string }>();
 
   private savedDataset: Dataset | undefined;
@@ -212,7 +205,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   }
 
   ngOnInit(): void {
-    const data = this.slideInRef ? this.slideInRef.getData() : this.params();
+    const data = this.params();
     this.isNew = data?.isNew ?? true;
     this.parentOrZvolId = data?.parentOrZvolId ?? '';
 
@@ -251,9 +244,8 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   };
 
   /**
-   * `<ix-form>` closes host-agnostically: in a SlideIn host it hands the saved zvol back
-   * through the SlideInRef; in a `<tn-side-panel>` it only signals success via `closed`, so
-   * re-emit the zvol captured in the submit `onSuccess` hook to the panel host.
+   * `<ix-form>` only signals success via `closed` (a plain `true`), so re-emit the zvol captured
+   * in the submit `onSuccess` hook — the opener needs the record to switch to the new zvol.
    */
   protected onFormClosed(): void {
     if (this.savedDataset) {

@@ -1,12 +1,10 @@
-@if (slideInRef) {
-  <ix-modal-header
-    [requiredRoles]="requiredRoles"
-    [title]="'Capacity Settings' | translate"
-    [loading]="isLoading()"
-  ></ix-modal-header>
-}
-
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [title]="'Capacity Settings' | translate"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   @if (dataset) {
     <div class="columns">
       <div class="column">
@@ -132,17 +130,4 @@
       </div>
     </div>
   }
-
-  <ix-form-actions>
-    @if (slideInRef) {
-      <tn-button
-        *ixRequiresRoles="requiredRoles"
-        type="submit"
-        color="primary"
-        [testId]="'save'"
-        [disabled]="form.invalid || isLoading()"
-        [label]="'Save' | translate"
-      ></tn-button>
-    }
-  </ix-form-actions>
-</form>
+</ix-form>

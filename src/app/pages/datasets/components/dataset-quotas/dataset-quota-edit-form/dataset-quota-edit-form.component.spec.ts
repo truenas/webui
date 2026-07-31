@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -10,7 +9,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 
@@ -18,12 +18,6 @@ describe('DatasetQuotaEditFormComponent', () => {
   let spectator: Spectator<DatasetQuotaEditFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -45,7 +39,9 @@ describe('DatasetQuotaEditFormComponent', () => {
         mockCall('pool.dataset.set_quota'),
       ]),
       mockProvider(DialogService),
-      mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
+      // Panel host: skip the minimum-feedback delay so the close is observable synchronously.
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockAuth(),
     ],
   });
@@ -77,8 +73,9 @@ describe('DatasetQuotaEditFormComponent', () => {
     it('sends an update payload to websocket when save is pressed', async () => {
       await (await getTnInput('data_quota')).setValue('1000 KiB');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', ['Test', [
         {
@@ -92,6 +89,7 @@ describe('DatasetQuotaEditFormComponent', () => {
           quota_value: 0,
         },
       ]]);
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
@@ -122,8 +120,7 @@ describe('DatasetQuotaEditFormComponent', () => {
     it('sends an update payload to websocket when save is pressed', async () => {
       await (await getTnInput('obj_quota')).setValue('1');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', ['Test', [
         {
@@ -160,8 +157,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       const confirmSpy = jest.spyOn(dialogService, 'confirm').mockReturnValue(of(true));
       await (await getTnInput('data_quota')).setValue('0');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(confirmSpy).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Delete User Quota',
@@ -170,15 +166,16 @@ describe('DatasetQuotaEditFormComponent', () => {
     });
 
     it('does not update the quota when the confirmation is declined', async () => {
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
       jest.spyOn(dialogService, 'confirm').mockReturnValue(of(false));
       await (await getTnInput('data_quota')).setValue('0');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(dialogService.confirm).toHaveBeenCalled();
       expect(api.call).not.toHaveBeenCalledWith('pool.dataset.set_quota', expect.anything());
-      expect(slideInRef.close).not.toHaveBeenCalled();
+      expect(closed).not.toHaveBeenCalled();
     });
   });
 });

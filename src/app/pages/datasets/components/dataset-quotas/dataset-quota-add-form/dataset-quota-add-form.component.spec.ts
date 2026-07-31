@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -10,8 +9,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { UserService } from 'app/services/user.service';
@@ -20,12 +20,6 @@ describe('DatasetQuotaAddFormComponent', () => {
   let spectator: Spectator<DatasetQuotaAddFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -74,7 +68,9 @@ describe('DatasetQuotaAddFormComponent', () => {
         }),
       }),
       mockProvider(DialogService),
-      mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
+      // Panel host: skip the minimum-feedback delay so the close is observable synchronously.
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockAuth(),
     ],
   });
@@ -99,8 +95,9 @@ describe('DatasetQuotaAddFormComponent', () => {
       const usersInput = await form.getControl('Apply To Users') as IxChipsHarness;
       await usersInput.selectSuggestionValue('john');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
         'my-dataset',
@@ -109,6 +106,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           { id: 'john', quota_type: DatasetQuotaType.UserObj, quota_value: 2000 },
         ],
       ]);
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
@@ -133,8 +131,7 @@ describe('DatasetQuotaAddFormComponent', () => {
       await (await getTnInput('data_quota')).setValue('500M');
       await (await getTnInput('obj_quota')).setValue('2000');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
         'my-dataset',
