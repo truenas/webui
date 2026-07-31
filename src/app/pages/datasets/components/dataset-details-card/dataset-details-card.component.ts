@@ -12,6 +12,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { datasetDetailsHelptext } from 'app/helptext/storage/volumes/datasets/dataset-details';
+import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
@@ -178,7 +179,7 @@ export class DatasetDetailsCardComponent {
 
   private editZvol(): void {
     this.formPanel.open<Dataset>(ZvolFormComponent, {
-      title: this.translate.instant('Edit Zvol'),
+      title: this.translate.instant(helptextZvol.editTitle),
       inputs: { params: { isNew: false, parentOrZvolId: this.dataset().id } },
     }).onSuccess((response) => {
       this.snackbar.success(

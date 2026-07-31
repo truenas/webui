@@ -3,20 +3,17 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { createHostFactory, SpectatorHost, mockProvider } from '@ngneat/spectator/jest';
 import { TnInputHarness } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { MiB } from 'app/constants/bytes.constant';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import {
-  ExplorerCreateZvolComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
 import {
-  getNamespaceTypeToggle, selectNamespaceType,
+  getNamespaceTypeToggle, mockExplorerCreateZvol, selectNamespaceType,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.testing';
 import {
   createNamespaceForm, NamespaceFormGroup,
@@ -39,16 +36,7 @@ describe('BaseNamespaceFormComponent', () => {
     imports: [
       ReactiveFormsModule,
     ],
-    overrideComponents: [
-      // BaseNamespaceFormComponent is standalone, so its own `imports` define the template scope —
-      // listing a mock in the TestBed module would NOT replace the real child. Override the
-      // component's own import array instead, or the real explorer button renders (pulling in the
-      // real FormSidePanelService) while the spec reads as though it were stubbed.
-      [BaseNamespaceFormComponent, {
-        remove: { imports: [ExplorerCreateZvolComponent] },
-        add: { imports: [MockComponent(ExplorerCreateZvolComponent)] },
-      }],
-    ],
+    overrideComponents: [mockExplorerCreateZvol()],
     providers: [
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
@@ -171,6 +159,7 @@ describe('BaseNamespaceFormComponent', () => {
     beforeEach(() => setupHost({
       device_type: NvmeOfNamespaceType.Zvol,
       device_path: 'zvol/tank/test-zvol',
+      filesize: 512 * MiB,
     } as NvmeOfNamespace));
 
     it('prefills the host form group from an existing namespace', async () => {
@@ -181,6 +170,15 @@ describe('BaseNamespaceFormComponent', () => {
       expect(await ixForm.getValues()).toEqual({
         'Path To Zvol': 'zvol/tank/test-zvol',
       });
+    });
+
+    // The prefill must not seed New File's fields: switching branches would otherwise show the old
+    // namespace's size beside a blank filename, and `toNamespaceChanges` reads `getRawValue()`.
+    it('does not carry the existing filesize into the New File branch', async () => {
+      await selectNamespaceType(loader, 'New File');
+
+      expect(form.getRawValue().filesize).toBeNull();
+      expect(form.getRawValue().filename).toBe('');
     });
   });
 });

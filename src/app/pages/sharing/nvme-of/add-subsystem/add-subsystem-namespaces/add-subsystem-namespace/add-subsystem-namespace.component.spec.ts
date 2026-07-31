@@ -1,23 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
-import {
-  ExplorerCreateZvolComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
-import {
-  BaseNamespaceFormComponent,
-} from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import {
-  selectNamespaceType,
+  mockExplorerCreateZvol, selectNamespaceType,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.testing';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -27,16 +20,7 @@ describe('AddSubsystemNamespaceComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AddSubsystemNamespaceComponent,
-    overrideComponents: [
-      // BaseNamespaceFormComponent is standalone, so its own `imports` define the template scope —
-      // listing a mock in the TestBed module would NOT replace the real child. Override the
-      // component's own import array instead, or the real explorer button renders (pulling in the
-      // real FormSidePanelService) while the spec reads as though it were stubbed.
-      [BaseNamespaceFormComponent, {
-        remove: { imports: [ExplorerCreateZvolComponent] },
-        add: { imports: [MockComponent(ExplorerCreateZvolComponent)] },
-      }],
-    ],
+    overrideComponents: [mockExplorerCreateZvol()],
     providers: [
       mockAuth(),
       mockProvider(FilesystemService),

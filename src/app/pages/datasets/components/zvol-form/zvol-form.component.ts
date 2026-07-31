@@ -108,9 +108,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
 
   private savedDataset: Dataset | undefined;
 
-  protected readonly addTitle = this.translate.instant(helptextZvol.addTitle);
-  protected readonly editTitle = this.translate.instant(helptextZvol.editTitle);
-
   protected parentOrZvolId: string;
   protected isNew = true;
 
@@ -255,10 +252,12 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
     // panel host tears down on this event alone. Gating it on `savedDataset` would mean a save
     // that succeeded but returned no record leaves the panel open with no feedback.
     //
-    // A falsy payload is safe because `FormSidePanelService.open` stores `saved || undefined` and
+    // A falsy payload is safe because `FormSidePanelService.open` stores `saved || undefined`, and
     // `SlideInResult` treats `undefined` as a cancel — so `onSuccess` never runs with a missing
-    // zvol. That is the guarantee openers rely on; note they dereference the record directly
-    // (`response.id`, `zvol.id`) rather than null-checking, so it must stay that way.
+    // zvol. Note the collapse happens in the *panel service*, not in `SlideInResult`, which treats
+    // `null` as a legitimate success payload (asserted in slide-in-result.spec.ts). That is why
+    // openers can dereference the record directly (`response.id`, `zvol.id`), and why this form
+    // must stay panel-only for that to hold.
     this.closed.emit(this.savedDataset ?? null);
   }
 

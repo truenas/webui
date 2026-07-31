@@ -27,56 +27,51 @@ export type NamespaceFormValue = ReturnType<NamespaceFormGroup['getRawValue']>;
  * {@link BaseNamespaceFormComponent} so the wrapper can hand the same instance to `<ix-form>`'s
  * `[formGroup]` — a `viewChild`-owned group resolves too late for a required input.
  *
- * The group is satisfiable the moment it is built: `filename` / `filesize` start disabled, which
- * matches the default Zvol device type. {@link syncNewFileControls} keeps them in step from there.
+ * `filename` / `filesize` belong to the New File branch only, so they start inert — disabled and
+ * unvalidated, matching the default Zvol device type. {@link syncNewFileControls} owns both halves
+ * of their state from there, which is what keeps the group satisfiable on every branch.
  */
 export function createNamespaceForm(formBuilder: NonNullableFormBuilder): NamespaceFormGroup {
   return formBuilder.group({
     device_type: [FormNamespaceType.Zvol],
     device_path: ['', Validators.required],
-    // Required only on the New File branch — see `syncNewFileControls`, which is what makes that
-    // conditional. Declaring the validator here (rather than relying on the rendered input's
-    // native `required`) is what lets `tn-form-field` infer the visual `*` — it checks
-    // `control.hasValidator(Validators.required)`.
-    filename: [{ value: '', disabled: true }, Validators.required],
-    filesize: [{ value: null as number | null, disabled: true }, Validators.required],
+    filename: [{ value: '', disabled: true }],
+    filesize: [{ value: null as number | null, disabled: true }],
   });
 }
 
 /**
- * Keeps `filename` / `filesize` — which only the New File branch renders — out of the group's
- * validity on every other branch. The other half of {@link createNamespaceForm}, which declares
- * `Validators.required` on both unconditionally (that's what `tn-form-field` reads to infer the
- * `*`): a group built there but never passed through here is permanently INVALID off New File, so
- * a user who merely *visited* New File could never save a Zvol or Existing File namespace.
+ * Puts `filename` / `filesize` in step with the selected device type: required and editable on the
+ * New File branch (the only branch that renders them), inert everywhere else.
  *
- * Disabling, rather than clearing validators, because {@link toNamespaceChanges} reads
- * `getRawValue()` — nothing is lost from the payload.
+ * Owning the validator here — rather than declaring it once in {@link createNamespaceForm} — is
+ * what makes the group self-consistent: there is no state in which a control carries `required`
+ * but no input can satisfy it, so a group built by the factory is valid on every branch without
+ * depending on this having run. `tn-form-field` still infers the visual `*` from
+ * `hasValidator(Validators.required)`, and only ever renders while the branch is active.
  *
- * Related invariant: the two `tn-input`s must NOT carry `[required]`. Angular's `RequiredValidator`
- * matches that binding on any element with a `formControlName`, and is not cleaned up when the
- * branch is destroyed — which resurrects this same bug independently of the factory. The `*` and
- * `aria-required` both come from the control's validator, so nothing is lost by omitting it.
- * `<ix-explorer [required]>` is exempt: it renders its own label and can't infer the state, and its
- * control (`device_path`) is always required and never disabled, so the extra validator is a no-op.
+ * Disabling as well as unvalidating is belt-and-braces: it keeps the controls out of group
+ * validity even if something else attaches a validator (e.g. a stray `[required]` binding, which
+ * also matches Angular's `RequiredValidator` directive). {@link toNamespaceChanges} reads
+ * `getRawValue()`, so disabling loses nothing from the payload.
  */
 export function syncNewFileControls(form: NamespaceFormGroup, type: FormNamespaceType): void {
   const { filename, filesize } = form.controls;
 
   if (type === FormNamespaceType.NewFile) {
+    filename.addValidators(Validators.required);
+    filesize.addValidators(Validators.required);
     filename.enable();
     filesize.enable();
-  } else {
-    filename.disable();
-    filesize.disable();
+    return;
   }
+
+  filename.removeValidators(Validators.required);
+  filesize.removeValidators(Validators.required);
+  filename.disable();
+  filesize.disable();
 }
 
-/**
- * Derives the API-shaped namespace changes from the form value: resolves the device path per
- * device type (zvol paths lose their `/dev/` prefix, a new file is directory + filename) and
- * carries `filesize` only where it applies.
- */
 export function toNamespaceChanges(value: NamespaceFormValue): NamespaceChanges {
   let path = '';
 

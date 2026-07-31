@@ -83,34 +83,21 @@ export class BaseNamespaceFormComponent implements OnInit {
   private filesystemService = inject(FilesystemService);
   private destroyRef = inject(DestroyRef);
 
-  private controlContainer = inject(ControlContainer);
+  // Optional so a host that forgets `[formGroup]` entirely reaches the check in `ngOnInit` with an
+  // actionable message, instead of dying on a raw NullInjectorError before we can say anything.
+  private controlContainer = inject(ControlContainer, { optional: true });
 
   /**
-   * The group to render into — taken from the host's `ControlContainer`, i.e. the very
-   * `FormGroupDirective` the `formControlName`s below bind through (see the `viewProviders` alias
-   * above). Reading it from there rather than accepting it as an input makes "the group I branch
-   * on" and "the group my controls write to" the same object by construction: there is no second
-   * binding for a host to get wrong, so the mismatch that would render controls into one group
-   * while the device-type `@switch` reads another cannot be expressed.
+   * The group to render into — the host's `ControlContainer`, i.e. the very `FormGroupDirective`
+   * the `formControlName`s below bind through (see the `viewProviders` alias above). Taking it
+   * from there rather than as an input makes "the group I branch on" and "the group my controls
+   * write to" the same object by construction: there is no second binding for a host to get wrong.
    *
-   * A getter, not a field: the host directive's `[formGroup]` input is bound during the enclosing
-   * template's update pass, which runs AFTER this component is constructed — so `control` is still
-   * null at field-initializer time. It is populated by `ngOnInit`.
+   * Resolved once in `ngOnInit` rather than read through a getter — the template reads it on every
+   * change-detection pass, and the host directive's `[formGroup]` is only bound during the
+   * enclosing template's update pass, so it is still null while this component is constructed.
    */
-  protected get form(): NamespaceFormGroup {
-    const control = this.controlContainer.control as NamespaceFormGroup | null;
-
-    // Probe a control rather than just null-checking: the cast would otherwise wave through any
-    // host group, and the failure would surface much later as `undefined.enable()` inside
-    // `syncNewFileControls` — nowhere near the wiring mistake that caused it.
-    if (!control?.controls?.device_type) {
-      throw new Error(
-        'ix-base-namespace-form must be rendered inside a host [formGroup] built with createNamespaceForm().',
-      );
-    }
-
-    return control;
-  }
+  protected form: NamespaceFormGroup;
 
   /** Existing namespace to prefill from; absent in create mode. */
   readonly namespace = input<NvmeOfNamespace>();
@@ -131,11 +118,16 @@ export class BaseNamespaceFormComponent implements OnInit {
   protected typeOptions = translateOptions(this.translate, typeOptions);
 
   ngOnInit(): void {
+    this.form = this.resolveHostForm();
+
     const namespace = this.namespace();
 
     if (namespace) {
+      // Only the two fields this form models for an existing namespace. Spreading the whole record
+      // would also seed `filesize`, which the New File branch then shows pre-filled with the old
+      // file's size next to a blank filename — and `toNamespaceChanges` reads `getRawValue()`.
       this.form.patchValue({
-        ...namespace,
+        device_path: namespace.device_path,
         device_type: namespace.device_type === NvmeOfNamespaceType.Zvol
           ? FormNamespaceType.Zvol
           : FormNamespaceType.ExistingFile,
@@ -152,5 +144,22 @@ export class BaseNamespaceFormComponent implements OnInit {
         this.form.patchValue({ device_path: '' });
         syncNewFileControls(this.form, type);
       });
+  }
+
+  /**
+   * Probes a known control rather than just null-checking: the cast would otherwise wave through
+   * any host group, and the failure would surface much later as `undefined.enable()` inside
+   * `syncNewFileControls` — nowhere near the wiring mistake that caused it.
+   */
+  private resolveHostForm(): NamespaceFormGroup {
+    const control = this.controlContainer?.control as NamespaceFormGroup | null;
+
+    if (!control?.controls?.device_type) {
+      throw new Error(
+        'ix-base-namespace-form must be rendered inside a host [formGroup] built with createNamespaceForm().',
+      );
+    }
+
+    return control;
   }
 }

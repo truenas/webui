@@ -14,7 +14,7 @@ import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
 import {
-  createNamespaceForm, toNamespaceChanges,
+  createNamespaceForm, NamespaceFormValue, toNamespaceChanges,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.utils';
 
 export interface NamespaceFormParams {
@@ -53,9 +53,9 @@ export class NamespaceFormComponent extends IxFormHostForm {
   // Owned here (not by the projected base form) so `<ix-form>` can take it as a required input.
   protected readonly form = createNamespaceForm(this.formBuilder);
 
-  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
+  protected handleSubmit = (event: FormSubmitEvent<NamespaceFormValue>): SubmitResult => {
     const payload = {
-      ...toNamespaceChanges(this.form.getRawValue()),
+      ...toNamespaceChanges(event.allValues),
       subsys_id: this.namespaceData().subsystemId,
     };
 
