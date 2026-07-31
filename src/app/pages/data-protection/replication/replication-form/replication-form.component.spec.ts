@@ -16,7 +16,7 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -341,7 +341,7 @@ describe('ReplicationFormComponent', () => {
         providers: [
           { provide: SlideInRef, useValue: null },
           // Skip the min submit-feedback hold so the synchronous-close assertions below hold.
-          { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
+          ...ixFormTestingProviders(),
         ],
         props: {
           replicationToEdit: { id: 1 } as ReplicationTask,

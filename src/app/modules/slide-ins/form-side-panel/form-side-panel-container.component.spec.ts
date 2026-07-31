@@ -223,3 +223,89 @@ describe('FormSidePanelContainerComponent footer actions', () => {
     expect(backClick).not.toHaveBeenCalled();
   });
 });
+
+/**
+ * Minimal hosted form exposing the two signals the footer Save reads. Mirrors what
+ * `IxFormHostForm` delegates to its inner `<ix-form>`: `isSubmitting` labels the button,
+ * `isBusy` (which also covers an initial data load) only disables it.
+ */
+@Component({
+  selector: 'ix-save-test-form',
+  template: '<p>form body</p>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class SaveTestFormComponent extends SidePanelForm {
+  protected readonly form = new FormControl('');
+  readonly canSubmit = signal(true);
+  readonly busy = signal(false);
+  readonly submitting = signal(false);
+
+  override isBusy(): boolean {
+    return this.busy();
+  }
+
+  override readonly isSubmitting = computed(() => this.submitting());
+
+  protected onSubmit(): void {
+    this.close(true);
+  }
+}
+
+describe('FormSidePanelContainerComponent footer Save', () => {
+  let fixture: ComponentFixture<FormSidePanelContainerComponent>;
+
+  const getForm = (): SaveTestFormComponent => fixture.debugElement.query(
+    (node) => node.componentInstance instanceof SaveTestFormComponent,
+  ).componentInstance as SaveTestFormComponent;
+
+  const getSaveButton = (): Promise<TnButtonHarness> => TnMenuTesting.rootLoader(fixture)
+    .getHarness(TnButtonHarness.with({ testId: 'button-save' }));
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [FormSidePanelContainerComponent, SaveTestFormComponent, TranslateModule.forRoot()],
+      providers: [
+        mockAuth(),
+        {
+          provide: UnsavedChangesService,
+          useValue: { showConfirmDialog: jest.fn(() => of(true)) },
+        },
+        ...TnIconTesting.jest.providers(),
+      ],
+    });
+
+    fixture = TestBed.createComponent(FormSidePanelContainerComponent);
+    fixture.componentRef.setInput('portal', new ComponentPortal(SaveTestFormComponent));
+    fixture.componentRef.setInput('open', true);
+    fixture.detectChanges();
+  });
+
+  it('swaps Save for Saving… only while the form reports isSubmitting()', async () => {
+    expect(await (await getSaveButton()).getLabel()).toBe('Save');
+
+    getForm().submitting.set(true);
+    getForm().busy.set(true);
+    fixture.detectChanges();
+
+    expect(await (await getSaveButton()).getLabel()).toBe('Saving…');
+  });
+
+  // The distinction IxFormHostForm.isSubmitting() exists for: a form fetching its initial config
+  // is busy (Save disabled) but is not saving, so the label must stay "Save".
+  it('keeps the Save label while merely busy, and disables it', async () => {
+    getForm().busy.set(true);
+    fixture.detectChanges();
+
+    const save = await getSaveButton();
+
+    expect(await save.getLabel()).toBe('Save');
+    expect(await save.isDisabled()).toBe(true);
+  });
+
+  it('disables Save when the form cannot be submitted', async () => {
+    getForm().canSubmit.set(false);
+    fixture.detectChanges();
+
+    expect(await (await getSaveButton()).isDisabled()).toBe(true);
+  });
+});

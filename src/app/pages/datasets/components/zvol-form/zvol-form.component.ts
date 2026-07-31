@@ -100,8 +100,11 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
-  /** Edit/create parameters, supplied by the `<tn-side-panel>` host that opens this form. */
-  readonly params = input<{ isNew: boolean; parentOrZvolId: string }>();
+  /**
+   * Edit/create parameters, supplied by the `<tn-side-panel>` host, which sets inputs before
+   * `ngOnInit` — so this can be required rather than defensively optional.
+   */
+  readonly params = input.required<{ isNew: boolean; parentOrZvolId: string }>();
 
   private savedDataset: Dataset | undefined;
 
@@ -205,8 +208,8 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
 
   ngOnInit(): void {
     const data = this.params();
-    this.isNew = data?.isNew ?? true;
-    this.parentOrZvolId = data?.parentOrZvolId ?? '';
+    this.isNew = data.isNew;
+    this.parentOrZvolId = data.parentOrZvolId;
 
     this.checkIfDedupIsSupported();
 

@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { createHostFactory, SpectatorHost, mockProvider } from '@ngneat/spectator/jest';
-import { TnButtonToggleHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnInputHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
@@ -16,7 +16,7 @@ import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
 import {
-  selectNamespaceType,
+  getNamespaceTypeToggle, selectNamespaceType,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.testing';
 import {
   createNamespaceForm, NamespaceFormGroup,
@@ -133,26 +133,24 @@ describe('BaseNamespaceFormComponent', () => {
       expect(form.status).toBe('VALID');
     });
 
-    // Both the `*` and `aria-required` are inferred from `Validators.required` on the control —
-    // the tn-inputs deliberately carry no `[required]` binding (see `syncNewFileControls`). This
-    // is what pins that: drop the factory's validator and both disappear together.
-    //
-    // `.required` is library-internal markup, so match on set membership + count rather than an
-    // exact ordered array — DOM order and sibling structure are not what this test is about.
+    // Pinned on both sides of the inference rather than on the rendered `*`: the validator is
+    // what `tn-form-field` / `ix-explorer` read, and `aria-required` is where that has to land for
+    // users. Dropping the factory's validator breaks both halves, without coupling the suite to
+    // library-internal class names or DOM nesting.
     it.each([
-      ['Zvol', ['Path To Zvol']],
-      ['Existing File', ['Path To File']],
-      ['New File', ['Parent Directory', 'Filename', 'File Size']],
-    ])('marks every required field as required on %s', async (type, expectedLabels) => {
+      ['Zvol', ['device_path']],
+      ['Existing File', ['device_path']],
+      ['New File', ['device_path', 'filename', 'filesize']],
+    ])('marks every required control as required on %s', async (type, expectedControls) => {
       await selectNamespaceType(loader, type);
 
-      const starredLabels = spectator.queryAll('.required')
-        .map((star) => star.parentElement?.textContent?.replace(/\*/g, '').trim());
+      expectedControls.forEach((name) => {
+        const control = form.controls[name as keyof NamespaceFormGroup['controls']];
+        expect(control.hasValidator(Validators.required)).toBe(true);
+        expect(control.enabled).toBe(true);
+      });
 
-      expect(starredLabels).toHaveLength(expectedLabels.length);
-      expectedLabels.forEach((label) => expect(starredLabels).toContain(label));
-      // The same inference has to reach assistive tech, not just the visual indicator.
-      expect(spectator.queryAll('[aria-required="true"]')).toHaveLength(expectedLabels.length);
+      expect(spectator.queryAll('[aria-required="true"]')).toHaveLength(expectedControls.length);
     });
 
     it('clears a previously chosen path when the device type changes', async () => {
@@ -176,7 +174,7 @@ describe('BaseNamespaceFormComponent', () => {
     } as NvmeOfNamespace));
 
     it('prefills the host form group from an existing namespace', async () => {
-      const checkedToggle = await loader.getHarness(TnButtonToggleHarness.with({ label: /Zvol/ }));
+      const checkedToggle = await getNamespaceTypeToggle(loader, 'Zvol');
       expect(await checkedToggle.isChecked()).toBe(true);
 
       const ixForm = await loader.getHarness(IxFormHarness);

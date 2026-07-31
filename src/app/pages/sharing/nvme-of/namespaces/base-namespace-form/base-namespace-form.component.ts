@@ -100,7 +100,10 @@ export class BaseNamespaceFormComponent implements OnInit {
   protected get form(): NamespaceFormGroup {
     const control = this.controlContainer.control as NamespaceFormGroup | null;
 
-    if (!control) {
+    // Probe a control rather than just null-checking: the cast would otherwise wave through any
+    // host group, and the failure would surface much later as `undefined.enable()` inside
+    // `syncNewFileControls` — nowhere near the wiring mistake that caused it.
+    if (!control?.controls?.device_type) {
       throw new Error(
         'ix-base-namespace-form must be rendered inside a host [formGroup] built with createNamespaceForm().',
       );

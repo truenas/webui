@@ -1,4 +1,6 @@
-/* eslint-disable @angular-eslint/component-max-inline-declarations, max-classes-per-file */
+// Two host components are needed: one that renders no <ix-form> (fallback paths) and one
+// that renders a real one (delegation paths).
+/* eslint-disable max-classes-per-file */
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
@@ -22,6 +24,7 @@ class TestFormHostComponent extends IxFormHostForm {}
 /** Wraps a real `<ix-form>`, so the delegating half of the base can be exercised. */
 @Component({
   selector: 'ix-test-form-wrapper',
+  // eslint-disable-next-line @angular-eslint/component-max-inline-declarations
   template: `
     <ix-form
       [formGroup]="form"

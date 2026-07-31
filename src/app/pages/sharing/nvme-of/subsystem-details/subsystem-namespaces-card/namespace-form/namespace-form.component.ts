@@ -44,10 +44,10 @@ export class NamespaceFormComponent extends IxFormHostForm {
   /** Gates the host-rendered footer Save. */
   readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  /** Form data supplied by the `tn-side-panel` host. */
-  readonly namespaceData = input<NamespaceFormParams>();
+  /** Form data supplied by the `tn-side-panel` host, which sets inputs before `ngOnInit`. */
+  readonly namespaceData = input.required<NamespaceFormParams>();
 
-  protected existingNamespace = computed(() => this.namespaceData()?.namespace);
+  protected existingNamespace = computed(() => this.namespaceData().namespace);
   protected isEdit = computed(() => Boolean(this.existingNamespace()));
 
   // Owned here (not by the projected base form) so `<ix-form>` can take it as a required input.
@@ -56,7 +56,7 @@ export class NamespaceFormComponent extends IxFormHostForm {
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const payload = {
       ...toNamespaceChanges(this.form.getRawValue()),
-      subsys_id: this.namespaceData()?.subsystemId,
+      subsys_id: this.namespaceData().subsystemId,
     };
 
     const request$ = this.isEdit()
