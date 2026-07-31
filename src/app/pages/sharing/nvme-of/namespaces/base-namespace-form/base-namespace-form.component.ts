@@ -20,9 +20,17 @@ import {
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import {
-  FormNamespaceType, NamespaceFormGroup,
+  FormNamespaceType, NamespaceFormGroup, syncNewFileControls,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.utils';
 import { FilesystemService } from 'app/services/filesystem.service';
+
+/** Backs the unique `aria-labelledby` target below, so two mounted instances can't collide. */
+let typeToggleLabelIdCounter = 0;
+
+function nextTypeToggleLabelId(): string {
+  typeToggleLabelIdCounter += 1;
+  return `namespace-device-type-label-${typeToggleLabelIdCounter}`;
+}
 
 const typeOptions: Option[] = [
   {
@@ -92,7 +100,7 @@ export class BaseNamespaceFormComponent implements OnInit {
 
   protected readonly FormNamespaceType = FormNamespaceType;
   protected readonly InputType = InputType;
-  protected readonly typeToggleLabelId = 'namespace-device-type-label';
+  protected readonly typeToggleLabelId = nextTypeToggleLabelId();
 
   protected typeOptions = translateOptions(this.translate, typeOptions);
 
@@ -108,7 +116,7 @@ export class BaseNamespaceFormComponent implements OnInit {
       });
     }
 
-    this.syncNewFileControls(this.form().controls.device_type.value);
+    syncNewFileControls(this.form(), this.form().controls.device_type.value);
 
     // Subscribed AFTER the prefill above so patching `device_type` on an existing namespace
     // doesn't immediately clear the path it was just given.
@@ -116,28 +124,7 @@ export class BaseNamespaceFormComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((type) => {
         this.form().patchValue({ device_path: '' });
-        this.syncNewFileControls(type);
+        syncNewFileControls(this.form(), type);
       });
-  }
-
-  /**
-   * Keeps `filename` / `filesize` — which only the New File branch renders — out of the group's
-   * validity on every other branch.
-   *
-   * Angular does NOT remove the `required` validator that a destroyed `tn-input` contributed, so
-   * without this a user who merely *visited* New File would leave both controls stuck INVALID and
-   * could never save a Zvol or Existing File namespace afterwards. Disabling excludes them from
-   * group validity; `toNamespaceChanges` reads `getRawValue()`, so nothing is lost from the payload.
-   */
-  private syncNewFileControls(type: FormNamespaceType): void {
-    const { filename, filesize } = this.form().controls;
-
-    if (type === FormNamespaceType.NewFile) {
-      filename.enable();
-      filesize.enable();
-    } else {
-      filename.disable();
-      filesize.disable();
-    }
   }
 }

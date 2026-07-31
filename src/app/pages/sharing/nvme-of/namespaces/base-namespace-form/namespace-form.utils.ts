@@ -26,18 +26,45 @@ export type NamespaceFormValue = ReturnType<NamespaceFormGroup['getRawValue']>;
  * Builds the namespace form group. Owned by the side-panel *wrapper* rather than by
  * {@link BaseNamespaceFormComponent} so the wrapper can hand the same instance to `<ix-form>`'s
  * `[formGroup]` — a `viewChild`-owned group resolves too late for a required input.
+ *
+ * The group is satisfiable the moment it is built: `filename` / `filesize` start disabled, which
+ * matches the default Zvol device type. {@link syncNewFileControls} keeps them in step from there.
  */
 export function createNamespaceForm(formBuilder: NonNullableFormBuilder): NamespaceFormGroup {
   return formBuilder.group({
     device_type: [FormNamespaceType.Zvol],
     device_path: ['', Validators.required],
-    // Required only on the New File branch; `BaseNamespaceFormComponent` disables both elsewhere,
-    // which takes them out of the group's validity. Declaring the validator here (rather than
-    // relying on the rendered input's native `required`) is what lets `tn-form-field` infer the
-    // visual `*` — it checks `control.hasValidator(Validators.required)`.
-    filename: ['', Validators.required],
-    filesize: [null as number | null, Validators.required],
+    // Required only on the New File branch — see `syncNewFileControls`, which is what makes that
+    // conditional. Declaring the validator here (rather than relying on the rendered input's
+    // native `required`) is what lets `tn-form-field` infer the visual `*` — it checks
+    // `control.hasValidator(Validators.required)`.
+    filename: [{ value: '', disabled: true }, Validators.required],
+    filesize: [{ value: null as number | null, disabled: true }, Validators.required],
   });
+}
+
+/**
+ * Keeps `filename` / `filesize` — which only the New File branch renders — out of the group's
+ * validity on every other branch. Lives here next to {@link createNamespaceForm}, whose
+ * unconditional `Validators.required` it is the other half of: a group built there but never
+ * passed through here would be permanently INVALID on every branch but New File.
+ *
+ * Angular does NOT remove the `required` validator that a destroyed `tn-input` contributed — the
+ * `[required]` binding also matches Angular's own `RequiredValidator` directive — so without this
+ * a user who merely *visited* New File would leave both controls stuck INVALID and could never
+ * save a Zvol or Existing File namespace afterwards. Disabling excludes them from group validity;
+ * {@link toNamespaceChanges} reads `getRawValue()`, so nothing is lost from the payload.
+ */
+export function syncNewFileControls(form: NamespaceFormGroup, type: FormNamespaceType): void {
+  const { filename, filesize } = form.controls;
+
+  if (type === FormNamespaceType.NewFile) {
+    filename.enable();
+    filesize.enable();
+  } else {
+    filename.disable();
+    filesize.disable();
+  }
 }
 
 /**

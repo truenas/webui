@@ -45,7 +45,7 @@ export class NamespaceFormComponent extends IxFormHostForm<NamespaceChanges> {
   /** Form data supplied by the `tn-side-panel` host. */
   readonly namespaceData = input<NamespaceFormParams>();
 
-  protected existingNamespace = computed<NvmeOfNamespace>(() => this.namespaceData()?.namespace);
+  protected existingNamespace = computed(() => this.namespaceData()?.namespace);
   protected isEdit = computed(() => Boolean(this.existingNamespace()));
 
   // Owned here (not by the projected base form) so `<ix-form>` can take it as a required input.

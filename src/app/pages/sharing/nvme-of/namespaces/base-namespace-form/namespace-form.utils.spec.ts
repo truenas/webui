@@ -1,8 +1,57 @@
+import { FormBuilder } from '@angular/forms';
 import { MiB } from 'app/constants/bytes.constant';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import {
-  FormNamespaceType, NamespaceFormValue, toNamespaceChanges,
+  createNamespaceForm, FormNamespaceType, NamespaceFormValue, syncNewFileControls, toNamespaceChanges,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.utils';
+
+describe('createNamespaceForm', () => {
+  // The group carries unconditional `required` validators on the New File controls, so it is only
+  // ever satisfiable because it hands them out disabled. Asserting it here means a host that never
+  // renders BaseNamespaceFormComponent can still reach VALID.
+  it('returns a group that only needs a device path to become valid', () => {
+    const form = createNamespaceForm(new FormBuilder().nonNullable);
+
+    expect(form.status).toBe('INVALID');
+    expect(form.controls.filename.disabled).toBe(true);
+    expect(form.controls.filesize.disabled).toBe(true);
+
+    form.controls.device_path.setValue('/mnt/tank/test-file');
+
+    expect(form.status).toBe('VALID');
+  });
+});
+
+describe('syncNewFileControls', () => {
+  const setUp = (type: FormNamespaceType): ReturnType<typeof createNamespaceForm> => {
+    const form = createNamespaceForm(new FormBuilder().nonNullable);
+    form.controls.device_path.setValue('/mnt/tank');
+    syncNewFileControls(form, type);
+    return form;
+  };
+
+  it('requires filename and file size on the New File branch', () => {
+    const form = setUp(FormNamespaceType.NewFile);
+
+    expect(form.status).toBe('INVALID');
+
+    form.patchValue({ filename: 'new-file.img', filesize: 1024 * MiB });
+
+    expect(form.status).toBe('VALID');
+  });
+
+  it.each([FormNamespaceType.Zvol, FormNamespaceType.ExistingFile])(
+    'takes filename and file size out of validity on %s',
+    (type) => {
+      const form = setUp(FormNamespaceType.NewFile);
+      syncNewFileControls(form, type);
+
+      expect(form.status).toBe('VALID');
+      expect(form.controls.filename.disabled).toBe(true);
+      expect(form.controls.filesize.disabled).toBe(true);
+    },
+  );
+});
 
 describe('toNamespaceChanges', () => {
   const formValue = (overrides: Partial<NamespaceFormValue>): NamespaceFormValue => ({
