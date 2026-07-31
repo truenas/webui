@@ -1,5 +1,14 @@
-<ix-base-namespace-form
-  [error]="error()"
-  [namespace]="existingNamespace()"
-  (submitted)="onNamespaceSubmitted($event)"
-></ix-base-namespace-form>
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="isEdit()"
+  [addTitle]="'Add Namespace' | translate"
+  [editTitle]="'Edit Namespace' | translate"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="onFormClosed()"
+>
+  <ix-base-namespace-form
+    [form]="form"
+    [namespace]="existingNamespace()"
+  ></ix-base-namespace-form>
+</ix-form>

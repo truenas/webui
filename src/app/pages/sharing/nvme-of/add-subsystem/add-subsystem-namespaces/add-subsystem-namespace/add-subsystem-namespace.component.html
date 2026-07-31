@@ -1,3 +1,3 @@
-<ix-base-namespace-form
-  (submitted)="onNamespaceSubmitted($event)"
-></ix-base-namespace-form>
+<form class="ix-form-container" [formGroup]="form" (ngSubmit)="submit()">
+  <ix-base-namespace-form [form]="form"></ix-base-namespace-form>
+</form>
