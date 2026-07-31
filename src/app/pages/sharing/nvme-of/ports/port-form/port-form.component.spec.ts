@@ -7,7 +7,6 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
@@ -46,9 +45,7 @@ describe('PortFormComponent', () => {
           NvmeOfTransportType.Rdma,
         ])),
       }),
-      ...ixFormTestingProviders(),
-      // Opt out of the panel-mode min-feedback hold so the close is synchronous.
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
+      ...ixFormTestingProviders({ synchronousSubmit: true }),
     ],
   });
 

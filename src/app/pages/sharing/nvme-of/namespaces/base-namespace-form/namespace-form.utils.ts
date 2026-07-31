@@ -45,15 +45,22 @@ export function createNamespaceForm(formBuilder: NonNullableFormBuilder): Namesp
 
 /**
  * Keeps `filename` / `filesize` — which only the New File branch renders — out of the group's
- * validity on every other branch. Lives here next to {@link createNamespaceForm}, whose
- * unconditional `Validators.required` it is the other half of: a group built there but never
- * passed through here would be permanently INVALID on every branch but New File.
- *
- * Angular does NOT remove the `required` validator that a destroyed `tn-input` contributed — the
- * `[required]` binding also matches Angular's own `RequiredValidator` directive — so without this
- * a user who merely *visited* New File would leave both controls stuck INVALID and could never
- * save a Zvol or Existing File namespace afterwards. Disabling excludes them from group validity;
+ * validity on every other branch. Disabling excludes them from group validity;
  * {@link toNamespaceChanges} reads `getRawValue()`, so nothing is lost from the payload.
+ *
+ * Two independent reasons both make this necessary, so don't drop it after fixing only one:
+ *
+ * 1. {@link createNamespaceForm} declares `Validators.required` on both unconditionally (it has
+ *    to — that's what `tn-form-field` reads to infer the `*`). This function is the other half of
+ *    that: a group built there but never passed through here is permanently INVALID off New File.
+ *
+ * 2. Angular does not, in this setup, remove the `required` validator that a destroyed `tn-input`
+ *    contributed — its `[required]` binding also matches Angular's own `RequiredValidator`
+ *    directive, and `cleanUpValidators` fails to filter it back off. Verified empirically: with
+ *    both validators removed from the factory AND nothing disabled, switching New File → Existing
+ *    File still leaves `filename`/`filesize` holding `{ required: true }`. So even a factory that
+ *    declared no validators would strand a user who merely *visited* New File, unable to save a
+ *    Zvol or Existing File namespace afterwards.
  */
 export function syncNewFileControls(form: NamespaceFormGroup, type: FormNamespaceType): void {
   const { filename, filesize } = form.controls;

@@ -16,6 +16,9 @@ import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
 import {
+  selectNamespaceType,
+} from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.testing';
+import {
   createNamespaceForm, NamespaceFormGroup,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.utils';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -28,13 +31,6 @@ describe('BaseNamespaceFormComponent', () => {
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-
-  // A checked toggle's label text is prefixed with the tn-button-toggle "✓" marker,
-  // so match the option text loosely via regex rather than an exact string.
-  const selectType = async (label: string): Promise<void> => {
-    const toggle = await loader.getHarness(TnButtonToggleHarness.with({ label: new RegExp(label) }));
-    await toggle.check();
-  };
 
   // The group is owned by the host (the real wrappers build it with createNamespaceForm), so the
   // component is rendered inside a form element that supplies the ControlContainer.
@@ -67,7 +63,7 @@ describe('BaseNamespaceFormComponent', () => {
     beforeEach(() => setupHost());
 
     it('writes a zvol path into the host form group', async () => {
-      await selectType('Zvol');
+      await selectNamespaceType(loader, 'Zvol');
       const ixForm = await loader.getHarness(IxFormHarness);
       await ixForm.fillForm({
         'Path To Zvol': '/dev/zvol/tank/test-zvol',
@@ -79,11 +75,11 @@ describe('BaseNamespaceFormComponent', () => {
     });
 
     it('shows filename and file size only for a new file', async () => {
-      await selectType('Existing File');
+      await selectNamespaceType(loader, 'Existing File');
       expect(await loader.getAllHarnesses(TnInputHarness.with({ selector: '[formControlName="filename"]' })))
         .toHaveLength(0);
 
-      await selectType('New File');
+      await selectNamespaceType(loader, 'New File');
       const ixForm = await loader.getHarness(IxFormHarness);
       await ixForm.fillForm({
         'Parent Directory': '/mnt/tank',
@@ -96,14 +92,14 @@ describe('BaseNamespaceFormComponent', () => {
       });
     });
 
-    // Regression: the New File branch's tn-inputs contribute `required` validators that Angular
-    // does not strip when the branch is destroyed, so visiting New File used to leave the group
-    // permanently INVALID — Save stayed disabled on every other device type.
+    // Regression: visiting New File used to leave the group permanently INVALID — Save stayed
+    // disabled on every other device type. `syncNewFileControls` is what fixes it; see its doc
+    // for the two independent causes it covers.
     it('stays valid on another device type after New File has been visited', async () => {
-      await selectType('New File');
+      await selectNamespaceType(loader, 'New File');
       expect(form.status).toBe('INVALID');
 
-      await selectType('Existing File');
+      await selectNamespaceType(loader, 'Existing File');
       const ixForm = await loader.getHarness(IxFormHarness);
       await ixForm.fillForm({
         'Path To File': '/mnt/tank/test-file',
@@ -115,7 +111,7 @@ describe('BaseNamespaceFormComponent', () => {
     });
 
     it('still requires filename and file size while New File is selected', async () => {
-      await selectType('New File');
+      await selectNamespaceType(loader, 'New File');
       const ixForm = await loader.getHarness(IxFormHarness);
       await ixForm.fillForm({
         'Parent Directory': '/mnt/tank',
@@ -136,7 +132,7 @@ describe('BaseNamespaceFormComponent', () => {
       ['Existing File', ['Path To File']],
       ['New File', ['Parent Directory', 'Filename', 'File Size']],
     ])('marks every required field with an indicator on %s', async (type, expectedLabels) => {
-      await selectType(type);
+      await selectNamespaceType(loader, type);
 
       const starredLabels = spectator.queryAll('.required')
         .map((star) => star.parentElement?.textContent?.trim().replace(/\*$/, ''));
@@ -145,14 +141,14 @@ describe('BaseNamespaceFormComponent', () => {
     });
 
     it('clears a previously chosen path when the device type changes', async () => {
-      await selectType('Existing File');
+      await selectNamespaceType(loader, 'Existing File');
       const ixForm = await loader.getHarness(IxFormHarness);
       await ixForm.fillForm({
         'Path To File': '/mnt/tank/test-file',
       });
       expect(form.getRawValue().device_path).toBe('/mnt/tank/test-file');
 
-      await selectType('Zvol');
+      await selectNamespaceType(loader, 'Zvol');
 
       expect(form.getRawValue().device_path).toBe('');
     });

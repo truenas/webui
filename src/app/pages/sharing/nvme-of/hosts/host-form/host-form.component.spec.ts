@@ -9,7 +9,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfGlobalConfig, NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
@@ -30,9 +29,7 @@ describe('HostFormComponent', () => {
         } as NvmeOfGlobalConfig),
       ]),
       mockAuth(),
-      ...ixFormTestingProviders(),
-      // Opt out of the panel-mode min-feedback hold so the close is synchronous.
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
+      ...ixFormTestingProviders({ synchronousSubmit: true }),
     ],
   });
 

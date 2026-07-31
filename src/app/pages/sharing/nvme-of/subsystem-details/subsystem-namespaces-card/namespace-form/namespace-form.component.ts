@@ -13,7 +13,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
-import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import {
   createNamespaceForm, toNamespaceChanges,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.utils';
@@ -34,7 +33,7 @@ export interface NamespaceFormParams {
     BaseNamespaceFormComponent,
   ],
 })
-export class NamespaceFormComponent extends IxFormHostForm<NamespaceChanges> {
+export class NamespaceFormComponent extends IxFormHostForm {
   private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
@@ -51,18 +50,9 @@ export class NamespaceFormComponent extends IxFormHostForm<NamespaceChanges> {
   // Owned here (not by the projected base form) so `<ix-form>` can take it as a required input.
   protected readonly form = createNamespaceForm(this.formBuilder);
 
-  // Captured on a successful submit so the inherited `closed` can hand the saved changes back to
-  // the side-panel host.
-  private savedChanges: NamespaceChanges | null = null;
-
-  protected onFormClosed(): void {
-    this.closed.emit(this.savedChanges);
-  }
-
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
-    const changes = toNamespaceChanges(this.form.getRawValue());
     const payload = {
-      ...changes,
+      ...toNamespaceChanges(this.form.getRawValue()),
       subsys_id: this.namespaceData()?.subsystemId,
     };
 
@@ -75,9 +65,6 @@ export class NamespaceFormComponent extends IxFormHostForm<NamespaceChanges> {
       successMessage: this.isEdit()
         ? this.translate.instant('Namespace updated.')
         : this.translate.instant('Namespace created.'),
-      onSuccess: () => {
-        this.savedChanges = changes;
-      },
     };
   };
 }

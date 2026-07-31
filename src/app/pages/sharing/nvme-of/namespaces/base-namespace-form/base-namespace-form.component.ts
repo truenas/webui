@@ -83,7 +83,17 @@ export class BaseNamespaceFormComponent implements OnInit {
   private filesystemService = inject(FilesystemService);
   private destroyRef = inject(DestroyRef);
 
-  /** The group to render into — built by the host with `createNamespaceForm`. */
+  /**
+   * The group to render into — built by the host with `createNamespaceForm`.
+   *
+   * Must be the SAME instance the host's `FormGroupDirective` carries: the `formControlName`s
+   * below bind through that directive (see the `viewProviders` alias above), while this input is
+   * what the template's `@switch` and this class's enable/disable read. Nothing enforces the
+   * match, so passing a different group would render controls into one and branch on another.
+   * Kept as an explicit input rather than `inject(ControlContainer).control` because both hosts
+   * must own the group anyway — `<ix-form>` takes it as a required input — so an implicit source
+   * would hide, not remove, the coupling.
+   */
   readonly form = input.required<NamespaceFormGroup>();
 
   /** Existing namespace to prefill from; absent in create mode. */

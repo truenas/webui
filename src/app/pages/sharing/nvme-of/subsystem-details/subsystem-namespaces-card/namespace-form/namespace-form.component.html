@@ -1,11 +1,9 @@
 <ix-form
   [formGroup]="form"
   [isEditMode]="isEdit()"
-  [addTitle]="'Add Namespace' | translate"
-  [editTitle]="'Edit Namespace' | translate"
   [requiredRoles]="requiredRoles"
   [submitHandler]="handleSubmit"
-  (closed)="onFormClosed()"
+  (closed)="closed.emit($event)"
 >
   <ix-base-namespace-form
     [form]="form"

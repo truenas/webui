@@ -12,7 +12,6 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfGlobalConfig } from 'app/interfaces/nvme-of.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -40,9 +39,7 @@ describe('NvmeOfConfigurationComponent', () => {
           basenqn: 'iqn.2005-10.org.freenas:ctl',
         } as NvmeOfGlobalConfig),
       ]),
-      ...ixFormTestingProviders(),
-      // Opt out of the panel-mode min-feedback hold so the close is synchronous.
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
+      ...ixFormTestingProviders({ synchronousSubmit: true }),
       provideMockStore({
         selectors: [
           {

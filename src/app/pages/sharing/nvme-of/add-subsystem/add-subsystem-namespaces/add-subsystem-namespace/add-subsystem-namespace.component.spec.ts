@@ -1,12 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { TnButtonToggleHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
-import { AuthService } from 'app/modules/auth/auth.service';
 import {
   ExplorerCreateZvolComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
@@ -16,6 +13,9 @@ import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
+import {
+  selectNamespaceType,
+} from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.testing';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 describe('AddSubsystemNamespaceComponent', () => {
@@ -29,18 +29,10 @@ describe('AddSubsystemNamespaceComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(AuthService, {
-        hasRole: jest.fn(() => of(true)),
-      }),
       mockProvider(FilesystemService),
       mockProvider(ApiService),
     ],
   });
-
-  const selectType = async (label: string): Promise<void> => {
-    const toggle = await loader.getHarness(TnButtonToggleHarness.with({ label: new RegExp(label) }));
-    await toggle.check();
-  };
 
   beforeEach(() => {
     spectator = createComponent();
@@ -51,7 +43,7 @@ describe('AddSubsystemNamespaceComponent', () => {
     const closedSpy = jest.fn();
     spectator.component.closed.subscribe(closedSpy);
 
-    await selectType('Existing File');
+    await selectNamespaceType(loader, 'Existing File');
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Path To File': '/mnt/dozer/file',
