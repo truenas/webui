@@ -38,7 +38,7 @@
       ></tn-checkbox>
     </tn-form-field>
 
-    @if (hasVmsInDataset) {
+    @if (hasVmsInDataset()) {
       <tn-form-field>
         <tn-checkbox
           formControlName="vmware_sync"

@@ -98,7 +98,13 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
 
   datasetOptions$: Observable<Option[]>;
   namingSchemaOptions$: Observable<Option[]>;
-  hasVmsInDataset = false;
+
+  /**
+   * Whether the selected dataset holds VMs, which decides both the VMWare Sync checkbox's
+   * visibility and whether `vmware_sync` reaches the payload. A signal so the template re-renders
+   * on its own account, rather than riding on the `isCheckingVms` write that happens beside it.
+   */
+  protected readonly hasVmsInDataset = signal(false);
 
   readonly helptext = helptextSnapshots;
 
@@ -117,7 +123,7 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
       switchMap(() => this.queryVmsInDataset()),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((hasVmsInDataset) => {
-      this.hasVmsInDataset = hasVmsInDataset;
+      this.hasVmsInDataset.set(hasVmsInDataset);
       this.isCheckingVms.set(false);
     });
 
@@ -161,7 +167,7 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
       params.name = values.name;
     }
 
-    if (this.hasVmsInDataset) {
+    if (this.hasVmsInDataset()) {
       params.vmware_sync = values.vmware_sync;
     }
 

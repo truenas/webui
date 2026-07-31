@@ -297,9 +297,14 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   }
 
   /**
-   * Hands the saved dataset to the opener, then navigates to the ACL editor if the post-save prompt
-   * was accepted — in that order, so the opener still sees the record before navigation tears the
-   * panel down.
+   * Hands the saved dataset to the opener (`<ix-form>` itself closes with a plain `true`), then
+   * navigates to the ACL editor if the post-save prompt was accepted.
+   *
+   * Note the emit does NOT guarantee the opener's `onSuccess` runs in the ACL branch: the host
+   * records the payload here but only resolves it on panel teardown, after the close animation, by
+   * which point `router.navigate` has destroyed the opener and the `DestroyRef` its callback is
+   * bound to. That's intended — we're leaving the page anyway — and matches the pre-migration
+   * behaviour. In the ordinary (non-ACL) branch nothing navigates and the opener runs normally.
    */
   protected onFormClosed(): void {
     this.closed.emit(this.savedDataset ?? null);

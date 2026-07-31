@@ -32,6 +32,12 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 /**
+ * Default for {@link ixFormMinSubmitFeedbackMs}. Exported so a spec asserting the delay can
+ * re-provide the real duration (and drive its `tick()`s from it) without restating the number.
+ */
+export const defaultMinSubmitFeedbackMs = 500;
+
+/**
  * Minimum time (ms) the submitting indicator stays up on a successful `<tn-side-panel>`-hosted save.
  * A local API call can resolve in a few ms, closing the panel before the host's progress bar / dim
  * overlay are perceptible — the save reads as if nothing happened. Holding success handling
@@ -39,10 +45,8 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
  * Only the success path waits; errors surface immediately (see {@link IxFormComponent.onFormSubmit}).
  *
  * Injectable so specs that assert a synchronous close can set it to `0` (which skips the timer
- * entirely, restoring the un-delayed path).
+ * entirely, restoring the un-delayed path); `ixFormTestingProviders()` does this by default.
  */
-export const defaultMinSubmitFeedbackMs = 500;
-
 export const ixFormMinSubmitFeedbackMs = new InjectionToken<number>('ixFormMinSubmitFeedbackMs', {
   providedIn: 'root',
   factory: () => defaultMinSubmitFeedbackMs,

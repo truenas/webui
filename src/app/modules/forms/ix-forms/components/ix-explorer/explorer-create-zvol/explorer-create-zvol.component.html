@@ -1,12 +1,12 @@
-<!-- Explicit type="button": this is projected into <ix-explorer>, which callers render inside a
-     <form>, so the button must never submit it. (tn-button already defaults to this.) -->
+<!-- type="button" is stated explicitly, as on every other in-form tn-button: this is projected into
+     <ix-explorer>, which callers render inside a <form> it must never submit. -->
 <tn-button
   *ixRequiresRoles="requiredRoles"
   type="button"
   variant="outline"
   class="create-btn"
+  testId="create-zvol"
   icon="mdi-database"
-  [testId]="'create-zvol'"
   [label]="'Create Zvol' | translate"
   [disabled]="isButtonDisabled()"
   (onClick)="onCreateZvol()"
