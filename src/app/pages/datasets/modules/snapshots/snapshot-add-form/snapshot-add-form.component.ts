@@ -30,9 +30,9 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/forms/ix-forms/validators/required-empty-validation';
-import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 
 @Component({
@@ -56,7 +56,8 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
-  private errorHandler = inject(FormErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
   private validatorsService = inject(IxValidatorsService);
   private datasetStore = inject(DatasetTreeStore);
   private storageService = inject(StorageService);
@@ -116,7 +117,7 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
         this.checkForVmsInDataset();
       },
       error: (error: unknown) => {
-        this.errorHandler.handleValidationErrors(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
         this.isFormLoading.set(false);
       },
     });
@@ -150,9 +151,8 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
 
     return {
       request$: this.api.call('pool.snapshot.create', [params]),
-      // Never rendered — the wrapper's snackbar is suppressed (creating a snapshot has never
-      // announced), so don't mint a translation key for it.
-      successMessage: ignoreTranslation(''),
+      // No successMessage: the wrapper's snackbar is suppressed — creating a snapshot has
+      // never announced.
       onSuccess: () => this.datasetStore.datasetUpdated(),
     };
   };
@@ -190,7 +190,10 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
           this.isCheckingVms.set(false);
         },
         error: (error: unknown) => {
-          this.errorHandler.handleValidationErrors(error, this.form);
+          // A read-only lookup, so its failure can't map onto a control — surface it as an error
+          // rather than routing it through the form's validation errors.
+          this.errorHandler.showErrorModal(error);
+          this.hasVmsInDataset = false;
           this.isCheckingVms.set(false);
         },
       });

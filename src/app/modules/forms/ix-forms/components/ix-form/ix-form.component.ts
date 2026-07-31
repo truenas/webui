@@ -41,9 +41,11 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
  * Injectable so specs that assert a synchronous close can set it to `0` (which skips the timer
  * entirely, restoring the un-delayed path).
  */
+export const defaultMinSubmitFeedbackMs = 500;
+
 export const ixFormMinSubmitFeedbackMs = new InjectionToken<number>('ixFormMinSubmitFeedbackMs', {
   providedIn: 'root',
-  factory: () => 500,
+  factory: () => defaultMinSubmitFeedbackMs,
 });
 
 export interface FormSubmitEvent<T = Record<string, unknown>> {
@@ -67,7 +69,13 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
 
 export interface SubmitResult {
   request$: Observable<unknown>;
-  successMessage: TranslatedString;
+
+  /**
+   * Snackbar text on success. Required unless the host sets `suppressSuccessSnackbar` — forms that
+   * announce success themselves (because the message depends on the saved record) omit it rather
+   * than passing a placeholder. A dev-mode warning fires if it's missing and not suppressed.
+   */
+  successMessage?: TranslatedString;
 
   /** Runs after success, before close (store/navigation fire pre-animation). */
   onSuccess?: (result: unknown) => void;
@@ -361,7 +369,15 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
         handledSuccess = true;
         this.hadSuccessfulSubmit = true;
         if (!this.suppressSuccessSnackbar()) {
-          this.snackbar.success(successMessage);
+          if (successMessage) {
+            this.snackbar.success(successMessage);
+          } else if (isDevMode()) {
+            console.warn(
+              '[ix-form] submitHandler returned no successMessage and suppressSuccessSnackbar is '
+              + 'false, so this save completes with no confirmation. Provide a successMessage, or '
+              + 'set [suppressSuccessSnackbar]="true" if the form announces success itself.',
+            );
+          }
         }
         onSuccess?.(result);
         const payload = closeWith ? closeWith(result) : result;

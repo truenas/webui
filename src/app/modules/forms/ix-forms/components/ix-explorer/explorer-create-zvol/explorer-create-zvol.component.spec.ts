@@ -2,8 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { FormControl, NgControl } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -65,7 +65,7 @@ describe('ExplorerCreateZvolComponent', () => {
   });
 
   it('opens ZvolFormComponent when Create Zvol button is pressed', async () => {
-    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Zvol' }));
+    const createButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create Zvol' }));
     await createButton.click();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ZvolFormComponent, {

@@ -1,16 +1,15 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgControl } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 
 @Component({
@@ -20,11 +19,9 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatButton,
-    TnIconComponent,
+    TnButtonComponent,
     TranslateModule,
     RequiresRolesDirective,
-    TestDirective,
   ],
 })
 export class ExplorerCreateZvolComponent implements AfterViewInit {
@@ -61,7 +58,7 @@ export class ExplorerCreateZvolComponent implements AfterViewInit {
 
   protected onCreateZvol(): void {
     this.formPanel.open<Dataset>(ZvolFormComponent, {
-      title: this.translate.instant('Add Zvol'),
+      title: this.translate.instant(helptextZvol.addTitle),
       inputs: {
         params: {
           isNew: true,

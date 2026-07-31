@@ -49,7 +49,7 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
   readonly defaultQuotaCritical = 95;
 
   /** Dataset to edit, supplied by the `<tn-side-panel>` host. */
-  readonly datasetToEdit = input<DatasetDetails | undefined>(undefined);
+  readonly datasetToEdit = input.required<DatasetDetails>();
 
   form = this.formBuilder.group({
     refquota: [null as number | null, this.validators.withMessage(
@@ -86,7 +86,7 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
     reservation: [null as number | null],
   });
 
-  protected dataset: DatasetDetails | undefined;
+  protected dataset: DatasetDetails;
 
   readonly helptext = helptextDatasetForm;
 
@@ -105,9 +105,7 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
 
   ngOnInit(): void {
     this.dataset = this.datasetToEdit();
-    if (this.dataset) {
-      this.setDatasetForEdit(this.dataset);
-    }
+    this.setDatasetForEdit(this.dataset);
   }
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {

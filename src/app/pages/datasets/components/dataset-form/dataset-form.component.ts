@@ -24,7 +24,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   EncryptionSectionComponent,
@@ -57,7 +56,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     OtherOptionsSectionComponent,
   ],
 })
-export class DatasetFormComponent extends IxFormHostForm<Dataset> implements OnInit, AfterViewInit {
+export class DatasetFormComponent extends IxFormHostForm<Dataset | null> implements OnInit, AfterViewInit {
   private api = inject(ApiService);
   private dialog = inject(DialogService);
   private datasetFormService = inject(DatasetFormService);
@@ -70,7 +69,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset> implements OnI
   private destroyRef = inject(DestroyRef);
 
   /** Edit parameters supplied by the `<tn-side-panel>` host. */
-  readonly params = input<{ datasetId: string; isNew?: boolean }>();
+  readonly params = input.required<{ datasetId: string; isNew?: boolean }>();
 
   private nameAndOptionsSection = viewChild.required(NameAndOptionsSectionComponent);
   private encryptionSection = viewChild(EncryptionSectionComponent);
@@ -119,8 +118,12 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset> implements OnI
    */
   private savedDataset: Dataset | undefined;
 
-  /** Whether the post-save ACL prompt was accepted; acted on after the panel closes. */
-  private shouldGoToAclEditor = false;
+  /**
+   * Mountpoint to open the ACL editor at, set only when the post-save ACL prompt was accepted.
+   * Carrying the path (rather than a boolean) keeps {@link onFormClosed} free of an invariant
+   * about `savedDataset` being present.
+   */
+  private aclEditorPath: string | undefined;
 
   get isNew(): boolean {
     return !this.existingDataset();
@@ -168,7 +171,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset> implements OnI
   }
 
   ngOnInit(): void {
-    this.formParams = this.params() ?? { datasetId: '' };
+    this.formParams = this.params();
 
     if (this.formParams.datasetId && !this.formParams.isNew) {
       this.setForEdit();
@@ -263,9 +266,8 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset> implements OnI
           );
         }),
       ),
-      // Never rendered: the message depends on the saved record, so it is raised in `onSuccess`
-      // and the wrapper's own snackbar is suppressed. Don't mint a translation key for it.
-      successMessage: ignoreTranslation(''),
+      // No successMessage: the text depends on the saved record, so `onSaved` raises it and the
+      // wrapper's own snackbar is suppressed.
       onSuccess: (result: unknown) => this.onSaved(...result as [Dataset, boolean]),
       onError: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
@@ -284,7 +286,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset> implements OnI
     }
 
     this.savedDataset = savedDataset;
-    this.shouldGoToAclEditor = shouldGoToAclEditor;
+    this.aclEditorPath = shouldGoToAclEditor ? savedDataset.mountpoint : undefined;
 
     if (!shouldGoToAclEditor) {
       this.snackbar.success(
@@ -301,11 +303,11 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset> implements OnI
    * panel down.
    */
   protected onFormClosed(): void {
-    this.closed.emit(this.savedDataset);
+    this.closed.emit(this.savedDataset ?? null);
 
-    if (this.shouldGoToAclEditor) {
+    if (this.aclEditorPath) {
       this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-        queryParams: { path: this.savedDataset.mountpoint },
+        queryParams: { path: this.aclEditorPath },
       });
     }
   }

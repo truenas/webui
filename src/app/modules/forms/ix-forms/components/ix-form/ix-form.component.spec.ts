@@ -23,7 +23,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import {
-  FormSubmitEvent, IxFormComponent, ixFormMinSubmitFeedbackMs, SubmitResult,
+  defaultMinSubmitFeedbackMs, FormSubmitEvent, IxFormComponent, ixFormMinSubmitFeedbackMs, SubmitResult,
 } from './ix-form.component';
 
 describe('IxFormComponent', () => {
@@ -1236,9 +1236,7 @@ describe('IxFormComponent', () => {
   describe('minimum submit feedback (side-panel host)', () => {
     // No SlideInRef provided → the form is hosted in a `<tn-side-panel>`, where success is held for
     // a minimum duration so the host's progress bar / dim overlay stay visible long enough to see.
-    // The `tick()`s below step across this boundary, so keep them in sync with it.
-    const minSubmitFeedbackMs = 500;
-
+    // The `tick()`s below step across this boundary.
     const createSidePanelComponent = createComponentFactory({
       component: TestHostComponent,
       imports: [ReactiveFormsModule],
@@ -1246,7 +1244,7 @@ describe('IxFormComponent', () => {
         ...ixFormTestingProviders(),
         // This block asserts the delay itself, so restore the real duration that
         // `ixFormTestingProviders()` zeroes for every other spec.
-        { provide: ixFormMinSubmitFeedbackMs, useValue: minSubmitFeedbackMs },
+        { provide: ixFormMinSubmitFeedbackMs, useValue: defaultMinSubmitFeedbackMs },
         // Force the `<tn-side-panel>` host: no SlideInRef (the harness would otherwise auto-mock
         // one, taking the un-delayed legacy path). `null` is what `inject(…, {optional:true})` sees.
         { provide: SlideInRef, useValue: null },
@@ -1273,7 +1271,7 @@ describe('IxFormComponent', () => {
       expect(closedSpy).not.toHaveBeenCalled();
       expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
 
-      tick(499);
+      tick(defaultMinSubmitFeedbackMs - 1);
       expect(ixForm.isSubmitting()).toBe(true);
       expect(closedSpy).not.toHaveBeenCalled();
 

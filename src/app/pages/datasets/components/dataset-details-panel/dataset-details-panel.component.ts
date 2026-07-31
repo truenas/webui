@@ -9,6 +9,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
+import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -93,7 +94,7 @@ export class DatasetDetailsPanelComponent {
 
   onAddZvol(): void {
     this.formPanel.open<Dataset>(ZvolFormComponent, {
-      title: this.translate.instant('Add Zvol'),
+      title: this.translate.instant(helptextZvol.addTitle),
       inputs: { params: { isNew: true, parentOrZvolId: this.dataset().id } },
     }).onSuccess((response) => {
       this.snackbar.success(this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(response) }));

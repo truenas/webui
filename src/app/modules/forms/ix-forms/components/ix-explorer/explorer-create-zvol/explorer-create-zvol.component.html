@@ -1,12 +1,9 @@
-<button
+<tn-button
   *ixRequiresRoles="requiredRoles"
-  mat-button
-  type="button"
   class="create-btn"
-  ixTest="create-zvol"
+  icon="mdi-database"
+  [testId]="'create-zvol'"
+  [label]="'Create Zvol' | translate"
   [disabled]="isButtonDisabled()"
-  (click)="onCreateZvol()"
->
-  <tn-icon name="database" library="mdi"></tn-icon>
-  {{ 'Create Zvol' | translate }}
-</button>
+  (onClick)="onCreateZvol()"
+></tn-button>
