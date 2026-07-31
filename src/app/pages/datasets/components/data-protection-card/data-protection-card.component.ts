@@ -74,9 +74,6 @@ export class DataProtectionCardComponent {
     this.formPanel.open(SnapshotAddFormComponent, {
       title: this.translate.instant('Add Snapshot'),
       inputs: { presetDatasetId: this.dataset().id },
-    })
-      .onSuccess(() => {
-        this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));
-      }, this.destroyRef);
+    });
   }
 }

@@ -78,7 +78,6 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
   /** Read by the `<tn-side-panel>` host to role-gate its footer Save. */
   readonly requiredRoles = [Role.DatasetWrite];
-  private formParams: { datasetId: string; isNew?: boolean };
 
   protected readonly isNameAndOptionsValid = signal(true);
   protected readonly isQuotaValid = signal(true);
@@ -171,12 +170,12 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   }
 
   ngOnInit(): void {
-    this.formParams = this.params();
+    const { datasetId, isNew } = this.params();
 
-    if (this.formParams.datasetId && !this.formParams.isNew) {
+    if (datasetId && !isNew) {
       this.setForEdit();
     }
-    if (this.formParams.datasetId && this.formParams.isNew) {
+    if (datasetId && isNew) {
       this.setForNew();
     }
   }
@@ -191,7 +190,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   private setForNew(): void {
     this.isLoading.set(true);
 
-    this.datasetFormService.checkAndWarnForLengthAndDepth(this.formParams.datasetId).pipe(
+    this.datasetFormService.checkAndWarnForLengthAndDepth(this.params().datasetId).pipe(
       filter((isValidLengthAndDepth) => {
         if (!isValidLengthAndDepth) {
           // Falsy payload — the host reads it as a cancel and just closes the panel.
@@ -199,7 +198,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
         }
         return isValidLengthAndDepth;
       }),
-      switchMap(() => this.datasetFormService.loadDataset(this.formParams.datasetId)),
+      switchMap(() => this.datasetFormService.loadDataset(this.params().datasetId)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (dataset) => {
@@ -215,10 +214,10 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
   setForEdit(): void {
     const requests = [
-      this.datasetFormService.loadDataset(this.formParams.datasetId),
+      this.datasetFormService.loadDataset(this.params().datasetId),
     ];
 
-    const parentId = this.formParams.datasetId.split('/').slice(0, -1).join('/');
+    const parentId = this.params().datasetId.split('/').slice(0, -1).join('/');
     if (parentId) {
       requests.push(this.datasetFormService.loadDataset(parentId));
     }

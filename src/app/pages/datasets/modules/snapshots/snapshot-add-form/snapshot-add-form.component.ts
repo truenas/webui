@@ -13,9 +13,8 @@ import {
 } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import {
-  combineLatest, merge, Observable, of,
+  catchError, combineLatest, merge, Observable, of, Subject, switchMap, tap,
 } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
@@ -26,7 +25,6 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/forms/ix-forms/validators/required-empty-validation';
@@ -56,7 +54,6 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
   private validatorsService = inject(IxValidatorsService);
   private datasetStore = inject(DatasetTreeStore);
@@ -75,6 +72,9 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
    * mid-edit each time either field is touched.
    */
   protected isCheckingVms = signal(false);
+
+  /** Requests a VM check that isn't driven by a field edit (i.e. the initial load). */
+  private readonly vmCheckRequests$ = new Subject<void>();
 
   /** Dataset to preset, supplied by the `<tn-side-panel>` host. */
   readonly presetDatasetId = input<string | undefined>(undefined);
@@ -103,6 +103,24 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   readonly helptext = helptextSnapshots;
 
   ngOnInit(): void {
+    // Subscribe before anything can trigger a check, so the first request is never dropped.
+    // `switchMap` cancels an in-flight lookup when either field changes again, so only the newest
+    // response can clear the Save gate or set `hasVmsInDataset` — an earlier, slower response can
+    // neither re-enable Save early nor leave a stale flag behind (which would silently drop
+    // `vmware_sync` from the payload).
+    merge(
+      this.vmCheckRequests$,
+      this.form.controls.recursive.valueChanges,
+      this.form.controls.dataset.valueChanges,
+    ).pipe(
+      tap(() => this.isCheckingVms.set(true)),
+      switchMap(() => this.queryVmsInDataset()),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((hasVmsInDataset) => {
+      this.hasVmsInDataset = hasVmsInDataset;
+      this.isCheckingVms.set(false);
+    });
+
     combineLatest([
       this.getDatasetOptions(),
       this.getNamingSchemaOptions(),
@@ -114,18 +132,16 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
         this.namingSchemaOptions$ = of(namingSchemaOptions);
         this.isFormLoading.set(false);
         this.form.controls.name.markAsTouched();
-        this.checkForVmsInDataset();
+        this.vmCheckRequests$.next();
       },
       error: (error: unknown) => {
-        this.formErrorHandler.handleValidationErrors(error, this.form);
+        // Both are read-only option lookups, so a failure can't map onto a control — surface it
+        // rather than routing it through the form's validation errors. (Submit errors still go
+        // through FormErrorHandlerService, inside `<ix-form>`.)
+        this.errorHandler.showErrorModal(error);
         this.isFormLoading.set(false);
       },
     });
-
-    merge(
-      this.form.controls.recursive.valueChanges,
-      this.form.controls.dataset.valueChanges,
-    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.checkForVmsInDataset());
 
     const presetDatasetId = this.presetDatasetId();
     if (presetDatasetId) {
@@ -151,8 +167,9 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
 
     return {
       request$: this.api.call('pool.snapshot.create', [params]),
-      // No successMessage: the wrapper's snackbar is suppressed — creating a snapshot has
-      // never announced.
+      // Owned by the form so every entry point confirms identically — the data-protection card
+      // used to raise this itself, and the snapshot list confirmed nothing at all.
+      successMessage: this.translate.instant('Snapshot added successfully.'),
       onSuccess: () => this.datasetStore.datasetUpdated(),
     };
   };
@@ -180,22 +197,17 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
     );
   }
 
-  private checkForVmsInDataset(): void {
-    this.isCheckingVms.set(true);
-    this.api.call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (hasVmsInDataset) => {
-          this.hasVmsInDataset = hasVmsInDataset;
-          this.isCheckingVms.set(false);
-        },
-        error: (error: unknown) => {
-          // A read-only lookup, so its failure can't map onto a control — surface it as an error
-          // rather than routing it through the form's validation errors.
+  private queryVmsInDataset(): Observable<boolean> {
+    return this.api
+      .call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
+      .pipe(
+        // Caught here (inside the switchMap projection) so a failed lookup doesn't kill the
+        // outer stream and stop every later check. It's a read-only lookup, so its failure
+        // can't map onto a control — surface it rather than routing it through form validation.
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
-          this.hasVmsInDataset = false;
-          this.isCheckingVms.set(false);
-        },
-      });
+          return of(false);
+        }),
+      );
   }
 }

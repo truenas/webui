@@ -3,6 +3,9 @@
   justify-content: flex-end;
 }
 
+// The Material original was a text button blended into the explorer panel via
+// `background: inherit !important`. tn-button has no text variant, so `variant="outline"` (a
+// transparent background with a light border) is the closest equivalent; only the size is local.
 .create-btn {
   font-size: 12px;
 }

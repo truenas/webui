@@ -136,6 +136,38 @@ describe('SnapshotAddFormComponent', () => {
     expect(spectator.component.canSubmit()).toBe(true);
   });
 
+  it('ignores a superseded VM check, so a slow earlier response cannot unblock Save or go stale', async () => {
+    const firstCheck$ = new Subject<boolean>();
+    const secondCheck$ = new Subject<boolean>();
+    const checks = [firstCheck$, secondCheck$];
+    const call = api.call as jest.Mock;
+    const respondNormally = call.getMockImplementation()!;
+    call.mockImplementation((method: string, params: unknown) => (
+      method === 'vmware.dataset_has_vms' ? (checks.shift() ?? of(false)) : respondNormally(method, params)
+    ));
+
+    await (await getSelect('dataset')).selectOption('APPS');
+    await (await getCheckbox('recursive')).check();
+
+    // The first lookup answers late, after its change was superseded.
+    firstCheck$.next(true);
+    spectator.detectChanges();
+
+    expect(spectator.component.canSubmit()).toBe(false);
+
+    secondCheck$.next(false);
+    spectator.detectChanges();
+
+    expect(spectator.component.canSubmit()).toBe(true);
+    await (await getInput('name')).setValue('test-snapshot-name');
+    clickSave();
+
+    // `vmware_sync` is only sent when the newest lookup found VMs — the stale `true` must not leak.
+    expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
+      expect.not.objectContaining({ vmware_sync: expect.anything() }),
+    ]);
+  });
+
   it('re-checks for VMs in dataset when recursive checkbox is toggled or dataset changed', async () => {
     jest.clearAllMocks();
 

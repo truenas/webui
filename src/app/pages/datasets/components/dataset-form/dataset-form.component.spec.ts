@@ -16,6 +16,7 @@ import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import {
@@ -115,8 +116,11 @@ describe('DatasetFormComponent', () => {
 
   /** The `<tn-side-panel>` host owns Save and the Advanced toggle, and drives them through the form. */
   const clickSave = (): void => spectator.component.submit();
+  const advancedAction = (): SidePanelFooterAction => {
+    return spectator.component.footerActions.find((action) => action.testId === 'toggle-advanced')!;
+  };
   const toggleAdvanced = (): void => {
-    spectator.component.footerActions[0].onClick();
+    advancedAction().onClick();
     spectator.detectChanges();
   };
 
@@ -128,13 +132,13 @@ describe('DatasetFormComponent', () => {
     it('toggles between Advanced mode from the panel footer action', () => {
       expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(false);
       expect(spectator.query(QuotasSectionComponent)).not.toExist();
-      expect(spectator.component.footerActions[0].label).toBe('Advanced Options');
+      expect(advancedAction().label).toBe('Advanced Options');
 
       toggleAdvanced();
 
       expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(true);
       expect(spectator.query(QuotasSectionComponent)).toExist();
-      expect(spectator.component.footerActions[0].label).toBe('Basic Options');
+      expect(advancedAction().label).toBe('Basic Options');
 
       toggleAdvanced();
 

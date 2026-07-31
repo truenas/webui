@@ -86,8 +86,6 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
     reservation: [null as number | null],
   });
 
-  protected dataset: DatasetDetails;
-
   readonly helptext = helptextDatasetForm;
 
   private oldValues: DatasetCapacitySettingsComponent['form']['value'];
@@ -104,13 +102,12 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
   }
 
   ngOnInit(): void {
-    this.dataset = this.datasetToEdit();
-    this.setDatasetForEdit(this.dataset);
+    this.setDatasetForEdit(this.datasetToEdit());
   }
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     return {
-      request$: this.api.call('pool.dataset.update', [this.dataset.id, this.getChangedFormValues()]),
+      request$: this.api.call('pool.dataset.update', [this.datasetToEdit().id, this.getChangedFormValues()]),
       successMessage: this.translate.instant('Dataset settings updated.'),
     };
   };
@@ -129,8 +126,8 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
     });
   }
 
-  get isRoot(): boolean {
-    return !!this.dataset && isRootDataset(this.dataset);
+  protected get isRoot(): boolean {
+    return isRootDataset(this.datasetToEdit());
   }
 
   private setDatasetForEdit(dataset: DatasetDetails): void {

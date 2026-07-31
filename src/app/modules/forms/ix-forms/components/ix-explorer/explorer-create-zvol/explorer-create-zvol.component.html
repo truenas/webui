@@ -1,5 +1,9 @@
+<!-- Explicit type="button": this is projected into <ix-explorer>, which callers render inside a
+     <form>, so the button must never submit it. (tn-button already defaults to this.) -->
 <tn-button
   *ixRequiresRoles="requiredRoles"
+  type="button"
+  variant="outline"
   class="create-btn"
   icon="mdi-database"
   [testId]="'create-zvol'"

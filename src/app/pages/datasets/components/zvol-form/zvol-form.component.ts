@@ -106,8 +106,13 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
 
   private savedDataset: Dataset | undefined;
 
-  protected parentOrZvolId: string;
-  protected isNew = true;
+  protected get parentOrZvolId(): string {
+    return this.params().parentOrZvolId;
+  }
+
+  protected get isNew(): boolean {
+    return this.params().isNew;
+  }
 
   readonly helptext = helptextZvol;
   readonly OnOff = OnOff;
@@ -202,10 +207,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   }
 
   ngOnInit(): void {
-    const data = this.params();
-    this.isNew = data.isNew;
-    this.parentOrZvolId = data.parentOrZvolId;
-
     this.checkIfDedupIsSupported();
 
     // Set up conditional validation for special_small_block_size_custom
