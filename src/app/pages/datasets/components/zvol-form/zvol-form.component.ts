@@ -63,6 +63,12 @@ import { LicenseService } from 'app/services/license.service';
 // as unchanged to avoid spurious payload churn.
 const volsizeUnchangedRelativeTolerance = 0.001;
 
+/**
+ * Note for callers: the payload is `Dataset | null`, but openers correctly use
+ * `formPanel.open<Dataset>(…)` and dereference the record without a guard — `null` is only emitted
+ * if a save somehow completes without a record, and `FormSidePanelService` coerces any falsy
+ * payload to a cancel, so `onSuccess` never observes it.
+ */
 @Component({
   selector: 'ix-zvol-form',
   templateUrl: './zvol-form.component.html',
@@ -86,7 +92,7 @@ const volsizeUnchangedRelativeTolerance = 0.001;
     FileSizePipe,
   ],
 })
-export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit {
+export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements OnInit {
   private formatter = inject(IxFormatterService);
   private translate = inject(TranslateService);
   private formBuilder = inject(NonNullableFormBuilder);
@@ -237,13 +243,16 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   };
 
   /**
-   * `<ix-form>` only signals success via `closed` (a plain `true`), so re-emit the zvol captured
-   * in the submit `onSuccess` hook — the opener needs the record to switch to the new zvol.
+   * `<ix-form>` only signals success via `closed` (a plain `true`), so re-emit the zvol captured in
+   * the submit `onSuccess` hook — the opener needs the record to switch to the new zvol.
+   *
+   * Emits unconditionally: `closed` is the only signal that tears the panel down, so skipping the
+   * emit when no record was captured would wedge the panel open with no Save in flight. A falsy
+   * payload is read as a cancel by `FormSidePanelService` (`pendingResponse = saved || undefined`),
+   * so the degraded case closes cleanly instead.
    */
   protected onFormClosed(): void {
-    if (this.savedDataset) {
-      this.closed.emit(this.savedDataset);
-    }
+    this.closed.emit(this.savedDataset ?? null);
   }
 
   protected getOptionLabel(options: Option[], value: unknown): string {

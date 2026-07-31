@@ -24,6 +24,7 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import {
   FormSidePanelContainerComponent, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -98,8 +99,8 @@ describe('DatasetFormComponent', () => {
       mockApi([
         mockCall('sharing.smb.create'),
         mockCall('sharing.nfs.create'),
-        mockCall('pool.dataset.create', { id: 'saved-id', mountpoint: '/mnt/saved-id' } as Dataset),
-        mockCall('pool.dataset.update', { id: 'saved-id', mountpoint: '/mnt/saved-id' } as Dataset),
+        mockCall('pool.dataset.create', { id: 'saved-id', name: 'parent/saved-child', mountpoint: '/mnt/saved-id' } as Dataset),
+        mockCall('pool.dataset.update', { id: 'saved-id', name: 'parent/saved-child', mountpoint: '/mnt/saved-id' } as Dataset),
         mockCall('filesystem.stat', { acl: true } as FileSystemStat),
       ]),
       ...ixFormTestingProviders(),
@@ -291,6 +292,40 @@ describe('DatasetFormComponent', () => {
         ['/', 'datasets', 'acl', 'edit'],
         { queryParams: { path: '/mnt/saved-id' } },
       );
+      // Deliberately silent on this branch — we're navigating away, so a snackbar would be noise.
+      expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+    });
+  });
+
+
+  describe('success messages', () => {
+    // The form sets `announcesSuccessItself: true` (its message needs the saved record), so these
+    // snackbars are the ONLY confirmation a save produces — the wrapper raises nothing.
+    // Declining the ACL prompt keeps us off the navigate-away branch, which is deliberately silent.
+    const declineAclPrompt = [mockProvider(DialogService, { confirm: jest.fn(() => of(false)) })];
+
+    it('announces the created dataset', () => {
+      spectator = createComponent({
+        props: { params: { datasetId: 'parent', isNew: true } },
+        providers: declineAclPrompt,
+      });
+
+      clickSave();
+
+      expect(spectator.inject(SnackbarService).success)
+        .toHaveBeenCalledWith('Switched to new dataset «saved-child».');
+    });
+
+    it('announces the updated dataset', () => {
+      spectator = createComponent({
+        props: { params: { datasetId: 'parent/child', isNew: false } },
+        providers: declineAclPrompt,
+      });
+
+      clickSave();
+
+      expect(spectator.inject(SnackbarService).success)
+        .toHaveBeenCalledWith('Dataset «saved-child» updated.');
     });
   });
 
@@ -339,7 +374,7 @@ describe('DatasetFormComponent hosted in the side panel', () => {
       imports: [FormSidePanelContainerComponent, TranslateModule.forRoot()],
       providers: [
         mockApi([
-          mockCall('pool.dataset.create', { id: 'saved-id', mountpoint: '/mnt/saved-id' } as Dataset),
+          mockCall('pool.dataset.create', { id: 'saved-id', name: 'parent/saved-child', mountpoint: '/mnt/saved-id' } as Dataset),
           mockCall('filesystem.stat', { acl: false } as FileSystemStat),
         ]),
         ...ixFormTestingProviders(),

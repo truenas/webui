@@ -361,7 +361,6 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
       request$, successMessage, onSuccess, onError, closeWith,
     } = this.submitHandler()(event);
 
-
     this.isSubmitting.set(true);
     let handledSuccess = false;
     // In a `<tn-side-panel>` host, pair the request with a minimum-duration timer so a fast save

@@ -7,7 +7,13 @@
   (closed)="closed.emit($event)"
 >
   <tn-form-section>
-    <tn-form-field [label]="helptext.datasetLabel | translate" [required]="true">
+    <!-- The lookup gates Save, so say so on the field it depends on rather than leaving the user
+         with a silently greyed-out Save. `hint` is ARIA-linked, so it's announced too. -->
+    <tn-form-field
+      [label]="helptext.datasetLabel | translate"
+      [required]="true"
+      [hint]="isCheckingVms() ? (helptext.checkingForVms | translate) : ''"
+    >
       <tn-select
         formControlName="dataset"
         [options]="(datasetOptions$ | async) ?? []"

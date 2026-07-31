@@ -2,6 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSnapshots = {
   addTitle: T('Add Snapshot'),
+  checkingForVms: T('Checking this dataset for VMs…'),
   datasetLabel: T('Dataset'),
 
   nameLabel: T('Name'),

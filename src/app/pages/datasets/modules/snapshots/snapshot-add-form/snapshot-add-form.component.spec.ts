@@ -1,14 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
 
 const mockNamingSchema = ['%Y %H %d %M %m'];
 
@@ -180,5 +183,82 @@ describe('SnapshotAddFormComponent', () => {
     expect(api.call).toHaveBeenNthCalledWith(2, 'vmware.dataset_has_vms', ['POOL', true]);
     expect(api.call).toHaveBeenNthCalledWith(3, 'vmware.dataset_has_vms', ['APPS', true]);
     expect(api.call).toHaveBeenNthCalledWith(4, 'vmware.dataset_has_vms', ['APPS', false]);
+  });
+
+  describe('VM check failures', () => {
+    /** Makes every `vmware.dataset_has_vms` lookup fail, leaving the other calls untouched. */
+    const failVmChecks = (): void => {
+      const call = api.call as jest.Mock;
+      const respondNormally = call.getMockImplementation()!;
+      call.mockImplementation((method: string, params: unknown) => (
+        method === 'vmware.dataset_has_vms'
+          ? throwError(() => new Error('vmware is down'))
+          : respondNormally(method, params)
+      ));
+    };
+
+    it('reports a failed lookup once, however many times it re-runs for the same dataset', async () => {
+      failVmChecks();
+
+      await (await getSelect('dataset')).selectOption('APPS');
+      await (await getCheckbox('recursive')).check();
+      await (await getCheckbox('recursive')).uncheck();
+
+      // Re-running on every recursive toggle must not raise a modal each time.
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledTimes(1);
+    });
+
+    it('re-reports on a new dataset, since that is what decides the payload', async () => {
+      failVmChecks();
+
+      await (await getSelect('dataset')).selectOption('APPS');
+      await (await getSelect('dataset')).selectOption('POOL');
+
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledTimes(2);
+    });
+
+    it('leaves Save usable and omits vmware_sync when the lookup fails', async () => {
+      failVmChecks();
+
+      await (await getSelect('dataset')).selectOption('APPS');
+      await (await getInput('name')).setValue('test-snapshot-name');
+
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      clickSave();
+
+      expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
+        expect.not.objectContaining({ vmware_sync: expect.anything() }),
+      ]);
+    });
+  });
+});
+
+// Its own TestBed: the suite above instantiates the module in `beforeEach`, so a per-test provider
+// override there is rejected.
+describe('SnapshotAddFormComponent option loading failures', () => {
+  const createComponent = createComponentFactory({
+    component: SnapshotAddFormComponent,
+    imports: [ReactiveFormsModule],
+    providers: [
+      mockAuth(),
+      mockApi([
+        mockCall('replication.list_naming_schemas', mockNamingSchema),
+        mockCall('vmware.dataset_has_vms', true),
+      ]),
+      mockProvider(StorageService, {
+        getDatasetNameOptions: jest.fn(() => throwError(() => new Error('choices are down'))),
+      }),
+      ...ixFormTestingProviders(),
+    ],
+  });
+
+  it('surfaces a failed options load instead of routing it through form validation', () => {
+    const spectator = createComponent();
+
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+    // Would have landed on the form's controls otherwise — but a failed option lookup can't map
+    // onto any of them.
+    expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).not.toHaveBeenCalled();
   });
 });

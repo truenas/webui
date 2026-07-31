@@ -9,6 +9,7 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
@@ -263,6 +264,21 @@ describe('ZvolFormComponent', () => {
         type: DatasetType.Volume,
       }]);
       expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'parentId/new zvol' }));
+    });
+
+    it('still closes the panel when a save completes without a record', async () => {
+      // `closed` is the only signal that tears the panel down, so an unexpected response must
+      // degrade to a cancel rather than leaving the panel wedged open with no Save in flight.
+      spectator.inject(MockApiService).mockCall('pool.dataset.create', undefined);
+
+      await setTnInput(loader, 'name', 'new zvol');
+      await setTnInput(loader, 'volsize', '1 GiB');
+
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+      spectator.component.submit();
+
+      expect(closed).toHaveBeenCalledWith(null);
     });
 
     it('does not allow creating zvol with existing name', async () => {

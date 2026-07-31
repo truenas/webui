@@ -33,7 +33,6 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 
-
 @Component({
   selector: 'ix-snapshot-add-form',
   templateUrl: './snapshot-add-form.component.html',
