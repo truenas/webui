@@ -105,13 +105,6 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
     this.setDatasetForEdit(this.datasetToEdit());
   }
 
-  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
-    return {
-      request$: this.api.call('pool.dataset.update', [this.datasetToEdit().id, this.getChangedFormValues()]),
-      successMessage: this.translate.instant('Dataset settings updated.'),
-    };
-  };
-
   private setFormRelations(): void {
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {
       Object.entries(this.inheritRelations).forEach(([inheritField, valueField]) => {
@@ -152,6 +145,13 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
     };
     this.form.patchValue(this.oldValues);
   }
+
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
+    return {
+      request$: this.api.call('pool.dataset.update', [this.datasetToEdit().id, this.getChangedFormValues()]),
+      successMessage: this.translate.instant('Dataset settings updated.'),
+    };
+  };
 
   private getChangedFormValues(): DatasetUpdate {
     const newValues = this.form.getRawValue();

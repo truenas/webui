@@ -9,6 +9,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
@@ -83,9 +84,11 @@ export class DatasetDetailsPanelComponent {
   protected readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
 
   onAddDataset(): void {
+    // `open<Dataset>` (not `Dataset | null`) is deliberate: the form's cancel payload is coerced
+    // to a cancel by the panel service, so `onSuccess` only ever sees a real record.
     this.formPanel.open<Dataset>(DatasetFormComponent, {
       wide: true,
-      title: this.translate.instant('Add Dataset'),
+      title: this.translate.instant(helptextDatasetForm.addTitle),
       inputs: { params: { isNew: true, datasetId: this.dataset().id } },
     }).onSuccess((response) => {
       this.switchToNewDateset(response.id);

@@ -12,6 +12,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { datasetDetailsHelptext } from 'app/helptext/storage/volumes/datasets/dataset-details';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -170,9 +171,11 @@ export class DatasetDetailsCardComponent {
   }
 
   private editDataset(): void {
+    // `open<Dataset>` (not `Dataset | null`) is deliberate: the form's cancel payload is coerced
+    // to a cancel by the panel service, so `onSuccess` only ever sees a real record.
     this.formPanel.open<Dataset>(DatasetFormComponent, {
       wide: true,
-      title: this.translate.instant('Edit Dataset'),
+      title: this.translate.instant(helptextDatasetForm.editTitle),
       inputs: { params: { datasetId: this.dataset().id, isNew: false } },
     }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }

@@ -13,7 +13,7 @@ import {
 } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import {
-  catchError, combineLatest, merge, Observable, of, Subject, switchMap, tap,
+  catchError, combineLatest, merge, Observable, of, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
@@ -73,8 +73,8 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
    */
   protected isCheckingVms = signal(false);
 
-  /** Requests a VM check that isn't driven by a field edit (i.e. the initial load). */
-  private readonly vmCheckRequests$ = new Subject<void>();
+  /** Latches once the VM check has failed, so its error is surfaced only once. */
+  private hasReportedVmCheckFailure = false;
 
   /** Dataset to preset, supplied by the `<tn-side-panel>` host. */
   readonly presetDatasetId = input<string | undefined>(undefined);
@@ -109,13 +109,15 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   readonly helptext = helptextSnapshots;
 
   ngOnInit(): void {
-    // Subscribe before anything can trigger a check, so the first request is never dropped.
+    // Subscribed before the preset below sets `dataset`, so that first check isn't dropped. Only
+    // field changes trigger a check — with no preset the dataset is empty and there is nothing to
+    // ask about, and with one the `setValue` covers it (a separate on-load request would just
+    // duplicate it).
     // `switchMap` cancels an in-flight lookup when either field changes again, so only the newest
     // response can clear the Save gate or set `hasVmsInDataset` — an earlier, slower response can
     // neither re-enable Save early nor leave a stale flag behind (which would silently drop
     // `vmware_sync` from the payload).
     merge(
-      this.vmCheckRequests$,
       this.form.controls.recursive.valueChanges,
       this.form.controls.dataset.valueChanges,
     ).pipe(
@@ -138,7 +140,6 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
         this.namingSchemaOptions$ = of(namingSchemaOptions);
         this.isFormLoading.set(false);
         this.form.controls.name.markAsTouched();
-        this.vmCheckRequests$.next();
       },
       error: (error: unknown) => {
         // Both are read-only option lookups, so a failure can't map onto a control — surface it
@@ -211,7 +212,13 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
         // outer stream and stop every later check. It's a read-only lookup, so its failure
         // can't map onto a control — surface it rather than routing it through form validation.
         catchError((error: unknown) => {
-          this.errorHandler.showErrorModal(error);
+          // Reported once per form: the check re-runs on every dataset/recursive edit, so a
+          // persistently failing endpoint would otherwise raise a modal on each keystroke-ish
+          // change. The failure is non-blocking by design — hence falling back to `false`.
+          if (!this.hasReportedVmCheckFailure) {
+            this.hasReportedVmCheckFailure = true;
+            this.errorHandler.showErrorModal(error);
+          }
           return of(false);
         }),
       );

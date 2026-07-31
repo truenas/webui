@@ -1,13 +1,12 @@
-<!-- type="button" is stated explicitly, as on every other in-form tn-button: this is projected into
-     <ix-explorer>, which callers render inside a <form> it must never submit. -->
-<tn-button
+<button
   *ixRequiresRoles="requiredRoles"
+  mat-button
   type="button"
-  variant="outline"
   class="create-btn"
-  testId="create-zvol"
-  icon="mdi-database"
-  [label]="'Create Zvol' | translate"
+  ixTest="create-zvol"
   [disabled]="isButtonDisabled()"
-  (onClick)="onCreateZvol()"
-></tn-button>
+  (click)="onCreateZvol()"
+>
+  <tn-icon name="database" library="mdi"></tn-icon>
+  {{ 'Create Zvol' | translate }}
+</button>

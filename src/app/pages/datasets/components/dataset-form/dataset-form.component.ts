@@ -43,6 +43,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
+/**
+ * Note for callers: the payload is `Dataset | null`, but openers correctly use
+ * `formPanel.open<Dataset>(…)` and dereference the record without a guard. `null` is only emitted
+ * on the length/depth bail-out, and `FormSidePanelService` coerces any falsy payload to a cancel
+ * (`pendingResponse = saved || undefined`), so `onSuccess` never observes it. Don't "fix" the call
+ * sites to `open<Dataset | null>` and add a redundant guard — the null never reaches them.
+ */
 @Component({
   selector: 'ix-dataset-form',
   templateUrl: './dataset-form.component.html',
