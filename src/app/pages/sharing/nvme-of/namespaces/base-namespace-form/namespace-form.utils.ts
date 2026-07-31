@@ -45,28 +45,20 @@ export function createNamespaceForm(formBuilder: NonNullableFormBuilder): Namesp
 
 /**
  * Keeps `filename` / `filesize` — which only the New File branch renders — out of the group's
- * validity on every other branch. Disabling excludes them from group validity;
- * {@link toNamespaceChanges} reads `getRawValue()`, so nothing is lost from the payload.
+ * validity on every other branch. The other half of {@link createNamespaceForm}, which declares
+ * `Validators.required` on both unconditionally (that's what `tn-form-field` reads to infer the
+ * `*`): a group built there but never passed through here is permanently INVALID off New File, so
+ * a user who merely *visited* New File could never save a Zvol or Existing File namespace.
  *
- * This is the other half of {@link createNamespaceForm}, which declares `Validators.required` on
- * both unconditionally (it has to — that's what `tn-form-field` reads to infer the `*`). A group
- * built there but never passed through here is permanently INVALID off the New File branch, so a
- * user who merely *visited* New File could never save a Zvol or Existing File namespace.
+ * Disabling, rather than clearing validators, because {@link toNamespaceChanges} reads
+ * `getRawValue()` — nothing is lost from the payload.
  *
- * Note the template deliberately does NOT put `[required]` on these two `tn-input`s: that binding
- * also matches Angular's own `RequiredValidator` directive (its selector is
- * `:not([type=checkbox])[required][formControlName]`, which any element can satisfy), and
- * `cleanUpValidators` fails to filter it back off when the branch is destroyed — reintroducing the
- * same stuck-INVALID bug from a second, independent direction. The `*` and `aria-required` both
- * come from the control's validator via `tn-form-field`, so nothing is lost by omitting it.
- *
- * The three `<ix-explorer [required]="true">`s are a deliberate exemption, not an oversight: that
- * component renders its own `<ix-label [required]>` and does NOT infer the state from the
- * validator, so the binding is the only way to get its asterisk. RequiredValidator does attach
- * there too (verified), but it lands on `device_path`, which is unconditionally required in
- * {@link createNamespaceForm} and never disabled — a duplicate `required` validator on a control
- * that always has one is a no-op. Add a conditionally-disabled explorer control and this stops
- * being true; treat the tn-input rule above as the default and this as the narrow exception.
+ * Related invariant: the two `tn-input`s must NOT carry `[required]`. Angular's `RequiredValidator`
+ * matches that binding on any element with a `formControlName`, and is not cleaned up when the
+ * branch is destroyed — which resurrects this same bug independently of the factory. The `*` and
+ * `aria-required` both come from the control's validator, so nothing is lost by omitting it.
+ * `<ix-explorer [required]>` is exempt: it renders its own label and can't infer the state, and its
+ * control (`device_path`) is always required and never disabled, so the extra validator is a no-op.
  */
 export function syncNewFileControls(form: NamespaceFormGroup, type: FormNamespaceType): void {
   const { filename, filesize } = form.controls;

@@ -55,13 +55,6 @@ export class NvmeOfConfigurationComponent extends IxFormHostForm implements OnIn
   /** Initial config fetch only — the submit lifecycle is owned by the inner `<ix-form>`. */
   protected readonly isLoadingConfig = signal(false);
 
-  /**
-   * Baseline handed to `<ix-form>` once the config lands. This form patches itself asynchronously
-   * rather than via `[editData]`, so without this `<ix-form>` has no baseline and its
-   * `FormSubmitEvent.changedValues` would report every field as changed.
-   */
-  protected readonly formSnapshot = signal<Record<string, unknown> | null>(null);
-
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly service = toSignal(this.store$.select(selectService(ServiceName.NvmeOf)));
@@ -115,12 +108,12 @@ export class NvmeOfConfigurationComponent extends IxFormHostForm implements OnIn
       if (service?.state === ServiceStatus.Running) {
         this.form.controls.kernel.disable();
       }
-
-      // After every patch/disable above, so the baseline is the config as loaded.
-      this.formSnapshot.set(this.form.getRawValue());
     });
   }
 
+  // Ignores the event: this form sends a full config every time, so `changedValues` (and the
+  // `initialFormSnapshot` that would make it meaningful) buys nothing. `isEdit` is likewise fixed
+  // via `[isEditMode]="true"` — a global config is never a create.
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     // `form.value` (not the event's raw values) so controls disabled by the loaded system
     // capabilities — RDMA, ANA, Implementation — stay out of the payload.

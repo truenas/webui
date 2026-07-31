@@ -98,7 +98,15 @@ export class BaseNamespaceFormComponent implements OnInit {
    * null at field-initializer time. It is populated by `ngOnInit`.
    */
   protected get form(): NamespaceFormGroup {
-    return this.controlContainer.control as NamespaceFormGroup;
+    const control = this.controlContainer.control as NamespaceFormGroup | null;
+
+    if (!control) {
+      throw new Error(
+        'ix-base-namespace-form must be rendered inside a host [formGroup] built with createNamespaceForm().',
+      );
+    }
+
+    return control;
   }
 
   /** Existing namespace to prefill from; absent in create mode. */

@@ -86,7 +86,7 @@ const volsizeUnchangedRelativeTolerance = 0.001;
     FileSizePipe,
   ],
 })
-export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit {
+export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements OnInit {
   private formatter = inject(IxFormatterService);
   private translate = inject(TranslateService);
   private formBuilder = inject(NonNullableFormBuilder);
@@ -256,7 +256,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     // `SlideInResult` treats `undefined` as a cancel — so `onSuccess` never runs with a missing
     // zvol. That is the guarantee openers rely on; note they dereference the record directly
     // (`response.id`, `zvol.id`) rather than null-checking, so it must stay that way.
-    this.closed.emit(this.savedDataset);
+    this.closed.emit(this.savedDataset ?? null);
   }
 
   protected getOptionLabel(options: Option[], value: unknown): string {

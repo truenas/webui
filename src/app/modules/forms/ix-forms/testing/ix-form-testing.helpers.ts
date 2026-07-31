@@ -11,14 +11,10 @@ export interface IxFormTestingOptions {
    * Keep the panel-mode minimum-submit-feedback hold, which delays a successful close behind a
    * `timer()` so a fast save still registers visually.
    *
-   * Off by default: virtually every spec that drives a side-panel-hosted `<ix-form>` to
-   * completion asserts on `closed` right after `submit()`, and the hold makes that assertion
-   * race. Set this only when the hold itself is what's under test.
-   *
-   * Because of that default, the production `forkJoin`/`timer` path has exactly ONE spec covering
-   * it: `ix-form.component.spec.ts` › "minimum submit feedback (side-panel host)". If you are
-   * refactoring `onFormSubmit`, that is the test standing between you and silently deleting the
-   * hold — do not let it be deleted or switched to the default alongside the others.
+   * Off by default: a spec that asserts on `closed` right after `submit()` races the hold. Set it
+   * only when the hold itself is under test — currently just `ix-form.component.spec.ts` ›
+   * "minimum submit feedback (side-panel host)", which is therefore the sole coverage of the
+   * production `forkJoin`/`timer` path.
    */
   holdSubmitFeedback?: boolean;
 }
@@ -41,9 +37,9 @@ export function ixFormTestingProviders(options: IxFormTestingOptions = {}): unkn
     mockProvider(SlideIn, {
       openSlideIns: jest.fn(() => 1),
     }),
-    // Always provided, never merely omitted: a spec file with more than one Spectator factory
-    // registers every factory's providers, and the last one wins. Omitting here would let an
-    // outer factory's `0` leak into a nested factory that asked to keep the hold.
+    // Always provided, never merely omitted: every factory in a spec file registers its providers
+    // and the last one wins, so an omission here would let an outer factory's `0` leak into a
+    // nested factory that asked to keep the hold.
     {
       provide: ixFormMinSubmitFeedbackMs,
       useValue: options.holdSubmitFeedback ? defaultIxFormMinSubmitFeedbackMs : 0,
