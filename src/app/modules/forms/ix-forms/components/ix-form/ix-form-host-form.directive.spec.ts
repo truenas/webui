@@ -2,7 +2,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -34,9 +34,12 @@ class TestFormHostComponent extends IxFormHostForm {}
   imports: [ReactiveFormsModule, IxFormComponent],
 })
 class TestFormWrapperComponent extends IxFormHostForm {
+  /** Held open so a submit can be observed mid-flight, then completed by the test. */
+  readonly request$ = new Subject<boolean>();
+
   protected readonly form = new FormGroup({ name: new FormControl('') });
   protected readonly externalLoading = signal(false);
-  protected handleSubmit = (): SubmitResult => ({ request$: of(true), successMessage: 'Saved.' });
+  protected handleSubmit = (): SubmitResult => ({ request$: this.request$, successMessage: 'Saved.' });
 
   setExternalLoading(loading: boolean): void {
     this.externalLoading.set(loading);
@@ -86,14 +89,19 @@ describe('IxFormHostForm', () => {
 
     // The `<tn-side-panel>` footer reads this to swap Save for "Saving…", so it must track the
     // inner form's submit-only signal rather than `isLoading()` (which also covers setup fetches).
-    it('mirrors the inner form submit state through isSubmitting()', () => {
-      const ixForm = wrapper.query(IxFormComponent);
-
+    // Driven through a real submit rather than by poking the signal, so the wiring is covered too:
+    // if `onFormSubmit` stopped setting `isSubmitting`, poking it directly would still pass.
+    it('reports isSubmitting() for the duration of a real submit', () => {
       expect(wrapper.component.isSubmitting()).toBe(false);
 
-      ixForm.isSubmitting.set(true);
+      wrapper.component.submit();
 
       expect(wrapper.component.isSubmitting()).toBe(true);
+
+      wrapper.component.request$.next(true);
+      wrapper.component.request$.complete();
+
+      expect(wrapper.component.isSubmitting()).toBe(false);
     });
 
     // The whole reason isSubmitting() exists apart from isBusy(): a form fetching its initial

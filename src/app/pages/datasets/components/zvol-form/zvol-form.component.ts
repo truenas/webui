@@ -250,8 +250,12 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   protected onFormClosed(): void {
     // Emitted unconditionally: `<ix-form>` only fires `closed` on a successful submit, and the
     // panel host tears down on this event alone. Gating it on `savedDataset` would mean a save
-    // that succeeded but returned no record leaves the panel open with no feedback — openers that
-    // need the zvol already null-check, so a bare emit is the benign failure.
+    // that succeeded but returned no record leaves the panel open with no feedback.
+    //
+    // A falsy payload is safe because `FormSidePanelService.open` stores `saved || undefined` and
+    // `SlideInResult` treats `undefined` as a cancel — so `onSuccess` never runs with a missing
+    // zvol. That is the guarantee openers rely on; note they dereference the record directly
+    // (`response.id`, `zvol.id`) rather than null-checking, so it must stay that way.
     this.closed.emit(this.savedDataset);
   }
 

@@ -54,10 +54,19 @@ export function createNamespaceForm(formBuilder: NonNullableFormBuilder): Namesp
  * user who merely *visited* New File could never save a Zvol or Existing File namespace.
  *
  * Note the template deliberately does NOT put `[required]` on these two `tn-input`s: that binding
- * also matches Angular's own `RequiredValidator` directive, which `cleanUpValidators` fails to
- * filter back off when the branch is destroyed — reintroducing the same stuck-INVALID bug from a
- * second, independent direction. The `*` and `aria-required` both come from the control's
- * validator via `tn-form-field`, so nothing visual or assistive is lost by omitting it.
+ * also matches Angular's own `RequiredValidator` directive (its selector is
+ * `:not([type=checkbox])[required][formControlName]`, which any element can satisfy), and
+ * `cleanUpValidators` fails to filter it back off when the branch is destroyed — reintroducing the
+ * same stuck-INVALID bug from a second, independent direction. The `*` and `aria-required` both
+ * come from the control's validator via `tn-form-field`, so nothing is lost by omitting it.
+ *
+ * The three `<ix-explorer [required]="true">`s are a deliberate exemption, not an oversight: that
+ * component renders its own `<ix-label [required]>` and does NOT infer the state from the
+ * validator, so the binding is the only way to get its asterisk. RequiredValidator does attach
+ * there too (verified), but it lands on `device_path`, which is unconditionally required in
+ * {@link createNamespaceForm} and never disabled — a duplicate `required` validator on a control
+ * that always has one is a no-op. Add a conditionally-disabled explorer control and this stops
+ * being true; treat the tn-input rule above as the default and this as the narrow exception.
  */
 export function syncNewFileControls(form: NamespaceFormGroup, type: FormNamespaceType): void {
   const { filename, filesize } = form.controls;

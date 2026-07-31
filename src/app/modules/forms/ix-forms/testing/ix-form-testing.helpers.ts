@@ -14,6 +14,11 @@ export interface IxFormTestingOptions {
    * Off by default: virtually every spec that drives a side-panel-hosted `<ix-form>` to
    * completion asserts on `closed` right after `submit()`, and the hold makes that assertion
    * race. Set this only when the hold itself is what's under test.
+   *
+   * Because of that default, the production `forkJoin`/`timer` path has exactly ONE spec covering
+   * it: `ix-form.component.spec.ts` › "minimum submit feedback (side-panel host)". If you are
+   * refactoring `onFormSubmit`, that is the test standing between you and silently deleting the
+   * hold — do not let it be deleted or switched to the default alongside the others.
    */
   holdSubmitFeedback?: boolean;
 }
