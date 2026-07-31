@@ -1,4 +1,4 @@
-export type HarborAssistantSearchResultFilter = 'all' | 'images' | 'text' | 'videos';
+export type HarborAssistantSearchResultFilter = 'all' | 'audio' | 'images' | 'text' | 'videos';
 export type HarborAssistantSearchSourceScope = 'dvr_library' | 'nas_files' | 'all';
 export type HarborAssistantRetrievalMode = 'auto' | 'on' | 'off';
 
@@ -7,6 +7,7 @@ export interface HarborAssistantSearchRequest {
   conversation_id?: string;
   limit?: number;
   include_documents: boolean;
+  include_audio: boolean;
   include_images: boolean;
   include_videos: boolean;
   use_retrieval?: boolean;
@@ -86,12 +87,20 @@ export interface HarborAssistantSearchResponse {
   answer_degraded?: boolean;
   answer_degraded_reason?: string | null;
   answer_intent?: string | null;
+  review_scope?: HarborAssistantReviewScope | null;
+}
+
+export interface HarborAssistantReviewScope {
+  returned_count: number;
+  reviewed_count: number;
+  max_reviewed_count: number;
+  note?: string | null;
 }
 
 export interface HarborAssistantQueryUnderstanding {
   intent: string;
   needs_retrieval: boolean;
-  target_modalities?: ('document' | 'image' | 'video')[];
+  target_modalities?: ('audio' | 'document' | 'image' | 'video')[];
   retrieval_strategy?: 'semantic' | 'recent';
 }
 
@@ -104,13 +113,26 @@ export interface HarborAssistantKnowledgeAnswerResponse {
   answer: string;
   citations: unknown[];
   search: HarborAssistantSearchResponse;
+  review_scope?: HarborAssistantReviewScope | null;
   warnings: string[];
   query_understanding?: HarborAssistantQueryUnderstanding | null;
+}
+
+export interface HarborAssistantKnowledgeSuggestion {
+  subject: string;
+  kind: 'describe' | 'summarize';
+  filter: HarborAssistantSearchResultFilter;
+}
+
+export interface HarborAssistantKnowledgeSuggestionsResponse {
+  generated_at: string;
+  suggestions: HarborAssistantKnowledgeSuggestion[];
 }
 
 export interface HarborAssistantConversationSettings {
   history_limit: number;
   context_turn_limit: number;
+  context_token_limit: number;
 }
 
 export interface HarborAssistantConversationSummary {
@@ -139,7 +161,7 @@ export interface HarborAssistantConversationListResponse {
 }
 
 export interface HarborAssistantSearchWaterfallItem {
-  kind: 'image' | 'document' | 'video';
+  kind: 'audio' | 'image' | 'document' | 'video';
   hit: HarborAssistantSearchHit;
   previewUrl: string;
 }

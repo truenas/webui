@@ -50,9 +50,16 @@ describe('Harbor Assistant search component', () => {
     localStorage.clear();
     api = {
       search: jest.fn(() => of(searchResponse())),
+      suggestions: jest.fn(() => of({
+        generated_at: '1722060000',
+        suggestions: [
+          { subject: '家庭旅行计划.md — 行程安排', kind: 'summarize', filter: 'text' },
+          { subject: '花园春景.jpg', kind: 'describe', filter: 'images' },
+        ],
+      })),
       conversations: jest.fn(() => of({
         conversations: [],
-        settings: { history_limit: 10, context_turn_limit: 3 },
+        settings: { history_limit: 10, context_turn_limit: 3, context_token_limit: 8192 },
       })),
       conversation: jest.fn(),
       deleteConversation: jest.fn(),
@@ -80,20 +87,22 @@ describe('Harbor Assistant search component', () => {
     const sourceOptions = spectator.queryAll<HTMLButtonElement>('.source-option:not(.all-sources)');
 
     expect(spectator.query('details.composer-options')).toExist();
-    expect(spectator.query('.composer-options > summary')).toHaveText('Automatic · Smart count');
+    expect(spectator.query('.composer-options > summary')).toHaveText('Automatic');
     expect(sourceOptions[0]).toHaveText('文档资料');
     expect(sourceOptions[0]).toHaveText('/mnt/documents');
     expect(sourceOptions[1]).toHaveText('摄像头录像');
   });
 
-  it('inserts the full translated quick prompt', () => {
+  it('renders and inserts questions generated from indexed knowledge', () => {
     spectator = createSearchComponent();
     const suggestions = spectator.queryAll<HTMLButtonElement>('.suggestion-card');
     const query = spectator.query<HTMLTextAreaElement>('textarea[aria-label="Assistant search query"]');
 
     spectator.click(suggestions[1]);
 
-    expect(query?.value).toBe('Find recent camera videos');
+    expect(api.suggestions).toHaveBeenCalled();
+    expect(suggestions[0]).toHaveText('What can I learn about “家庭旅行计划.md — 行程安排”?');
+    expect(query?.value).toBe('Show me content about “花园春景.jpg”');
   });
 
   it('closes search settings when clicking elsewhere', () => {
@@ -151,6 +160,48 @@ describe('Harbor Assistant search component', () => {
     expect(spectator.query('.embedding-action')).toHaveText('Open model settings');
   }));
 
+  it('does not report the embedding model unavailable for partial vector coverage', fakeAsync(() => {
+    api.search = jest.fn(() => of(searchResponse({
+      warnings: ['Embedding cache 覆盖不足：9 / 108 个 BM25 候选在向量存储中不存在。'],
+    })));
+    spectator = createSearchComponent();
+    const component = spectator.component as unknown as {
+      form: { controls: { query: { setValue: (value: string) => void } } };
+      search: () => void;
+    };
+
+    component.form.controls.query.setValue('大自然相关图片');
+    component.search();
+    tick();
+    spectator.detectChanges();
+
+    expect(spectator.query('.embedding-action')).not.toExist();
+    expect(spectator.query('.notice.warning')).toHaveText('Embedding cache 覆盖不足');
+    expect(spectator.query('.notice.warning')).not.toHaveText('Vector search model is unavailable');
+  }));
+
+  it('shows active knowledge indexing progress', () => {
+    spectator = createSearchComponent();
+    spectator.setInput('knowledgeIndexJob', {
+      job_id: 'knowledge-index-1',
+      source_root_id: 'documents',
+      source_root_label: 'Documents',
+      source_root_path: '/mnt/documents',
+      modalities: ['document'],
+      status: 'running',
+      progress_percent: 85,
+      retry_count: 0,
+      checkpoint: { phase: 'embedding_warmup' },
+      resource_profile: 'cpu_only',
+      cancel_requested: false,
+    });
+    spectator.detectChanges();
+
+    expect(spectator.query('.knowledge-index-progress')).toHaveText('Knowledge index is running');
+    expect(spectator.query('.knowledge-index-progress')).toHaveText('Generating missing vectors');
+    expect(spectator.query('.knowledge-index-progress')).toHaveText('85%');
+  });
+
   it('keeps automatic routing when the @ source scope is cleared', fakeAsync(() => {
     spectator = createSearchComponent();
     const component = spectator.component as unknown as {
@@ -161,7 +212,7 @@ describe('Harbor Assistant search component', () => {
     const selectAll = spectator.query<HTMLButtonElement>('.source-option.all-sources');
 
     expect(sourceTrigger).toHaveClass('selected');
-    expect(sourceTrigger).toHaveText('Automatic · Smart count');
+    expect(sourceTrigger).toHaveText('Automatic');
     expect(selectAll?.getAttribute('aria-checked')).toBe('true');
     spectator.click(selectAll as HTMLButtonElement);
     spectator.detectChanges();
@@ -205,26 +256,19 @@ describe('Harbor Assistant search component', () => {
     expect(api.search).toHaveBeenLastCalledWith(expect.objectContaining({ retrieval_mode: 'off' }));
   }));
 
-  it('uses smart result count by default and sends a selected fixed count', fakeAsync(() => {
+  it('leaves result count to natural-language planning', fakeAsync(() => {
     spectator = createSearchComponent();
     const component = spectator.component as unknown as {
       form: { controls: {
         query: { setValue: (value: string) => void };
-        resultLimit: { setValue: (value: string) => void };
       } };
       search: () => void;
     };
 
-    component.form.controls.query.setValue('智能数量');
+    component.form.controls.query.setValue('给我10张图片');
     component.search();
     tick();
     expect(api.search).toHaveBeenLastCalledWith(expect.not.objectContaining({ limit: expect.anything() }));
-
-    component.form.controls.resultLimit.setValue('20');
-    component.form.controls.query.setValue('固定数量');
-    component.search();
-    tick();
-    expect(api.search).toHaveBeenLastCalledWith(expect.objectContaining({ limit: 20 }));
   }));
 
   it('maps one selected source to its scope and multiple sources to all', fakeAsync(() => {
@@ -261,6 +305,12 @@ describe('Harbor Assistant search component', () => {
   it('renders the grounded answer above the evidence results', fakeAsync(() => {
     api.search = jest.fn(() => of(searchResponse({
       answer: '春天相关的文章包括《spring.md》。 [1]',
+      review_scope: {
+        returned_count: 20,
+        reviewed_count: 10,
+        max_reviewed_count: 10,
+        note: '共返回20个结果，本次只分析前10个。',
+      },
     })));
     spectator = createSearchComponent();
     const component = spectator.component as unknown as {
@@ -276,6 +326,7 @@ describe('Harbor Assistant search component', () => {
     spectator.detectChanges();
 
     expect(spectator.query('.answer-markdown')).toHaveText('春天相关的文章包括《spring.md》。 [1]');
+    expect(spectator.query('.notice.compact')).toHaveText('共返回20个结果，本次只分析前10个。');
     expect(spectator.query('.references-panel')).toExist();
   }));
 
@@ -310,7 +361,7 @@ describe('Harbor Assistant search component', () => {
       conversations: [{
         conversation_id: 'conv-history', title: '春天的文章', turn_count: 1,
       }],
-      settings: { history_limit: 10, context_turn_limit: 3 },
+      settings: { history_limit: 10, context_turn_limit: 3, context_token_limit: 8192 },
     }));
     api.conversation = jest.fn(() => of({
       conversation_id: 'conv-history',
@@ -448,5 +499,6 @@ function searchResponse(partial: Partial<HarborAssistantSearchResponse> = {}): H
     answer_degraded: partial.answer_degraded,
     answer_degraded_reason: partial.answer_degraded_reason,
     answer_intent: partial.answer_intent,
+    review_scope: partial.review_scope,
   };
 }

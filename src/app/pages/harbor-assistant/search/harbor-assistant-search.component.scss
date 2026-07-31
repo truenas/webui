@@ -195,6 +195,38 @@
   flex: 1 1 auto;
 }
 
+.knowledge-index-progress {
+  align-items: center;
+  background: color-mix(in srgb, var(--primary) 7%, var(--bg2));
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 24%, var(--lines));
+  display: grid;
+  flex: 0 0 auto;
+  gap: 8px 14px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin: 0 auto;
+  padding: 10px 16px;
+  width: 100%;
+}
+
+.knowledge-index-progress div {
+  display: grid;
+  gap: 2px;
+}
+
+.knowledge-index-progress strong {
+  color: var(--fg1);
+  font-size: 13px;
+}
+
+.knowledge-index-progress span {
+  color: var(--fg2);
+  font-size: 12px;
+}
+
+.knowledge-index-progress mat-progress-bar {
+  grid-column: 1 / -1;
+}
+
 .chat-actions {
   align-items: center;
   border-bottom: 1px solid var(--lines);
@@ -579,6 +611,7 @@
 }
 
 .reference-card.document { border-top: 3px solid #6f5a1d; }
+.reference-card.audio { border-top: 3px solid #8a4fa3; }
 .reference-card.image { border-top: 3px solid #18826f; }
 .reference-card.video { border-top: 3px solid #2f6d9b; }
 
@@ -627,6 +660,16 @@
   display: block;
   height: 100%;
   object-fit: cover;
+  width: 100%;
+}
+
+.audio-frame {
+  background: #f6f2f8;
+  padding: 18px 12px;
+}
+
+.audio-frame audio {
+  display: block;
   width: 100%;
 }
 
@@ -916,26 +959,6 @@
   align-items: center;
   display: flex;
   gap: 8px;
-}
-
-.result-limit-row {
-  display: grid;
-  gap: 8px;
-  grid-template-columns: minmax(0, 1fr) auto;
-}
-
-.result-limit-row select,
-.result-limit-row input {
-  background: var(--bg1);
-  border: 1px solid var(--lines);
-  border-radius: 6px;
-  color: var(--fg1);
-  min-height: 38px;
-  padding: 7px 9px;
-}
-
-.result-limit-row input {
-  width: 86px;
 }
 
 .advanced-settings-button {

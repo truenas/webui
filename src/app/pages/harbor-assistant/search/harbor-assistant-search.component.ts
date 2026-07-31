@@ -10,18 +10,21 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
 import { finalize } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import { KnowledgeSourceRoot } from 'app/pages/harbor-assistant/interfaces/harbor-assistant-status.interface';
-import { HarborAssistantContentApiService } from 'app/pages/harbor-assistant/shared/harbor-assistant-content-api.service';
 import {
-  HarborAssistantRetrievalSettingsDialogComponent,
-  HarborAssistantRetrievalSettingsDialogData,
-} from 'app/pages/harbor-assistant/shared/harbor-assistant-retrieval-settings-dialog.component';
+  KnowledgeIndexJobRecord,
+  KnowledgeSourceRoot,
+} from 'app/pages/harbor-assistant/interfaces/harbor-assistant-status.interface';
+import { HarborAssistantContentApiService } from 'app/pages/harbor-assistant/shared/harbor-assistant-content-api.service';
 import {
   buildHarborAssistantSearchPayload,
   buildHarborAssistantSearchWaterfallItems,
   harborAssistantSearchErrorMessage,
   harborAssistantSearchHasNoResults,
 } from 'app/pages/harbor-assistant/shared/harbor-assistant-results';
+import {
+  HarborAssistantRetrievalSettingsDialogComponent,
+  HarborAssistantRetrievalSettingsDialogData,
+} from 'app/pages/harbor-assistant/shared/harbor-assistant-retrieval-settings-dialog.component';
 import {
   HarborTimeRangeDialogComponent,
   HarborTimeRangeValue,
@@ -92,6 +95,7 @@ export class HarborAssistantSearchComponent implements OnInit {
   @ViewChild('searchSettings') private searchSettings?: ElementRef<HTMLDetailsElement>;
 
   readonly knowledgeSourceRoots = input<KnowledgeSourceRoot[]>([]);
+  readonly knowledgeIndexJob = input<KnowledgeIndexJobRecord | null>(null);
 
   protected readonly form = this.formBuilder.group({
     query: ['', Validators.required],
@@ -99,31 +103,16 @@ export class HarborAssistantSearchComponent implements OnInit {
     from: [''],
     to: [''],
     retrievalMode: ['auto' as HarborAssistantRetrievalMode, Validators.required],
-    resultLimit: ['auto', Validators.required],
-    customResultLimit: [10, [Validators.required, Validators.min(1), Validators.max(50)]],
   });
 
   protected readonly conversationSettingsForm = this.formBuilder.group({
     history_limit: [10, [Validators.required, Validators.min(1), Validators.max(100)]],
     context_turn_limit: [3, [Validators.required, Validators.min(0), Validators.max(20)]],
+    context_token_limit: [8192, [Validators.required, Validators.min(4096), Validators.max(8192)]],
   });
 
-  protected readonly promptSuggestions: HarborAssistantSearchPromptSuggestion[] = [
-    {
-      label: 'Who is pouring beer?', query: 'Who is pouring beer?', filter: 'videos',
-    },
-    {
-      label: 'Find recent camera videos', query: 'Find recent camera videos', filter: 'videos',
-    },
-    {
-      label: 'Find recent recordings', query: 'Find recent recordings', filter: 'videos',
-    },
-    {
-      label: 'Summarize recent documents', query: 'Summarize recent documents', filter: 'text',
-    },
-  ];
-
   protected readonly loading = signal(false);
+  protected readonly promptSuggestions = signal<HarborAssistantSearchPromptSuggestion[]>([]);
   protected readonly response = signal<HarborAssistantSearchResponse | null>(null);
   protected readonly error = signal<string | null>(null);
   protected readonly searchHistory = signal<string[]>([]);
@@ -155,6 +144,7 @@ export class HarborAssistantSearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchHistory.set(this.loadSearchHistory());
+    this.refreshPromptSuggestions();
     this.refreshConversations();
   }
 
@@ -171,7 +161,7 @@ export class HarborAssistantSearchComponent implements OnInit {
     const payload = buildHarborAssistantSearchPayload(
       query,
       filter,
-      this.resultLimitValue(),
+      null,
       {
         from: this.localDateTimeToUnixSeconds(this.form.controls.from.value),
         sourceRootIds: this.selectedRetrievalSources(),
@@ -291,12 +281,31 @@ export class HarborAssistantSearchComponent implements OnInit {
 
   usePromptSuggestion(suggestion: HarborAssistantSearchPromptSuggestion): void {
     this.form.patchValue({
-      query: this.translate.instant(suggestion.query),
+      query: suggestion.query,
       filter: suggestion.filter,
       from: '',
       to: '',
     });
     this.error.set(null);
+  }
+
+  private refreshPromptSuggestions(): void {
+    this.api.suggestions().subscribe({
+      next: (response) => {
+        this.promptSuggestions.set(response.suggestions.map((suggestion) => {
+          const template = suggestion.kind === 'describe'
+            ? 'Show me content about “{subject}”'
+            : 'What can I learn about “{subject}”?';
+          const query = this.translate.instant(template, { subject: suggestion.subject });
+          return {
+            label: query,
+            query,
+            filter: suggestion.filter,
+          };
+        }));
+      },
+      error: () => this.promptSuggestions.set([]),
+    });
   }
 
   useSearchHistoryTerm(term: string): void {
@@ -378,13 +387,6 @@ export class HarborAssistantSearchComponent implements OnInit {
     }
   }
 
-  resultLimitLabel(): string {
-    const limit = this.resultLimitValue();
-    return limit === null
-      ? this.translate.instant('Smart count')
-      : `${limit} ${this.translate.instant('results')}`;
-  }
-
   openAdvancedRetrievalSettings(): void {
     if (this.retrievalSettingsBusy()) {
       return;
@@ -435,11 +437,25 @@ export class HarborAssistantSearchComponent implements OnInit {
 
   embeddingUnavailable(result: HarborAssistantSearchResponse | null = this.response()): boolean {
     const reason = result?.degraded_reason?.toLowerCase() ?? '';
-    const warnings = (result?.warnings ?? []).join(' ').toLowerCase();
-    const blockers = (result?.blockers ?? []).join(' ').toLowerCase();
-    return reason.includes('embedding')
-      || warnings.includes('embedding')
-      || blockers.includes('embedding');
+    const messages = [...(result?.warnings ?? []), ...(result?.blockers ?? [])];
+    return reason === 'embedding_unavailable'
+      || reason === 'embedding_model_unavailable'
+      || messages.some((message) => this.embeddingUnavailableMessage(message));
+  }
+
+  indexJobProgress(job: KnowledgeIndexJobRecord): number {
+    return Math.min(100, Math.max(0, job.progress_percent ?? 0));
+  }
+
+  indexJobPhaseLabel(job: KnowledgeIndexJobRecord): string {
+    switch (job.checkpoint?.phase) {
+      case 'load_or_refresh':
+        return 'Scanning files and detecting changes';
+      case 'embedding_warmup':
+        return 'Generating missing vectors';
+      default:
+        return job.status === 'queued' ? 'Waiting to start' : 'Indexing knowledge files';
+    }
   }
 
   openHarborAssistantModels(): void {
@@ -492,6 +508,9 @@ export class HarborAssistantSearchComponent implements OnInit {
   }
 
   kindLabel(item: HarborAssistantSearchWaterfallItem): string {
+    if (item.kind === 'audio') {
+      return 'Audio';
+    }
     if (item.kind === 'image') {
       return 'Image';
     }
@@ -545,6 +564,8 @@ export class HarborAssistantSearchComponent implements OnInit {
 
   filterLabel(filter: HarborAssistantSearchResultFilter): string {
     switch (filter) {
+      case 'audio':
+        return 'Audio';
       case 'images':
         return 'Image';
       case 'text':
@@ -565,11 +586,23 @@ export class HarborAssistantSearchComponent implements OnInit {
   }
 
   userFacingSearchNotice(message: string): string {
-    const normalized = message.toLowerCase();
-    if (normalized.includes('embedding') || normalized.includes('/v1/embeddings')) {
+    if (this.embeddingUnavailableMessage(message)) {
       return 'Vector search model is unavailable, so local lexical search was used temporarily.';
     }
     return message;
+  }
+
+  private embeddingUnavailableMessage(message: string): boolean {
+    const normalized = message.toLowerCase();
+    const identifiesEmbedding = normalized.includes('embedding') || normalized.includes('/v1/embeddings');
+    const identifiesFailure = [
+      'unavailable',
+      'not available',
+      'not configured',
+      'connection refused',
+      'failed to connect',
+    ].some((failureSignal) => normalized.includes(failureSignal));
+    return identifiesEmbedding && identifiesFailure;
   }
 
   submitOnEnter(event: Event): void {
@@ -591,17 +624,6 @@ export class HarborAssistantSearchComponent implements OnInit {
       return null;
     }
     return Math.floor(timestamp / 1000).toString();
-  }
-
-  private resultLimitValue(): number | null {
-    const selected = this.form.controls.resultLimit.value;
-    if (selected === 'auto') {
-      return null;
-    }
-    const value = selected === 'custom'
-      ? this.form.controls.customResultLimit.value
-      : Number(selected);
-    return Math.min(50, Math.max(1, Math.round(value)));
   }
 
   private saveAdvancedRetrievalSettings(settings: HarborAssistantRetrievalSettings): void {
@@ -651,6 +673,7 @@ export class HarborAssistantSearchComponent implements OnInit {
       answer_degraded: response.degraded,
       answer_degraded_reason: response.degraded_reason,
       answer_intent: response.query_understanding?.intent ?? null,
+      review_scope: response.review_scope ?? null,
       warnings: [...new Set([...response.search.warnings, ...response.warnings])],
     };
   }

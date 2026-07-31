@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -42,13 +42,19 @@ export class HarborAssistantRetrievalSettingsDialogComponent {
   protected readonly form = this.formBuilder.group({
     queryExpansionEnabled: [this.data.settings.query_expansion_enabled],
     candidateLimit: [this.data.settings.candidate_limit, [Validators.required, Validators.min(1), Validators.max(500)]],
-    lexicalMinScore: [this.data.settings.lexical_min_score, [Validators.required, Validators.min(0), Validators.max(1)]],
+    lexicalMinScore: [
+      this.data.settings.lexical_min_score,
+      [Validators.required, Validators.min(0), Validators.max(1)],
+    ],
     vectorMinScore: [this.data.settings.vector_min_score, [Validators.required, Validators.min(0), Validators.max(1)]],
     rerankEnabled: [this.data.settings.rerank_enabled],
     rerankTopK: [this.data.settings.rerank_top_k, [Validators.required, Validators.min(1), Validators.max(500)]],
     rerankMinScore: [this.data.settings.rerank_min_score, [Validators.required, Validators.min(0), Validators.max(1)]],
     mmrEnabled: [this.data.settings.mmr_enabled],
-    deduplicationStrength: [1 - this.data.settings.mmr_lambda, [Validators.required, Validators.min(0), Validators.max(1)]],
+    deduplicationStrength: [
+      1 - this.data.settings.mmr_lambda,
+      [Validators.required, Validators.min(0), Validators.max(1)],
+    ],
   });
 
   protected resetRecommended(): void {
@@ -64,6 +70,22 @@ export class HarborAssistantRetrievalSettingsDialogComponent {
       deduplicationStrength: 1 - recommendedSettings.mmr_lambda,
     });
     this.form.markAsDirty();
+  }
+
+  protected updateLexicalMinScore(event: Event): void {
+    this.updateRangeValue(this.form.controls.lexicalMinScore, event);
+  }
+
+  protected updateVectorMinScore(event: Event): void {
+    this.updateRangeValue(this.form.controls.vectorMinScore, event);
+  }
+
+  protected updateRerankMinScore(event: Event): void {
+    this.updateRangeValue(this.form.controls.rerankMinScore, event);
+  }
+
+  protected updateDeduplicationStrength(event: Event): void {
+    this.updateRangeValue(this.form.controls.deduplicationStrength, event);
   }
 
   protected cancel(): void {
@@ -87,5 +109,10 @@ export class HarborAssistantRetrievalSettingsDialogComponent {
       mmr_enabled: value.mmrEnabled,
       mmr_lambda: 1 - value.deduplicationStrength,
     } satisfies HarborAssistantRetrievalSettings);
+  }
+
+  private updateRangeValue(control: FormControl<number>, event: Event): void {
+    control.setValue((event.target as HTMLInputElement).valueAsNumber);
+    control.markAsDirty();
   }
 }

@@ -63,6 +63,7 @@
   @if (isTab('search')) {
     <section class="tab-panel assistant-search-tab">
       <ix-harbor-assistant-search
+        [knowledgeIndexJob]="activeKnowledgeIndexJob()"
         [knowledgeSourceRoots]="knowledgeSourceRoots()"
       ></ix-harbor-assistant-search>
     </section>
@@ -343,10 +344,32 @@
               <section class="knowledge-section index-status-card">
                 <div class="section-heading">
                   <h2>{{ 'Index status' | translate }}</h2>
-                  <button mat-button color="primary" type="button" [disabled]="actionBusy('knowledge-index')" (click)="runKnowledgeIndex()">
-                    {{ actionBusy('knowledge-index') ? ('Indexing...' | translate) : ('Start indexing' | translate) }}
+                  <button
+                    mat-button
+                    color="primary"
+                    type="button"
+                    [disabled]="actionBusy('knowledge-index') || knowledgeIndexing()"
+                    (click)="runKnowledgeIndex()"
+                  >
+                    {{ knowledgeIndexing() || actionBusy('knowledge-index')
+                      ? ('Indexing...' | translate)
+                      : ('Start indexing' | translate) }}
                   </button>
                 </div>
+                @if (activeKnowledgeIndexJob(); as indexJob) {
+                  <div class="knowledge-index-job-progress" aria-live="polite">
+                    <div>
+                      <strong>{{ 'Knowledge index is running' | translate }}</strong>
+                      <span>{{ knowledgeIndexPhaseLabel(indexJob) | translate }}</span>
+                    </div>
+                    <span>{{ knowledgeIndexProgress(indexJob) }}%</span>
+                    <mat-progress-bar
+                      mode="determinate"
+                      [value]="knowledgeIndexProgress(indexJob)"
+                      [attr.aria-label]="'Indexing progress' | translate"
+                    ></mat-progress-bar>
+                  </div>
+                }
                 @if (knowledgeIndexStatus(); as indexState) {
                   <div class="overview-grid compact-overview">
                     <div>
@@ -357,13 +380,29 @@
                       <span class="field-label">{{ 'Data source' | translate }}</span>
                       <strong>{{ knowledgeSourceRoots().length }}</strong>
                     </div>
-                    <div>
-                      <span class="field-label">{{ 'Image content' | translate }}</span>
-                      <strong>{{ indexState.content_indexed_image_count ?? 0 }}/{{ indexState.image_count ?? 0 }}</strong>
+                    <div class="knowledge-index-stat knowledge-index-stat--total">
+                      <span class="field-label">{{ 'Indexed files' | translate }}</span>
+                      <strong>{{ indexedKnowledgeFileCount(indexState) }}</strong>
                     </div>
-                    <div>
-                      <span class="field-label">{{ 'Video/image descriptions' | translate }}</span>
-                      <strong>{{ indexState.vlm_indexed_image_count ?? 0 }}</strong>
+                    <div class="knowledge-index-stat knowledge-index-stat--unindexed">
+                      <span class="field-label">{{ 'Unindexed files' | translate }}</span>
+                      <strong>{{ indexState.unindexed_file_count ?? '—' }}</strong>
+                    </div>
+                    <div class="knowledge-index-stat knowledge-index-stat--documents">
+                      <span class="field-label">{{ 'Documents' | translate }}</span>
+                      <strong>{{ indexState.document_count ?? 0 }}</strong>
+                    </div>
+                    <div class="knowledge-index-stat knowledge-index-stat--images">
+                      <span class="field-label">{{ 'Images' | translate }}</span>
+                      <strong>{{ indexState.image_count ?? 0 }}</strong>
+                    </div>
+                    <div class="knowledge-index-stat knowledge-index-stat--audio">
+                      <span class="field-label">{{ 'Audio files' | translate }}</span>
+                      <strong>{{ indexState.audio_count ?? 0 }}</strong>
+                    </div>
+                    <div class="knowledge-index-stat knowledge-index-stat--videos">
+                      <span class="field-label">{{ 'Videos' | translate }}</span>
+                      <strong>{{ indexState.video_count ?? 0 }}</strong>
                     </div>
                   </div>
                 } @else {

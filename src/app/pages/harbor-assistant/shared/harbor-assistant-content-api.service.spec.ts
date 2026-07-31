@@ -27,11 +27,32 @@ describe('Harbor Assistant content API service', () => {
     httpMock.verify();
   });
 
+  it('loads prompt suggestions derived from the current knowledge index', async () => {
+    const promise = firstValueFrom(spectator.service.suggestions());
+
+    const req = httpMock.expectOne('/api/harbor-beacon/knowledge/suggestions');
+    expect(req.request.method).toBe('GET');
+    req.flush({
+      generated_at: '1722060000',
+      suggestions: [
+        { subject: '家庭旅行计划.md', kind: 'summarize', filter: 'text' },
+      ],
+    });
+
+    await expect(promise).resolves.toEqual({
+      generated_at: '1722060000',
+      suggestions: [
+        { subject: '家庭旅行计划.md', kind: 'summarize', filter: 'text' },
+      ],
+    });
+  });
+
   it('posts questions to the same-origin Harbor Assistant answer endpoint', async () => {
     const promise = firstValueFrom(spectator.service.search({
       query: '找到和春天相关的照片',
       limit: 24,
       include_documents: true,
+      include_audio: true,
       include_images: true,
       include_videos: true,
     }));
@@ -42,6 +63,7 @@ describe('Harbor Assistant content API service', () => {
       query: '找到和春天相关的照片',
       limit: 24,
       include_documents: true,
+      include_audio: true,
       include_images: true,
       include_videos: true,
     });
@@ -103,7 +125,7 @@ describe('Harbor Assistant content API service', () => {
     const listPromise = firstValueFrom(spectator.service.conversations());
     httpMock.expectOne('/api/harbor-beacon/knowledge/conversations').flush({
       conversations: [{ conversation_id: 'conv-1', title: '春天的文章', turn_count: 2 }],
-      settings: { history_limit: 10, context_turn_limit: 3 },
+      settings: { history_limit: 10, context_turn_limit: 3, context_token_limit: 8192 },
     });
     expect((await listPromise).settings?.context_turn_limit).toBe(3);
 
@@ -116,11 +138,16 @@ describe('Harbor Assistant content API service', () => {
     const savePromise = firstValueFrom(spectator.service.saveConversationSettings({
       history_limit: 20,
       context_turn_limit: 5,
+      context_token_limit: 8192,
     }));
     const saveRequest = httpMock.expectOne('/api/harbor-beacon/knowledge/conversation-settings');
     expect(saveRequest.request.method).toBe('PATCH');
-    expect(saveRequest.request.body).toEqual({ history_limit: 20, context_turn_limit: 5 });
-    saveRequest.flush({ history_limit: 20, context_turn_limit: 5 });
+    expect(saveRequest.request.body).toEqual({
+      history_limit: 20,
+      context_turn_limit: 5,
+      context_token_limit: 8192,
+    });
+    saveRequest.flush({ history_limit: 20, context_turn_limit: 5, context_token_limit: 8192 });
     expect((await savePromise).history_limit).toBe(20);
 
     const deletePromise = firstValueFrom(spectator.service.deleteConversation('conv-1'));

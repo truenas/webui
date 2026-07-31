@@ -17,6 +17,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
@@ -64,6 +65,8 @@ import {
   HardwareReadinessComponent,
   HardwareReadinessResponse,
   InferenceHealthResponse,
+  KnowledgeIndexJobRecord,
+  KnowledgeIndexJobsResponse,
   KnowledgeIndexRootStatus,
   KnowledgeIndexStatusResponse,
   KnowledgeSettings,
@@ -401,6 +404,7 @@ export const harborAssistantI18nMarkers = [
     MatLabel,
     MatSuffix,
     MatOption,
+    MatProgressBar,
     MatSelect,
     NgClass,
     HarborAssistantSearchComponent,
@@ -420,6 +424,7 @@ export class HarborAssistantComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private matDialog = inject(MatDialog);
+  private readonly knowledgeIndexPollInProgress = signal(false);
 
   protected readonly tabs: HarborAssistantTab[] = [
     { id: 'search', label: T('Search'), detail: '' },
@@ -465,6 +470,13 @@ export class HarborAssistantComponent implements OnInit {
   protected readonly rag = signal<RagReadinessResponse | null>(null);
   protected readonly knowledgeSettings = signal<KnowledgeSettings | null>(null);
   protected readonly knowledgeIndexStatus = signal<KnowledgeIndexStatusResponse | null>(null);
+  protected readonly knowledgeIndexJobs = signal<KnowledgeIndexJobsResponse | null>(null);
+  protected readonly activeKnowledgeIndexJob = computed<KnowledgeIndexJobRecord | null>(() => {
+    return this.knowledgeIndexJobs()?.jobs.find((job) => {
+      return job.status === 'queued' || job.status === 'running';
+    }) ?? null;
+  });
+  protected readonly knowledgeIndexing = computed(() => this.activeKnowledgeIndexJob() !== null);
   protected readonly dvrSettings = signal<DvrRecordingSettings | null>(null);
   protected readonly dvrStatus = signal<DvrRecordingStatusResponse | null>(null);
   protected readonly dvrTimeline = signal<DvrTimelineResponse | null>(null);
@@ -795,9 +807,13 @@ export class HarborAssistantComponent implements OnInit {
       });
 
     this.loadData();
+    this.pollKnowledgeIndexJobs();
     timer(2000, 2000)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.pollModelDownloadsIfNeeded());
+      .subscribe(() => {
+        this.pollModelDownloadsIfNeeded();
+        this.pollKnowledgeIndexJobs();
+      });
   }
 
   protected refresh(): void {
@@ -2000,7 +2016,10 @@ export class HarborAssistantComponent implements OnInit {
       finalize(() => this.actionInProgress.set(null)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: () => this.actionMessage.set(T('Data source was added and indexing has started.')),
+      next: () => {
+        this.actionMessage.set(T('Data source was added and indexing has started.'));
+        this.pollKnowledgeIndexJobs();
+      },
       error: (error: unknown) => this.actionError.set(this.getErrorMessage(error)),
     });
   }
@@ -2035,9 +2054,27 @@ export class HarborAssistantComponent implements OnInit {
       finalize(() => this.actionInProgress.set(null)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: () => this.actionMessage.set(T('Knowledge index run completed.')),
+      next: () => {
+        this.actionMessage.set(T('Knowledge indexing has started.'));
+        this.pollKnowledgeIndexJobs();
+      },
       error: (error: unknown) => this.actionError.set(this.getErrorMessage(error)),
     });
+  }
+
+  protected knowledgeIndexProgress(job: KnowledgeIndexJobRecord): number {
+    return Math.min(100, Math.max(0, job.progress_percent ?? 0));
+  }
+
+  protected knowledgeIndexPhaseLabel(job: KnowledgeIndexJobRecord): string {
+    switch (job.checkpoint?.phase) {
+      case 'load_or_refresh':
+        return T('Scanning files and detecting changes');
+      case 'embedding_warmup':
+        return T('Generating missing vectors');
+      default:
+        return job.status === 'queued' ? T('Waiting to start') : T('Indexing knowledge files');
+    }
   }
 
   protected startKnowledgeSourceRoot(): void {
@@ -2876,6 +2913,15 @@ export class HarborAssistantComponent implements OnInit {
 
   protected isCancelableJob(job: LocalModelDownloadJob): boolean {
     return ['queued', 'running', 'downloading'].includes((job.status || '').toLowerCase());
+  }
+
+  protected indexedKnowledgeFileCount(indexState: KnowledgeIndexStatusResponse): number {
+    return [
+      indexState.document_count,
+      indexState.image_count,
+      indexState.audio_count,
+      indexState.video_count,
+    ].reduce((total, count) => total + (count ?? 0), 0);
   }
 
   private buildAiSettingsTabs(): AiSettingsTab[] {
@@ -3907,6 +3953,44 @@ export class HarborAssistantComponent implements OnInit {
           ...this.endpointErrors(),
           localDownloads: `local-downloads: ${this.getErrorMessage(error)}`,
         });
+      },
+    });
+  }
+
+  private pollKnowledgeIndexJobs(): void {
+    if (this.knowledgeIndexPollInProgress()) {
+      return;
+    }
+
+    const previousActiveJob = this.activeKnowledgeIndexJob();
+    this.knowledgeIndexPollInProgress.set(true);
+    this.harborAssistantApi.getKnowledgeIndexJobs().pipe(
+      finalize(() => this.knowledgeIndexPollInProgress.set(false)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (response) => {
+        this.knowledgeIndexJobs.set(response);
+        const activeJob = response.jobs.find((job) => {
+          return job.status === 'queued' || job.status === 'running';
+        });
+        if (!previousActiveJob || activeJob) {
+          return;
+        }
+
+        const finishedJob = response.jobs.find((job) => job.job_id === previousActiveJob.job_id);
+        if (finishedJob?.status === 'completed') {
+          this.actionMessage.set(T('Knowledge indexing completed.'));
+        } else if (finishedJob?.status === 'failed') {
+          this.actionError.set(finishedJob.error_message || T('Knowledge indexing failed.'));
+        } else if (finishedJob?.status === 'canceled') {
+          this.actionMessage.set(T('Knowledge indexing was canceled.'));
+        }
+        this.fetchKnowledgeIndexState()
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe();
+      },
+      error: () => {
+        // Progress is supplementary; normal search and settings remain usable.
       },
     });
   }

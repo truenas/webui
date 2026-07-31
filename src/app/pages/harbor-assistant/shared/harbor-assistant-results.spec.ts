@@ -15,6 +15,7 @@ describe('Harbor Assistant search result helpers', () => {
     expect(buildHarborAssistantSearchPayload(' 春天照片 ', 'all')).toEqual({
       query: '春天照片',
       include_documents: true,
+      include_audio: true,
       include_images: true,
       include_videos: true,
       retrieval_mode: 'auto',
@@ -28,6 +29,7 @@ describe('Harbor Assistant search result helpers', () => {
       query: 'spring',
       limit: 12,
       include_documents: false,
+      include_audio: false,
       include_images: true,
       include_videos: false,
       retrieval_mode: 'auto',
@@ -37,6 +39,7 @@ describe('Harbor Assistant search result helpers', () => {
     expect(buildHarborAssistantSearchPayload('report', 'text')).toEqual({
       query: 'report',
       include_documents: true,
+      include_audio: false,
       include_images: false,
       include_videos: false,
       retrieval_mode: 'auto',
@@ -46,6 +49,7 @@ describe('Harbor Assistant search result helpers', () => {
     expect(buildHarborAssistantSearchPayload('clip', 'videos')).toEqual({
       query: 'clip',
       include_documents: false,
+      include_audio: false,
       include_images: false,
       include_videos: true,
       retrieval_mode: 'auto',
@@ -63,6 +67,7 @@ describe('Harbor Assistant search result helpers', () => {
       query: 'pouring drink',
       limit: 12,
       include_documents: false,
+      include_audio: false,
       include_images: false,
       include_videos: true,
       retrieval_mode: 'auto',
@@ -76,6 +81,7 @@ describe('Harbor Assistant search result helpers', () => {
       query: 'nas docs',
       limit: 6,
       include_documents: true,
+      include_audio: true,
       include_images: true,
       include_videos: true,
       retrieval_mode: 'auto',
@@ -95,6 +101,14 @@ describe('Harbor Assistant search result helpers', () => {
     expect(buildHarborAssistantSearchPayload('folder search', 'text', 24, {
       sourceRootIds: ['documents'],
     })).toEqual(expect.objectContaining({ source_root_ids: ['documents'] }));
+    expect(buildHarborAssistantSearchPayload('painting and mathematics', 'audio')).toEqual(
+      expect.objectContaining({
+        include_documents: false,
+        include_audio: true,
+        include_images: false,
+        include_videos: false,
+      }),
+    );
   });
 
   it('encodes same-origin preview URLs', () => {
@@ -120,6 +134,9 @@ describe('Harbor Assistant search result helpers', () => {
       ],
       documents: [
         { modality: 'document', path: '/mnt/note.md', title: 'Note', score: 77 },
+        {
+          modality: 'audio', path: '/mnt/speech.flac', title: 'Speech', score: 88,
+        },
       ],
       videos: [
         { modality: 'video', path: '/mnt/clip.mp4', title: 'Clip', score: 55 },
@@ -128,10 +145,11 @@ describe('Harbor Assistant search result helpers', () => {
 
     const items = buildHarborAssistantSearchWaterfallItems(response, 'all');
 
-    expect(items.map((item) => item.kind)).toEqual(['document', 'video', 'image']);
-    expect(items[0].previewUrl).toBe('/api/harbor-beacon/knowledge/preview?path=%2Fmnt%2Fnote.md');
+    expect(items.map((item) => item.kind)).toEqual(['audio', 'document', 'video', 'image']);
+    expect(items[0].previewUrl).toBe('/api/harbor-beacon/knowledge/preview?path=%2Fmnt%2Fspeech.flac');
     expect(buildHarborAssistantSearchWaterfallItems(response, 'images').map((item) => item.kind)).toEqual(['image']);
     expect(buildHarborAssistantSearchWaterfallItems(response, 'text').map((item) => item.kind)).toEqual(['document']);
+    expect(buildHarborAssistantSearchWaterfallItems(response, 'audio').map((item) => item.kind)).toEqual(['audio']);
     expect(buildHarborAssistantSearchWaterfallItems(response, 'videos').map((item) => item.kind)).toEqual(['video']);
   });
 

@@ -1375,6 +1375,36 @@ $hd-space-5: 20px;
   margin-top: 0;
 }
 
+.knowledge-index-job-progress {
+  align-items: center;
+  background: color-mix(in srgb, var(--primary) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--lines));
+  border-radius: 4px;
+  display: grid;
+  gap: 8px 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 14px;
+  padding: 12px;
+
+  div {
+    display: grid;
+    gap: 3px;
+  }
+
+  strong {
+    color: var(--fg1);
+  }
+
+  span {
+    color: var(--fg2);
+    font-size: 12px;
+  }
+
+  mat-progress-bar {
+    grid-column: 1 / -1;
+  }
+}
+
 .inline-advanced {
   border: 1px solid var(--lines);
   border-radius: 4px;

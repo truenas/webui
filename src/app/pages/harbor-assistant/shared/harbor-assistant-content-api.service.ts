@@ -1,12 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
+import { harborAssistantBeaconApiUrl } from 'app/pages/harbor-assistant/services/harbor-assistant-api-prefix';
+import { harborAssistantPreviewUrl } from 'app/pages/harbor-assistant/shared/harbor-assistant-results';
 import {
   HarborAssistantCameraLiveSessionResponse,
   HarborAssistantConversationDetail,
   HarborAssistantConversationListResponse,
   HarborAssistantConversationSettings,
   HarborAssistantKnowledgeAnswerResponse,
+  HarborAssistantKnowledgeSuggestionsResponse,
   HarborAssistantRetrievalSettings,
   HarborAssistantSearchCameraStateResponse,
   HarborAssistantSearchDvrStatusResponse,
@@ -15,8 +18,6 @@ import {
   HarborAssistantSearchResponse,
   HarborAssistantSearchSnapshotTaskResponse,
 } from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
-import { harborAssistantPreviewUrl } from 'app/pages/harbor-assistant/shared/harbor-assistant-results';
-import { harborAssistantBeaconApiUrl } from 'app/pages/harbor-assistant/services/harbor-assistant-api-prefix';
 
 @Injectable({ providedIn: 'root' })
 export class HarborAssistantContentApiService {
@@ -37,6 +38,12 @@ export class HarborAssistantContentApiService {
         answer_intent: response.query_understanding?.intent ?? null,
         warnings: [...new Set([...response.search.warnings, ...response.warnings])],
       })),
+    );
+  }
+
+  suggestions(): Observable<HarborAssistantKnowledgeSuggestionsResponse> {
+    return this.http.get<HarborAssistantKnowledgeSuggestionsResponse>(
+      this.apiUrl('/knowledge/suggestions'),
     );
   }
 

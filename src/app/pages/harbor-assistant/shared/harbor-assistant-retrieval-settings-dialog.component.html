@@ -31,7 +31,14 @@
           <p>{{ 'Higher values remove weak keyword matches earlier.' | translate }}</p>
         </div>
         <div class="range-control">
-          <input type="range" min="0" max="1" step="0.01" formControlName="lexicalMinScore" />
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            [value]="form.controls.lexicalMinScore.value"
+            (input)="updateLexicalMinScore($event)"
+          />
           <input type="number" min="0" max="1" step="0.01" formControlName="lexicalMinScore" />
         </div>
       </section>
@@ -42,7 +49,14 @@
           <p>{{ 'Higher values require stronger semantic similarity before a candidate is retained.' | translate }}</p>
         </div>
         <div class="range-control">
-          <input type="range" min="0" max="1" step="0.01" formControlName="vectorMinScore" />
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            [value]="form.controls.vectorMinScore.value"
+            (input)="updateVectorMinScore($event)"
+          />
           <input type="number" min="0" max="1" step="0.01" formControlName="vectorMinScore" />
         </div>
       </section>
@@ -69,7 +83,14 @@
           <p>{{ 'Higher values improve precision but may return no results; lower values improve recall with more noise.' | translate }}</p>
         </div>
         <div class="range-control">
-          <input type="range" min="0" max="1" step="0.01" formControlName="rerankMinScore" />
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            [value]="form.controls.rerankMinScore.value"
+            (input)="updateRerankMinScore($event)"
+          />
           <input type="number" min="0" max="1" step="0.01" formControlName="rerankMinScore" />
         </div>
       </section>
@@ -88,7 +109,14 @@
           <p>{{ 'Higher values favor diversity; lower values favor the highest-scoring results.' | translate }}</p>
         </div>
         <div class="range-control">
-          <input type="range" min="0" max="1" step="0.01" formControlName="deduplicationStrength" />
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            [value]="form.controls.deduplicationStrength.value"
+            (input)="updateDeduplicationStrength($event)"
+          />
           <input type="number" min="0" max="1" step="0.01" formControlName="deduplicationStrength" />
         </div>
       </section>

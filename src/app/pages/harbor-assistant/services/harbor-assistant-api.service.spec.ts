@@ -468,6 +468,27 @@ describe('Harbor Assistant API service', () => {
     expect(status.content_indexed_image_count).toBe(9);
     expect(status.vlm_indexed_image_count).toBe(7);
 
+    const jobsPromise = firstValueFrom(spectator.service.getKnowledgeIndexJobs());
+    const jobsReq = httpMock.expectOne('/api/harbor-beacon/knowledge/index/jobs');
+    expect(jobsReq.request.method).toBe('GET');
+    jobsReq.flush({
+      generated_at: '1',
+      jobs: [{
+        job_id: 'knowledge-index-1',
+        source_root_id: 'nas',
+        source_root_label: 'NAS Library',
+        source_root_path: '/mnt/pool/library',
+        modalities: ['document'],
+        status: 'running',
+        progress_percent: 10,
+        retry_count: 0,
+        checkpoint: { phase: 'load_or_refresh' },
+        resource_profile: 'cpu_only',
+        cancel_requested: false,
+      }],
+    });
+    expect((await jobsPromise).jobs[0].progress_percent).toBe(10);
+
     const browsePromise = firstValueFrom(spectator.service.browseFiles('/mnt/MM-test'));
     const browseReq = httpMock.expectOne('/api/harbor-beacon/files/browse?path=%2Fmnt%2FMM-test');
     expect(browseReq.request.method).toBe('GET');

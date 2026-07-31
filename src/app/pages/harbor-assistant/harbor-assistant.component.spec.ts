@@ -71,6 +71,43 @@ describe('Harbor Assistant component', () => {
     expect(spectator.element.textContent?.toLowerCase()).not.toContain('fallback order');
   });
 
+  it('shows the active knowledge index job and disables duplicate starts', () => {
+    api.getKnowledgeIndexJobs = jest.fn(() => of({
+      generated_at: '1',
+      jobs: [{
+        job_id: 'knowledge-index-1',
+        source_root_id: 'nas',
+        source_root_label: 'NAS Library',
+        source_root_path: '/mnt/pool/library',
+        modalities: ['document'],
+        status: 'running',
+        progress_percent: 10,
+        retry_count: 0,
+        checkpoint: { phase: 'load_or_refresh' },
+        resource_profile: 'cpu_only',
+        cancel_requested: false,
+      }],
+    }));
+    spectator = createComponent();
+    spectator.detectChanges();
+
+    expect(spectator.query('.knowledge-index-job-progress')).toHaveText('Scanning files and detecting changes');
+    expect(spectator.query('.knowledge-index-job-progress')).toHaveText('10%');
+    expect(spectator.query<HTMLButtonElement>('.index-status-card button')?.disabled).toBe(true);
+  });
+
+  it('shows indexed totals for every supported file category', () => {
+    spectator = createComponent();
+    spectator.detectChanges();
+
+    expect(spectator.query('.knowledge-index-stat--total')).toHaveText('33');
+    expect(spectator.query('.knowledge-index-stat--unindexed')).toHaveText('4');
+    expect(spectator.query('.knowledge-index-stat--documents')).toHaveText('27');
+    expect(spectator.query('.knowledge-index-stat--images')).toHaveText('1');
+    expect(spectator.query('.knowledge-index-stat--audio')).toHaveText('2');
+    expect(spectator.query('.knowledge-index-stat--videos')).toHaveText('3');
+  });
+
   it('does not show raw endpoint errors in the AI settings page', () => {
     spectator = createComponent();
     spectator.detectChanges();
@@ -1651,11 +1688,20 @@ function harborAssistantApiMock(): Partial<Record<keyof HarborAssistantApiServic
       source_roots: [
         { root_id: 'nas', path: '/mnt/pool/library', enabled: true, exists: true, status: 'ready' },
       ],
+      document_count: 27,
       image_count: 1,
+      audio_count: 2,
+      video_count: 3,
+      supported_file_count: 37,
+      unindexed_file_count: 4,
       content_indexed_image_count: 1,
       vlm_indexed_image_count: 1,
       image_content_missing_count: 0,
       blockers: [],
+    })),
+    getKnowledgeIndexJobs: jest.fn(() => of({
+      generated_at: '1',
+      jobs: [],
     })),
     saveKnowledgeSettings: jest.fn((payload) => of(payload)),
     runKnowledgeIndex: jest.fn(() => of({ status: 'started' })),

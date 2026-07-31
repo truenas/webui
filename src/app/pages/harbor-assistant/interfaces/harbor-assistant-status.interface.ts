@@ -1013,6 +1013,8 @@ export interface KnowledgeIndexStatusResponse {
   index_root_writable: boolean;
   manifest_count?: number;
   manifest_entry_count?: number;
+  supported_file_count?: number | null;
+  unindexed_file_count?: number | null;
   document_count?: number;
   image_count?: number;
   audio_count?: number;
@@ -1028,6 +1030,36 @@ export interface KnowledgeIndexStatusResponse {
   last_indexed_at?: string | null;
   source_roots: KnowledgeIndexRootStatus[];
   blockers: string[];
+}
+
+export interface KnowledgeIndexJobRecord {
+  job_id: string;
+  source_root_id: string;
+  source_root_label: string;
+  source_root_path: string;
+  modalities: string[];
+  status: string;
+  progress_percent?: number | null;
+  requested_at?: string | null;
+  started_at?: string | null;
+  completed_at?: string | null;
+  error_message?: string | null;
+  retry_count: number;
+  checkpoint: {
+    phase?: string;
+    embedding_total?: number;
+    embedding_completed?: number;
+    embedding_skipped?: number;
+    embedding_failed?: number;
+    [key: string]: unknown;
+  };
+  resource_profile: string;
+  cancel_requested: boolean;
+}
+
+export interface KnowledgeIndexJobsResponse {
+  generated_at: string;
+  jobs: KnowledgeIndexJobRecord[];
 }
 
 export interface KnowledgeIndexRunResponse {

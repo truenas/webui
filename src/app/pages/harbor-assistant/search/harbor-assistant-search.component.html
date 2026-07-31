@@ -40,7 +40,8 @@
         <span>{{ 'History settings' | translate }}</span>
         <small>
           {{ conversationSettingsForm.controls.history_limit.value }} /
-          {{ conversationSettingsForm.controls.context_turn_limit.value }}
+          {{ conversationSettingsForm.controls.context_turn_limit.value }} /
+          {{ conversationSettingsForm.controls.context_token_limit.value }}
         </small>
       </summary>
       <form [formGroup]="conversationSettingsForm" (ngSubmit)="saveConversationSettings()">
@@ -53,6 +54,19 @@
           <span>{{ 'Context turns' | translate }}</span>
           <input type="number" min="0" max="20" formControlName="context_turn_limit" />
         </label>
+        <label>
+          <span>{{ 'Context token limit' | translate }}</span>
+          <input
+            type="number"
+            min="4096"
+            max="8192"
+            step="1024"
+            formControlName="context_token_limit"
+          />
+          <small>
+            {{ 'The assistant automatically reserves space for the answer and protects the current question.' | translate }}
+          </small>
+        </label>
         <button mat-stroked-button type="submit" [disabled]="conversationSettingsForm.invalid || conversationSettingsSaving()">
           {{ 'Save' | translate }}
         </button>
@@ -61,6 +75,20 @@
   </aside>
 
   <div class="chat-shell">
+    @if (knowledgeIndexJob(); as indexJob) {
+      <section class="knowledge-index-progress" aria-live="polite">
+        <div>
+          <strong>{{ 'Knowledge index is running' | translate }}</strong>
+          <span>{{ indexJobPhaseLabel(indexJob) | translate }}</span>
+        </div>
+        <span>{{ indexJobProgress(indexJob) }}%</span>
+        <mat-progress-bar
+          mode="determinate"
+          [value]="indexJobProgress(indexJob)"
+          [attr.aria-label]="'Indexing progress' | translate"
+        ></mat-progress-bar>
+      </section>
+    }
     <main #chatScroll class="chat-scroll" data-testid="harbor-assistant-chat-stream">
       <div class="chat-thread">
         @if (chatTurns().length === 0 && !pendingQuery()) {
@@ -69,14 +97,16 @@
             <h2>{{ 'How can I help you?' | translate }}</h2>
             <p>{{ 'Ask naturally. Harbor Assistant decides when local knowledge retrieval is needed.' | translate }}</p>
 
-            <div class="suggested-questions" aria-label="Search question examples">
-              @for (suggestion of promptSuggestions; track suggestion.query) {
-                <button type="button" class="suggestion-card" (click)="usePromptSuggestion(suggestion)">
-                  <span>{{ suggestion.label | translate }}</span>
-                  <span aria-hidden="true">→</span>
-                </button>
-              }
-            </div>
+            @if (promptSuggestions().length > 0) {
+              <div class="suggested-questions" aria-label="Questions based on indexed knowledge">
+                @for (suggestion of promptSuggestions(); track suggestion.query) {
+                  <button type="button" class="suggestion-card" (click)="usePromptSuggestion(suggestion)">
+                    <span>{{ suggestion.label }}</span>
+                    <span aria-hidden="true">→</span>
+                  </button>
+                }
+              </div>
+            }
 
             @if (searchHistory().length > 0) {
               <div class="search-history-strip" aria-label="Search history">
@@ -122,6 +152,10 @@
 
                 @if (result.answer) {
                   <markdown class="answer-markdown" [data]="result.answer"></markdown>
+                }
+
+                @if (result.review_scope?.note; as reviewScopeNote) {
+                  <div class="notice compact">{{ reviewScopeNote }}</div>
                 }
 
                 @if (result.warnings.length > 0 || result.blockers.length > 0) {
@@ -172,6 +206,11 @@
                             <div class="video-frame">
                               <video [src]="videoPreviewUrl(item)" muted playsinline preload="metadata" aria-hidden="true"></video>
                               <span class="play-chip">{{ 'Play' | translate }}</span>
+                            </div>
+                          }
+                          @if (item.kind === 'audio') {
+                            <div class="audio-frame" (click)="$event.stopPropagation()">
+                              <audio [src]="item.previewUrl" controls preload="metadata"></audio>
                             </div>
                           }
                           <mat-card-content>
@@ -232,7 +271,7 @@
               >
                 <span class="at-mark" aria-hidden="true">&#64;</span>
                 <span>{{ 'Search settings' | translate }}</span>
-                <span class="settings-summary">{{ retrievalModeLabel() }} · {{ resultLimitLabel() }}</span>
+                <span class="settings-summary">{{ retrievalModeLabel() }}</span>
               </summary>
               <div class="options-popover">
                 <label>{{ 'Conversation mode' | translate }}</label>
@@ -296,6 +335,7 @@
                   <mat-button-toggle value="all">{{ 'All' | translate }}</mat-button-toggle>
                   <mat-button-toggle value="images">{{ 'Image' | translate }}</mat-button-toggle>
                   <mat-button-toggle value="text">{{ 'Text' | translate }}</mat-button-toggle>
+                  <mat-button-toggle value="audio">{{ 'Audio' | translate }}</mat-button-toggle>
                   <mat-button-toggle value="videos">{{ 'Video' | translate }}</mat-button-toggle>
                 </mat-button-toggle-group>
 
@@ -306,27 +346,6 @@
                   </button>
                   @if (hasTimeRange()) {
                     <button mat-button type="button" (click)="clearTimeRange()">{{ 'Clear' | translate }}</button>
-                  }
-                </div>
-
-                <label>{{ 'Return count' | translate }}</label>
-                <div class="result-limit-row">
-                  <select formControlName="resultLimit" [attr.aria-label]="'Return count' | translate">
-                    <option value="auto">{{ 'Smart count (recommended)' | translate }}</option>
-                    <option value="5">5 {{ 'results' | translate }}</option>
-                    <option value="10">10 {{ 'results' | translate }}</option>
-                    <option value="20">20 {{ 'results' | translate }}</option>
-                    <option value="50">50 {{ 'results' | translate }}</option>
-                    <option value="custom">{{ 'Custom' | translate }}</option>
-                  </select>
-                  @if (form.controls.resultLimit.value === 'custom') {
-                    <input
-                      type="number"
-                      min="1"
-                      max="50"
-                      formControlName="customResultLimit"
-                      [attr.aria-label]="'Custom return count' | translate"
-                    />
                   }
                 </div>
 
