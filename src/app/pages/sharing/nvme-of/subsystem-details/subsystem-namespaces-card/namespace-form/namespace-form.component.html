@@ -5,8 +5,5 @@
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"
 >
-  <ix-base-namespace-form
-    [form]="form"
-    [namespace]="existingNamespace()"
-  ></ix-base-namespace-form>
+  <ix-base-namespace-form [namespace]="existingNamespace()"></ix-base-namespace-form>
 </ix-form>

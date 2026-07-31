@@ -12,6 +12,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
+import {
+  BaseNamespaceFormComponent,
+} from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import {
   selectNamespaceType,
@@ -24,8 +27,15 @@ describe('AddSubsystemNamespaceComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AddSubsystemNamespaceComponent,
-    imports: [
-      MockComponent(ExplorerCreateZvolComponent),
+    overrideComponents: [
+      // BaseNamespaceFormComponent is standalone, so its own `imports` define the template scope —
+      // listing a mock in the TestBed module would NOT replace the real child. Override the
+      // component's own import array instead, or the real explorer button renders (pulling in the
+      // real FormSidePanelService) while the spec reads as though it were stubbed.
+      [BaseNamespaceFormComponent, {
+        remove: { imports: [ExplorerCreateZvolComponent] },
+        add: { imports: [MockComponent(ExplorerCreateZvolComponent)] },
+      }],
     ],
     providers: [
       mockAuth(),

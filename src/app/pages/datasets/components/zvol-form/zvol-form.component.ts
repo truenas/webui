@@ -248,9 +248,11 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
    * to select the newly created zvol.
    */
   protected onFormClosed(): void {
-    if (this.savedDataset) {
-      this.closed.emit(this.savedDataset);
-    }
+    // Emitted unconditionally: `<ix-form>` only fires `closed` on a successful submit, and the
+    // panel host tears down on this event alone. Gating it on `savedDataset` would mean a save
+    // that succeeded but returned no record leaves the panel open with no feedback — openers that
+    // need the zvol already null-check, so a bare emit is the benign failure.
+    this.closed.emit(this.savedDataset);
   }
 
   protected getOptionLabel(options: Option[], value: unknown): string {

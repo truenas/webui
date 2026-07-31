@@ -38,7 +38,16 @@ describe('BaseNamespaceFormComponent', () => {
     component: BaseNamespaceFormComponent,
     imports: [
       ReactiveFormsModule,
-      MockComponent(ExplorerCreateZvolComponent),
+    ],
+    overrideComponents: [
+      // BaseNamespaceFormComponent is standalone, so its own `imports` define the template scope —
+      // listing a mock in the TestBed module would NOT replace the real child. Override the
+      // component's own import array instead, or the real explorer button renders (pulling in the
+      // real FormSidePanelService) while the spec reads as though it were stubbed.
+      [BaseNamespaceFormComponent, {
+        remove: { imports: [ExplorerCreateZvolComponent] },
+        add: { imports: [MockComponent(ExplorerCreateZvolComponent)] },
+      }],
     ],
     providers: [
       mockProvider(AuthService, {
@@ -52,7 +61,7 @@ describe('BaseNamespaceFormComponent', () => {
     form = createNamespaceForm(new FormBuilder().nonNullable);
     spectator = createHost(
       `<form [formGroup]="form">
-        <ix-base-namespace-form [form]="form" [namespace]="namespace"></ix-base-namespace-form>
+        <ix-base-namespace-form [namespace]="namespace"></ix-base-namespace-form>
       </form>`,
       { hostProps: { form, namespace } },
     );
@@ -124,11 +133,9 @@ describe('BaseNamespaceFormComponent', () => {
       expect(form.status).toBe('VALID');
     });
 
-    // The `*` is inferred from `Validators.required` on the control (tn-form-field) / the
-    // explorer's own `[required]` input — NOT from `tn-input [required]`, which only renders the
-    // native attribute. Asserting the rendered indicator is what pins that distinction: dropping
-    // the factory's validator removes the `*` while the tn-input attribute stays, and no other
-    // observable (aria-required, the native attribute) tells the two apart.
+    // Both the `*` and `aria-required` are inferred from `Validators.required` on the control —
+    // the tn-inputs deliberately carry no `[required]` binding (see `syncNewFileControls`). This
+    // is what pins that: drop the factory's validator and both disappear together.
     //
     // `.required` is library-internal markup, so match on set membership + count rather than an
     // exact ordered array — DOM order and sibling structure are not what this test is about.
@@ -136,14 +143,16 @@ describe('BaseNamespaceFormComponent', () => {
       ['Zvol', ['Path To Zvol']],
       ['Existing File', ['Path To File']],
       ['New File', ['Parent Directory', 'Filename', 'File Size']],
-    ])('marks every required field with an indicator on %s', async (type, expectedLabels) => {
+    ])('marks every required field as required on %s', async (type, expectedLabels) => {
       await selectNamespaceType(loader, type);
 
       const starredLabels = spectator.queryAll('.required')
-        .map((star) => star.parentElement?.textContent?.replace('*', '').trim());
+        .map((star) => star.parentElement?.textContent?.replace(/\*/g, '').trim());
 
       expect(starredLabels).toHaveLength(expectedLabels.length);
       expectedLabels.forEach((label) => expect(starredLabels).toContain(label));
+      // The same inference has to reach assistive tech, not just the visual indicator.
+      expect(spectator.queryAll('[aria-required="true"]')).toHaveLength(expectedLabels.length);
     });
 
     it('clears a previously chosen path when the device type changes', async () => {

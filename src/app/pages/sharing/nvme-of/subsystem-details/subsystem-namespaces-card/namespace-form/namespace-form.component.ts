@@ -32,6 +32,11 @@ export interface NamespaceFormParams {
     // the only `ControlContainer` the projected `<ix-base-namespace-form>` can resolve — the one
     // inside `<ix-form>`'s own template lives in a different view. Removing this as an "unused
     // import" makes the projected controls fail with NullInjectorError at runtime.
+    //
+    // Note this means two FormGroupDirectives bind the same group (ours and ix-form's internal
+    // one). `FormGroup._registerOnCollectionChange` is single-slot, so the later-created inner
+    // directive wins it — harmless while the group's control set is fixed, as it is here, but a
+    // form that add/removeControl's at runtime would not see the projected controls re-sync.
     ReactiveFormsModule,
     IxFormComponent,
     BaseNamespaceFormComponent,

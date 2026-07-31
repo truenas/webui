@@ -48,19 +48,16 @@ export function createNamespaceForm(formBuilder: NonNullableFormBuilder): Namesp
  * validity on every other branch. Disabling excludes them from group validity;
  * {@link toNamespaceChanges} reads `getRawValue()`, so nothing is lost from the payload.
  *
- * Two independent reasons both make this necessary, so don't drop it after fixing only one:
+ * This is the other half of {@link createNamespaceForm}, which declares `Validators.required` on
+ * both unconditionally (it has to — that's what `tn-form-field` reads to infer the `*`). A group
+ * built there but never passed through here is permanently INVALID off the New File branch, so a
+ * user who merely *visited* New File could never save a Zvol or Existing File namespace.
  *
- * 1. {@link createNamespaceForm} declares `Validators.required` on both unconditionally (it has
- *    to — that's what `tn-form-field` reads to infer the `*`). This function is the other half of
- *    that: a group built there but never passed through here is permanently INVALID off New File.
- *
- * 2. Angular does not, in this setup, remove the `required` validator that a destroyed `tn-input`
- *    contributed — its `[required]` binding also matches Angular's own `RequiredValidator`
- *    directive, and `cleanUpValidators` fails to filter it back off. Verified empirically: with
- *    both validators removed from the factory AND nothing disabled, switching New File → Existing
- *    File still leaves `filename`/`filesize` holding `{ required: true }`. So even a factory that
- *    declared no validators would strand a user who merely *visited* New File, unable to save a
- *    Zvol or Existing File namespace afterwards.
+ * Note the template deliberately does NOT put `[required]` on these two `tn-input`s: that binding
+ * also matches Angular's own `RequiredValidator` directive, which `cleanUpValidators` fails to
+ * filter back off when the branch is destroyed — reintroducing the same stuck-INVALID bug from a
+ * second, independent direction. The `*` and `aria-required` both come from the control's
+ * validator via `tn-form-field`, so nothing visual or assistive is lost by omitting it.
  */
 export function syncNewFileControls(form: NamespaceFormGroup, type: FormNamespaceType): void {
   const { filename, filesize } = form.controls;

@@ -1,3 +1,8 @@
+<!--
+  No Save button here — the tn-side-panel host renders the footer and calls submit() itself.
+  The <form> + (ngSubmit) pair is what makes Enter in a field save, via browser implicit
+  submission; it also supplies the FormGroupDirective that ix-base-namespace-form reads.
+-->
 <form class="ix-form-container" [formGroup]="form" (ngSubmit)="submit()">
-  <ix-base-namespace-form [form]="form"></ix-base-namespace-form>
+  <ix-base-namespace-form></ix-base-namespace-form>
 </form>

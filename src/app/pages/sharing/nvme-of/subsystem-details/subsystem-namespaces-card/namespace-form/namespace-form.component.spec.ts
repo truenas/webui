@@ -15,6 +15,9 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
+  BaseNamespaceFormComponent,
+} from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
+import {
   selectNamespaceType,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.testing';
 import {
@@ -35,8 +38,15 @@ describe('NamespaceFormComponent', () => {
 
   const createComponent = createComponentFactory({
     component: NamespaceFormComponent,
-    imports: [
-      MockComponent(ExplorerCreateZvolComponent),
+    overrideComponents: [
+      // BaseNamespaceFormComponent is standalone, so its own `imports` define the template scope —
+      // listing a mock in the TestBed module would NOT replace the real child. Override the
+      // component's own import array instead, or the real explorer button renders (pulling in the
+      // real FormSidePanelService) while the spec reads as though it were stubbed.
+      [BaseNamespaceFormComponent, {
+        remove: { imports: [ExplorerCreateZvolComponent] },
+        add: { imports: [MockComponent(ExplorerCreateZvolComponent)] },
+      }],
     ],
     providers: [
       mockApi([

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, isDevMode } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlContainer, FormGroupDirective, ReactiveFormsModule } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -83,23 +83,23 @@ export class BaseNamespaceFormComponent implements OnInit {
   private filesystemService = inject(FilesystemService);
   private destroyRef = inject(DestroyRef);
 
-  /**
-   * The host's `ControlContainer` — the same `FormGroupDirective` the `formControlName`s below
-   * bind through. Read only to assert it agrees with {@link form}; see {@link assertSameGroup}.
-   */
-  private hostControlContainer = inject(ControlContainer, { optional: true });
+  private controlContainer = inject(ControlContainer);
 
   /**
-   * The group to render into — built by the host with `createNamespaceForm`.
+   * The group to render into — taken from the host's `ControlContainer`, i.e. the very
+   * `FormGroupDirective` the `formControlName`s below bind through (see the `viewProviders` alias
+   * above). Reading it from there rather than accepting it as an input makes "the group I branch
+   * on" and "the group my controls write to" the same object by construction: there is no second
+   * binding for a host to get wrong, so the mismatch that would render controls into one group
+   * while the device-type `@switch` reads another cannot be expressed.
    *
-   * Must be the SAME instance the host's `FormGroupDirective` carries: the `formControlName`s
-   * below bind through that directive (see the `viewProviders` alias above), while this input is
-   * what the template's `@switch` and this class's enable/disable read. Kept as an explicit input
-   * rather than `inject(ControlContainer).control` because both hosts must own the group anyway —
-   * `<ix-form>` takes it as a required input — so an implicit source would hide, not remove, the
-   * coupling. {@link assertSameGroup} makes a mismatch loud in dev instead of silent.
+   * A getter, not a field: the host directive's `[formGroup]` input is bound during the enclosing
+   * template's update pass, which runs AFTER this component is constructed — so `control` is still
+   * null at field-initializer time. It is populated by `ngOnInit`.
    */
-  readonly form = input.required<NamespaceFormGroup>();
+  protected get form(): NamespaceFormGroup {
+    return this.controlContainer.control as NamespaceFormGroup;
+  }
 
   /** Existing namespace to prefill from; absent in create mode. */
   readonly namespace = input<NvmeOfNamespace>();
@@ -120,12 +120,10 @@ export class BaseNamespaceFormComponent implements OnInit {
   protected typeOptions = translateOptions(this.translate, typeOptions);
 
   ngOnInit(): void {
-    this.assertSameGroup();
-
     const namespace = this.namespace();
 
     if (namespace) {
-      this.form().patchValue({
+      this.form.patchValue({
         ...namespace,
         device_type: namespace.device_type === NvmeOfNamespaceType.Zvol
           ? FormNamespaceType.Zvol
@@ -133,34 +131,15 @@ export class BaseNamespaceFormComponent implements OnInit {
       });
     }
 
-    syncNewFileControls(this.form(), this.form().controls.device_type.value);
+    syncNewFileControls(this.form, this.form.controls.device_type.value);
 
     // Subscribed AFTER the prefill above so patching `device_type` on an existing namespace
     // doesn't immediately clear the path it was just given.
-    this.form().controls.device_type.valueChanges
+    this.form.controls.device_type.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((type) => {
-        this.form().patchValue({ device_path: '' });
-        syncNewFileControls(this.form(), type);
+        this.form.patchValue({ device_path: '' });
+        syncNewFileControls(this.form, type);
       });
-  }
-
-  /**
-   * Fails loudly in dev when `[form]` and the host's `[formGroup]` are different instances.
-   * Left silent otherwise the symptom is baffling: controls write into one group while the
-   * `@switch` branches on another, so picking a device type appears to do nothing.
-   */
-  private assertSameGroup(): void {
-    if (!isDevMode() || !this.hostControlContainer) {
-      return;
-    }
-
-    if (this.hostControlContainer.control !== this.form()) {
-      console.error(
-        'ix-base-namespace-form: [form] is not the same FormGroup as the host\'s [formGroup]. '
-        + 'Controls will render into one group while the device-type switch reads another. '
-        + 'Pass the instance built by createNamespaceForm() to both.',
-      );
-    }
   }
 }

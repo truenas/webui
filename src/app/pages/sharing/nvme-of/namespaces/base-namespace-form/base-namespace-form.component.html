@@ -15,7 +15,7 @@
     </tn-button-toggle-group>
   </div>
 
-  @switch (form().value.device_type) {
+  @switch (form.value.device_type) {
     @case (FormNamespaceType.Zvol) {
       <ix-explorer
         formControlName="device_path"
@@ -50,14 +50,13 @@
       </ix-explorer>
 
       <tn-form-field [label]="'Filename' | translate">
-        <tn-input formControlName="filename" [required]="true"></tn-input>
+        <tn-input formControlName="filename"></tn-input>
       </tn-form-field>
 
       <tn-form-field [label]="'File Size' | translate">
         <tn-input
           formControlName="filesize"
           sizeDefaultUnit="MiB"
-          [required]="true"
           [inputType]="InputType.Size"
         ></tn-input>
       </tn-form-field>
