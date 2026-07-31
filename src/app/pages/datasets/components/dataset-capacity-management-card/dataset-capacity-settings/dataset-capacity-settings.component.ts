@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -119,9 +119,8 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
     });
   }
 
-  protected get isRoot(): boolean {
-    return isRootDataset(this.datasetToEdit());
-  }
+  /** Read several times per change detection in the template, so memoize rather than re-deriving. */
+  protected readonly isRoot = computed(() => isRootDataset(this.datasetToEdit()));
 
   private setDatasetForEdit(dataset: DatasetDetails): void {
     const refquotaWarning = getUserProperty<number>(dataset, 'refquota_warning');

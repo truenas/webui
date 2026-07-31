@@ -33,6 +33,7 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 
+
 @Component({
   selector: 'ix-snapshot-add-form',
   templateUrl: './snapshot-add-form.component.html',
@@ -119,7 +120,10 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
     // `vmware_sync` from the payload).
     merge(
       this.form.controls.recursive.valueChanges,
-      this.form.controls.dataset.valueChanges,
+      // Re-arm the failure report per dataset: whether THIS dataset holds VMs is what decides the
+      // checkbox and the payload, so a failure that's been reported once for an earlier dataset
+      // must not stay silent for the one the user actually snapshots.
+      this.form.controls.dataset.valueChanges.pipe(tap(() => { this.hasReportedVmCheckFailure = false; })),
     ).pipe(
       tap(() => this.isCheckingVms.set(true)),
       switchMap(() => this.queryVmsInDataset()),
@@ -204,6 +208,12 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
     );
   }
 
+  /**
+   * Deliberately NOT wrapped in `timeout(...)`: any timer-based bound keeps the Angular zone
+   * unstable for the whole lookup (and so hangs harness-driven tests), and it would run on every
+   * dataset/recursive edit. A check that never settles at all is a websocket-level concern; every
+   * settled outcome — success, error, or being superseded by `switchMap` — already clears the gate.
+   */
   private queryVmsInDataset(): Observable<boolean> {
     return this.api
       .call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])

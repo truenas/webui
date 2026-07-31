@@ -7,6 +7,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { dataProtectionCardElements } from 'app/pages/datasets/components/data-protection-card/data-protection-card.elements';
@@ -69,7 +70,7 @@ export class DataProtectionCardComponent {
 
   addSnapshot(): void {
     this.formPanel.open(SnapshotAddFormComponent, {
-      title: this.translate.instant('Add Snapshot'),
+      title: this.translate.instant(helptextSnapshots.addTitle),
       inputs: { presetDatasetId: this.dataset().id },
     });
   }

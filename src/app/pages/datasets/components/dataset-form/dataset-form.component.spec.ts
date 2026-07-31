@@ -1,7 +1,12 @@
+import { ComponentPortal } from '@angular/cdk/portal';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
+import { TranslateModule } from '@ngx-translate/core';
+import { TnButtonHarness, TnIconTesting, TnMenuTesting } from '@truenas/ui-components';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
@@ -16,7 +21,10 @@ import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import {
+  FormSidePanelContainerComponent, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import {
@@ -314,5 +322,78 @@ describe('DatasetFormComponent', () => {
         aclmode: AclMode.Passthrough,
       }]);
     });
+  });
+});
+
+/**
+ * The specs above drive the form directly. This one portals it into the real
+ * `FormSidePanelContainerComponent` instead, so the form's own `footerActions` and `requiredRoles`
+ * are proven to reach an actual panel footer — the container spec otherwise only exercises that
+ * wiring against its own test doubles.
+ */
+describe('DatasetFormComponent hosted in the side panel', () => {
+  let fixture: ComponentFixture<FormSidePanelContainerComponent>;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      imports: [FormSidePanelContainerComponent, TranslateModule.forRoot()],
+      providers: [
+        mockApi([
+          mockCall('pool.dataset.create', { id: 'saved-id', mountpoint: '/mnt/saved-id' } as Dataset),
+          mockCall('filesystem.stat', { acl: false } as FileSystemStat),
+        ]),
+        ...ixFormTestingProviders(),
+        mockProvider(DialogService, { confirm: jest.fn(() => of(false)) }),
+        mockProvider(DatasetFormService, {
+          checkAndWarnForLengthAndDepth: jest.fn(() => of(true)),
+          loadDataset: jest.fn(() => of(parentDataset)),
+        }),
+        mockProvider(Router),
+        mockProvider(FilesystemService),
+        provideMockStore(),
+        mockAuth(),
+        { provide: UnsavedChangesService, useValue: { showConfirmDialog: jest.fn(() => of(true)) } },
+        ...TnIconTesting.jest.providers(),
+      ],
+    });
+    // Keep the real template (its `viewChild.required` section queries must resolve) and swap only
+    // the heavy section components for mocks — the same ones the specs above use.
+    TestBed.overrideComponent(DatasetFormComponent, {
+      remove: {
+        imports: [
+          NameAndOptionsSectionComponent,
+          EncryptionSectionComponent,
+          QuotasSectionComponent,
+          OtherOptionsSectionComponent,
+        ],
+      },
+      add: {
+        imports: MockComponents(
+          NameAndOptionsSectionComponent,
+          EncryptionSectionComponent,
+          QuotasSectionComponent,
+          OtherOptionsSectionComponent,
+        ),
+      },
+    });
+
+    fixture = TestBed.createComponent(FormSidePanelContainerComponent);
+    fixture.componentRef.setInput('portal', new ComponentPortal(DatasetFormComponent));
+    fixture.componentRef.setInput('formInputs', { params: { datasetId: 'parent', isNew: true } });
+    fixture.componentRef.setInput('open', true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+  });
+
+  it("renders the form's own Advanced Options footer action alongside the host Save", async () => {
+    const loader = TnMenuTesting.rootLoader(fixture);
+
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Advanced Options' }))).not.toBeNull();
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Save' }))).not.toBeNull();
+  });
+
+  it("gates the host Save on the form's requiredRoles", () => {
+    // DatasetWrite is held here (mockAuth grants everything), so Save renders unwrapped.
+    expect(document.querySelector('ix-missing-access-wrapper')).toBeNull();
   });
 });

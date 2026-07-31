@@ -31,7 +31,7 @@
           >
             <tn-checkbox
               formControlName="refquota_warning_inherit"
-              [label]="isRoot ? ('Default' | translate) : ('Inherit' | translate)"
+              [label]="isRoot() ? ('Default' | translate) : ('Inherit' | translate)"
             ></tn-checkbox>
           </tn-form-field>
         </div>
@@ -50,7 +50,7 @@
           >
             <tn-checkbox
               formControlName="refquota_critical_inherit"
-              [label]="isRoot ? ('Default' | translate) : ('Inherit' | translate)"
+              [label]="isRoot() ? ('Default' | translate) : ('Inherit' | translate)"
             ></tn-checkbox>
           </tn-form-field>
         </div>
@@ -92,7 +92,7 @@
           >
             <tn-checkbox
               formControlName="quota_warning_inherit"
-              [label]="isRoot ? ('Default' | translate) : ('Inherit' | translate)"
+              [label]="isRoot() ? ('Default' | translate) : ('Inherit' | translate)"
             ></tn-checkbox>
           </tn-form-field>
         </div>
@@ -111,7 +111,7 @@
           >
             <tn-checkbox
               formControlName="quota_critical_inherit"
-              [label]="isRoot ? ('Default' | translate) : ('Inherit' | translate)"
+              [label]="isRoot() ? ('Default' | translate) : ('Inherit' | translate)"
             ></tn-checkbox>
           </tn-form-field>
         </div>

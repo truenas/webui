@@ -71,15 +71,8 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
   changedValues: Partial<T>;
 }
 
-export interface SubmitResult {
+interface SubmitResultBase {
   request$: Observable<unknown>;
-
-  /**
-   * Snackbar text on success. Required unless the host sets `suppressSuccessSnackbar` — forms that
-   * announce success themselves (because the message depends on the saved record) omit it rather
-   * than passing a placeholder. A dev-mode warning fires if it's missing and not suppressed.
-   */
-  successMessage?: TranslatedString;
 
   /** Runs after success, before close (store/navigation fire pre-animation). */
   onSuccess?: (result: unknown) => void;
@@ -94,6 +87,18 @@ export interface SubmitResult {
    */
   closeWith?: (result: unknown) => unknown;
 }
+
+/**
+ * What a `submitHandler` returns. Every save must confirm itself to the user, so the success
+ * message is mandatory — with exactly one escape hatch, for forms whose message depends on the
+ * saved record (or that deliberately stay silent) and therefore raise it from `onSuccess`. That
+ * case is spelled `announcesSuccessItself: true` rather than an omitted field, so "forgot the
+ * message" is a compile error instead of a silent save nobody notices.
+ */
+export type SubmitResult = SubmitResultBase & (
+  | { successMessage: TranslatedString; announcesSuccessItself?: never }
+  | { successMessage?: never; announcesSuccessItself: true }
+);
 
 /**
  * Unified form wrapper: modal header + card + save/actions chrome, change
@@ -356,6 +361,7 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
       request$, successMessage, onSuccess, onError, closeWith,
     } = this.submitHandler()(event);
 
+
     this.isSubmitting.set(true);
     let handledSuccess = false;
     // In a `<tn-side-panel>` host, pair the request with a minimum-duration timer so a fast save
@@ -372,16 +378,10 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
       next: (result: unknown) => {
         handledSuccess = true;
         this.hadSuccessfulSubmit = true;
-        if (!this.suppressSuccessSnackbar()) {
-          if (successMessage) {
-            this.snackbar.success(successMessage);
-          } else if (isDevMode()) {
-            console.warn(
-              '[ix-form] submitHandler returned no successMessage and suppressSuccessSnackbar is '
-              + 'false, so this save completes with no confirmation. Provide a successMessage, or '
-              + 'set [suppressSuccessSnackbar]="true" if the form announces success itself.',
-            );
-          }
+        // `successMessage` is absent only on the `announcesSuccessItself` arm of SubmitResult,
+        // where the form raises its own message from `onSuccess` below.
+        if (successMessage && !this.suppressSuccessSnackbar()) {
+          this.snackbar.success(successMessage);
         }
         onSuccess?.(result);
         const payload = closeWith ? closeWith(result) : result;

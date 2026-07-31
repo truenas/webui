@@ -43,6 +43,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
+/** The saved dataset, paired with whether the user accepted the post-save ACL-editor prompt. */
+type SaveDatasetResult = [Dataset, boolean];
+
 /**
  * Note for callers: the payload is `Dataset | null`, but openers correctly use
  * `formPanel.open<Dataset>(…)` and dereference the record without a guard. `null` is only emitted
@@ -263,24 +266,35 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
       : this.api.call('pool.dataset.update', [existingDataset.id, payload as DatasetUpdate]);
 
     return {
-      request$: request$.pipe(
-        switchMap((dataset) => this.createSmb(dataset)),
-        switchMap((dataset) => this.createNfs(dataset)),
-        switchMap((dataset) => {
-          return this.checkForAclOnParent().pipe(
-            switchMap((isAcl) => combineLatest([of(dataset), isAcl ? this.aclDialog() : of(false)])),
-          );
-        }),
-      ),
-      // No successMessage: the text depends on the saved record, so `onSaved` raises it and the
-      // wrapper's own snackbar is suppressed.
-      onSuccess: (result: unknown) => this.onSaved(...result as [Dataset, boolean]),
+      request$: this.saveDataset(request$),
+      // The message depends on the saved record, so `onSaved` raises it instead.
+      announcesSuccessItself: true,
+      onSuccess: (result: unknown) => this.onSaved(...result as SaveDatasetResult),
       onError: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return true;
       },
     };
   };
+
+  /**
+   * Runs the post-save chain (optional SMB/NFS shares, then the parent-ACL prompt) and types its
+   * result, so the tuple `onSaved` destructures is declared in one place rather than being asserted
+   * at the `onSuccess` boundary against a shape produced further up.
+   */
+  private saveDataset(request$: Observable<Dataset>): Observable<SaveDatasetResult> {
+    return request$.pipe(
+      switchMap((dataset) => this.createSmb(dataset)),
+      switchMap((dataset) => this.createNfs(dataset)),
+      switchMap((dataset) => {
+        return this.checkForAclOnParent().pipe(
+          switchMap((isAcl): Observable<SaveDatasetResult> => {
+            return combineLatest([of(dataset), isAcl ? this.aclDialog() : of(false)]);
+          }),
+        );
+      }),
+    );
+  }
 
   private onSaved(savedDataset: Dataset, shouldGoToAclEditor: boolean): void {
     const datasetPresetFormValue = this.nameAndOptionsSection().datasetPresetForm.value;
