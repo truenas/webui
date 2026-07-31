@@ -12,6 +12,18 @@ export interface JobSlice {
 
 const { selectAll } = adapter.getSelectors();
 
+/**
+ * Methods that are hidden from the job list, job panel and topbar badge.
+ *
+ * `service.control` runs for every service start, stop, restart and reload, most of which happen automatically as
+ * a side effect of unrelated operations, so it crowds out the jobs a user is looking for. It also carries no
+ * `description`, so each one renders as an identical, unsearchable row.
+ *
+ * This affects display only. Jobs are still tracked in the store, so `ApiService.job()` and `observeJob()` continue
+ * to report progress and failures for user-initiated service actions as they happen.
+ */
+const hiddenJobMethods = new Set<Job['method']>(['service.control']);
+
 export const selectJobs = createSelector(
   selectJobState,
   selectAll,
@@ -19,7 +31,7 @@ export const selectJobs = createSelector(
 
 export const selectAllNonTransientJobs = createSelector(
   selectJobs,
-  (jobs) => jobs.filter((job) => !job.transient),
+  (jobs) => jobs.filter((job) => !job.transient && !hiddenJobMethods.has(job.method)),
 );
 
 /**

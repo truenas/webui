@@ -75,6 +75,14 @@ describe('Job Selectors', () => {
       time_started: { $date: 1000 },
       message_ids: ['uuid-6'],
     },
+    {
+      id: 7,
+      method: 'service.control',
+      state: JobState.Running,
+      transient: false,
+      time_started: { $date: 500 },
+      message_ids: ['uuid-7'],
+    },
   ] as Job[];
 
   const state: JobsState = adapter.setAll(mockJobs, {
@@ -104,6 +112,11 @@ describe('Job Selectors', () => {
       expect(result).toHaveLength(5);
       expect(result.every((job) => !job.transient)).toBe(true);
     });
+
+    it('filters out jobs for methods that are hidden from the job list', () => {
+      const result = selectAllNonTransientJobs(rootState);
+      expect(result.some((job) => job.method === 'service.control')).toBe(false);
+    });
   });
 
   describe('selectJob', () => {
@@ -116,6 +129,11 @@ describe('Job Selectors', () => {
       const result = selectJob(999)(rootState);
       expect(result).toBeUndefined();
     });
+
+    it('still selects jobs that are hidden from the job list', () => {
+      const result = selectJob(7)(rootState);
+      expect(result?.method).toBe('service.control');
+    });
   });
 
   describe('selectJobWithCallId', () => {
@@ -127,6 +145,13 @@ describe('Job Selectors', () => {
     it('returns undefined if job is not found', () => {
       const result = selectJobWithCallId('non-existent-uuid')(rootState);
       expect(result).toBeUndefined();
+    });
+
+    // ApiService.job() resolves through this selector, so hiding a method from the job list
+    // must not stop the caller from tracking its progress and failures.
+    it('still selects jobs that are hidden from the job list', () => {
+      const result = selectJobWithCallId('uuid-7')(rootState);
+      expect(result?.method).toBe('service.control');
     });
   });
 
