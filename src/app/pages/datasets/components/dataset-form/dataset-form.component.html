@@ -1,9 +1,6 @@
+<!-- Panel-hosted only: the title, Save and role gating live on the <tn-side-panel> host. -->
 <ix-form
   [formGroup]="form"
-  [isEditMode]="!isNew"
-  [addTitle]="'Add Dataset' | translate"
-  [editTitle]="'Edit Dataset' | translate"
-  [requiredRoles]="requiredRoles"
   [externalLoading]="isLoading()"
   [extraDisabled]="!areSubFormsValid()"
   [suppressSuccessSnackbar]="true"

@@ -103,19 +103,19 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
     this.setFormRelations();
   }
 
-  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
-    return {
-      request$: this.api.call('pool.dataset.update', [this.dataset.id, this.getChangedFormValues()]),
-      successMessage: this.translate.instant('Dataset settings updated.'),
-    };
-  };
-
   ngOnInit(): void {
     this.dataset = this.datasetToEdit();
     if (this.dataset) {
       this.setDatasetForEdit(this.dataset);
     }
   }
+
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
+    return {
+      request$: this.api.call('pool.dataset.update', [this.dataset.id, this.getChangedFormValues()]),
+      successMessage: this.translate.instant('Dataset settings updated.'),
+    };
+  };
 
   private setFormRelations(): void {
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {

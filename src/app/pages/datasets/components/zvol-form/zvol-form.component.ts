@@ -106,9 +106,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
 
   private savedDataset: Dataset | undefined;
 
-  protected readonly addTitle = this.translate.instant(helptextZvol.addTitle);
-  protected readonly editTitle = this.translate.instant(helptextZvol.editTitle);
-
   protected parentOrZvolId: string;
   protected isNew = true;
 

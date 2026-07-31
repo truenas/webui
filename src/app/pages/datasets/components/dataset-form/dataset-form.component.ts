@@ -6,7 +6,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import {
   catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
@@ -55,7 +55,6 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     QuotasSectionComponent,
     EncryptionSectionComponent,
     OtherOptionsSectionComponent,
-    TranslateModule,
   ],
 })
 export class DatasetFormComponent extends IxFormHostForm<Dataset> implements OnInit, AfterViewInit {
@@ -113,6 +112,15 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset> implements OnI
 
   protected readonly parentDataset = signal<Dataset | undefined>(undefined);
   protected readonly existingDataset = signal<Dataset | undefined>(undefined);
+
+  /**
+   * The saved dataset, captured on success so {@link onFormClosed} can hand it back to the opener —
+   * `<ix-form>` closes with a plain `true`, and the dataset list needs the record to switch to it.
+   */
+  private savedDataset: Dataset | undefined;
+
+  /** Whether the post-save ACL prompt was accepted; acted on after the panel closes. */
+  private shouldGoToAclEditor = false;
 
   get isNew(): boolean {
     return !this.existingDataset();
@@ -234,15 +242,6 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset> implements OnI
   protected onSwitchToAdvanced(): void {
     this.isAdvancedMode.set(true);
   }
-
-  /**
-   * The saved dataset, captured on success so {@link onFormClosed} can hand it back to the opener —
-   * `<ix-form>` closes with a plain `true`, and the dataset list needs the record to switch to it.
-   */
-  private savedDataset: Dataset | undefined;
-
-  /** Whether the post-save ACL prompt was accepted; acted on after the panel closes. */
-  private shouldGoToAclEditor = false;
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const payload = this.preparePayload();

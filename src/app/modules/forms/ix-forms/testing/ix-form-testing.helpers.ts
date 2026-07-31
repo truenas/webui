@@ -1,4 +1,5 @@
 import { mockProvider } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -11,6 +12,12 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
  * to compute its overlay-position tooltip; without this mock, tests would
  * crash trying to call `.openSlideIns()` on an undefined service.
  *
+ * Also zeroes {@link ixFormMinSubmitFeedbackMs}. In a `<tn-side-panel>` host a successful submit
+ * is held behind a minimum-duration timer so the panel's loader is actually perceptible, which
+ * makes the close asynchronous; `0` restores the un-delayed path so a spec can assert the `closed`
+ * emission synchronously after submitting. Override it back to a non-zero value in the rare spec
+ * that asserts the delay itself.
+ *
  * Returned as a factory so each test gets its own `jest.fn()` for
  * `openSlideIns` — avoids shared call counts leaking between tests.
  */
@@ -21,5 +28,6 @@ export function ixFormTestingProviders(): unknown[] {
     mockProvider(SlideIn, {
       openSlideIns: jest.fn(() => 1),
     }),
+    { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
   ];
 }

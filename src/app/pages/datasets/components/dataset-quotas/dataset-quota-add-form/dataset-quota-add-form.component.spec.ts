@@ -9,7 +9,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -69,8 +68,6 @@ describe('DatasetQuotaAddFormComponent', () => {
       }),
       mockProvider(DialogService),
       ...ixFormTestingProviders(),
-      // Panel host: skip the minimum-feedback delay so the close is observable synchronously.
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockAuth(),
     ],
   });

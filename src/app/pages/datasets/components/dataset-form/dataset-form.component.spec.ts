@@ -15,7 +15,6 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -95,8 +94,6 @@ describe('DatasetFormComponent', () => {
         mockCall('filesystem.stat', { acl: true } as FileSystemStat),
       ]),
       ...ixFormTestingProviders(),
-      // Panel host: skip the minimum-feedback delay so the close is observable synchronously.
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -218,6 +215,22 @@ describe('DatasetFormComponent', () => {
       expect(spectator.inject(Store).dispatch).not.toHaveBeenCalledWith(
         checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }),
       );
+    });
+
+    it('keeps Save disabled while a sub-section reports itself invalid', () => {
+      // The root FormGroup is empty (and so always VALID) — sub-section validity reaches the
+      // host-owned Save only through `<ix-form>`'s [extraDisabled] binding.
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      spectator.query(EncryptionSectionComponent)!.formValidityChange.emit(false);
+      spectator.detectChanges();
+
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      spectator.query(EncryptionSectionComponent)!.formValidityChange.emit(true);
+      spectator.detectChanges();
+
+      expect(spectator.component.canSubmit()).toBe(true);
     });
 
     it('creates a new dataset when new form is submitted', () => {

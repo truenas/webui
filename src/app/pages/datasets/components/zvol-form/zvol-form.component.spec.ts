@@ -27,7 +27,6 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
@@ -193,8 +192,6 @@ describe('ZvolFormComponent', () => {
       ]),
       mockProvider(DialogService),
       ...ixFormTestingProviders(),
-      // Panel host: skip the minimum-feedback delay so the close is observable synchronously.
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockAuth(),
       provideMockStore({
         initialState: {
@@ -405,7 +402,6 @@ describe('ZvolFormComponent', () => {
         ]),
         mockProvider(DialogService),
         ...ixFormTestingProviders(),
-        { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
         mockAuth(),
       ],
     });
@@ -559,7 +555,6 @@ describe('ZvolFormComponent', () => {
           }),
           mockProvider(DialogService),
           ...ixFormTestingProviders(),
-          { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
           mockProvider(ErrorHandlerService, {
             withErrorHandler: () => tap(),
           }),

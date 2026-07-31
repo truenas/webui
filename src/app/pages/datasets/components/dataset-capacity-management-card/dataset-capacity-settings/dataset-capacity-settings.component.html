@@ -1,7 +1,6 @@
+<!-- Panel-hosted only: the title, Save and role gating live on the <tn-side-panel> host. -->
 <ix-form
   [formGroup]="form"
-  [title]="'Capacity Settings' | translate"
-  [requiredRoles]="requiredRoles"
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"
 >

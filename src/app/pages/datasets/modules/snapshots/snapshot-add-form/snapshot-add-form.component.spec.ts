@@ -3,10 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import { Subject } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 
@@ -31,8 +31,6 @@ describe('SnapshotAddFormComponent', () => {
         mockCall('vmware.dataset_has_vms', true),
       ]),
       ...ixFormTestingProviders(),
-      // Panel host: skip the minimum-feedback delay so the close is observable synchronously.
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
     ],
   });
 
@@ -115,6 +113,27 @@ describe('SnapshotAddFormComponent', () => {
 
     expect(spectator.component.canSubmit()).toBe(false);
     expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create', expect.anything());
+  });
+
+  it('blocks saving while the VM check is in flight', async () => {
+    // The check re-runs on every dataset/recursive change, so it must gate Save only — routing it
+    // through the panel's busy state would dim and lock the whole form mid-edit.
+    const pendingVmCheck$ = new Subject<boolean>();
+    const call = api.call as jest.Mock;
+    const respondNormally = call.getMockImplementation()!;
+    call.mockImplementation((method: string, params: unknown) => (
+      method === 'vmware.dataset_has_vms' ? pendingVmCheck$ : respondNormally(method, params)
+    ));
+
+    await (await getSelect('dataset')).selectOption('APPS');
+    await (await getInput('name')).setValue('test-snapshot-name');
+
+    expect(spectator.component.canSubmit()).toBe(false);
+
+    pendingVmCheck$.next(false);
+    spectator.detectChanges();
+
+    expect(spectator.component.canSubmit()).toBe(true);
   });
 
   it('re-checks for VMs in dataset when recursive checkbox is toggled or dataset changed', async () => {
