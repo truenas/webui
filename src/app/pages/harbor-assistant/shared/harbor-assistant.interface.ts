@@ -206,21 +206,63 @@ export interface HarborAssistantSearchDvrStatusResponse {
 export interface HarborAssistantCameraLiveSessionResponse {
   device_id: string;
   session_id?: string | null;
-  status: 'starting' | 'running' | 'stopped' | 'failed' | 'degraded' | string;
+  status: string;
   playlist_url?: string | null;
   playlist_ready: boolean;
+  webrtc_url?: string | null;
+  webrtc_status?: string;
+  webrtc_message?: string | null;
   mode: string;
   codec: string;
+  stream_profile?: string;
   started_at?: string | null;
   updated_at: string;
   message?: string | null;
+  diagnostics?: {
+    playlist_exists: boolean;
+    segment_count: number;
+    startup_elapsed_seconds?: number;
+    playlist_modified_at?: string | null;
+    playlist_created_after_seconds?: number | null;
+    latest_segment_name?: string | null;
+    latest_segment_size_bytes?: number | null;
+    latest_segment_modified_at?: string | null;
+    latest_segment_created_after_seconds?: number | null;
+    ready_after_seconds?: number | null;
+    ffmpeg_running: boolean;
+  } | null;
+}
+
+export interface HarborAssistantHarborLinkFeatureStatus {
+  status?: string | null;
+  basePath?: string | null;
+  message?: string | null;
+}
+
+export interface HarborAssistantHarborLinkCapabilitiesResponse {
+  ok?: boolean;
+  status?: string | null;
+  contractVersion?: string | null;
+  contract?: {
+    version?: string | null;
+    major?: string | null;
+  } | null;
+  dependency?: string | null;
+  error?: string | null;
+  features?: {
+    camera?: HarborAssistantHarborLinkFeatureStatus | null;
+    homeAssistant?: HarborAssistantHarborLinkFeatureStatus | null;
+    recording?: HarborAssistantHarborLinkFeatureStatus | null;
+    hls?: HarborAssistantHarborLinkFeatureStatus | null;
+    webrtc?: HarborAssistantHarborLinkFeatureStatus | null;
+  } | null;
 }
 
 export interface HarborAssistantSearchDvrTimelineSegment {
   device_id: string;
   file_path: string;
   sidecar_path?: string | null;
-  media_kind?: 'snapshot' | 'recording' | string;
+  media_kind?: string;
   stream_kind: string;
   started_at: string;
   created_at?: string;

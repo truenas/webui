@@ -1,14 +1,16 @@
 import {
-  HarborAssistantSearchResponse,
-} from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
-import {
   buildHarborAssistantSearchPayload,
   buildHarborAssistantSearchWaterfallItems,
+  harborAssistantHlsLiveUrl,
   harborAssistantSearchErrorMessage,
   harborAssistantSearchHasNoResults,
   harborAssistantPreviewUrl,
   harborAssistantSearchSameOriginAdminUrl,
+  harborAssistantWhepUrl,
 } from 'app/pages/harbor-assistant/shared/harbor-assistant-results';
+import {
+  HarborAssistantSearchResponse,
+} from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
 
 describe('Harbor Assistant search result helpers', () => {
   it('builds modality-aware search payloads', () => {
@@ -123,14 +125,35 @@ describe('Harbor Assistant search result helpers', () => {
       .toBe('/api/harbor-beacon/cameras/camera-main/snapshot.jpg');
     expect(harborAssistantSearchSameOriginAdminUrl('/api/harbor-beacon/cameras/camera-main/snapshot.jpg'))
       .toBe('/api/harbor-beacon/cameras/camera-main/snapshot.jpg');
+    expect(harborAssistantSearchSameOriginAdminUrl('/api/harbor-link/hls/harbor-live-1/index.m3u8'))
+      .toBe('/api/harbor-link/hls/harbor-live-1/index.m3u8');
+    expect(harborAssistantSearchSameOriginAdminUrl('/api/harbor-link/media/harbor-live-1/whep'))
+      .toBe('/api/harbor-link/media/harbor-live-1/whep');
     expect(harborAssistantSearchSameOriginAdminUrl('http://127.0.0.1/ui/assets/harbor-fixtures/public-fixture-dvr.jpg'))
       .toBe('/ui/assets/harbor-fixtures/public-fixture-dvr.jpg');
+  });
+
+  it('uses separate same-origin allowlists for HLS playlists and WHEP endpoints', () => {
+    expect(harborAssistantHlsLiveUrl('/api/harbor-link/hls/harbor-live-1/index.m3u8'))
+      .toBe('/api/harbor-link/hls/harbor-live-1/index.m3u8');
+    expect(harborAssistantHlsLiveUrl('/api/beacon/cameras/camera-main/live/live-1/index.m3u8'))
+      .toBe('/api/beacon/cameras/camera-main/live/live-1/index.m3u8');
+    expect(harborAssistantHlsLiveUrl('/api/harbor-link/media/harbor-live-1/whep')).toBeNull();
+    expect(harborAssistantHlsLiveUrl('https://example.com/api/harbor-link/hls/live-1/index.m3u8')).toBeNull();
+
+    expect(harborAssistantWhepUrl('/api/harbor-link/media/harbor-live-1/whep'))
+      .toBe('/api/harbor-link/media/harbor-live-1/whep');
+    expect(harborAssistantWhepUrl('/api/harbor-link/hls/harbor-live-1/index.m3u8')).toBeNull();
+    expect(harborAssistantWhepUrl('/api/harbor-link/media/harbor-live-1/whep/session-1')).toBeNull();
+    expect(harborAssistantWhepUrl('https://example.com/api/harbor-link/media/live-1/whep')).toBeNull();
   });
 
   it('classifies and sorts waterfall items across image, text, and video hits', () => {
     const response = searchResponse({
       images: [
-        { modality: 'image', path: '/mnt/photo-a.jpg', title: 'Photo A', score: 42 },
+        {
+          modality: 'image', path: '/mnt/photo-a.jpg', title: 'Photo A', score: 42,
+        },
       ],
       documents: [
         { modality: 'document', path: '/mnt/note.md', title: 'Note', score: 77 },
@@ -139,7 +162,9 @@ describe('Harbor Assistant search result helpers', () => {
         },
       ],
       videos: [
-        { modality: 'video', path: '/mnt/clip.mp4', title: 'Clip', score: 55 },
+        {
+          modality: 'video', path: '/mnt/clip.mp4', title: 'Clip', score: 55,
+        },
       ],
     });
 

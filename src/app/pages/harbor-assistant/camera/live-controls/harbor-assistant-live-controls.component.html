@@ -1,0 +1,104 @@
+<div class="live-controls" data-testid="harbor-assistant-live-controls">
+  <label class="visually-hidden" for="live-timeline">{{ 'Live timeline' | translate }}</label>
+  <input
+    id="live-timeline"
+    class="live-timeline"
+    type="range"
+    [attr.aria-label]="'Live timeline' | translate"
+    [min]="startTime()"
+    [max]="sliderMaximum()"
+    [step]="0.1"
+    [value]="sliderValue()"
+    (input)="onSeekInput($event)"
+    (change)="commitSeek($event)"
+  />
+
+  <div class="control-row">
+    <button
+      class="control-button"
+      type="button"
+      [attr.aria-label]="(paused() ? 'Play' : 'Pause') | translate"
+      [title]="(paused() ? 'Play' : 'Pause') | translate"
+      (click)="playbackToggle.emit()"
+    >
+      <tn-icon library="mdi" [name]="paused() ? 'play' : 'pause'"></tn-icon>
+    </button>
+
+    <span class="time-label" aria-live="off">
+      {{ formatTime(displayedCurrentTime()) }} / {{ formatTime(endTime()) }}
+    </span>
+
+    <span class="transport-label" [class.fallback]="playbackMode() === 'hls-fallback'">
+      @switch (playbackMode()) {
+        @case ('webrtc') { WebRTC }
+        @case ('hls-timeshift') { HLS }
+        @default { HLS }
+      }
+    </span>
+
+    <span class="control-spacer"></span>
+
+    <div class="volume-control">
+      <button
+        class="control-button"
+        type="button"
+        [attr.aria-label]="(muted() ? 'Unmute' : 'Mute') | translate"
+        [title]="(muted() ? 'Unmute' : 'Mute') | translate"
+        (click)="toggleMute()"
+      >
+        <tn-icon library="mdi" [name]="muted() || volume() === 0 ? 'volume-off' : 'volume-high'"></tn-icon>
+      </button>
+      <label class="visually-hidden" for="live-volume">{{ 'Volume' | translate }}</label>
+      <input
+        id="live-volume"
+        class="volume-slider"
+        type="range"
+        min="0"
+        max="1"
+        step="0.05"
+        [attr.aria-label]="'Volume' | translate"
+        [value]="volume()"
+        (input)="updateVolume($event)"
+      />
+    </div>
+
+    <div class="more-control">
+      <button
+        class="control-button"
+        type="button"
+        aria-haspopup="menu"
+        [attr.aria-expanded]="menuOpen()"
+        [attr.aria-label]="'Playback speed' | translate"
+        [title]="'Playback speed' | translate"
+        (click)="toggleMenu()"
+      >
+        <tn-icon library="mdi" name="dots-vertical"></tn-icon>
+      </button>
+      @if (menuOpen()) {
+        <div class="speed-menu" role="menu" [attr.aria-label]="'Playback speed' | translate">
+          @for (rate of playbackRates; track rate) {
+            <button
+              type="button"
+              role="menuitemradio"
+              [attr.aria-checked]="playbackRate() === rate"
+              [class.selected]="playbackRate() === rate"
+              (click)="selectPlaybackRate(rate)"
+            >
+              {{ rate }}×
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <button
+      class="control-button"
+      type="button"
+      [attr.aria-label]="'Fullscreen' | translate"
+      [title]="'Fullscreen' | translate"
+      (click)="toggleFullscreen()"
+    >
+      <tn-icon library="mdi" name="fullscreen"></tn-icon>
+    </button>
+  </div>
+</div>

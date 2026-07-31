@@ -79,8 +79,13 @@ for (const required of [
 const packaging = read('scripts/harbornavi-k3/build-deb.sh');
 for (const required of [
   'Package: $package_name',
+  'harboros-beacon (>= $beacon_min_version)',
+  'harborlink (>= $harborlink_min_version)',
+  'release-manifest.json',
   '/usr/share/harbornavi/webui',
   '/etc/nginx/conf.d/harbornavi-webui.conf',
+  'location ^~ /api/harbor-link/media/',
+  'location ^~ /api/harbor-link/hls/',
   'location /api/beacon/',
   'proxy_pass http://127.0.0.1:4174',
   'location /api/harbor-gate/',
@@ -88,6 +93,17 @@ for (const required of [
 ]) {
   if (!packaging.includes(required)) {
     fail(`HarborNavi package script missing: ${required}`);
+  }
+}
+
+const mediaReleaseVersions = read('scripts/harbornavi-k3/media-stack-release.env');
+for (const required of [
+  'HARBORNAVI_MEDIA_RELEASE_ID=',
+  'HARBORNAVI_BEACON_RELEASE_VERSION=',
+  'HARBORLINK_RELEASE_VERSION=',
+]) {
+  if (!mediaReleaseVersions.includes(required)) {
+    fail(`HarborNavi media release contract missing: ${required}`);
   }
 }
 

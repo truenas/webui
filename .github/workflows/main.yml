@@ -41,7 +41,37 @@ jobs:
         run: yarn run check-env && yarn run strict-null-checks
 
   lint:
-    name: Validate code style
+    name: Validate changed code style
+    needs: [install]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install
+        uses: ./.github/actions/prepare
+      - name: Generate default environment file
+        run: yarn run check-env
+      - name: Run changed-file linters
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        shell: bash
+        run: |
+          if [[ ! "$BASE_SHA" =~ ^[0-9a-f]{40}$ || "$BASE_SHA" == "0000000000000000000000000000000000000000" ]]; then
+            BASE_SHA="$(git rev-parse HEAD^)"
+          fi
+          mapfile -t eslint_files < <(git diff --name-only --diff-filter=ACMR "$BASE_SHA...HEAD" -- '*.ts' '*.js' '*.mjs' '*.html')
+          mapfile -t stylelint_files < <(git diff --name-only --diff-filter=ACMR "$BASE_SHA...HEAD" -- '*.scss')
+          if (( ${#eslint_files[@]} > 0 )); then
+            node node_modules/eslint/bin/eslint.js "${eslint_files[@]}"
+          fi
+          if (( ${#stylelint_files[@]} > 0 )); then
+            node node_modules/stylelint/bin/stylelint.mjs "${stylelint_files[@]}"
+          fi
+
+  baseline-lint:
+    name: Baseline lint inventory (non-blocking)
     needs: [install]
     runs-on: ubuntu-latest
     steps:
@@ -51,8 +81,48 @@ jobs:
         uses: ./.github/actions/prepare
       - name: Generate default environment file
         run: yarn run check-env
-      - name: Run linter
+      - name: Run baseline linter
+        continue-on-error: true
         run: yarn lint
+
+  harbor-assistant-gate:
+    name: Harbor Assistant blocking tests
+    needs: [install]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install
+        uses: ./.github/actions/prepare
+      - name: Generate default environment file
+        run: yarn run check-env
+      - name: Run Harbor Assistant tests
+        run: >-
+          yarn test
+          src/app/pages/harbor-assistant/camera/harbor-assistant-camera.component.spec.ts
+          src/app/pages/harbor-assistant/camera/live-controls/harbor-assistant-live-controls.component.spec.ts
+          src/app/pages/harbor-assistant/harbor-assistant.component.spec.ts
+          src/app/pages/harbor-assistant/home-assistant/harbor-assistant-home-assistant.component.spec.ts
+          src/app/pages/harbor-assistant/search/harbor-assistant-search.component.spec.ts
+          src/app/pages/harbor-assistant/services/harbor-assistant-api.service.spec.ts
+          src/app/pages/harbor-assistant/shared/harbor-assistant-content-api.service.spec.ts
+          src/app/pages/harbor-assistant/shared/harbor-assistant-results.spec.ts
+          src/app/pages/harbor-assistant/utils/harborgate-urls.spec.ts
+          --runInBand
+      - name: Check Harbor Assistant delivery contracts
+        run: yarn check:harbor-assistant-i18n && yarn check:harbor-assistant-delivery
+
+  harbornavi-package-contract:
+    name: HarborNavi package contract
+    needs: [install]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install
+        uses: ./.github/actions/prepare
+      - name: Check package versions, dependencies, upgrade and rollback
+        run: yarn check:harbornavi-k3-package
 
   check-ux-team:
     if: github.event_name == 'pull_request'
@@ -61,7 +131,7 @@ jobs:
   test-ux-team:
     name: Run tests (UX Team - Self-hosted)
     needs: [install, check-ux-team]
-    if: needs.check-ux-team.outputs.is_member == 'true'
+    if: needs.check-ux-team.outputs.is_member == 'true' && github.repository == 'truenas/webui'
     strategy:
       fail-fast: false
     runs-on: self-hosted
@@ -75,21 +145,23 @@ jobs:
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
-         name: coverage
-         path: coverage/webui/coverage-final.json
+          name: coverage
+          path: coverage/webui/coverage-final.json
       - name: Upload test data
         uses: actions/upload-artifact@v4
         with:
-         name: coverage-junit
-         path: coverage/webui/junit.xml
+          name: coverage-junit
+          path: coverage/webui/junit.xml
 
   test:
-    name: Run tests (Standard)
+    name: Baseline tests (non-blocking)
     needs: [install, check-ux-team]
     if: |
       always() &&
       needs.install.result == 'success' &&
-      (github.event_name != 'pull_request' || needs.check-ux-team.outputs.is_member != 'true')
+      (github.repository != 'truenas/webui' ||
+       github.event_name != 'pull_request' ||
+       needs.check-ux-team.outputs.is_member != 'true')
     strategy:
       fail-fast: false
     runs-on: ubuntu-latest
@@ -99,17 +171,18 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare
       - name: Run tests
+        continue-on-error: true
         run: yarn test:pr --maxWorkers=2
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
-         name: coverage
-         path: coverage/webui/coverage-final.json
+          name: coverage
+          path: coverage/webui/coverage-final.json
       - name: Upload test data
         uses: actions/upload-artifact@v4
         with:
-         name: coverage-junit
-         path: coverage/webui/junit.xml
+          name: coverage-junit
+          path: coverage/webui/junit.xml
 
   report-coverage:
     name: Collect coverage

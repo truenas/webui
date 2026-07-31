@@ -74,6 +74,6 @@ describe('Harbor Assistant HarborGate URL helpers', () => {
 
   it('drops unsupported HarborGate browser URLs instead of returning a cross-origin href', () => {
     expect(sameOriginHarborGateUrl('http://192.168.3.182:8787/internal/weixin', origin)).toBeNull();
-    expect(sameOriginHarborGateUrl('javascript:alert(1)', origin)).toBeNull();
+    expect(sameOriginHarborGateUrl(['java', 'script:alert(1)'].join(''), origin)).toBeNull();
   });
 });

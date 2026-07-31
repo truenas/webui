@@ -4,7 +4,7 @@ $hd-bg-canvas: #f8fafc;
 $hd-bg-surface: #fff;
 $hd-bg-hover: #f1f5f9;
 $hd-border-subtle: rgba(0, 0, 0, 0.06);
-$hd-border-default: rgba(0, 0, 0, 0.10);
+$hd-border-default: rgba(0, 0, 0, 0.1);
 $hd-text-secondary: #64748b;
 $hd-space-1: 4px;
 $hd-space-2: 8px;
@@ -534,7 +534,7 @@ $hd-space-5: 20px;
 .inline-device-rename-form {
   align-items: center;
   border-top: 1px solid $hd-border-subtle;
-  grid-template-columns: minmax(180px, 1fr) minmax(160px, .8fr) minmax(120px, auto);
+  grid-template-columns: minmax(180px, 1fr) minmax(160px, 0.8fr) minmax(120px, auto);
   margin-top: $hd-space-4;
   padding-top: $hd-space-4;
 }
@@ -549,10 +549,10 @@ $hd-space-5: 20px;
   align-items: center;
   grid-template-columns:
     minmax(220px, 1.5fr)
-    minmax(120px, .7fr)
-    minmax(110px, .55fr)
-    minmax(130px, .75fr)
-    minmax(150px, .9fr)
+    minmax(120px, 0.7fr)
+    minmax(110px, 0.55fr)
+    minmax(130px, 0.75fr)
+    minmax(150px, 0.9fr)
     minmax(150px, auto);
 }
 
@@ -1246,7 +1246,7 @@ $hd-space-5: 20px;
   align-items: center;
   display: grid;
   gap: $hd-space-4;
-  grid-template-columns: minmax(220px, 1.2fr) minmax(220px, 1fr) minmax(140px, .55fr) minmax(280px, auto);
+  grid-template-columns: minmax(220px, 1.2fr) minmax(220px, 1fr) minmax(140px, 0.55fr) minmax(280px, auto);
 }
 
 .model-capability-header {

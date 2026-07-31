@@ -9,11 +9,29 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTab, MatTabGroup } from '@angular/material/tabs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { forkJoin, of, timer } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
 import Hls from 'hls.js';
+import { forkJoin, fromEvent, Observable, of, timer } from 'rxjs';
+import { catchError, finalize, retry, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
+import { harborAssistantBeaconApiUrl } from 'app/pages/harbor-assistant/services/harbor-assistant-api-prefix';
+import { HarborAssistantContentApiService } from 'app/pages/harbor-assistant/shared/harbor-assistant-content-api.service';
+import {
+  buildHarborAssistantSearchPayload,
+  buildHarborAssistantSearchWaterfallItems,
+  harborAssistantHlsLiveUrl,
+  harborAssistantSearchErrorMessage,
+  harborAssistantSearchHasNoResults,
+  harborAssistantSearchSameOriginAdminUrl,
+  harborAssistantWhepUrl,
+} from 'app/pages/harbor-assistant/shared/harbor-assistant-results';
+import {
+  HarborTimeRangeDialogComponent,
+  HarborTimeRangeValue,
+} from 'app/pages/harbor-assistant/shared/harbor-assistant-time-range-dialog.component';
 import {
   HarborAssistantCameraLiveSessionResponse,
+  HarborAssistantHarborLinkCapabilitiesResponse,
+  HarborAssistantSearchCameraStateResponse,
   HarborAssistantSearchResultFilter,
   HarborAssistantSearchCameraDevice,
   HarborAssistantSearchDvrRecordingStatus,
@@ -23,19 +41,10 @@ import {
   HarborAssistantSearchSourceScope,
   HarborAssistantSearchWaterfallItem,
 } from 'app/pages/harbor-assistant/shared/harbor-assistant.interface';
-import { HarborAssistantContentApiService } from 'app/pages/harbor-assistant/shared/harbor-assistant-content-api.service';
 import {
-  buildHarborAssistantSearchPayload,
-  buildHarborAssistantSearchWaterfallItems,
-  harborAssistantSearchErrorMessage,
-  harborAssistantSearchHasNoResults,
-  harborAssistantSearchSameOriginAdminUrl,
-} from 'app/pages/harbor-assistant/shared/harbor-assistant-results';
-import { harborAssistantBeaconApiUrl } from 'app/pages/harbor-assistant/services/harbor-assistant-api-prefix';
-import {
-  HarborTimeRangeDialogComponent,
-  HarborTimeRangeValue,
-} from 'app/pages/harbor-assistant/shared/harbor-assistant-time-range-dialog.component';
+  HarborAssistantLiveControlsComponent,
+  HarborAssistantLivePlaybackMode,
+} from './live-controls/harbor-assistant-live-controls.component';
 
 interface HarborAssistantSearchPromptSuggestion {
   label: string;
@@ -45,8 +54,29 @@ interface HarborAssistantSearchPromptSuggestion {
   matchers?: string[];
 }
 
-type HarborAssistantSearchLocalMediaStatus = 'archiving' | 'archive_failed' | 'finalizing';
+type HarborAssistantSearchLocalMediaStatus = 'archiving' | 'archive_failed' | 'finalizing' | 'finalize_failed';
 type HarborAssistantSearchRecordIntent = 'starting' | 'finalizing';
+type HarborAssistantLiveStreamProfile = 'sub' | 'main';
+type HarborAssistantLiveTransport = 'hls' | 'webrtc';
+
+interface HarborAssistantVideoFrameCallbacks {
+  cancelVideoFrameCallback?: (callbackId: number) => void;
+  requestVideoFrameCallback?: (callback: () => void) => number;
+}
+
+interface HarborAssistantHlsWarmStartRequest {
+  deviceId: string;
+  streamProfile: HarborAssistantLiveStreamProfile;
+  token: number;
+  request$: Observable<HarborAssistantCameraLiveSessionResponse>;
+}
+
+interface HarborAssistantLivePlaybackRequest {
+  allowDelayedPlayback: boolean;
+  attempt: number;
+  token: number;
+  url: string;
+}
 
 interface HarborAssistantSearchMediaItem extends HarborAssistantSearchDvrTimelineSegment {
   local_preview_url?: string;
@@ -72,6 +102,7 @@ interface HarborAssistantSearchMediaItem extends HarborAssistantSearchDvrTimelin
     MatProgressBar,
     MatTab,
     MatTabGroup,
+    HarborAssistantLiveControlsComponent,
   ],
 })
 export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
@@ -80,8 +111,11 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
   private readonly translate = inject(TranslateService);
+  private readonly window = inject<Window>(WINDOW);
   @ViewChild('liveImage') private liveImage?: ElementRef<HTMLImageElement>;
+  @ViewChild('liveTransitionFrame') private liveTransitionFrame?: ElementRef<HTMLCanvasElement>;
   @ViewChild('liveVideo') private liveVideo?: ElementRef<HTMLVideoElement>;
+  @ViewChild('playbackVideo') private playbackVideo?: ElementRef<HTMLVideoElement>;
   @ViewChild('mediaViewer') private mediaViewer?: ElementRef<HTMLElement>;
   @ViewChild('searchResults') private searchResults?: ElementRef<HTMLElement>;
 
@@ -141,9 +175,21 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   protected readonly lastGoodLiveFrameUrl = signal<string | null>(null);
   protected readonly liveMjpegFailed = signal(false);
   protected readonly hlsLiveUrl = signal<string | null>(null);
+  protected readonly webrtcLiveUrl = signal<string | null>(null);
   protected readonly hlsLiveSession = signal<HarborAssistantCameraLiveSessionResponse | null>(null);
+  protected readonly harborLinkCapabilities = signal<HarborAssistantHarborLinkCapabilitiesResponse | null>(null);
   protected readonly hlsLiveStatus = signal<'stopped' | 'starting' | 'live' | 'degraded'>('stopped');
   protected readonly hlsLiveError = signal<string | null>(null);
+  protected readonly liveControlCurrentTime = signal(0);
+  protected readonly liveControlEndTime = signal(0);
+  protected readonly liveControlMuted = signal(true);
+  protected readonly liveControlPaused = signal(true);
+  protected readonly liveControlPlaybackMode = signal<HarborAssistantLivePlaybackMode>('hls-fallback');
+  protected readonly liveControlPlaybackRate = signal(1);
+  protected readonly liveControlStartTime = signal(0);
+  protected readonly liveControlVolume = signal(1);
+  protected readonly liveTransitionFrameVisible = signal(false);
+  protected readonly selectedStreamProfile = signal<HarborAssistantLiveStreamProfile>('sub');
   protected readonly actionBusy = signal<string | null>(null);
   protected readonly actionMessage = signal<string | null>(null);
   protected readonly actionError = signal<string | null>(null);
@@ -156,14 +202,98 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   private cameraRefreshRetryQueued = false;
   private actionMessageToken = 0;
   private liveFeedbackToken = 0;
+  private recordingFinalizationAttempts = 0;
+  private recordingFinalizationTimer: number | null = null;
+  private hlsAttachToken = 0;
+  private hlsPlaybackToken = 0;
+  private hlsWarmToken = 0;
+  private hlsWarmTimer: number | null = null;
+  private liveSessionRenewTimer: number | null = null;
+  private hlsWarmSession: HarborAssistantCameraLiveSessionResponse | null = null;
+  private hlsWarmStartRequest: HarborAssistantHlsWarmStartRequest | null = null;
+  private hlsRecoveryAttempts = 0;
+  private hlsStartingAssetRetryCount = 0;
+  private hlsStartingAssetRetryTimer: number | null = null;
+  private webrtcAttachToken = 0;
+  private webrtcFirstFrameCallbackId: number | null = null;
+  private webrtcFirstFrameCallbackVideo: (HTMLVideoElement & HarborAssistantVideoFrameCallbacks) | null = null;
+  private webrtcFirstFrameDeadlineTimer: number | null = null;
+  private webrtcMediaStream: MediaStream | null = null;
+  private webrtcNegotiationAbortController: AbortController | null = null;
+  private webrtcPlayRequestPending = false;
+  private webrtcPlayRetryTimer: number | null = null;
+  private webrtcPlaybackPending = false;
+  private webrtcPeerConnection: RTCPeerConnection | null = null;
+  private webrtcPostDispatched = false;
+  private webrtcResourceUrl: string | null = null;
+  private webrtcDegradedSessionId: string | null = null;
+  private webrtcPauseTimelineSeconds: number | null = null;
+  private liveTimelineStartedAtEpochSeconds: number | null = null;
+  private pendingHlsBehindLiveSeconds: number | null = null;
+  private hlsControlTimelineOffsetSeconds: number | null = null;
+  private hlsFirstFrameSeen = false;
+  private livePlaybackHasPlayed = false;
+  private livePlaybackBackgroundPaused = false;
+  private livePlaybackUserPaused = false;
+  private livePlaybackUserDelayed = false;
+  private userLivePlaybackAnchorSeconds: number | null = null;
+  private userLivePlaybackRate = 1;
+  private pendingProgrammaticLivePlayToken: number | null = null;
+  private suppressLivePauseEvent = false;
+  private programmaticLiveSeekTargetSeconds: number | null = null;
+  private programmaticLivePlaybackRateTarget: number | null = null;
+  private playbackSeekAnchorSeconds: number | null = null;
+  private playbackSeekMediaKey: string | null = null;
+  private programmaticPlaybackSeekTargetSeconds: number | null = null;
+  private liveEdgeMonitor: number | null = null;
+  private liveTransitionFrameCallbackId: number | null = null;
+  private liveTransitionFrameCallbackVideo: (HTMLVideoElement & HarborAssistantVideoFrameCallbacks) | null = null;
+  private liveTransitionRevealTimer: number | null = null;
+  private liveTransitionTarget: HarborAssistantLiveTransport | null = null;
+  private liveTransitionToken = 0;
   private hls: Hls | null = null;
+  private readonly defaultLivePlaybackRate = 1;
+  private readonly maxUserLivePlaybackRate = 4;
+  private readonly liveEdgeFallbackBackoffSeconds = 1;
+  private readonly liveEdgeMaxDriftSeconds = 18;
+  private readonly liveEdgeReturnToleranceSeconds = 1;
+  private readonly webRtcHandoffGapSeconds = 1;
+  private readonly liveEdgeMonitorIntervalMs = 1_000;
+  private readonly livePausedTimeDriftToleranceSeconds = 0.2;
+  private readonly playbackSeekDriftToleranceSeconds = 0.2;
+  private readonly livePlaybackRateChangeTolerance = 0.01;
+  private readonly hlsPrewarmDelayMs = 300;
+  private readonly hlsPrewarmPollIntervalMs = 1_000;
+  private readonly hlsPrewarmMaxWaitMs = 60_000;
+  private readonly hlsPlaylistPollIntervalMs = 500;
+  private readonly hlsPlaylistMaxWaitMs = 90_000;
+  private readonly hlsStartingAssetRetryDelayMs = 1_000;
+  private readonly hlsStartingAssetRetryLimit = 5;
+  private readonly liveSessionRenewIntervalMs = 120_000;
+  private readonly liveSessionTtlSeconds = 300;
+  private readonly webRtcFirstFrameDeadlineMs = 10_000;
+  private readonly webRtcNegotiationDeadlineMs = 12_000;
+  private readonly webRtcPlayAbortRetryLimit = 2;
+  private readonly webRtcPlayRetryDelayMs = 100;
+  private readonly liveTransitionFallbackRevealDelayMs = 250;
+  private readonly liveTransitionPaintDelayMs = 32;
+  private readonly recordingFinalizationPollDelayMs = 1_000;
+  private readonly recordingFinalizationPollLimit = 8;
 
   ngOnInit(): void {
     this.refreshCameraDvr();
+    fromEvent(document, 'visibilitychange').pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.handleLiveDocumentVisibilityChange());
     timer(0, 3000).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      if (!this.isRecording() && this.recordIntent() === null && this.actionBusy() !== 'snapshot') {
+      if (
+        this.hlsLiveStatus() !== 'stopped'
+        && !this.isRecording()
+        && this.recordIntent() === null
+        && this.actionBusy() !== 'snapshot'
+      ) {
         this.liveSnapshotToken.set(Date.now());
       }
     });
@@ -229,6 +359,7 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
             devices: this.cameras(),
           });
         }),
+        tap((state) => this.applyCameraState(state)),
       ),
       dvr: this.api.dvrStatus().pipe(
         catchError((error: unknown) => {
@@ -237,25 +368,9 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
         }),
       ),
     }).subscribe({
-      next: ({ state, dvr }) => {
-        const devices = state.devices ?? [];
-        const liveDevices = devices.filter((device) => !this.isFixtureCamera(device));
-        const currentSelection = this.selectedCameraId();
-        const defaultSelection = state.defaults?.selected_camera_device_id ?? null;
-        const defaultIsLive = liveDevices.some((device) => device.device_id === defaultSelection);
-        const currentIsLive = liveDevices.some((device) => device.device_id === currentSelection);
-        const fallbackSelection = liveDevices[0]?.device_id
-          ?? devices.find((device) => device.device_id !== this.fixtureCameraId)?.device_id
-          ?? null;
-        const selected = currentSelection && currentIsLive
-          ? currentSelection
-          : defaultIsLive
-            ? defaultSelection
-            : fallbackSelection;
-        this.cameras.set(devices);
-        this.selectedCameraId.set(selected);
+      next: ({ dvr }) => {
         this.dvrStatuses.set(dvr.statuses ?? []);
-        this.loadDvrTimeline(selected, refreshErrors);
+        this.loadDvrTimeline(this.selectedCameraId(), refreshErrors);
       },
       error: (error: unknown) => {
         this.cameraLoading.set(false);
@@ -264,9 +379,36 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     });
   }
 
+  private applyCameraState(state: HarborAssistantSearchCameraStateResponse): void {
+    const devices = state.devices ?? [];
+    const liveDevices = devices.filter((device) => !this.isFixtureCamera(device));
+    const currentSelection = this.selectedCameraId();
+    const defaultSelection = state.defaults?.selected_camera_device_id ?? null;
+    const defaultIsLive = liveDevices.some((device) => device.device_id === defaultSelection);
+    const currentIsLive = liveDevices.some((device) => device.device_id === currentSelection);
+    const fallbackSelection = liveDevices[0]?.device_id
+      ?? devices.find((device) => device.device_id !== this.fixtureCameraId)?.device_id
+      ?? null;
+    let selected = fallbackSelection;
+    if (defaultIsLive) {
+      selected = defaultSelection;
+    }
+    if (currentSelection && currentIsLive) {
+      selected = currentSelection;
+    }
+    this.cameras.set(devices);
+    if (selected !== currentSelection) {
+      this.selectedStreamProfile.set(this.defaultStreamProfileForCamera(selected));
+    }
+    this.selectedCameraId.set(selected);
+    this.scheduleHlsLivePrewarm();
+  }
+
   selectCamera(deviceId: string): void {
     if (deviceId !== this.selectedCameraId()) {
       this.stopLive(false);
+      this.stopHlsWarmSession();
+      this.selectedStreamProfile.set(this.defaultStreamProfileForCamera(deviceId));
     }
     this.selectedCameraId.set(deviceId);
     this.liveMjpegFailed.set(false);
@@ -274,6 +416,22 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     this.lastGoodLiveFrameUrl.set(null);
     this.selectedMediaItem.set(null);
     this.refreshCameraDvr();
+  }
+
+  selectStreamProfile(profile: HarborAssistantLiveStreamProfile): void {
+    if (profile !== 'sub' && profile !== 'main') {
+      return;
+    }
+    if (profile === this.selectedStreamProfile()) {
+      return;
+    }
+    if (this.hlsLiveStatus() === 'live' || this.hlsLiveStatus() === 'starting') {
+      this.stopLive(false);
+      this.showLiveFeedback('Stream changed. Press Play live to start it.', 1800);
+    }
+    this.stopHlsWarmSession();
+    this.selectedStreamProfile.set(profile);
+    this.scheduleHlsLivePrewarm();
   }
 
   usePromptSuggestion(suggestion: HarborAssistantSearchPromptSuggestion): void {
@@ -337,7 +495,7 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   }
 
   openHarborAssistantModels(): void {
-    window.open('/ui/harbor-assistant?tab=settings&section=ai&focus=semantic-index', '_blank', 'noopener');
+    this.window.open('/ui/harbor-assistant?tab=settings&section=ai&focus=semantic-index', '_blank', 'noopener');
   }
 
   selectedCameraIsFixture(): boolean {
@@ -394,7 +552,7 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   }
 
   openPreview(item: HarborAssistantSearchWaterfallItem): void {
-    window.open(item.previewUrl, '_blank', 'noopener');
+    this.window.open(item.previewUrl, '_blank', 'noopener');
   }
 
   openReplay(segment: HarborAssistantSearchMediaItem): void {
@@ -404,12 +562,14 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     }
     this.blurActiveElement();
     this.actionError.set(null);
+    this.resetPlaybackSeekAnchor();
     this.selectedMediaItem.set(segment);
-    this.selectedTabIndex.set(1);
+    this.onCameraTabChange(1);
     this.scrollToMediaViewer();
   }
 
   closeMediaPreview(): void {
+    this.resetPlaybackSeekAnchor();
     this.selectedMediaItem.set(null);
   }
 
@@ -471,7 +631,7 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     this.recordIntent.set('starting');
     this.actionError.set(null);
     this.showActionMessage('Starting recording...', 1800);
-    this.api.startDvrRecording(deviceId).pipe(
+    this.api.startDvrRecording(deviceId, this.selectedStreamProfile()).pipe(
       finalize(() => {
         if (this.actionBusy() === 'record') {
           this.actionBusy.set(null);
@@ -497,6 +657,8 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
       return;
     }
     this.actionBusy.set('record');
+    this.clearRecordingFinalizationTimer();
+    this.recordingFinalizationAttempts = 0;
     this.recordIntent.set('finalizing');
     this.actionError.set(null);
     this.showActionMessage('Finalizing recording...', 2200);
@@ -512,14 +674,9 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
         this.dvrStatuses.set(response.statuses ?? []);
         this.showActionMessage('Recording stopped. Preparing playable clips...');
         this.refreshCameraDvr();
-        timer(1200).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-          this.refreshCameraDvr();
-          if (this.recordIntent() === 'finalizing') {
-            this.recordIntent.set(null);
-          }
-        });
       },
       error: (error: unknown) => {
+        this.clearRecordingFinalizationTimer();
         this.recordIntent.set(null);
         this.removeOptimisticRecordings(deviceId);
         this.actionError.set(harborAssistantSearchErrorMessage(error));
@@ -536,11 +693,40 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
       this.stopLive(false);
     }
     this.actionBusy.set('live');
+    this.cancelLiveTransportTransition();
     this.hlsLiveStatus.set('starting');
     this.hlsLiveError.set(null);
     this.hlsLiveUrl.set(null);
+    this.clearLiveSessionRenewTimer();
+    this.stopWebRtcPlayback();
+    this.webrtcDegradedSessionId = null;
+    const streamProfile = this.selectedStreamProfile();
+    const warmSession = this.hlsWarmSession
+      && this.hlsWarmSessionMatches(this.hlsWarmSession, deviceId, streamProfile)
+      ? this.hlsWarmSession
+      : null;
+    const warmStartRequest$ = this.hlsWarmStartRequest
+      && this.hlsWarmStartRequestMatches(this.hlsWarmStartRequest, deviceId, streamProfile)
+      ? this.hlsWarmStartRequest.request$
+      : null;
+    this.cancelHlsLivePrewarmForPlayback();
+    this.hlsAttachToken += 1;
+    this.hlsPlaybackToken += 1;
+    this.hlsRecoveryAttempts = 0;
+    this.hlsFirstFrameSeen = false;
+    this.resetLivePlaybackUserPause();
     this.stopHlsPlayback();
-    this.api.startCameraLiveSession(deviceId).pipe(
+    this.resetLiveControlTimeline();
+    const startRequest$ = warmSession?.session_id
+      ? this.api.renewCameraLiveSession(
+          warmSession.device_id,
+          warmSession.session_id,
+          this.liveSessionTtlSeconds,
+        ).pipe(catchError(() => this.api.startCameraLiveSession(deviceId, streamProfile)))
+      : warmStartRequest$ ?? this.api.startCameraLiveSession(deviceId, streamProfile);
+    this.refreshHarborLinkCapabilitiesForLive().pipe(
+      switchMap(() => startRequest$),
+      takeUntilDestroyed(this.destroyRef),
       finalize(() => {
         if (this.actionBusy() === 'live') {
           this.actionBusy.set(null);
@@ -548,8 +734,26 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
       }),
     ).subscribe({
       next: (session) => {
+        this.applySessionStreamProfile(session);
         this.hlsLiveSession.set(session);
         if (session.session_id) {
+          this.scheduleLiveSessionRenewal(session);
+          this.rememberLivePlaybackUrls(session);
+          const usingWebRtc = this.startWebRtcPlaybackFromSession(session);
+          const attached = !usingWebRtc
+            && this.shouldAttachHlsPlayback(session)
+            && this.startHlsPlaybackFromSession(session, { pending: !session.playlist_ready });
+          if (usingWebRtc) {
+            this.showLiveFeedback('Connecting low-latency live...', 1800);
+            if (!session.playlist_ready) {
+              this.waitForHlsPlaylist(session);
+            }
+            return;
+          }
+          if (session.playlist_ready && attached) {
+            this.showLiveFeedback('Live buffer is ready...', 1800);
+            return;
+          }
           this.showLiveFeedback('Live is starting...', 1800);
           this.waitForHlsPlaylist(session);
         } else {
@@ -579,12 +783,19 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
         if (this.hlsLiveSession()?.session_id !== sessionId) {
           return;
         }
+        this.applySessionStreamProfile(status);
         this.hlsLiveSession.set(status);
-        if (status.playlist_ready && status.playlist_url) {
-          this.hlsLiveUrl.set(harborAssistantSearchSameOriginAdminUrl(status.playlist_url));
-          this.hlsLiveStatus.set('live');
-          this.showLiveFeedback('Live started.', 1800);
-          window.setTimeout(() => this.attachHlsPlayback(), 0);
+        this.rememberLivePlaybackUrls(status);
+        const usingWebRtc = this.isWebRtcPlaybackActive()
+          || this.startWebRtcPlaybackFromSession(status);
+        const attached = !usingWebRtc
+          && this.shouldAttachHlsPlayback(status)
+          && this.startHlsPlaybackFromSession(status, { pending: !status.playlist_ready });
+        if (status.playlist_ready && usingWebRtc) {
+          return;
+        }
+        if (status.playlist_ready && attached) {
+          this.showLiveFeedback('Live buffer is ready...', 1800);
           return;
         }
         if (status.status === 'failed' || status.status === 'degraded' || status.status === 'stopped') {
@@ -593,20 +804,26 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
           this.showLiveFeedback('Live unavailable. Falling back to snapshots.', 2200);
           return;
         }
-        if (attempt >= 15) {
+        if (attempt * this.hlsPlaylistPollIntervalMs >= this.hlsPlaylistMaxWaitMs) {
           this.hlsLiveStatus.set('degraded');
           this.hlsLiveError.set(status.message || 'Live playlist is not ready yet.');
           this.showLiveFeedback('Live unavailable. Falling back to snapshots.', 2200);
           return;
         }
-        window.setTimeout(() => this.waitForHlsPlaylist(status, attempt + 1), 1000);
+        this.window.setTimeout(
+          () => this.waitForHlsPlaylist(status, attempt + 1),
+          this.hlsPlaylistPollIntervalMs,
+        );
       },
       error: (error: unknown) => {
         if (this.hlsLiveSession()?.session_id !== sessionId) {
           return;
         }
-        if (attempt < 15) {
-          window.setTimeout(() => this.waitForHlsPlaylist(session, attempt + 1), 1000);
+        if (attempt * this.hlsPlaylistPollIntervalMs < this.hlsPlaylistMaxWaitMs) {
+          this.window.setTimeout(
+            () => this.waitForHlsPlaylist(session, attempt + 1),
+            this.hlsPlaylistPollIntervalMs,
+          );
           return;
         }
         this.hlsLiveStatus.set('degraded');
@@ -616,11 +833,245 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     });
   }
 
+  private scheduleHlsLivePrewarm(): void {
+    this.clearHlsWarmTimer();
+    this.hlsWarmTimer = this.window.setTimeout(() => {
+      this.hlsWarmTimer = null;
+      this.ensureHlsLivePrewarm();
+    }, this.hlsPrewarmDelayMs);
+  }
+
+  private ensureHlsLivePrewarm(): void {
+    const deviceId = this.selectedCameraId();
+    const streamProfile = this.selectedStreamProfile();
+    if (!deviceId || this.selectedCamera()?.device_id !== deviceId || this.hlsLiveStatus() !== 'stopped') {
+      return;
+    }
+    const warmSession = this.hlsWarmSession;
+    if (warmSession && this.hlsWarmSessionMatches(warmSession, deviceId, streamProfile)) {
+      if (!warmSession.playlist_ready) {
+        this.pollHlsLivePrewarm(warmSession, this.hlsWarmToken);
+      }
+      return;
+    }
+    if (warmSession) {
+      this.stopHlsWarmSession();
+    }
+    const warmStartRequest = this.hlsWarmStartRequest;
+    if (warmStartRequest && this.hlsWarmStartRequestMatches(warmStartRequest, deviceId, streamProfile)) {
+      return;
+    }
+    this.hlsWarmToken += 1;
+    const token = this.hlsWarmToken;
+    const request$ = this.api.startCameraLiveSession(deviceId, streamProfile).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => {
+        if (this.hlsWarmStartRequest?.token === token) {
+          this.hlsWarmStartRequest = null;
+        }
+      }),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+    this.hlsWarmStartRequest = {
+      deviceId, streamProfile, token, request$,
+    };
+    request$.subscribe({
+      next: (session) => {
+        if (!this.hlsWarmPrewarmCanContinue(session, token)) {
+          this.releaseStaleHlsWarmSession(session);
+          return;
+        }
+        this.hlsWarmSession = session;
+        if (!session.playlist_ready) {
+          this.pollHlsLivePrewarm(session, token);
+        }
+      },
+      error: () => {
+        if (this.hlsWarmToken === token) {
+          this.hlsWarmSession = null;
+        }
+      },
+    });
+  }
+
+  private pollHlsLivePrewarm(
+    session: HarborAssistantCameraLiveSessionResponse,
+    token: number,
+    attempt = 0,
+  ): void {
+    const sessionId = session.session_id;
+    const deviceId = session.device_id;
+    if (!sessionId || !deviceId || !this.hlsWarmPrewarmCanContinue(session, token)) {
+      return;
+    }
+    if (attempt * this.hlsPrewarmPollIntervalMs >= this.hlsPrewarmMaxWaitMs) {
+      return;
+    }
+    this.clearHlsWarmTimer();
+    this.hlsWarmTimer = this.window.setTimeout(() => {
+      this.hlsWarmTimer = null;
+      if (!this.hlsWarmPrewarmCanContinue(session, token)) {
+        return;
+      }
+      this.api.cameraLiveStatus(deviceId, sessionId).pipe(
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe({
+        next: (status) => {
+          if (!this.hlsWarmPrewarmCanContinue(status, token)) {
+            this.releaseStaleHlsWarmSession(status);
+            return;
+          }
+          this.hlsWarmSession = status;
+          if (!status.playlist_ready && status.status !== 'failed' && status.status !== 'degraded') {
+            this.pollHlsLivePrewarm(status, token, attempt + 1);
+          }
+        },
+        error: () => {
+          if (this.hlsWarmToken === token) {
+            this.pollHlsLivePrewarm(session, token, attempt + 1);
+          }
+        },
+      });
+    }, this.hlsPrewarmPollIntervalMs);
+  }
+
+  private hlsWarmPrewarmCanContinue(session: HarborAssistantCameraLiveSessionResponse, token: number): boolean {
+    const profile = this.normalizeLiveStreamProfile(session.stream_profile);
+    return this.hlsWarmToken === token
+      && this.hlsLiveStatus() === 'stopped'
+      && Boolean(session.session_id)
+      && session.device_id === this.selectedCameraId()
+      && profile === this.selectedStreamProfile();
+  }
+
+  private hlsWarmSessionMatches(
+    session: HarborAssistantCameraLiveSessionResponse,
+    deviceId: string,
+    streamProfile: HarborAssistantLiveStreamProfile,
+  ): boolean {
+    return Boolean(session.session_id)
+      && session.device_id === deviceId
+      && this.normalizeLiveStreamProfile(session.stream_profile) === streamProfile;
+  }
+
+  private hlsWarmStartRequestMatches(
+    request: HarborAssistantHlsWarmStartRequest,
+    deviceId: string,
+    streamProfile: HarborAssistantLiveStreamProfile,
+  ): boolean {
+    return request.deviceId === deviceId && request.streamProfile === streamProfile;
+  }
+
+  private cancelHlsLivePrewarmForPlayback(): void {
+    this.clearHlsWarmTimer();
+    this.hlsWarmToken += 1;
+    this.hlsWarmSession = null;
+  }
+
+  private stopHlsWarmSession(): void {
+    this.clearHlsWarmTimer();
+    this.hlsWarmToken += 1;
+    const session = this.hlsWarmSession;
+    this.hlsWarmSession = null;
+    if (session) {
+      this.releaseHlsWarmSession(session);
+    }
+  }
+
+  private releaseStaleHlsWarmSession(session: HarborAssistantCameraLiveSessionResponse): void {
+    if (this.hlsLiveSession()?.session_id === session.session_id) {
+      return;
+    }
+    if (
+      this.hlsLiveStatus() !== 'stopped'
+      && session.device_id === this.selectedCameraId()
+      && this.normalizeLiveStreamProfile(session.stream_profile) === this.selectedStreamProfile()
+    ) {
+      return;
+    }
+    this.releaseHlsWarmSession(session);
+  }
+
+  private releaseHlsWarmSession(session: HarborAssistantCameraLiveSessionResponse): void {
+    if (!session.device_id || !session.session_id) {
+      return;
+    }
+    this.api.stopCameraLiveSession(session.device_id, session.session_id).subscribe({
+      error: () => undefined,
+    });
+  }
+
+  private clearHlsWarmTimer(): void {
+    if (this.hlsWarmTimer === null) {
+      return;
+    }
+    this.window.clearTimeout(this.hlsWarmTimer);
+    this.hlsWarmTimer = null;
+  }
+
+  private scheduleLiveSessionRenewal(session: HarborAssistantCameraLiveSessionResponse): void {
+    this.clearLiveSessionRenewTimer();
+    if (!session.device_id || !session.session_id) {
+      return;
+    }
+    const deviceId = session.device_id;
+    const sessionId = session.session_id;
+    this.liveSessionRenewTimer = this.window.setTimeout(() => {
+      this.liveSessionRenewTimer = null;
+      if (
+        this.hlsLiveStatus() === 'stopped'
+        || this.hlsLiveSession()?.session_id !== sessionId
+      ) {
+        return;
+      }
+      this.api.renewCameraLiveSession(deviceId, sessionId, this.liveSessionTtlSeconds).pipe(
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe({
+        next: (renewed) => {
+          if (this.hlsLiveSession()?.session_id !== sessionId) {
+            return;
+          }
+          this.applySessionStreamProfile(renewed);
+          this.hlsLiveSession.set(renewed);
+          this.rememberLivePlaybackUrls(renewed);
+          if (renewed.status === 'running' || renewed.status === 'starting') {
+            this.scheduleLiveSessionRenewal(renewed);
+            return;
+          }
+          this.hlsLiveStatus.set('degraded');
+          this.hlsLiveError.set(renewed.message || 'Live session expired.');
+        },
+        error: () => {
+          if (this.hlsLiveSession()?.session_id === sessionId) {
+            this.scheduleLiveSessionRenewal(session);
+          }
+        },
+      });
+    }, this.liveSessionRenewIntervalMs);
+  }
+
+  private clearLiveSessionRenewTimer(): void {
+    if (this.liveSessionRenewTimer === null) {
+      return;
+    }
+    this.window.clearTimeout(this.liveSessionRenewTimer);
+    this.liveSessionRenewTimer = null;
+  }
+
   stopLive(showMessage = true): void {
     const session = this.hlsLiveSession();
     const deviceId = session?.device_id ?? this.selectedCameraId();
+    this.hlsAttachToken += 1;
+    this.hlsPlaybackToken += 1;
+    this.hlsRecoveryAttempts = 0;
+    this.clearLiveSessionRenewTimer();
+    this.cancelLiveTransportTransition();
+    this.resetLivePlaybackUserPause();
+    this.stopWebRtcPlayback();
     this.stopHlsPlayback();
+    this.resetLiveControlTimeline();
     this.hlsLiveUrl.set(null);
+    this.liveControlPlaybackMode.set('hls-fallback');
     this.hlsLiveStatus.set('stopped');
     this.hlsLiveError.set(null);
     this.hlsLiveSession.set(null);
@@ -643,15 +1094,37 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
 
   liveModeLabel(): string {
     if (this.hlsLiveStatus() === 'live') {
-      return 'Live H.264';
+      const transport = this.liveControlPlaybackMode() === 'webrtc' ? 'WebRTC' : 'HLS';
+      return `Live ${transport} H.264 ${this.selectedStreamProfile()}`;
     }
     if (this.hlsLiveStatus() === 'starting') {
-      return 'Starting live';
+      return `Starting ${this.selectedStreamProfile()} stream`;
     }
     if (this.hlsLiveStatus() === 'degraded') {
       return 'Snapshot fallback';
     }
     return 'Stopped';
+  }
+
+  private applySessionStreamProfile(session: HarborAssistantCameraLiveSessionResponse): void {
+    const profile = this.normalizeLiveStreamProfile(session.stream_profile);
+    if (profile) {
+      this.selectedStreamProfile.set(profile);
+    }
+  }
+
+  private normalizeLiveStreamProfile(profile: string | null | undefined): HarborAssistantLiveStreamProfile | null {
+    if (profile === 'sub' || profile === 'main') {
+      return profile;
+    }
+    return null;
+  }
+
+  private defaultStreamProfileForCamera(deviceId: string | null | undefined): HarborAssistantLiveStreamProfile {
+    if (deviceId?.toLowerCase().includes('main')) {
+      return 'main';
+    }
+    return 'sub';
   }
 
   liveCanStart(): boolean {
@@ -663,6 +1136,383 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
 
   liveCanStop(): boolean {
     return this.hlsLiveStatus() === 'starting' || this.hlsLiveStatus() === 'live';
+  }
+
+  onCameraTabChange(index: number): void {
+    this.selectedTabIndex.set(index);
+    if (index !== 0) {
+      return;
+    }
+    this.pausePlaybackVideo();
+    if (this.livePlaybackBackgroundPaused) {
+      if (this.liveControlPlaybackMode() === 'webrtc') {
+        this.resumeLivePlayback();
+        return;
+      }
+      this.scheduleLiveVideoPlayback(0, this.hlsLiveUrl(), this.hlsPlaybackToken, true);
+      return;
+    }
+    this.resumeLivePlayback();
+  }
+
+  resumeLivePlayback(): void {
+    if (this.livePlaybackUserPaused) {
+      return;
+    }
+    if (this.isWebRtcPlaybackActive()) {
+      const video = this.liveVideo?.nativeElement;
+      if (video?.paused) {
+        this.requestWebRtcPlayback(video, this.webrtcAttachToken);
+      }
+      return;
+    }
+    this.scheduleLiveVideoPlayback();
+  }
+
+  onLiveVideoLoadedData(): void {
+    const video = this.liveVideo?.nativeElement;
+    if (video?.srcObject && video.srcObject === this.webrtcMediaStream) {
+      this.waitForWebRtcDecodedFrame(video, this.webrtcAttachToken);
+      return;
+    }
+    this.syncLiveControlState();
+    this.markHlsPlaybackReady();
+    this.resumeLivePlayback();
+    this.scheduleLiveTransportFrameReveal();
+  }
+
+  onLiveVideoPlaying(): void {
+    const video = this.liveVideo?.nativeElement;
+    if (
+      video?.srcObject
+      && video.srcObject === this.webrtcMediaStream
+      && this.webrtcPeerConnection
+    ) {
+      this.waitForWebRtcDecodedFrame(video, this.webrtcAttachToken);
+      return;
+    }
+    this.livePlaybackHasPlayed = true;
+    this.livePlaybackBackgroundPaused = false;
+    this.startLiveControlTimeline();
+    this.syncLiveControlState();
+    this.markHlsPlaybackReady();
+    this.scheduleLiveTransportFrameReveal();
+  }
+
+  onLiveVideoPause(): void {
+    this.syncLiveControlState();
+    if (this.liveControlPlaybackMode() === 'webrtc') {
+      if (this.suppressLivePauseEvent || this.liveDocumentIsHidden() || this.selectedTabIndex() !== 0) {
+        this.livePlaybackBackgroundPaused = true;
+        return;
+      }
+      this.livePlaybackUserPaused = true;
+      this.livePlaybackUserDelayed = true;
+      this.webrtcPauseTimelineSeconds = this.liveSessionElapsedSeconds();
+      this.hlsPlaybackToken += 1;
+      this.hlsLiveError.set(null);
+      return;
+    }
+    if (this.suppressLivePauseEvent || !this.hlsLiveUrl() || this.hlsLiveStatus() !== 'live') {
+      return;
+    }
+    if (this.selectedTabIndex() !== 0) {
+      this.preserveBackgroundLivePlaybackPosition();
+      this.hlsLiveError.set(null);
+      this.scheduleLiveVideoPlayback(0, this.hlsLiveUrl(), this.hlsPlaybackToken, true);
+      return;
+    }
+    if (this.liveDocumentIsHidden()) {
+      this.preserveBackgroundLivePlaybackPosition();
+      this.hlsLiveError.set(null);
+      this.scheduleLiveVideoPlayback(0, this.hlsLiveUrl(), this.hlsPlaybackToken, true);
+      return;
+    }
+    if (!this.livePlaybackHasPlayed && !this.livePlaybackUserPaused) {
+      this.hlsLiveError.set(null);
+      this.scheduleLiveVideoPlayback();
+      return;
+    }
+    this.livePlaybackUserPaused = true;
+    this.livePlaybackUserDelayed = true;
+    this.userLivePlaybackAnchorSeconds = this.normalizedLiveVideoCurrentTime();
+    this.hlsPlaybackToken += 1;
+    this.hlsLiveError.set(null);
+  }
+
+  private handleLiveDocumentVisibilityChange(): void {
+    if (!this.hlsLiveUrl() || this.hlsLiveStatus() !== 'live' || this.livePlaybackUserPaused) {
+      return;
+    }
+    const video = this.liveVideo?.nativeElement;
+    if (this.liveControlPlaybackMode() === 'webrtc') {
+      if (!this.liveDocumentIsHidden() && video?.paused) {
+        this.livePlaybackBackgroundPaused = false;
+        this.requestWebRtcPlayback(video, this.webrtcAttachToken);
+      }
+      return;
+    }
+    if (this.liveDocumentIsHidden()) {
+      if (video?.paused) {
+        this.preserveBackgroundLivePlaybackPosition();
+        this.scheduleLiveVideoPlayback(0, this.hlsLiveUrl(), this.hlsPlaybackToken, true);
+      }
+      return;
+    }
+    if (video?.paused && this.livePlaybackHasPlayed) {
+      this.preserveBackgroundLivePlaybackPosition();
+    }
+    if (this.livePlaybackBackgroundPaused || video?.paused) {
+      this.scheduleLiveVideoPlayback(0, this.hlsLiveUrl(), this.hlsPlaybackToken, true);
+    }
+  }
+
+  private preserveBackgroundLivePlaybackPosition(): void {
+    this.livePlaybackBackgroundPaused = true;
+    const currentTime = this.normalizedLiveVideoCurrentTime();
+    if (currentTime !== null && this.livePlaybackHasPlayed) {
+      this.livePlaybackUserDelayed = true;
+      this.userLivePlaybackAnchorSeconds = currentTime;
+    }
+  }
+
+  private liveDocumentIsHidden(): boolean {
+    return document.visibilityState === 'hidden';
+  }
+
+  private pausePlaybackVideo(): void {
+    const video = this.playbackVideo?.nativeElement;
+    if (video && !video.paused) {
+      video.pause();
+    }
+  }
+
+  onLiveVideoPlay(): void {
+    this.syncLiveControlState();
+    if (this.liveControlPlaybackMode() === 'webrtc') {
+      this.livePlaybackBackgroundPaused = false;
+      this.hlsLiveError.set(null);
+      return;
+    }
+    if (!this.hlsLiveUrl() || this.hlsLiveStatus() !== 'live') {
+      return;
+    }
+    const video = this.liveVideo?.nativeElement;
+    if (this.livePlaybackUserPaused && this.hasPendingProgrammaticLivePlayRequest()) {
+      if (video) {
+        this.pauseLiveVideoSilently(video);
+      }
+      return;
+    }
+    const shouldRestoreUserAnchor = this.livePlaybackUserPaused && this.livePlaybackUserDelayed;
+    this.livePlaybackUserPaused = false;
+    if (video) {
+      if (shouldRestoreUserAnchor) {
+        this.restoreUserLivePlaybackAnchor(video);
+      }
+      this.applyUserLivePlaybackRate(video);
+    }
+    this.hlsLiveError.set(null);
+  }
+
+  onLiveVideoRateChange(): void {
+    this.syncLiveControlState();
+    if (this.liveControlPlaybackMode() === 'webrtc') {
+      const video = this.liveVideo?.nativeElement;
+      if (video && Math.abs(video.playbackRate - this.defaultLivePlaybackRate) > this.livePlaybackRateChangeTolerance) {
+        this.setLiveVideoPlaybackRate(video, this.defaultLivePlaybackRate);
+      }
+      return;
+    }
+    if (!this.hlsLiveUrl() || this.hlsLiveStatus() !== 'live') {
+      return;
+    }
+    const video = this.liveVideo?.nativeElement;
+    if (!video) {
+      return;
+    }
+    if (this.consumeProgrammaticLivePlaybackRate(video)) {
+      return;
+    }
+    const playbackRate = this.normalizedLivePlaybackRate(video.playbackRate);
+    if (playbackRate === null) {
+      return;
+    }
+    if (
+      !this.livePlaybackUserDelayed
+      && this.userLivePlaybackRateIsCatchingUp(playbackRate)
+      && this.returnLivePlaybackToWebRtcAfterCatchUp(video)
+    ) {
+      return;
+    }
+    this.userLivePlaybackRate = playbackRate;
+    if (Math.abs(playbackRate - this.defaultLivePlaybackRate) > this.livePlaybackRateChangeTolerance) {
+      this.livePlaybackUserDelayed = true;
+      this.hlsPlaybackToken += 1;
+    }
+    this.hlsLiveError.set(null);
+  }
+
+  onLiveVideoTimeUpdate(): void {
+    this.syncLiveControlState();
+    if (this.liveControlPlaybackMode() === 'webrtc') {
+      return;
+    }
+    if (
+      !this.hlsLiveUrl()
+      || this.hlsLiveStatus() !== 'live'
+      || !this.livePlaybackUserDelayed
+      || !this.userLivePlaybackRateIsCatchingUp()
+    ) {
+      return;
+    }
+    const video = this.liveVideo?.nativeElement;
+    if (!video) {
+      return;
+    }
+    this.returnLivePlaybackToWebRtcAfterCatchUp(video);
+  }
+
+  onLiveVideoSeeked(): void {
+    this.syncLiveControlState();
+    if (this.liveControlPlaybackMode() === 'webrtc') {
+      return;
+    }
+    if (!this.hlsLiveUrl() || this.hlsLiveStatus() !== 'live') {
+      return;
+    }
+    const video = this.liveVideo?.nativeElement;
+    if (!video || !Number.isFinite(video.currentTime)) {
+      return;
+    }
+    if (this.consumeProgrammaticLiveSeek(video)) {
+      return;
+    }
+    this.livePlaybackUserPaused = video.paused;
+    this.livePlaybackUserDelayed = true;
+    this.userLivePlaybackAnchorSeconds = video.currentTime;
+    this.hlsPlaybackToken += 1;
+    this.applyUserLivePlaybackRate(video);
+    this.hlsLiveError.set(null);
+  }
+
+  onLiveVideoVolumeChange(): void {
+    this.syncLiveControlState();
+  }
+
+  toggleLivePlaybackFromControls(): void {
+    const video = this.liveVideo?.nativeElement;
+    if (!video) {
+      return;
+    }
+    if (this.liveControlPlaybackMode() === 'webrtc') {
+      if (this.liveControlPaused() || video.paused) {
+        const timelineSeconds = this.webrtcPauseTimelineSeconds ?? this.liveSessionElapsedSeconds();
+        this.switchToHlsTimeshift(timelineSeconds, true);
+      } else {
+        const timelineSeconds = this.liveSessionElapsedSeconds();
+        this.webrtcPauseTimelineSeconds = timelineSeconds;
+        this.livePlaybackUserPaused = true;
+        this.livePlaybackUserDelayed = true;
+        video.pause();
+        this.liveControlCurrentTime.set(timelineSeconds);
+        this.liveControlPaused.set(true);
+      }
+      return;
+    }
+    if (video.paused) {
+      video.play().catch((): void => undefined);
+    } else {
+      video.pause();
+    }
+  }
+
+  seekLivePlaybackFromControls(seconds: number): void {
+    const video = this.liveVideo?.nativeElement;
+    if (!video || !Number.isFinite(seconds)) {
+      return;
+    }
+    const start = this.liveControlStartTime();
+    const end = this.liveControlEndTime();
+    const timelineSeconds = Math.min(end, Math.max(start, seconds));
+    if (this.liveControlPlaybackMode() === 'webrtc') {
+      if (end - timelineSeconds <= this.liveEdgeReturnToleranceSeconds && !video.paused) {
+        return;
+      }
+      this.switchToHlsTimeshift(timelineSeconds, !video.paused);
+      return;
+    }
+    if (
+      end - timelineSeconds <= this.liveEdgeReturnToleranceSeconds
+      && this.switchLivePlaybackToWebRtc(video)
+    ) {
+      return;
+    }
+    const liveEdge = this.liveVideoEdgeSeconds(video);
+    const sessionElapsed = this.liveSessionElapsedSeconds();
+    const timelineOffset = this.hlsControlTimelineOffset(sessionElapsed, liveEdge);
+    video.currentTime = liveEdge === null
+      ? timelineSeconds
+      : Math.max(0, timelineSeconds - timelineOffset);
+  }
+
+  setLivePlaybackRateFromControls(rate: number): void {
+    const video = this.liveVideo?.nativeElement;
+    if (!video || !Number.isFinite(rate) || rate <= 0 || rate > this.maxUserLivePlaybackRate) {
+      return;
+    }
+    if (this.liveControlPlaybackMode() === 'webrtc') {
+      if (video.paused) {
+        this.userLivePlaybackRate = rate;
+        this.liveControlPlaybackRate.set(rate);
+      } else {
+        this.userLivePlaybackRate = this.defaultLivePlaybackRate;
+        this.liveControlPlaybackRate.set(this.defaultLivePlaybackRate);
+      }
+      return;
+    }
+    video.playbackRate = rate;
+  }
+
+  setLiveMutedFromControls(muted: boolean): void {
+    const video = this.liveVideo?.nativeElement;
+    if (!video) {
+      return;
+    }
+    video.muted = muted;
+    this.syncLiveControlState();
+  }
+
+  setLiveVolumeFromControls(volume: number): void {
+    const video = this.liveVideo?.nativeElement;
+    if (!video || !Number.isFinite(volume)) {
+      return;
+    }
+    video.volume = Math.min(1, Math.max(0, volume));
+    if (video.volume > 0) {
+      video.muted = false;
+    }
+    this.syncLiveControlState();
+  }
+
+  onPlaybackVideoSeeking(event: Event): void {
+    const video = this.playbackVideoFromEvent(event);
+    if (!video || !Number.isFinite(video.currentTime)) {
+      return;
+    }
+    if (this.consumeProgrammaticPlaybackSeek(video)) {
+      return;
+    }
+    this.playbackSeekAnchorSeconds = video.currentTime;
+    this.playbackSeekMediaKey = this.selectedPlaybackMediaKey();
+  }
+
+  onPlaybackVideoSeeked(event: Event): void {
+    this.restorePlaybackSeekAnchor(this.playbackVideoFromEvent(event));
+  }
+
+  onPlaybackVideoReady(event: Event): void {
+    this.restorePlaybackSeekAnchor(this.playbackVideoFromEvent(event));
   }
 
   ptzAction(direction: string): void {
@@ -727,6 +1577,9 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   }
 
   selectedLiveUrl(): string | null {
+    if (this.hlsLiveStatus() === 'stopped') {
+      return null;
+    }
     if (this.hlsLiveUrl() && this.hlsLiveStatus() !== 'degraded') {
       return null;
     }
@@ -757,6 +1610,9 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   }
 
   livePreviewErrorMessage(): string | null {
+    if (this.hlsLiveStatus() === 'stopped') {
+      return null;
+    }
     if (!this.selectedCameraId()) {
       return 'Choose a camera.';
     }
@@ -776,7 +1632,7 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   }
 
   openCameraSettings(): void {
-    window.open('/ui/harbor-assistant?tab=settings&section=camera', '_blank', 'noopener');
+    this.window.open('/ui/harbor-assistant?tab=settings&section=camera', '_blank', 'noopener');
   }
 
   selectedSnapshotUrl(): string | null {
@@ -792,8 +1648,10 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.clearRecordingFinalizationTimer();
     this.stopHlsPlayback();
     this.stopLive(false);
+    this.stopHlsWarmSession();
   }
 
   handleLiveError(): void {
@@ -881,6 +1739,9 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     if (segment.local_status === 'archive_failed') {
       return 'Archive failed';
     }
+    if (segment.local_status === 'finalize_failed') {
+      return 'Recording unavailable';
+    }
     return this.canOpenMediaItem(segment) ? 'Playable' : 'Not playable';
   }
 
@@ -893,7 +1754,7 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   }
 
   isArchiveFailed(segment: HarborAssistantSearchMediaItem): boolean {
-    return segment.local_status === 'archive_failed';
+    return segment.local_status === 'archive_failed' || segment.local_status === 'finalize_failed';
   }
 
   formatUnix(value: string | number | undefined | null): string {
@@ -1019,7 +1880,7 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   fullscreenMediaViewer(): void {
     const media = this.mediaViewer?.nativeElement.querySelector('video, img') as HTMLElement | null;
     const target = media ?? this.mediaViewer?.nativeElement;
-    void target?.requestFullscreen?.();
+    target?.requestFullscreen?.().catch((): void => undefined);
   }
 
   private localDateTimeToUnixSeconds(value: string): string | null {
@@ -1035,7 +1896,7 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   }
 
   private formatLocalDateTimeLabel(value: string): string {
-    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/);
+    const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
     if (!match) {
       return '';
     }
@@ -1105,7 +1966,9 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
   private prependTimelineItem(item: HarborAssistantSearchDvrTimelineSegment): void {
     const normalized = this.normalizeTimelineItem(item);
     const existing = this.dvrTimeline().filter((segment) => segment.file_path !== item.file_path);
-    this.dvrTimeline.set([normalized, ...existing].sort((left, right) => this.mediaTimestamp(right) - this.mediaTimestamp(left)));
+    this.dvrTimeline.set(
+      [normalized, ...existing].sort((left, right) => this.mediaTimestamp(right) - this.mediaTimestamp(left)),
+    );
   }
 
   private prependOptimisticSnapshot(deviceId: string, previewUrl: string): string {
@@ -1161,7 +2024,10 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     return optimisticKey;
   }
 
-  private replaceOptimisticMediaItem(optimisticKey: string | null, item: HarborAssistantSearchDvrTimelineSegment): void {
+  private replaceOptimisticMediaItem(
+    optimisticKey: string | null,
+    item: HarborAssistantSearchDvrTimelineSegment,
+  ): void {
     const optimisticItem = optimisticKey
       ? this.optimisticMediaItems().find((segment) => segment.optimistic_key === optimisticKey)
       : null;
@@ -1195,14 +2061,17 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     }));
   }
 
-  private pruneFinalizingRecordings(deviceId: string, segments: HarborAssistantSearchDvrTimelineSegment[]): void {
+  private pruneFinalizingRecordings(
+    deviceId: string,
+    segments: HarborAssistantSearchDvrTimelineSegment[],
+  ): boolean {
     const pendingRecordings = this.optimisticMediaItems().filter((segment) => {
       return segment.device_id === deviceId
         && this.mediaKind(segment) === 'recording'
         && segment.local_status === 'finalizing';
     });
     if (pendingRecordings.length === 0) {
-      return;
+      return true;
     }
     const playableRecordingExists = segments.some((segment) => {
       const matchesPendingWindow = pendingRecordings.some((pending) => {
@@ -1216,6 +2085,41 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     if (playableRecordingExists) {
       this.removeOptimisticRecordings(deviceId);
     }
+    return playableRecordingExists;
+  }
+
+  private scheduleRecordingFinalizationRefresh(deviceId: string): void {
+    this.clearRecordingFinalizationTimer();
+    if (this.recordingFinalizationAttempts >= this.recordingFinalizationPollLimit) {
+      this.optimisticMediaItems.set(this.optimisticMediaItems().map((segment) => {
+        if (
+          segment.device_id !== deviceId
+          || this.mediaKind(segment) !== 'recording'
+          || segment.local_status !== 'finalizing'
+        ) {
+          return segment;
+        }
+        return { ...segment, local_status: 'finalize_failed' };
+      }));
+      this.recordIntent.set(null);
+      this.actionError.set('Recording stopped, but the saved clip did not appear in Playback.');
+      return;
+    }
+    this.recordingFinalizationAttempts += 1;
+    this.recordingFinalizationTimer = this.window.setTimeout(() => {
+      this.recordingFinalizationTimer = null;
+      if (this.recordIntent() === 'finalizing' && this.selectedCameraId() === deviceId) {
+        this.refreshCameraDvr();
+      }
+    }, this.recordingFinalizationPollDelayMs);
+  }
+
+  private clearRecordingFinalizationTimer(): void {
+    if (this.recordingFinalizationTimer === null) {
+      return;
+    }
+    this.window.clearTimeout(this.recordingFinalizationTimer);
+    this.recordingFinalizationTimer = null;
   }
 
   private uniqueMediaItems(segments: HarborAssistantSearchMediaItem[]): HarborAssistantSearchMediaItem[] {
@@ -1244,7 +2148,10 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     return segment.created_at || segment.started_at || segment.ended_at;
   }
 
-  private normalizeTimelineItem(item: HarborAssistantSearchDvrTimelineSegment, displayAt?: string | null): HarborAssistantSearchMediaItem {
+  private normalizeTimelineItem(
+    item: HarborAssistantSearchDvrTimelineSegment,
+    displayAt?: string | null,
+  ): HarborAssistantSearchMediaItem {
     const mediaKind = item.media_kind || 'recording';
     if (displayAt && mediaKind === 'recording') {
       return { ...item, local_display_at: displayAt };
@@ -1280,7 +2187,16 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
       next: (timeline) => {
         const segments = this.normalizeTimelineSegmentsForDisplay(deviceId, timeline.segments ?? []);
         this.dvrTimeline.set(segments);
-        this.pruneFinalizingRecordings(deviceId, segments);
+        const recordingFinalized = this.pruneFinalizingRecordings(deviceId, segments);
+        if (this.recordIntent() === 'finalizing') {
+          if (recordingFinalized) {
+            this.clearRecordingFinalizationTimer();
+            this.recordIntent.set(null);
+            this.showActionMessage('Recording is ready in Playback.');
+          } else {
+            this.scheduleRecordingFinalizationRefresh(deviceId);
+          }
+        }
         this.cameraError.set(refreshErrors.length > 0 ? refreshErrors[0] : null);
       },
       error: (error: unknown) => {
@@ -1289,7 +2205,11 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     });
   }
 
-  private searchScopeForQuery(query: string): { filter: HarborAssistantSearchResultFilter; cameraId: string | null; sourceScope: HarborAssistantSearchSourceScope } {
+  private searchScopeForQuery(query: string): {
+    filter: HarborAssistantSearchResultFilter;
+    cameraId: string | null;
+    sourceScope: HarborAssistantSearchSourceScope;
+  } {
     const suggestion = this.matchPromptSuggestion(query);
     if (suggestion?.sourceScope) {
       if (this.form.controls.filter.value !== suggestion.filter) {
@@ -1311,7 +2231,10 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     };
   }
 
-  private normalizeTimelineSegmentsForDisplay(deviceId: string, segments: HarborAssistantSearchDvrTimelineSegment[]): HarborAssistantSearchMediaItem[] {
+  private normalizeTimelineSegmentsForDisplay(
+    deviceId: string,
+    segments: HarborAssistantSearchDvrTimelineSegment[],
+  ): HarborAssistantSearchMediaItem[] {
     const pendingRecordings = this.optimisticMediaItems().filter((segment) => {
       return segment.device_id === deviceId
         && this.mediaKind(segment) === 'recording'
@@ -1323,7 +2246,10 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
         return this.normalizeTimelineItem(segment);
       }
       const pending = pendingRecordings.find((item) => {
-        return Math.abs(Number(segment.ended_at || segment.created_at || segment.started_at || 0) - this.mediaTimestamp(item)) <= 30;
+        const segmentTimestamp = Number(
+          segment.ended_at || segment.created_at || segment.started_at || 0,
+        );
+        return Math.abs(segmentTimestamp - this.mediaTimestamp(item)) <= 30;
       });
       return this.normalizeTimelineItem(segment, pending?.local_display_at);
     });
@@ -1406,63 +2332,1382 @@ export class HarborAssistantCameraComponent implements OnInit, OnDestroy {
     });
   }
 
-  private attachHlsPlayback(): void {
-    const url = this.hlsLiveUrl();
-    const video = this.liveVideo?.nativeElement;
-    if (!url || !video) {
+  private rememberLivePlaybackUrls(session: HarborAssistantCameraLiveSessionResponse): void {
+    if (session.playlist_url) {
+      this.hlsLiveUrl.set(harborAssistantHlsLiveUrl(session.playlist_url));
+    }
+    if (session.webrtc_status === 'ready' && session.webrtc_url) {
+      this.webrtcLiveUrl.set(harborAssistantWhepUrl(session.webrtc_url));
+    }
+  }
+
+  private startWebRtcPlaybackFromSession(session: HarborAssistantCameraLiveSessionResponse): boolean {
+    if (
+      !this.harborLinkWebRtcReady()
+      || session.session_id === this.webrtcDegradedSessionId
+      || session.webrtc_status !== 'ready'
+      || !session.webrtc_url
+      || typeof RTCPeerConnection === 'undefined'
+    ) {
+      return false;
+    }
+    const url = harborAssistantWhepUrl(session.webrtc_url);
+    if (!url) {
+      return false;
+    }
+    if (this.liveControlPlaybackMode() !== 'webrtc') {
+      this.beginLiveTransportTransition('webrtc');
+    }
+    this.webrtcLiveUrl.set(url);
+    this.scheduleWebRtcPlaybackAttach(0, url);
+    return true;
+  }
+
+  private scheduleWebRtcPlaybackAttach(
+    attempt = 0,
+    url = this.webrtcLiveUrl(),
+    token = this.webrtcAttachToken + 1,
+  ): void {
+    if (!url) {
       return;
     }
-    this.stopHlsPlayback();
-    video.muted = true;
-    video.playsInline = true;
-    if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = url;
-      void video.play().catch(() => {
-        this.hlsLiveStatus.set('degraded');
-        this.hlsLiveError.set('Browser blocked live autoplay. Press Play again.');
+    if (attempt === 0) {
+      this.webrtcAttachToken = token;
+      this.webrtcPlaybackPending = true;
+    }
+    this.window.setTimeout(() => {
+      if (this.webrtcAttachToken !== token || this.webrtcLiveUrl() !== url) {
+        return;
+      }
+      const video = this.liveVideo?.nativeElement;
+      if (!video) {
+        if (attempt < 20) {
+          this.scheduleWebRtcPlaybackAttach(attempt + 1, url, token);
+        } else {
+          this.fallbackToHlsPlayback('WebRTC player did not initialize.');
+        }
+        return;
+      }
+      this.attachWhepPlayback(video, url, token).catch((error: unknown) => {
+        if (this.webrtcAttachToken === token) {
+          this.fallbackToHlsPlayback(this.webRtcNegotiationFailureMessage(error));
+        }
+      });
+    }, attempt === 0 ? 0 : 100);
+  }
+
+  private async attachWhepPlayback(video: HTMLVideoElement, url: string, token: number): Promise<void> {
+    const peerConnection = new RTCPeerConnection({ iceServers: [] });
+    this.webrtcPeerConnection?.close();
+    this.abortWebRtcNegotiation();
+    this.clearWebRtcFirstFrameDeadline();
+    this.clearWebRtcPlayRetry();
+    this.webrtcMediaStream = null;
+    this.webrtcPlayRequestPending = false;
+    this.webrtcPostDispatched = false;
+    this.webrtcPeerConnection = peerConnection;
+    const abortController = new AbortController();
+    this.webrtcNegotiationAbortController = abortController;
+    let negotiatedResourceUrl: string | null = null;
+    peerConnection.addTransceiver('video', { direction: 'recvonly' });
+    peerConnection.addTransceiver('audio', { direction: 'recvonly' });
+    peerConnection.ontrack = (event) => {
+      if (this.webrtcAttachToken !== token || this.webrtcPeerConnection !== peerConnection) {
+        return;
+      }
+      this.attachWebRtcTrack(video, event);
+      video.autoplay = true;
+      video.playsInline = true;
+      video.muted = this.liveControlMuted();
+      video.volume = this.liveControlVolume();
+      this.webrtcPauseTimelineSeconds = null;
+      this.resetLivePlaybackUserPause();
+      this.requestWebRtcPlayback(video, token);
+    };
+    peerConnection.onconnectionstatechange = () => {
+      if (this.webrtcAttachToken !== token || this.webrtcPeerConnection !== peerConnection) {
+        return;
+      }
+      if (peerConnection.connectionState === 'failed') {
+        this.fallbackToHlsPlayback('WebRTC connection failed.');
+      } else if (peerConnection.connectionState === 'disconnected') {
+        this.window.setTimeout(() => {
+          if (
+            this.webrtcAttachToken === token
+            && this.webrtcPeerConnection === peerConnection
+            && peerConnection.connectionState === 'disconnected'
+          ) {
+            this.fallbackToHlsPlayback('WebRTC connection was interrupted.');
+          }
+        }, 2_000);
+      }
+    };
+
+    const negotiation = async (): Promise<void> => {
+      const offer = await peerConnection.createOffer();
+      this.ensureWebRtcNegotiationIsActive(peerConnection, token, abortController.signal);
+      await peerConnection.setLocalDescription(offer);
+      await this.waitForIceGathering(peerConnection);
+      this.ensureWebRtcNegotiationIsActive(peerConnection, token, abortController.signal);
+      const offerSdp = peerConnection.localDescription?.sdp;
+      if (!offerSdp) {
+        throw new Error('WebRTC offer did not contain SDP');
+      }
+      this.webrtcPostDispatched = true;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/sdp' },
+        body: offerSdp,
+        signal: abortController.signal,
+      });
+      this.ensureWebRtcNegotiationIsActive(peerConnection, token, abortController.signal);
+      if (!response.ok) {
+        throw new Error(`WHEP negotiation failed with HTTP ${response.status}`);
+      }
+      negotiatedResourceUrl = this.validateWhepResourceUrl(response.headers.get('Location'));
+      const answer = await response.text();
+      this.ensureWebRtcNegotiationIsActive(peerConnection, token, abortController.signal);
+      await peerConnection.setRemoteDescription({ type: 'answer', sdp: answer });
+      this.ensureWebRtcNegotiationIsActive(peerConnection, token, abortController.signal);
+    };
+
+    try {
+      await this.runWebRtcNegotiationWithDeadline(negotiation(), abortController);
+      this.webrtcResourceUrl = negotiatedResourceUrl;
+      this.scheduleWebRtcFirstFrameDeadline(peerConnection, token);
+    } catch (error: unknown) {
+      if (this.webrtcPeerConnection === peerConnection) {
+        this.webrtcPeerConnection = null;
+      }
+      peerConnection.ontrack = null;
+      peerConnection.onconnectionstatechange = null;
+      peerConnection.close();
+      this.deleteWhepResource(negotiatedResourceUrl);
+      throw error;
+    } finally {
+      if (this.webrtcNegotiationAbortController === abortController) {
+        this.webrtcNegotiationAbortController = null;
+      }
+    }
+  }
+
+  private runWebRtcNegotiationWithDeadline(
+    negotiation: Promise<void>,
+    abortController: AbortController,
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const deadline = this.window.setTimeout(() => {
+        abortController.abort();
+        reject(new Error('WebRTC negotiation timed out'));
+      }, this.webRtcNegotiationDeadlineMs);
+      negotiation.then(resolve, reject).finally(() => this.window.clearTimeout(deadline));
+    });
+  }
+
+  private ensureWebRtcNegotiationIsActive(
+    peerConnection: RTCPeerConnection,
+    token: number,
+    abortSignal: AbortSignal,
+  ): void {
+    if (
+      abortSignal.aborted
+      || this.webrtcAttachToken !== token
+      || this.webrtcPeerConnection !== peerConnection
+    ) {
+      throw new Error('WebRTC negotiation was cancelled');
+    }
+  }
+
+  private validateWhepResourceUrl(location: string | null): string {
+    if (!location) {
+      throw new Error('WHEP response did not include a Location header');
+    }
+    const resourceUrl = new URL(location, this.window.location.href);
+    const currentUrl = new URL(this.window.location.href);
+    if (
+      resourceUrl.origin !== currentUrl.origin
+      || !/^\/api\/harbor-link\/media\/[^/]+\/whep\/[^/]+$/.test(resourceUrl.pathname)
+      || resourceUrl.search
+    ) {
+      throw new Error('WHEP resource Location is outside the allowed HarborLink media path');
+    }
+    resourceUrl.hash = '';
+    return resourceUrl.toString();
+  }
+
+  private scheduleWebRtcFirstFrameDeadline(peerConnection: RTCPeerConnection, token: number): void {
+    this.clearWebRtcFirstFrameDeadline();
+    this.webrtcFirstFrameDeadlineTimer = this.window.setTimeout(() => {
+      this.webrtcFirstFrameDeadlineTimer = null;
+      if (
+        this.webrtcAttachToken === token
+        && this.webrtcPeerConnection === peerConnection
+        && this.liveControlPlaybackMode() !== 'webrtc'
+      ) {
+        this.fallbackToHlsPlayback('WebRTC did not render a first frame in time.');
+      }
+    }, this.webRtcFirstFrameDeadlineMs);
+  }
+
+  private waitForWebRtcDecodedFrame(video: HTMLVideoElement, token: number): void {
+    if (
+      this.webrtcAttachToken !== token
+      || video.srcObject !== this.webrtcMediaStream
+      || !this.webrtcPeerConnection
+    ) {
+      return;
+    }
+    const frameVideo = video as HTMLVideoElement & HarborAssistantVideoFrameCallbacks;
+    if (frameVideo.requestVideoFrameCallback) {
+      if (this.webrtcFirstFrameCallbackVideo === frameVideo && this.webrtcFirstFrameCallbackId !== null) {
+        return;
+      }
+      this.clearWebRtcFirstFrameCallback();
+      this.webrtcFirstFrameCallbackVideo = frameVideo;
+      this.webrtcFirstFrameCallbackId = frameVideo.requestVideoFrameCallback(() => {
+        this.webrtcFirstFrameCallbackId = null;
+        this.webrtcFirstFrameCallbackVideo = null;
+        this.markWebRtcDecodedFrame(video, token);
       });
       return;
     }
-    if (!Hls.isSupported()) {
-      this.hlsLiveStatus.set('degraded');
-      this.hlsLiveError.set('This browser cannot play local HLS live video.');
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      this.markWebRtcDecodedFrame(video, token);
+    }
+  }
+
+  private markWebRtcDecodedFrame(video: HTMLVideoElement, token: number): void {
+    if (
+      this.webrtcAttachToken !== token
+      || video.srcObject !== this.webrtcMediaStream
+      || !this.webrtcPeerConnection
+    ) {
       return;
     }
-    const hls = new Hls({
-      backBufferLength: 30,
-      lowLatencyMode: true,
+    this.clearWebRtcFirstFrameCallback();
+    this.clearWebRtcFirstFrameDeadline();
+    this.liveControlPlaybackMode.set('webrtc');
+    this.hlsLiveStatus.set('live');
+    this.webrtcPlaybackPending = false;
+    this.webrtcPauseTimelineSeconds = null;
+    this.resetLivePlaybackUserPause();
+    this.livePlaybackHasPlayed = true;
+    this.livePlaybackBackgroundPaused = false;
+    this.startLiveControlTimeline();
+    this.syncLiveControlState();
+    this.scheduleLiveTransportFrameReveal();
+    this.startLiveEdgeMonitor();
+  }
+
+  private clearWebRtcFirstFrameCallback(): void {
+    if (this.webrtcFirstFrameCallbackId !== null) {
+      this.webrtcFirstFrameCallbackVideo?.cancelVideoFrameCallback?.(this.webrtcFirstFrameCallbackId);
+    }
+    this.webrtcFirstFrameCallbackId = null;
+    this.webrtcFirstFrameCallbackVideo = null;
+  }
+
+  private clearWebRtcFirstFrameDeadline(): void {
+    if (this.webrtcFirstFrameDeadlineTimer === null) {
+      return;
+    }
+    this.window.clearTimeout(this.webrtcFirstFrameDeadlineTimer);
+    this.webrtcFirstFrameDeadlineTimer = null;
+  }
+
+  private abortWebRtcNegotiation(): void {
+    this.webrtcNegotiationAbortController?.abort();
+    this.webrtcNegotiationAbortController = null;
+  }
+
+  private attachWebRtcTrack(video: HTMLVideoElement, event: RTCTrackEvent): void {
+    const stream = this.webrtcMediaStream ?? event.streams[0] ?? new MediaStream();
+    this.webrtcMediaStream = stream;
+    if (!stream.getTracks().includes(event.track)) {
+      stream.addTrack(event.track);
+    }
+    if (video.srcObject !== stream) {
+      this.stopHlsPlayback();
+      video.srcObject = stream;
+    }
+  }
+
+  private requestWebRtcPlayback(
+    video: HTMLVideoElement,
+    token: number,
+    abortRetryCount = 0,
+  ): void {
+    if (
+      this.webrtcAttachToken !== token
+      || video.srcObject !== this.webrtcMediaStream
+      || this.webrtcPlayRequestPending
+      || this.webrtcPlayRetryTimer !== null
+    ) {
+      return;
+    }
+    this.webrtcPlayRequestPending = true;
+    video.play().then(() => {
+      if (this.webrtcAttachToken === token) {
+        this.webrtcPlayRequestPending = false;
+      }
+    }).catch((error: unknown) => {
+      if (this.webrtcAttachToken !== token) {
+        return;
+      }
+      this.webrtcPlayRequestPending = false;
+      if (this.webRtcPlaybackWasAborted(error) && abortRetryCount < this.webRtcPlayAbortRetryLimit) {
+        this.webrtcPlayRetryTimer = globalThis.setTimeout(() => {
+          this.webrtcPlayRetryTimer = null;
+          this.requestWebRtcPlayback(video, token, abortRetryCount + 1);
+        }, this.webRtcPlayRetryDelayMs);
+        return;
+      }
+      this.fallbackToHlsPlayback(this.webRtcPlaybackFailureMessage(error));
     });
-    this.hls = hls;
-    hls.on(Hls.Events.ERROR, (_event, data) => {
-      if (!data.fatal) {
+  }
+
+  private webRtcPlaybackWasAborted(error: unknown): boolean {
+    return Boolean(error && typeof error === 'object' && 'name' in error && error.name === 'AbortError');
+  }
+
+  private webRtcPlaybackFailureMessage(error: unknown): string {
+    if (error && typeof error === 'object' && 'name' in error && typeof error.name === 'string') {
+      return `WebRTC playback failed (${error.name}).`;
+    }
+    return 'WebRTC playback failed.';
+  }
+
+  private webRtcNegotiationFailureMessage(error: unknown): string {
+    if (error instanceof Error && error.message.includes('timed out')) {
+      return 'WebRTC connection timed out.';
+    }
+    return 'WebRTC connection failed.';
+  }
+
+  private waitForIceGathering(peerConnection: RTCPeerConnection): Promise<void> {
+    if (peerConnection.iceGatheringState === 'complete') {
+      return Promise.resolve();
+    }
+    return new Promise((resolve, reject) => {
+      let timeout = 0;
+      const handleStateChange = (): void => {
+        if (peerConnection.iceGatheringState !== 'complete') {
+          return;
+        }
+        this.window.clearTimeout(timeout);
+        peerConnection.removeEventListener('icegatheringstatechange', handleStateChange);
+        resolve();
+      };
+      timeout = this.window.setTimeout(() => {
+        peerConnection.removeEventListener('icegatheringstatechange', handleStateChange);
+        reject(new Error('WebRTC ICE gathering timed out'));
+      }, 5_000);
+      peerConnection.addEventListener('icegatheringstatechange', handleStateChange);
+    });
+  }
+
+  private isWebRtcPlaybackActive(): boolean {
+    return this.webrtcPlaybackPending || this.liveControlPlaybackMode() === 'webrtc';
+  }
+
+  private fallbackToHlsPlayback(message: string): void {
+    const session = this.hlsLiveSession();
+    const requiresRemoteSessionCleanup = Boolean(
+      this.webrtcPostDispatched
+      && !this.webrtcResourceUrl
+      && session?.device_id
+      && session.session_id,
+    );
+    if (session?.session_id) {
+      this.webrtcDegradedSessionId = session.session_id;
+    }
+    if (this.isWebRtcPlaybackActive()) {
+      this.beginLiveTransportTransition('hls');
+    }
+    this.stopWebRtcPlayback(false);
+    this.liveControlPlaybackMode.set('hls-fallback');
+    this.hlsLiveError.set(`${message} HLS fallback is active.`);
+    if (requiresRemoteSessionCleanup && session) {
+      this.restartLiveSessionForHlsFallback(session);
+      this.showLiveFeedback('WebRTC unavailable. Using HLS.', 2200);
+      return;
+    }
+    if (session?.playlist_url && this.shouldAttachHlsPlayback(session)) {
+      this.startHlsPlaybackFromSession(session, { pending: !session.playlist_ready });
+      this.scheduleLiveTransportFrameReveal();
+    }
+    this.showLiveFeedback('WebRTC unavailable. Using HLS.', 2200);
+  }
+
+  private restartLiveSessionForHlsFallback(session: HarborAssistantCameraLiveSessionResponse): void {
+    const deviceId = session.device_id;
+    const sessionId = session.session_id;
+    if (!deviceId || !sessionId) {
+      return;
+    }
+    const streamProfile = this.normalizeLiveStreamProfile(session.stream_profile);
+    this.clearLiveSessionRenewTimer();
+    this.hlsLiveStatus.set('starting');
+    this.api.stopCameraLiveSession(deviceId, sessionId).pipe(
+      retry({
+        count: 3,
+        delay: (_error, retryCount) => timer(retryCount * 500),
+      }),
+      catchError(() => of(null)),
+      switchMap(() => this.api.startCameraLiveSession(deviceId, streamProfile)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (fallbackSession) => {
+        if (
+          this.hlsLiveStatus() === 'stopped'
+          || this.hlsLiveSession()?.session_id !== sessionId
+        ) {
+          this.releaseHlsWarmSession(fallbackSession);
+          return;
+        }
+        this.applySessionStreamProfile(fallbackSession);
+        this.hlsLiveSession.set(fallbackSession);
+        this.webrtcDegradedSessionId = fallbackSession.session_id;
+        this.rememberLivePlaybackUrls(fallbackSession);
+        this.scheduleLiveSessionRenewal(fallbackSession);
+        const attached = this.shouldAttachHlsPlayback(fallbackSession)
+          && this.startHlsPlaybackFromSession(fallbackSession, { pending: !fallbackSession.playlist_ready });
+        if (!fallbackSession.playlist_ready || !attached) {
+          this.waitForHlsPlaylist(fallbackSession);
+        }
+      },
+      error: (error: unknown) => {
+        if (this.hlsLiveSession()?.session_id !== sessionId) {
+          return;
+        }
+        this.hlsLiveStatus.set('degraded');
+        this.hlsLiveError.set(harborAssistantSearchErrorMessage(error));
+      },
+    });
+  }
+
+  private stopWebRtcPlayback(clearUrl = true): void {
+    this.webrtcAttachToken += 1;
+    this.abortWebRtcNegotiation();
+    this.clearWebRtcFirstFrameCallback();
+    this.clearWebRtcFirstFrameDeadline();
+    this.clearWebRtcPlayRetry();
+    this.webrtcMediaStream = null;
+    this.webrtcPlayRequestPending = false;
+    this.webrtcPlaybackPending = false;
+    const peerConnection = this.webrtcPeerConnection;
+    this.webrtcPeerConnection = null;
+    this.webrtcPostDispatched = false;
+    if (peerConnection) {
+      peerConnection.ontrack = null;
+      peerConnection.onconnectionstatechange = null;
+      peerConnection.close();
+    }
+    const resourceUrl = this.webrtcResourceUrl;
+    this.webrtcResourceUrl = null;
+    this.deleteWhepResource(resourceUrl);
+    const video = this.liveVideo?.nativeElement;
+    if (video?.srcObject) {
+      this.pauseLiveVideoSilently(video);
+      video.srcObject = null;
+    }
+    if (clearUrl) {
+      this.webrtcLiveUrl.set(null);
+    }
+  }
+
+  private refreshHarborLinkCapabilitiesForLive(): Observable<HarborAssistantHarborLinkCapabilitiesResponse | null> {
+    return this.api.harborLinkCapabilities().pipe(
+      tap((capabilities) => this.harborLinkCapabilities.set(capabilities)),
+      catchError(() => {
+        this.harborLinkCapabilities.set(null);
+        return of(null);
+      }),
+    );
+  }
+
+  private harborLinkWebRtcReady(): boolean {
+    const capabilities = this.harborLinkCapabilities();
+    return Boolean(capabilities?.ok !== false && capabilities?.features?.webrtc?.status === 'ready');
+  }
+
+  private deleteWhepResource(resourceUrl: string | null): void {
+    if (!resourceUrl || typeof fetch === 'undefined') {
+      return;
+    }
+    try {
+      const validatedResourceUrl = this.validateWhepResourceUrl(resourceUrl);
+      fetch(validatedResourceUrl, { method: 'DELETE', keepalive: true }).catch((): void => undefined);
+    } catch {
+      // Ignore unsafe or malformed resource URLs; they must never receive a browser request.
+    }
+  }
+
+  private clearWebRtcPlayRetry(): void {
+    if (this.webrtcPlayRetryTimer === null) {
+      return;
+    }
+    globalThis.clearTimeout(this.webrtcPlayRetryTimer);
+    this.webrtcPlayRetryTimer = null;
+  }
+
+  private switchToHlsTimeshift(timelineSeconds: number, autoplay: boolean): void {
+    const session = this.hlsLiveSession();
+    if (!session?.playlist_url) {
+      this.fallbackToHlsPlayback('HLS time-shift is not ready.');
+      return;
+    }
+    if (this.liveControlPlaybackMode() === 'webrtc') {
+      this.beginLiveTransportTransition('hls');
+    }
+    this.pendingHlsBehindLiveSeconds = Math.max(0, this.liveSessionElapsedSeconds() - timelineSeconds);
+    this.livePlaybackUserPaused = !autoplay;
+    this.livePlaybackUserDelayed = true;
+    this.webrtcPauseTimelineSeconds = null;
+    this.stopWebRtcPlayback(false);
+    this.liveControlPlaybackMode.set('hls-timeshift');
+    this.startHlsPlaybackFromSession(session, { pending: !session.playlist_ready });
+  }
+
+  private restorePendingHlsPosition(video: HTMLVideoElement): void {
+    const behindLiveSeconds = this.pendingHlsBehindLiveSeconds;
+    const liveEdge = this.liveVideoEdgeSeconds(video);
+    if (behindLiveSeconds === null || liveEdge === null) {
+      return;
+    }
+    const seekableStart = video.seekable.length > 0 ? video.seekable.start(0) : 0;
+    const targetTime = Math.max(seekableStart, liveEdge - behindLiveSeconds);
+    this.pendingHlsBehindLiveSeconds = null;
+    this.userLivePlaybackAnchorSeconds = targetTime;
+    this.setLiveVideoCurrentTime(video, targetTime);
+    this.applyUserLivePlaybackRate(video);
+    if (this.livePlaybackUserPaused) {
+      this.pauseLiveVideoSilently(video);
+    } else {
+      this.scheduleLiveVideoPlayback(0, this.hlsLiveUrl(), this.hlsPlaybackToken, true);
+    }
+  }
+
+  private shouldAttachHlsPlayback(session: HarborAssistantCameraLiveSessionResponse): boolean {
+    return session.playlist_ready
+      || Boolean(session.diagnostics?.playlist_exists)
+      || (session.diagnostics?.segment_count ?? 0) > 0;
+  }
+
+  private startHlsPlaybackFromSession(
+    session: HarborAssistantCameraLiveSessionResponse,
+    options: { pending?: boolean } = {},
+  ): boolean {
+    if (!session.playlist_url) {
+      return false;
+    }
+
+    const liveUrl = harborAssistantHlsLiveUrl(session.playlist_url);
+    const shouldAttach = this.hlsLiveUrl() !== liveUrl || this.hls === null;
+    this.hlsLiveUrl.set(liveUrl);
+    if (shouldAttach) {
+      this.hlsFirstFrameSeen = false;
+    }
+    if (options.pending || !this.hlsFirstFrameSeen) {
+      this.hlsLiveStatus.set('starting');
+    } else {
+      this.hlsLiveStatus.set('live');
+    }
+    if (shouldAttach) {
+      this.scheduleHlsPlaybackAttach(0, liveUrl);
+    } else {
+      this.scheduleLiveVideoPlayback(0, liveUrl);
+    }
+    return true;
+  }
+
+  private scheduleHlsPlaybackAttach(
+    attempt = 0,
+    url = this.hlsLiveUrl(),
+    token = this.hlsAttachToken + 1,
+  ): void {
+    if (!url) {
+      return;
+    }
+    if (attempt === 0) {
+      this.hlsAttachToken = token;
+    }
+    this.window.setTimeout(() => {
+      if (
+        this.hlsAttachToken !== token
+        || this.hlsLiveUrl() !== url
+        || this.hlsLiveStatus() === 'stopped'
+      ) {
+        return;
+      }
+      if (this.attachHlsPlayback()) {
+        return;
+      }
+      if (attempt < 20) {
+        this.scheduleHlsPlaybackAttach(attempt + 1, url, token);
         return;
       }
       this.hlsLiveStatus.set('degraded');
-      this.hlsLiveError.set('Live HLS playback failed. Snapshot fallback is still available.');
-      this.stopHlsPlayback();
-    });
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      this.hlsLiveStatus.set('live');
-      void video.play().catch(() => {
-        this.hlsLiveStatus.set('degraded');
-        this.hlsLiveError.set('Browser blocked live autoplay. Press Play again.');
+      this.hlsLiveError.set('Live player did not initialize. Retry live playback.');
+    }, attempt === 0 ? 0 : 100);
+  }
+
+  private attachHlsPlayback(): boolean {
+    const url = this.hlsLiveUrl();
+    const video = this.liveVideo?.nativeElement;
+    if (!url || !video) {
+      return false;
+    }
+    const playbackMode = this.liveControlPlaybackMode();
+    this.stopHlsPlayback();
+    this.liveControlPlaybackMode.set(
+      playbackMode === 'hls-timeshift' ? 'hls-timeshift' : 'hls-fallback',
+    );
+    this.hlsRecoveryAttempts = 0;
+    video.autoplay = true;
+    video.defaultMuted = true;
+    video.muted = true;
+    video.playsInline = true;
+    if (Hls.isSupported()) {
+      const hls = new Hls({
+        backBufferLength: Number.POSITIVE_INFINITY,
+        lowLatencyMode: true,
+        maxBufferLength: 120,
+        maxMaxBufferLength: 600,
+        maxLiveSyncPlaybackRate: 1,
       });
+      this.hls = hls;
+      hls.on(Hls.Events.ERROR, (_event, data) => {
+        if (!data.fatal) {
+          return;
+        }
+        if (this.isExpiredHlsAssetError(data)) {
+          if (this.retryStartingHlsAsset(hls, data)) {
+            return;
+          }
+          this.hlsLiveStatus.set('degraded');
+          this.hlsLiveError.set('Live session expired. Start live playback again.');
+          this.stopHlsPlayback();
+          return;
+        }
+        if (this.recoverHlsPlayback(hls, data)) {
+          return;
+        }
+        this.hlsLiveStatus.set('degraded');
+        this.hlsLiveError.set(
+          `Live HLS playback failed (${this.describeHlsError(data)}). Snapshot fallback is still available.`,
+        );
+        this.stopHlsPlayback();
+      });
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        this.startLiveEdgeMonitor();
+        if (this.pendingHlsBehindLiveSeconds !== null) {
+          this.restorePendingHlsPosition(video);
+        } else {
+          this.seekLiveVideoToEdge(true);
+          this.scheduleLiveVideoPlayback();
+        }
+      });
+      hls.on(Hls.Events.FRAG_BUFFERED, () => {
+        this.markHlsPlaybackReady();
+        if (this.pendingHlsBehindLiveSeconds !== null) {
+          this.restorePendingHlsPosition(video);
+        }
+        if (this.livePlaybackUserPaused) {
+          this.restoreUserLivePlaybackAnchor();
+        }
+        if (!this.livePlaybackUserDelayed) {
+          this.scheduleLiveVideoPlayback();
+        }
+      });
+      hls.loadSource(url);
+      hls.attachMedia(video);
+      return true;
+    }
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = url;
+      video.load();
+      this.startLiveEdgeMonitor();
+      if (this.pendingHlsBehindLiveSeconds !== null) {
+        const restorePosition = (): void => {
+          video.removeEventListener('loadedmetadata', restorePosition);
+          this.restorePendingHlsPosition(video);
+        };
+        video.addEventListener('loadedmetadata', restorePosition);
+      } else {
+        this.scheduleLiveVideoPlayback();
+      }
+      return true;
+    }
+    this.hlsLiveStatus.set('degraded');
+    this.hlsLiveError.set('This browser cannot play local HLS live video.');
+    return true;
+  }
+
+  private markHlsPlaybackReady(): void {
+    if (!this.hlsLiveUrl() || this.hlsLiveStatus() === 'stopped' || this.hlsLiveStatus() === 'degraded') {
+      return;
+    }
+    if (!this.hlsFirstFrameSeen) {
+      this.hlsFirstFrameSeen = true;
+      this.showLiveFeedback('Live started.', 1800);
+    }
+    this.clearHlsStartingAssetRetry();
+    this.hlsLiveStatus.set('live');
+    this.hlsLiveError.set(null);
+  }
+
+  private recoverHlsPlayback(hls: Hls, data: { details?: unknown; type?: unknown }): boolean {
+    if (this.hlsRecoveryAttempts >= 3) {
+      return false;
+    }
+    const type = typeof data.type === 'string' ? data.type : '';
+    if (type === 'networkError') {
+      this.hlsRecoveryAttempts += 1;
+      this.hlsLiveError.set(`Live HLS network error; retrying (${this.describeHlsError(data)}).`);
+      hls.startLoad();
+      this.scheduleLiveVideoPlayback();
+      return true;
+    }
+    if (type === 'mediaError') {
+      this.hlsRecoveryAttempts += 1;
+      this.hlsLiveError.set(`Live HLS media error; retrying (${this.describeHlsError(data)}).`);
+      hls.recoverMediaError();
+      this.scheduleLiveVideoPlayback();
+      return true;
+    }
+    return false;
+  }
+
+  private isExpiredHlsAssetError(data: { response?: unknown; type?: unknown }): boolean {
+    if (data.type !== 'networkError') {
+      return false;
+    }
+    const response = data.response;
+    if (!response || typeof response !== 'object') {
+      return false;
+    }
+    const code = (response as { code?: unknown }).code;
+    return code === 404 || code === 410;
+  }
+
+  private retryStartingHlsAsset(
+    hls: Hls,
+    data: { details?: unknown; response?: unknown; type?: unknown },
+  ): boolean {
+    if (
+      this.hlsLiveStatus() !== 'starting'
+      || this.hlsStartingAssetRetryCount >= this.hlsStartingAssetRetryLimit
+    ) {
+      return false;
+    }
+    this.hlsStartingAssetRetryCount += 1;
+    this.hlsLiveError.set(
+      `Live HLS assets are starting; retrying ${this.hlsStartingAssetRetryCount}/${this.hlsStartingAssetRetryLimit} (${this.describeHlsError(data)}).`,
+    );
+    this.clearHlsStartingAssetRetryTimer();
+    this.hlsStartingAssetRetryTimer = this.window.setTimeout(() => {
+      this.hlsStartingAssetRetryTimer = null;
+      if (this.hls === hls && this.hlsLiveStatus() === 'starting') {
+        hls.startLoad();
+      }
+    }, this.hlsStartingAssetRetryDelayMs);
+    return true;
+  }
+
+  private clearHlsStartingAssetRetry(): void {
+    this.clearHlsStartingAssetRetryTimer();
+    this.hlsStartingAssetRetryCount = 0;
+  }
+
+  private clearHlsStartingAssetRetryTimer(): void {
+    if (this.hlsStartingAssetRetryTimer === null) {
+      return;
+    }
+    this.window.clearTimeout(this.hlsStartingAssetRetryTimer);
+    this.hlsStartingAssetRetryTimer = null;
+  }
+
+  private describeHlsError(data: { details?: unknown; error?: unknown; type?: unknown }): string {
+    const type = typeof data.type === 'string' && data.type.trim() ? data.type.trim() : 'unknown';
+    const details = typeof data.details === 'string' && data.details.trim() ? data.details.trim() : 'unknown';
+    const error = data.error instanceof Error && data.error.message.trim() ? data.error.message.trim() : null;
+    const message = error ? `${type}/${details}: ${error}` : `${type}/${details}`;
+    return message.slice(0, 160);
+  }
+
+  private scheduleLiveVideoPlayback(
+    attempt = 0,
+    url = this.hlsLiveUrl(),
+    token = this.hlsPlaybackToken,
+    allowDelayedPlayback = false,
+  ): void {
+    if (!url || this.livePlaybackUserPaused || (this.livePlaybackUserDelayed && !allowDelayedPlayback)) {
+      return;
+    }
+    this.window.setTimeout(() => {
+      if (
+        this.hlsPlaybackToken !== token
+        || this.hlsLiveUrl() !== url
+        || this.hlsLiveStatus() === 'stopped'
+        || this.livePlaybackUserPaused
+        || (this.livePlaybackUserDelayed && !allowDelayedPlayback)
+      ) {
+        return;
+      }
+      const video = this.liveVideo?.nativeElement;
+      if (!video) {
+        return;
+      }
+      video.playsInline = true;
+      if (!video.paused && video.currentTime > 0) {
+        this.hlsLiveError.set(null);
+        return;
+      }
+      if (allowDelayedPlayback && this.livePlaybackBackgroundPaused) {
+        this.restoreUserLivePlaybackAnchor(video);
+        this.applyUserLivePlaybackRate(video);
+      }
+      this.requestProgrammaticLiveVideoPlay(video, {
+        allowDelayedPlayback,
+        attempt,
+        token,
+        url,
+      });
+    }, attempt === 0 ? 0 : 350);
+  }
+
+  private requestProgrammaticLiveVideoPlay(
+    video: HTMLVideoElement,
+    request: HarborAssistantLivePlaybackRequest,
+  ): void {
+    if (this.hasPendingProgrammaticLivePlayRequest(request.token)) {
+      return;
+    }
+    this.pendingProgrammaticLivePlayToken = request.token;
+    video.play().then(() => {
+      this.completeProgrammaticLivePlayRequest(request.token);
+      if (this.livePlaybackUserPaused) {
+        this.pauseLiveVideoSilently(video);
+        return;
+      }
+      if (!this.livePlaybackRequestIsCurrent(request)) {
+        return;
+      }
+      this.hlsLiveError.set(null);
+    }).catch(() => {
+      this.completeProgrammaticLivePlayRequest(request.token);
+      if (!this.livePlaybackRequestIsCurrent(request)) {
+        return;
+      }
+      if (request.attempt < 6) {
+        this.scheduleLiveVideoPlayback(
+          request.attempt + 1,
+          request.url,
+          request.token,
+          request.allowDelayedPlayback,
+        );
+        return;
+      }
+      if (!this.liveDocumentIsHidden()) {
+        this.hlsLiveError.set('Browser paused live playback. Press the video play control.');
+      }
     });
-    hls.loadSource(url);
-    hls.attachMedia(video);
+  }
+
+  private livePlaybackRequestIsCurrent(request: HarborAssistantLivePlaybackRequest): boolean {
+    return this.hlsPlaybackToken === request.token
+      && this.hlsLiveUrl() === request.url
+      && this.hlsLiveStatus() !== 'stopped'
+      && !this.livePlaybackUserPaused
+      && (!this.livePlaybackUserDelayed || request.allowDelayedPlayback);
   }
 
   private stopHlsPlayback(): void {
+    this.stopLiveEdgeMonitor();
+    this.clearHlsStartingAssetRetry();
     if (this.hls) {
       this.hls.destroy();
       this.hls = null;
     }
+    this.hlsFirstFrameSeen = false;
+    this.livePlaybackHasPlayed = false;
+    this.livePlaybackBackgroundPaused = false;
+    this.liveControlPaused.set(true);
+    this.hlsControlTimelineOffsetSeconds = null;
+    this.pendingProgrammaticLivePlayToken = null;
     const video = this.liveVideo?.nativeElement;
     if (video) {
-      video.pause();
+      this.pauseLiveVideoSilently(video);
+      this.resetUserLivePlaybackRate(video);
       video.removeAttribute('src');
       video.load();
     }
+  }
+
+  private beginLiveTransportTransition(target: HarborAssistantLiveTransport): void {
+    this.resetLiveTransitionRevealWait();
+    this.liveTransitionToken += 1;
+    this.liveTransitionTarget = target;
+    if (this.liveTransitionFrameVisible()) {
+      return;
+    }
+
+    const video = this.liveVideo?.nativeElement;
+    const canvas = this.liveTransitionFrame?.nativeElement;
+    if (
+      !video
+      || !canvas
+      || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA
+      || video.videoWidth <= 0
+      || video.videoHeight <= 0
+    ) {
+      this.liveTransitionTarget = null;
+      return;
+    }
+
+    const context = canvas.getContext('2d');
+    if (!context) {
+      this.liveTransitionTarget = null;
+      return;
+    }
+
+    try {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      this.liveTransitionFrameVisible.set(true);
+    } catch {
+      this.liveTransitionTarget = null;
+      this.liveTransitionFrameVisible.set(false);
+    }
+  }
+
+  private scheduleLiveTransportFrameReveal(): void {
+    const target = this.liveTransitionTarget;
+    const video = this.liveVideo?.nativeElement;
+    if (
+      !this.liveTransitionFrameVisible()
+      || !target
+      || !video
+      || this.currentLiveTransport() !== target
+      || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA
+      || this.liveTransitionFrameCallbackId !== null
+      || this.liveTransitionRevealTimer !== null
+    ) {
+      return;
+    }
+
+    const token = this.liveTransitionToken;
+    const frameVideo = video as HTMLVideoElement & HarborAssistantVideoFrameCallbacks;
+    const revealFrame = (): void => this.completeLiveTransportTransition(token, target);
+    if (typeof frameVideo.requestVideoFrameCallback === 'function') {
+      this.liveTransitionFrameCallbackVideo = frameVideo;
+      this.liveTransitionFrameCallbackId = frameVideo.requestVideoFrameCallback(revealFrame);
+    }
+    this.liveTransitionRevealTimer = globalThis.setTimeout(
+      revealFrame,
+      typeof frameVideo.requestVideoFrameCallback === 'function'
+        ? this.liveTransitionFallbackRevealDelayMs
+        : this.liveTransitionPaintDelayMs,
+    );
+  }
+
+  private completeLiveTransportTransition(token: number, target: HarborAssistantLiveTransport): void {
+    if (
+      token !== this.liveTransitionToken
+      || target !== this.liveTransitionTarget
+      || target !== this.currentLiveTransport()
+    ) {
+      return;
+    }
+    this.resetLiveTransitionRevealWait();
+    this.liveTransitionTarget = null;
+    this.liveTransitionFrameVisible.set(false);
+  }
+
+  private cancelLiveTransportTransition(): void {
+    this.liveTransitionToken += 1;
+    this.resetLiveTransitionRevealWait();
+    this.liveTransitionTarget = null;
+    this.liveTransitionFrameVisible.set(false);
+  }
+
+  private resetLiveTransitionRevealWait(): void {
+    const callbackVideo = this.liveTransitionFrameCallbackVideo;
+    const callbackId = this.liveTransitionFrameCallbackId;
+    this.liveTransitionFrameCallbackVideo = null;
+    this.liveTransitionFrameCallbackId = null;
+    if (callbackVideo && callbackId !== null && typeof callbackVideo.cancelVideoFrameCallback === 'function') {
+      callbackVideo.cancelVideoFrameCallback(callbackId);
+    }
+    if (this.liveTransitionRevealTimer !== null) {
+      globalThis.clearTimeout(this.liveTransitionRevealTimer);
+      this.liveTransitionRevealTimer = null;
+    }
+  }
+
+  private currentLiveTransport(): HarborAssistantLiveTransport {
+    return this.liveControlPlaybackMode() === 'webrtc' ? 'webrtc' : 'hls';
+  }
+
+  private startLiveEdgeMonitor(): void {
+    this.stopLiveEdgeMonitor();
+    this.liveEdgeMonitor = this.window.setInterval(() => {
+      if (this.hlsLiveStatus() !== 'live') {
+        return;
+      }
+      this.syncLiveControlState();
+      if (this.liveControlPlaybackMode() === 'webrtc') {
+        return;
+      }
+      this.seekLiveVideoToEdge();
+    }, this.liveEdgeMonitorIntervalMs);
+  }
+
+  private stopLiveEdgeMonitor(): void {
+    if (this.liveEdgeMonitor === null) {
+      return;
+    }
+    this.window.clearInterval(this.liveEdgeMonitor);
+    this.liveEdgeMonitor = null;
+  }
+
+  private seekLiveVideoToEdge(force = false): void {
+    const video = this.liveVideo?.nativeElement;
+    const liveEdge = video ? this.liveVideoEdgeSeconds(video) : null;
+    if (!video || liveEdge === null) {
+      return;
+    }
+    if (this.livePlaybackUserPaused) {
+      this.restoreUserLivePlaybackAnchor(video);
+      this.applyUserLivePlaybackRate(video);
+      return;
+    }
+    if (this.livePlaybackUserDelayed) {
+      if (
+        this.userLivePlaybackRateIsCatchingUp()
+        && this.returnLivePlaybackToWebRtcAfterCatchUp(video)
+      ) {
+        return;
+      }
+      this.applyUserLivePlaybackRate(video);
+      return;
+    }
+
+    const targetTime = this.liveVideoTargetSeconds(liveEdge);
+    const driftSeconds = liveEdge - video.currentTime;
+    const targetDriftSeconds = liveEdge - targetTime;
+    if (force || driftSeconds > this.liveEdgeMaxDriftSeconds) {
+      this.setLiveVideoCurrentTime(video, targetTime);
+      this.setLiveVideoPlaybackRate(video, this.defaultLivePlaybackRate);
+      this.syncLiveControlState();
+      return;
+    }
+    this.setLiveVideoPlaybackRate(video, driftSeconds > targetDriftSeconds + 4 ? 1.05 : 1);
+    this.syncLiveControlState();
+  }
+
+  private syncLiveControlState(): void {
+    const video = this.liveVideo?.nativeElement;
+    if (!video) {
+      return;
+    }
+    const sessionElapsed = this.liveSessionElapsedSeconds();
+    if (this.liveControlPlaybackMode() === 'webrtc') {
+      this.liveControlStartTime.set(0);
+      this.liveControlEndTime.set(sessionElapsed);
+      this.liveControlCurrentTime.set(
+        video.paused && this.webrtcPauseTimelineSeconds !== null
+          ? this.webrtcPauseTimelineSeconds
+          : sessionElapsed,
+      );
+      this.liveControlPaused.set(video.paused);
+      this.liveControlPlaybackRate.set(
+        video.paused ? this.userLivePlaybackRate : this.defaultLivePlaybackRate,
+      );
+      this.liveControlMuted.set(video.muted);
+      this.liveControlVolume.set(video.volume);
+      return;
+    }
+    const liveEdge = this.liveVideoEdgeSeconds(video);
+    const seekableStart = video.seekable?.length > 0 ? video.seekable.start(0) : 0;
+    const normalizedLiveEdge = liveEdge ?? (Number.isFinite(video.duration) ? video.duration : 0);
+    const timelineOffset = this.hlsControlTimelineOffset(sessionElapsed, liveEdge);
+    const controlStart = Math.max(0, (Number.isFinite(seekableStart) ? seekableStart : 0) + timelineOffset);
+    const controlEnd = liveEdge === null ? normalizedLiveEdge : sessionElapsed;
+    const controlCurrent = Number.isFinite(video.currentTime)
+      ? video.currentTime + timelineOffset
+      : controlStart;
+    this.liveControlStartTime.set(controlStart);
+    this.liveControlEndTime.set(controlEnd);
+    this.liveControlCurrentTime.set(Math.min(controlEnd, Math.max(controlStart, controlCurrent)));
+    this.liveControlPaused.set(video.paused);
+    this.liveControlPlaybackRate.set(video.playbackRate);
+    this.liveControlMuted.set(video.muted);
+    this.liveControlVolume.set(video.volume);
+  }
+
+  private hlsControlTimelineOffset(sessionElapsed: number, liveEdge: number | null): number {
+    if (liveEdge === null) {
+      return 0;
+    }
+    if (this.hlsControlTimelineOffsetSeconds === null) {
+      // Media time advances continuously, while the HLS live edge jumps when a fragment is appended.
+      // Prewarmed media can start before the user-visible timeline, so the stable mapping may be negative.
+      this.hlsControlTimelineOffsetSeconds = sessionElapsed - liveEdge;
+    }
+    return this.hlsControlTimelineOffsetSeconds;
+  }
+
+  private resetLivePlaybackUserPause(): void {
+    this.livePlaybackBackgroundPaused = false;
+    this.livePlaybackUserPaused = false;
+    this.livePlaybackUserDelayed = false;
+    this.userLivePlaybackAnchorSeconds = null;
+    this.userLivePlaybackRate = this.defaultLivePlaybackRate;
+    this.pendingProgrammaticLivePlayToken = null;
+    this.programmaticLiveSeekTargetSeconds = null;
+    this.programmaticLivePlaybackRateTarget = null;
+    this.webrtcPauseTimelineSeconds = null;
+    this.pendingHlsBehindLiveSeconds = null;
+  }
+
+  private liveSessionElapsedSeconds(): number {
+    if (this.liveTimelineStartedAtEpochSeconds === null) {
+      return 0;
+    }
+    return Math.max(0, (Date.now() / 1_000) - this.liveTimelineStartedAtEpochSeconds);
+  }
+
+  private startLiveControlTimeline(): void {
+    if (this.liveTimelineStartedAtEpochSeconds !== null) {
+      return;
+    }
+    // Start once on the first playable frame so prewarm and transport setup are not shown as watched time.
+    this.liveTimelineStartedAtEpochSeconds = Date.now() / 1_000;
+    this.hlsControlTimelineOffsetSeconds = null;
+  }
+
+  private resetLiveControlTimeline(): void {
+    this.liveTimelineStartedAtEpochSeconds = null;
+    this.liveControlStartTime.set(0);
+    this.liveControlCurrentTime.set(0);
+    this.liveControlEndTime.set(0);
+  }
+
+  private resetPlaybackSeekAnchor(): void {
+    this.playbackSeekAnchorSeconds = null;
+    this.playbackSeekMediaKey = null;
+    this.programmaticPlaybackSeekTargetSeconds = null;
+  }
+
+  private playbackVideoFromEvent(event: Event): HTMLVideoElement | null {
+    return event.target instanceof HTMLVideoElement ? event.target : null;
+  }
+
+  private selectedPlaybackMediaKey(): string | null {
+    const mediaItem = this.selectedMediaItem();
+    if (!mediaItem) {
+      return null;
+    }
+    return [
+      this.mediaKind(mediaItem),
+      mediaItem.optimistic_key ?? mediaItem.file_path,
+      mediaItem.created_at,
+    ].join(':');
+  }
+
+  private restorePlaybackSeekAnchor(video: HTMLVideoElement | null): void {
+    const anchorTime = this.playbackSeekAnchorSeconds;
+    if (!video || anchorTime === null || !Number.isFinite(anchorTime)) {
+      return;
+    }
+    if (this.playbackSeekMediaKey !== this.selectedPlaybackMediaKey()) {
+      this.resetPlaybackSeekAnchor();
+      return;
+    }
+    if (Math.abs(video.currentTime - anchorTime) <= this.playbackSeekDriftToleranceSeconds) {
+      return;
+    }
+    if (!this.playbackTimeIsAvailable(video, anchorTime)) {
+      return;
+    }
+    this.setPlaybackVideoCurrentTime(video, anchorTime);
+  }
+
+  private playbackTimeIsAvailable(video: HTMLVideoElement, seconds: number): boolean {
+    if (seconds < 0) {
+      return false;
+    }
+    if (Number.isFinite(video.duration) && video.duration > 0) {
+      return seconds <= video.duration + this.playbackSeekDriftToleranceSeconds;
+    }
+    return this.liveTimeRangeContains(video.seekable, seconds)
+      || this.liveTimeRangeContains(video.buffered, seconds);
+  }
+
+  private setPlaybackVideoCurrentTime(video: HTMLVideoElement, seconds: number): void {
+    this.programmaticPlaybackSeekTargetSeconds = seconds;
+    video.currentTime = seconds;
+  }
+
+  private consumeProgrammaticPlaybackSeek(video: HTMLVideoElement): boolean {
+    const targetTime = this.programmaticPlaybackSeekTargetSeconds;
+    if (targetTime === null) {
+      return false;
+    }
+    this.programmaticPlaybackSeekTargetSeconds = null;
+    return Math.abs(video.currentTime - targetTime) <= this.playbackSeekDriftToleranceSeconds;
+  }
+
+  private hasPendingProgrammaticLivePlayRequest(token?: number): boolean {
+    if (token === undefined) {
+      return this.pendingProgrammaticLivePlayToken !== null;
+    }
+    return this.pendingProgrammaticLivePlayToken === token;
+  }
+
+  private completeProgrammaticLivePlayRequest(token: number): void {
+    if (this.pendingProgrammaticLivePlayToken === token) {
+      this.pendingProgrammaticLivePlayToken = null;
+    }
+  }
+
+  private pauseLiveVideoSilently(video: HTMLVideoElement): void {
+    this.suppressLivePauseEvent = true;
+    try {
+      video.pause();
+      this.setLiveVideoPlaybackRate(video, this.defaultLivePlaybackRate);
+    } finally {
+      this.suppressLivePauseEvent = false;
+    }
+  }
+
+  private restoreUserLivePlaybackAnchor(video = this.liveVideo?.nativeElement): void {
+    const anchorTime = this.userLivePlaybackAnchorSeconds;
+    if (!video || anchorTime === null || !Number.isFinite(anchorTime)) {
+      return;
+    }
+    if (Math.abs(video.currentTime - anchorTime) <= this.livePausedTimeDriftToleranceSeconds) {
+      return;
+    }
+    const anchorTimeAvailable = this.liveTimeRangeContains(video.seekable, anchorTime)
+      || this.liveTimeRangeContains(video.buffered, anchorTime);
+    if (!anchorTimeAvailable) {
+      return;
+    }
+    this.setLiveVideoCurrentTime(video, anchorTime);
+  }
+
+  private liveVideoEdgeSeconds(video: HTMLVideoElement): number | null {
+    const seekable = video.seekable;
+    if (!seekable || seekable.length === 0) {
+      return null;
+    }
+    const liveEdge = seekable.end(seekable.length - 1);
+    return Number.isFinite(liveEdge) ? liveEdge : null;
+  }
+
+  private liveVideoTargetSeconds(liveEdge: number): number {
+    const liveSyncPosition = this.hls?.liveSyncPosition;
+    if (typeof liveSyncPosition === 'number' && Number.isFinite(liveSyncPosition)) {
+      return Math.min(liveEdge, Math.max(0, liveSyncPosition));
+    }
+    return Math.max(0, liveEdge - this.liveEdgeFallbackBackoffSeconds);
+  }
+
+  private returnLivePlaybackToWebRtcAfterCatchUp(video: HTMLVideoElement): boolean {
+    if (this.pendingHlsBehindLiveSeconds !== null) {
+      return false;
+    }
+    const visibleGapSeconds = Math.max(0, this.liveControlEndTime() - this.liveControlCurrentTime());
+    if (!Number.isFinite(visibleGapSeconds) || visibleGapSeconds >= this.webRtcHandoffGapSeconds) {
+      return false;
+    }
+    return this.switchLivePlaybackToWebRtc(video);
+  }
+
+  private switchLivePlaybackToWebRtc(video: HTMLVideoElement): boolean {
+    const session = this.hlsLiveSession();
+    if (!session || !this.startWebRtcPlaybackFromSession(session)) {
+      return false;
+    }
+    this.resetLivePlaybackUserPause();
+    this.resetUserLivePlaybackRate(video);
+    this.hlsLiveError.set(null);
+    return true;
+  }
+
+  private applyUserLivePlaybackRate(video: HTMLVideoElement): void {
+    this.setLiveVideoPlaybackRate(video, this.userLivePlaybackRate);
+  }
+
+  private userLivePlaybackRateIsCatchingUp(playbackRate = this.userLivePlaybackRate): boolean {
+    return playbackRate > this.defaultLivePlaybackRate + this.livePlaybackRateChangeTolerance;
+  }
+
+  private resetUserLivePlaybackRate(video = this.liveVideo?.nativeElement): void {
+    this.userLivePlaybackRate = this.defaultLivePlaybackRate;
+    if (video) {
+      this.setLiveVideoPlaybackRate(video, this.defaultLivePlaybackRate);
+    }
+  }
+
+  private normalizedLiveVideoCurrentTime(): number | null {
+    const currentTime = this.liveVideo?.nativeElement.currentTime;
+    return typeof currentTime === 'number' && Number.isFinite(currentTime) ? currentTime : null;
+  }
+
+  private normalizedLivePlaybackRate(playbackRate: number): number | null {
+    if (!Number.isFinite(playbackRate) || playbackRate <= 0) {
+      return null;
+    }
+    return Math.min(playbackRate, this.maxUserLivePlaybackRate);
+  }
+
+  private setLiveVideoCurrentTime(video: HTMLVideoElement, seconds: number): void {
+    this.programmaticLiveSeekTargetSeconds = seconds;
+    video.currentTime = seconds;
+  }
+
+  private setLiveVideoPlaybackRate(video: HTMLVideoElement, playbackRate: number): void {
+    const normalizedPlaybackRate = this.normalizedLivePlaybackRate(playbackRate) ?? this.defaultLivePlaybackRate;
+    this.programmaticLivePlaybackRateTarget = normalizedPlaybackRate;
+    video.playbackRate = normalizedPlaybackRate;
+  }
+
+  private consumeProgrammaticLiveSeek(video: HTMLVideoElement): boolean {
+    const targetTime = this.programmaticLiveSeekTargetSeconds;
+    if (targetTime === null) {
+      return false;
+    }
+    this.programmaticLiveSeekTargetSeconds = null;
+    return Math.abs(video.currentTime - targetTime) <= this.livePausedTimeDriftToleranceSeconds;
+  }
+
+  private consumeProgrammaticLivePlaybackRate(video: HTMLVideoElement): boolean {
+    const targetRate = this.programmaticLivePlaybackRateTarget;
+    if (targetRate === null) {
+      return false;
+    }
+    this.programmaticLivePlaybackRateTarget = null;
+    return Math.abs(video.playbackRate - targetRate) <= this.livePlaybackRateChangeTolerance;
+  }
+
+  private liveTimeRangeContains(ranges: TimeRanges | undefined, seconds: number): boolean {
+    if (!ranges) {
+      return false;
+    }
+    for (let index = 0; index < ranges.length; index += 1) {
+      if (
+        seconds >= ranges.start(index) - this.livePausedTimeDriftToleranceSeconds
+        && seconds <= ranges.end(index) + this.livePausedTimeDriftToleranceSeconds
+      ) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private scrollToSearchResults(): void {
