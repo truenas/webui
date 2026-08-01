@@ -113,8 +113,7 @@ export class ServiceSshComponent extends IxFormHostForm<boolean, SshFormValue> i
     this.loadFormConfig(this.api.call('ssh.config'), (config) => this.form.patchValue(config));
   }
 
-  // Built from `allValues` (the wrapper's own `getRawValue()` snapshot) rather than re-reading the
-  // form, so any future `preSubmit` transform is honoured. Copied because it is mutated below.
+  // `allValues` is copied because it is mutated below.
   protected handleSubmit = ({ allValues }: FormSubmitEvent<SshFormValue>): SubmitResult => {
     const values = { ...allValues };
     // Clearing the tn-select empty option writes null; the API expects ''.

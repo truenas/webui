@@ -106,8 +106,7 @@ export class ServiceSnmpComponent extends IxFormHostForm<boolean, SnmpFormValue>
     this.loadFormConfig(this.api.call('snmp.config'), (config) => this.form.patchValue(config));
   }
 
-  // Built from `allValues` (the wrapper's own `getRawValue()` snapshot) rather than re-reading the
-  // form, so any future `preSubmit` transform is honoured. Copied because it is blanked below.
+  // `allValues` is copied because it is blanked below.
   protected handleSubmit = ({ allValues }: FormSubmitEvent<SnmpFormValue>): SubmitResult => {
     const values = { ...allValues };
     // Clearing the tn-select empty option writes null; the API expects ''.

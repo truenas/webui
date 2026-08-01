@@ -151,8 +151,6 @@ export class ServiceFtpComponent extends IxFormHostForm<boolean, FtpFormValue> i
     });
   }
 
-  // Reshapes the payload from `allValues` (the wrapper's own `getRawValue()` snapshot) rather than
-  // re-reading the form, so any future `preSubmit` transform is honoured.
   protected handleSubmit = ({ allValues }: FormSubmitEvent<FtpFormValue>): SubmitResult => {
     const values = {
       ...allValues,

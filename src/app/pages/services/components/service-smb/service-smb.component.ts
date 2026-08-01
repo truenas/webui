@@ -330,9 +330,8 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
     this.openTruenasConnectModal();
   }
 
-  // Reshapes the payload from `allValues` (the wrapper's own `getRawValue()` snapshot) rather than
-  // re-reading the form, so any future `preSubmit` transform is honoured and disabled controls —
-  // `spotlight_search` / `stateful_failover` — still reach the API.
+  // Built from `allValues`, not `changedValues`, so the disabled controls — `spotlight_search` /
+  // `stateful_failover` — still reach the API.
   protected handleSubmit = ({ allValues }: FormSubmitEvent<SmbFormValue>): SubmitResult => {
     const { spotlight_search: spotlightSearch, bindip, ...formValues } = allValues;
     const values: SmbConfigUpdate = {

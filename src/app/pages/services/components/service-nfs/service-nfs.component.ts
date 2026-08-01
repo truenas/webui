@@ -178,8 +178,6 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
     ).subscribe();
   }
 
-  // Reshapes the payload from `allValues` (the wrapper's own `getRawValue()` snapshot) rather than
-  // re-reading the form, so any future `preSubmit` transform is honoured.
   protected handleSubmit = ({ allValues }: FormSubmitEvent<NfsFormValue>): SubmitResult => {
     const { servers_auto: serversAuto, ...params } = allValues;
 
