@@ -15,6 +15,11 @@ import { Pipe, PipeTransform } from '@angular/core';
  * ```html
  * [title]="emptyConfig.message | translate | flattenEmptyMessage"
  * ```
+ *
+ * ⚠ Strips anything matching `<…>`, so a message containing a literal `<` followed by a `>`
+ * later in the string ("completes in <5 minutes") would lose the text between them. No catalog
+ * message does today, but the input is translator-supplied — prefer `&lt;` in a message that
+ * needs a literal one.
  */
 @Pipe({
   name: 'flattenEmptyMessage',

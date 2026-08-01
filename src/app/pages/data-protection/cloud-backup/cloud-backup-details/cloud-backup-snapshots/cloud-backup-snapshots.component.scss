@@ -1,3 +1,12 @@
+@import 'mixins/tn-table';
+
+// tn-table lays its table out `auto`, so a long value (a cron description, a naming
+// schema) widens its column until the row overflows the page and the trailing columns
+// clip. Pin the shared fixed-layout + wrap workaround, as every other migrated list does.
+:host {
+  @include tn-table-fixed-wrap;
+}
+
 .spinner-container {
   align-items: center;
   display: flex;

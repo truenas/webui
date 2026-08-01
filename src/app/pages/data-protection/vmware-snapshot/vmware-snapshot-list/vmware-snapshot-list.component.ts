@@ -20,11 +20,11 @@ import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { ExpandOnRowClickDirective } from 'app/modules/ix-table/directives/expand-on-row-click.directive';
 import { detailActionTestId, tnTableListHost } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { ExpandOnRowClickDirective } from 'app/modules/tn-table/directives/expand-on-row-click.directive';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
@@ -74,7 +74,8 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   // One source of truth per column title: the header, the cell (whose test id is built
   // from it) and the column model all read the same entry, so a rename cannot silently
-  // change a data-test value. `translated` re-runs it on a language change.
+  // change a data-test value. `translated` re-runs it on a language change. (This list has no
+  // column picker, so the titles are read only from the template and follow along directly.)
   protected readonly titles = translated(() => ({
     hostname: this.translate.instant('Hostname'),
     username: this.translate.instant('Username'),

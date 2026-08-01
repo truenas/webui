@@ -141,7 +141,8 @@ export class RsyncTaskListComponent implements OnInit {
 
   // One source of truth per column title: the header, the cell (whose test id is built
   // from it) and the column model all read the same entry, so a rename cannot silently
-  // change a data-test value. `translated` re-runs it on a language change.
+  // change a data-test value. `translated` re-runs it on a language change — and because
+  // the column model is passed as a factory, the picker and detail row re-read it too.
   protected readonly titles = translated(() => ({
     path: this.translate.instant('Path'),
     remoteHost: this.translate.instant('Remote Host'),
@@ -161,7 +162,7 @@ export class RsyncTaskListComponent implements OnInit {
   }));
 
   protected readonly list = tnTableListHost<RsyncTask>(this.dataProvider, {
-    columns: createTable<RsyncTask>([
+    columns: () => createTable<RsyncTask>([
       textColumn({
         title: this.titles().path,
         propertyName: 'path',

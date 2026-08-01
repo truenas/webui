@@ -79,7 +79,8 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
 
   // One source of truth per column title: the header, the cell (whose test id is built
   // from it) and the column model all read the same entry, so a rename cannot silently
-  // change a data-test value. `translated` re-runs it on a language change.
+  // change a data-test value. `translated` re-runs it on a language change. (This list has no
+  // column picker, so the titles are read only from the template and follow along directly.)
   protected readonly titles = translated(() => ({
     snapshotTime: this.translate.instant('Snapshot Time'),
     hostname: this.translate.instant('Hostname'),

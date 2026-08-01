@@ -32,24 +32,37 @@ export function convertStringToId(inputString: string): string {
 }
 
 /**
- * Dev-mode guard for a migrated tn-table's column model. The model no longer
- * renders the visible cells, so a missing `getValue` only shows up in the detail
- * row and in sorting — both easy to miss.
+ * Dev-mode guard for a migrated tn-table's column model. The model no longer renders the visible
+ * cells, so a missing `getValue` only shows up in the detail row and in sorting — both easy to
+ * miss. Reports rather than throws: this catches a mis-declared column model, not a broken
+ * invariant, and nothing a user does can trip it — white-screening the page in dev would be a
+ * worse trade than a loud console error.
  */
 function assertMigratedColumns<T>(columns: Column<T, ColumnComponent<T>>[]): void {
-  const unnamed = columns.filter((column) => !column.propertyName && !column.columnName);
-  if (unnamed.length > 1) {
-    throw new Error(
-      'createTable: columns '
-      + `${unnamed.map((column) => JSON.stringify(column.title)).join(', ')} declare neither `
-      + '`propertyName` nor `columnName`, so they all resolve to the `actions` column name.',
+  // Checked on the RESOLVED names, so the single-unnamed case is caught too: one such column
+  // resolves to 'actions', which collides with the name `appendedColumns: ['actions']` adds. That
+  // duplicate in `displayedColumns` is the whole failure mode this guard exists for.
+  const seen = new Set<string>();
+  const duplicates = new Set<string>();
+  for (const column of columns) {
+    const name = tnColumnName(column);
+    if (seen.has(name)) {
+      duplicates.add(name);
+    }
+    seen.add(name);
+  }
+  if (duplicates.size) {
+    console.error(
+      `[createTable] columns resolve to duplicate tn-table names: ${[...duplicates].join(', ')}. `
+      + 'Each column needs its own `propertyName` or `columnName` — a column with neither falls '
+      + 'back to "actions", which also collides with an appended actions column.',
     );
   }
 
   const valueless = columns.find((column) => column.columnName && !column.propertyName && !column.getValue);
   if (valueless) {
-    throw new Error(
-      `createTable: column "${valueless.title}" ("${valueless.columnName}") has no \`propertyName\`, `
+    console.error(
+      `[createTable] column "${valueless.title}" ("${valueless.columnName}") has no \`propertyName\`, `
       + 'so it must declare `getValue` — that is what the detail row renders and what sorting uses.',
     );
   }
@@ -78,8 +91,35 @@ export function createTable<T>(
   });
 }
 
-/** What `BaseDataProvider.sort()` accepts as a `sortBy` accessor. */
-export type RowSortValue<T> = (row: T) => string | number;
+/**
+ * What a column's sort accessor may return. Wider than what `BaseDataProvider.sort()` ultimately
+ * orders by, because the accessors are usually the cell's own `getValue` — which returns whatever
+ * the cell renders, including a `Date` or nothing at all for a row with no value.
+ * {@link normalizeSortValue} narrows it before the provider sees it.
+ */
+export type RowSortValue<T> = (row: T) => string | number | Date | null | undefined;
+
+/**
+ * Narrows what an accessor returns into something lodash `sortBy` orders meaningfully:
+ *
+ * - a `Date` becomes its epoch — ordering the formatted string instead would sort by weekday name;
+ * - a missing value becomes `''`, so rows without one group together rather than ordering
+ *   arbitrarily against real values.
+ *
+ * Applied to every accessor this module hands over, so a column config can return the natural
+ * value (`row.job?.time_finished?.$date`, a `Date` from a scheduler) without hand-writing a
+ * `?? 0` / `+date` coercion at each site. Anything still unorderable after this is caught by
+ * {@link guardSortValue}.
+ */
+function normalizeSortValue<T>(accessor: RowSortValue<T>): (row: T) => SortValue {
+  return (row: T) => {
+    const value = accessor(row);
+    if (value instanceof Date) {
+      return value.getTime();
+    }
+    return value ?? '';
+  };
+}
 
 /**
  * Optional sort *semantics* for a table whose cells don't all show their raw row value. Restores
@@ -361,7 +401,14 @@ export interface FixedColumnsConfig<T> {
 
 /** Columns of a table whose column set is driven by `<ix-table-column-picker>`. */
 export interface PickerColumnsConfig<T> {
-  columns: Column<T, ColumnComponent<T>>[];
+  /**
+   * Accepts a factory so the model can be rebuilt when the language changes: column titles are
+   * resolved eagerly (`translate.instant`), so a model built once freezes the picker's and detail
+   * row's labels in the initial locale while the visible headers — which read the title signal
+   * from the template — follow along. Called inside a `computed`, so reading a `translated()`
+   * signal in it is what makes the rebuild happen. Visibility survives the rebuild (see below).
+   */
+  columns: () => Column<T, ColumnComponent<T>>[];
   /**
    * Column names appended after the picker's, for columns the picker must never
    * offer — an actions column, which has no cell component behind it.
@@ -438,7 +485,7 @@ export function tnTableListHost<T extends object>(
       instance.setSorting(mapTnSortToTableSort<T>(
         event,
         displayedColumns(),
-        sortBy ? { sortAccessors: { [event.column]: sortBy } } : undefined,
+        sortBy ? { sortAccessors: { [event.column]: normalizeSortValue(sortBy) } } : undefined,
       ));
     },
   });
@@ -454,19 +501,32 @@ export function tnTableListHost<T extends object>(
     );
   }
 
-  const columns = signal(config.columns);
+  const buildColumns = config.columns;
   const appendedColumns = config.appendedColumns ?? [];
+
+  // The picker's choices are held as visibility BY COLUMN NAME rather than as the column array
+  // itself, so rebuilding the model on a language change can't discard what the user hid.
+  const hiddenByName = signal<ReadonlyMap<string, boolean>>(new Map());
+
+  const columns = computed(() => {
+    const overrides = hiddenByName();
+    return buildColumns().map((column) => (
+      overrides.has(tnColumnName(column))
+        ? { ...column, hidden: overrides.get(tnColumnName(column)) }
+        : column
+    ));
+  });
 
   return {
     ...withSorting(
       computed(() => [...toDisplayedColumns(columns()), ...appendedColumns]),
       (columnName) => columnSortBy(columns().find((column) => tnColumnName(column) === columnName)),
     ),
-    columns: columns.asReadonly(),
+    columns,
     hiddenColumns: computed(() => columns().filter((column) => column?.hidden)),
-    // The picker hands back the same array it was given with `hidden` flipped, so
-    // copy it — the signal would otherwise compare equal and not notify.
-    columnsChange: (next: Column<T, ColumnComponent<T>>[]) => columns.set([...next]),
+    columnsChange: (next: Column<T, ColumnComponent<T>>[]) => {
+      hiddenByName.set(new Map(next.map((column) => [tnColumnName(column), Boolean(column.hidden)])));
+    },
   };
 }
 

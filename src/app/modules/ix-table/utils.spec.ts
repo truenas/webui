@@ -348,30 +348,60 @@ describe('filterTableRows', () => {
 describe('createTable', () => {
   interface Row { name: string }
 
+  // The guard reports rather than throws — a mis-declared column model shouldn't white-screen the
+  // page in dev, and nothing a user does can trip it.
+  let reported: jest.SpyInstance;
+
+  beforeEach(() => {
+    reported = jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => reported.mockRestore());
+
   it('accepts a columnName-keyed column that carries getValue', () => {
-    expect(() => createTable<Row>([
+    createTable<Row>([
       { title: 'Last Run', columnName: 'last-run', getValue: () => 1 } as Column<Row, ColumnComponent<Row>>,
-    ])).not.toThrow();
+    ]);
+
+    expect(reported).not.toHaveBeenCalled();
   });
 
-  it('rejects a columnName-keyed column with no getValue', () => {
-    expect(() => createTable<Row>([
+  it('reports a columnName-keyed column with no getValue', () => {
+    createTable<Row>([
       { title: 'Last Run', columnName: 'last-run' } as Column<Row, ColumnComponent<Row>>,
-    ])).toThrow('"Last Run" ("last-run")');
+    ]);
+
+    expect(reported).toHaveBeenCalledWith(expect.stringContaining('"Last Run" ("last-run")'));
   });
 
-  it('rejects more than one column resolving to the "actions" column name', () => {
-    expect(() => createTable<Row>([
+  it('reports more than one column resolving to the "actions" column name', () => {
+    createTable<Row>([
       { title: 'Actions' } as Column<Row, ColumnComponent<Row>>,
       { title: 'More' } as Column<Row, ColumnComponent<Row>>,
-    ])).toThrow('"Actions", "More"');
+    ]);
+
+    expect(reported).toHaveBeenCalledWith(expect.stringContaining('actions'));
+  });
+
+  it('reports a single unnamed column colliding with an explicit actions column', () => {
+    // The case the count-based check used to miss: one unnamed column resolves to 'actions',
+    // which is exactly the name `appendedColumns: ['actions']` adds.
+    createTable<Row>([
+      { propertyName: 'name', title: 'Name' } as Column<Row, ColumnComponent<Row>>,
+      { title: 'Actions' } as Column<Row, ColumnComponent<Row>>,
+      { columnName: 'actions', title: 'More', getValue: () => 1 } as Column<Row, ColumnComponent<Row>>,
+    ]);
+
+    expect(reported).toHaveBeenCalledWith(expect.stringContaining('actions'));
   });
 
   it('does not validate the legacy ix-table column model built with a config', () => {
-    expect(() => createTable<Row>(
+    createTable<Row>(
       [{ title: 'Actions' } as Column<Row, ColumnComponent<Row>>, {} as Column<Row, ColumnComponent<Row>>],
       { uniqueRowTag: (row) => row.name, ariaLabels: (row) => [row.name] },
-    )).not.toThrow();
+    );
+
+    expect(reported).not.toHaveBeenCalled();
   });
 });
 
@@ -491,7 +521,7 @@ describe('tnTableListHost', () => {
 
     it('derives the displayed columns from the visible ones, then the appended ones', () => {
       TestBed.runInInjectionContext(() => {
-        const list = tnTableListHost<Row>(provider, { columns: columns(), appendedColumns: ['actions'] });
+        const list = tnTableListHost<Row>(provider, { columns: () => columns(), appendedColumns: ['actions'] });
 
         expect(list.displayedColumns()).toEqual(['name', 'actions']);
         expect(list.hiddenColumns()).toEqual([expect.objectContaining({ propertyName: 'path' })]);
@@ -500,7 +530,7 @@ describe('tnTableListHost', () => {
 
     it('re-derives the displayed columns when the picker changes visibility', () => {
       TestBed.runInInjectionContext(() => {
-        const list = tnTableListHost<Row>(provider, { columns: columns() });
+        const list = tnTableListHost<Row>(provider, { columns: () => columns() });
         const next = list.columns().map((column) => ({ ...column, hidden: false }));
 
         list.columnsChange(next);
@@ -510,11 +540,37 @@ describe('tnTableListHost', () => {
       });
     });
 
+    it('rebuilds the column model on a language change, keeping what the picker hid', () => {
+      TestBed.runInInjectionContext(() => {
+        // Column titles are resolved eagerly, so a model built once would freeze the picker's and
+        // detail row's labels in the initial locale while the headers followed along.
+        const locale = signal('en');
+        const list = tnTableListHost<Row>(provider, {
+          columns: () => [
+            { propertyName: 'name', title: `Name (${locale()})` },
+            { propertyName: 'path', title: 'Path' },
+          ] as Column<Row, ColumnComponent<Row>>[],
+        });
+
+        list.columnsChange(list.columns().map((column) => (
+          column.propertyName === 'path' ? { ...column, hidden: true } : column
+        )));
+        expect(list.displayedColumns()).toEqual(['name']);
+
+        locale.set('fr');
+
+        expect(list.columns()[0].title).toBe('Name (fr)');
+        // The rebuild must not resurrect a column the user hid.
+        expect(list.displayedColumns()).toEqual(['name']);
+        expect(list.hiddenColumns()).toEqual([expect.objectContaining({ propertyName: 'path' })]);
+      });
+    });
+
     it('sorts a derived column by its getValue, which is all it has to order on', () => {
       TestBed.runInInjectionContext(() => {
         const getValue = (row: Row): string => row.name;
         const list = tnTableListHost<Row>(provider, {
-          columns: [
+          columns: () => [
             { propertyName: 'name', title: 'Name' },
             { columnName: 'state', title: 'State', getValue },
           ] as Column<Row, ColumnComponent<Row>>[],
@@ -529,7 +585,7 @@ describe('tnTableListHost', () => {
 
     it('leaves a real-property column to sort by its property', () => {
       TestBed.runInInjectionContext(() => {
-        const list = tnTableListHost<Row>(provider, { columns: columns() });
+        const list = tnTableListHost<Row>(provider, { columns: () => columns() });
         list.onSortChange({ column: 'name', direction: 'asc' });
 
         expect(setSorting).toHaveBeenCalledWith(expect.objectContaining({

@@ -41,7 +41,6 @@ import {
   IxTableDetailsRowComponent,
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { ExpandOnRowClickDirective } from 'app/modules/ix-table/directives/expand-on-row-click.directive';
 import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -50,6 +49,7 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { ExpandOnRowClickDirective } from 'app/modules/tn-table/directives/expand-on-row-click.directive';
 import {
   TableRelativeDateCellComponent,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
@@ -132,7 +132,8 @@ export class SnapshotTaskListComponent implements OnInit {
 
   // One source of truth per column title: the header, the cell (whose test id is built
   // from it) and the column model all read the same entry, so a rename cannot silently
-  // change a data-test value. `translated` re-runs it on a language change.
+  // change a data-test value. `translated` re-runs it on a language change — and because
+  // the column model is passed as a factory, the picker and detail row re-read it too.
   protected readonly titles = translated(() => ({
     poolDataset: this.translate.instant('Pool/Dataset'),
     recursive: this.translate.instant('Recursive'),
@@ -149,7 +150,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }));
 
   protected readonly list = tnTableListHost<PeriodicSnapshotTaskUi>(this.dataProvider, {
-    columns: createTable<PeriodicSnapshotTaskUi>([
+    columns: () => createTable<PeriodicSnapshotTaskUi>([
       textColumn({
         title: this.titles().poolDataset,
         propertyName: 'dataset',

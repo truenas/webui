@@ -11,7 +11,7 @@ import {
   TnTableComponent,
   TnTableHarness,
 } from '@truenas/ui-components';
-import { ExpandOnRowClickDirective } from 'app/modules/ix-table/directives/expand-on-row-click.directive';
+import { ExpandOnRowClickDirective } from 'app/modules/tn-table/directives/expand-on-row-click.directive';
 
 interface Row { name: string }
 

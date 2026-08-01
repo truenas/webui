@@ -13,8 +13,9 @@ import {
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
-import { cloudBackupTaskEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
+import { cloudBackupTaskEmptyConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
@@ -23,7 +24,6 @@ import { translated } from 'app/helpers/translated.helper';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
@@ -82,7 +82,6 @@ export class CloudBackupListComponent {
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
-  private emptyService = inject(EmptyService);
 
   readonly dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
   readonly cloudBackups = input<CloudBackup[]>([]);
@@ -94,7 +93,8 @@ export class CloudBackupListComponent {
 
   // One source of truth per column title: the header, the cell (whose test id is built
   // from it) and the column model all read the same entry, so a rename cannot silently
-  // change a data-test value. `translated` re-runs it on a language change.
+  // change a data-test value. `translated` re-runs it on a language change. (This list has no
+  // column picker, so the titles are read only from the template and follow along directly.)
   protected readonly titles = translated(() => ({
     name: this.translate.instant('Name'),
     enabled: this.translate.instant('Enabled'),
@@ -110,31 +110,24 @@ export class CloudBackupListComponent {
       'snapshot',
       // Derived from the row's job rather than a property of its own, so they need an
       // explicit accessor to stay sortable.
-      { name: 'state', sortBy: (row) => row.job?.state ?? '' },
-      { name: 'last-run', sortBy: (row) => row.job?.time_finished?.$date ?? 0 },
+      { name: 'state', sortBy: (row) => row.job?.state },
+      { name: 'last-run', sortBy: (row) => row.job?.time_finished?.$date },
       'actions',
     ],
   });
 
-  // Bound from the shared catalog configs rather than inlined in the template, so the
-  // translated strings have a single source of truth and follow a language change.
-  // Unlike the other migrated lists, both empty branches are rendered above the table
-  // (the page-level `@if` covers search and no-data alike), so the table itself never
-  // shows an empty state and takes no `[emptyMessage]`/`[emptyIcon]`.
+  // Bound from the shared catalog config rather than inlined in the template, so the
+  // translated string has a single source of truth and follows a language change. Only the
+  // "nothing configured yet" state is rendered here (it replaces the table entirely); every
+  // other state — errors, no search results — comes from the table's own
+  // `[emptyMessage]`/`[emptyIcon]`, as on the other migrated lists.
   protected readonly emptyConfig = cloudBackupTaskEmptyConfig;
-  protected readonly noSearchResultsConfig = noSearchResultsConfig;
 
-  // Icons split out of the same configs rather than hand-copied into the template, so
-  // the catalog stays the single source of truth for the icon as well as the message.
-  // The no-search-results config carries no icon of its own — that state's icon belongs
-  // to the empty *type*, so it comes from the type mapping. Keyed on the config's own
-  // type rather than the provider's: this branch renders whenever a search matched
-  // nothing, including on a list that was empty to begin with.
+  // Icon split out of the same config rather than hand-copied into the template, so the
+  // catalog stays the single source of truth for the icon as well as the message.
   protected readonly emptyIcon = emptyConfigIcon(cloudBackupTaskEmptyConfig);
-  protected readonly noSearchResultsIcon = emptyConfigIcon(
-    noSearchResultsConfig,
-    this.emptyService.iconForType(noSearchResultsConfig.type),
-  );
+
+  protected readonly EmptyType = EmptyType;
 
   protected readonly actions: IconActionConfig<CloudBackup>[] = [
     {

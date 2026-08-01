@@ -43,7 +43,6 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { ExpandOnRowClickDirective } from 'app/modules/ix-table/directives/expand-on-row-click.directive';
 import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -54,6 +53,7 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ExpandOnRowClickDirective } from 'app/modules/tn-table/directives/expand-on-row-click.directive';
 import {
   TableRelativeDateCellComponent,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
@@ -142,7 +142,8 @@ export class CloudSyncListComponent implements OnInit {
 
   // One source of truth per column title: the header, the cell (whose test id is built
   // from it) and the column model all read the same entry, so a rename cannot silently
-  // change a data-test value. `translated` re-runs it on a language change.
+  // change a data-test value. `translated` re-runs it on a language change — and because
+  // the column model is passed as a factory, the picker and detail row re-read it too.
   protected readonly titles = translated(() => ({
     description: this.translate.instant('Description'),
     credential: this.translate.instant('Credential'),
@@ -158,7 +159,7 @@ export class CloudSyncListComponent implements OnInit {
   }));
 
   protected readonly list = tnTableListHost<CloudSyncTaskUi>(this.dataProvider, {
-    columns: createTable<CloudSyncTaskUi>([
+    columns: () => createTable<CloudSyncTaskUi>([
       textColumn({
         title: this.titles().description,
         propertyName: 'description',

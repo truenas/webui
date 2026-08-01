@@ -5,23 +5,16 @@
   ></ix-basic-search>
 </div>
 
-@if (!list.empty.count() && !list.isLoading()) {
-  @if (searchQuery()) {
-    <tn-empty
-      [icon]="noSearchResultsIcon.name"
-      [iconLibrary]="noSearchResultsIcon.library"
-      [iconSize]="noSearchResultsIcon.size"
-      [title]="noSearchResultsConfig.title | translate"
-      [description]="noSearchResultsConfig.message | translate"
-    ></tn-empty>
-  } @else {
-    <tn-empty
-      [icon]="emptyIcon.name"
-      [iconLibrary]="emptyIcon.library"
-      [iconSize]="emptyIcon.size"
-      [title]="emptyConfig.message | translate | flattenEmptyMessage"
-    ></tn-empty>
-  }
+<!-- Gate on the empty TYPE, not the row count, so an errored query still reaches the table's own
+     empty state below instead of being mistaken for "nothing configured yet". Matches the other
+     migrated lists. -->
+@if (list.empty.type() === EmptyType.NoPageData && !list.empty.count()) {
+  <tn-empty
+    [icon]="emptyIcon.name"
+    [iconLibrary]="emptyIcon.library"
+    [iconSize]="emptyIcon.size"
+    [title]="emptyConfig.message | translate | flattenEmptyMessage"
+  ></tn-empty>
 } @else {
   <tn-table
     class="backups"
@@ -33,6 +26,8 @@
     [loading]="list.isLoading()"
     [clickable]="true"
     [activeRow]="activeRow()"
+    [emptyMessage]="list.empty.message()"
+    [emptyIcon]="list.empty.icon()"
     (rowClick)="onRowClick($event)"
     (sortChange)="list.onSortChange($event)"
   >

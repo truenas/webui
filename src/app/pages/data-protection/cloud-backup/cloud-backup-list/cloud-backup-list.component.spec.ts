@@ -13,7 +13,6 @@ import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -86,7 +85,6 @@ describe('CloudBackupListComponent', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SnackbarService),
-      mockProvider(EmptyService),
       provideMockStore({
         selectors: [
           {

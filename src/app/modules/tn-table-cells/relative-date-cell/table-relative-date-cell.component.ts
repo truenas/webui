@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { isValid } from 'date-fns';
@@ -11,7 +10,6 @@ import { translated } from 'app/helpers/translated.helper';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { RelativeDateTickerService } from 'app/modules/dates/services/relative-date-ticker.service';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 
 /**
  * tn-table replacement for the ix-table `relativeDateColumn` cell renderer.
@@ -53,15 +51,13 @@ export class TableRelativeDateCellComponent {
   private readonly tick = toSignal(inject(RelativeDateTickerService).tick$, { initialValue: 0 });
 
   /**
-   * Date/time format dependency for `tooltip`. `FormatDateTimePipe` re-reads the user's
-   * format preference on this action; it is impure so the templates that use it as a pipe
-   * pick that up on the next pass, but a `computed` calling `transform()` has to take the
-   * dependency itself.
+   * Date/time format dependency for `tooltip`. The pipe is impure, so templates using it as a
+   * pipe re-run anyway; a `computed` calling `transform()` has to take the dependency itself.
+   * Read from the pipe rather than re-derived from the NgRx action that happens to drive it
+   * today — what invalidates a format is the pipe's business, so this can't go stale if the
+   * preference ever starts changing through another path.
    */
-  private readonly dateTimeFormat = toSignal(
-    inject(Actions).pipe(ofType(localizationFormSubmitted)),
-    { initialValue: null },
-  );
+  private readonly dateTimeFormat = this.formatDateTime.formatChanged;
 
   protected readonly testId = computed(() => [this.title(), this.uniqueRowTag(), 'row-relative-date']);
 
