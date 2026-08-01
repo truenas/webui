@@ -313,11 +313,24 @@ the epic's follow-up list.
 | Gap | Where it shows up | Owner |
 | --- | --- | --- |
 | No multi-colour status pill primitive | `status-pill` mixin in `src/assets/styles/scss-imports/status-pill.scss`, used by `ix-task-state-cell` and `ix-vmware-status-cell` | library |
-| `TnMenuTriggerDirective` sets no `aria-haspopup`/`aria-expanded`, and its open state is private with no `exportAs` | `table-actions-cell.component.html` menu trigger | library |
 | `tn-empty`'s `[title]`/`[description]` are text-only, so an `EmptyConfig.message` written as HTML has to be flattened at runtime | `FlattenEmptyMessagePipe` | library |
-| `tn-table` has no input for a second empty-state line, so the `EmptyConfig.message` ix-table showed under the no-search-results title is dropped | `dataProviderEmptyState` in `ix-table/utils.ts` | library |
 | Replication "Enabled" is read-only Yes/No in the detail row when the picker hides the column (it was an interactive toggle before); a dead toggle would be worse, so the toggle stays in the visible column only | `replication-list.component.ts` | webui |
-| `tn-table` expands a row only through its chevron; the `ix-table` it replaces expanded on a row click too, so migrated lists re-add that from `(rowClick)` | `ExpandOnRowClickDirective` in `ix-table/directives/expand-on-row-click.directive.ts` | library |
+
+### Fixed upstream, pending a release
+
+Implemented in `@truenas/ui-components` but not yet published, so the webui workaround stays until
+`package.json` moves past `~0.3.26`. Each row is a straight deletion once it does — the replacement
+was verified against a local build of the library.
+
+| Library addition | webui workaround it deletes |
+| --- | --- |
+| `tn-table [wrapCells]` — fixed layout + wrapping cells | The `tn-table-fixed-wrap` mixin (`assets/styles/mixins/tn-table.scss`) and its `::ng-deep` into `.tn-table__cell-content`, included by ~15 list/card stylesheets |
+| `tn-table [expandOnRowClick]` | `ExpandOnRowClickDirective` (`tn-table/directives/expand-on-row-click.directive.ts`) and its 4 usages |
+| `tn-table [singleExpand]` | `restrictToSingleExpandedRow` (`tn-table/utils.ts`) |
+| `tn-table [(sortColumn)]` / `[(sortDirection)]` (now `model()`s) | `reflectSortIntoTable` (`tn-table/utils.ts`), which reached in and set the signals from an effect |
+| `tn-table [emptyDescription]` | The dropped second empty-state line in `dataProviderEmptyState` (`ix-table/utils.ts`) |
+| `TnMenuTriggerDirective` `aria-haspopup`/`aria-expanded` + public `isOpen` | Nothing to delete — it was an unfixable a11y gap on the trigger in `table-actions-cell.component.html` |
+| `tn-side-panel [closeButtonAriaLabel]` | The hardcoded, untranslated "Dismiss" on every side panel — lets `form-side-panel-container` name what it closes |
 
 ### Shared pieces for a migrated list page
 
