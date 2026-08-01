@@ -1,14 +1,3 @@
 .table {
   width: 100%;
 }
-
-// TEMP (NAS-141021): the library defaults tn-card to `height: 100%`, which suits the equal-height
-// dashboard grid but makes this full-page list card fill the viewport, leaving a large empty area
-// below the table. Let it grow to its content instead. Mirrors the `tn-card` block in
-// pages/sharing/components/_tn-table-in-card.scss — that mixin isn't imported here because its
-// other two blocks (pager chrome, table corner radius) don't apply to this page. Remove once
-// @truenas/ui-components exposes a content-height option.
-tn-card {
-  display: block;
-  height: auto;
-}
