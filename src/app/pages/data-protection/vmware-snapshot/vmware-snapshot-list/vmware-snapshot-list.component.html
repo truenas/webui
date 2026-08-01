@@ -12,8 +12,9 @@
 
 <div class="table-container">
   <tn-table
-    ixExpandOnRowClick
     class="table"
+    [wrapCells]="true"
+    [expandOnRowClick]="true"
     [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.vmwareSnapshots"
     [dataSource]="list.rows()"

@@ -316,21 +316,29 @@ the epic's follow-up list.
 | `tn-empty`'s `[title]`/`[description]` are text-only, so an `EmptyConfig.message` written as HTML has to be flattened at runtime | `FlattenEmptyMessagePipe` | library |
 | Replication "Enabled" is read-only Yes/No in the detail row when the picker hides the column (it was an interactive toggle before); a dead toggle would be worse, so the toggle stays in the visible column only | `replication-list.component.ts` | webui |
 
-### Fixed upstream, pending a release
+### Adopted from the library, pending its release
 
-Implemented in `@truenas/ui-components` but not yet published, so the webui workaround stays until
-`package.json` moves past `~0.3.26`. Each row is a straight deletion once it does — the replacement
-was verified against a local build of the library.
+Implemented in `@truenas/ui-components` and already used here, so this branch needs a
+`@truenas/ui-components` newer than `~0.3.26` to build. Bump the dependency once the library
+release lands.
 
-| Library addition | webui workaround it deletes |
+| Library addition | What it replaced here |
 | --- | --- |
-| `tn-table [wrapCells]` — fixed layout + wrapping cells | The `tn-table-fixed-wrap` mixin (`assets/styles/mixins/tn-table.scss`) and its `::ng-deep` into `.tn-table__cell-content`, included by ~15 list/card stylesheets |
-| `tn-table [expandOnRowClick]` | `ExpandOnRowClickDirective` (`tn-table/directives/expand-on-row-click.directive.ts`) and its 4 usages |
-| `tn-table [singleExpand]` | `restrictToSingleExpandedRow` (`tn-table/utils.ts`) |
-| `tn-table [(sortColumn)]` / `[(sortDirection)]` (now `model()`s) | `reflectSortIntoTable` (`tn-table/utils.ts`), which reached in and set the signals from an effect |
-| `tn-table [emptyDescription]` | The dropped second empty-state line in `dataProviderEmptyState` (`ix-table/utils.ts`) |
-| `TnMenuTriggerDirective` `aria-haspopup`/`aria-expanded` + public `isOpen` | Nothing to delete — it was an unfixable a11y gap on the trigger in `table-actions-cell.component.html` |
-| `tn-side-panel [closeButtonAriaLabel]` | The hardcoded, untranslated "Dismiss" on every side panel — lets `form-side-panel-container` name what it closes |
+| `tn-table [wrapCells]` — fixed layout + wrapping cells | The `tn-table-fixed-wrap` mixin include on all seven Data Protection lists, and its `::ng-deep` into `.tn-table__cell-content` |
+| `tn-table [expandOnRowClick]` | `ExpandOnRowClickDirective` (deleted, with its spec) and its four usages |
+| `tn-table [minColumnWidth]` (default `120px`) | Nothing — new. The width floor is derived as `minColumnWidth × columnCount`, so a narrow viewport scrolls instead of wrapping cells to a few characters, and no page picks a number |
+
+Also fixed in the library and available, but not adopted here because their consumers sit in other
+feature areas: `[singleExpand]` (would delete `restrictToSingleExpandedRow`),
+`[(sortColumn)]`/`[(sortDirection)]` (would delete `reflectSortIntoTable`), `[emptyDescription]`
+(the second empty-state line `dataProviderEmptyState` drops), `TnMenuTriggerDirective`'s
+`aria-haspopup`/`aria-expanded` + public `isOpen`, and `tn-side-panel [closeButtonAriaLabel]`.
+
+Two long-standing library bugs surfaced while doing this, both the same root cause — a rule
+written as a plain `.tn-table` class selector, which emulated encapsulation compiles to
+`[_ngcontent-…]` while the host carries `[_nghost-…]`, so it never matches:
+`overflow-x: auto` (horizontal scrolling had never worked on any `tn-table`) and the first
+version of `wrapCells`. Both are now `:host`-scoped, with a test guarding the convention.
 
 ### Shared pieces for a migrated list page
 

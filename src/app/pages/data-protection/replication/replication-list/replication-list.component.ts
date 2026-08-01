@@ -45,7 +45,6 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ExpandOnRowClickDirective } from 'app/modules/tn-table/directives/expand-on-row-click.directive';
 import {
   TableRelativeDateCellComponent,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
@@ -87,7 +86,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnCellDefDirective,
     TnDetailRowDefDirective,
     TnTablePagerComponent,
-    ExpandOnRowClickDirective,
     IxTableDetailsRowComponent,
     TableRelativeDateCellComponent,
     TableTextCellComponent,

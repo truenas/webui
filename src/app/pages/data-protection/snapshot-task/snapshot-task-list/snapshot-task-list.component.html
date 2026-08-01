@@ -36,8 +36,9 @@
     ></tn-empty>
   } @else {
     <tn-table
-      ixExpandOnRowClick
       class="table"
+      [wrapCells]="true"
+      [expandOnRowClick]="true"
       [testId]="'table-table'"
       [ixUiSearch]="searchableElements.elements.tasks"
       [dataSource]="list.rows()"

@@ -1,10 +1,4 @@
-@import 'mixins/tn-table';
-
-// tn-table lays its table out `auto`, so a long value widens its column until the row
-// overflows the page and the trailing columns clip. Shared fixed-layout + wrap workaround.
 :host {
-  @include tn-table-fixed-wrap;
-
   height: 100%;
 
   .backups {

@@ -49,7 +49,6 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { ExpandOnRowClickDirective } from 'app/modules/tn-table/directives/expand-on-row-click.directive';
 import {
   TableRelativeDateCellComponent,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
@@ -86,7 +85,6 @@ import { TaskService } from 'app/services/task.service';
     TnCellDefDirective,
     TnDetailRowDefDirective,
     TnTablePagerComponent,
-    ExpandOnRowClickDirective,
     IxTableDetailsRowComponent,
     TableRelativeDateCellComponent,
     TableTextCellComponent,
