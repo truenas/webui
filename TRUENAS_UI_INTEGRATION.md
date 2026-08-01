@@ -324,9 +324,9 @@ release lands.
 
 | Library addition | What it replaced here |
 | --- | --- |
-| `tn-table [wrapCells]` — fixed layout + wrapping cells | The `tn-table-fixed-wrap` mixin include on all seven Data Protection lists, and its `::ng-deep` into `.tn-table__cell-content` |
+| `tn-table` wraps cells by default (no input) | The `tn-table-fixed-wrap` mixin include on all seven Data Protection lists, and its `::ng-deep` into `.tn-table__cell-content`. Equal-width columns are a separate opt-in, `[fixedLayout]`, which none of these lists needs |
 | `tn-table [expandOnRowClick]` | `ExpandOnRowClickDirective` (deleted, with its spec) and its four usages |
-| `tn-table [minColumnWidth]` (default `120px`) | Nothing — new. The width floor is derived as `minColumnWidth × columnCount`, so a narrow viewport scrolls instead of wrapping cells to a few characters, and no page picks a number |
+| `tn-table [minColumnWidth]` (default `120px`) | Nothing — new. Only applies with `[fixedLayout]`, where it derives a width floor as `minColumnWidth × columnCount` so a narrow viewport scrolls rather than shrinking columns to nothing |
 
 Also fixed in the library and available, but not adopted here because their consumers sit in other
 feature areas: `[singleExpand]` (would delete `restrictToSingleExpandedRow`),
