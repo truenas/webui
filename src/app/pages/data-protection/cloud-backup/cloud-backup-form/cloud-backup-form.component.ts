@@ -92,8 +92,11 @@ export class CloudBackupFormComponent implements OnInit {
   // This form hosts `<ix-form>` directly and forwards its submit()/canSubmit()/isBusy()/closed, so it
   // follows the ix-form dual-host recipe rather than extending `SidePanelForm` (whose `submit()` drives a
   // subclass-owned form group + `canSubmit` signal — incompatible with delegating to the inner ix-form).
-  /** Fired on a successful submit when hosted in a `<tn-side-panel>` (forwarded from `<ix-form>`). */
-  readonly closed = output<boolean>();
+  /**
+   * Fired on a successful submit when hosted in a `<tn-side-panel>`, carrying the saved record
+   * (forwarded from `<ix-form>`, which shapes it with the submit's `closeWith`).
+   */
+  readonly closed = output<CloudBackup>();
 
   /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
   private readonly ixForm = viewChild(IxFormComponent);
@@ -282,7 +285,7 @@ export class CloudBackupFormComponent implements OnInit {
     });
   }
 
-  protected handleSubmit = (): SubmitResult => {
+  protected handleSubmit = (): SubmitResult<CloudBackup, CloudBackup> => {
     const payload = this.prepareData(this.form.value);
     const request$: Observable<CloudBackup> = this.editingTask
       ? this.api.call('cloud_backup.update', [this.editingTask.id, payload])
@@ -293,8 +296,8 @@ export class CloudBackupFormComponent implements OnInit {
       successMessage: this.isNew
         ? this.translate.instant('Task created')
         : this.translate.instant('Task updated'),
-      // SlideIn host listeners expect the saved record (slideInRef.close({ response })).
-      closeWith: (response: unknown) => response as CloudBackup,
+      // Both hosts' listeners expect the saved record (slide-in close payload / panel `closed`).
+      closeWith: (response) => response,
     };
   };
 

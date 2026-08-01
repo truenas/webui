@@ -1,3 +1,5 @@
+@import 'mixins/a11y';
+
 .header {
   align-items: baseline;
   border-bottom: 1px solid var(--lines);
@@ -88,15 +90,7 @@
     // (kept in the DOM as the checkbox's accessible name). Remove once
     // @truenas/ui-components ships a label-hidden / aria-label-only checkbox mode.
     ::ng-deep .tn-checkbox__text {
-      border: 0;
-      clip: rect(0 0 0 0);
-      height: 1px;
-      margin: -1px;
-      overflow: hidden;
-      padding: 0;
-      position: absolute;
-      white-space: nowrap;
-      width: 1px;
+      @include visually-hidden;
     }
   }
 }
