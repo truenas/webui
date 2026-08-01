@@ -2,13 +2,12 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, TnDialog } from '@truenas/ui-components';
+import { TnCardComponent, TnDialog, TnTestIdDirective } from '@truenas/ui-components';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
 import { Role } from 'app/enums/role.enum';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ManageDiskSedDialog,
@@ -24,7 +23,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   imports: [
     TnCardComponent,
     HasRoleDirective,
-    TestDirective,
+    TnTestIdDirective,
     NavigateAndHighlightDirective,
     TranslateModule,
   ],
@@ -41,7 +40,7 @@ export class HardwareDiskEncryptionComponent {
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly requiredRoles = [Role.DiskWrite];
 
-  hasSedSupport = computed(() => {
+  protected readonly hasSedSupport = computed(() => {
     return this.isEnterprise() || (this.hasDiskEncryption() || this.hasGlobalEncryption());
   });
 
@@ -57,7 +56,7 @@ export class HardwareDiskEncryptionComponent {
     ),
   );
 
-  onManageSedPassword(): void {
+  protected onManageSedPassword(): void {
     this.tnDialog.open(ManageDiskSedDialog, {
       data: this.topologyDisk().disk,
     }).closed

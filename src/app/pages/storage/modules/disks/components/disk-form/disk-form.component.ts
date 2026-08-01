@@ -1,107 +1,151 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, inject, input } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
-import { MatDivider } from '@angular/material/divider';
+import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import {
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  type TnSelectOption,
+} from '@truenas/ui-components';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
+import {
+  IxFormHostForm,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 export type DiskFormResponse = (DiskUpdate & { identifier: string })[];
 
+/**
+ * `tn-select` derives an option's test id from a primitive `value` before falling back to the
+ * label, which would collapse `option-advpowermgmt-level-127-…` down to `option-advpowermgmt-127`.
+ * The legacy `ix-select` ids were label-derived, so pin the extractor to keep them byte-stable.
+ * Shared with the bulk-edit form, which renders the same option list.
+ */
+export const advPowerManagementOptionTestId = (option: TnSelectOption<DiskPowerLevel>): string => option.label;
+
+interface DiskFormValues {
+  name: string;
+  serial: string;
+  description: string;
+  hddstandby: DiskStandby | null;
+  advpowermgmt: DiskPowerLevel | null;
+  passwd: string;
+  clear_pw: boolean;
+}
+
 @Component({
   selector: 'ix-disk-form',
   templateUrl: 'disk-form.component.html',
-  styleUrls: ['disk-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    IxFormComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxInputComponent,
-    MatDivider,
-    IxSelectComponent,
-    IxCheckboxComponent,
-    MatCardActions,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     TranslateModule,
-    TranslateOptionsPipe,
   ],
 })
-export class DiskFormComponent implements OnInit {
+export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
-  private errorHandler = inject(FormErrorHandlerService);
-  private snackbarService = inject(SnackbarService);
-  slideInRef = inject<SlideInRef<Disk, DiskFormResponse>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.DiskWrite];
+  /** The disk being edited, supplied by the `<tn-side-panel>` host before `ngOnInit`. */
+  readonly diskToEdit = input.required<Disk>();
 
-  form = this.fb.group({
+  protected readonly requiredRoles = [Role.DiskWrite];
+  protected readonly InputType = InputType;
+
+  protected form = this.fb.group({
     name: [''],
     serial: [''],
     description: [''],
+    // `Validators.required` is added in `ngOnInit`, per field — see `isHddStandbyRequired`.
     hddstandby: [null as DiskStandby | null],
     advpowermgmt: [null as DiskPowerLevel | null],
     passwd: [''],
     clear_pw: [false],
   });
 
-  readonly helptext = helptextDisks;
-  readonly hddstandbyOptions$ = of(helptextDisks.standbyOptions);
-  readonly advpowermgmtOptions$ = of(helptextDisks.advancedPowerManagementOptions);
-  readonly isLoading = signal<boolean>(false);
-  readonly existingDisk = signal<Disk | null>(null);
+  protected readonly helptext = helptextDisks;
+  protected readonly hddstandbyOptions = translateOptions(this.translate, helptextDisks.standbyOptions);
+  protected readonly advpowermgmtOptions = translateOptions(
+    this.translate,
+    helptextDisks.advancedPowerManagementOptions,
+  );
 
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  readonly showSedSection = computed(() => {
-    return this.isEnterprise() || (this.existingDisk()?.passwd && this.existingDisk()?.passwd !== '');
-  });
+  protected readonly optionLabelTestId = advPowerManagementOptionTestId;
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.setFormDisk(this.slideInRef.getData());
-  }
+  /**
+   * A disk normally always has a power-management value, so the field is marked required and
+   * backed by a validator rather than leaving Save always enabled. Only when the disk actually
+   * arrived with a value, though: requiring one that came back empty would leave Save
+   * permanently disabled — blocking an edit to the description, say — on a field the user
+   * never touched and got no explanation about.
+   *
+   * Plain fields, not computeds: the asterisk and the validator are two halves of one decision,
+   * so they are resolved together in `ngOnInit` (the panel sets `diskToEdit` once, before it)
+   * rather than leaving the marker reactive and the validator imperative — a pair with two
+   * reactivity models drifts the moment the input becomes re-settable.
+   */
+  protected isHddStandbyRequired = false;
+  protected isAdvPowerManagementRequired = false;
+
+  // `requireSync`, like the disk list's `hasSed`: this is a store selector, so it resolves at
+  // field init — and `showSedSection()` is read in `ngOnInit`, where an async signal would still
+  // be `undefined` and quietly skip the SED wiring.
+  private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise), { requireSync: true });
+  protected readonly showSedSection = computed(() => this.isEnterprise() || !!this.diskToEdit()?.passwd);
 
   ngOnInit(): void {
+    const disk = this.diskToEdit();
+
+    this.isHddStandbyRequired = Boolean(disk?.hddstandby);
+    if (this.isHddStandbyRequired) {
+      this.form.controls.hddstandby.addValidators(Validators.required);
+      // `addValidators` deliberately doesn't re-run validation. Do it here rather than relying on
+      // `<ix-form>`'s own `ngOnInit` patch to revalidate as a side effect, which would make the
+      // control's validity depend on the order two components' hooks happen to run in.
+      this.form.controls.hddstandby.updateValueAndValidity({ emitEvent: false });
+    }
+
+    this.isAdvPowerManagementRequired = Boolean(disk?.advpowermgmt);
+    if (this.isAdvPowerManagementRequired) {
+      this.form.controls.advpowermgmt.addValidators(Validators.required);
+      this.form.controls.advpowermgmt.updateValueAndValidity({ emitEvent: false });
+    }
+
     if (this.showSedSection()) {
       this.clearPasswordField();
     }
   }
 
-  private setFormDisk(disk: Disk): void {
-    this.existingDisk.set(disk);
-    this.form.patchValue({ ...disk });
-  }
+  protected readonly handleSubmit = (event: FormSubmitEvent<DiskFormValues>): SubmitResult<DiskFormResponse> => {
+    const diskId = this.diskToEdit().identifier;
+    const valuesDiskUpdate = this.prepareUpdate(event.allValues);
+
+    return {
+      request$: this.api.call('disk.update', [diskId, valuesDiskUpdate]),
+      successMessage: this.translate.instant('Disk settings successfully saved.'),
+      // The panel host forwards this to its opener, which reconciles the edited row.
+      closeWith: () => [{ identifier: diskId, ...valuesDiskUpdate }],
+    };
+  };
 
   private clearPasswordField(): void {
     this.form.controls.clear_pw.valueChanges
@@ -121,8 +165,8 @@ export class DiskFormComponent implements OnInit {
       );
   }
 
-  private prepareUpdate(value: DiskFormComponent['form']['value']): DiskUpdate {
-    const transformedValue = { ...value };
+  private prepareUpdate(value: DiskFormValues): DiskUpdate {
+    const transformedValue: Partial<DiskFormValues> = { ...value };
 
     if (transformedValue.passwd === '') {
       delete transformedValue.passwd;
@@ -137,30 +181,5 @@ export class DiskFormComponent implements OnInit {
     delete transformedValue.serial;
 
     return transformedValue;
-  }
-
-  protected onSubmit(): void {
-    const diskId = this.existingDisk().identifier;
-    const valuesDiskUpdate: DiskUpdate = this.prepareUpdate(this.form.value);
-
-    this.isLoading.set(true);
-    this.api.call('disk.update', [diskId, valuesDiskUpdate])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isLoading.set(false);
-          this.slideInRef.close({
-            response: [{
-              identifier: diskId,
-              ...valuesDiskUpdate,
-            }],
-          });
-          this.snackbarService.success(this.translate.instant('Disk settings successfully saved.'));
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.errorHandler.handleValidationErrors(error, this.form);
-        },
-      });
   }
 }

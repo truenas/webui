@@ -970,6 +970,7 @@ export interface ApiCallDirectory {
   'vm.poweroff': { params: [id: number]; response: void };
   'vm.query': { params: QueryParams<VirtualMachine>; response: VirtualMachine[] };
   'vm.random_mac': { params: void; response: string };
+  'vm.reset': { params: [id: number]; response: void };
   'vm.resolution_choices': { params: void; response: Choices };
   'vm.start': { params: [id: number, params?: { overcommit?: boolean }]; response: void };
   'vm.update': { params: [id: number, update: Partial<VirtualMachineUpdate>]; response: VirtualMachine };

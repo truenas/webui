@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { TnDialog } from '@truenas/ui-components';
 import {
-  BehaviorSubject, catchError, filter, Observable, of, repeat, Subject, switchMap, take,
+  BehaviorSubject, catchError, filter, map, Observable, of, repeat, Subject, switchMap, take, tap,
 } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { VmDisplayType, VmState } from 'app/enums/vm.enum';
@@ -20,6 +20,7 @@ import {
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StopVmDialogComponent, StopVmDialogData } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { DownloadService } from 'app/services/download.service';
@@ -33,6 +34,7 @@ export class VmService {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private download = inject(DownloadService);
+  private snackbar = inject(SnackbarService);
   private tnDialog = inject(TnDialog);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
@@ -44,6 +46,7 @@ export class VmService {
     start: 'vm.start',
     restart: 'vm.restart',
     poweroff: 'vm.poweroff',
+    reset: 'vm.reset',
     resume: 'vm.resume',
   } as const;
 
@@ -130,6 +133,43 @@ export class VmService {
 
   doPowerOff(vm: VirtualMachine): void {
     this.doAction(vm, this.wsMethods.poweroff, [vm.id]);
+  }
+
+  /**
+   * Hard-resets the VM, equivalent to pressing the reset button on a physical machine.
+   * The guest OS is not shut down cleanly, so confirmation is required first.
+   */
+  doReset(vm: VirtualMachine): Observable<boolean> {
+    return this.dialogService.confirm({
+      title: this.translate.instant(helptextVmList.resetDialog.title),
+      message: this.translate.instant(helptextVmList.resetDialog.message, {
+        vmName: vm.name,
+        warning: this.translate.instant(helptextVmList.hardResetWarning),
+      }),
+      buttonText: this.translate.instant(helptextVmList.resetDialog.buttonMessage),
+      buttonColor: 'warn',
+    })
+      .pipe(
+        take(1),
+        switchMap((confirmed) => {
+          if (!confirmed) {
+            return of(false);
+          }
+
+          return this.api.call(this.wsMethods.reset, [vm.id]).pipe(
+            this.loader.withLoader(),
+            take(1),
+            tap(() => this.snackbar.success(
+              this.translate.instant(helptextVmList.resetDialog.successMessage, { vmName: vm.name }),
+            )),
+            map(() => true),
+            catchError((error: unknown) => {
+              this.errorHandler.showErrorModal(error);
+              return of(false);
+            }),
+          );
+        }),
+      );
   }
 
   downloadLogs(vm: VirtualMachine): Observable<Blob> {

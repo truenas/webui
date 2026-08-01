@@ -23,13 +23,13 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import {
-  FormSubmitEvent, IxFormComponent, PreSubmitOverrides, SubmitResult,
+  FormSubmitEvent, IxFormComponent, ixFormMinSubmitFeedbackMs, PreSubmitOverrides, SubmitResult,
 } from './ix-form.component';
 
 describe('IxFormComponent', () => {
   // Hosts call this via a closure (not `handleSubmit = submitHandlerSpy`) so the
   // per-test reassignment in beforeEach is seen — don't inline the lambda.
-  let submitHandlerSpy: jest.Mock<SubmitResult, [FormSubmitEvent]>;
+  let submitHandlerSpy: jest.Mock<SubmitResult<unknown>, [FormSubmitEvent]>;
 
   @Component({
     template: `
@@ -39,6 +39,7 @@ describe('IxFormComponent', () => {
         [title]="'Test Form'"
         [requiredRoles]="[role]"
         [submitHandler]="handleSubmit"
+        [suppressSuccessSnackbar]="suppressSnackbar"
       >
         <ix-fieldset>
           <ix-input formControlName="name" [label]="'Name'" />
@@ -55,6 +56,7 @@ describe('IxFormComponent', () => {
     ixForm = viewChild.required(IxFormComponent);
     role = Role.FullAdmin;
     editData: Record<string, unknown> | null = null;
+    suppressSnackbar = false;
 
     private fb = inject(FormBuilder);
 
@@ -63,7 +65,7 @@ describe('IxFormComponent', () => {
       description: [''],
     });
 
-    handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+    handleSubmit = (event: FormSubmitEvent): SubmitResult<unknown> => submitHandlerSpy(event);
   }
 
   @Component({
@@ -98,7 +100,7 @@ describe('IxFormComponent', () => {
       name: [''],
     });
 
-    handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+    handleSubmit = (event: FormSubmitEvent): SubmitResult<unknown> => submitHandlerSpy(event);
   }
 
   let spectator: Spectator<TestHostComponent>;
@@ -124,7 +126,7 @@ describe('IxFormComponent', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    submitHandlerSpy = jest.fn<SubmitResult, [FormSubmitEvent]>(() => ({
+    submitHandlerSpy = jest.fn<SubmitResult<unknown>, [FormSubmitEvent]>(() => ({
       request$: of(undefined),
       successMessage: 'Saved!' as TranslatedString,
     }));
@@ -498,7 +500,7 @@ describe('IxFormComponent', () => {
 
       form = this.fb.group({ name: [''] });
 
-      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+      handleSubmit = (event: FormSubmitEvent): SubmitResult<unknown> => submitHandlerSpy(event);
     }
 
     const createRequireDirtyComponent = createComponentFactory({
@@ -576,7 +578,7 @@ describe('IxFormComponent', () => {
 
       form = this.fb.group({ name: ['filled'] });
 
-      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+      handleSubmit = (event: FormSubmitEvent): SubmitResult<unknown> => submitHandlerSpy(event);
     }
 
     const createExtraDisabledComponent = createComponentFactory({
@@ -662,7 +664,7 @@ describe('IxFormComponent', () => {
         description: [''],
       });
 
-      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+      handleSubmit = (event: FormSubmitEvent): SubmitResult<unknown> => submitHandlerSpy(event);
     }
 
     const createTransformComponent = createComponentFactory({
@@ -732,7 +734,7 @@ describe('IxFormComponent', () => {
 
       form = this.fb.group({ name: ['initial'] });
 
-      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+      handleSubmit = (event: FormSubmitEvent): SubmitResult<unknown> => submitHandlerSpy(event);
     }
 
     const createPreSubmitComponent = createComponentFactory({
@@ -825,7 +827,7 @@ describe('IxFormComponent', () => {
 
       form = this.fb.group({ name: [''] });
 
-      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+      handleSubmit = (event: FormSubmitEvent): SubmitResult<unknown> => submitHandlerSpy(event);
     }
 
     const createCancelComponent = createComponentFactory({
@@ -889,7 +891,7 @@ describe('IxFormComponent', () => {
 
       form = this.fb.group({ name: [''] });
 
-      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+      handleSubmit = (event: FormSubmitEvent): SubmitResult<unknown> => submitHandlerSpy(event);
     }
 
     const createSuppressComponent = createComponentFactory({
@@ -1090,7 +1092,7 @@ describe('IxFormComponent', () => {
         name: [''],
       });
 
-      handleSubmit = (event: FormSubmitEvent): SubmitResult => submitHandlerSpy(event);
+      handleSubmit = (event: FormSubmitEvent): SubmitResult<unknown> => submitHandlerSpy(event);
     }
 
     const createExternalLoadingComponent = createComponentFactory({
@@ -1337,5 +1339,57 @@ describe('IxFormComponent', () => {
       expect(ixForm.isSubmitting()).toBe(false);
       expect(sidePanelSpectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalled();
     }));
+
+    it('emits the closeWith payload through closed, so the host can hand it to its opener', () => {
+      const apiResult = { id: 42 };
+      submitHandlerSpy.mockReturnValue({
+        request$: of(apiResult),
+        successMessage: 'Saved!' as TranslatedString,
+        closeWith: (result: unknown) => ({ saved: result }),
+      });
+
+      const sidePanelSpectator = createSidePanelComponent({
+        providers: [{ provide: ixFormMinSubmitFeedbackMs, useValue: 0 }],
+      });
+      const ixForm = sidePanelSpectator.component.ixForm();
+      const closedSpy = jest.fn();
+      ixForm.closed.subscribe(closedSpy);
+
+      ixForm.submit();
+
+      expect(closedSpy).toHaveBeenCalledWith({ saved: apiResult });
+    });
+
+    it('skips the snackbar for a null successMessage, and warns that the save is silent', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation();
+      submitHandlerSpy.mockReturnValue({ request$: of({ id: 1 }), successMessage: null });
+
+      const sidePanelSpectator = createSidePanelComponent({
+        providers: [{ provide: ixFormMinSubmitFeedbackMs, useValue: 0 }],
+      });
+      sidePanelSpectator.component.ixForm().submit();
+
+      expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('null successMessage'));
+      warn.mockRestore();
+    });
+
+    it('stays silent for a null successMessage when the snackbar is suppressed', () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation();
+      submitHandlerSpy.mockReturnValue({ request$: of({ id: 1 }), successMessage: null });
+
+      const sidePanelSpectator = createSidePanelComponent({
+        providers: [{ provide: ixFormMinSubmitFeedbackMs, useValue: 0 }],
+        detectChanges: false,
+      });
+      sidePanelSpectator.component.suppressSnackbar = true;
+      sidePanelSpectator.detectChanges();
+
+      sidePanelSpectator.component.ixForm().submit();
+
+      expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+      expect(warn).not.toHaveBeenCalled();
+      warn.mockRestore();
+    });
   });
 });
