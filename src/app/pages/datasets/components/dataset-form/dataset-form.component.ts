@@ -267,8 +267,9 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
     return {
       request$: this.saveDataset(request$),
-      // The message depends on the saved record, so `onSaved` raises it instead.
-      announcesSuccessItself: true,
+      // The message depends on the saved record, so `onSaved` raises it instead — the form runs
+      // under `[suppressSuccessSnackbar]`, which is what makes this `null` deliberate.
+      successMessage: null,
       onSuccess: (result: unknown) => this.onSaved(...result as SaveDatasetResult),
       onError: (error: unknown) => {
         this.errorHandler.showErrorModal(error);

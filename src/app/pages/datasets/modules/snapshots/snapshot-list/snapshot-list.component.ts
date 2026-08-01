@@ -1,6 +1,6 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit,
-  computed, effect, inject, signal, viewChild,
+  computed, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -34,11 +34,12 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
-import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { getMachineTime, LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
@@ -130,13 +131,11 @@ export class SnapshotListComponent implements OnInit {
 
   protected readonly trackBySnapshotId = (_: number, row: ZfsSnapshot): string => row.name;
 
-  // tn-table allows multiple rows expanded at once and exposes no single-expand input, so we
-  // restore the previous ix-table single-expand behavior: whenever a second row opens we collapse
-  // back to just the newly-opened one. Diff against the previous set (rather than caching a single
-  // reference) so a data reload swapping in fresh row objects can't leave a stale reference behind.
-  private previousExpandedRows = new Set<unknown>();
-
-  private readonly sortByMap: Record<string, (row: ZfsSnapshot) => number> = {
+  /**
+   * `used`/`created`/`referenced` are display-only columns whose values live under `properties`,
+   * so they can't sort by the raw row value at their column name.
+   */
+  private readonly sortAccessors: Record<string, (row: ZfsSnapshot) => number> = {
     used: (row) => getFiniteNumber(row?.properties?.used?.parsed) ?? 0,
     created: (row) => getSnapshotCreationMs(row) ?? 0,
     referenced: (row) => getFiniteNumber(row?.properties?.referenced?.parsed) ?? 0,
@@ -173,21 +172,7 @@ export class SnapshotListComponent implements OnInit {
   constructor() {
     this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
 
-    effect(() => {
-      const table = this.table();
-      if (!table) {
-        return;
-      }
-      const expanded = table.expandedRows();
-      if (expanded.size <= 1) {
-        this.previousExpandedRows = new Set(expanded);
-        return;
-      }
-      const newest = [...expanded].find((row) => !this.previousExpandedRows.has(row));
-      const collapsed = newest ? new Set<unknown>([newest]) : new Set<unknown>();
-      this.previousExpandedRows = collapsed;
-      table.expandedRows.set(collapsed);
-    });
+    restrictToSingleExpandedRow(this.table);
 
     this.showExtraColumnsControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -318,20 +303,9 @@ export class SnapshotListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    const direction = event.direction === '' ? null : (event.direction as SortDirection);
-    // `dataset`/`snapshot_name` are real ZfsSnapshot keys the data provider can sort on
-    // directly. `used`/`created`/`referenced` are display-only columns whose values live
-    // under `properties`, so the cast is nominal for those — the sortByMap override below
-    // supplies the actual accessor and `propertyName` is never read for them.
-    const sorting: TableSort<ZfsSnapshot> = {
-      propertyName: direction ? (event.column as keyof ZfsSnapshot) : null,
-      direction,
-      active: null,
-    };
-    if (direction && this.sortByMap[event.column]) {
-      sorting.sortBy = this.sortByMap[event.column];
-    }
-    this.dataProvider.setSorting(sorting);
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort<ZfsSnapshot>(event, this.displayedColumns(), { sortAccessors: this.sortAccessors }),
+    );
   }
 
   protected onListFiltered(query: string): void {

@@ -4,6 +4,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { SmbSession } from 'app/interfaces/smb-status.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -93,6 +94,22 @@ describe('SmbSessionListComponent', () => {
         'AES-128-GMAC',
       ],
     ]);
+  });
+
+  it('sorts Signing by the cipher the cell shows, not by the object behind it', async () => {
+    spectator.inject(MockApiService).mockCall('smb.status', [
+      { ...sessions[0], session_id: 'a', signing: { cipher: 'AES-128-GMAC', degree: 'partial' } },
+      { ...sessions[0], session_id: 'b', signing: { cipher: '-', degree: 'none' } },
+    ] as SmbSession[]);
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(TnTableHarness);
+
+    await table.clickSortHeader('signing');
+
+    // The raw value is `{ cipher, degree }`; sorting by it leaves the rows in whatever order
+    // lodash makes of two objects. The column's `getValue` gives the cipher to sort by instead.
+    expect((await table.getAllRowTexts()).map((row) => row[9])).toEqual(['-', 'AES-128-GMAC']);
   });
 
   it('should call loadData when Refresh button is pressed', async () => {

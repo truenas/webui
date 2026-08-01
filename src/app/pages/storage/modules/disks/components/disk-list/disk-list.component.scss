@@ -1,3 +1,9 @@
+@import 'mixins/a11y';
+
+.sr-only {
+  @include visually-hidden;
+}
+
 .batch-actions-toolbar {
   background: var(--bg2);
   border-bottom: 1px solid var(--lines);
@@ -5,6 +11,11 @@
 
   .title {
     padding: 16px 28px 8px;
+
+    .selection-count {
+      color: var(--fg2);
+      margin-left: 8px;
+    }
   }
 
   .actions {

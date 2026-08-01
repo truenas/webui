@@ -12,8 +12,10 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import {
+  DiskFormComponent, DiskFormResponse,
+} from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import {
   ReplaceDiskDialog,
   ReplaceDiskDialogData,
@@ -35,7 +37,7 @@ import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.s
 })
 export class DiskInfoCardComponent {
   private tnDialog = inject(TnDialog);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private route = inject(ActivatedRoute);
   private vDevsStore = inject(VDevsStore);
   private translate = inject(TranslateService);
@@ -85,12 +87,15 @@ export class DiskInfoCardComponent {
     };
   });
 
-  onEdit(): void {
-    this.slideIn.open(DiskFormComponent, { data: this.disk() })
+  private onEdit(): void {
+    this.formPanel.open<DiskFormResponse>(DiskFormComponent, {
+      title: this.translate.instant('Edit Disk'),
+      inputs: { diskToEdit: this.disk() },
+    })
       .onSuccess(() => this.vDevsStore.reloadList(), this.destroyRef);
   }
 
-  onReplace(): void {
+  private onReplace(): void {
     const poolId = this.route.snapshot.params.poolId as string;
     this.tnDialog
       .open(ReplaceDiskDialog, {

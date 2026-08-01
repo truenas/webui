@@ -71,34 +71,56 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
   changedValues: Partial<T>;
 }
 
-interface SubmitResultBase {
-  request$: Observable<unknown>;
+/**
+ * Shared shape of a submit descriptor. Consumers write {@link SubmitResult}, which layers the
+ * "`closeWith` is mandatory once `R` isn't boolean" rule on top of this.
+ *
+ * @typeParam R payload the form closes with (see {@link SubmitResult.closeWith}).
+ * @typeParam TResult what `request$` emits; types all three callbacks.
+ */
+interface SubmitResultBase<R, TResult> {
+  request$: Observable<TResult>;
+
+  /**
+   * Success snackbar text. Required, but nullable: pass `null` — visibly, at the callsite — for a
+   * form that raises its own snackbar (or deliberately raises none) under
+   * `[suppressSuccessSnackbar]`. A `null` without that input set is a silent save, and warns in
+   * dev mode.
+   */
+  successMessage: TranslatedString | null;
 
   /** Runs after success, before close (store/navigation fire pre-animation). */
-  onSuccess?: (result: unknown) => void;
+  onSuccess?: (result: TResult) => void;
 
   /** Return true if handled, to skip the default form error handler. */
   onError?: (error: unknown) => boolean;
 
   /**
-   * Payload the slide-in closes with (default: raw request$ result). An emitted
-   * `undefined` is coerced to `true` since SlideInResponse reads `undefined` as
-   * a cancel — set this when listeners must see the real value.
+   * Shapes the payload the form closes with. The SlideIn host closes the slide-in with it
+   * (default: the raw request$ result; an `undefined` is coerced to `true` since SlideInResponse
+   * reads `undefined` as a cancel). The `<tn-side-panel>` host emits it through
+   * {@link IxFormComponent.closed}, which is how a panel-hosted form hands the saved record back
+   * to its opener — without it that output carries a bare `true`.
+   *
+   * IMPORTANT — under the `<tn-side-panel>` host, only a TRUTHY payload counts as a save; never
+   * return `0`, `''`, `null` or `false` to mean one. `FormSidePanelService.open` documents the
+   * rule and owns the coercion.
    */
-  closeWith?: (result: unknown) => unknown;
+  closeWith?: (result: TResult) => R;
 }
 
 /**
- * What a `submitHandler` returns. Every save must confirm itself to the user, so the success
- * message is mandatory — with exactly one escape hatch, for forms whose message depends on the
- * saved record (or that deliberately stay silent) and therefore raise it from `onSuccess`. That
- * case is spelled `announcesSuccessItself: true` rather than an omitted field, so "forgot the
- * message" is a compile error instead of a silent save nobody notices.
+ * Descriptor a `submitHandler` returns: the request plus how to report and close.
+ *
+ * `closeWith` is optional only while `R` admits `boolean` — declare a richer `R` and the compiler
+ * demands one, so a form can't promise its opener a record and silently deliver `true`.
+ *
+ * @typeParam R payload the form closes with; defaults to `boolean` ("saved", nothing to hand back).
+ * @typeParam TResult what `request$` emits — types `onSuccess`/`closeWith`'s argument.
  */
-export type SubmitResult = SubmitResultBase & (
-  | { successMessage: TranslatedString; announcesSuccessItself?: never }
-  | { successMessage?: never; announcesSuccessItself: true }
-);
+export type SubmitResult<R = boolean, TResult = unknown> = boolean extends R
+  ? SubmitResultBase<R, TResult>
+  : SubmitResultBase<R, TResult> & { closeWith: (result: TResult) => R };
 
 /**
  * Unified form wrapper: modal header + card + save/actions chrome, change
@@ -123,6 +145,11 @@ export type SubmitResult = SubmitResultBase & (
  *
  * Input surface is FROZEN: no new top-level inputs without team review — keep
  * outlier forms bespoke rather than grow this API.
+ *
+ * @typeParam T form value shape
+ * @typeParam R payload {@link closed} carries in the side-panel host; inferred from the
+ *   `submitHandler`'s {@link SubmitResult} and defaulting to `boolean`.
+ * @typeParam TResult what the handler's `request$` emits; inferred alongside `R`.
  */
 @Component({
   selector: 'ix-form',
@@ -138,7 +165,11 @@ export type SubmitResult = SubmitResultBase & (
     TranslateModule,
   ],
 })
-export class IxFormComponent<T extends object = Record<string, unknown>> implements OnInit {
+export class IxFormComponent<
+  T extends object = Record<string, unknown>,
+  R = boolean,
+  TResult = unknown,
+> implements OnInit {
   // Input surface is FROZEN (see class JSDoc): no new top-level inputs without
   // team review; keep outlier forms bespoke.
 
@@ -175,7 +206,7 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * Type the handler as `(event: FormSubmitEvent<MyShape>) => SubmitResult` for
    * type safety — templates can't pass the generic.
    */
-  readonly submitHandler = input.required<(event: FormSubmitEvent<T>) => SubmitResult>();
+  readonly submitHandler = input.required<(event: FormSubmitEvent<T>) => SubmitResult<R, TResult>>();
 
   /** Hook before submitHandler: return a modified event, or `false` to cancel. */
   readonly preSubmit = input<((event: FormSubmitEvent<T>) => FormSubmitEvent<T> | false) | null>(null);
@@ -218,8 +249,13 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
    * `<tn-side-panel>`, where {@link slideInRef} is absent). The host listens to
    * close its panel and reload. In SlideIn mode this never fires — the slide-in
    * is closed directly via {@link slideInRef}.
+   *
+   * Carries the payload from the submit's {@link SubmitResult.closeWith}, so a host whose opener
+   * needs the saved record can forward it straight through; without a `closeWith` it is a bare
+   * `true` (and `R` stays `boolean`). Note `FormSidePanelService` reads a FALSY payload here as a
+   * cancel — see the caveat on `SubmitResult.closeWith`.
    */
-  readonly closed = output<boolean>();
+  readonly closed = output<R>();
 
   /**
    * Live form validity for hosts that own the Save action (the `<tn-side-panel>`
@@ -357,9 +393,11 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
       event = result;
     }
 
+    // Read through the base shape: `SubmitResult`'s conditional only tightens `closeWith` for
+    // callers, and stays unresolved while `R` is still a type parameter here.
     const {
       request$, successMessage, onSuccess, onError, closeWith,
-    } = this.submitHandler()(event);
+    }: SubmitResultBase<R, TResult> = this.submitHandler()(event);
 
     this.isSubmitting.set(true);
     let handledSuccess = false;
@@ -374,17 +412,22 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
       ? forkJoin([request$.pipe(take(1)), timer(this.minSubmitFeedbackMs)]).pipe(map(([result]) => result))
       : request$.pipe(take(1));
     submit$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (result: unknown) => {
+      next: (result: TResult) => {
         handledSuccess = true;
         this.hadSuccessfulSubmit = true;
-        // `successMessage` is absent only on the `announcesSuccessItself` arm of SubmitResult,
-        // where the form raises its own message from `onSuccess` below.
-        if (successMessage && !this.suppressSuccessSnackbar()) {
-          this.snackbar.success(successMessage);
+        if (!this.suppressSuccessSnackbar()) {
+          if (successMessage) {
+            this.snackbar.success(successMessage);
+          } else if (isDevMode()) {
+            console.warn(
+              '[ix-form] submitHandler returned a null successMessage and suppressSuccessSnackbar is not '
+              + 'set, so this save gives the user no confirmation. Provide a successMessage, or set '
+              + '[suppressSuccessSnackbar] if the form reports success some other way.',
+            );
+          }
         }
         onSuccess?.(result);
-        const payload = closeWith ? closeWith(result) : result;
-        this.finishClose(payload);
+        this.finishClose(result, closeWith);
         // Reset after close so a sync-complete observable doesn't flash Save enabled.
         this.isSubmitting.set(false);
       },
@@ -405,18 +448,22 @@ export class IxFormComponent<T extends object = Record<string, unknown>> impleme
   }
 
   /**
-   * Closes through whichever host opened the form. SlideIn host: closes the
-   * slide-in with the payload (coercing `undefined`→`true` so a void-endpoint
-   * success isn't read as a cancel). Side-panel host: emits {@link closed} so the
-   * host tears down its panel; the payload isn't forwarded (the host reloads from
-   * its own source / the submit's `onSuccess` already updated any store).
+   * Closes through whichever host opened the form, handing back whatever `closeWith` shaped.
+   * SlideIn host: closes the slide-in with it (coercing `undefined`→`true` so a void-endpoint
+   * success isn't read as a cancel), defaulting to the raw request result. Side-panel host: emits
+   * it through {@link closed}, defaulting to `true` — with no `closeWith` there is nothing typed
+   * to forward, and the host reloads from its own source anyway.
    */
-  private finishClose(payload: unknown): void {
+  private finishClose(result: TResult, closeWith?: (result: TResult) => R): void {
     if (!this.slideInRef) {
-      this.closed.emit(true);
+      // `SubmitResult` makes `closeWith` mandatory unless `R` admits `boolean`, so reaching this
+      // branch without one means `R` is (or includes) `boolean` and `true` is a valid payload.
+      // The cast only exists because TS can't narrow `R` from the absent property.
+      this.closed.emit(closeWith ? closeWith(result) : (true as R & boolean));
       return;
     }
 
+    const payload = closeWith ? closeWith(result) : result;
     if (payload === undefined) {
       if (isDevMode()) {
         console.warn(
