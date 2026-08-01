@@ -1,3 +1,5 @@
+@import 'mixins/a11y';
+
 // TEMP: reaches into a @truenas/ui-components internal class because the shell's
 // `title` input only accepts a string; remove once tn-dialog-shell exposes a
 // supported title template / projection slot.
@@ -55,3 +57,6 @@
   }
 }
 
+.sr-only {
+  @include visually-hidden;
+}

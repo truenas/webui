@@ -3,7 +3,6 @@ export interface SnmpConfig {
   contact: string;
   id: number;
   location: string;
-  loglevel: number;
   options: string;
   traps: boolean;
   v3: boolean;

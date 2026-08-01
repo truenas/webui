@@ -16,7 +16,6 @@ import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-vali
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -74,7 +73,6 @@ export class ServiceSnmpComponent extends SidePanelForm implements OnInit {
 
     options: [''],
     zilstat: [false],
-    loglevel: [null as number | null],
   });
 
   readonly tooltips = {
@@ -88,13 +86,10 @@ export class ServiceSnmpComponent extends SidePanelForm implements OnInit {
     v3_privproto: helptextServiceSnmp.v3.privprotoTooltip,
     v3_privpassphrase: helptextServiceSnmp.v3.privpassphraseTooltip,
     options: helptextServiceSnmp.optionsTooltip,
-    loglevel: helptextServiceSnmp.loglevelTooltip,
   };
 
   readonly authtypeOptions = helptextServiceSnmp.v3.authTypeOptions;
   readonly privprotoOptions = helptextServiceSnmp.v3.privprotoOptions;
-  // tn-select does not translate option labels, so translate up-front.
-  readonly logLevelOptions = translateOptions(this.translate, helptextServiceSnmp.loglevelOptions);
 
   readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 

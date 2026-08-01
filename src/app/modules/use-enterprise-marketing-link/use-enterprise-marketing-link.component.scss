@@ -4,8 +4,8 @@
   margin: 0 auto;
 }
 
-a {
-  cursor: pointer;
+a,
+.no-link {
   display: block;
   margin-bottom: 2px;
   text-align: center;
@@ -20,4 +20,8 @@ a {
       margin-bottom: 10px;
     }
   }
+}
+
+a {
+  cursor: pointer;
 }
