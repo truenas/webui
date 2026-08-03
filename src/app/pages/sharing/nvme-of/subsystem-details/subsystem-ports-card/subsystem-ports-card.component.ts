@@ -11,7 +11,7 @@ import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { normalizeTestId } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 import { AddPortMenuComponent } from 'app/pages/sharing/nvme-of/ports/add-port-menu/add-port-menu.component';
 import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-description/port-description.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
@@ -53,8 +53,12 @@ export class SubsystemPortsCardComponent {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
+  /**
+   * Ports with no `addr_trsvcid` (FC, RDMA) lose the literal `-undefined` suffix the
+   * pre-migration id carried — see `addPortTestId` in add-port-menu for the full note.
+   */
   protected removePortTestId(port: NvmeOfPort): string[] {
-    return normalizeTestId(['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]);
+    return normalizeTestIdParts(['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]);
   }
 
   protected onPortAdded(port: NvmeOfPort): void {

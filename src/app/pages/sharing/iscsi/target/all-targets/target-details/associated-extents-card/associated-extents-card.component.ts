@@ -16,7 +16,7 @@ import {
 } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-target-form/associated-target-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -50,7 +50,7 @@ export class AssociatedExtentsCardComponent {
 
   // No convertStringToId here: the legacy path was a raw [ixTest] array (no table config),
   // and its lowercasing would destroy the camelCase boundaries lodash kebab splits on.
-  protected readonly targetTestIdSlug = computed(() => normalizeTestIdSegment(this.target().name));
+  protected readonly targetTestIdSlug = computed(() => normalizeTestIdString(this.target().name));
 
   readonly isLoadingExtents = signal<boolean>(false);
   readonly targetExtents = signal<IscsiTargetExtent[]>([]);

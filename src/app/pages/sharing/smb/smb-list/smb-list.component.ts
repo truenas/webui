@@ -36,7 +36,7 @@ import {
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -214,7 +214,7 @@ export class SmbListComponent implements OnInit {
   protected readonly trackBySmbId = (_index: number, row: SmbShare): number => row.id;
 
   protected uniqueRowTag(row: SmbShare): string {
-    return normalizeTestIdSegment(convertStringToId('smb-' + row.name));
+    return normalizeTestIdString(convertStringToId('smb-' + row.name));
   }
 
   protected ariaLabel(row: SmbShare): string {

@@ -23,7 +23,7 @@ import {
   convertStringToId, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { targetListElements } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.elements';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 
@@ -89,7 +89,7 @@ export class TargetListComponent implements OnInit {
   protected readonly trackByTargetId = (_index: number, row: IscsiTarget): number => row.id;
 
   protected uniqueRowTag(row: IscsiTarget): string {
-    return normalizeTestIdSegment(convertStringToId('iscsi-target-' + row.name));
+    return normalizeTestIdString(convertStringToId('iscsi-target-' + row.name));
   }
 
   protected modeLabel(row: IscsiTarget): string {

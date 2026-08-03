@@ -26,7 +26,7 @@ import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
@@ -133,7 +133,7 @@ export class PortalListComponent implements OnInit {
   protected readonly trackByPortalId = (_index: number, row: IscsiPortal): number => row.id;
 
   protected uniqueRowTag(row: IscsiPortal): string {
-    return normalizeTestIdSegment(convertStringToId('iscsi-portal-' + row.comment));
+    return normalizeTestIdString(convertStringToId('iscsi-portal-' + row.comment));
   }
 
   protected ariaLabel(row: IscsiPortal): string {

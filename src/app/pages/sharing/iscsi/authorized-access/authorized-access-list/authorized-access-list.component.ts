@@ -25,7 +25,7 @@ import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -137,7 +137,7 @@ export class AuthorizedAccessListComponent implements OnInit {
   protected readonly trackByAuthId = (_index: number, row: IscsiAuthAccess): number => row.id;
 
   protected uniqueRowTag(row: IscsiAuthAccess): string {
-    return normalizeTestIdSegment(convertStringToId('iscsi-authorized-access-' + row.user + '-' + row.peeruser));
+    return normalizeTestIdString(convertStringToId('iscsi-authorized-access-' + row.user + '-' + row.peeruser));
   }
 
   protected ariaLabel(row: IscsiAuthAccess): string {

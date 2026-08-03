@@ -19,7 +19,7 @@ import { TableColumnPickerComponent } from 'app/modules/ix-table/components/tabl
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -103,7 +103,7 @@ export class SmbNotificationListComponent implements OnInit {
   }
 
   protected uniqueRowTag(row: SmbNotificationInfo): string {
-    return normalizeTestIdSegment(
+    return normalizeTestIdString(
       convertStringToId('smb-notification-' + row.creation_time + '-' + row.server_id.unique_id),
     );
   }

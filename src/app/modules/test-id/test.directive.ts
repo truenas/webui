@@ -1,5 +1,5 @@
 import { Directive, ElementRef, HostBinding, input, inject } from '@angular/core';
-import { normalizeTestId, SupportedTestId } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdParts, SupportedTestId } from 'app/modules/test-id/normalize-test-id.utils';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 
 /**
@@ -28,7 +28,7 @@ export class TestDirective {
 
   get normalizedDescription(): string[] {
     const description = this.overrideDirective?.overrideDescription() ?? this.description();
-    const normalizedDescription = normalizeTestId(description);
+    const normalizedDescription = normalizeTestIdParts(description);
 
     if (this.overrideDirective?.keepLastPart()) {
       const initialDescription = this.description();

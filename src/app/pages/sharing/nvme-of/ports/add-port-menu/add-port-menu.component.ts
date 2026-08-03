@@ -11,7 +11,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestId } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 import { ManagePortsDialog } from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
 import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-description/port-description.component';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
@@ -54,8 +54,16 @@ export class AddPortMenuComponent {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
+  /**
+   * `addr_trsvcid` is optional (FC and RDMA ports carry none), and
+   * {@link normalizeTestIdParts} drops empty segments — so those rows now resolve to
+   * `add-port-fc-<addr>` where the pre-migration code stringified the missing value and
+   * emitted a literal `add-port-fc-<addr>-undefined`. Deliberate: the trailing `undefined`
+   * was a bug, and RE has been told the ids of those rows change. Every port that does have
+   * a service id is unaffected.
+   */
   protected addPortTestId(port: NvmeOfPort): string[] {
-    return normalizeTestId(['add-port', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]);
+    return normalizeTestIdParts(['add-port', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]);
   }
 
   protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');

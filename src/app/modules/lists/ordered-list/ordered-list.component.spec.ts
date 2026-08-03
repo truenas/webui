@@ -33,8 +33,9 @@ describe('OrderedListboxComponent', () => {
     ],
   });
 
-  // The stored value has to be written before the first change detection: the options
-  // are only ordered against it when they arrive, in `ngOnInit`.
+  // Writes the stored value the way a form does on load: before the options arrive, so
+  // they are ordered against it in `ngOnInit`. See the late-write case below for the
+  // other order.
   function setUpWith(value: BaseOptionValueType[]): void {
     spectator = createComponent({
       props: { options: of(options) },
@@ -79,6 +80,18 @@ describe('OrderedListboxComponent', () => {
     const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
 
     expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth1', 'eth0', 'eth2']);
+  });
+
+  // A `patchValue` from a late-resolving request lands after the options have emitted,
+  // so the rows have to be reordered by `writeValue` itself rather than by `ngOnInit`.
+  it('reorders the options when a value is written after they have arrived', async () => {
+    spectator.component.writeValue(['eth1']);
+    spectator.detectChanges();
+
+    const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
+
+    expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth1', 'eth2', 'eth0']);
+    expect(await Promise.all(toggles.map((toggle) => toggle.isChecked()))).toEqual([true, false, false]);
   });
 
   it('lists every option unchecked when the control has no value', async () => {

@@ -1,3 +1,8 @@
 :host {
   display: block;
 }
+
+// Set by the component when [fullWidth] is on, so consumers can still override it.
+:host(.full-width) {
+  width: 100%;
+}

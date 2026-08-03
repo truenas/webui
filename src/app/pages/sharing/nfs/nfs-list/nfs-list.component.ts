@@ -34,7 +34,7 @@ import {
 } from 'app/modules/ix-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -184,7 +184,7 @@ export class NfsListComponent implements OnInit {
   protected readonly trackByNfsId = (_index: number, row: NfsShare): number => row.id;
 
   protected uniqueRowTag(row: NfsShare): string {
-    return normalizeTestIdSegment(convertStringToId('nfs-share-' + row.path + '-' + row.comment));
+    return normalizeTestIdString(convertStringToId('nfs-share-' + row.path + '-' + row.comment));
   }
 
   protected ariaLabel(row: NfsShare): string {

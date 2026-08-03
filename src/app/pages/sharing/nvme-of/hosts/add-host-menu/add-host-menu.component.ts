@@ -11,7 +11,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 import { ManageHostsDialog } from 'app/pages/sharing/nvme-of/hosts/manage-hosts/manage-hosts-dialog.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -56,7 +56,7 @@ export class AddHostMenuComponent {
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected hostTestIdSlug(host: NvmeOfHost): string {
-    return normalizeTestIdSegment(host.hostnqn);
+    return normalizeTestIdString(host.hostnqn);
   }
 
   protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');

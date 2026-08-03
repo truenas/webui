@@ -25,7 +25,7 @@ import { TableColumnPickerComponent } from 'app/modules/ix-table/components/tabl
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { initiatorListElements } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.elements';
@@ -125,7 +125,7 @@ export class InitiatorListComponent implements OnInit {
   protected readonly trackByInitiatorId = (_index: number, row: IscsiInitiatorGroup): number => row.id;
 
   protected uniqueRowTag(row: IscsiInitiatorGroup): string {
-    return normalizeTestIdSegment(convertStringToId(`iscsi-initiator-${row.id}`));
+    return normalizeTestIdString(convertStringToId(`iscsi-initiator-${row.id}`));
   }
 
   protected ariaLabel(row: IscsiInitiatorGroup): string {

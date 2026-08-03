@@ -44,7 +44,7 @@ import {
   convertStringToId, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -183,7 +183,7 @@ export class IscsiCardComponent implements OnInit {
   protected readonly trackByIscsiId = (_index: number, row: IscsiTarget): number => row.id;
 
   protected uniqueRowTag(row: IscsiTarget): string {
-    return normalizeTestIdSegment(convertStringToId('card-iscsi-target-' + row.name));
+    return normalizeTestIdString(convertStringToId('card-iscsi-target-' + row.name));
   }
 
   protected ariaLabel(row: IscsiTarget): string {

@@ -20,7 +20,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { convertStringToId, dataProviderRows } from 'app/modules/ix-table/utils';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -96,7 +96,7 @@ export class FibreChannelPortsComponent implements OnInit {
   protected readonly trackByPortName = (_index: number, row: FibreChannelPortRow): string => row.name;
 
   protected uniqueRowTag(row: FibreChannelPortRow): string {
-    return normalizeTestIdSegment(convertStringToId('fibre-channel-port-' + row.name));
+    return normalizeTestIdString(convertStringToId('fibre-channel-port-' + row.name));
   }
 
   protected ariaLabel(row: FibreChannelPortRow): string {

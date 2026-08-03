@@ -317,7 +317,7 @@ library APIs directly and carries no `::ng-deep` workaround for them.
 | # | Library gap | Fix | Now used by |
 |---|---|---|---|
 | 1 | `tn-list-item`'s `[tnListIcon]` / `[tnListAvatar]` / `[tnListItemLine]` / `[tnListItemTrailing]` slots never rendered: the flags gating them were set from a `querySelector` in `ngAfterContentInit`, which cannot see content whose slot has not rendered yet. | Signal `contentChildren` queries | `dual-listbox`, `ordered-list`, `network-configuration-card` |
-| 2 | No dense / wrapping `tn-list-item` variant — fixed at 48px rows and single-line ellipsis. | `[dense]` and `[wrap]` inputs | `network-configuration-card` (`[dense]`), `dual-listbox` (`[wrap]`) |
+| 2 | No dense / wrapping `tn-list-item` variant — fixed at 48px rows and single-line ellipsis. | `[dense]` and `[wrap]` inputs | `network-configuration-card` (`[dense]`), `dual-listbox` and `widget-sys-info-active` (`[wrap]`) |
 | 3 | No full-width `tn-button`. | `[fullWidth]` input | `ix-oauth-button`, which re-exposes its own `fullWidth` |
 | 4 | No full-width `tn-slide-toggle` — `inline-flex`, so it shrink-wraps its label and track. | `[fullWidth]` input | `ordered-list` |
 
@@ -340,6 +340,11 @@ workarounds under gap 5 live in `src/assets/styles/mixins/tn-list.scss` (alongsi
 existing `mixins/tn-card.scss` and `mixins/tn-table.scss`) rather than being spelled out
 per consumer. A library class rename is then a one-file fix, and each gap disappears
 with a single edit once the corresponding input ships.
+
+That only holds while the mixins are the *only* place the classes are named, so keep
+`grep -rn 'tn-list-item__' src` returning nothing outside `mixins/tn-list.scss` (and gap 8's
+spec query). A new consumer reaching for `::ng-deep` should either use the mixin or, if no
+mixin fits, add one.
 
 ### Local library builds
 

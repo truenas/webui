@@ -28,7 +28,7 @@ import {
 } from 'app/modules/ix-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import {
@@ -140,7 +140,7 @@ export class ExtentListComponent implements OnInit {
   protected readonly trackByExtentId = (_index: number, row: IscsiExtent): number => row.id;
 
   protected uniqueRowTag(row: IscsiExtent): string {
-    return normalizeTestIdSegment(convertStringToId('iscsi-extent-' + row.name));
+    return normalizeTestIdString(convertStringToId('iscsi-extent-' + row.name));
   }
 
   protected ariaLabel(row: IscsiExtent): string {

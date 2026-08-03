@@ -20,7 +20,7 @@ import { TableColumnPickerComponent } from 'app/modules/ix-table/components/tabl
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SmbOpenFilesComponent } from 'app/pages/sharing/smb/smb-status/components/smb-open-files/smb-open-files.component';
 
@@ -140,7 +140,7 @@ export class SmbLockListComponent implements OnInit {
   }
 
   protected uniqueRowTag(row: SmbLockInfo): string {
-    return normalizeTestIdSegment(
+    return normalizeTestIdString(
       convertStringToId(`smb-lock-${row.filename}-${row.fileid.devid}-${row.fileid.extid}`),
     );
   }

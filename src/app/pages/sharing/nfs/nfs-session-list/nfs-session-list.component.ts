@@ -22,7 +22,7 @@ import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
 
@@ -166,11 +166,11 @@ export class NfsSessionListComponent implements OnInit {
   }
 
   protected uniqueRowTag3(row: Nfs3Session): string {
-    return normalizeTestIdSegment(convertStringToId('nfs3-session-' + row.export + '-' + row.ip));
+    return normalizeTestIdString(convertStringToId('nfs3-session-' + row.export + '-' + row.ip));
   }
 
   protected uniqueRowTag4(row: Nfs4Session['info']): string {
-    return normalizeTestIdSegment(convertStringToId(`nfs4-session-${row.address}-${row.clientid}`));
+    return normalizeTestIdString(convertStringToId(`nfs4-session-${row.address}-${row.clientid}`));
   }
 
   ngOnInit(): void {

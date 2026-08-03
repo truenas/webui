@@ -3,7 +3,7 @@ import { kebabCase } from 'lodash-es';
 export type SupportedTestId = number | string | null | undefined | (string | number | null | undefined)[];
 
 /**
- * Normalizes one test-id segment the way `[ixTest]` always has: lodash `kebabCase`.
+ * Normalizes one already-joined test id the way `[ixTest]` always has: lodash `kebabCase`.
  *
  * `@truenas/ui-components` normalizes `testId` values too, but it does not split
  * letter→digit boundaries the way lodash does, so `eth0` stays `eth0` where
@@ -13,21 +13,26 @@ export type SupportedTestId = number | string | null | undefined | (string | num
  * library's `[tnTestId]` directive, and the tn-* components' own `testId` inputs.
  * Static ids need no such treatment.
  *
- * Use this for an already-joined id (a table row tag, typically) and
- * {@link normalizeTestId} when the id is built from separate segments.
+ * Use this for a single string (a table row tag, typically) and
+ * {@link normalizeTestIdParts} when the id is built from separate segments.
  *
  * See NAS-141021.
  */
-export function normalizeTestIdSegment(segment: string | number): string {
-  return kebabCase(String(segment));
+export function normalizeTestIdString(id: string | number): string {
+  return kebabCase(String(id));
 }
 
 /**
- * Segment-wise form of {@link normalizeTestIdSegment}, with empty segments dropped.
+ * Segment-wise form of {@link normalizeTestIdString}, with empty segments dropped.
  * This is what `[ixTest]` applies to its own `string | string[]` input.
+ *
+ * Note that dropping empties is what `[ixTest]` did, so it is byte-identical for
+ * anything that already went through the directive — but a call site that used to
+ * stringify an optional value itself (`kebabCase(String(maybeUndefined))`) loses its
+ * literal `undefined` segment here. See `addPortTestId` in add-port-menu.
  */
-export function normalizeTestId(segments: SupportedTestId): string[] {
+export function normalizeTestIdParts(segments: SupportedTestId): string[] {
   return (Array.isArray(segments) ? segments : [segments])
     .filter((part): part is string | number => Boolean(part))
-    .map((part) => normalizeTestIdSegment(part));
+    .map((part) => normalizeTestIdString(part));
 }

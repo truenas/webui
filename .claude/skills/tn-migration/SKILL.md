@@ -662,15 +662,20 @@ the component's `testId` input, and the library assembles `${type}-${base}`, keb
 ```
 
 Verified prefixes: `tn-button`/`tn-icon-button` → `button`, `tn-card` title link → `link`,
-`tn-menu-item` → `menu-item`, `tn-select` → `select` (options `option`), `tn-checkbox` →
+`tn-menu-item` → `button` (the owning `tn-menu-panel` renders each item as a button and
+declares `tnTestIdType="button"`), `tn-select` → `select` (options `option`), `tn-checkbox` →
 `checkbox`, `tn-radio` → `radio`, `tn-slide-toggle` → `toggle`, `tn-input` → `input`
 (textarea `textarea`), `tn-button-toggle` → `button-toggle`. Exception: `tn-table`,
 `tn-tree`, `tn-selection-list`, `tn-calendar` are **not yet typed** — they write `testId`
 verbatim, so pass the full value (prefix included) on those.
 
 Two properties make this safe:
-- **Kebab-parity** with the legacy directive (mirrors lodash `kebabCase`), so a migrated
-  base resolves byte-identically (`sshPort` → `ssh-port`).
+- **Kebab-parity** with the legacy directive for a *static* base, so it resolves
+  byte-identically (`sshPort` → `ssh-port`). It is **not** parity for values carrying
+  digits: the library does not split a letter→digit boundary the way lodash does, so
+  `eth0` stays `eth0` where `[ixTest]` produced `eth-0`. Pre-normalize any **dynamic**
+  value with `normalizeTestIdString` / `normalizeTestIdParts`
+  (`app/modules/test-id/normalize-test-id.utils`) before handing it to a `testId` input.
 - **Idempotent prefix** — a base that already starts with its prefix is not doubled
   (`button-save` stays `button-save`). The migration is therefore order-independent, but
   **pass the bare semantic base** (`'save'`, not `'button-save'`) — let the component supply

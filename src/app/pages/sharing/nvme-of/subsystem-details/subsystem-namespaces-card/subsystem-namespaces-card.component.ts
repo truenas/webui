@@ -13,7 +13,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfNamespace, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import {
   NamespaceDescriptionComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/namespace-description/namespace-description.component';
@@ -57,7 +57,7 @@ export class SubsystemNamespacesCardComponent {
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected namespaceTestIdSlug(namespace: NvmeOfNamespace): string {
-    return normalizeTestIdSegment(namespace.device_path);
+    return normalizeTestIdString(namespace.device_path);
   }
 
   protected onAddNamespace(): void {

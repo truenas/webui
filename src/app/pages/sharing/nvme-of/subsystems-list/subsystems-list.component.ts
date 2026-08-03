@@ -12,7 +12,7 @@ import { searchDelayConst } from 'app/modules/global-search/constants/delay.cons
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/modules/ix-table/utils';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystem-name-cell/subsystem-name-cell.component';
 
 @Component({
@@ -60,7 +60,7 @@ export class SubsystemsListComponent {
   protected readonly trackBySubsystemId = (_: number, row: NvmeOfSubsystemDetails): number => row.id;
 
   protected uniqueRowTag(row: NvmeOfSubsystemDetails): string {
-    return normalizeTestIdSegment(convertStringToId('nvmeof-subsys-' + row.name));
+    return normalizeTestIdString(convertStringToId('nvmeof-subsys-' + row.name));
   }
 
   constructor() {

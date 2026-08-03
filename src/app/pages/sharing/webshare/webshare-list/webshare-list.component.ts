@@ -33,7 +33,7 @@ import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdSegment } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -163,7 +163,7 @@ export class WebShareListComponent implements OnInit {
   protected readonly trackByWebShareId = (_index: number, row: WebShareTableRow): number => row.id;
 
   protected uniqueRowTag(row: WebShareTableRow): string {
-    return normalizeTestIdSegment(convertStringToId(row.name));
+    return normalizeTestIdString(convertStringToId(row.name));
   }
 
   protected ariaLabel(row: WebShareTableRow): string {

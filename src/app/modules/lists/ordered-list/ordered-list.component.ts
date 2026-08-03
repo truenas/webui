@@ -17,7 +17,7 @@ import { Observable } from 'rxjs';
 import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { normalizeTestId } from 'app/modules/test-id/normalize-test-id.utils';
+import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 interface OrderedOption extends Option {
@@ -26,7 +26,7 @@ interface OrderedOption extends Option {
    * leave as-is where `[ixTest]` produced `eth-0`. Normalizing once, when the
    * options arrive, keeps `toggle-lag-ports-eth-0` intact without rebuilding the
    * array on every change detection pass. The `toggle` prefix comes from
-   * `tn-slide-toggle`. See {@link normalizeTestId}.
+   * `tn-slide-toggle`. See {@link normalizeTestIdParts}.
    */
   testId: string[];
 }
@@ -81,6 +81,13 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
 
   writeValue(value: BaseOptionValueType[]): void {
     this.value = value ?? [];
+    // The options usually arrive after the first `writeValue` and are ordered against the
+    // stored value in `ngOnInit`. A value written *after* they arrive (a `patchValue` from a
+    // late-resolving request) has to reorder the rows itself, or the toggles would flip while
+    // the rows stayed in the order the options came in.
+    if (this.items) {
+      this.orderOptions();
+    }
     this.cdr.markForCheck();
   }
 
@@ -115,7 +122,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
     this.options().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((options) => {
       this.items = options.map((option) => ({
         ...option,
-        testId: normalizeTestId([this.controlDirective.name, option.label]),
+        testId: normalizeTestIdParts([this.controlDirective.name, option.label]),
       }));
       this.orderOptions();
       this.cdr.markForCheck();
