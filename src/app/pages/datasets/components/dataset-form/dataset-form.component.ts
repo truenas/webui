@@ -22,6 +22,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -68,6 +69,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   private datasetFormService = inject(DatasetFormService);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
 
@@ -95,25 +97,21 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   form = new FormGroup({});
 
   /**
-   * Mirrors the template's `@if`s rather than AND-ing all four signals: a section that unmounts
-   * leaves its last emission behind, and gating a section that isn't on screen would disable Save
-   * with nothing to fix — invalidate a quota, click Basic Options, and it would stay stuck for the
-   * life of the panel.
+   * A plain AND, because each signal is kept meaningful whether or not its section is on screen.
    *
-   * This covers only the unmount direction; the remount direction is the section's own
-   * responsibility — `QuotasSectionComponent` emits its current validity on mount (`startWith`), so
-   * a fresh, valid instance clears the stale `false` its predecessor left here.
+   * Quotas is the only section that comes and goes (with the Advanced toggle), and both directions
+   * are covered: {@link toggleAdvancedMode} resets its signal on the way out, so a section that
+   * isn't on screen can't disable Save with nothing to fix, and `QuotasSectionComponent` emits its
+   * current validity on mount, so a fresh instance reports itself immediately.
    *
-   * Encryption is deliberately gated whenever it's mounted, even in basic mode where its fields are
-   * hidden: unlike quotas, its payload is part of every create, so an invalid value still ships.
+   * Encryption is gated even in basic mode, where its fields are hidden: unlike quotas, its payload
+   * is part of every create, so an invalid value still ships. In edit it never mounts and its
+   * signal stays at its initial `true`.
    */
   protected readonly areSubFormsValid = computed(() => {
-    const isQuotasMounted = this.isNew() && this.isAdvancedMode();
-    const isEncryptionMounted = this.isNew();
-
     return this.isNameAndOptionsValid()
-      && (!isQuotasMounted || this.isQuotaValid())
-      && (!isEncryptionMounted || this.isEncryptionValid())
+      && this.isQuotaValid()
+      && this.isEncryptionValid()
       && this.isOtherOptionsValid();
   });
 
@@ -188,6 +186,24 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
       this.nameAndOptionsSection(),
       this.otherOptionsSection(),
     ];
+  }
+
+  /**
+   * The `FormGroup`s that actually hold fields, for backend validation errors to be resolved
+   * against. Only mounted sections contribute — an unmounted one has no field on screen to carry
+   * an error, so its group is skipped and the handler falls back to a modal for that message.
+   */
+  private sectionForms(): FormGroup[] {
+    const nameAndOptions = this.nameAndOptionsSection();
+
+    return [
+      nameAndOptions.form,
+      // Its own group (SMB/NFS share presets), sibling to the section's main one.
+      nameAndOptions.datasetPresetForm,
+      this.quotasSection()?.form,
+      this.encryptionSection()?.form,
+      this.otherOptionsSection()?.form,
+    ].filter((form): form is FormGroup => Boolean(form));
   }
 
   override hasUnsavedChanges(): boolean {
@@ -272,7 +288,17 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   }
 
   protected toggleAdvancedMode(): void {
-    this.isAdvancedMode.update((advanced) => !advanced);
+    const isAdvanced = !this.isAdvancedMode();
+
+    if (!isAdvanced) {
+      // Leaving advanced unmounts the quotas section, so its last verdict goes with it. Without this
+      // a stale `false` would still be parked here when the section remounts, and the fresh
+      // instance's on-mount emission would flip `areSubFormsValid()` during the same change
+      // detection pass that already read it — NG0100 in dev mode.
+      this.isQuotaValid.set(true);
+    }
+
+    this.isAdvancedMode.set(isAdvanced);
   }
 
   protected onSwitchToAdvanced(): void {
@@ -305,8 +331,14 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
       },
       onSuccess: ([savedDataset, shouldGoToAclEditor]) => this.onSaved(savedDataset, shouldGoToAclEditor),
       closeWith: ([savedDataset]) => savedDataset,
+      // `<ix-form>`'s default handler maps backend validation errors against its own `[formGroup]`,
+      // which here is the empty root — every field lives in a section's own group. Run the same
+      // handler over those groups instead, so a duplicate name or an out-of-range quota lands on the
+      // control that caused it. Anything it can't place (a non-validation error, or a share-creation
+      // failure naming `sharingsmb_create.*` fields) still falls back to an error modal inside the
+      // handler, which is what this form did before the migration.
       onError: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
+        this.formErrorHandler.handleValidationErrors(error, this.sectionForms());
         return true;
       },
     };

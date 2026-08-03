@@ -8,7 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonHarness, TnIconTesting, TnMenuTesting } from '@truenas/ui-components';
 import { MockComponents, MockInstance } from 'ng-mocks';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -20,6 +20,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import {
   FormSidePanelContainerComponent, SidePanelFooterAction,
@@ -177,9 +178,14 @@ describe('DatasetFormComponent', () => {
       toggleAdvanced();
       toggleAdvanced();
 
-      // The real section reports its current validity on mount (see QuotasSectionComponent), which
-      // is what clears the stale `false` its predecessor left behind — the mocked one here doesn't,
-      // so the emission stands in for it.
+      // The remount itself must not carry the previous instance's `false` back in: the gate is
+      // cleared on the way out, so a fresh section starts from "nothing to fix" and its own on-mount
+      // report agrees with what the host already believes (a report that disagreed mid-pass would be
+      // NG0100).
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      // The real section reports its current validity on mount (see QuotasSectionComponent); the
+      // mocked one here doesn't, so the emission stands in for it.
       spectator.query(QuotasSectionComponent)!.formValidityChange.emit(true);
       spectator.detectChanges();
 
@@ -263,6 +269,21 @@ describe('DatasetFormComponent', () => {
       );
       expect(spectator.inject(Store).dispatch).not.toHaveBeenCalledWith(
         checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }),
+      );
+    });
+
+    it('maps a failed save onto the sections that own the fields', () => {
+      const error = new Error('dataset already exists');
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(throwError(() => error));
+
+      save();
+
+      // `<ix-form>`'s own [formGroup] here is the empty root, so left to itself the handler would
+      // find no control for any field. The sections' groups are what a backend validation error has
+      // to be resolved against.
+      expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalledWith(
+        error,
+        expect.arrayContaining([nameAndOptionsForm, datasetPresetForm]),
       );
     });
 

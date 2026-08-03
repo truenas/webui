@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -40,6 +40,7 @@ const vmCheckError = 'vmCheckFailed';
 @Component({
   selector: 'ix-snapshot-add-form',
   templateUrl: './snapshot-add-form.component.html',
+  styleUrls: ['./snapshot-add-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
@@ -83,6 +84,30 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
    * {@link setVmCheckFailed}.
    */
   protected readonly vmCheckFailed = signal(false);
+
+  /**
+   * Whether the retry button is on screen. A latch rather than {@link vmCheckFailed} itself: the
+   * button unmounting on the state change it triggers would drop the focus of the user who just
+   * pressed it back to `<body>`, mid-form. Once a failure has put it there it stays for the life of
+   * the form — disabled while a check runs — so the retry cycle happens under the user's cursor.
+   */
+  protected readonly canRetryVmCheck = signal(false);
+
+  /**
+   * Live-region text for the retry cycle. Silent until a check has failed, so the ordinary lookups
+   * that run on every dataset/recursive change don't chatter.
+   */
+  protected readonly vmCheckStatus = computed(() => {
+    if (!this.canRetryVmCheck()) {
+      return '';
+    }
+    if (this.isCheckingVms()) {
+      return this.translate.instant(helptextSnapshots.checkingForVms);
+    }
+    return this.translate.instant(
+      this.vmCheckFailed() ? helptextSnapshots.vmCheckFailed : helptextSnapshots.vmCheckSucceeded,
+    );
+  });
 
   /** Re-runs the VM lookup without the user having to disturb a field to trigger one. */
   private readonly retryVmCheck$ = new Subject<void>();
@@ -279,6 +304,8 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
     const dataset = this.form.controls.dataset;
 
     if (failed) {
+      // Not cleared on a later success — see {@link canRetryVmCheck}.
+      this.canRetryVmCheck.set(true);
       dataset.setErrors({ ...dataset.errors, [vmCheckError]: true });
       // `tn-form-field` only renders an error on an interacted control, and a preset dataset is
       // never touched by the user — without this the block would be silent on the very path that

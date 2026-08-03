@@ -1,0 +1,7 @@
+@import 'mixins/a11y';
+
+// The VM-check state is already on screen (the dataset field's hint and error), so this region
+// exists only to announce it to a user whose focus is on the retry button.
+.vm-check-status {
+  @include visually-hidden;
+}

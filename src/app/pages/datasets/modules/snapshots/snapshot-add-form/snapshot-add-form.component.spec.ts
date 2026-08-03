@@ -296,6 +296,31 @@ describe('SnapshotAddFormComponent', () => {
         expect.objectContaining({ vmware_sync: true }),
       ]);
     });
+
+    it('keeps the retry button in place through the check it starts, and reports the outcome', async () => {
+      failVmChecks();
+      await (await getSelect('dataset')).selectOption('APPS');
+
+      const pendingCheck$ = new Subject<boolean>();
+      (api.call as jest.Mock).mockImplementation(() => pendingCheck$);
+
+      const retry = await loader.getHarness(TnButtonHarness.with({ label: 'Retry VM Check' }));
+      await retry.click();
+
+      // Unmounting the button on the state change it triggers would drop the pressing user's focus
+      // to `<body>`; it stays put and goes disabled instead, and the live region says why.
+      expect(await retry.isDisabled()).toBe(true);
+      expect(spectator.query('[role="status"]')).toHaveText('Checking this dataset for VMs…');
+
+      pendingCheck$.next(true);
+      pendingCheck$.complete();
+      spectator.detectChanges();
+
+      expect(await retry.isDisabled()).toBe(false);
+      expect(spectator.query('[role="status"]')).toHaveText(
+        'This dataset was checked for VMs. Saving is no longer blocked.',
+      );
+    });
   });
 });
 

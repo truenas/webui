@@ -22,16 +22,24 @@
     </tn-form-field>
 
     <!-- A failed lookup blocks Save, so the user needs a way out that isn't "disturb a field until
-         it re-runs" — the error above says why, this re-runs it. Hidden again the moment a check
-         starts (the field's "Checking…" hint takes over), and back if that one fails too. -->
-    @if (vmCheckFailed()) {
+         it re-runs" — the error above says why, this re-runs it. Once a failure has put it here it
+         stays: it must not vanish from under the focus of the user who just pressed it, and a
+         disabled button still announces the check running. -->
+    @if (canRetryVmCheck()) {
       <tn-button
         variant="outline"
         testId="retry-vm-check"
         [label]="helptext.retryVmCheck | translate"
+        [disabled]="isCheckingVms()"
         (onClick)="retryVmCheck()"
       ></tn-button>
     }
+
+    <!-- The field's hint and error carry the same states, but they're announced through the dataset
+         select — a user standing on the retry button would hear nothing back. Mounted from the
+         start, and empty until a check has failed: a live region inserted together with its text
+         isn't reliably announced. -->
+    <div class="vm-check-status" role="status" aria-live="polite">{{ vmCheckStatus() }}</div>
 
     <tn-form-field
       [label]="helptext.nameLabel | translate"
