@@ -185,6 +185,23 @@ describe('SnapshotAddFormComponent', () => {
     expect(api.call).toHaveBeenNthCalledWith(4, 'vmware.dataset_has_vms', ['APPS', false]);
   });
 
+  it('skips the VM lookup while no dataset is picked, and keeps Save usable', async () => {
+    jest.clearAllMocks();
+
+    // Toggling Recursive first would otherwise ask `vmware.dataset_has_vms` about '' and raise an
+    // error modal at a user who has not chosen anything yet.
+    await (await getCheckbox('recursive')).check();
+
+    expect(api.call).not.toHaveBeenCalledWith('vmware.dataset_has_vms', expect.anything());
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+
+    // The skipped lookup must still clear the Save gate it opened.
+    await (await getSelect('dataset')).selectOption('APPS');
+    await (await getInput('name')).setValue('test-snapshot-name');
+
+    expect(spectator.component.canSubmit()).toBe(true);
+  });
+
   describe('VM check failures', () => {
     /** Makes every `vmware.dataset_has_vms` lookup fail, leaving the other calls untouched. */
     const failVmChecks = (): void => {

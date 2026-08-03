@@ -97,16 +97,37 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
   form = new FormGroup({});
 
+  /**
+   * Mirrors the template's `@if`s rather than AND-ing all four signals: `formValidityChange` fires
+   * only on status *changes*, so a section that unmounts leaves its last emission behind. Gating a
+   * section that isn't on screen would disable Save with nothing to fix — invalidate a quota, click
+   * Basic Options, and it would stay stuck for the life of the panel.
+   *
+   * Encryption is deliberately gated whenever it's mounted, even in basic mode where its fields are
+   * hidden: unlike quotas, its payload is part of every create, so an invalid value still ships.
+   */
   protected readonly areSubFormsValid = computed(() => {
-    return this.isNameAndOptionsValid() && this.isQuotaValid()
-      && this.isEncryptionValid() && this.isOtherOptionsValid();
+    const isQuotasMounted = this.isNew() && this.isAdvancedMode();
+    const isEncryptionMounted = this.isNew();
+
+    return this.isNameAndOptionsValid()
+      && (!isQuotasMounted || this.isQuotaValid())
+      && (!isEncryptionMounted || this.isEncryptionValid())
+      && this.isOtherOptionsValid();
   });
 
   /**
    * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
    * change detection, so the label flips with {@link isAdvancedMode}.
+   *
+   * Create only: on edit, quotas and encryption are create-only and Other Options is advanced-only,
+   * so switching back to basic would leave nothing on screen but the disabled Name field.
    */
   get footerActions(): SidePanelFooterAction[] {
+    if (!this.isNew()) {
+      return [];
+    }
+
     // Labels are extraction markers — the panel container pipes them through `translate`.
     return [{
       label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
@@ -170,10 +191,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   }
 
   ngOnInit(): void {
-    const { datasetId, isNew } = this.params();
-    if (!datasetId) {
-      return;
-    }
+    const { isNew } = this.params();
 
     if (isNew) {
       this.setForNew();
@@ -214,7 +232,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
     });
   }
 
-  setForEdit(): void {
+  private setForEdit(): void {
     // Edit renders Other Options only in advanced mode (quotas/encryption stay create-only), so a
     // basic-mode edit panel would show nothing but the disabled Name field. Start expanded.
     this.isAdvancedMode.set(true);

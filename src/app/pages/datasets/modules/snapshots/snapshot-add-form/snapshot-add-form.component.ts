@@ -125,7 +125,11 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
       this.form.controls.dataset.valueChanges.pipe(tap(() => { this.hasReportedVmCheckFailure = false; })),
     ).pipe(
       tap(() => this.isCheckingVms.set(true)),
-      switchMap(() => this.queryVmsInDataset()),
+      // Guarded inside the projection rather than by a `filter` before it: a filter would drop the
+      // emission after `isCheckingVms` was already set, latching Save disabled forever. With no
+      // dataset there is nothing to ask about — toggling Recursive first would otherwise call
+      // `vmware.dataset_has_vms` with '' and raise an error modal at the user.
+      switchMap(() => (this.form.controls.dataset.value ? this.queryVmsInDataset() : of(false))),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((hasVmsInDataset) => {
       this.hasVmsInDataset.set(hasVmsInDataset);

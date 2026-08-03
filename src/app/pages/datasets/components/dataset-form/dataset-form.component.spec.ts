@@ -154,6 +154,23 @@ describe('DatasetFormComponent', () => {
       expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(false);
       expect(spectator.query(QuotasSectionComponent)).not.toExist();
     });
+
+    it('stops gating Save on a section the Basic Options toggle unmounted', () => {
+      toggleAdvanced();
+
+      spectator.query(QuotasSectionComponent)!.formValidityChange.emit(false);
+      spectator.detectChanges();
+
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      // `formValidityChange` only fires on status changes, so the `false` above is the last thing
+      // quotas ever emits. Once it's off screen it must stop blocking Save, or the panel is wedged
+      // with nothing left for the user to fix.
+      toggleAdvanced();
+
+      expect(spectator.query(QuotasSectionComponent)).not.toExist();
+      expect(spectator.component.canSubmit()).toBe(true);
+    });
   });
 
   describe('second checks', () => {
@@ -334,9 +351,9 @@ describe('DatasetFormComponent', () => {
       spectator = createComponent({ props: { params: { datasetId: 'parent/child', isNew: false } } });
     });
 
-    it('opens in advanced mode, since basic edit mode has nothing but the disabled Name field', () => {
+    it('opens in advanced mode and offers no toggle back — basic edit mode has nothing but the disabled Name field', () => {
       expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(true);
-      expect(advancedAction().label).toBe('Basic Options');
+      expect(spectator.component.footerActions).toEqual([]);
     });
 
     it('hands the saved dataset back to the opener', () => {

@@ -224,9 +224,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
       customControl.updateValueAndValidity();
     });
 
-    if (this.parentOrZvolId()) {
-      this.setupForm();
-    }
+    this.setupForm();
   }
 
   protected handleSubmit = (event: FormSubmitEvent<ZvolFormData>): SubmitResult<Dataset, Dataset> => {
@@ -290,7 +288,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
       ),
       // See `buildCreateResult` — the message is the form's, not the opener's.
       successMessage: this.translate.instant('Zvol «{name}» updated.', {
-        name: this.parentOrZvolId().split('/').pop(),
+        name: getDatasetLabel({ name: this.parentOrZvolId() }),
       }),
       closeWith: (result) => result,
       onError: (error: unknown) => {
