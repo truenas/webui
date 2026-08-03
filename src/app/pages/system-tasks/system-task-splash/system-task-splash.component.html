@@ -1,10 +1,11 @@
 <div class="wrapper">
   <tn-card class="splash-card" elevation="low" padding="small">
     <div class="card-body">
-      <!-- aria-live rather than role="status": an explicit role would override the implicit
-           heading semantics and leave the page with no heading at all. It sits on the heading
-           itself, not on a wrapper, so the logo and copyright line are not announced with it. -->
-      <h1 class="message" aria-live="polite">
+      <!-- tabindex="-1" so the component can move focus here after render. A live region
+           would not do: the message is there from the first render and never changes, and
+           regions are only announced when their content mutates. An explicit role="status"
+           would also cost the page its only heading. -->
+      <h1 #heading class="message" tabindex="-1">
         {{ message() }}
       </h1>
       <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>

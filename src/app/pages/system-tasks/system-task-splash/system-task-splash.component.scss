@@ -37,6 +37,12 @@
   font-size: inherit;
   font-weight: inherit;
   margin: 0;
+
+  // The heading is focused programmatically to announce the message, never by keyboard, so
+  // the ring would sit on the screen for the whole task with nothing to act on.
+  &:focus {
+    outline: none;
+  }
 }
 
 .logo {

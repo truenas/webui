@@ -45,6 +45,8 @@ describe('RestartComponent', () => {
       mockProvider(WebSocketHandlerService, {
         prepareShutdown: jest.fn(),
         reconnect: jest.fn(),
+        // The flag prepareShutdown() raises, which stays up until a new connection opens.
+        isSystemShuttingDown: true,
       }),
       // AuthService is injected by SystemTaskRedirectService rather than by the component,
       // so it is easy to miss - mock it anyway to keep this spec off the real implementation.
@@ -60,11 +62,11 @@ describe('RestartComponent', () => {
   });
 
   /**
-   * The connection starts down and is brought up per test, so the reconnect the component
-   * waits for is a real transition rather than state left behind by an earlier test.
+   * The connection is still live when system.reboot returns - it only drops once the box
+   * actually restarts. Created per test so no state is left behind by an earlier run.
    */
   function createRestart(providers: Provider[] = []): void {
-    isConnected$ = new BehaviorSubject(false);
+    isConnected$ = new BehaviorSubject(true);
     spectator = createComponent({
       providers: [
         mockProvider(WebSocketStatusService, {
@@ -108,6 +110,9 @@ describe('RestartComponent', () => {
     it('stays on the splash screen until the websocket comes back after the reboot', () => {
       expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
 
+      // Mirrors the reboot dropping the socket and the handler opening a new connection.
+      isConnected$.next(false);
+      Object.assign(spectator.inject(WebSocketHandlerService), { isSystemShuttingDown: false });
       isConnected$.next(true);
 
       expect(spectator.inject(AuthService).clearAuthToken).toHaveBeenCalled();

@@ -30,10 +30,10 @@ describe('SystemTaskSplashComponent', () => {
     expect(spectator.query('ix-copyright-line')).toExist();
   });
 
-  // The heading is the only live region, so the logo and copyright line are not announced
-  // along with the message.
-  it('announces the message, and nothing else, as a live region', () => {
-    expect(spectator.queryAll('[aria-live]')).toHaveLength(1);
-    expect(spectator.query('h1.message')).toHaveAttribute('aria-live', 'polite');
+  // Focus rather than a live region: the message never changes after the first render, so
+  // there would be no mutation for a live region to announce.
+  it('moves focus to the message so it is read out when the screen appears', () => {
+    expect(spectator.query('h1.message')).toHaveAttribute('tabindex', '-1');
+    expect(document.activeElement).toBe(spectator.query('h1.message'));
   });
 });

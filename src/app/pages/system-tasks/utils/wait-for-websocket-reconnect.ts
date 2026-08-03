@@ -1,44 +1,28 @@
-import {
-  Observable, filter, map, race, switchMap, take, timer,
-} from 'rxjs';
+import { Observable, filter, map, take } from 'rxjs';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 /**
- * How long to keep waiting for the socket to go down before assuming it already has.
- * Middleware stops answering within a few seconds of a reboot or config reset job returning.
- */
-export const waitForDisconnectTimeout = 15 * 1000;
-
-/**
- * Emits once the websocket has gone down and come back up again.
+ * Emits once the system that was taken down is answering again.
  *
- * `prepareShutdown()` only raises a flag - the socket is still connected when a restart or
- * config reset job returns, so we have to wait for the connection to actually drop before a
- * live connection can be read as "the system finished rebooting".
+ * A live connection on its own does not mean the system is back: the jobs return as soon as
+ * the work is scheduled, so the socket is still the original one for as long as it takes the
+ * box to tear down networking. `prepareShutdown()` marks that window - the flag stays up until
+ * `WebSocketHandlerService` opens a *new* connection - so a connection that is live while the
+ * flag is down is one that outlived the shutdown, whether we saw the drop or not. Callers must
+ * therefore call `prepareShutdown()` before subscribing.
  *
- * The drop is only awaited for up to `disconnectTimeout`, because it may never be observed:
- * the socket can go down and be reconnected by `WebSocketHandlerService` before we even
- * subscribe, and the middleware may not go down at all despite the job reporting success.
- * The timeout also fires in the case where the socket simply has not gone down *yet* - the
- * jobs return as soon as the work is scheduled, so a slow teardown redirects the caller while
- * the connection is still the original one, exactly like the fixed 15s wait this replaced.
- * In every case the caller is released instead of waiting forever on the splash screen.
- * Coming back up is deliberately not bounded - a reboot legitimately takes minutes.
+ * Nothing here is bounded by a wall clock on purpose. A reboot legitimately takes minutes, and
+ * timing out means dropping the user on a sign-in page that cannot reach middleware - a broken
+ * session, against the cost of leaving the splash screen up for too long.
  */
 export function waitForWebSocketReconnect(
   wsStatus: WebSocketStatusService,
-  disconnectTimeout = waitForDisconnectTimeout,
+  wsManager: WebSocketHandlerService,
 ): Observable<void> {
-  const hasDisconnected$ = wsStatus.isConnected$.pipe(
-    filter((isConnected) => !isConnected),
+  return wsStatus.isConnected$.pipe(
+    filter((isConnected) => isConnected && !wsManager.isSystemShuttingDown),
     take(1),
-  );
-
-  return race(hasDisconnected$, timer(disconnectTimeout)).pipe(
-    switchMap(() => wsStatus.isConnected$.pipe(
-      filter((isConnected) => isConnected),
-      take(1),
-    )),
     map((): void => undefined),
   );
 }

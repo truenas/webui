@@ -36,6 +36,8 @@ describe('FailoverComponent', () => {
       }),
       mockProvider(WebSocketHandlerService, {
         prepareShutdown: jest.fn(),
+        // The flag prepareShutdown() raises, which stays up until a new connection opens.
+        isSystemShuttingDown: true,
       }),
       // AuthService is injected by SystemTaskRedirectService rather than by the component,
       // so it is easy to miss - mock it anyway to keep this spec off the real implementation.
@@ -46,10 +48,17 @@ describe('FailoverComponent', () => {
     ],
   });
 
+  /** Mirrors the handover dropping the socket and WebSocketHandlerService opening a new one. */
+  function simulateSystemComingBack(): void {
+    isConnected$.next(false);
+    Object.assign(spectator.inject(WebSocketHandlerService), { isSystemShuttingDown: false });
+    isConnected$.next(true);
+  }
+
   beforeEach(() => {
-    // Starts down and is brought up per test, so the reconnect the component waits for is a
-    // real transition rather than state left behind by an earlier test.
-    isConnected$ = new BehaviorSubject(false);
+    // The connection is still live when become_passive returns - it only drops once the other
+    // controller takes over. Created per test so no state is left behind by an earlier run.
+    isConnected$ = new BehaviorSubject(true);
     // ngOnInit dispatches on the store, so the spy has to be in place before it runs.
     spectator = createComponent({
       detectChanges: false,
@@ -87,8 +96,9 @@ describe('FailoverComponent', () => {
   it('takes user to sign-in page once the websocket comes back after the failover', () => {
     expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
 
-    isConnected$.next(true);
+    simulateSystemComingBack();
 
+    expect(spectator.inject(AuthService).clearAuthToken).toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/signin']);
   });
 
