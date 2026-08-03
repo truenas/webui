@@ -2,10 +2,11 @@
   display: block;
 }
 
-// Set by the component when [fullWidth] is on, so consumers can still override it.
-// The name is component-private on purpose — the global `.full-width` utility would
-// drag `position: relative` in with it and would fight a consumer override at equal
-// specificity.
+// Set by the component when [fullWidth] is on. The name is component-private on purpose:
+// the global `.full-width` utility would drag `position: relative` in with it, which this
+// host never asked for. Note that a consumer's own class lands at the same specificity
+// (`:host(.x)` emits `[_nghost-a].x`, a consumer's `.y` emits `.y[_ngcontent-b]`), so
+// which one wins comes down to stylesheet order — this is not an override hook.
 :host(.oauth-full-width) {
   width: 100%;
 }

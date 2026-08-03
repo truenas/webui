@@ -62,7 +62,14 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   readonly minHeight = input('100px');
   readonly maxHeight = input('300px');
 
-  protected items: OrderedOption[];
+  protected items: OrderedOption[] = [];
+  /**
+   * The options as they arrived, never reordered. `orderOptions` starts from this rather
+   * than from the current row order, so writing a value is idempotent: writing `null`
+   * (or a value that selects nothing) restores the source order instead of leaving the
+   * rows hoisted by whatever the previous value was.
+   */
+  private sourceItems: OrderedOption[] = [];
 
   protected isDisabled = false;
   /** Kept non-null so the template's `isChecked` and `orderOptions` never have to guard. */
@@ -85,7 +92,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
     // stored value in `ngOnInit`. A value written *after* they arrive (a `patchValue` from a
     // late-resolving request) has to reorder the rows itself, or the toggles would flip while
     // the rows stayed in the order the options came in.
-    if (this.items) {
+    if (this.sourceItems.length) {
       this.orderOptions();
     }
     this.cdr.markForCheck();
@@ -120,7 +127,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
 
   ngOnInit(): void {
     this.options().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((options) => {
-      this.items = options.map((option) => ({
+      this.sourceItems = options.map((option) => ({
         ...option,
         testId: normalizeTestIdParts([this.controlDirective.name, option.label]),
       }));
@@ -135,6 +142,8 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   }
 
   private orderOptions(): void {
+    this.items = [...this.sourceItems];
+
     this.value.toReversed().forEach((value) => {
       const idx = this.items.findIndex((option) => option.value === value);
       // A stored value can name an option that is no longer offered (an interface taken

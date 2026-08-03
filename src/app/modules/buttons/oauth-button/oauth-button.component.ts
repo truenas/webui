@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnDestroy, output, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent } from '@truenas/ui-components';
 import { map, interval, takeWhile, finalize } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -25,7 +25,6 @@ import { OauthProviderData } from 'app/pages/credentials/backup-credentials/clou
   },
   imports: [
     TnButtonComponent,
-    TranslateModule,
   ],
 })
 export class OauthButtonComponent implements OnDestroy {

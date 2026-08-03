@@ -84,14 +84,28 @@ describe('OrderedListboxComponent', () => {
 
   // A `patchValue` from a late-resolving request lands after the options have emitted,
   // so the rows have to be reordered by `writeValue` itself rather than by `ngOnInit`.
+  // The order is rebuilt from the options as they arrived, so the previous value's
+  // hoisting leaves nothing behind: `eth2` drops back below `eth0`.
   it('reorders the options when a value is written after they have arrived', async () => {
     spectator.component.writeValue(['eth1']);
     spectator.detectChanges();
 
     const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
 
-    expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth1', 'eth2', 'eth0']);
+    expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth1', 'eth0', 'eth2']);
     expect(await Promise.all(toggles.map((toggle) => toggle.isChecked()))).toEqual([true, false, false]);
+  });
+
+  // The counterpart: clearing the value must not leave the rows hoisted by the value
+  // that was there before.
+  it('restores the original option order when the value is cleared', async () => {
+    spectator.component.writeValue(null);
+    spectator.detectChanges();
+
+    const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
+
+    expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth0', 'eth1', 'eth2']);
+    expect(await Promise.all(toggles.map((toggle) => toggle.isChecked()))).toEqual([false, false, false]);
   });
 
   it('lists every option unchecked when the control has no value', async () => {

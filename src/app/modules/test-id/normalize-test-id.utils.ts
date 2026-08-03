@@ -23,23 +23,23 @@ export function normalizeTestIdString(id: string | number): string {
 }
 
 /**
- * Segment-wise form of {@link normalizeTestIdString}, with falsy segments dropped.
- * This is what `[ixTest]` applies to its own `string | string[]` input.
+ * Segment-wise form of {@link normalizeTestIdString}, with absent segments dropped.
  *
- * "Falsy" means every segment is dropped that `[ixTest]` dropped: `null`, `undefined`,
- * `''` — **and the number `0`**, which disappears rather than becoming `-0-`. This
- * differs from {@link normalizeTestIdString}, which keeps a lone `0`; the two are
- * deliberately not symmetrical, because parity with `[ixTest]` is what keeps the
- * resolved ids byte-identical. A call site that must keep a `0` segment has to stringify
- * it before calling (`String(port)`).
+ * "Absent" means `null`, `undefined` and `''` — a segment that carries no value. A
+ * numeric `0` is a value and is kept, so a control at index 0 of a `FormArray` still
+ * contributes its index instead of silently colliding with its siblings.
  *
- * Note that dropping empties is what `[ixTest]` did, so it is byte-identical for
- * anything that already went through the directive — but a call site that used to
- * stringify an optional value itself (`kebabCase(String(maybeUndefined))`) loses its
- * literal `undefined` segment here. See `addPortTestId` in add-port-menu.
+ * Dropping empties is what `[ixTest]` did, so this stays byte-identical for anything
+ * that already went through the directive — but a call site that used to stringify an
+ * optional value itself (`kebabCase(String(maybeUndefined))`) loses its literal
+ * `undefined` segment here. See `addPortTestId` in add-port-menu.
+ *
+ * `[ixTest]` itself filters on plain falsiness, so it also drops a numeric `0`. That
+ * legacy quirk stays inside `TestDirective` rather than here, so brand-new tn-* call
+ * sites don't inherit it.
  */
 export function normalizeTestIdParts(segments: SupportedTestId): string[] {
   return (Array.isArray(segments) ? segments : [segments])
-    .filter((part): part is string | number => Boolean(part))
+    .filter((part): part is string | number => part != null && part !== '')
     .map((part) => normalizeTestIdString(part));
 }

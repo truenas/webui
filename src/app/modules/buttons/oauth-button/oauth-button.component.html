@@ -4,6 +4,6 @@
   [testId]="testId()"
   [disabled]="disabled() || oauthWindowOpen()"
   [color]="isLoggedIn() ? 'secondary' : 'primary'"
-  [label]="buttonText() | translate"
+  [label]="buttonText()"
   (onClick)="onOauthClicked()"
 ></tn-button>

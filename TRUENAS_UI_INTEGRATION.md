@@ -329,7 +329,7 @@ library APIs directly and carries no `::ng-deep` workaround for them.
 | 5b | No control over `tn-list-item`'s row metrics beyond `[dense]`. `dual-listbox` needs a 23px row with 12px/16px padding, `inspect-vdevs-dialog` an asymmetric 11px/21px/13px one; neither is expressible, and the host is forced to `padding: 0` by the library, so the padding can only be set on the internal content wrapper. | `tn-list-item-content` |
 | 5c | No control over the primary-text span. `dual-listbox` recolours it to `--fg2`; `widget-sys-info` has to make it a flex row to seat a copy button beside the version text (a trailing-slot / rich-label API would cover the latter). | `tn-list-item-primary-text` |
 | 6 | No flat / embedded `tn-list` variant. `tn-list` ships a standalone card look (own background, rounded corners, vertical padding), so a list rendered inside an already-bordered container has to flatten it back out. | `ordered-list.component.scss` resets `background` / `border-radius` / `padding` on `tn-list` |
-| 7 | `TnMenuHarness` exposes no per-item harness, and so no `getTestId()`. | `copy-button.component.spec.ts` reads `data-test` off `.tn-menu-item` directly |
+| 7 | `TnMenuHarness` exposes no per-item harness, and so no `getTestId()`. | Menu-item test ids are left unasserted — reaching into the overlay for `.tn-menu-item[data-test]` couples a spec to library-internal markup |
 | 8 | No `TnListHarness` / `TnListItemHarness` at all as of 0.4.7, so a spec cannot assert a `tn-list-item` slot rendered without selecting on the library's internal classes. | `dual-listbox.component.spec.ts` queries `.tn-list-item__leading` |
 
 Gaps 5 and 6 are the same signal that produced gaps 1–4: without them, every new

@@ -37,11 +37,11 @@ describe('normalizeTestIdParts', () => {
     expect(normalizeTestIdParts(['device', null, undefined, '', 'add'])).toEqual(['device', 'add']);
   });
 
-  // Faithful `[ixTest]` parity: its filter is falsy-based, so a numeric 0 segment is
-  // dropped along with null/undefined/''. Pinned here so it is not "fixed" later —
-  // changing it would shift every id built from a zero-valued segment.
-  it('drops a numeric 0 segment, the way [ixTest] does', () => {
-    expect(normalizeTestIdParts(['port', 0, 'edit'])).toEqual(['port', 'edit']);
+  // A numeric 0 carries a value — a control at index 0 of a FormArray, say — so it must
+  // survive, or two siblings would resolve to the same id. `[ixTest]`'s own falsy filter
+  // does drop it, but that quirk lives in TestDirective, not here.
+  it('keeps a numeric 0 segment', () => {
+    expect(normalizeTestIdParts(['port', 0, 'edit'])).toEqual(['port', '0', 'edit']);
   });
 
   it('returns an empty array when there is nothing to normalize', () => {

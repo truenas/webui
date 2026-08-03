@@ -148,7 +148,7 @@ the ticket and document it in the PR.
 | Angular Material | @truenas/ui-components | Notes |
 |---|---|---|
 | `<mat-menu>` | `<tn-menu>` | `[items]` input takes `TnMenuItem[]`. See `ServiceActionsMenuService` for the composition pattern (Recipe 2). |
-| `<button mat-menu-item>` | `<tn-menu-item>` | ⚠ Test IDs resolve to `menu-item-*`, not `button-*` (tn-menu-item declares the `menu-item` prefix). To preserve a legacy `button-foo`, pass `testId="button-foo"` — a per-item `testId` is written verbatim. Do NOT edit `test.directive.ts`. See "Test IDs." |
+| `<button mat-menu-item>` | `<tn-menu-item>` | Test IDs resolve to `button-*`: `tn-menu-panel` renders each item as a `<button tnTestIdType="button">`, so a legacy `button-foo` survives from `testId="foo"`. Do NOT edit `test.directive.ts`. See "Test IDs." |
 | `[matMenuTriggerFor]` | `[tnMenuTriggerFor]` | `TnMenuTriggerDirective`; same usage shape. |
 | `[matTooltip]` | `[tnTooltip]` | `TnTooltipDirective`. ⚠ Tooltips are not accessible descriptions on their own — for form controls prefer the `[tooltip]` input on `ix-input`/`ix-checkbox`/etc., reserve `[tnTooltip]` for hover-only context (disabled-state hints, etc.). |
 
@@ -708,10 +708,10 @@ type, changing the type changes the resolved value even when the base is identic
   resolves to `button-foo` (tn-button declares `button`). Intentional anchor → button change,
   but RE-visible: if a legacy `link-*` selector is referenced anywhere, pin the full legacy
   value verbatim on a typeless host or coordinate the rename.
-- `<button mat-menu-item [ixTest]="'foo'">` resolved to `button-foo`. `<tn-menu-item
-  [testId]="'foo'">` resolves to `menu-item-foo` because `tn-menu-item` declares the
-  `menu-item` prefix. To preserve the legacy `button-foo`, pass `testId="button-foo"` on the
-  menu item — a per-item `testId` is written verbatim. Do NOT edit `test.directive.ts`.
+- `<button mat-menu-item [ixTest]="'foo'">` resolved to `button-foo`, and `<tn-menu-item
+  [testId]="'foo'">` also resolves to `button-foo` — the owning `tn-menu-panel` renders each
+  item as a `<button tnTestIdType="button">`. Pass the bare base; do NOT pre-prefix it and do
+  NOT edit `test.directive.ts`.
 
 ## Spec / test updates
 
