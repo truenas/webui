@@ -1,11 +1,9 @@
-<div id="wrapper">
-  <tn-card id="splash-card" elevation="low" padding="small">
+<div class="wrapper" role="status">
+  <tn-card class="splash-card" elevation="low" padding="small">
     <div class="card-body">
-      @if (message()) {
-        <h1 id="message">
-          {{ message() }}
-        </h1>
-      }
+      <h1 class="message">
+        {{ message() }}
+      </h1>
       <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>
       <div class="copyright-txt">
         <ix-copyright-line></ix-copyright-line>

@@ -74,10 +74,10 @@ describe('RestartComponent', () => {
       expect(spectator.inject(DialogService).closeAllDialogs).toHaveBeenCalled();
     });
 
-    // Rendered DOM instead of a CDK harness: ngOnInit schedules an in-zone setTimeout before
+    // Rendered DOM instead of a CDK harness: ngOnInit schedules an in-zone timer before
     // navigating to /signin, so awaiting a harness here blocks for the whole 5s.
     it('shows the restarting message in the splash screen', () => {
-      expect(spectator.query('ix-system-task-splash #message')).toHaveText('System is restarting...');
+      expect(spectator.query('ix-system-task-splash .message')).toHaveText('System is restarting...');
     });
   });
 

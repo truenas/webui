@@ -36,7 +36,7 @@
 // preset when a custom webui theme is active and the component-library theme sync can't
 // resolve it. Re-point it at the live theme var. Include on the card host.
 //
-//   #restart-card { @include tn-card-webui-palette; }
+//   .splash-card { @include tn-card-webui-palette; }
 //
 // NOTE: this is opt-in per card, but the underlying gap is app-wide —
 // `ThemeService.syncComponentLibraryTheme` only pushes themes listed in

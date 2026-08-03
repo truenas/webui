@@ -18,6 +18,10 @@ import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyri
   ],
 })
 export class SystemTaskSplashComponent {
-  /** Already translated status line. Omitted on the config reset screen, which shows the logo alone. */
-  readonly message = input<string>();
+  /**
+   * Already translated status line, announced through the wrapper's `role="status"`. Required:
+   * these screens are shown for minutes at a time, so a logo with no text leaves a screen
+   * reader with nothing to announce.
+   */
+  readonly message = input.required<string>();
 }

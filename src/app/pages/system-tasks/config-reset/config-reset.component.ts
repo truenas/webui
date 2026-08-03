@@ -1,17 +1,14 @@
 import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { AuthService } from 'app/modules/auth/auth.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { SystemTaskRedirectService } from 'app/pages/system-tasks/services/system-task-redirect.service';
 import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
-import { waitForWebSocketReconnect } from 'app/pages/system-tasks/utils/wait-for-websocket-reconnect';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @Component({
   selector: 'ix-config-reset',
@@ -19,19 +16,18 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     SystemTaskSplashComponent,
+    TranslateModule,
   ],
 })
 export class ConfigResetComponent implements OnInit {
   private wsManager = inject(WebSocketHandlerService);
-  private wsStatus = inject(WebSocketStatusService);
-  private router = inject(Router);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private location = inject(Location);
   private api = inject(ApiService);
-  private authService = inject(AuthService);
+  private redirect = inject(SystemTaskRedirectService);
   private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
@@ -58,17 +54,7 @@ export class ConfigResetComponent implements OnInit {
       .subscribe(() => {
         this.wsManager.prepareShutdown();
         this.loader.open();
-        this.goToSigninWhenSystemIsBack();
-      });
-  }
-
-  private goToSigninWhenSystemIsBack(): void {
-    waitForWebSocketReconnect(this.wsStatus)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.loader.close();
-        this.authService.clearAuthToken();
-        this.router.navigate(['/signin']);
+        this.redirect.goToSigninWhenSystemIsBack(this.destroyRef);
       });
   }
 }

@@ -1,5 +1,5 @@
-#overlay {
-  background: black !important;
+.overlay {
+  background: black;
   height: 100%;
   opacity: 0;
   position: absolute;
@@ -7,9 +7,7 @@
   z-index: 10;
 }
 
-#overlay.blackout {
-  -webkit-opacity: 1;
-  -moz-opacity: 1;
+.overlay.blackout {
   opacity: 1;
-  transition: all 3s ease;
+  transition: opacity 3s ease;
 }

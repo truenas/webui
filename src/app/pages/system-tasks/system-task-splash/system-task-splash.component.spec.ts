@@ -18,19 +18,18 @@ describe('SystemTaskSplashComponent', () => {
     ],
   });
 
+  beforeEach(() => {
+    spectator = createComponent({ props: { message: 'System is restarting...' } });
+  });
+
   // Rendered DOM instead of a harness: there is no TnCardHarness in @truenas/ui-components.
   it('shows the message as a heading inside the card, along with the logo', () => {
-    spectator = createComponent({ props: { message: 'System is restarting...' } });
-
-    expect(spectator.query('tn-card h1#message')).toHaveText('System is restarting...');
+    expect(spectator.query('tn-card h1.message')).toHaveText('System is restarting...');
     expect(spectator.query('tn-card tn-icon.logo')).toExist();
     expect(spectator.query('ix-copyright-line')).toExist();
   });
 
-  it('shows the logo alone when no message is provided', () => {
-    spectator = createComponent();
-
-    expect(spectator.query('#message')).not.toExist();
-    expect(spectator.query('tn-card tn-icon.logo')).toExist();
+  it('announces the message as a status region', () => {
+    expect(spectator.query('.wrapper')).toHaveAttribute('role', 'status');
   });
 });

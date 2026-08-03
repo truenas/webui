@@ -1,13 +1,13 @@
 @import 'mixins/tn-card';
 
-// The splash used to be inlined in each page component, so `#wrapper` sized itself against
+// The splash used to be inlined in each page component, so the wrapper sized itself against
 // that page's host element. Keep this host transparent to layout so nothing changes.
 :host {
   display: block;
   height: 100%;
 }
 
-#wrapper {
+.wrapper {
   align-items: center;
   background-color: #0095d5;
   display: flex;
@@ -15,7 +15,7 @@
   justify-content: center;
 }
 
-#splash-card {
+.splash-card {
   @include tn-card-webui-palette;
 
   margin: auto;
@@ -27,13 +27,13 @@
 }
 
 .copyright-txt,
-#message,
+.message,
 .logo {
   text-align: center;
 }
 
 // Heading for document structure only - the splash screen keeps the surrounding body type.
-#message {
+.message {
   font-size: inherit;
   font-weight: inherit;
   margin: 0;
@@ -49,7 +49,7 @@
 }
 
 @media screen and (max-height: 700px) {
-  #splash-card {
+  .splash-card {
     max-width: 480px;
     width: 80%;
   }

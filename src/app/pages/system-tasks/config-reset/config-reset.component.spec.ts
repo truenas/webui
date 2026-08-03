@@ -71,7 +71,8 @@ describe('ConfigResetComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/signin']);
   });
 
-  it('shows the splash screen', () => {
+  it('shows the config reset message in the splash screen', () => {
+    expect(spectator.query('ix-system-task-splash .message')).toHaveText('Resetting configuration...');
     expect(spectator.query('ix-system-task-splash tn-icon.logo')).toExist();
   });
 });

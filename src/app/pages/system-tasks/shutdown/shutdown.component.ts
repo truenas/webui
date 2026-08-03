@@ -1,13 +1,19 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { timer } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+/** How long the splash stays readable before the screen fades to black. */
+export const blackoutDelay = 60 * 1000;
 
 @Component({
   selector: 'ix-shutdown',
@@ -29,6 +35,7 @@ export class ShutdownComponent implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
+  protected readonly isBlackedOut = signal(false);
 
   ngOnInit(): void {
     const reason = this.route.snapshot.queryParamMap.get('reason') || 'Unknown Reason';
@@ -49,11 +56,9 @@ export class ShutdownComponent implements OnInit {
         this.authService.clearAuthToken();
       },
     });
-    // fade to black after 60 sec on shut down
-    const blackoutTimeout = setTimeout(() => {
-      const overlay = document.getElementById('overlay');
-      overlay?.setAttribute('class', 'blackout');
-    }, 60000);
-    this.destroyRef.onDestroy(() => clearTimeout(blackoutTimeout));
+    // The system is off by now, so fade the screen to black.
+    timer(blackoutDelay)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.isBlackedOut.set(true));
   }
 }

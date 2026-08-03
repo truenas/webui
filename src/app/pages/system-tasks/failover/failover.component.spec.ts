@@ -89,6 +89,6 @@ describe('FailoverComponent', () => {
   });
 
   it('shows the failover message in the splash screen', () => {
-    expect(spectator.query('ix-system-task-splash #message')).toHaveText('System is failing over...');
+    expect(spectator.query('ix-system-task-splash .message')).toHaveText('System is failing over...');
   });
 });

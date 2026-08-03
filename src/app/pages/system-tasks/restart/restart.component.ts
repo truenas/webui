@@ -4,6 +4,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { timer } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -13,6 +14,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+
+/** Time the splash screen is kept up after the reboot job returns, before returning to sign-in. */
+const navigateToSigninDelay = 5 * 1000;
 
 @Component({
   selector: 'ix-restart',
@@ -62,10 +66,9 @@ export class RestartComponent implements OnInit {
         this.wsManager.prepareShutdown();
         this.authService.clearAuthToken();
         this.wsManager.reconnect();
-        const navigateTimeout = setTimeout(() => {
-          this.router.navigate(['/signin']);
-        }, 5000);
-        this.destroyRef.onDestroy(() => clearTimeout(navigateTimeout));
+        timer(navigateToSigninDelay)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe(() => this.router.navigate(['/signin']));
       },
     });
   }
