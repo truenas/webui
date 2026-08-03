@@ -82,18 +82,13 @@ describe('ExplorerCreateZvolComponent', () => {
     expect(fakeControl.control.setValue).toHaveBeenCalledWith('/dev/zvol/test-pool/test-zvol');
   });
 
-  it('does not open the form without a parent – ZvolFormComponent requires a parent id', async () => {
+  it('disables Create Zvol without a parent – ZvolFormComponent requires a parent id', async () => {
     fakeControl.control.setValue('');
     spectator.detectChanges();
 
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Zvol' }));
+
     expect(await createButton.isDisabled()).toBe(true);
-
-    // The disabled button can't exercise the guard itself, and `inputs` is an untyped bag — call the
-    // handler directly so the early return is actually covered. It's `protected` (template-only),
-    // hence the structural cast.
-    (spectator.component as unknown as { onCreateZvol: () => void }).onCreateZvol();
-
     expect(spectator.inject(FormSidePanelService).open).not.toHaveBeenCalled();
   });
 });

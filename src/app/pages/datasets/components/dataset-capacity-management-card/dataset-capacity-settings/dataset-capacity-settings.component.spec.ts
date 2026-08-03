@@ -79,7 +79,7 @@ describe('DatasetCapacitySettingsComponent', () => {
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
   // The `<tn-side-panel>` host owns the Save button and drives submission through `submit()`.
-  const clickSave = (): void => spectator.component.submit();
+  const save = (): void => spectator.component.submit();
 
   beforeEach(() => {
     spectator = createComponent({ props: { datasetToEdit: dataset } });
@@ -138,7 +138,7 @@ describe('DatasetCapacitySettingsComponent', () => {
 
     const closed = jest.fn();
     spectator.component.closed.subscribe(closed);
-    clickSave();
+    save();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', [
       'root/path',
@@ -161,7 +161,7 @@ describe('DatasetCapacitySettingsComponent', () => {
     await (await getInput('quota')).setValue('105 GiB');
     await (await getInput('quota_critical')).setValue('93');
 
-    clickSave();
+    save();
 
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
       'root/path',

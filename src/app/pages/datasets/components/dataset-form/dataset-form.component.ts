@@ -323,9 +323,12 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
     this.aclEditorPath = shouldGoToAclEditor ? savedDataset.mountpoint : undefined;
 
     if (!shouldGoToAclEditor) {
+      // Phrased as plain "created", matching the zvol form: now that the forms own their messages
+      // they must hold for every opener, and not all of them navigate to the new record (the
+      // explorer's Create Zvol just fills the field in place).
       this.snackbar.success(
         this.isNew()
-          ? this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(savedDataset) })
+          ? this.translate.instant('Dataset «{name}» created.', { name: getDatasetLabel(savedDataset) })
           : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(savedDataset) }),
       );
     }

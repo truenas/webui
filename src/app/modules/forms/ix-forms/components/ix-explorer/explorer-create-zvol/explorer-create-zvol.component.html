@@ -1,3 +1,9 @@
+<!--
+  TODO: NAS-141021 — deliberately still mat-button + [ixTest] while the rest of this component is
+  migrated. It is a text button blended into the explorer panel (`background: inherit`), and
+  tn-button ships no text variant; `variant="outline"` was the closest match and read as a visual
+  regression. Convert once the library grows one, alongside the rest of ix-explorer.
+-->
 <button
   *ixRequiresRoles="requiredRoles"
   mat-button

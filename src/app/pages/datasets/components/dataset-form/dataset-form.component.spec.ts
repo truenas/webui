@@ -124,7 +124,7 @@ describe('DatasetFormComponent', () => {
   });
 
   /** The `<tn-side-panel>` host owns Save and the Advanced toggle, and drives them through the form. */
-  const clickSave = (): void => spectator.component.submit();
+  const save = (): void => spectator.component.submit();
   const advancedAction = (): SidePanelFooterAction => {
     return spectator.component.footerActions.find((action) => action.testId === 'toggle-advanced')!;
   };
@@ -190,7 +190,7 @@ describe('DatasetFormComponent', () => {
 
     it('creates new SMB and NFS when new form is submitted', () => {
       jest.spyOn(spectator.inject(Store), 'dispatch');
-      clickSave();
+      save();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
@@ -212,7 +212,7 @@ describe('DatasetFormComponent', () => {
     it('sets purpose to MultiProtocolShare on SMB create when Multiprotocol preset is selected', () => {
       nameAndOptionsForm.controls.share_type.setValue(DatasetPreset.Multiprotocol);
 
-      clickSave();
+      save();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
@@ -228,7 +228,7 @@ describe('DatasetFormComponent', () => {
       datasetPresetForm.controls.create_nfs.setValue(false);
 
       jest.spyOn(spectator.inject(Store), 'dispatch');
-      clickSave();
+      save();
 
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
@@ -267,7 +267,7 @@ describe('DatasetFormComponent', () => {
       const closed = jest.fn();
       spectator.component.closed.subscribe(closed);
 
-      clickSave();
+      save();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
         name: 'dataset',
@@ -280,7 +280,7 @@ describe('DatasetFormComponent', () => {
 
     it('creates a new dataset in advanced mode when new form is submitted', () => {
       toggleAdvanced();
-      clickSave();
+      save();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
         name: 'dataset',
@@ -294,7 +294,7 @@ describe('DatasetFormComponent', () => {
       const closed = jest.fn();
       spectator.component.closed.subscribe(closed);
 
-      clickSave();
+      save();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/parent']);
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
@@ -314,7 +314,6 @@ describe('DatasetFormComponent', () => {
     });
   });
 
-
   describe('success messages', () => {
     // The form saves with a `null` successMessage under `[suppressSuccessSnackbar]` (its message
     // needs the saved record), so these snackbars are the ONLY confirmation a save produces.
@@ -327,10 +326,10 @@ describe('DatasetFormComponent', () => {
         providers: declineAclPrompt,
       });
 
-      clickSave();
+      save();
 
       expect(spectator.inject(SnackbarService).success)
-        .toHaveBeenCalledWith('Switched to new dataset «saved-child».');
+        .toHaveBeenCalledWith('Dataset «saved-child» created.');
     });
 
     it('announces the updated dataset', () => {
@@ -339,7 +338,7 @@ describe('DatasetFormComponent', () => {
         providers: declineAclPrompt,
       });
 
-      clickSave();
+      save();
 
       expect(spectator.inject(SnackbarService).success)
         .toHaveBeenCalledWith('Dataset «saved-child» updated.');
@@ -360,13 +359,13 @@ describe('DatasetFormComponent', () => {
       const closed = jest.fn();
       spectator.component.closed.subscribe(closed);
 
-      clickSave();
+      save();
 
       expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'saved-id' }));
     });
 
     it('updates an existing child dataset when edit form is submitted', () => {
-      clickSave();
+      save();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent/child', {
         name: 'dataset',
@@ -409,7 +408,7 @@ describe('DatasetFormComponent', () => {
     });
 
     it('updates an existing root dataset when edit form is submitted', () => {
-      clickSave();
+      save();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent', {
         name: 'dataset',

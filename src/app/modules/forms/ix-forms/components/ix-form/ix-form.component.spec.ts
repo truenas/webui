@@ -1291,11 +1291,24 @@ describe('IxFormComponent', () => {
 
       const sidePanelSpectator = createSidePanelComponent();
       const ixForm = sidePanelSpectator.component.ixForm();
+      const closedSpy = jest.fn();
+      ixForm.closed.subscribe(closedSpy);
 
       ixForm.submit();
 
+      // No `tick()` above: the failure is reported before a single millisecond of the min-duration
+      // timer, so a broken save never sits behind the loader waiting it out.
       expect(ixForm.isSubmitting()).toBe(false);
       expect(sidePanelSpectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalled();
+      expect(closedSpy).not.toHaveBeenCalled();
+      expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+
+      // The paired timer is torn down with the errored forkJoin, so nothing closes or confirms
+      // late once the duration would have elapsed (and `fakeAsync` would throw on a leftover timer).
+      tick(defaultMinSubmitFeedbackMs);
+
+      expect(closedSpy).not.toHaveBeenCalled();
+      expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
     }));
 
     it('emits the closeWith payload through closed, so the host can hand it to its opener', () => {

@@ -47,7 +47,7 @@ describe('SnapshotAddFormComponent', () => {
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
   // The `<tn-side-panel>` host owns the Save button and drives submission through `submit()`.
-  const clickSave = (): void => spectator.component.submit();
+  const save = (): void => spectator.component.submit();
 
   beforeEach(() => {
     spectator = createComponent();
@@ -74,7 +74,7 @@ describe('SnapshotAddFormComponent', () => {
 
     const closed = jest.fn();
     spectator.component.closed.subscribe(closed);
-    clickSave();
+    save();
 
     expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
       {
@@ -95,7 +95,7 @@ describe('SnapshotAddFormComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', true]);
 
-    clickSave();
+    save();
 
     expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
       {
@@ -112,7 +112,7 @@ describe('SnapshotAddFormComponent', () => {
     await (await getInput('name')).setValue('snapshot-name');
     await (await getSelect('naming_schema')).selectOption('%Y %H %d %M %m');
 
-    clickSave();
+    save();
 
     expect(spectator.component.canSubmit()).toBe(false);
     expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create', expect.anything());
@@ -163,7 +163,7 @@ describe('SnapshotAddFormComponent', () => {
 
     expect(spectator.component.canSubmit()).toBe(true);
     await (await getInput('name')).setValue('test-snapshot-name');
-    clickSave();
+    save();
 
     // `vmware_sync` is only sent when the newest lookup found VMs — the stale `true` must not leak.
     expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
@@ -242,7 +242,7 @@ describe('SnapshotAddFormComponent', () => {
 
       expect(spectator.component.canSubmit()).toBe(true);
 
-      clickSave();
+      save();
 
       expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
         expect.not.objectContaining({ vmware_sync: expect.anything() }),
