@@ -94,10 +94,11 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   });
 
   ngOnChanges(): void {
-    if (this.parent()) {
-      this.setInheritValues();
-      this.disableEncryptionIfParentEncrypted();
+    if (this.parentHasPassphrase()) {
+      this.form.controls.encryption_type.setValue(DatasetEncryptionType.Passphrase);
     }
+
+    this.disableEncryptionIfParentEncrypted();
   }
 
   ngOnInit(): void {
@@ -132,12 +133,6 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
       encryption_options: encryptionOptions,
       inherit_encryption: false,
     };
-  }
-
-  private setInheritValues(): void {
-    if (this.parentHasPassphrase()) {
-      this.form.controls.encryption_type.setValue(DatasetEncryptionType.Passphrase);
-    }
   }
 
   private disableEncryptionIfParentEncrypted(): void {

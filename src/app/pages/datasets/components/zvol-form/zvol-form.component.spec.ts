@@ -124,12 +124,6 @@ describe('ZvolFormComponent', () => {
       value: null,
       source: ZfsPropertySource.Default,
     },
-    encryption_algorithm: {
-      parsed: 'off',
-      rawvalue: 'off',
-      value: null,
-      source: ZfsPropertySource.Default,
-    },
     pbkdf2iters: {
       parsed: '0',
       rawvalue: '0',
@@ -368,12 +362,6 @@ describe('ZvolFormComponent', () => {
     const encryptedParent = {
       ...dataset,
       encrypted: true,
-      encryption_algorithm: {
-        value: 'AES-256-GCM',
-        parsed: 'AES-256-GCM',
-        rawvalue: 'aes-256-gcm',
-        source: ZfsPropertySource.Default,
-      },
       key_format: {
         value: EncryptionKeyFormat.Hex,
         parsed: 'hex',

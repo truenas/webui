@@ -135,9 +135,9 @@ describe('EncryptionOptionsDialogComponent', () => {
     await setCheckbox('Inherit encryption properties from parent', true);
 
     // Inherit/Confirm are tn-checkbox (outside IxFormHarness); ticking Inherit
-    // hides the encryption-type controls, leaving only the Algorithm select.
+    // hides every remaining ix-form control.
     const labels = await form.getLabels();
-    expect(labels).toEqual(['Algorithm']);
+    expect(labels).toEqual([]);
     expect(await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }))).toBeTruthy();
   });
 
