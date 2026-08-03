@@ -325,13 +325,21 @@ library APIs directly and carries no `::ng-deep` workaround for them.
 
 | # | Library gap | Current workaround |
 |---|---|---|
-| 5 | No control over `tn-list-item`'s leading-slot gap. Three consumers now reach through `::ng-deep .tn-list-item__leading` to reset the library's standard 16px `margin-right` to a different value (`dual-listbox` 5px, `ordered-list` 2px, `network-configuration-card` 0). A `[leadingGap]` input — or having `[dense]` tighten the leading slot too — would remove all three. | `::ng-deep .tn-list-item__leading` per consumer |
+| 5a | No control over `tn-list-item`'s leading-slot gap. Three consumers reset the library's standard 16px `margin-right` to a different value (`dual-listbox` 5px, `ordered-list` 2px, `network-configuration-card` 0). A `[leadingGap]` input — or having `[dense]` tighten the leading slot too — would remove all three. | `tn-list-item-leading-gap($gap)` |
+| 5b | No control over `tn-list-item`'s row metrics beyond `[dense]`. `dual-listbox` needs a 23px row with 12px/16px padding, `inspect-vdevs-dialog` an asymmetric 11px/21px/13px one; neither is expressible, and the host is forced to `padding: 0` by the library, so the padding can only be set on the internal content wrapper. | `tn-list-item-content` |
+| 5c | No control over the primary-text span. `dual-listbox` recolours it to `--fg2`; `widget-sys-info` has to make it a flex row to seat a copy button beside the version text (a trailing-slot / rich-label API would cover the latter). | `tn-list-item-primary-text` |
 | 6 | No flat / embedded `tn-list` variant. `tn-list` ships a standalone card look (own background, rounded corners, vertical padding), so a list rendered inside an already-bordered container has to flatten it back out. | `ordered-list.component.scss` resets `background` / `border-radius` / `padding` on `tn-list` |
 | 7 | `TnMenuHarness` exposes no per-item harness, and so no `getTestId()`. | `copy-button.component.spec.ts` reads `data-test` off `.tn-menu-item` directly |
 | 8 | No `TnListHarness` / `TnListItemHarness` at all as of 0.4.7, so a spec cannot assert a `tn-list-item` slot rendered without selecting on the library's internal classes. | `dual-listbox.component.spec.ts` queries `.tn-list-item__leading` |
 
 Gaps 5 and 6 are the same signal that produced gaps 1–4: without them, every new
 `tn-list-item` consumer adds another `::ng-deep` override.
+
+Because `.tn-list-item__*` is internal markup rather than public API, the three
+workarounds under gap 5 live in `src/assets/styles/mixins/tn-list.scss` (alongside the
+existing `mixins/tn-card.scss` and `mixins/tn-table.scss`) rather than being spelled out
+per consumer. A library class rename is then a one-file fix, and each gap disappears
+with a single edit once the corresponding input ships.
 
 ### Local library builds
 

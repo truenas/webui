@@ -1,11 +1,3 @@
 :host {
   display: block;
 }
-
-// `[fullWidth]` stretches the inner tn-button, but the host still has to stretch
-// with it when the container is a flex parent (where `display: block` alone does
-// not fill the cross axis). There is a global `.full-width` rule, but relying on
-// it makes the host binding look inert when reading this component.
-:host(.full-width) {
-  width: 100%;
-}

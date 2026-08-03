@@ -59,11 +59,11 @@ export class CopyButtonComponent {
     return this.copyViaDeprecatedExecCommand(text);
   }
 
-  copyToClipboard(): void {
+  protected copyToClipboard(): void {
     this.handleCopyToClipboard(this.text()).then(() => this.showSuccessMessage());
   }
 
-  copyJsonToClipboard(): void {
+  protected copyJsonToClipboard(): void {
     this.handleCopyToClipboard(JSON.stringify(this.jsonText(), null, 2)).then(() => this.showSuccessMessage());
   }
 }

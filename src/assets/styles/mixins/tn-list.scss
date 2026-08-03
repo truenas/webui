@@ -1,0 +1,46 @@
+// Shared TEMP workarounds for @truenas/ui-components `tn-list-item`. Its
+// `.tn-list-item__*` classes are internal, view-encapsulated markup rather than public
+// API, so a consumer that has to retune the row's internals can only reach them through
+// `::ng-deep`. Hoisted here so the eventual removal (once the library exposes real
+// inputs — see the "Known Library Gaps" table in TRUENAS_UI_INTEGRATION.md) is a single
+// edit instead of a sweep across every list consumer. Tracked under NAS-141021.
+
+// The library gives the leading slot a standard 16px `margin-right`. Consumers whose
+// leading element is a drag handle or a small status icon want it closer to the label.
+//
+// Include inside the block that scopes the list item:
+//   tn-list-item { @include tn-list-item-leading-gap(2px); }
+@mixin tn-list-item-leading-gap($gap) {
+  ::ng-deep .tn-list-item__leading {
+    margin-right: $gap;
+  }
+}
+
+// Row metrics (padding, min-height) live on the item's internal content wrapper — the
+// library forces the host itself to `padding: 0`, so setting them on `tn-list-item`
+// does nothing.
+//
+//   .vdev-type {
+//     @include tn-list-item-content {
+//       padding: 11px 21px 13px;
+//     }
+//   }
+@mixin tn-list-item-content {
+  ::ng-deep .tn-list-item__content {
+    @content;
+  }
+}
+
+// The primary-text span carries the row's label typography and layout, which scoped
+// styles can't reach either.
+//
+//   tn-list-item {
+//     @include tn-list-item-primary-text {
+//       color: var(--fg2);
+//     }
+//   }
+@mixin tn-list-item-primary-text {
+  ::ng-deep .tn-list-item__primary-text {
+    @content;
+  }
+}

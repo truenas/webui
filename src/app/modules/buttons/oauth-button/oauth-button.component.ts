@@ -17,7 +17,10 @@ import { OauthProviderData } from 'app/pages/credentials/backup-credentials/clou
   styleUrls: ['./oauth-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[class.full-width]': 'fullWidth()',
+    // `[fullWidth]` stretches the inner tn-button, but the host has to stretch with it
+    // when the container is a flex parent, where `display: block` alone does not fill
+    // the cross axis.
+    '[style.width]': 'fullWidth() ? "100%" : null',
   },
   imports: [
     TnButtonComponent,

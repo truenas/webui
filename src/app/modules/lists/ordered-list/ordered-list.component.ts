@@ -65,7 +65,8 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   protected items: OrderedOption[];
 
   protected isDisabled = false;
-  value: BaseOptionValueType[];
+  /** Kept non-null so the template's `isChecked` and `orderOptions` never have to guard. */
+  protected value: BaseOptionValueType[] = [];
 
   private get orderedValue(): BaseOptionValueType[] {
     return this.items.filter((item) => this.value.includes(item.value)).map((item) => item.value);
@@ -79,7 +80,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   onTouch: () => void = (): void => {};
 
   writeValue(value: BaseOptionValueType[]): void {
-    this.value = value;
+    this.value = value ?? [];
     this.cdr.markForCheck();
   }
 
@@ -129,6 +130,13 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   private orderOptions(): void {
     this.value.toReversed().forEach((value) => {
       const idx = this.items.findIndex((option) => option.value === value);
+      // A stored value can name an option that is no longer offered (an interface taken
+      // by another LAG, renamed or removed). Without this guard `splice(-1, 1)` would
+      // hoist the last, unrelated option to the top.
+      if (idx === -1) {
+        return;
+      }
+
       this.items.unshift(...this.items.splice(idx, 1));
     });
   }

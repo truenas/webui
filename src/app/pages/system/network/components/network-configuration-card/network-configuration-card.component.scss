@@ -1,4 +1,5 @@
 @import 'scss-imports/variables';
+@import 'mixins/tn-list';
 
 .card {
   width: 100%;
@@ -35,9 +36,7 @@
 
   // The leading slot centres the icon for us; keep this row's own tighter gap
   // rather than the library's standard 16px.
-  ::ng-deep .tn-list-item__leading {
-    margin-right: 0;
-  }
+  @include tn-list-item-leading-gap(0);
 
   .list-icon {
     min-width: 30px;

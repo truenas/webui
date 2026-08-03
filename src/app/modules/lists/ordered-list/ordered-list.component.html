@@ -23,6 +23,12 @@
           aria-hidden="true"
         ></tn-icon>
 
+        <!--
+          tn-slide-toggle exposes no blur output (it reports touches only through its own
+          CVA, which is unused here), so the bubbling DOM event stands in for the
+          mat-slide-toggle `(blur)` this replaced. The toggle has a single focusable node,
+          so it still fires once, when focus leaves the row.
+        -->
         <tn-slide-toggle
           color="primary"
           labelPosition="before"

@@ -28,6 +28,6 @@ export function normalizeTestIdSegment(segment: string | number): string {
  */
 export function normalizeTestId(segments: SupportedTestId): string[] {
   return (Array.isArray(segments) ? segments : [segments])
-    .filter((part) => part)
-    .map((part) => normalizeTestIdSegment(part as string | number));
+    .filter((part): part is string | number => Boolean(part))
+    .map((part) => normalizeTestIdSegment(part));
 }

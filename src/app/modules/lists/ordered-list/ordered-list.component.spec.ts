@@ -5,7 +5,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnSlideToggleHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { Option } from 'app/interfaces/option.interface';
+import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
@@ -33,20 +33,26 @@ describe('OrderedListboxComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    onChange.mockClear();
-    onTouch.mockClear();
-
+  // The stored value has to be written before the first change detection: the options
+  // are only ordered against it when they arrive, in `ngOnInit`.
+  function setUpWith(value: BaseOptionValueType[]): void {
     spectator = createComponent({
       props: { options: of(options) },
       detectChanges: false,
     });
     spectator.component.registerOnChange(onChange);
     spectator.component.registerOnTouched(onTouch);
-    spectator.component.writeValue(['eth2']);
+    spectator.component.writeValue(value);
     spectator.detectChanges();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  }
+
+  beforeEach(() => {
+    onChange.mockClear();
+    onTouch.mockClear();
+
+    setUpWith(['eth2']);
   });
 
   it('lists every option, with the selected ones hoisted to the top', async () => {
@@ -63,6 +69,25 @@ describe('OrderedListboxComponent', () => {
 
     expect(await Promise.all(toggles.map((toggle) => toggle.getTestId())))
       .toEqual(['toggle-lag-ports-eth-2', 'toggle-lag-ports-eth-0', 'toggle-lag-ports-eth-1']);
+  });
+
+  // A saved value can name an option that is no longer offered — an interface claimed by
+  // another LAG, renamed or removed. It must not disturb the options that do exist.
+  it('skips a stored value that no longer has an option', async () => {
+    setUpWith(['no-such-nic', 'eth1']);
+
+    const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
+
+    expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth1', 'eth0', 'eth2']);
+  });
+
+  it('lists every option unchecked when the control has no value', async () => {
+    setUpWith(null);
+
+    const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
+
+    expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth0', 'eth1', 'eth2']);
+    expect(await Promise.all(toggles.map((toggle) => toggle.isChecked()))).toEqual([false, false, false]);
   });
 
   it('checks the toggles of the selected options', async () => {

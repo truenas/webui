@@ -1,4 +1,5 @@
 @import 'scss-imports/variables';
+@import 'mixins/tn-list';
 
 :host {
   display: block;
@@ -79,18 +80,16 @@
       // Wrapping comes from tn-list-item's [wrap] input; these are the row metrics
       // this drag-drop widget has always used, which are tighter than the library's
       // standard 48px row.
-      ::ng-deep .tn-list-item__content {
+      @include tn-list-item-content {
         min-height: 23px;
         padding: 12px 16px;
       }
 
-      ::ng-deep .tn-list-item__primary-text {
+      @include tn-list-item-primary-text {
         color: var(--fg2);
       }
 
-      ::ng-deep .tn-list-item__leading {
-        margin-right: 5px;
-      }
+      @include tn-list-item-leading-gap(5px);
 
       label {
         cursor: pointer;

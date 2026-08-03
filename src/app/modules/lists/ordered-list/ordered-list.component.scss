@@ -1,3 +1,5 @@
+@import 'mixins/tn-list';
+
 :host {
   margin-top: 12px;
   padding: 8px 0;
@@ -22,9 +24,7 @@ tn-list-item {
   cursor: move;
 
   // The drag handle sits closer to the label than a standard leading icon would.
-  ::ng-deep .tn-list-item__leading {
-    margin-right: 2px;
-  }
+  @include tn-list-item-leading-gap(2px);
 }
 
 .cdk-drag-preview {
