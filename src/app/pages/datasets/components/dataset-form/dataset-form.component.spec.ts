@@ -163,13 +163,32 @@ describe('DatasetFormComponent', () => {
 
       expect(spectator.component.canSubmit()).toBe(false);
 
-      // `formValidityChange` only fires on status changes, so the `false` above is the last thing
-      // quotas ever emits. Once it's off screen it must stop blocking Save, or the panel is wedged
-      // with nothing left for the user to fix.
+      // The `false` above is the last thing that instance emits. Once it's off screen it must stop
+      // blocking Save, or the panel is wedged with nothing left for the user to fix.
       toggleAdvanced();
 
       expect(spectator.query(QuotasSectionComponent)).not.toExist();
       expect(spectator.component.canSubmit()).toBe(true);
+    });
+
+    it('takes a re-mounted section back into the Save gate on its own report', () => {
+      toggleAdvanced();
+      spectator.query(QuotasSectionComponent)!.formValidityChange.emit(false);
+      toggleAdvanced();
+      toggleAdvanced();
+
+      // The real section reports its current validity on mount (see QuotasSectionComponent), which
+      // is what clears the stale `false` its predecessor left behind — the mocked one here doesn't,
+      // so the emission stands in for it.
+      spectator.query(QuotasSectionComponent)!.formValidityChange.emit(true);
+      spectator.detectChanges();
+
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      spectator.query(QuotasSectionComponent)!.formValidityChange.emit(false);
+      spectator.detectChanges();
+
+      expect(spectator.component.canSubmit()).toBe(false);
     });
   });
 

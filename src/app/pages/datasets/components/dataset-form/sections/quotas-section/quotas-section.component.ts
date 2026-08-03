@@ -8,6 +8,7 @@ import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { pickBy } from 'lodash-es';
+import { startWith } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
@@ -66,7 +67,14 @@ export class QuotasSectionComponent implements OnInit {
   ngOnInit(): void {
     this.setFormRelations();
 
-    this.form.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((status) => {
+    // `startWith` makes the contract "always reports its current validity" rather than "reports
+    // changes": this section mounts and unmounts with the Advanced toggle, so without an emission on
+    // mount a fresh, valid instance would leave the host's last-known `false` in place and keep Save
+    // disabled with no invalid field on screen.
+    this.form.statusChanges.pipe(
+      startWith(this.form.status),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((status) => {
       this.formValidityChange.emit(status === 'VALID');
     });
   }

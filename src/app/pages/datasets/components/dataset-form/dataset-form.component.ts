@@ -98,10 +98,14 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   form = new FormGroup({});
 
   /**
-   * Mirrors the template's `@if`s rather than AND-ing all four signals: `formValidityChange` fires
-   * only on status *changes*, so a section that unmounts leaves its last emission behind. Gating a
-   * section that isn't on screen would disable Save with nothing to fix — invalidate a quota, click
-   * Basic Options, and it would stay stuck for the life of the panel.
+   * Mirrors the template's `@if`s rather than AND-ing all four signals: a section that unmounts
+   * leaves its last emission behind, and gating a section that isn't on screen would disable Save
+   * with nothing to fix — invalidate a quota, click Basic Options, and it would stay stuck for the
+   * life of the panel.
+   *
+   * This covers only the unmount direction; the remount direction is the section's own
+   * responsibility — `QuotasSectionComponent` emits its current validity on mount (`startWith`), so
+   * a fresh, valid instance clears the stale `false` its predecessor left here.
    *
    * Encryption is deliberately gated whenever it's mounted, even in basic mode where its fields are
    * hidden: unlike quotas, its payload is part of every create, so an invalid value still ships.

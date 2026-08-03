@@ -2,7 +2,7 @@
 <ix-form
   [formGroup]="form"
   [externalLoading]="isFormLoading()"
-  [extraDisabled]="isCheckingVms()"
+  [extraDisabled]="isCheckingVms() || vmCheckFailed()"
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"
 >

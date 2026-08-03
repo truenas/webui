@@ -243,16 +243,36 @@ describe('SnapshotAddFormComponent', () => {
       );
     });
 
-    it('reports every failed attempt, since each one follows an explicit user action', async () => {
+    it('keeps Save blocked even if the field error is cleared from elsewhere', async () => {
+      failVmChecks();
+
+      await (await getSelect('dataset')).selectOption('APPS');
+      await (await getInput('name')).setValue('test-snapshot-name');
+
+      // The control error only explains the block; Save is gated on the signal, so a stray
+      // `setErrors`/`updateValueAndValidity` elsewhere can't quietly let an unsynced snapshot out.
+      spectator.component.form.controls.dataset.setErrors(null);
+      spectator.detectChanges();
+
+      expect(spectator.component.canSubmit()).toBe(false);
+    });
+
+    it('lets auto re-checks fail quietly into the field, and only reports an explicit retry', async () => {
       failVmChecks();
 
       await (await getSelect('dataset')).selectOption('APPS');
       await (await getCheckbox('recursive')).check();
       await (await getCheckbox('recursive')).uncheck();
 
-      // Recursion is precisely what changes the answer for nested VM datasets, so a second failure
-      // must not be swallowed just because an earlier one was reported for the same dataset.
-      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledTimes(3);
+      // The lookup re-runs on every dataset/recursive change, so with the endpoint down a modal per
+      // attempt would pile up on a form that already explains the failure inline and offers a retry.
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+
+      // A retry is the user asking for this lookup specifically, so its failure gets the backend's
+      // own wording rather than dropping the click on the floor.
+      await (await loader.getHarness(TnButtonHarness.with({ label: 'Retry VM Check' }))).click();
+
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledTimes(1);
     });
 
     it('retries the lookup on demand, and clears the block once it succeeds', async () => {
