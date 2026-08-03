@@ -65,6 +65,51 @@ describe('CopyButtonComponent', () => {
     });
   });
 
+  // Browsers without `navigator.clipboard` (and any non-secure context) fall back to
+  // `document.execCommand`, which reports a refused copy by returning false rather than
+  // throwing.
+  describe('execCommand fallback', () => {
+    const execCommand = jest.fn(() => true);
+    // The component under test deliberately uses the deprecated API, so stubbing it is
+    // the only way to cover that path.
+    // eslint-disable-next-line sonarjs/deprecation
+    const originalExecCommand = document.execCommand;
+
+    beforeEach(() => {
+      Object.defineProperty(navigator, 'clipboard', { configurable: true, value: undefined });
+      // eslint-disable-next-line sonarjs/deprecation
+      document.execCommand = execCommand;
+      execCommand.mockClear();
+
+      spectator = createComponent({ props: { text: 'some text' } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    afterEach(() => {
+      Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
+      // eslint-disable-next-line sonarjs/deprecation
+      document.execCommand = originalExecCommand;
+    });
+
+    it('copies the text and reports success when execCommand succeeds', async () => {
+      const button = await loader.getHarness(TnIconButtonHarness);
+      await button.click();
+
+      expect(execCommand).toHaveBeenCalledWith('copy');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Copied to clipboard');
+    });
+
+    it('shows an error when execCommand refuses the copy', async () => {
+      execCommand.mockReturnValueOnce(false);
+
+      const button = await loader.getHarness(TnIconButtonHarness);
+      await button.click();
+
+      expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('Failed to copy to clipboard');
+      expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+    });
+  });
+
   describe('json', () => {
     async function openMenu(): Promise<TnMenuHarness> {
       const trigger = await loader.getHarness(TnIconButtonHarness);

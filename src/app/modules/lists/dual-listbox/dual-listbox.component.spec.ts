@@ -42,11 +42,13 @@ describe('DualListBoxComponent', () => {
   // `.tn-list-item__leading` is internal library markup, selected on here only because
   // @truenas/ui-components 0.4.7 ships no TnListHarness / TnListItemHarness — see library
   // gap 8 in TRUENAS_UI_INTEGRATION.md. Replace this query with the harness once one
-  // exists; it is the last `.tn-list-item__` reference outside `mixins/tn-list.scss`.
+  // exists; it is the last `.tn-list-item__` reference outside `mixins/tn-list.scss`,
+  // hence the lone `no-restricted-syntax` exemption.
   it('should render the item icon in the list item leading slot when listItemIcon is set', () => {
     spectator.setInput('listItemIcon', 'account');
     spectator.detectChanges();
 
+    // eslint-disable-next-line no-restricted-syntax
     expect(spectator.queryAll('tn-list-item .tn-list-item__leading tn-icon')).toHaveLength(testData.length);
   });
 

@@ -341,14 +341,21 @@ existing `mixins/tn-card.scss` and `mixins/tn-table.scss`) rather than being spe
 per consumer. A library class rename is then a one-file fix, and each gap disappears
 with a single edit once the corresponding input ships.
 
-That only holds while the mixins are the *only* place the classes are named, so
-`.stylelintrc.json` disallows `.tn-list-item__` selectors everywhere except
-`mixins/tn-list.scss` (an `overrides` entry restores the plain rule there). A new consumer
-reaching for `::ng-deep` therefore gets a lint error pointing at the mixins, and should
-either use one or, if none fits, add one. Gap 8's spec query is the only remaining
-reference outside the mixins — stylelint doesn't lint `.spec.ts`, so
-`grep -rn 'tn-list-item__' src` should return the mixins plus that one line and nothing
-else.
+That only holds while the mixins are the *only* place the classes are named, so both
+linters enforce it rather than leaving it to review:
+
+- `.stylelintrc.json`'s `selector-disallowed-list` bans `.tn-list-item__` selectors in
+  every `.scss` file. `mixins/tn-list.scss` carries a `stylelint-disable-next-line` on
+  each of its three rules — a per-selector exemption rather than an `overrides` entry,
+  because an override would replace the whole disallowed list and a selector banned
+  globally later would silently stop being banned inside the mixins.
+- `eslint.config.mjs` adds a `no-restricted-syntax` entry matching the string in
+  TypeScript, so a spec query or class-name literal can't route around stylelint. Gap 8's
+  query in `dual-listbox.component.spec.ts` is the single `eslint-disable-next-line`, and
+  goes away with the gap.
+
+A new consumer reaching for `::ng-deep` therefore gets a lint error pointing at the
+mixins, and should either use one or, if none fits, add one.
 
 ### Local library builds
 

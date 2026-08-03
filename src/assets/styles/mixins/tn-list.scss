@@ -4,6 +4,12 @@
 // `::ng-deep`. Hoisted here so the eventual removal (once the library exposes real
 // inputs — see the "Known Library Gaps" table in TRUENAS_UI_INTEGRATION.md) is a single
 // edit instead of a sweep across every list consumer. Tracked under NAS-141021.
+//
+// `selector-disallowed-list` bans `.tn-list-item__*` everywhere so those `::ng-deep`
+// rules can't spread again; this file is the one place allowed to name them. The
+// exemption is per-selector rather than a `.stylelintrc.json` override for that reason —
+// an override would replace the whole disallowed list, so a selector banned globally
+// later would silently stop being banned here.
 
 // The library gives the leading slot a standard 16px `margin-right`. Consumers whose
 // leading element is a drag handle or a small status icon want it closer to the label.
@@ -11,6 +17,7 @@
 // Include inside the block that scopes the list item:
 //   tn-list-item { @include tn-list-item-leading-gap(2px); }
 @mixin tn-list-item-leading-gap($gap) {
+  // stylelint-disable-next-line selector-disallowed-list
   ::ng-deep .tn-list-item__leading {
     margin-right: $gap;
   }
@@ -26,6 +33,7 @@
 //     }
 //   }
 @mixin tn-list-item-content {
+  // stylelint-disable-next-line selector-disallowed-list
   ::ng-deep .tn-list-item__content {
     @content;
   }
@@ -40,6 +48,7 @@
 //     }
 //   }
 @mixin tn-list-item-primary-text {
+  // stylelint-disable-next-line selector-disallowed-list
   ::ng-deep .tn-list-item__primary-text {
     @content;
   }

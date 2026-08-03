@@ -43,7 +43,7 @@ export class CopyButtonComponent {
   }
 
   private copyViaDeprecatedExecCommand(text: string): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const textArea = document.createElement('textarea');
       Object.assign(textArea.style, { position: 'fixed', left: '-9999px', top: '-9999px' });
       textArea.value = text;
@@ -51,9 +51,16 @@ export class CopyButtonComponent {
       textArea.select();
       // Fallback for browsers that don't support navigator.clipboard
       // eslint-disable-next-line sonarjs/deprecation
-      document.execCommand('copy');
+      const isCopied = document.execCommand('copy');
       textArea.remove();
-      resolve();
+
+      // `execCommand` reports a refused copy by returning false rather than throwing, so
+      // without this the fallback path would always claim success.
+      if (isCopied) {
+        resolve();
+      } else {
+        reject(new Error('document.execCommand("copy") was refused'));
+      }
     });
   }
 

@@ -17,6 +17,22 @@ import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-d
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 
+interface UnusedPortRow {
+  port: NvmeOfPort;
+  /**
+   * `addr_trsvcid` is optional (FC and RDMA ports carry none), and
+   * {@link normalizeTestIdParts} drops empty segments — so those rows now resolve to
+   * `add-port-fc-<addr>` where the pre-migration code stringified the missing value and
+   * emitted a literal `add-port-fc-<addr>-undefined`. Deliberate: the trailing `undefined`
+   * was a bug, and RE has been told the ids of those rows change. Every port that does have
+   * a service id is unaffected.
+   *
+   * Resolved with the row rather than by a template method, so the `[testId]` signal input
+   * isn't handed a freshly allocated array on every change detection pass.
+   */
+  testId: string[];
+}
+
 @Component({
   selector: 'ix-add-port-menu',
   templateUrl: './add-port-menu.component.html',
@@ -46,25 +62,17 @@ export class AddPortMenuComponent {
 
   protected noPortsExist = computed(() => !this.allPorts().length);
 
-  protected unusedPorts = computed(() => {
+  protected unusedPorts = computed<UnusedPortRow[]>(() => {
     const usedPortIds = this.subsystemPorts().map((port) => port.id);
     const unusedPorts = this.allPorts().filter((port) => !usedPortIds.includes(port.id));
-    return sortBy(unusedPorts, ['addr_trtype', 'addr_traddr', 'addr_trsvcid']);
+
+    return sortBy(unusedPorts, ['addr_trtype', 'addr_traddr', 'addr_trsvcid']).map((port) => ({
+      port,
+      testId: normalizeTestIdParts(['add-port', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]),
+    }));
   });
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
-
-  /**
-   * `addr_trsvcid` is optional (FC and RDMA ports carry none), and
-   * {@link normalizeTestIdParts} drops empty segments — so those rows now resolve to
-   * `add-port-fc-<addr>` where the pre-migration code stringified the missing value and
-   * emitted a literal `add-port-fc-<addr>-undefined`. Deliberate: the trailing `undefined`
-   * was a bug, and RE has been told the ids of those rows change. Every port that does have
-   * a service id is unaffected.
-   */
-  protected addPortTestId(port: NvmeOfPort): string[] {
-    return normalizeTestIdParts(['add-port', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]);
-  }
 
   protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
 

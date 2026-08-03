@@ -64,16 +64,17 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
 
   protected items: OrderedOption[] = [];
   /**
-   * The options as they arrived, never reordered. `orderOptions` starts from this rather
-   * than from the current row order, so writing a value is idempotent: writing `null`
-   * (or a value that selects nothing) restores the source order instead of leaving the
-   * rows hoisted by whatever the previous value was.
+   * The base order `orderOptions` hoists the selected values out of: the options as they
+   * arrived, plus any reordering the user has since done by dragging. Starting from this
+   * rather than from the current row order makes writing a value idempotent — writing
+   * `null` (or a value that selects nothing) restores the base order instead of leaving
+   * the rows hoisted by whatever the previous value was.
    */
   private sourceItems: OrderedOption[] = [];
 
   protected isDisabled = false;
-  /** Kept non-null so the template's `isChecked` and `orderOptions` never have to guard. */
-  protected value: BaseOptionValueType[] = [];
+  /** Kept non-null so `isChecked` and `orderOptions` never have to guard. */
+  private value: BaseOptionValueType[] = [];
 
   private get orderedValue(): BaseOptionValueType[] {
     return this.items.filter((item) => this.value.includes(item.value)).map((item) => item.value);
@@ -138,6 +139,10 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
 
   protected drop(event: CdkDragDrop<string[]>): void {
     moveItemInArray(this.items, event.previousIndex, event.currentIndex);
+    // A drag is a change to the base order, not just to the current rows: a later
+    // `writeValue` rebuilds `items` from `sourceItems`, so without this the drop would be
+    // undone the next time the control's value is written.
+    this.sourceItems = [...this.items];
     this.onChange(this.orderedValue);
   }
 

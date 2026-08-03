@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -18,6 +18,17 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { subsystemPortsCardElements } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-ports-card/subsystem-ports-card.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+interface PortRow {
+  port: NvmeOfPort;
+  /**
+   * Ports with no `addr_trsvcid` (FC, RDMA) lose the literal `-undefined` suffix the
+   * pre-migration id carried — see `UnusedPortRow` in add-port-menu for the full note.
+   * Resolved with the row for the same reason: `[testId]` is a signal input, so a
+   * template method would hand it a new array on every change detection pass.
+   */
+  testId: string[];
+}
 
 @Component({
   selector: 'ix-subsystem-ports-card',
@@ -53,13 +64,14 @@ export class SubsystemPortsCardComponent {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  /**
-   * Ports with no `addr_trsvcid` (FC, RDMA) lose the literal `-undefined` suffix the
-   * pre-migration id carried — see `addPortTestId` in add-port-menu for the full note.
-   */
-  protected removePortTestId(port: NvmeOfPort): string[] {
-    return normalizeTestIdParts(['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]);
-  }
+  protected portRows = computed<PortRow[]>(() => {
+    return (this.subsystem().ports ?? []).map((port) => ({
+      port,
+      testId: normalizeTestIdParts([
+        'remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid,
+      ]),
+    }));
+  });
 
   protected onPortAdded(port: NvmeOfPort): void {
     this.nvmeOfService.associatePorts(this.subsystem(), [port])

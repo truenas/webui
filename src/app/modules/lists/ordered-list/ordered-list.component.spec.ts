@@ -1,3 +1,4 @@
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { NgControl } from '@angular/forms';
@@ -106,6 +107,22 @@ describe('OrderedListboxComponent', () => {
 
     expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth0', 'eth1', 'eth2']);
     expect(await Promise.all(toggles.map((toggle) => toggle.isChecked()))).toEqual([false, false, false]);
+  });
+
+  // Dragging changes the base order the rows are rebuilt from, so a `writeValue` that
+  // lands afterwards (a refresh after save, a validation-driven reset) must not snap the
+  // rows back to the order the options arrived in.
+  it('keeps a dragged order when a value is written afterwards', async () => {
+    spectator.triggerEventHandler('[cdkDropList]', 'cdkDropListDropped', {
+      previousIndex: 2,
+      currentIndex: 1,
+    } as CdkDragDrop<string[]>);
+    spectator.component.writeValue(['eth2']);
+    spectator.detectChanges();
+
+    const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
+
+    expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth2', 'eth1', 'eth0']);
   });
 
   it('lists every option unchecked when the control has no value', async () => {
