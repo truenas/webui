@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnCardComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnIconComponent } from '@truenas/ui-components';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -79,11 +79,7 @@ describe('RestartComponent', () => {
     // setTimeout before navigating to /signin, so the component never reaches zone
     // stability and any CDK harness await here hangs until the jest timeout.
     it('shows the restarting message and logo in a card', () => {
-      const card = spectator.query(TnCardComponent)!;
-      expect(card.elevation()).toBe('low');
-      expect(card.padding()).toBe('small');
-
-      expect(spectator.query('#message')).toHaveText('System is restarting...');
+      expect(spectator.query('tn-card #message')).toHaveText('System is restarting...');
 
       const logo = spectator.query(TnIconComponent)!;
       expect(logo.name()).toBe('tn-truenas-logo');

@@ -37,6 +37,12 @@
 // resolve it. Re-point it at the live theme var. Include on the card host.
 //
 //   #restart-card { @include tn-card-webui-palette; }
+//
+// NOTE: this is opt-in per card, but the underlying gap is app-wide —
+// `ThemeService.syncComponentLibraryTheme` only pushes themes listed in
+// `webuiToComponentLibraryThemeMap`, so *every* `tn-card` renders off-palette under a
+// custom theme. The real fix is to have the theme sync feed the library's CSS vars for
+// unmapped themes; until then each migrated card includes this. Tracked under NAS-141021.
 @mixin tn-card-webui-palette {
   --tn-bg2: var(--bg2);
 
@@ -44,7 +50,7 @@
   display: block;
 }
 
-// The splash screens (signin, shutdown, restart, failover, config-reset) project a plain
+// The system-task screens (shutdown, restart, failover, config-reset) project a plain
 // wrapper into `tn-card`'s default content slot, since that slot carries no layout of its
 // own. Include on that wrapper.
 //
