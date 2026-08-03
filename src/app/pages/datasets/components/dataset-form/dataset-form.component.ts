@@ -47,11 +47,8 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 type SaveDatasetResult = [Dataset, boolean];
 
 /**
- * Note for callers: the payload is `Dataset | null`, but openers correctly use
- * `formPanel.open<Dataset>(…)` and dereference the record without a guard. `null` is only emitted
- * on the length/depth bail-out, and `FormSidePanelService` coerces any falsy payload to a cancel
- * (`pendingResponse = saved || undefined`), so `onSuccess` never observes it. Don't "fix" the call
- * sites to `open<Dataset | null>` and add a redundant guard — the null never reaches them.
+ * Closes with the saved dataset, or `null` on the name length/depth bail-out — `FormSidePanelService`
+ * reads that falsy payload as a cancel, so openers can safely `open<Dataset>(…)`.
  */
 @Component({
   selector: 'ix-dataset-form',
@@ -78,8 +75,8 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
   private destroyRef = inject(DestroyRef);
 
-  /** Edit parameters supplied by the `<tn-side-panel>` host. */
-  readonly params = input.required<{ datasetId: string; isNew?: boolean }>();
+  /** Create/edit parameters supplied by the `<tn-side-panel>` host. */
+  readonly params = input.required<{ datasetId: string; isNew: boolean }>();
 
   private nameAndOptionsSection = viewChild.required(NameAndOptionsSectionComponent);
   private encryptionSection = viewChild(EncryptionSectionComponent);
@@ -121,22 +118,15 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   protected readonly parentDataset = signal<Dataset | undefined>(undefined);
   protected readonly existingDataset = signal<Dataset | undefined>(undefined);
 
-  /**
-   * The saved dataset, captured on success so {@link onFormClosed} can hand it back to the opener —
-   * `<ix-form>` closes with a plain `true`, and the dataset list needs the record to switch to it.
-   */
-  private savedDataset: Dataset | undefined;
-
-  /**
-   * Mountpoint to open the ACL editor at, set only when the post-save ACL prompt was accepted.
-   * Carrying the path (rather than a boolean) keeps {@link onFormClosed} free of an invariant
-   * about `savedDataset` being present.
-   */
+  /** Mountpoint to open the ACL editor at, set only when the post-save ACL prompt was accepted. */
   private aclEditorPath: string | undefined;
 
-  get isNew(): boolean {
-    return !this.existingDataset();
-  }
+  /**
+   * Taken from the host's params rather than `!existingDataset()`: that record only lands once the
+   * edit load resolves, so deriving from it would report "new" for the whole load and mount (then
+   * immediately tear down) the create-only sections.
+   */
+  protected readonly isNew = computed(() => this.params().isNew);
 
   get createSections(): [
     NameAndOptionsSectionComponent,
@@ -181,12 +171,14 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
   ngOnInit(): void {
     const { datasetId, isNew } = this.params();
-
-    if (datasetId && !isNew) {
-      this.setForEdit();
+    if (!datasetId) {
+      return;
     }
-    if (datasetId && isNew) {
+
+    if (isNew) {
       this.setForNew();
+    } else {
+      this.setForEdit();
     }
   }
 
@@ -259,13 +251,12 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
     this.isAdvancedMode.set(true);
   }
 
-  protected handleSubmit = (_: FormSubmitEvent): SubmitResult<boolean, SaveDatasetResult> => {
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult<Dataset, SaveDatasetResult> => {
     const payload = this.preparePayload();
     const existingDataset = this.existingDataset();
-    // `!existingDataset` is redundant with `isNew` (which is `!existingDataset()`) but narrows the
-    // type so `existingDataset.id` on the update branch is non-null — keep both.
-    const isNew = this.isNew || !existingDataset;
-    const request$ = isNew
+    // `!existingDataset` is redundant with `isNew()` but narrows the type, so `existingDataset.id`
+    // on the update branch is non-null — keep both.
+    const request$ = this.isNew() || !existingDataset
       ? this.api.call('pool.dataset.create', [payload as DatasetCreate])
       : this.api.call('pool.dataset.update', [existingDataset.id, payload as DatasetUpdate]);
 
@@ -275,6 +266,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
       // under `[suppressSuccessSnackbar]`, which is what makes this `null` deliberate.
       successMessage: null,
       onSuccess: ([savedDataset, shouldGoToAclEditor]) => this.onSaved(savedDataset, shouldGoToAclEditor),
+      closeWith: ([savedDataset]) => savedDataset,
       onError: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return true;
@@ -310,12 +302,11 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
       this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
     }
 
-    this.savedDataset = savedDataset;
     this.aclEditorPath = shouldGoToAclEditor ? savedDataset.mountpoint : undefined;
 
     if (!shouldGoToAclEditor) {
       this.snackbar.success(
-        this.isNew
+        this.isNew()
           ? this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(savedDataset) })
           : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(savedDataset) }),
       );
@@ -323,17 +314,16 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   }
 
   /**
-   * Hands the saved dataset to the opener (`<ix-form>` itself closes with a plain `true`), then
-   * navigates to the ACL editor if the post-save prompt was accepted.
+   * Forwards the `closeWith` payload to the opener, then navigates to the ACL editor if the
+   * post-save prompt was accepted.
    *
-   * Note the emit does NOT guarantee the opener's `onSuccess` runs in the ACL branch: the host
-   * records the payload here but only resolves it on panel teardown, after the close animation, by
-   * which point `router.navigate` has destroyed the opener and the `DestroyRef` its callback is
-   * bound to. That's intended — we're leaving the page anyway — and matches the pre-migration
-   * behaviour. In the ordinary (non-ACL) branch nothing navigates and the opener runs normally.
+   * The emit does NOT guarantee the opener's `onSuccess` runs in the ACL branch: the host records
+   * the payload here but only resolves it on panel teardown, after the close animation, by which
+   * point `router.navigate` has destroyed the opener and the `DestroyRef` its callback is bound to.
+   * That's intended — we're leaving the page anyway — and matches the pre-migration behaviour.
    */
-  protected onFormClosed(): void {
-    this.closed.emit(this.savedDataset ?? null);
+  protected onFormClosed(savedDataset: Dataset): void {
+    this.closed.emit(savedDataset);
 
     if (this.aclEditorPath) {
       this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
@@ -343,7 +333,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   }
 
   private preparePayload(): DatasetCreate | DatasetUpdate {
-    const sections: { getPayload: () => Partial<DatasetCreate> | Partial<DatasetUpdate> }[] = this.isNew
+    const sections: { getPayload: () => Partial<DatasetCreate> | Partial<DatasetUpdate> }[] = this.isNew()
       ? this.createSections
       : this.updateSections;
 
@@ -374,7 +364,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
   private createSmb(dataset: Dataset): Observable<Dataset> {
     const datasetPresetFormValue = this.nameAndOptionsSection().datasetPresetForm.value;
-    if (!this.isNew || !datasetPresetFormValue.create_smb || !this.nameAndOptionsSection().canCreateSmb) {
+    if (!this.isNew() || !datasetPresetFormValue.create_smb || !this.nameAndOptionsSection().canCreateSmb) {
       return of(dataset);
     }
     const isMultiprotocol = this.nameAndOptionsSection().form.value.share_type === DatasetPreset.Multiprotocol;
@@ -390,7 +380,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
   private createNfs(dataset: Dataset): Observable<Dataset> {
     const datasetPresetFormValue = this.nameAndOptionsSection().datasetPresetForm.value;
-    if (!this.isNew || !datasetPresetFormValue.create_nfs || !this.nameAndOptionsSection().canCreateNfs) {
+    if (!this.isNew() || !datasetPresetFormValue.create_nfs || !this.nameAndOptionsSection().canCreateNfs) {
       return of(dataset);
     }
     return this.api.call('sharing.nfs.create', [{

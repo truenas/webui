@@ -65,12 +65,6 @@ import { LicenseService } from 'app/services/license.service';
 // as unchanged to avoid spurious payload churn.
 const volsizeUnchangedRelativeTolerance = 0.001;
 
-/**
- * Note for callers: the payload is `Dataset | null`, but openers correctly use
- * `formPanel.open<Dataset>(…)` and dereference the record without a guard — `null` is only emitted
- * if a save somehow completes without a record, and `FormSidePanelService` coerces any falsy
- * payload to a cancel, so `onSuccess` never observes it.
- */
 @Component({
   selector: 'ix-zvol-form',
   templateUrl: './zvol-form.component.html',
@@ -94,7 +88,7 @@ const volsizeUnchangedRelativeTolerance = 0.001;
     FileSizePipe,
   ],
 })
-export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements OnInit {
+export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit {
   private formatter = inject(IxFormatterService);
   private translate = inject(TranslateService);
   private formBuilder = inject(NonNullableFormBuilder);
@@ -111,8 +105,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
 
   /** Edit/create parameters supplied by the `<tn-side-panel>` host. */
   readonly params = input.required<{ isNew: boolean; parentOrZvolId: string }>();
-
-  private savedDataset: Dataset | undefined;
 
   protected readonly parentOrZvolId = computed(() => this.params().parentOrZvolId);
   protected readonly isNew = computed(() => this.params().isNew);
@@ -237,25 +229,12 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
     }
   }
 
-  protected handleSubmit = (event: FormSubmitEvent<ZvolFormData>): SubmitResult<boolean, Dataset> => {
+  protected handleSubmit = (event: FormSubmitEvent<ZvolFormData>): SubmitResult<Dataset, Dataset> => {
     if (this.isNew()) {
       return this.buildCreateResult(event);
     }
     return this.buildEditResult(event);
   };
-
-  /**
-   * `<ix-form>` only signals success via `closed` (a plain `true`), so re-emit the zvol captured in
-   * the submit `onSuccess` hook — the opener needs the record to switch to the new zvol.
-   *
-   * Emits unconditionally: `closed` is the only signal that tears the panel down, so skipping the
-   * emit when no record was captured would wedge the panel open with no Save in flight. A falsy
-   * payload is read as a cancel by `FormSidePanelService` (`pendingResponse = saved || undefined`),
-   * so the degraded case closes cleanly instead.
-   */
-  protected onFormClosed(): void {
-    this.closed.emit(this.savedDataset ?? null);
-  }
 
   protected getOptionLabel(options: Option[], value: unknown): string {
     return options.find((option) => option.value === value)?.label ?? String(value ?? '');
@@ -284,7 +263,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
     control.updateValueAndValidity({ emitEvent: false });
   }
 
-  private buildCreateResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult<boolean, Dataset> {
+  private buildCreateResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult<Dataset, Dataset> {
     const data = this.buildCreatePayload(event.allValues);
     return {
       request$: this.api.call('pool.dataset.create', [data as DatasetCreate]),
@@ -293,13 +272,12 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
       successMessage: this.translate.instant('Zvol «{name}» created.', {
         name: getDatasetLabel({ name: data.name ?? '' }),
       }),
-      onSuccess: (result) => {
-        this.savedDataset = result;
-      },
+      // The opener needs the record to switch to the new zvol.
+      closeWith: (result) => result,
     };
   }
 
-  private buildEditResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult<boolean, Dataset> {
+  private buildEditResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult<Dataset, Dataset> {
     return {
       request$: this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId()]]]).pipe(
         switchMap((datasets) => {
@@ -312,11 +290,9 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
       ),
       // See `buildCreateResult` — the message is the form's, not the opener's.
       successMessage: this.translate.instant('Zvol «{name}» updated.', {
-        name: getDatasetLabel({ name: this.parentOrZvolId() }),
+        name: this.parentOrZvolId().split('/').pop(),
       }),
-      onSuccess: (result) => {
-        this.savedDataset = result;
-      },
+      closeWith: (result) => result,
       onError: (error: unknown) => {
         if (error instanceof Error && error.message === 'VOLSIZE_VALIDATION') {
           this.dialogService.error({

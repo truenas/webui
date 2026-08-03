@@ -5,19 +5,19 @@
   [extraDisabled]="!areSubFormsValid()"
   [suppressSuccessSnackbar]="true"
   [submitHandler]="handleSubmit"
-  (closed)="onFormClosed()"
+  (closed)="onFormClosed($event)"
 >
   <ix-name-and-options
     [existing]="existingDataset()"
     [parent]="parentDataset()"
     (formValidityChange)="isNameAndOptionsValid.set($event)"
   ></ix-name-and-options>
-  @if (isAdvancedMode() && isNew) {
+  @if (isAdvancedMode() && isNew()) {
     <ix-quotas-section
       (formValidityChange)="isQuotaValid.set($event)"
     ></ix-quotas-section>
   }
-  @if (isNew) {
+  @if (isNew()) {
     <ix-encryption-section
       [parent]="parentDataset()"
       [advancedMode]="isAdvancedMode()"

@@ -8,7 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonHarness, TnIconTesting, TnMenuTesting } from '@truenas/ui-components';
 import { MockComponents, MockInstance } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -339,6 +339,15 @@ describe('DatasetFormComponent', () => {
       expect(advancedAction().label).toBe('Basic Options');
     });
 
+    it('hands the saved dataset back to the opener', () => {
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
+      clickSave();
+
+      expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'saved-id' }));
+    });
+
     it('updates an existing child dataset when edit form is submitted', () => {
       clickSave();
 
@@ -346,6 +355,34 @@ describe('DatasetFormComponent', () => {
         name: 'dataset',
         aclmode: AclMode.Passthrough,
       }]);
+    });
+  });
+
+  describe('edit mode while the dataset is still loading', () => {
+    it('never mounts the create-only sections', () => {
+      // `isNew` comes from the host params, not `!existingDataset()`: the latter reads as "new"
+      // for the whole load, so both create-only sections would mount and immediately tear down —
+      // and their parting `formValidityChange` emissions would linger in the Save gate.
+      const load$ = new Subject<Dataset>();
+      spectator = createComponent({
+        props: { params: { datasetId: 'parent/child', isNew: false } },
+        providers: [
+          mockProvider(DatasetFormService, {
+            checkAndWarnForLengthAndDepth: jest.fn(() => of(true)),
+            loadDataset: jest.fn(() => load$),
+          }),
+        ],
+      });
+
+      expect(spectator.query(EncryptionSectionComponent)).toBeNull();
+      expect(spectator.query(QuotasSectionComponent)).toBeNull();
+
+      load$.next(existingDataset);
+      load$.complete();
+      spectator.detectChanges();
+
+      expect(spectator.query(EncryptionSectionComponent)).toBeNull();
+      expect(spectator.query(QuotasSectionComponent)).toBeNull();
     });
   });
 

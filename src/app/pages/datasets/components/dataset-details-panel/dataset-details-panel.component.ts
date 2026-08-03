@@ -82,8 +82,6 @@ export class DatasetDetailsPanelComponent {
   protected readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
 
   onAddDataset(): void {
-    // `open<Dataset>` (not `Dataset | null`) is deliberate: the form's cancel payload is coerced
-    // to a cancel by the panel service, so `onSuccess` only ever sees a real record.
     this.formPanel.open<Dataset>(DatasetFormComponent, {
       wide: true,
       title: this.translate.instant(helptextDatasetForm.addTitle),

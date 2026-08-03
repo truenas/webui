@@ -208,22 +208,18 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   }
 
   /**
-   * Deliberately NOT wrapped in `timeout(...)`: any timer-based bound keeps the Angular zone
-   * unstable for the whole lookup (and so hangs harness-driven tests), and it would run on every
-   * dataset/recursive edit. A check that never settles at all is a websocket-level concern; every
-   * settled outcome — success, error, or being superseded by `switchMap` — already clears the gate.
+   * No `timeout(...)`: a timer here keeps the Angular zone unstable for the whole lookup (hanging
+   * harness-driven tests), and every settled outcome — success, error, or being superseded by
+   * `switchMap` — already clears the Save gate.
    */
   private queryVmsInDataset(): Observable<boolean> {
     return this.api
       .call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
       .pipe(
-        // Caught here (inside the switchMap projection) so a failed lookup doesn't kill the
-        // outer stream and stop every later check. It's a read-only lookup, so its failure
-        // can't map onto a control — surface it rather than routing it through form validation.
+        // Caught inside the switchMap projection so a failed lookup doesn't kill the outer stream
+        // and stop every later check. Surfaced as a modal (a read-only lookup can't map onto a
+        // control), once per dataset, and non-blocking — hence falling back to `false`.
         catchError((error: unknown) => {
-          // Reported once per form: the check re-runs on every dataset/recursive edit, so a
-          // persistently failing endpoint would otherwise raise a modal on each keystroke-ish
-          // change. The failure is non-blocking by design — hence falling back to `false`.
           if (!this.hasReportedVmCheckFailure) {
             this.hasReportedVmCheckFailure = true;
             this.errorHandler.showErrorModal(error);

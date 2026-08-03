@@ -269,7 +269,8 @@ describe('ZvolFormComponent', () => {
 
     it('still closes the panel when a save completes without a record', async () => {
       // `closed` is the only signal that tears the panel down, so an unexpected response must
-      // degrade to a cancel rather than leaving the panel wedged open with no Save in flight.
+      // still emit — falsy, which `FormSidePanelService` reads as a cancel — rather than leaving
+      // the panel wedged open with no Save in flight.
       spectator.inject(MockApiService).mockCall('pool.dataset.create', undefined);
 
       await setTnInput(loader, 'name', 'new zvol');
@@ -279,7 +280,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.closed.subscribe(closed);
       spectator.component.submit();
 
-      expect(closed).toHaveBeenCalledWith(null);
+      expect(closed).toHaveBeenCalledWith(undefined);
     });
 
     it('announces the created zvol – openers rely on the form for the success message', async () => {

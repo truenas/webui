@@ -4,7 +4,7 @@
   [externalLoading]="setupLoading()"
   [initialFormSnapshot]="formSnapshot()"
   [submitHandler]="handleSubmit"
-  (closed)="onFormClosed()"
+  (closed)="closed.emit($event)"
 >
   <tn-form-section>
     <tn-form-field
