@@ -314,6 +314,7 @@ the epic's follow-up list.
 | --- | --- | --- |
 | No multi-colour status pill primitive | `status-pill` mixin in `src/assets/styles/scss-imports/status-pill.scss`, used by `ix-task-state-cell` and `ix-vmware-status-cell` | library |
 | `tn-empty`'s `[title]`/`[description]` are text-only, so an `EmptyConfig.message` written as HTML has to be flattened at runtime | `FlattenEmptyMessagePipe` | library |
+| `tn-empty` caps `[description]` at a readable measure but not `[title]`, so a paragraph-length message stretches the full page width | `tn-empty` rule in `src/assets/styles/components/_tn-empty.scss` | library |
 | Replication "Enabled" is read-only Yes/No in the detail row when the picker hides the column (it was an interactive toggle before); a dead toggle would be worse, so the toggle stays in the visible column only | `replication-list.component.ts` | webui |
 
 ### Adopted from the library, pending its release

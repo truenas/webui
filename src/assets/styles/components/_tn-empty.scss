@@ -1,0 +1,9 @@
+// `tn-empty` caps its `[description]` at a readable measure but leaves `[title]`
+// unbounded, and the migrated list pages pass a paragraph-length `EmptyConfig.message`
+// as the title — which then stretches edge to edge on a wide viewport.
+// Cap it globally rather than per page; drop this once the library bounds the title.
+tn-empty {
+  .tn-empty__title {
+    max-width: 560px;
+  }
+}
