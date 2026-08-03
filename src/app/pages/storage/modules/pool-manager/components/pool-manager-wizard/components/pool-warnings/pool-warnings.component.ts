@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent,
+  TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent, TnRadioGroupComponent,
 } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { combineLatest, startWith } from 'rxjs';
@@ -12,7 +12,6 @@ import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { TnRadioGroupComponent } from 'app/modules/forms/ix-forms/components/tn-radio-group/tn-radio-group.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { isTnCheckboxChange } from 'app/modules/forms/ix-forms/utils/tn-checkbox-change.utils';
 import { translatedSignal } from 'app/modules/translate/translated-signal';

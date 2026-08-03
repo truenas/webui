@@ -4,12 +4,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnInputComponent,
+  TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { Option } from 'app/interfaces/option.interface';
-import {
-  TnRadioGroupComponent,
-} from 'app/modules/forms/ix-forms/components/tn-radio-group/tn-radio-group.component';
 import {
   IxFormControlHarness, unreadableControl,
 } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
@@ -82,7 +80,7 @@ describe('TnFormControlHarness', () => {
       </tn-form-field>
 
       <tn-form-field [label]="'Choice'">
-        <ix-tn-radio-group name="choice" [formControl]="choice" [options]="options"></ix-tn-radio-group>
+        <tn-radio-group [formControl]="choice" [options]="options"></tn-radio-group>
       </tn-form-field>
 
       <tn-form-field [label]="'Tags'">
@@ -248,12 +246,11 @@ describe('TnFormControlHarness, label-less fields', () => {
   beforeEach(() => {
     spectator = createHost(`
       <tn-form-field>
-        <ix-tn-radio-group
-          name="choice"
+        <tn-radio-group
           [formControl]="choice"
           [options]="options"
           [ariaLabel]="'Dispersal strategy'"
-        ></ix-tn-radio-group>
+        ></tn-radio-group>
       </tn-form-field>
 
       <tn-form-field>

@@ -9,12 +9,11 @@
   @if (!isAddingVdevs()) {
     <!-- Encryption type radio group -->
     <tn-form-field [label]="'Encryption' | translate">
-      <ix-tn-radio-group
-        name="encryptionType"
+      <tn-radio-group
         formControlName="encryptionType"
         [options]="encryptionTypeOptions()"
         [testId]="['radio-button', 'encryption-type']"
-      ></ix-tn-radio-group>
+      ></tn-radio-group>
     </tn-form-field>
 
     <!-- Software Encryption Standard dropdown -->

@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnFormFieldComponent, TnSelectComponent,
+  TnButtonComponent, TnFormFieldComponent, TnRadioGroupComponent, TnSelectComponent,
   TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { timer } from 'rxjs';
@@ -14,7 +14,6 @@ import {
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { TnRadioGroupComponent } from 'app/modules/forms/ix-forms/components/tn-radio-group/tn-radio-group.component';
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { translatedSignal } from 'app/modules/translate/translated-signal';
@@ -119,8 +118,7 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
     ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
     this.store.startOver$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      // `ix-tn-radio-group` owns the re-render of the radios' stale `checked` state; a plain
-      // reset is enough here.
+      // `tn-radio-group` owns the checked state of its options, so a plain reset is enough here.
       this.form.reset({
         dispersalStrategy: DispersalStrategy.None,
       });

@@ -1,13 +1,12 @@
 <ng-container [formGroup]="form">
   <tn-form-field>
     <!-- This group has no visible label, so the accessible name is supplied explicitly. -->
-    <ix-tn-radio-group
-      name="dispersalStrategy"
+    <tn-radio-group
       formControlName="dispersalStrategy"
       [options]="dispersalOptions()"
       [ariaLabel]="'Enclosure dispersal strategy' | translate"
       [testId]="['radio-button', 'dispersal-strategy']"
-    ></ix-tn-radio-group>
+    ></tn-radio-group>
   </tn-form-field>
 
   @if (isLimitingToSingle) {

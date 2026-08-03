@@ -38,7 +38,7 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
    * library exposes no `hasValue()`, so there is no public equivalent to compose here yet.
    */
   private selectPlaceholder = this.locatorForOptional('.tn-select-text.placeholder');
-  /** Only `ix-tn-radio-group` renders this, and only with an explicit accessible name. */
+  /** Only `tn-radio-group` renders this, and only with an explicit `[ariaLabel]`. */
   private namedRadioGroup = this.locatorForOptional('[role="radiogroup"][aria-label]');
 
   /**
@@ -58,9 +58,10 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
     if (checkbox) {
       return checkbox.getLabelText();
     }
-    // Same idea for a label-less `ix-tn-radio-group`: its `[ariaLabel]` is the group's accessible
+    // Same idea for a label-less `tn-radio-group`: its `[ariaLabel]` is the group's accessible
     // name, so it is a real name to index under rather than a nameless control. (When the field
-    // does carry a label the group mirrors it into `aria-label`, so this never competes with it.)
+    // does carry a label the group takes its name from it via `aria-labelledby` and writes no
+    // `aria-label` at all, so this branch never competes with the field's own label.)
     const radioGroup = await this.namedRadioGroup();
     if (radioGroup) {
       return (await radioGroup.getAttribute('aria-label')) ?? '';

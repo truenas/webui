@@ -7,13 +7,12 @@
         [tooltip]="nonUniqueSerialDisksTooltip | translate"
         [required]="true"
       >
-        <ix-tn-radio-group
-          name="allowNonUniqueSerialDisks"
+        <tn-radio-group
           formControlName="allowNonUniqueSerialDisks"
           [options]="allowNonUniqueSerialDisksOptions()"
           [inline]="true"
           [testId]="['radio-button', 'allow-non-unique-serial-disks']"
-        ></ix-tn-radio-group>
+        ></tn-radio-group>
       </tn-form-field>
     </div>
   }
