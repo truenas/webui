@@ -53,6 +53,9 @@ import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
+import {
+  VolsizeValidationError,
+} from 'app/pages/datasets/components/zvol-form/volsize-validation-error';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
 import {
   getDatasetLabel, getUserProperty, transformSpecialSmallBlockSizeForPayload,
@@ -281,7 +284,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
         switchMap((datasets) => {
           const { payload, canSubmit } = this.buildEditPayload(event, datasets);
           if (!canSubmit) {
-            return throwError(() => new Error('VOLSIZE_VALIDATION'));
+            return throwError(() => new VolsizeValidationError('Zvol volsize cannot be shrunk.'));
           }
           return this.api.call('pool.dataset.update', [this.parentOrZvolId(), payload]);
         }),
@@ -294,7 +297,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
       }),
       closeWith: (result) => result,
       onError: (error: unknown) => {
-        if (error instanceof Error && error.message === 'VOLSIZE_VALIDATION') {
+        if (error instanceof VolsizeValidationError) {
           this.dialogService.error({
             title: helptextZvol.zvolSaveError.title,
             message: helptextZvol.zvolSaveError.msg,

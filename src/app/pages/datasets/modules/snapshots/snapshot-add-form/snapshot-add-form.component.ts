@@ -88,8 +88,9 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   /**
    * Whether the retry button is on screen. A latch rather than {@link vmCheckFailed} itself: the
    * button unmounting on the state change it triggers would drop the focus of the user who just
-   * pressed it back to `<body>`, mid-form. Once a failure has put it there it stays for the life of
-   * the form — disabled while a check runs — so the retry cycle happens under the user's cursor.
+   * pressed it back to `<body>`, mid-form. So a failure puts it there and a success leaves it —
+   * disabled while a check runs — and only picking another dataset takes it down, by which point
+   * focus has moved to the select and there is a new question to answer anyway.
    */
   protected readonly canRetryVmCheck = signal(false);
 
@@ -159,11 +160,17 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
     // neither re-enable Save early nor leave a stale flag behind (which would silently drop
     // `vmware_sync` from the payload).
     merge(
-      this.form.controls.recursive.valueChanges.pipe(map(() => false)),
-      this.form.controls.dataset.valueChanges.pipe(map(() => false)),
-      this.retryVmCheck$.pipe(map(() => true)),
+      this.form.controls.recursive.valueChanges.pipe(map(() => 'recursive' as const)),
+      this.form.controls.dataset.valueChanges.pipe(map(() => 'dataset' as const)),
+      this.retryVmCheck$.pipe(map(() => 'retry' as const)),
     ).pipe(
-      tap(() => {
+      tap((trigger) => {
+        if (trigger === 'dataset') {
+          // A different dataset is a different question, so a retry button left over from the
+          // previous one has nothing to retry — see {@link canRetryVmCheck} for why only this
+          // trigger clears it.
+          this.canRetryVmCheck.set(false);
+        }
         this.isCheckingVms.set(true);
         // Cleared per attempt, not per dataset: each run is a fresh answer, and leaving the previous
         // failure parked would keep Save blocked after a successful retry.
@@ -173,7 +180,9 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
       // emission after `isCheckingVms` was already set, latching Save disabled forever. With no
       // dataset there is nothing to ask about — toggling Recursive first would otherwise call
       // `vmware.dataset_has_vms` with '' and raise an error modal at the user.
-      switchMap((isRetry) => (this.form.controls.dataset.value ? this.queryVmsInDataset(isRetry) : of(false))),
+      switchMap((trigger) => {
+        return this.form.controls.dataset.value ? this.queryVmsInDataset(trigger === 'retry') : of(false);
+      }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((hasVmsInDataset) => {
       this.hasVmsInDataset.set(hasVmsInDataset);

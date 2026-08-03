@@ -321,6 +321,42 @@ describe('SnapshotAddFormComponent', () => {
         'This dataset was checked for VMs. Saving is no longer blocked.',
       );
     });
+
+    it('does not submit the form when clicked with the gate already clear', async () => {
+      failVmChecks();
+
+      await (await getSelect('dataset')).selectOption('APPS');
+      await (await getInput('name')).setValue('test-snapshot-name');
+
+      const retry = await loader.getHarness(TnButtonHarness.with({ label: 'Retry VM Check' }));
+      (api.call as jest.Mock).mockImplementation(() => of(true));
+      await retry.click();
+
+      // The button outlives the failure that put it there, so by now it is live inside the
+      // `<ix-form>`'s `<form>` with Save enabled — it must not act as a submit button.
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      await retry.click();
+
+      expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create', expect.anything());
+    });
+
+    it('takes the retry button away once another dataset is picked', async () => {
+      failVmChecks();
+
+      await (await getSelect('dataset')).selectOption('APPS');
+
+      expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Retry VM Check' }))).not.toBeNull();
+
+      // A new dataset is a new question, and focus is on the select rather than the button, so
+      // leaving a "Retry VM Check" (and a live region saying saving is blocked) behind would just
+      // describe a state the form is no longer in.
+      (api.call as jest.Mock).mockImplementation(() => of(true));
+      await (await getSelect('dataset')).selectOption('POOL');
+
+      expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Retry VM Check' }))).toBeNull();
+      expect(spectator.query('[role="status"]')).toHaveText('');
+    });
   });
 });
 
