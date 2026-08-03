@@ -1,14 +1,16 @@
 <div id="overlay"></div>
 <div id="wrapper">
-  <mat-card id="shutdown-card">
-    <mat-card-content id="shutdown-message">
-      {{ 'System is shutting down...' | translate }}
-    </mat-card-content>
-    <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>
-    <div>
-      <span class="copyright-txt">
-        <ix-copyright-line></ix-copyright-line>
-      </span>
+  <tn-card id="shutdown-card" elevation="low" padding="small">
+    <div class="card-body">
+      <div id="shutdown-message">
+        {{ 'System is shutting down...' | translate }}
+      </div>
+      <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>
+      <div>
+        <span class="copyright-txt">
+          <ix-copyright-line></ix-copyright-line>
+        </span>
+      </div>
     </div>
-  </mat-card>
+  </tn-card>
 </div>

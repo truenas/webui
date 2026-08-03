@@ -1,10 +1,9 @@
 import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnCardComponent, TnIconComponent } from '@truenas/ui-components';
 import { Timeout } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -21,8 +20,7 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   styleUrls: ['./config-reset.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
+    TnCardComponent,
     TnIconComponent,
     CopyrightLineComponent,
   ],

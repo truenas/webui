@@ -70,4 +70,9 @@ describe('ConfigResetComponent', () => {
   it('takes user to sign-in page when new websocket connection is established after config reset', fakeAsync(() => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/signin']);
   }));
+
+  it('shows the logo in a card while the reset job runs', () => {
+    expect(spectator.query('tn-card')).toExist();
+    expect(spectator.query('tn-card tn-icon')).toExist();
+  });
 });

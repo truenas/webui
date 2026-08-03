@@ -73,6 +73,12 @@ describe('RestartComponent', () => {
     it('closes all dialogs', () => {
       expect(spectator.inject(DialogService).closeAllDialogs).toHaveBeenCalled();
     });
+
+    it('shows the restarting message and logo in a card', () => {
+      expect(spectator.query('tn-card')).toExist();
+      expect(spectator.query('tn-card #message')).toHaveText('System is restarting...');
+      expect(spectator.query('tn-card tn-icon')).toExist();
+    });
   });
 
   describe('with reason query parameter', () => {

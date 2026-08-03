@@ -23,14 +23,25 @@
 }
 
 #shutdown-card {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  // Keep the card on the active webui theme palette even for custom themes,
+  // where the component-library theme sync falls back to a preset.
+  --tn-bg2: var(--bg2);
+
+  color: var(--fg2);
+  display: block;
   margin: auto;
   position: relative;
   top: 75px;
   width: 275px;
+}
+
+// tn-card projects into a plain content slot, so the column layout the legacy
+// card host carried lives on this wrapper instead.
+.card-body {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 #overlay {
@@ -51,17 +62,17 @@
 
 @media screen and (max-height: 700px) {
   #shutdown-card {
-    font-size: 80%;
     top: 20px;
     width: 80%;
   }
 
-  .logo {
-    width: 206px;
+  // Set inside the card: tn-card's own `.tn-card__content` declares an explicit
+  // font-size, so a host-level rule would no longer cascade into the content.
+  .card-body {
+    font-size: 80%;
   }
 
-  .mat-mdc-dialog-container {
-    height: 100px;
-    width: 100px;
+  .logo {
+    width: 206px;
   }
 }
