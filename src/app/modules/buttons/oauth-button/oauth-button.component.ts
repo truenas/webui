@@ -19,7 +19,9 @@ import { OauthProviderData } from 'app/pages/credentials/backup-credentials/clou
   host: {
     // `[fullWidth]` stretches the inner tn-button, but the host has to stretch with it:
     // in a row-direction flex parent a `display: block` host is still sized by its content.
-    '[class.full-width]': 'fullWidth()',
+    // Deliberately not the global `.full-width` utility: that one also carries
+    // `position: relative` (see `_material-reduction.scss`), which this host never asked for.
+    '[class.oauth-full-width]': 'fullWidth()',
   },
   imports: [
     TnButtonComponent,

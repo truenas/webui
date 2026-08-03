@@ -53,6 +53,17 @@ describe('CopyButtonComponent', () => {
       expect(writeText).toHaveBeenCalledWith('some text');
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Copied to clipboard');
     });
+
+    // writeText rejects when the document isn't focused or the permission is denied.
+    it('shows an error when the clipboard write is rejected', async () => {
+      writeText.mockRejectedValueOnce(new Error('Document is not focused'));
+
+      const button = await loader.getHarness(TnIconButtonHarness);
+      await button.click();
+
+      expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('Failed to copy to clipboard');
+      expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+    });
   });
 
   describe('json', () => {
@@ -82,8 +93,10 @@ describe('CopyButtonComponent', () => {
     // The menu-item test ids are the ones the old `<button mat-menu-item ixTest="copy-text">`
     // resolved to. The prefix is now composed by the library, so pin the resolved values.
     // This asserts the Release Engineering contract, so reading `data-test` is the point of
-    // the test. TnMenuHarness has no per-item harness to read it from, so the items are
-    // located in this fixture's own overlay container rather than the whole document.
+    // the test. TnMenuHarness has no per-item harness to read it from (library gap 7 in
+    // TRUENAS_UI_INTEGRATION.md), so the items are located in this fixture's own overlay
+    // container rather than the whole document. Drop the query for the harness's own
+    // `getTestId()` once the library exposes a per-item harness.
     it('keeps the legacy test ids on the menu items', async () => {
       await openMenu();
 

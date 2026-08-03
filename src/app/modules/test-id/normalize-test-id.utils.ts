@@ -23,8 +23,15 @@ export function normalizeTestIdString(id: string | number): string {
 }
 
 /**
- * Segment-wise form of {@link normalizeTestIdString}, with empty segments dropped.
+ * Segment-wise form of {@link normalizeTestIdString}, with falsy segments dropped.
  * This is what `[ixTest]` applies to its own `string | string[]` input.
+ *
+ * "Falsy" means every segment is dropped that `[ixTest]` dropped: `null`, `undefined`,
+ * `''` — **and the number `0`**, which disappears rather than becoming `-0-`. This
+ * differs from {@link normalizeTestIdString}, which keeps a lone `0`; the two are
+ * deliberately not symmetrical, because parity with `[ixTest]` is what keeps the
+ * resolved ids byte-identical. A call site that must keep a `0` segment has to stringify
+ * it before calling (`String(port)`).
  *
  * Note that dropping empties is what `[ixTest]` did, so it is byte-identical for
  * anything that already went through the directive — but a call site that used to

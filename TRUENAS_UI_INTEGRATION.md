@@ -341,10 +341,14 @@ existing `mixins/tn-card.scss` and `mixins/tn-table.scss`) rather than being spe
 per consumer. A library class rename is then a one-file fix, and each gap disappears
 with a single edit once the corresponding input ships.
 
-That only holds while the mixins are the *only* place the classes are named, so keep
-`grep -rn 'tn-list-item__' src` returning nothing outside `mixins/tn-list.scss` (and gap 8's
-spec query). A new consumer reaching for `::ng-deep` should either use the mixin or, if no
-mixin fits, add one.
+That only holds while the mixins are the *only* place the classes are named, so
+`.stylelintrc.json` disallows `.tn-list-item__` selectors everywhere except
+`mixins/tn-list.scss` (an `overrides` entry restores the plain rule there). A new consumer
+reaching for `::ng-deep` therefore gets a lint error pointing at the mixins, and should
+either use one or, if none fits, add one. Gap 8's spec query is the only remaining
+reference outside the mixins — stylelint doesn't lint `.spec.ts`, so
+`grep -rn 'tn-list-item__' src` should return the mixins plus that one line and nothing
+else.
 
 ### Local library builds
 

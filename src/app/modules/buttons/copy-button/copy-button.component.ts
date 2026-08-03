@@ -36,6 +36,12 @@ export class CopyButtonComponent {
     this.snackbar.success(this.translate.instant('Copied to clipboard'));
   }
 
+  // `navigator.clipboard.writeText` rejects when the document isn't focused or the
+  // permission is denied, so the copy can fail with nothing else to report it.
+  private showErrorMessage(): void {
+    this.snackbar.error(this.translate.instant('Failed to copy to clipboard'));
+  }
+
   private copyViaDeprecatedExecCommand(text: string): Promise<void> {
     return new Promise((resolve) => {
       const textArea = document.createElement('textarea');
@@ -60,10 +66,14 @@ export class CopyButtonComponent {
   }
 
   protected copyToClipboard(): void {
-    this.handleCopyToClipboard(this.text()).then(() => this.showSuccessMessage());
+    this.handleCopyToClipboard(this.text())
+      .then(() => this.showSuccessMessage())
+      .catch(() => this.showErrorMessage());
   }
 
   protected copyJsonToClipboard(): void {
-    this.handleCopyToClipboard(JSON.stringify(this.jsonText(), null, 2)).then(() => this.showSuccessMessage());
+    this.handleCopyToClipboard(JSON.stringify(this.jsonText(), null, 2))
+      .then(() => this.showSuccessMessage())
+      .catch(() => this.showErrorMessage());
   }
 }

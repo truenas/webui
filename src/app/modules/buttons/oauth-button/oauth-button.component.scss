@@ -3,6 +3,9 @@
 }
 
 // Set by the component when [fullWidth] is on, so consumers can still override it.
-:host(.full-width) {
+// The name is component-private on purpose — the global `.full-width` utility would
+// drag `position: relative` in with it and would fight a consumer override at equal
+// specificity.
+:host(.oauth-full-width) {
   width: 100%;
 }

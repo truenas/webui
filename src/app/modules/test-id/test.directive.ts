@@ -26,7 +26,7 @@ export class TestDirective {
     alias: 'ixTest',
   });
 
-  get normalizedDescription(): string[] {
+  private get normalizedDescription(): string[] {
     const description = this.overrideDirective?.overrideDescription() ?? this.description();
     const normalizedDescription = normalizeTestIdParts(description);
 
