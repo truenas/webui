@@ -2,7 +2,7 @@
 <ix-form
   [formGroup]="form"
   [externalLoading]="isLoading()"
-  [extraDisabled]="!areSubFormsValid() || isMissingEditRecord()"
+  [extraDisabled]="!areSubFormsValid() || isMissingEditRecord() || isMissingParent()"
   [submitHandler]="handleSubmit"
   (closed)="onFormClosed($event)"
 >

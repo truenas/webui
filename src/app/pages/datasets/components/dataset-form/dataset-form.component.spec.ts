@@ -464,6 +464,29 @@ describe('DatasetFormComponent', () => {
     });
   });
 
+  describe('create mode when the parent fails to load', () => {
+    it('keeps Save disabled, so nothing is filed under an unknown parent', () => {
+      spectator = createComponent({
+        props: { params: { datasetId: 'parent', isNew: true } },
+        providers: [
+          mockProvider(DatasetFormService, {
+            checkAndWarnForLengthAndDepth: jest.fn(() => of(true)),
+            loadDataset: jest.fn(() => throwError(() => new Error('Failed to load dataset'))),
+          }),
+          mockProvider(ErrorHandlerService),
+        ],
+      });
+
+      // A create is filed as `${parent.name}/${name}`, so without the parent the payload would ask
+      // the backend for `undefined/my-dataset`.
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      save();
+
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('pool.dataset.create', expect.anything());
+    });
+  });
+
   describe('unsaved changes', () => {
     beforeEach(() => {
       spectator = createComponent({ props: { params: { datasetId: 'dataset', isNew: true } } });

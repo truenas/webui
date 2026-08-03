@@ -46,6 +46,11 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 /** The saved dataset, paired with whether the user accepted the post-save ACL-editor prompt. */
 type SaveDatasetResult = [Dataset, boolean];
 
+/** What {@link DatasetFormComponent.preparePayload} needs from a section, whichever one it is. */
+interface DatasetFormSection {
+  getPayload: () => Partial<DatasetCreate> | Partial<DatasetUpdate>;
+}
+
 /**
  * Closes with the saved dataset, or `null` on the name length/depth bail-out — `FormSidePanelService`
  * reads that falsy payload as a cancel, so openers can safely `open<Dataset>(…)`.
@@ -157,35 +162,37 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
    */
   protected readonly isMissingEditRecord = computed(() => !this.isNew() && !this.existingDataset());
 
-  get createSections(): [
-    NameAndOptionsSectionComponent,
-    EncryptionSectionComponent,
-    OtherOptionsSectionComponent,
-    QuotasSectionComponent?,
-  ] {
-    const sections: [
-      NameAndOptionsSectionComponent,
-      EncryptionSectionComponent,
-      OtherOptionsSectionComponent,
-      QuotasSectionComponent?,
-    ] = [
+  /**
+   * A create panel with no parent — the load in {@link setForNew} failed. Blocks Save for the same
+   * reason as {@link isMissingEditRecord}: the name a create is filed under is
+   * `${parent.name}/${name}`, so submitting without one asks the backend to create
+   * `undefined/my-dataset`.
+   */
+  protected readonly isMissingParent = computed(() => this.isNew() && !this.parentDataset());
+
+  /**
+   * Every section view query is optional (three of the four sections mount conditionally), so the
+   * lists are filtered rather than positional — {@link preparePayload} calls `getPayload()` on
+   * whatever comes back, and an unresolved query would be a TypeError instead of a skipped section.
+   */
+  private get createSections(): DatasetFormSection[] {
+    return this.toSections([
       this.nameAndOptionsSection(),
       this.encryptionSection(),
       this.otherOptionsSection(),
-    ];
-
-    if (this.isAdvancedMode()) {
-      sections.push(this.quotasSection());
-    }
-
-    return sections;
+      this.isAdvancedMode() ? this.quotasSection() : undefined,
+    ]);
   }
 
-  get updateSections(): [NameAndOptionsSectionComponent, OtherOptionsSectionComponent] {
-    return [
+  private get updateSections(): DatasetFormSection[] {
+    return this.toSections([
       this.nameAndOptionsSection(),
       this.otherOptionsSection(),
-    ];
+    ]);
+  }
+
+  private toSections(sections: (DatasetFormSection | undefined)[]): DatasetFormSection[] {
+    return sections.filter((section): section is DatasetFormSection => Boolean(section));
   }
 
   /**
@@ -398,9 +405,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   }
 
   private preparePayload(): DatasetCreate | DatasetUpdate {
-    const sections: { getPayload: () => Partial<DatasetCreate> | Partial<DatasetUpdate> }[] = this.isNew()
-      ? this.createSections
-      : this.updateSections;
+    const sections = this.isNew() ? this.createSections : this.updateSections;
 
     return sections.reduce((payload, section) => {
       return { ...payload, ...section.getPayload() } as DatasetCreate | DatasetUpdate;
