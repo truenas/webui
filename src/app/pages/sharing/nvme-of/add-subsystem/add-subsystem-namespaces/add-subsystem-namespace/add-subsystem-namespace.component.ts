@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, inject, signal,
 } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder } from '@angular/forms';
 import { Role } from 'app/enums/role.enum';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import {
@@ -23,7 +23,6 @@ import {
   templateUrl: './add-subsystem-namespace.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ReactiveFormsModule,
     BaseNamespaceFormComponent,
   ],
 })

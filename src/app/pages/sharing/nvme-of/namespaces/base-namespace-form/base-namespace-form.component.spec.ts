@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { createHostFactory, SpectatorHost, mockProvider } from '@ngneat/spectator/jest';
 import { TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -29,13 +29,10 @@ describe('BaseNamespaceFormComponent', () => {
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
 
-  // The group is owned by the host (the real wrappers build it with createNamespaceForm), so the
-  // component is rendered inside a form element that supplies the ControlContainer.
+  // The group is owned by the host (the real wrappers build it with createNamespaceForm) and handed
+  // over as an input, so the spec host mirrors that rather than wrapping anything in a <form>.
   const createHost = createHostFactory({
     component: BaseNamespaceFormComponent,
-    imports: [
-      ReactiveFormsModule,
-    ],
     overrideComponents: [mockExplorerCreateZvol()],
     providers: [
       mockProvider(AuthService, {
@@ -48,8 +45,10 @@ describe('BaseNamespaceFormComponent', () => {
   const setupHost = (namespace?: NvmeOfNamespace): void => {
     form = createNamespaceForm(new FormBuilder().nonNullable);
     spectator = createHost(
-      `<form [formGroup]="form">
-        <ix-base-namespace-form [namespace]="namespace"></ix-base-namespace-form>
+      // The bare <form> carries no [formGroup] — the component binds the group it is handed. It is
+      // here because IxFormHarness anchors on a form element, and both real hosts render one.
+      `<form>
+        <ix-base-namespace-form [group]="form" [namespace]="namespace"></ix-base-namespace-form>
       </form>`,
       { hostProps: { form, namespace } },
     );

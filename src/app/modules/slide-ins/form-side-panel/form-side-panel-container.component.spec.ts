@@ -3,20 +3,29 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import {
   ChangeDetectionStrategy, Component, computed, signal,
 } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl } from '@angular/forms';
+import {
+  ComponentFixture, fakeAsync, TestBed, tick,
+} from '@angular/core/testing';
+import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonHarness, TnIconButtonHarness, TnIconTesting, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  defaultIxFormMinSubmitFeedbackMs, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import {
   FormSidePanelContainerComponent,
   SidePanelFooterAction,
   SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
 const privateKeyClick = jest.fn();
@@ -308,4 +317,85 @@ describe('FormSidePanelContainerComponent footer Save', () => {
 
     expect(await (await getSaveButton()).isDisabled()).toBe(true);
   });
+});
+
+/**
+ * Hosted form wrapping a REAL `<ix-form>`, so the footer Save reads the submitting state the
+ * production wrapper actually produces rather than a hand-driven signal.
+ */
+@Component({
+  selector: 'ix-hosted-ix-form',
+  template: '<ix-form [formGroup]="form" [submitHandler]="handleSubmit" (closed)="closed.emit($event)"></ix-form>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [IxFormComponent],
+})
+class HostedIxFormComponent extends IxFormHostForm {
+  // No controls: an empty group is VALID, so Save is enabled from the start.
+  protected readonly form = new FormGroup({});
+
+  // Resolves synchronously — the only thing keeping the submit in flight is the feedback hold.
+  protected handleSubmit = (): SubmitResult => ({
+    request$: of({ id: 1 }),
+    successMessage: 'Saved!' as TranslatedString,
+  });
+}
+
+/**
+ * The footer Save label lives here, but the state behind it is produced by `<ix-form>` — and
+ * `ixFormTestingProviders()` zeroes the minimum-submit-feedback hold for every other spec. This one
+ * keeps the production hold so the "Saving…" swap is pinned against real timing: a save that
+ * resolves instantly must still hold the label up for the hold's duration and drop it right after.
+ */
+describe('FormSidePanelContainerComponent footer Save with a real <ix-form>', () => {
+  let fixture: ComponentFixture<FormSidePanelContainerComponent>;
+
+  const getForm = (): HostedIxFormComponent => fixture.debugElement.query(
+    (node) => node.componentInstance instanceof HostedIxFormComponent,
+  ).componentInstance as HostedIxFormComponent;
+
+  // Read from the DOM rather than through a harness: harness calls await zone stability, which the
+  // pending hold timer would block until it has already fired — exactly the window under test.
+  // Selected by element rather than test id: raw TestBed doesn't emit the library's `data-test`
+  // attributes, and Save is the only `tn-button` this form puts in the footer.
+  const getSaveLabel = (): string => document.querySelector('tn-button')?.textContent?.trim() ?? '';
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [FormSidePanelContainerComponent, HostedIxFormComponent, TranslateModule.forRoot()],
+      providers: [
+        mockAuth(),
+        // The hold is the point of this suite; everywhere else it is zeroed.
+        ...ixFormTestingProviders({ holdSubmitFeedback: true }),
+        // No SlideInRef → `<ix-form>` takes the side-panel path, which is the one that holds.
+        { provide: SlideInRef, useValue: null },
+        {
+          provide: UnsavedChangesService,
+          useValue: { showConfirmDialog: jest.fn(() => of(true)) },
+        },
+        ...TnIconTesting.jest.providers(),
+      ],
+    });
+
+    fixture = TestBed.createComponent(FormSidePanelContainerComponent);
+    fixture.componentRef.setInput('portal', new ComponentPortal(HostedIxFormComponent));
+    fixture.componentRef.setInput('open', true);
+    fixture.detectChanges();
+  });
+
+  it('shows Saving… for as long as the production feedback hold runs', fakeAsync(() => {
+    expect(getSaveLabel()).toBe('Save');
+
+    getForm().submit();
+    fixture.detectChanges();
+
+    expect(getSaveLabel()).toBe('Saving…');
+
+    tick(defaultIxFormMinSubmitFeedbackMs - 1);
+    fixture.detectChanges();
+    expect(getSaveLabel()).toBe('Saving…');
+
+    tick(1);
+    fixture.detectChanges();
+    expect(getSaveLabel()).toBe('Save');
+  }));
 });

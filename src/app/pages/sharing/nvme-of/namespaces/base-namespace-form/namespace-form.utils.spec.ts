@@ -73,6 +73,20 @@ describe('toNamespaceChanges', () => {
     });
   });
 
+  // Only a leading `/dev/` is the device prefix; a dataset that happens to contain the same
+  // segments keeps them.
+  it('only strips the /dev/ prefix when it leads the zvol path', () => {
+    expect(toNamespaceChanges(formValue({
+      device_type: FormNamespaceType.Zvol,
+      device_path: '/dev/zvol/tank/dev/zvol/nested',
+    })).device_path).toBe('zvol/tank/dev/zvol/nested');
+
+    expect(toNamespaceChanges(formValue({
+      device_type: FormNamespaceType.Zvol,
+      device_path: 'zvol/tank/dev/zvol/nested',
+    })).device_path).toBe('zvol/tank/dev/zvol/nested');
+  });
+
   it('passes an existing file path through unchanged and reports it as a File', () => {
     expect(toNamespaceChanges(formValue({
       device_type: FormNamespaceType.ExistingFile,

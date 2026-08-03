@@ -1,4 +1,9 @@
-<tn-form-section>
+<!--
+  The [formGroup] lives here rather than on the host: it binds the group this component was handed,
+  so the controls below can't drift from the group it branches on, and no host has to arrange a
+  ControlContainer for projected content. Not a <form> — the host owns submission.
+-->
+<tn-form-section [formGroup]="group()">
   <div class="device-type-toggle">
     <span class="device-type-toggle__label" [id]="typeToggleLabelId">{{ 'Type' | translate }}</span>
     <tn-button-toggle-group
@@ -15,7 +20,7 @@
     </tn-button-toggle-group>
   </div>
 
-  @switch (form.value.device_type) {
+  @switch (group().value.device_type) {
     @case (FormNamespaceType.Zvol) {
       <ix-explorer
         formControlName="device_path"

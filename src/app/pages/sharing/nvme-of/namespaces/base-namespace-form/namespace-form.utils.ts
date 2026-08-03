@@ -57,19 +57,23 @@ export function createNamespaceForm(formBuilder: NonNullableFormBuilder): Namesp
  */
 export function syncNewFileControls(form: NamespaceFormGroup, type: FormNamespaceType): void {
   const { filename, filesize } = form.controls;
+  const isNewFile = type === FormNamespaceType.NewFile;
 
-  if (type === FormNamespaceType.NewFile) {
-    filename.addValidators(Validators.required);
-    filesize.addValidators(Validators.required);
-    filename.enable();
-    filesize.enable();
-    return;
+  for (const control of [filename, filesize]) {
+    if (isNewFile) {
+      control.addValidators(Validators.required);
+      control.enable();
+    } else {
+      control.removeValidators(Validators.required);
+      control.disable();
+    }
+
+    // add/removeValidators only swap the validator, they never re-run it — Angular requires an
+    // explicit recompute. `enable()` / `disable()` above happen to do one, but they are here for
+    // the branch's *editability*, so relying on them would tie this function's correctness to a
+    // call that a later refactor could reasonably drop, leaving the status silently stale.
+    control.updateValueAndValidity();
   }
-
-  filename.removeValidators(Validators.required);
-  filesize.removeValidators(Validators.required);
-  filename.disable();
-  filesize.disable();
 }
 
 export function toNamespaceChanges(value: NamespaceFormValue): NamespaceChanges {
@@ -77,7 +81,10 @@ export function toNamespaceChanges(value: NamespaceFormValue): NamespaceChanges 
 
   switch (value.device_type) {
     case FormNamespaceType.Zvol:
-      path = value.device_path.replace('/dev/zvol/', 'zvol/');
+      // Anchored: the API wants the `zvol/…` form, and only a LEADING `/dev/` is the device prefix.
+      // The Zvol explorer is rooted at `zvolsRootNode`, so the prefix is always leading today —
+      // anchoring keeps a dataset legitimately named `.../dev/zvol/...` from being rewritten.
+      path = value.device_path.replace(/^\/dev\/zvol\//, 'zvol/');
       break;
     case FormNamespaceType.NewFile: {
       const directory = value.device_path.replace(/\/$/, '');

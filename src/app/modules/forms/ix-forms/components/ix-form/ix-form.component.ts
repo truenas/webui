@@ -101,6 +101,13 @@ export interface SubmitResult {
  * For self-managed async setup use `initialFormSnapshot` + `externalLoading` +
  * `isEditMode` instead of `editData` (snapshot wins if both are set).
  *
+ * Projected controls resolve their `ControlContainer` in the CONSUMER's view — from the
+ * `FormGroupDirective` that `[formGroup]` puts on the `<ix-form>` element via the consumer's own
+ * `ReactiveFormsModule` import. The inner `<form>` below is NOT in that chain (it exists to give
+ * `ngSubmit`), so it never serves projected content. A child component that holds some of the
+ * fields therefore can't inherit the container across the projection boundary: hand it the group as
+ * an input and let it bind `[formGroup]` in its own template (see `BaseNamespaceFormComponent`).
+ *
  * Hosts either way: inside a legacy slide-in (injects `SlideInRef`, closed directly
  * through it) or host-less inside a `<tn-side-panel>` (`SlideInRef` is `{ optional: true }`
  * and absent — the {@link closed} output drives the panel to close and reload). Tests use
