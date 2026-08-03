@@ -1,31 +1,27 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { TnCardComponent, TnIconComponent } from '@truenas/ui-components';
-import { Timeout } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
+import { waitForWebSocketReconnect } from 'app/pages/system-tasks/utils/wait-for-websocket-reconnect';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @Component({
   selector: 'ix-config-reset',
   templateUrl: './config-reset.component.html',
-  styleUrls: ['./config-reset.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnCardComponent,
-    TnIconComponent,
-    CopyrightLineComponent,
+    SystemTaskSplashComponent,
   ],
 })
-export class ConfigResetComponent implements OnInit, OnDestroy {
+export class ConfigResetComponent implements OnInit {
   private wsManager = inject(WebSocketHandlerService);
   private wsStatus = inject(WebSocketStatusService);
   private router = inject(Router);
@@ -38,38 +34,12 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
-  private connectedSubscription: Timeout;
-
-  isWsConnected(): void {
-    // TODO: isConnected$ doesn't work correctly.
-    this.wsStatus.isConnected$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (isConnected) => {
-        if (isConnected) {
-          this.loader.close();
-          this.authService.clearAuthToken();
-          this.router.navigate(['/signin']);
-        } else {
-          // TODO: Why not just rely on isConnected$ emitting new value.
-          this.connectedSubscription = setTimeout(() => {
-            this.isWsConnected();
-          }, 1000);
-        }
-      },
-    });
-  }
-
   ngOnInit(): void {
     // Replace URL so that we don't reset config again if page is refreshed.
     this.location.replaceState('/signin');
 
     this.dialogService.closeAllDialogs();
     this.resetConfig();
-  }
-
-  ngOnDestroy(): void {
-    if (this.connectedSubscription) {
-      clearTimeout(this.connectedSubscription);
-    }
   }
 
   private resetConfig(): void {
@@ -88,9 +58,17 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.wsManager.prepareShutdown();
         this.loader.open();
-        setTimeout(() => {
-          this.isWsConnected();
-        }, 15000);
+        this.goToSigninWhenSystemIsBack();
+      });
+  }
+
+  private goToSigninWhenSystemIsBack(): void {
+    waitForWebSocketReconnect(this.wsStatus)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.loader.close();
+        this.authService.clearAuthToken();
+        this.router.navigate(['/signin']);
       });
   }
 }

@@ -1,9 +1,11 @@
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -16,6 +18,7 @@ import { selectIsEnterprise, selectProductType } from 'app/store/system-info/sys
 describe('FailoverComponent', () => {
   let spectator: Spectator<FailoverComponent>;
   let dispatchSpy: jest.SpyInstance;
+  const isConnected$ = new BehaviorSubject(false);
   const createComponent = createComponentFactory({
     component: FailoverComponent,
     providers: [
@@ -37,14 +40,21 @@ describe('FailoverComponent', () => {
         prepareShutdown: jest.fn(),
       }),
       mockProvider(WebSocketStatusService, {
-        isConnected$: new BehaviorSubject(false),
+        isConnected$,
         setReconnectAllowed: jest.fn(),
         setFailoverStatus: jest.fn(),
       }),
+      mockProvider(AuthService, {
+        clearAuthToken: jest.fn(),
+      }),
+      mockProvider(Router),
     ],
   });
 
   beforeEach(() => {
+    // The subject is shared across tests, so put the connection back down before each run -
+    // the component waits for the websocket to drop before watching for it to come back.
+    isConnected$.next(false);
     // ngOnInit dispatches on the store, so the spy has to be in place before it runs.
     spectator = createComponent({ detectChanges: false });
     dispatchSpy = jest.spyOn(spectator.inject(MockStore), 'dispatch');
@@ -70,11 +80,15 @@ describe('FailoverComponent', () => {
     expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
   });
 
-  // Rendered DOM instead of TnIconHarness (there is no TnCardHarness): the component re-arms
-  // an in-zone setTimeout for as long as the websocket is down, so it never reaches zone
-  // stability and any CDK harness await here hangs until the jest timeout.
-  it('shows the failover message and logo in a card', () => {
-    expect(spectator.query('tn-card #message')).toHaveText('System is failing over...');
-    expect(spectator.query('tn-card tn-icon.logo')).toExist();
+  it('takes user to sign-in page once the websocket comes back after the failover', () => {
+    expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
+
+    isConnected$.next(true);
+
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/signin']);
+  });
+
+  it('shows the failover message in the splash screen', () => {
+    expect(spectator.query('ix-system-task-splash #message')).toHaveText('System is failing over...');
   });
 });

@@ -57,11 +57,10 @@ describe('ShutdownComponent', () => {
     expect(spectator.inject(AuthService).clearAuthToken).toHaveBeenCalled();
   });
 
-  // Rendered DOM instead of TnIconHarness (there is no TnCardHarness): ngOnInit schedules an
-  // in-zone 60s setTimeout for the blackout overlay, so the component only reaches zone
-  // stability long after the 30s jest timeout.
-  it('shows the shutdown message and logo in a card', () => {
-    expect(spectator.query('tn-card #message')).toHaveText('System is shutting down...');
-    expect(spectator.query('tn-card tn-icon.logo')).toExist();
+  // Rendered DOM instead of a CDK harness: ngOnInit schedules an in-zone 60s setTimeout for
+  // the blackout overlay, so the component only reaches zone stability long after the jest
+  // timeout.
+  it('shows the shutdown message in the splash screen', () => {
+    expect(spectator.query('ix-system-task-splash #message')).toHaveText('System is shutting down...');
   });
 });

@@ -1,5 +1,4 @@
 import { Location } from '@angular/common';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -46,12 +45,13 @@ describe('ConfigResetComponent', () => {
     ],
   });
 
-  beforeEach(fakeAsync(() => {
+  beforeEach(() => {
+    // The subject is shared across tests, so put the connection back down before each run -
+    // the component waits for the websocket to drop before watching for it to come back.
+    isConnected$.next(false);
     spectator = createComponent();
-    tick(15000);
     isConnected$.next(true);
-    tick(1500);
-  }));
+  });
 
   it('closes on dialogs when user navigates to this page', () => {
     expect(spectator.inject(DialogService).closeAllDialogs).toHaveBeenCalled();
@@ -61,20 +61,17 @@ describe('ConfigResetComponent', () => {
     expect(spectator.inject(Location).replaceState).toHaveBeenCalledWith('/signin');
   });
 
-  it('resets config when user visits the page and waits for websocket to reconnect', fakeAsync(() => {
+  it('resets config when user visits the page and waits for websocket to reconnect', () => {
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('config.reset', [{ reboot: true }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
-  }));
+  });
 
-  it('takes user to sign-in page when new websocket connection is established after config reset', fakeAsync(() => {
+  it('takes user to sign-in page when new websocket connection is established after config reset', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/signin']);
-  }));
+  });
 
-  // Rendered DOM instead of TnIconHarness (there is no TnCardHarness): the component re-arms
-  // an in-zone setTimeout for as long as the websocket is down, so it never reaches zone
-  // stability and any CDK harness await here hangs until the jest timeout.
-  it('shows the logo in a card', () => {
-    expect(spectator.query('tn-card tn-icon.logo')).toExist();
+  it('shows the splash screen', () => {
+    expect(spectator.query('ix-system-task-splash tn-icon.logo')).toExist();
   });
 });

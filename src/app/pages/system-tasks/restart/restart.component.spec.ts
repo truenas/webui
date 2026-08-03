@@ -74,13 +74,10 @@ describe('RestartComponent', () => {
       expect(spectator.inject(DialogService).closeAllDialogs).toHaveBeenCalled();
     });
 
-    // Rendered DOM instead of TnIconHarness (there is no TnCardHarness): ngOnInit schedules
-    // an in-zone setTimeout before navigating to /signin, so awaiting a CDK harness blocks
-    // the whole 5s. The sibling screens are worse - shutdown waits 60s and failover re-arms
-    // its poll forever, so neither ever reaches zone stability.
-    it('shows the restarting message and logo in a card', () => {
-      expect(spectator.query('tn-card #message')).toHaveText('System is restarting...');
-      expect(spectator.query('tn-card tn-icon.logo')).toExist();
+    // Rendered DOM instead of a CDK harness: ngOnInit schedules an in-zone setTimeout before
+    // navigating to /signin, so awaiting a harness here blocks for the whole 5s.
+    it('shows the restarting message in the splash screen', () => {
+      expect(spectator.query('ix-system-task-splash #message')).toHaveText('System is restarting...');
     });
   });
 

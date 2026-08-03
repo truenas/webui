@@ -1,48 +1,3 @@
-@import 'mixins/tn-card';
-
-.copyright-txt,
-#message,
-.logo {
-  text-align: center;
-}
-
-// Heading for document structure only - the splash screen keeps the surrounding body type.
-#message {
-  font-size: inherit;
-  font-weight: inherit;
-  margin: 0;
-}
-
-.logo {
-  height: auto;
-  width: 256px;
-}
-
-.copyright-txt {
-  margin-top: 10px;
-}
-
-#wrapper {
-  align-items: center;
-  background-color: #0095d5;
-  display: flex;
-  height: 100%;
-  justify-content: center;
-}
-
-#shutdown-card {
-  @include tn-card-webui-palette;
-
-  margin: auto;
-  position: relative;
-  top: 75px;
-  width: 275px;
-}
-
-.card-body {
-  @include tn-card-centered-column;
-}
-
 #overlay {
   background: black !important;
   height: 100%;
@@ -57,21 +12,4 @@
   -moz-opacity: 1;
   opacity: 1;
   transition: all 3s ease;
-}
-
-@media screen and (max-height: 700px) {
-  #shutdown-card {
-    top: 20px;
-    width: 80%;
-  }
-
-  // Set on the projected wrapper, not the card host: `.tn-card__content` declares an
-  // explicit font-size that a host-level rule would no longer cascade past.
-  .card-body {
-    font-size: 80%;
-  }
-
-  .logo {
-    width: 206px;
-  }
 }

@@ -3,11 +3,10 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnCardComponent, TnIconComponent } from '@truenas/ui-components';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -16,9 +15,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./shutdown.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TnCardComponent,
-    TnIconComponent,
-    CopyrightLineComponent,
+    SystemTaskSplashComponent,
     TranslateModule,
   ],
 })
