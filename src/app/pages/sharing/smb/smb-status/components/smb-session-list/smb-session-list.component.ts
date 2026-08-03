@@ -124,6 +124,8 @@ export class SmbSessionListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<SmbSession>(event, this.displayedColumns()));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort<SmbSession>(event, this.displayedColumns(), { columns: this.columns() }),
+    );
   }
 }

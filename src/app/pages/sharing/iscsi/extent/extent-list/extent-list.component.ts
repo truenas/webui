@@ -184,7 +184,9 @@ export class ExtentListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<IscsiExtent>(event, this.displayedColumns()));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort<IscsiExtent>(event, this.displayedColumns(), { columns: this.columns() }),
+    );
   }
 
   protected onListFiltered(query: string): void {

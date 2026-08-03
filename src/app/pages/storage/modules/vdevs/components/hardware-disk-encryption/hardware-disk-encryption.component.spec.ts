@@ -2,7 +2,7 @@ import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnDialog } from '@truenas/ui-components';
+import { TnCardComponent, TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -67,7 +67,7 @@ describe('HardwareDiskEncryptionComponent', () => {
     });
 
     it('checks no hardware disk encryption support', () => {
-      expect(spectator.query('tn-card')).not.toExist();
+      expect(spectator.query(TnCardComponent)).toBeNull();
     });
   });
 
@@ -104,6 +104,15 @@ describe('HardwareDiskEncryptionComponent', () => {
       spectator.click(manageGlobalSedPassword);
       expect(spectator.inject(NavigateAndHighlightService).navigateAndHighlight)
         .toHaveBeenCalledWith(['/system', 'advanced'], 'sed-card', { inset: false });
+    });
+
+    // The one place a `data-test` selector is the right tool, despite CLAUDE.md's rule against
+    // locating elements by them: the resolved id *is* what's under test here. Both links moved
+    // from `[ixTest]` to the library's directive, and e2e locators still key on these exact
+    // values — the tests above locate by text, as everything else should.
+    it('keeps the legacy link test ids after moving to the library test-id directive', () => {
+      expect(spectator.query('[data-test="link-manage-sed-password"]')).toExist();
+      expect(spectator.query('[data-test="link-manage-global-sed-password"]')).toExist();
     });
   });
 });

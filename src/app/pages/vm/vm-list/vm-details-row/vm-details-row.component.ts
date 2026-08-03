@@ -4,11 +4,12 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmState } from 'app/enums/vm.enum';
+import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -30,6 +31,7 @@ import { VmService } from 'app/services/vm.service';
     MatButton,
     TestDirective,
     TnIconComponent,
+    TnTooltipDirective,
     TranslateModule,
   ],
 })
@@ -41,11 +43,24 @@ export class VirtualMachineDetailsRowComponent {
   private errorHandler = inject(ErrorHandlerService);
   private vmService = inject(VmService);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   readonly vm = input.required<VirtualMachine>();
 
   protected readonly requiredReadRoles = [Role.VmRead];
   protected readonly requiredRoles = [Role.VmWrite];
+
+  protected readonly resetTooltip = this.translate.instant(
+    helptextVmList.resetButton.tooltip,
+    { warning: this.translate.instant(helptextVmList.hardResetWarning) },
+  );
+
+  /**
+   * The Reset button sits next to Restart and the two sound alike, so the accessible name spells
+   * out that this one is a hard reset. The consequences stay out of the name — the tooltip carries
+   * them as a description and the confirmation dialog repeats them where the user has to act.
+   */
+  protected readonly resetAriaLabel = this.translate.instant(helptextVmList.resetButton.ariaLabel);
 
   readonly vmStateInfo = computed(() => {
     const state = this.vm().status.state;
@@ -77,6 +92,13 @@ export class VirtualMachineDetailsRowComponent {
         complete: () => this.vmService.checkMemory(),
         error: (error: unknown) => this.errorHandler.showErrorModal(error),
       });
+  }
+
+  protected doReset(): void {
+    this.vmService
+      .doReset(this.vm())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
   }
 
   protected doPowerOff(): void {

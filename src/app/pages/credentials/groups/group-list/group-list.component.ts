@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal, viewChild, effect,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { select, Store } from '@ngrx/store';
@@ -20,9 +20,10 @@ import { Group } from 'app/interfaces/group.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { getGroupFormConfig } from 'app/pages/credentials/groups/group-form/group.form-config';
@@ -74,43 +75,20 @@ export class GroupListComponent implements OnInit {
   protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
   protected readonly trackById = (_: number, row: Group): number => row.id;
 
-  // tn-table allows multiple rows expanded at once and exposes no single-expand input or
-  // row-expand output to hook into, so we restore the single-expand behavior of the previous
-  // ix-table here: whenever a second row opens (via row click or the expand chevron) we collapse
-  // back to just the newly-opened one. We diff against the previous set rather than caching a
-  // single row reference, so a data reload (which swaps in fresh row objects) can't leave a stale
-  // reference behind — the set tracking stays consistent with whatever tn-table currently holds.
-  private previousExpandedRows = new Set<unknown>();
-  private defaultSortReflected = false;
+  /**
+   * The sort the list opens with. One declaration for both halves of it — `setDefaultSort` maps
+   * it into the data provider and `activeSort` seeds the header arrow from it — so the arrow
+   * can't end up pointing at a column the provider isn't sorting by.
+   */
+  private readonly defaultSort: TnSortEvent = { column: 'gid', direction: 'asc' };
+
+  // Remembered so the arrow shows from the start and survives a table rebuild; see
+  // `reflectSortIntoTable`.
+  private readonly activeSort = signal<TnSortEvent | null>(this.defaultSort);
 
   constructor() {
-    effect(() => {
-      const table = this.table();
-      if (!table) {
-        return;
-      }
-      const expanded = table.expandedRows();
-      if (expanded.size <= 1) {
-        this.previousExpandedRows = new Set(expanded);
-        return;
-      }
-      const newest = [...expanded].find((row) => !this.previousExpandedRows.has(row));
-      const collapsed = newest ? new Set<unknown>([newest]) : new Set<unknown>();
-      this.previousExpandedRows = collapsed;
-      table.expandedRows.set(collapsed);
-    });
-
-    // The data provider sorts the rows, but tn-table tracks its own sort-arrow state, so reflect
-    // the default sort in the header indicator once the table view is available.
-    effect(() => {
-      const table = this.table();
-      if (!table || this.defaultSortReflected) {
-        return;
-      }
-      this.defaultSortReflected = true;
-      table.sortColumn.set('gid');
-      table.sortDirection.set('asc');
-    });
+    restrictToSingleExpandedRow(this.table);
+    reflectSortIntoTable(this.table, this.activeSort);
   }
 
   protected hideBuiltinGroups = true;
@@ -154,12 +132,8 @@ export class GroupListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    const direction = event.direction === '' ? null : (event.direction as SortDirection);
-    this.dataProvider.setSorting({
-      propertyName: direction ? (event.column as keyof Group) : null,
-      direction,
-      active: null,
-    });
+    this.activeSort.set(event);
+    this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns));
   }
 
   ngOnInit(): void {
@@ -227,10 +201,6 @@ export class GroupListComponent implements OnInit {
   }
 
   private setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 1,
-      direction: SortDirection.Asc,
-      propertyName: 'gid',
-    });
+    this.dataProvider.setSorting(mapTnSortToTableSort(this.defaultSort, this.displayedColumns));
   }
 }

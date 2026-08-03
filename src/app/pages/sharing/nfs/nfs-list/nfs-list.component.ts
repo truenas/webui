@@ -255,7 +255,9 @@ export class NfsListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<NfsShare>(event, this.displayedColumns()));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort<NfsShare>(event, this.displayedColumns(), { columns: this.columns() }),
+    );
   }
 
   protected onListFiltered(query: string): void {
