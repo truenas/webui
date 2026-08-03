@@ -2,6 +2,7 @@ import { Location } from '@angular/common';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnCardComponent, TnIconComponent } from '@truenas/ui-components';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -52,9 +53,23 @@ describe('ShutdownComponent', () => {
     expect(spectator.inject(Location).replaceState).toHaveBeenCalledWith('/signin');
   });
 
+  it('tears down the websocket connection once the shutdown job completes', () => {
+    expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
+    expect(spectator.inject(AuthService).clearAuthToken).toHaveBeenCalled();
+  });
+
+  // Instance reads instead of TnCardHarness/TnIconHarness: ngOnInit schedules an in-zone
+  // setTimeout for the blackout overlay that outlives the jest timeout, so the component
+  // never reaches zone stability and any CDK harness await here hangs for 30s.
   it('shows the shutdown message and logo in a card', () => {
-    expect(spectator.query('tn-card')).toExist();
-    expect(spectator.query('tn-card #shutdown-message')).toHaveText('System is shutting down...');
-    expect(spectator.query('tn-card tn-icon')).toExist();
+    const card = spectator.query(TnCardComponent)!;
+    expect(card.elevation()).toBe('low');
+    expect(card.padding()).toBe('small');
+
+    expect(spectator.query('#shutdown-message')).toHaveText('System is shutting down...');
+
+    const logo = spectator.query(TnIconComponent)!;
+    expect(logo.name()).toBe('tn-truenas-logo');
+    expect(logo.fullSize()).toBe(true);
   });
 });

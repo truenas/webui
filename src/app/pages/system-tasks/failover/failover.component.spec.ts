@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnCardComponent, TnIconComponent } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -10,10 +11,12 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { FailoverComponent } from 'app/pages/system-tasks/failover/failover.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
+import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 import { selectIsEnterprise, selectProductType } from 'app/store/system-info/system-info.selectors';
 
 describe('FailoverComponent', () => {
   let spectator: Spectator<FailoverComponent>;
+  let dispatchSpy: jest.SpyInstance;
   const createComponent = createComponentFactory({
     component: FailoverComponent,
     providers: [
@@ -43,7 +46,10 @@ describe('FailoverComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    // ngOnInit dispatches on the store, so the spy has to be in place before it runs.
+    spectator = createComponent({ detectChanges: false });
+    dispatchSpy = jest.spyOn(spectator.inject(MockStore), 'dispatch');
+    spectator.detectChanges();
   });
 
   it('makes the active controller become passive', () => {
@@ -54,9 +60,29 @@ describe('FailoverComponent', () => {
     expect(spectator.inject(Location).replaceState).toHaveBeenCalledWith('/signin');
   });
 
+  it('puts the websocket into failover mode and closes any open dialogs', () => {
+    expect(spectator.inject(WebSocketStatusService).setReconnectAllowed).toHaveBeenCalledWith(false);
+    expect(spectator.inject(WebSocketStatusService).setFailoverStatus).toHaveBeenCalledWith(true);
+    expect(spectator.inject(DialogService).closeAllDialogs).toHaveBeenCalled();
+  });
+
+  it('marks the passive node as replaced and tears down the connection once failover completes', () => {
+    expect(dispatchSpy).toHaveBeenCalledWith(passiveNodeReplaced());
+    expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
+  });
+
+  // Instance reads instead of TnCardHarness/TnIconHarness: the component re-arms an in-zone
+  // setTimeout while the websocket is down, so it never reaches zone stability and any CDK
+  // harness await here hangs until the jest timeout.
   it('shows the failover message and logo in a card', () => {
-    expect(spectator.query('tn-card')).toExist();
-    expect(spectator.query('tn-card #message')).toHaveText('System is failing over...');
-    expect(spectator.query('tn-card tn-icon')).toExist();
+    const card = spectator.query(TnCardComponent)!;
+    expect(card.elevation()).toBe('low');
+    expect(card.padding()).toBe('small');
+
+    expect(spectator.query('#message')).toHaveText('System is failing over...');
+
+    const logo = spectator.query(TnIconComponent)!;
+    expect(logo.name()).toBe('tn-truenas-logo');
+    expect(logo.fullSize()).toBe(true);
   });
 });

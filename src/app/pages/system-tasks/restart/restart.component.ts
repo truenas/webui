@@ -29,12 +29,12 @@ import { selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info
   ],
 })
 export class RestartComponent implements OnInit {
-  protected api = inject(ApiService);
+  private api = inject(ApiService);
   private wsManager = inject(WebSocketHandlerService);
-  protected router = inject(Router);
+  private router = inject(Router);
   private route = inject(ActivatedRoute);
   private errorHandler = inject(ErrorHandlerService);
-  protected loader = inject(LoaderService);
+  private loader = inject(LoaderService);
   private dialogService = inject(DialogService);
   private location = inject(Location);
   private wsStatus = inject(WebSocketStatusService);
@@ -42,8 +42,8 @@ export class RestartComponent implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
-  isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
-  isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
+  private isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+  private isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
 
   ngOnInit(): void {
     const reason = this.route.snapshot.queryParamMap.get('reason') || 'Unknown Reason';

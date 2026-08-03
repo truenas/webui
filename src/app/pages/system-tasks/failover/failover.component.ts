@@ -29,12 +29,12 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
   ],
 })
 export class FailoverComponent implements OnInit {
-  protected api = inject(ApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private wsManager = inject(WebSocketHandlerService);
   private wsStatus = inject(WebSocketStatusService);
-  protected router = inject(Router);
-  protected loader = inject(LoaderService);
+  private router = inject(Router);
+  private loader = inject(LoaderService);
   private dialogService = inject(DialogService);
   private location = inject(Location);
   private store$ = inject<Store<AlertSlice>>(Store);

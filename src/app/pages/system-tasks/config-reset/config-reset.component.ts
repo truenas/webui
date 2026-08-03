@@ -28,11 +28,11 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 export class ConfigResetComponent implements OnInit, OnDestroy {
   private wsManager = inject(WebSocketHandlerService);
   private wsStatus = inject(WebSocketStatusService);
-  protected router = inject(Router);
-  protected loader = inject(LoaderService);
+  private router = inject(Router);
+  private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
-  translate = inject(TranslateService);
-  protected dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
   private location = inject(Location);
   private api = inject(ApiService);
   private authService = inject(AuthService);

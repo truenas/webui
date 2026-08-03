@@ -1,3 +1,5 @@
+@import 'mixins/tn-card';
+
 #wrapper {
   align-items: center;
   background-color: #0095d5;
@@ -6,23 +8,14 @@
 }
 
 #restart-card {
-  // Keep the card on the active webui theme palette even for custom themes,
-  // where the component-library theme sync falls back to a preset.
-  --tn-bg2: var(--bg2);
+  @include tn-card-webui-palette;
 
-  color: var(--fg2);
-  display: block;
   margin: auto;
   width: 275px;
 }
 
-// tn-card projects into a plain content slot, so the column layout the legacy
-// card host carried lives on this wrapper instead.
 .card-body {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  @include tn-card-splash-body;
 }
 
 .copyright-txt,
@@ -44,12 +37,6 @@
   #restart-card {
     max-width: 480px;
     width: 80%;
-  }
-
-  // Set inside the card: tn-card's own `.tn-card__content` declares an explicit
-  // font-size, so a host-level rule would no longer cascade into the content.
-  .card-body {
-    font-size: 80%;
   }
 
   .logo {

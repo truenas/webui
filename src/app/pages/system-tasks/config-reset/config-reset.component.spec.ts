@@ -3,6 +3,7 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnCardComponent, TnIconComponent } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -71,8 +72,16 @@ describe('ConfigResetComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/signin']);
   }));
 
-  it('shows the logo in a card while the reset job runs', () => {
-    expect(spectator.query('tn-card')).toExist();
-    expect(spectator.query('tn-card tn-icon')).toExist();
+  // Instance reads instead of TnCardHarness/TnIconHarness: the component re-arms an in-zone
+  // setTimeout while the websocket is down, so it never reaches zone stability and any CDK
+  // harness await here hangs until the jest timeout.
+  it('shows the logo in a card', () => {
+    const card = spectator.query(TnCardComponent)!;
+    expect(card.elevation()).toBe('low');
+    expect(card.padding()).toBe('small');
+
+    const logo = spectator.query(TnIconComponent)!;
+    expect(logo.name()).toBe('tn-truenas-logo');
+    expect(logo.fullSize()).toBe(true);
   });
 });

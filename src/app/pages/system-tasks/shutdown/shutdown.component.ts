@@ -23,10 +23,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ShutdownComponent implements OnInit {
-  protected api = inject(ApiService);
+  private api = inject(ApiService);
   private wsManager = inject(WebSocketHandlerService);
   private errorHandler = inject(ErrorHandlerService);
-  protected router = inject(Router);
+  private router = inject(Router);
   private route = inject(ActivatedRoute);
   private location = inject(Location);
   private authService = inject(AuthService);

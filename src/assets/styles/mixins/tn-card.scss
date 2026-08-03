@@ -31,3 +31,35 @@
   display: inline-flex;
   text-decoration: none;
 }
+
+// `tn-card` paints its surface from the library's own `--tn-bg2`, which falls back to a
+// preset when a custom webui theme is active and the component-library theme sync can't
+// resolve it. Re-point it at the live theme var. Include on the card host.
+//
+//   #restart-card { @include tn-card-webui-palette; }
+@mixin tn-card-webui-palette {
+  --tn-bg2: var(--bg2);
+
+  color: var(--fg2);
+  display: block;
+}
+
+// The splash screens (signin, shutdown, restart, failover, config-reset) project a plain
+// wrapper into `tn-card`'s default content slot, since that slot carries no layout of its
+// own. Include on that wrapper.
+//
+// The short-viewport step-down is nested here rather than living on the card host because
+// `.tn-card__content` declares an explicit font-size, which a host-level rule would no
+// longer cascade past.
+//
+//   .card-body { @include tn-card-splash-body; }
+@mixin tn-card-splash-body {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  @media screen and (max-height: 700px) {
+    font-size: 80%;
+  }
+}
