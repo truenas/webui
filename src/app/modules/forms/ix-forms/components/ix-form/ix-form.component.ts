@@ -82,12 +82,16 @@ interface SubmitResultBase<R, TResult> {
   request$: Observable<TResult>;
 
   /**
-   * Success snackbar text. Required, but nullable: pass `null` — visibly, at the callsite — for a
-   * form that raises its own snackbar (or deliberately raises none) under
-   * `[suppressSuccessSnackbar]`. A `null` without that input set is a silent save, and warns in
-   * dev mode.
+   * Success snackbar text — a string, or a function of the request result for the common case of a
+   * confirmation that names the saved record (which a static string can't reach).
+   *
+   * Required, but nullable: pass `null` — visibly, at the callsite — for a form that raises its own
+   * snackbar (or deliberately raises none) under `[suppressSuccessSnackbar]`. A `null` without that
+   * input set is a silent save, and warns in dev mode. The function form may also return `null`,
+   * for a save whose confirmation depends on the outcome (e.g. none when the success path navigates
+   * away); that's an explicit per-result decision, so it never warns.
    */
-  successMessage: TranslatedString | null;
+  successMessage: TranslatedString | ((result: TResult) => TranslatedString | null) | null;
 
   /** Runs after success, before close (store/navigation fire pre-animation). */
   onSuccess?: (result: TResult) => void;
@@ -416,9 +420,12 @@ export class IxFormComponent<
         handledSuccess = true;
         this.hadSuccessfulSubmit = true;
         if (!this.suppressSuccessSnackbar()) {
-          if (successMessage) {
-            this.snackbar.success(successMessage);
-          } else if (isDevMode()) {
+          const message = typeof successMessage === 'function' ? successMessage(result) : successMessage;
+          if (message) {
+            this.snackbar.success(message);
+          } else if (successMessage === null && isDevMode()) {
+            // Only a statically `null` successMessage warns — a function that returned `null` chose
+            // silence for this particular result, which is a supported outcome.
             console.warn(
               '[ix-form] submitHandler returned a null successMessage and suppressSuccessSnackbar is not '
               + 'set, so this save gives the user no confirmation. Provide a successMessage, or set '

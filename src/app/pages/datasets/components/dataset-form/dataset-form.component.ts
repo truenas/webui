@@ -23,7 +23,6 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   EncryptionSectionComponent,
@@ -69,7 +68,6 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   private datasetFormService = inject(DatasetFormService);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
-  private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
 
@@ -83,7 +81,6 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   private quotasSection = viewChild(QuotasSectionComponent);
   private otherOptionsSection = viewChild(OtherOptionsSectionComponent);
 
-  /** Read by the `<tn-side-panel>` host to role-gate its footer Save. */
   readonly requiredRoles = [Role.DatasetWrite];
 
   protected readonly isNameAndOptionsValid = signal(true);
@@ -293,9 +290,19 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
     return {
       request$: this.saveDataset(request$),
-      // The message depends on the saved record, so `onSaved` raises it instead — the form runs
-      // under `[suppressSuccessSnackbar]`, which is what makes this `null` deliberate.
-      successMessage: null,
+      // Owned by the form (not its openers) so every entry point confirms identically, and phrased
+      // as plain "created"/"updated" to match the zvol form — a message that has to hold for every
+      // opener can't assume the user is being taken to the new record.
+      successMessage: ([savedDataset, shouldGoToAclEditor]) => {
+        // Accepting the ACL prompt navigates to the ACL editor; a toast about the dataset would
+        // land on a page the user has already left.
+        if (shouldGoToAclEditor) {
+          return null;
+        }
+        return this.isNew()
+          ? this.translate.instant('Dataset «{name}» created.', { name: getDatasetLabel(savedDataset) })
+          : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(savedDataset) });
+      },
       onSuccess: ([savedDataset, shouldGoToAclEditor]) => this.onSaved(savedDataset, shouldGoToAclEditor),
       closeWith: ([savedDataset]) => savedDataset,
       onError: (error: unknown) => {
@@ -334,17 +341,6 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
     }
 
     this.aclEditorPath = shouldGoToAclEditor ? savedDataset.mountpoint : undefined;
-
-    if (!shouldGoToAclEditor) {
-      // Phrased as plain "created", matching the zvol form: now that the forms own their messages
-      // they must hold for every opener, and not all of them navigate to the new record (the
-      // explorer's Create Zvol just fills the field in place).
-      this.snackbar.success(
-        this.isNew()
-          ? this.translate.instant('Dataset «{name}» created.', { name: getDatasetLabel(savedDataset) })
-          : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(savedDataset) }),
-      );
-    }
   }
 
   /**

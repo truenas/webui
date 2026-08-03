@@ -65,7 +65,6 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   private storageService = inject(StorageService);
   private destroyRef = inject(DestroyRef);
 
-  /** Read by the `<tn-side-panel>` host to role-gate its footer Save. */
   readonly requiredRoles = [Role.SnapshotWrite];
 
   /** Initial options load. Drives the panel's progress bar and busy overlay. */

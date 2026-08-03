@@ -157,8 +157,9 @@ describe('ZvolFormComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('pool.dataset.create', { id: 'parentId/new zvol' } as Dataset),
-        mockCall('pool.dataset.update', { id: 'zvolId' } as Dataset),
+        // `name` matters: the success snackbars are built from the saved record, not the payload.
+        mockCall('pool.dataset.create', { id: 'parentId/new zvol', name: 'parentId/new zvol' } as Dataset),
+        mockCall('pool.dataset.update', { id: 'zvolId', name: 'zvolId' } as Dataset),
         mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
         mockCall('pool.dataset.query', (params) => {
           if ((params[0][0] as QueryFilter<Dataset>)[2] === 'parentId') {

@@ -100,7 +100,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
 
   private destroyRef = inject(DestroyRef);
 
-  /** Read by the `<tn-side-panel>` host to role-gate its footer Save. */
   readonly requiredRoles = [Role.DatasetWrite];
 
   /** Edit/create parameters supplied by the `<tn-side-panel>` host. */
@@ -266,9 +265,10 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     return {
       request$: this.api.call('pool.dataset.create', [data as DatasetCreate]),
       // Owned by the form so every entry point (details panel, details card, explorer) confirms
-      // identically — the openers deliberately raise no snackbar of their own.
-      successMessage: this.translate.instant('Zvol «{name}» created.', {
-        name: getDatasetLabel({ name: data.name ?? '' }),
+      // identically — the openers deliberately raise no snackbar of their own. Named from the
+      // created record rather than the payload, so the toast can't drift from what was saved.
+      successMessage: (created) => this.translate.instant('Zvol «{name}» created.', {
+        name: getDatasetLabel(created),
       }),
       // The opener needs the record to switch to the new zvol.
       closeWith: (result) => result,
@@ -286,12 +286,11 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
           return this.api.call('pool.dataset.update', [this.parentOrZvolId(), payload]);
         }),
       ),
-      // See `buildCreateResult` — the message is the form's, not the opener's. On edit
-      // `parentOrZvolId()` IS the zvol's own id (create passes the parent), and it names the zvol
-      // correctly only because the Name control is disabled in edit mode — a rename would have to
-      // read the submitted value instead.
-      successMessage: this.translate.instant('Zvol «{name}» updated.', {
-        name: getDatasetLabel({ name: this.parentOrZvolId() }),
+      // See `buildCreateResult` — the message is the form's, not the opener's, and it names the
+      // updated record rather than `parentOrZvolId()`, so it stays correct if Name ever becomes
+      // editable on edit.
+      successMessage: (updated) => this.translate.instant('Zvol «{name}» updated.', {
+        name: getDatasetLabel(updated),
       }),
       closeWith: (result) => result,
       onError: (error: unknown) => {

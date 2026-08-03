@@ -334,8 +334,8 @@ describe('DatasetFormComponent', () => {
   });
 
   describe('success messages', () => {
-    // The form saves with a `null` successMessage under `[suppressSuccessSnackbar]` (its message
-    // needs the saved record), so these snackbars are the ONLY confirmation a save produces.
+    // These snackbars are the ONLY confirmation a save produces, and they are built from the saved
+    // record by `successMessage`'s function form.
     // Declining the ACL prompt keeps us off the navigate-away branch, which is deliberately silent.
     const declineAclPrompt = [mockProvider(DialogService, { confirm: jest.fn(() => of(false)) })];
 

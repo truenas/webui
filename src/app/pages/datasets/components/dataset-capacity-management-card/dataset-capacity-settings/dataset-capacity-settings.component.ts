@@ -41,7 +41,6 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
   private validators = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
 
-  /** Read by the `<tn-side-panel>` host to role-gate its footer Save. */
   readonly requiredRoles = [Role.DatasetWrite];
   protected readonly InputType = InputType;
 

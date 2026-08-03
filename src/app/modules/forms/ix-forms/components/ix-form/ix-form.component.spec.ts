@@ -1247,8 +1247,9 @@ describe('IxFormComponent', () => {
         // This block asserts the delay itself, so restore the real duration that
         // `ixFormTestingProviders()` zeroes for every other spec.
         { provide: ixFormMinSubmitFeedbackMs, useValue: defaultMinSubmitFeedbackMs },
-        // Force the `<tn-side-panel>` host: no SlideInRef (the harness would otherwise auto-mock
-        // one, taking the un-delayed legacy path). `null` is what `inject(…, {optional:true})` sees.
+        // Force the `<tn-side-panel>` host: `null` is exactly what `inject(SlideInRef,
+        // {optional: true})` sees when nothing provides one, and stating it here keeps the block
+        // independent of whatever the surrounding suite happens to provide.
         { provide: SlideInRef, useValue: null },
         mockAuth(),
       ],
@@ -1360,6 +1361,37 @@ describe('IxFormComponent', () => {
 
       expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
       expect(warn).not.toHaveBeenCalled();
+      warn.mockRestore();
+    });
+
+    it('builds the snackbar from the request result when successMessage is a function', () => {
+      submitHandlerSpy.mockReturnValue({
+        request$: of({ id: 1, name: 'saved-record' }),
+        successMessage: (result: { name: string }) => `Saved «${result.name}».` as TranslatedString,
+      });
+
+      const sidePanelSpectator = createSidePanelComponent({
+        providers: [{ provide: ixFormMinSubmitFeedbackMs, useValue: 0 }],
+      });
+      sidePanelSpectator.component.ixForm().submit();
+
+      expect(sidePanelSpectator.inject(SnackbarService).success).toHaveBeenCalledWith('Saved «saved-record».');
+    });
+
+    it('stays silent without warning when a successMessage function returns null', () => {
+      // A function returning `null` decided, for this result, that no confirmation is wanted (the
+      // dataset form does exactly that when the save navigates on to the ACL editor). That's an
+      // explicit choice, unlike a statically `null` message, so it must not dev-warn.
+      const warn = jest.spyOn(console, 'warn').mockImplementation();
+      submitHandlerSpy.mockReturnValue({ request$: of({ id: 1 }), successMessage: () => null });
+
+      const sidePanelSpectator = createSidePanelComponent({
+        providers: [{ provide: ixFormMinSubmitFeedbackMs, useValue: 0 }],
+      });
+      sidePanelSpectator.component.ixForm().submit();
+
+      expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+      expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('null successMessage'));
       warn.mockRestore();
     });
   });
