@@ -370,7 +370,7 @@ describe('CloudBackupFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('emits closed and updates when saved via the host submit() entry point', async () => {
+    it('emits the saved record through closed when saved via the host submit() entry point', async () => {
       const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
       await (await getSelect('bucket')).selectOption('bucket1');
@@ -378,7 +378,7 @@ describe('CloudBackupFormComponent', () => {
       spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.update', [1, expect.anything()]);
-      expect(closedSpy).toHaveBeenCalledWith(true);
+      expect(closedSpy).toHaveBeenCalledWith(existingTask);
     });
   });
 });

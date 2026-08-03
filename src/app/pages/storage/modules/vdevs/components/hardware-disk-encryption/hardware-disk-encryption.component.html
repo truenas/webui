@@ -9,13 +9,21 @@
         }}
       </div>
 
-      <a
+      <!--
+        These were anchors before the migration and are buttons now (they act, they don't
+        navigate to a URL), but keep the `link-` test-id prefix: the e2e suite locates them by
+        the resolved ids, so renaming has to happen there in the same change.
+      -->
+      <button
         *ixHasRole="requiredRoles"
-        ixTest="manage-sed-password"
+        class="link-action"
+        type="button"
+        tnTestIdType="link"
+        [tnTestId]="'manage-sed-password'"
         (click)="onManageSedPassword()"
       >
         {{ 'Manage SED Password' | translate }}
-      </a>
+      </button>
     </div>
 
     <div class="details-item">
@@ -27,15 +35,18 @@
         }}
       </div>
 
-      <a
+      <button
         *ixHasRole="requiredRoles"
         ixNavigateAndHighlight
-        ixTest="manage-global-sed-password"
+        class="link-action"
+        type="button"
+        tnTestIdType="link"
+        [tnTestId]="'manage-global-sed-password'"
         [navigateHash]="'sed-card'"
         [navigateRoute]="['/system', 'advanced']"
       >
         {{ 'Manage Global SED Password' | translate }}
-      </a>
+      </button>
     </div>
   </tn-card>
 }

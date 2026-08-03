@@ -1,0 +1,15 @@
+// Hides an element visually while leaving it in the accessibility tree — for text that only a
+// screen reader needs, and for the `aria-live` regions the tn-* migrations mount alongside
+// selection toolbars. Include it rather than hand-rolling the clip pattern again.
+@mixin visually-hidden {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}

@@ -25,12 +25,19 @@
     white-space: normal;
   }
 
-  a {
+  // A real <button> so activation, focus ring and keyboard support come from the
+  // platform; only the link's appearance is borrowed.
+  .link-action {
+    background: none;
+    border: 0;
     color: var(--primary);
     cursor: pointer;
+    font: inherit;
     margin-left: auto;
     max-width: 100%;
     overflow: hidden;
+    padding: 0;
+    text-align: left;
     text-decoration: underline;
     text-overflow: ellipsis;
     white-space: nowrap;

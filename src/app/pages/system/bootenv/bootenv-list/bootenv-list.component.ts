@@ -29,7 +29,6 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -38,6 +37,7 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { reflectSortIntoTable } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolDeleteDialog } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
@@ -91,9 +91,35 @@ export class BootEnvironmentListComponent implements OnInit {
 
   protected readonly displayedColumns = ['id', 'active', 'created', 'used_bytes', 'keep', 'actions'];
 
+  /** `created` renders a formatted date, so it has to sort by the underlying timestamp. */
+  private readonly sortByCreated = (row: BootEnvironment): number => row.created.$date;
+
+  /**
+   * Accessors for the columns whose cells don't show their raw row value. Shared by the default
+   * sort and by `(sortChange)`, so the two can't disagree.
+   */
+  private readonly sortAccessors: Record<string, (row: BootEnvironment) => string | number> = {
+    created: this.sortByCreated,
+  };
+
   protected readonly trackByBootenvId = (_: number, row: BootEnvironment): string => row.id;
 
   private readonly tnTable = viewChild(TnTableComponent);
+
+  /**
+   * The sort the list opens with. One declaration for both halves of it — `setDefaultSort` maps
+   * it into the data provider (accessors included) and `activeSort` seeds the header arrow from
+   * it — so the arrow can't end up pointing at a column the provider isn't sorting by.
+   */
+  private readonly defaultSort: TnSortEvent = { column: 'created', direction: 'desc' };
+
+  // Remembered so the arrow shows from the start and survives a table rebuild; see
+  // `reflectSortIntoTable`.
+  private readonly activeSort = signal<TnSortEvent | null>(this.defaultSort);
+
+  constructor() {
+    reflectSortIntoTable(this.tnTable, this.activeSort);
+  }
 
   protected readonly selectedBootenvs = signal<BootEnvironment[]>([]);
 
@@ -270,20 +296,16 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    const sorting = mapTnSortToTableSort<BootEnvironment>(event, this.displayedColumns);
-    if (sorting.propertyName === 'created') {
-      sorting.sortBy = (row) => row.created.$date;
-    }
-    this.dataProvider.setSorting(sorting);
+    this.activeSort.set(event);
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort(event, this.displayedColumns, { sortAccessors: this.sortAccessors }),
+    );
   }
 
   private setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 2,
-      direction: SortDirection.Desc,
-      propertyName: 'created',
-      sortBy: (row) => row.created.$date,
-    });
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort(this.defaultSort, this.displayedColumns, { sortAccessors: this.sortAccessors }),
+    );
   }
 
   private refresh(): void {
