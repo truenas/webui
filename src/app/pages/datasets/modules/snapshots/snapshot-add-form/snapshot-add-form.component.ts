@@ -257,7 +257,6 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
     );
   }
 
-  /** Re-runs the lookup after a failure, from the retry button on the dataset field. */
   protected retryVmCheck(): void {
     this.retryVmCheck$.next();
   }
@@ -294,9 +293,8 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
    * for, `vmware_sync` cannot be decided — falling through to `false` would silently take an
    * unsynchronised snapshot of a dataset that does hold VMs — so the failure blocks Save.
    *
-   * The block itself is the {@link vmCheckFailed} signal, read by `[extraDisabled]` (which gates the
-   * panel's footer Save and the in-form one alike). The control error is only how the field says
-   * why, right where the retry sits: nothing about Save depends on it surviving, so a stray
+   * The block is the {@link vmCheckFailed} signal, read by `[extraDisabled]`; the control error is
+   * only how the field says why. Nothing about Save depends on it, so a stray
    * `updateValueAndValidity()` elsewhere can't quietly unblock the save.
    */
   private setVmCheckFailed(failed: boolean): void {

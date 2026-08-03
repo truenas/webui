@@ -42,6 +42,7 @@ import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
@@ -439,6 +440,43 @@ describe('DatasetFormComponent', () => {
 
       expect(spectator.query(EncryptionSectionComponent)).toBeNull();
       expect(spectator.query(QuotasSectionComponent)).toBeNull();
+    });
+
+    it('keeps Save disabled when the edit load fails, so an edit cannot fall through to a create', () => {
+      spectator = createComponent({
+        props: { params: { datasetId: 'parent/child', isNew: false } },
+        providers: [
+          mockProvider(DatasetFormService, {
+            checkAndWarnForLengthAndDepth: jest.fn(() => of(true)),
+            loadDataset: jest.fn(() => throwError(() => new Error('Failed to load dataset'))),
+          }),
+          mockProvider(ErrorHandlerService),
+        ],
+      });
+
+      // The Name field stays enabled while `existing` is unset, so without this gate the user could
+      // fill the form in and submit a create payload rooted at the pool from an edit panel.
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      save();
+
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('pool.dataset.create', expect.anything());
+    });
+  });
+
+  describe('unsaved changes', () => {
+    beforeEach(() => {
+      spectator = createComponent({ props: { params: { datasetId: 'dataset', isNew: true } } });
+      nameAndOptionsForm.markAsPristine();
+      datasetPresetForm.markAsPristine();
+    });
+
+    it('counts the share-preset group, which is a sibling of the section form', () => {
+      expect(spectator.component.hasUnsavedChanges()).toBe(false);
+
+      datasetPresetForm.controls.create_smb.markAsDirty();
+
+      expect(spectator.component.hasUnsavedChanges()).toBe(true);
     });
   });
 

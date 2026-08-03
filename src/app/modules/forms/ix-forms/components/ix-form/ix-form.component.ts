@@ -82,14 +82,13 @@ interface SubmitResultBase<R, TResult> {
   request$: Observable<TResult>;
 
   /**
-   * Success snackbar text — a string, or a function of the request result for the common case of a
-   * confirmation that names the saved record (which a static string can't reach).
+   * Success snackbar text — a string, or a function of the request result for a confirmation that
+   * names the saved record.
    *
-   * Required, but nullable: pass `null` — visibly, at the callsite — for a form that raises its own
-   * snackbar (or deliberately raises none) under `[suppressSuccessSnackbar]`. A `null` without that
-   * input set is a silent save, and warns in dev mode. The function form may also return `null`,
-   * for a save whose confirmation depends on the outcome (e.g. none when the success path navigates
-   * away); that's an explicit per-result decision, so it never warns.
+   * Required, but nullable: pass `null` — visibly, at the callsite — for a form that reports success
+   * itself under `[suppressSuccessSnackbar]`. A `null` without that input is a silent save and warns
+   * in dev mode; a function that returns `null` (e.g. the success path navigates away) is a
+   * per-result decision and never warns.
    */
   successMessage: TranslatedString | ((result: TResult) => TranslatedString | null) | null;
 

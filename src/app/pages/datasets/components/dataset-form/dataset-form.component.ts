@@ -98,15 +98,11 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
   /**
    * A plain AND, because each signal is kept meaningful whether or not its section is on screen.
+   * Quotas is the only one that comes and goes (with the Advanced toggle): {@link toggleAdvancedMode}
+   * resets its signal on the way out, and the section re-reports on mount.
    *
-   * Quotas is the only section that comes and goes (with the Advanced toggle), and both directions
-   * are covered: {@link toggleAdvancedMode} resets its signal on the way out, so a section that
-   * isn't on screen can't disable Save with nothing to fix, and `QuotasSectionComponent` emits its
-   * current validity on mount, so a fresh instance reports itself immediately.
-   *
-   * Encryption is gated even in basic mode, where its fields are hidden: unlike quotas, its payload
-   * is part of every create, so an invalid value still ships. In edit it never mounts and its
-   * signal stays at its initial `true`.
+   * Encryption counts even in basic mode, where its fields are hidden — its payload is part of every
+   * create, so an invalid value still ships.
    */
   protected readonly areSubFormsValid = computed(() => {
     return this.isNameAndOptionsValid()
@@ -135,11 +131,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
     }];
   });
 
-  /**
-   * Still a getter because `HostedSidePanelForm` types `footerActions` as a plain array and the
-   * container reads it each change detection — but backed by a `computed`, so the array is rebuilt
-   * only when the mode actually changes rather than allocated on every pass.
-   */
+  /** A getter because `HostedSidePanelForm` types `footerActions` as a plain array. */
   get footerActions(): SidePanelFooterAction[] {
     return this.footerActionList();
   }
@@ -156,6 +148,14 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
    * immediately tear down) the create-only sections.
    */
   protected readonly isNew = computed(() => this.params().isNew);
+
+  /**
+   * An edit panel with no record to edit — the load in {@link setForEdit} failed, so only the error
+   * modal happened and `existingDataset` never arrived. Blocks Save: the Name field is left enabled
+   * (the section un-disables it only once `existing` lands), so the user can otherwise fill in a
+   * name, satisfy every section, and submit a create payload rooted at the pool from an edit panel.
+   */
+  protected readonly isMissingEditRecord = computed(() => !this.isNew() && !this.existingDataset());
 
   get createSections(): [
     NameAndOptionsSectionComponent,
@@ -207,13 +207,9 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   }
 
   override hasUnsavedChanges(): boolean {
-    return Boolean(
-      this.form.dirty
-      || this.nameAndOptionsSection()?.form?.dirty
-      || this.encryptionSection()?.form?.dirty
-      || this.otherOptionsSection()?.form?.dirty
-      || this.quotasSection()?.form.dirty,
-    );
+    // The root group holds no fields, so the sections' own groups are what carries edits — including
+    // the share-preset one, whose "Create SMB Share" toggle would otherwise discard silently.
+    return this.form.dirty || this.sectionForms().some((form) => form.dirty);
   }
 
   ngOnInit(): void {
@@ -240,6 +236,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
       filter((isValidLengthAndDepth) => {
         if (!isValidLengthAndDepth) {
           // Falsy payload — the host reads it as a cancel and just closes the panel.
+          this.isLoading.set(false);
           this.closed.emit(null);
         }
         return isValidLengthAndDepth;
@@ -308,11 +305,17 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult<Dataset, SaveDatasetResult> => {
     const payload = this.preparePayload();
     const existingDataset = this.existingDataset();
-    // `!existingDataset` is redundant with `isNew()` but narrows the type, so `existingDataset.id`
-    // on the update branch is non-null — keep both.
-    const request$ = this.isNew() || !existingDataset
-      ? this.api.call('pool.dataset.create', [payload as DatasetCreate])
-      : this.api.call('pool.dataset.update', [existingDataset.id, payload as DatasetUpdate]);
+
+    let request$: Observable<Dataset>;
+    if (this.isNew()) {
+      request$ = this.api.call('pool.dataset.create', [payload as DatasetCreate]);
+    } else if (existingDataset) {
+      request$ = this.api.call('pool.dataset.update', [existingDataset.id, payload as DatasetUpdate]);
+    } else {
+      // Unreachable — `isMissingEditRecord` keeps Save disabled until the edit load lands. Explicit
+      // rather than falling back to create, which would file a stray dataset from an edit panel.
+      throw new Error('Cannot save: the dataset being edited was not loaded.');
+    }
 
     return {
       request$: this.saveDataset(request$),
