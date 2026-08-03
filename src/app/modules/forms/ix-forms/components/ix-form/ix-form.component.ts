@@ -106,7 +106,7 @@ export interface SubmitResult {
  * `ReactiveFormsModule` import. The inner `<form>` below is NOT in that chain (it exists to give
  * `ngSubmit`), so it never serves projected content. A child component that holds some of the
  * fields therefore can't inherit the container across the projection boundary: hand it the group as
- * an input and let it bind `[formGroup]` in its own template (see `BaseNamespaceFormComponent`).
+ * an input and let it bind `[formGroup]` in its own template.
  *
  * Hosts either way: inside a legacy slide-in (injects `SlideInRef`, closed directly
  * through it) or host-less inside a `<tn-side-panel>` (`SlideInRef` is `{ optional: true }`

@@ -28,6 +28,13 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
+/**
+ * The footer Save. `tnSidePanelAction` sits directly on it in the container template, while
+ * `footerActions` / `footerMenu` buttons sit inside a wrapper carrying the directive — so this
+ * matches Save and only Save, no matter what else the footer holds.
+ */
+const saveButtonSelector = 'tn-button[tnSidePanelAction]';
+
 const privateKeyClick = jest.fn();
 const publicKeyClick = jest.fn();
 
@@ -74,8 +81,7 @@ describe('FormSidePanelContainerComponent footer menu', () => {
     (node) => node.componentInstance instanceof MenuTestFormComponent,
   ).componentInstance as MenuTestFormComponent;
 
-  // Select the menu trigger by its `dots-vertical` icon — raw TestBed doesn't emit the library's
-  // `data-test` attributes (only spectator's factory wires that), so we can't select by test id.
+  // Selected by its `dots-vertical` icon: TnIconButtonHarness filters on the icon, not on a test id.
   const getTrigger = (): Promise<TnIconButtonHarness> => TnMenuTesting.rootLoader(fixture)
     .getHarness(TnIconButtonHarness.with({ name: 'dots-vertical', library: 'mdi' }));
 
@@ -267,8 +273,9 @@ describe('FormSidePanelContainerComponent footer Save', () => {
     (node) => node.componentInstance instanceof SaveTestFormComponent,
   ).componentInstance as SaveTestFormComponent;
 
+  // Document-root loader: tn-side-panel renders its panel (footer included) outside the fixture.
   const getSaveButton = (): Promise<TnButtonHarness> => TnMenuTesting.rootLoader(fixture)
-    .getHarness(TnButtonHarness.with({ testId: 'button-save' }));
+    .getHarness(TnButtonHarness.with({ selector: saveButtonSelector }));
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -355,9 +362,9 @@ describe('FormSidePanelContainerComponent footer Save with a real <ix-form>', ()
 
   // Read from the DOM rather than through a harness: harness calls await zone stability, which the
   // pending hold timer would block until it has already fired — exactly the window under test.
-  // Selected by element rather than test id: raw TestBed doesn't emit the library's `data-test`
-  // attributes, and Save is the only `tn-button` this form puts in the footer.
-  const getSaveLabel = (): string => document.querySelector('tn-button')?.textContent?.trim() ?? '';
+  // Queried from `document` because tn-side-panel renders its panel outside the fixture's host, and
+  // addressed by `saveButtonSelector` so a second footer button can't shift what is read.
+  const getSaveLabel = (): string => document.querySelector(saveButtonSelector)?.textContent?.trim() ?? '';
 
   beforeEach(() => {
     TestBed.configureTestingModule({

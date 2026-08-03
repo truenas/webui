@@ -45,15 +45,16 @@ export function createNamespaceForm(formBuilder: NonNullableFormBuilder): Namesp
  * New File branch (the only branch that renders them), inert everywhere else.
  *
  * Owning the validator here — rather than declaring it once in {@link createNamespaceForm} — is
- * what makes the group self-consistent: there is no state in which a control carries `required`
- * but no input can satisfy it, so a group built by the factory is valid on every branch without
- * depending on this having run. `tn-form-field` still infers the visual `*` from
- * `hasValidator(Validators.required)`, and only ever renders while the branch is active.
+ * what makes the group self-consistent: no state has a control carrying `required` that no visible
+ * input can satisfy, so a group built by the factory is valid on every branch without depending on
+ * this having run — while the branch that does render them still gets the `*` that `tn-form-field`
+ * infers from the validator. Disabling on top of that keeps the controls out of group validity even
+ * if something else attaches a validator.
  *
- * Disabling as well as unvalidating is belt-and-braces: it keeps the controls out of group
- * validity even if something else attaches a validator (e.g. a stray `[required]` binding, which
- * also matches Angular's `RequiredValidator` directive). {@link toNamespaceChanges} reads
- * `getRawValue()`, so disabling loses nothing from the payload.
+ * Leaving the branch also CLEARS them, mirroring the `device_path` reset the caller does on every
+ * device-type change. {@link toNamespaceChanges} reads `getRawValue()`, so a disabled leftover is
+ * still in the payload — without the reset, New File → Zvol → New File would silently resurrect
+ * values the user last saw two branches ago.
  */
 export function syncNewFileControls(form: NamespaceFormGroup, type: FormNamespaceType): void {
   const { filename, filesize } = form.controls;
@@ -65,6 +66,7 @@ export function syncNewFileControls(form: NamespaceFormGroup, type: FormNamespac
       control.enable();
     } else {
       control.removeValidators(Validators.required);
+      control.reset();
       control.disable();
     }
 

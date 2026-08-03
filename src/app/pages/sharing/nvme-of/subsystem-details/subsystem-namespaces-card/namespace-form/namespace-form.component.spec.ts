@@ -12,7 +12,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   mockExplorerCreateZvol, selectNamespaceType,
-} from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.testing';
+} from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/testing/namespace-form.testing';
 import {
   NamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-namespaces-card/namespace-form/namespace-form.component';

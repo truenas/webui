@@ -13,11 +13,11 @@ import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
 import {
-  getNamespaceTypeToggle, mockExplorerCreateZvol, selectNamespaceType,
-} from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.testing';
-import {
   createNamespaceForm, NamespaceFormGroup,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.utils';
+import {
+  getNamespaceTypeToggle, mockExplorerCreateZvol, selectNamespaceType,
+} from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/testing/namespace-form.testing';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 describe('BaseNamespaceFormComponent', () => {

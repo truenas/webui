@@ -111,7 +111,16 @@ export class FormSidePanelService {
     });
   }
 
-  open<R = boolean>(component: Type<SidePanelHostCloseable<R>>, options: FormSidePanelOptions = {}): SlideInResult<R> {
+  /**
+   * The hosted form may close with `R | null` while the opener only ever sees `R | undefined`: any
+   * falsy payload is collapsed to `undefined` below, which {@link SlideInResult} reads as a cancel.
+   * That is what lets a form emit `null` on a save that returned no record (so the panel still
+   * tears down) without every `onSuccess` callback having to null-check.
+   */
+  open<R = boolean>(
+    component: Type<SidePanelHostCloseable<R | null>>,
+    options: FormSidePanelOptions = {},
+  ): SlideInResult<R> {
     const top = this.stack[this.stack.length - 1];
     // Dedupe a re-entrant open of the component already on top (e.g. a double-fired menu click);
     // a different component is a genuine nested open and stacks on top.
@@ -123,7 +132,7 @@ export class FormSidePanelService {
     // Defaults to a cancel; overwritten with the form's response when it closes itself via save.
     let pendingResponse: R | undefined;
 
-    const portal = new ComponentPortal<SidePanelHostCloseable<R>>(component, null, this.injector);
+    const portal = new ComponentPortal<SidePanelHostCloseable<R | null>>(component, null, this.injector);
     const containerRef = createComponent(FormSidePanelContainerComponent, {
       environmentInjector: this.environmentInjector,
     });
@@ -157,7 +166,7 @@ export class FormSidePanelService {
       // Form-initiated close (save / cancel). A truthy payload is a success — `true` for the
       // default boolean form, or the created record for a richer `R`; any falsy value is a
       // cancellation, matching SlideInResult's `=== undefined` convention.
-      (form as SidePanelHostCloseable<R>).closed.subscribe((saved) => {
+      (form as SidePanelHostCloseable<R | null>).closed.subscribe((saved) => {
         pendingResponse = saved || undefined;
         containerRef.setInput('open', false);
       });

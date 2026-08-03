@@ -6,9 +6,8 @@ import {
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.utils';
 
 describe('createNamespaceForm', () => {
-  // The group carries unconditional `required` validators on the New File controls, so it is only
-  // ever satisfiable because it hands them out disabled. Asserting it here means a host that never
-  // renders BaseNamespaceFormComponent can still reach VALID.
+  // The New File controls start inert — no `required`, disabled — so a host that never renders
+  // BaseNamespaceFormComponent (and so never runs `syncNewFileControls`) can still reach VALID.
   it('returns a group that only needs a device path to become valid', () => {
     const form = createNamespaceForm(new FormBuilder().nonNullable);
 
@@ -51,6 +50,21 @@ describe('syncNewFileControls', () => {
       expect(form.controls.filesize.disabled).toBe(true);
     },
   );
+
+  // `toNamespaceChanges` reads `getRawValue()`, so a disabled leftover would still ship — and would
+  // reappear in the inputs on the way back to New File.
+  it('clears filename and file size when leaving the New File branch', () => {
+    const form = setUp(FormNamespaceType.NewFile);
+    form.patchValue({ filename: 'new-file.img', filesize: 1024 * MiB });
+
+    syncNewFileControls(form, FormNamespaceType.Zvol);
+
+    expect(form.getRawValue()).toMatchObject({ filename: '', filesize: null });
+
+    syncNewFileControls(form, FormNamespaceType.NewFile);
+
+    expect(form.getRawValue()).toMatchObject({ filename: '', filesize: null });
+  });
 });
 
 describe('toNamespaceChanges', () => {

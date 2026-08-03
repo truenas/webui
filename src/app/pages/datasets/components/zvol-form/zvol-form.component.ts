@@ -250,14 +250,9 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
   protected onFormClosed(): void {
     // Emitted unconditionally: `<ix-form>` only fires `closed` on a successful submit, and the
     // panel host tears down on this event alone. Gating it on `savedDataset` would mean a save
-    // that succeeded but returned no record leaves the panel open with no feedback.
-    //
-    // A falsy payload is safe because `FormSidePanelService.open` stores `saved || undefined`, and
-    // `SlideInResult` treats `undefined` as a cancel — so `onSuccess` never runs with a missing
-    // zvol. Note the collapse happens in the *panel service*, not in `SlideInResult`, which treats
-    // `null` as a legitimate success payload (asserted in slide-in-result.spec.ts). That is why
-    // openers can dereference the record directly (`response.id`, `zvol.id`), and why this form
-    // must stay panel-only for that to hold.
+    // that succeeded but returned no record leaves the panel open with no feedback. `null` is the
+    // "saved, but no record" payload `FormSidePanelService.open` collapses to a cancel, which is
+    // why openers can dereference the record they do get (`response.id`).
     this.closed.emit(this.savedDataset ?? null);
   }
 

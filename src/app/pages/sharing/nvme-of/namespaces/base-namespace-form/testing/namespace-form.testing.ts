@@ -1,4 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
+import { SpectatorOptions } from '@ngneat/spectator';
 import { TnButtonToggleHarness } from '@truenas/ui-components';
 import { escapeRegExp } from 'lodash-es';
 import { MockComponent } from 'ng-mocks';
@@ -28,6 +29,9 @@ export async function selectNamespaceType(loader: HarnessLoader, label: string):
   await toggle.check();
 }
 
+/** One entry of a spectator factory's `overrideComponents`. */
+type ComponentOverride = NonNullable<SpectatorOptions<unknown>['overrideComponents']>[number];
+
 /**
  * Spectator `overrideComponents` entry that stubs the explorer's "Create Zvol" button.
  *
@@ -36,10 +40,7 @@ export async function selectNamespaceType(loader: HarnessLoader, label: string):
  * render (pulling in the real `FormSidePanelService`) while the spec read as though it were
  * stubbed. Overriding the component's own import array is what actually swaps it.
  */
-export function mockExplorerCreateZvol(): [typeof BaseNamespaceFormComponent, {
-  remove: { imports: [typeof ExplorerCreateZvolComponent] };
-  add: { imports: [unknown] };
-}] {
+export function mockExplorerCreateZvol(): ComponentOverride {
   return [BaseNamespaceFormComponent, {
     remove: { imports: [ExplorerCreateZvolComponent] },
     add: { imports: [MockComponent(ExplorerCreateZvolComponent)] },

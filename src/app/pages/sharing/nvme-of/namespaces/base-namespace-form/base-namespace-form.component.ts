@@ -49,19 +49,17 @@ const typeOptions: Option[] = [
 
 /**
  * Renders the namespace controls into a form group its host owns — it neither builds the group nor
- * submits it. Both side-panel wrappers ({@link NamespaceFormComponent}, which saves through
- * `<ix-form>`, and `AddSubsystemNamespaceComponent`, which collects changes in memory for the Add
- * Subsystem wizard) build the group with `createNamespaceForm` and drive submission themselves.
+ * submits it. Both side-panel wrappers (one saving through `<ix-form>`, one collecting changes in
+ * memory for the Add Subsystem wizard) build the group with `createNamespaceForm` and drive
+ * submission themselves.
  *
- * The group arrives as the {@link group} input and is bound to a `[formGroup]` inside this
- * component's own template, so the wiring is explicit and type-checked. The alternative — resolving
- * the host's `ControlContainer` through content projection — costs the host an invisible contract
- * (`formControlName` injects `ControlContainer` with `@Host()`, so the container has to be
- * re-provided here AND a `FormGroupDirective` has to happen to sit on the host element, which for
- * an `<ix-form>` host means keeping a "does nothing here" `ReactiveFormsModule` import alive).
+ * The group arrives as the {@link group} input and is bound to a `[formGroup]` in this component's
+ * own template, rather than inherited from the host's `ControlContainer` through projection — which
+ * would put an invisible contract on every host (re-provide the container here, and keep a
+ * `FormGroupDirective` on the host element).
  *
- * Renders no `<form>` element of its own, so it still composes inside either host without nesting
- * a second form.
+ * Renders no `<form>` element of its own, so it composes inside either host without nesting a
+ * second form.
  */
 @Component({
   selector: 'ix-base-namespace-form',
@@ -87,11 +85,9 @@ export class BaseNamespaceFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   /**
-   * The group to render into, built by the host with `createNamespaceForm`. One binding drives both
-   * halves — the template's `[formGroup]`, so the controls below write here, and the branching this
-   * component does on `device_type` — so "the group I branch on" and "the group my controls write
-   * to" are the same object by construction. Typed as {@link NamespaceFormGroup}, so a host that
-   * passes the wrong group fails to compile rather than at runtime.
+   * The group to render into, built by the host with `createNamespaceForm`. It backs both the
+   * template's `[formGroup]` and the `device_type` branching below, so "the group I branch on" and
+   * "the group my controls write to" are the same object by construction.
    */
   readonly group = input.required<NamespaceFormGroup>();
 

@@ -377,7 +377,8 @@ describe('NfsFormComponent', () => {
       spectator = createComponent({
         providers: [
           { provide: SlideInRef, useValue: null },
-          // Opt out of the panel-mode min-feedback hold so the close is synchronous.
+          // The `<ix-form>` this mode renders needs its own service mocks, and the bundle also
+          // zeroes the panel-mode min-feedback hold so the close stays synchronous.
           ...ixFormTestingProviders(),
         ],
         props: { nfsShareData: { existingNfsShare: existingShare } },

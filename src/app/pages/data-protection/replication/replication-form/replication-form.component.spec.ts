@@ -340,7 +340,8 @@ describe('ReplicationFormComponent', () => {
       spectator = createComponent({
         providers: [
           { provide: SlideInRef, useValue: null },
-          // Skip the min submit-feedback hold so the synchronous-close assertions below hold.
+          // The `<ix-form>` this mode renders needs its own service mocks, and the bundle also
+          // zeroes the min submit-feedback hold so the close assertions below stay synchronous.
           ...ixFormTestingProviders(),
         ],
         props: {
