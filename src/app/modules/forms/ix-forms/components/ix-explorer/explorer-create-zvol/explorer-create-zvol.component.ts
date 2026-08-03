@@ -61,12 +61,19 @@ export class ExplorerCreateZvolComponent implements AfterViewInit {
   });
 
   protected onCreateZvol(): void {
+    const parent = this.parent();
+    // `isButtonDisabled` already covers this, but `inputs` is an untyped bag: without the guard a
+    // null would flow into `ZvolFormComponent.params.parentOrZvolId`, which is a required string.
+    if (!parent) {
+      return;
+    }
+
     this.formPanel.open<Dataset>(ZvolFormComponent, {
       title: this.translate.instant(helptextZvol.addTitle),
       inputs: {
         params: {
           isNew: true,
-          parentOrZvolId: this.parent(),
+          parentOrZvolId: parent,
         },
       },
     }).onSuccess((zvol) => {

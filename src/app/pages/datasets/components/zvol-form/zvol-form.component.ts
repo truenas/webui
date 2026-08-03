@@ -54,7 +54,9 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
-import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
+import {
+  getDatasetLabel, getUserProperty, transformSpecialSmallBlockSizeForPayload,
+} from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { LicenseService } from 'app/services/license.service';
 
@@ -235,7 +237,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
     }
   }
 
-  protected handleSubmit = (event: FormSubmitEvent<ZvolFormData>): SubmitResult => {
+  protected handleSubmit = (event: FormSubmitEvent<ZvolFormData>): SubmitResult<boolean, Dataset> => {
     if (this.isNew()) {
       return this.buildCreateResult(event);
     }
@@ -282,18 +284,22 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
     control.updateValueAndValidity({ emitEvent: false });
   }
 
-  private buildCreateResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult {
+  private buildCreateResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult<boolean, Dataset> {
     const data = this.buildCreatePayload(event.allValues);
     return {
       request$: this.api.call('pool.dataset.create', [data as DatasetCreate]),
-      successMessage: this.translate.instant('Zvol created'),
+      // Owned by the form so every entry point (details panel, details card, explorer) confirms
+      // identically — the openers deliberately raise no snackbar of their own.
+      successMessage: this.translate.instant('Zvol «{name}» created.', {
+        name: getDatasetLabel({ name: data.name ?? '' }),
+      }),
       onSuccess: (result) => {
-        this.savedDataset = result as Dataset;
+        this.savedDataset = result;
       },
     };
   }
 
-  private buildEditResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult {
+  private buildEditResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult<boolean, Dataset> {
     return {
       request$: this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId()]]]).pipe(
         switchMap((datasets) => {
@@ -304,9 +310,12 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
           return this.api.call('pool.dataset.update', [this.parentOrZvolId(), payload]);
         }),
       ),
-      successMessage: this.translate.instant('Zvol updated'),
+      // See `buildCreateResult` — the message is the form's, not the opener's.
+      successMessage: this.translate.instant('Zvol «{name}» updated.', {
+        name: getDatasetLabel({ name: this.parentOrZvolId() }),
+      }),
       onSuccess: (result) => {
-        this.savedDataset = result as Dataset;
+        this.savedDataset = result;
       },
       onError: (error: unknown) => {
         if (error instanceof Error && error.message === 'VOLSIZE_VALIDATION') {

@@ -81,4 +81,17 @@ describe('ExplorerCreateZvolComponent', () => {
     expect(fakeExplorer.refreshNode).toHaveBeenCalled();
     expect(fakeControl.control.setValue).toHaveBeenCalledWith('/dev/zvol/test-pool/test-zvol');
   });
+
+  it('does not open the form without a parent – ZvolFormComponent requires a parent id', async () => {
+    fakeControl.control.setValue('');
+    spectator.detectChanges();
+
+    // The button is disabled in this state, so call the handler directly: `inputs` is an untyped
+    // bag, and the guard is what stops a null reaching the form's required `parentOrZvolId`.
+    (spectator.component as unknown as { onCreateZvol: () => void }).onCreateZvol();
+
+    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Zvol' }));
+    expect(await createButton.isDisabled()).toBe(true);
+    expect(spectator.inject(FormSidePanelService).open).not.toHaveBeenCalled();
+  });
 });

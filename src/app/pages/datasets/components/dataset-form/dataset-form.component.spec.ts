@@ -334,6 +334,11 @@ describe('DatasetFormComponent', () => {
       spectator = createComponent({ props: { params: { datasetId: 'parent/child', isNew: false } } });
     });
 
+    it('opens in advanced mode, since basic edit mode has nothing but the disabled Name field', () => {
+      expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(true);
+      expect(advancedAction().label).toBe('Basic Options');
+    });
+
     it('updates an existing child dataset when edit form is submitted', () => {
       clickSave();
 

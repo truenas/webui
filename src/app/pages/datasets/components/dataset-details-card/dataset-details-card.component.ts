@@ -26,7 +26,7 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { getDatasetLabel, getUserProperty, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { getUserProperty, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -184,10 +184,9 @@ export class DatasetDetailsCardComponent {
     this.formPanel.open<Dataset>(ZvolFormComponent, {
       title: this.translate.instant(helptextZvol.editTitle),
       inputs: { params: { isNew: false, parentOrZvolId: this.dataset().id } },
-    }).onSuccess((response) => {
-      this.snackbar.success(
-        this.translate.instant('Zvol «{name}» updated.', { name: getDatasetLabel(response) }),
-      );
+    }).onSuccess(() => {
+      // No snackbar here: `ZvolFormComponent` owns the success message so every entry point
+      // confirms identically.
       this.datasetStore.datasetUpdated();
     }, this.destroyRef);
   }

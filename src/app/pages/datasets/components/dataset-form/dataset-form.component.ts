@@ -223,6 +223,10 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   }
 
   setForEdit(): void {
+    // Edit renders Other Options only in advanced mode (quotas/encryption stay create-only), so a
+    // basic-mode edit panel would show nothing but the disabled Name field. Start expanded.
+    this.isAdvancedMode.set(true);
+
     const requests = [
       this.datasetFormService.loadDataset(this.params().datasetId),
     ];
@@ -255,7 +259,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
     this.isAdvancedMode.set(true);
   }
 
-  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult<boolean, SaveDatasetResult> => {
     const payload = this.preparePayload();
     const existingDataset = this.existingDataset();
     // `!existingDataset` is redundant with `isNew` (which is `!existingDataset()`) but narrows the
@@ -270,7 +274,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
       // The message depends on the saved record, so `onSaved` raises it instead — the form runs
       // under `[suppressSuccessSnackbar]`, which is what makes this `null` deliberate.
       successMessage: null,
-      onSuccess: (result: unknown) => this.onSaved(...result as SaveDatasetResult),
+      onSuccess: ([savedDataset, shouldGoToAclEditor]) => this.onSaved(savedDataset, shouldGoToAclEditor),
       onError: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return true;

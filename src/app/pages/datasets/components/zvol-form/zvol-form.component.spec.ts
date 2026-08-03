@@ -29,6 +29,7 @@ import { DetailsTableHarness } from 'app/modules/details-table/details-table.har
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -281,6 +282,15 @@ describe('ZvolFormComponent', () => {
       expect(closed).toHaveBeenCalledWith(null);
     });
 
+    it('announces the created zvol – openers rely on the form for the success message', async () => {
+      await setTnInput(loader, 'name', 'new zvol');
+      await setTnInput(loader, 'volsize', '1 GiB');
+
+      spectator.component.submit();
+
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Zvol «new zvol» created.');
+    });
+
     it('does not allow creating zvol with existing name', async () => {
       await setTnInput(loader, 'name', 'existing-child');
       await setTnInput(loader, 'volsize', '1 GiB');
@@ -495,6 +505,14 @@ describe('ZvolFormComponent', () => {
       }]);
 
       expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'zvolId' }));
+    });
+
+    it('announces the updated zvol – openers rely on the form for the success message', async () => {
+      await setTnInput(loader, 'volsize', '2 GiB');
+
+      spectator.component.submit();
+
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Zvol «zvolId» updated.');
     });
 
     it('treats size change above 0.1% threshold as a change requiring alignment', async () => {
