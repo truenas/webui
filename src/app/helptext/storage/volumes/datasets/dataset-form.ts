@@ -129,10 +129,6 @@ export const helptextDatasetForm = {
       { label: T('Key'), value: 'key' },
       { label: T('Passphrase'), value: 'passphrase' },
     ],
-    algorithmTooltip: T('Mathematical instruction sets that determine how plaintext is converted\
- into ciphertext. See\
- <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard" target="_blank">Advanced Encryption Standard (AES)</a>\
- for more details.'),
     passphraseTooltip: T('User-defined string used to decrypt the dataset. Can be used instead of an encryption key.<br>\
  WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a\
  memorable passphrase or physically secure the passphrase.'),

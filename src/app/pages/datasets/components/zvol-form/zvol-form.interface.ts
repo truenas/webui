@@ -35,12 +35,10 @@ export interface ZvolFormData {
   passphrase?: string;
   confirm_passphrase?: string;
   pbkdf2iters?: number;
-  algorithm?: string;
   type?: string;
   encryption_options?: {
     generate_key?: boolean;
     pbkdf2iters?: number;
-    algorithm?: string;
     passphrase?: string;
     key?: string;
   };

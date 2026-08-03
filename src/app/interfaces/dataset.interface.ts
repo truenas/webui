@@ -128,7 +128,6 @@ export interface DatasetCreate {
   encryption_options?: {
     generate_key?: boolean;
     pbkdf2iters?: number;
-    algorithm?: string;
     passphrase?: string;
     key?: string;
   };

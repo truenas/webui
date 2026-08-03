@@ -286,8 +286,8 @@
         </tn-form-field>
       }
 
-      <ix-details-table class="encryption-details">
-        @if (form.controls.pbkdf2iters.enabled) {
+      @if (form.controls.pbkdf2iters.enabled) {
+        <ix-details-table class="encryption-details">
           <ix-details-item
             [label]="helptext.encryption.pbkdf2itersLabel | translate"
             [tooltip]="helptext.encryption.pbkdf2itersTooltip | translate"
@@ -304,29 +304,8 @@
               </div>
             </ix-editable>
           </ix-details-item>
-        }
-
-        @if (form.controls.algorithm.enabled) {
-          <ix-details-item
-            [label]="helptext.encryption.algorithmLabel | translate"
-            [tooltip]="helptext.encryption.algorithmTooltip | translate"
-          >
-            <ix-editable>
-              <div view>
-                @let algorithmOptions = algorithmOptions$ | async;
-                {{ algorithmOptions ? getOptionLabel(algorithmOptions, form.value.algorithm): form.value.algorithm }}
-              </div>
-              <div edit>
-                <tn-select
-                  formControlName="algorithm"
-                  [options]="(algorithmOptions$ | async) ?? []"
-                  [ariaLabel]="helptext.encryption.algorithmLabel | translate"
-                ></tn-select>
-              </div>
-            </ix-editable>
-          </ix-details-item>
-        }
-      </ix-details-table>
+        </ix-details-table>
+      }
     </tn-form-section>
   }
 </ix-form>

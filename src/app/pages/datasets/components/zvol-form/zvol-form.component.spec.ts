@@ -176,14 +176,6 @@ describe('ZvolFormComponent', () => {
             type: DatasetType.Volume,
           }];
         }),
-        mockCall('pool.dataset.encryption_algorithm_choices', {
-          'AES-128-CCM': 'AES-128-CCM',
-          'AES-192-CCM': 'AES-192-CCM',
-          'AES-256-CCM': 'AES-256-CCM',
-          'AES-128-GCM': 'AES-128-GCM',
-          'AES-192-GCM': 'AES-192-GCM',
-          'AES-256-GCM': 'AES-256-GCM',
-        }),
         mockCall('pool.dataset.compression_choices', {
           OFF: 'Off',
           LZ4: 'lz4 (recommended)',
@@ -250,7 +242,6 @@ describe('ZvolFormComponent', () => {
       await setEditableTnSelect(loader, mainDetails, 'Snapdev', 'snapdev', 'Visible');
 
       const encryptionDetails = (await loader.getAllHarnesses(DetailsTableHarness))[1];
-      await setEditableTnSelect(loader, encryptionDetails, 'Algorithm', 'algorithm', 'AES-128-CCM');
       await setEditableTnInput(loader, encryptionDetails, 'pbkdf2iters', 'pbkdf2iters', '1400000');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -271,7 +262,6 @@ describe('ZvolFormComponent', () => {
         inherit_encryption: false,
         encryption: true,
         encryption_options: {
-          algorithm: 'AES-128-CCM',
           passphrase: '12345678',
           pbkdf2iters: 1400000,
         },
@@ -403,14 +393,6 @@ describe('ZvolFormComponent', () => {
           mockCall('pool.dataset.update'),
           mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
           mockCall('pool.dataset.query', [encryptedParent]),
-          mockCall('pool.dataset.encryption_algorithm_choices', {
-            'AES-128-CCM': 'AES-128-CCM',
-            'AES-192-CCM': 'AES-192-CCM',
-            'AES-256-CCM': 'AES-256-CCM',
-            'AES-128-GCM': 'AES-128-GCM',
-            'AES-192-GCM': 'AES-192-GCM',
-            'AES-256-GCM': 'AES-256-GCM',
-          }),
           mockCall('pool.dataset.compression_choices', {
             OFF: 'Off',
             LZ4: 'lz4 (recommended)',
@@ -563,9 +545,6 @@ describe('ZvolFormComponent', () => {
             call: jest.fn((method) => {
               if (method === 'pool.dataset.query') {
                 return of([dataset]);
-              }
-              if (method === 'pool.dataset.encryption_algorithm_choices') {
-                return of({});
               }
               if (method === 'pool.dataset.recommended_zvol_blocksize') {
                 return of('16K');

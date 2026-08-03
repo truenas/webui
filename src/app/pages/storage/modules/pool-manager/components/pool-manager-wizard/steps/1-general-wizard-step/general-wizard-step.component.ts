@@ -9,7 +9,6 @@ import {
   combineLatest, map, Observable,
 } from 'rxjs';
 import { startWith, take } from 'rxjs/operators';
-import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -17,7 +16,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
@@ -29,8 +27,6 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-const defaultEncryptionStandard = 'AES-256-GCM';
-
 @Component({
   selector: 'ix-general-wizard-step',
   templateUrl: './general-wizard-step.component.html',
@@ -41,7 +37,6 @@ const defaultEncryptionStandard = 'AES-256-GCM';
     ReactiveFormsModule,
     IxInputComponent,
     IxRadioGroupComponent,
-    IxSelectComponent,
     PoolWarningsComponent,
     FormActionsComponent,
     TnButtonComponent,
@@ -67,7 +62,6 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     encryptionType: [EncryptionType.None],
-    encryptionStandard: [defaultEncryptionStandard, Validators.required],
     sedPassword: [''],
     sedPasswordConfirm: [''],
   }, {
@@ -89,10 +83,6 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   );
 
   private readonly oldNameForbiddenValidator = forbiddenAsyncValues(this.poolNames$);
-
-  readonly encryptionAlgorithmOptions$ = this.api
-    .call('pool.dataset.encryption_algorithm_choices')
-    .pipe(choicesToOptions());
 
   hasSedCapableDisks$ = this.store.hasSedCapableDisks$;
   isEnterprise$ = this.store$.select(selectIsEnterprise);
@@ -122,7 +112,6 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   ngOnChanges(): void {
     if (this.isAddingVdevs()) {
       this.form.controls.encryptionType.disable();
-      this.form.controls.encryptionStandard.disable();
       this.form.controls.sedPassword.disable();
       this.form.controls.sedPasswordConfirm.disable();
       this.form.controls.name.setValue(this.pool()?.name || '');
@@ -176,7 +165,6 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
         this.form.reset({
           name: poolName,
           encryptionType: defaultEncryptionType,
-          encryptionStandard: defaultEncryptionStandard,
         });
       });
   }
@@ -258,20 +246,17 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       this.form.controls.name.statusChanges.pipe(startWith(this.form.controls.name.status)),
       this.form.controls.name.valueChanges.pipe(startWith('')),
       this.form.controls.encryptionType.valueChanges.pipe(startWith(EncryptionType.None)),
-      this.form.controls.encryptionStandard.valueChanges.pipe(startWith(defaultEncryptionStandard)),
       this.form.controls.sedPassword.valueChanges.pipe(startWith('')),
     ]).pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(([, name, encryptionType, encryptionStandard, sedPassword]) => {
+    ).subscribe(([, name, encryptionType, sedPassword]) => {
       this.store.setGeneralOptions({
         name,
         nameErrors: this.form.controls.name.errors,
-        encryption: encryptionType === EncryptionType.Software ? encryptionStandard : null,
       });
 
       this.store.setEncryptionOptions({
         encryptionType,
-        encryption: encryptionType === EncryptionType.Software ? encryptionStandard : null,
         sedPassword: encryptionType === EncryptionType.Sed ? sedPassword : null,
       });
     });

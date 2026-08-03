@@ -24,7 +24,7 @@
           @if ((encryptionType$ | async) === EncryptionType.None) {
             {{ 'None' | translate }}
           } @else if ((encryptionType$ | async) === EncryptionType.Software) {
-            {{ 'Software (ZFS)' | translate }} - {{ (encryption$ | async) || unknownProp }}
+            {{ 'Software (ZFS)' | translate }}
           } @else if ((encryptionType$ | async) === EncryptionType.Sed) {
             {{ 'Hardware (SED)' | translate }}
           } @else {
