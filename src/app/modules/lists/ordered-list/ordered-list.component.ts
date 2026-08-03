@@ -71,6 +71,12 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
    * the rows hoisted by whatever the previous value was.
    */
   private sourceItems: OrderedOption[] = [];
+  /**
+   * Set once the user has dragged a row. From then on the row order is theirs, so
+   * `orderOptions` stops hoisting the selected values: hoisting a value the user has just
+   * dragged *below* an unselected row would undo the drag on the next `writeValue`.
+   */
+  private hasUserOrdered = false;
 
   protected isDisabled = false;
   /** Kept non-null so `isChecked` and `orderOptions` never have to guard. */
@@ -132,6 +138,9 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
         ...option,
         testId: normalizeTestIdParts([this.controlDirective.name, option.label]),
       }));
+      // A fresh set of options replaces the base order wholesale, so whatever the user
+      // dragged no longer applies to it — order against the stored value again.
+      this.hasUserOrdered = false;
       this.orderOptions();
       this.cdr.markForCheck();
     });
@@ -143,11 +152,16 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
     // `writeValue` rebuilds `items` from `sourceItems`, so without this the drop would be
     // undone the next time the control's value is written.
     this.sourceItems = [...this.items];
+    this.hasUserOrdered = true;
     this.onChange(this.orderedValue);
   }
 
   private orderOptions(): void {
     this.items = [...this.sourceItems];
+
+    if (this.hasUserOrdered) {
+      return;
+    }
 
     this.value.toReversed().forEach((value) => {
       const idx = this.items.findIndex((option) => option.value === value);

@@ -125,6 +125,23 @@ describe('OrderedListboxComponent', () => {
     expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth2', 'eth1', 'eth0']);
   });
 
+  // The case the drag order is easiest to lose in: the row dragged is a *selected* one, and
+  // it is dragged below unselected rows. Ordering against the value again would hoist it
+  // straight back to the top, so once the user has dragged, hoisting has to stop entirely.
+  it('keeps a selected row dragged below the unselected ones when a value is written afterwards', async () => {
+    spectator.triggerEventHandler('[cdkDropList]', 'cdkDropListDropped', {
+      previousIndex: 0,
+      currentIndex: 2,
+    } as CdkDragDrop<string[]>);
+    spectator.component.writeValue(['eth2']);
+    spectator.detectChanges();
+
+    const toggles = await loader.getAllHarnesses(TnSlideToggleHarness);
+
+    expect(await Promise.all(toggles.map((toggle) => toggle.getLabelText()))).toEqual(['eth0', 'eth1', 'eth2']);
+    expect(await Promise.all(toggles.map((toggle) => toggle.isChecked()))).toEqual([false, false, true]);
+  });
+
   it('lists every option unchecked when the control has no value', async () => {
     setUpWith(null);
 
