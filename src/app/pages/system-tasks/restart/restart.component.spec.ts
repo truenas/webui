@@ -1,4 +1,5 @@
 import { Location } from '@angular/common';
+import { Provider } from '@angular/core';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -8,7 +9,6 @@ import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { RestartComponent } from 'app/pages/system-tasks/restart/restart.component';
@@ -19,7 +19,7 @@ import { selectIsEnterprise, selectProductType } from 'app/store/system-info/sys
 
 describe('RestartComponent', () => {
   let spectator: Spectator<RestartComponent>;
-  const isConnected$ = new BehaviorSubject(false);
+  let isConnected$: BehaviorSubject<boolean>;
   const createComponent = createComponentFactory({
     component: RestartComponent,
     providers: [
@@ -46,13 +46,8 @@ describe('RestartComponent', () => {
         prepareShutdown: jest.fn(),
         reconnect: jest.fn(),
       }),
-      mockProvider(WebSocketStatusService, {
-        isConnected$,
-        setReconnectAllowed: jest.fn(),
-      }),
-      // Injected by SystemTaskRedirectService rather than by the component, so they are easy
-      // to miss - mock them anyway to keep this spec off the real implementations.
-      mockProvider(LoaderService),
+      // AuthService is injected by SystemTaskRedirectService rather than by the component,
+      // so it is easy to miss - mock it anyway to keep this spec off the real implementation.
       mockProvider(AuthService, {
         clearAuthToken: jest.fn(),
       }),
@@ -64,12 +59,26 @@ describe('RestartComponent', () => {
     ],
   });
 
+  /**
+   * The connection starts down and is brought up per test, so the reconnect the component
+   * waits for is a real transition rather than state left behind by an earlier test.
+   */
+  function createRestart(providers: Provider[] = []): void {
+    isConnected$ = new BehaviorSubject(false);
+    spectator = createComponent({
+      providers: [
+        mockProvider(WebSocketStatusService, {
+          isConnected$,
+          setReconnectAllowed: jest.fn(),
+        }),
+        ...providers,
+      ],
+    });
+  }
+
   describe('without reason query parameter', () => {
     beforeEach(() => {
-      // The subject is shared across tests, so put the connection back down before each run -
-      // the component waits for the websocket to drop before watching for it to come back.
-      isConnected$.next(false);
-      spectator = createComponent();
+      createRestart();
     });
 
     it('calls system.reboot with default "Unknown Reason" when no reason is provided', () => {
@@ -89,9 +98,11 @@ describe('RestartComponent', () => {
       expect(spectator.query('ix-system-task-splash .message')).toHaveText('System is restarting...');
     });
 
-    it('tears down the connection and reconnects once the reboot job returns', () => {
+    // Not reconnect(): forcing the socket down would start the handler's retry loop while
+    // middleware is still up, and a successful early retry would read as a finished reboot.
+    it('marks the connection as shutting down once the reboot job returns', () => {
       expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketHandlerService).reconnect).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketHandlerService).reconnect).not.toHaveBeenCalled();
     });
 
     it('stays on the splash screen until the websocket comes back after the reboot', () => {
@@ -106,16 +117,13 @@ describe('RestartComponent', () => {
 
   describe('with reason query parameter', () => {
     beforeEach(() => {
-      isConnected$.next(false);
-      spectator = createComponent({
-        providers: [
-          mockProvider(ActivatedRoute, {
-            snapshot: {
-              queryParamMap: convertToParamMap({ reason: 'Active Controller Update Reboot' }),
-            },
-          }),
-        ],
-      });
+      createRestart([
+        mockProvider(ActivatedRoute, {
+          snapshot: {
+            queryParamMap: convertToParamMap({ reason: 'Active Controller Update Reboot' }),
+          },
+        }),
+      ]);
     });
 
     it('calls system.reboot with the provided reason', () => {

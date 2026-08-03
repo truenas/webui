@@ -41,35 +41,41 @@ describe('ShutdownComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  // Every test builds its component inside the fakeAsync zone rather than in a beforeEach:
+  // ngOnInit schedules the 60s blackout timer, which is only patched - and so only tickable,
+  // and only kept off the real clock - when it is scheduled there.
+  it('shuts the system down with the reason from the query parameters', fakeAsync(() => {
     spectator = createComponent();
-  });
 
-  it('shuts the system down with the reason from the query parameters', () => {
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.shutdown', ['User requested shutdown']);
-  });
+  }));
 
-  it('replaces location state to avoid shutting down again if user visits the page again', () => {
+  it('replaces location state to avoid shutting down again if user visits the page again', fakeAsync(() => {
+    spectator = createComponent();
+
     expect(spectator.inject(Location).replaceState).toHaveBeenCalledWith('/signin');
-  });
+  }));
 
-  it('tears down the websocket connection once the shutdown job completes', () => {
+  it('tears down the websocket connection once the shutdown job completes', fakeAsync(() => {
+    spectator = createComponent();
+
     expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
     expect(spectator.inject(AuthService).clearAuthToken).toHaveBeenCalled();
-  });
+  }));
 
-  // Rendered DOM instead of a CDK harness: ngOnInit schedules an in-zone 60s timer for the
-  // blackout overlay, so the component only reaches zone stability long after the jest timeout.
-  it('shows the shutdown message in the splash screen', () => {
+  // Rendered DOM instead of a harness: awaiting one would block on the pending blackout timer.
+  it('shows the shutdown message in the splash screen', fakeAsync(() => {
+    spectator = createComponent();
+
     expect(spectator.query('ix-system-task-splash .message')).toHaveText('System is shutting down...');
-  });
+  }));
 
-  it('keeps the screen readable until the system has had time to go down', () => {
+  it('keeps the screen readable until the system has had time to go down', fakeAsync(() => {
+    spectator = createComponent();
+
     expect(spectator.query('.overlay')).not.toHaveClass('blackout');
-  });
+  }));
 
-  // Component is re-created inside the fakeAsync zone: the blackout timer is only patched when
-  // it is scheduled there.
   it('fades the screen to black once the system is off', fakeAsync(() => {
     spectator = createComponent();
 

@@ -7,7 +7,6 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { FailoverComponent } from 'app/pages/system-tasks/failover/failover.component';
@@ -18,7 +17,7 @@ import { selectIsEnterprise, selectProductType } from 'app/store/system-info/sys
 describe('FailoverComponent', () => {
   let spectator: Spectator<FailoverComponent>;
   let dispatchSpy: jest.SpyInstance;
-  const isConnected$ = new BehaviorSubject(false);
+  let isConnected$: BehaviorSubject<boolean>;
   const createComponent = createComponentFactory({
     component: FailoverComponent,
     providers: [
@@ -32,18 +31,14 @@ describe('FailoverComponent', () => {
         mockCall('failover.become_passive'),
       ]),
       mockProvider(Location),
-      mockProvider(LoaderService),
       mockProvider(DialogService, {
         closeAllDialogs: jest.fn(),
       }),
       mockProvider(WebSocketHandlerService, {
         prepareShutdown: jest.fn(),
       }),
-      mockProvider(WebSocketStatusService, {
-        isConnected$,
-        setReconnectAllowed: jest.fn(),
-        setFailoverStatus: jest.fn(),
-      }),
+      // AuthService is injected by SystemTaskRedirectService rather than by the component,
+      // so it is easy to miss - mock it anyway to keep this spec off the real implementation.
       mockProvider(AuthService, {
         clearAuthToken: jest.fn(),
       }),
@@ -52,11 +47,20 @@ describe('FailoverComponent', () => {
   });
 
   beforeEach(() => {
-    // The subject is shared across tests, so put the connection back down before each run -
-    // the component waits for the websocket to drop before watching for it to come back.
-    isConnected$.next(false);
+    // Starts down and is brought up per test, so the reconnect the component waits for is a
+    // real transition rather than state left behind by an earlier test.
+    isConnected$ = new BehaviorSubject(false);
     // ngOnInit dispatches on the store, so the spy has to be in place before it runs.
-    spectator = createComponent({ detectChanges: false });
+    spectator = createComponent({
+      detectChanges: false,
+      providers: [
+        mockProvider(WebSocketStatusService, {
+          isConnected$,
+          setReconnectAllowed: jest.fn(),
+          setFailoverStatus: jest.fn(),
+        }),
+      ],
+    });
     dispatchSpy = jest.spyOn(spectator.inject(MockStore), 'dispatch');
     spectator.detectChanges();
   });

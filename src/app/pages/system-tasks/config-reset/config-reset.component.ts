@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { SystemTaskRedirectService } from 'app/pages/system-tasks/services/system-task-redirect.service';
@@ -21,7 +20,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class ConfigResetComponent implements OnInit {
   private wsManager = inject(WebSocketHandlerService);
-  private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
@@ -53,7 +51,6 @@ export class ConfigResetComponent implements OnInit {
       )
       .subscribe(() => {
         this.wsManager.prepareShutdown();
-        this.loader.open();
         this.redirect.goToSigninWhenSystemIsBack(this.destroyRef);
       });
   }

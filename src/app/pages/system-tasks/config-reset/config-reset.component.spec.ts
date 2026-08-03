@@ -8,7 +8,6 @@ import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ConfigResetComponent } from 'app/pages/system-tasks/config-reset/config-reset.component';
@@ -17,7 +16,7 @@ import { selectIsEnterprise, selectProductType } from 'app/store/system-info/sys
 
 describe('ConfigResetComponent', () => {
   let spectator: Spectator<ConfigResetComponent>;
-  const isConnected$ = new BehaviorSubject(false);
+  let isConnected$: BehaviorSubject<boolean>;
   const createComponent = createComponentFactory({
     component: ConfigResetComponent,
     providers: [
@@ -34,14 +33,10 @@ describe('ConfigResetComponent', () => {
       mockProvider(WebSocketHandlerService, {
         prepareShutdown: jest.fn(),
       }),
-      // Injected by SystemTaskRedirectService rather than by the component, so they are easy
-      // to miss - mock them anyway to keep this spec off the real implementations.
-      mockProvider(LoaderService),
+      // AuthService is injected by SystemTaskRedirectService rather than by the component,
+      // so it is easy to miss - mock it anyway to keep this spec off the real implementation.
       mockProvider(AuthService, {
         clearAuthToken: jest.fn(),
-      }),
-      mockProvider(WebSocketStatusService, {
-        isConnected$,
       }),
       mockProvider(DialogService, {
         closeAllDialogs: jest.fn(),
@@ -54,10 +49,14 @@ describe('ConfigResetComponent', () => {
   });
 
   beforeEach(() => {
-    // The subject is shared across tests, so put the connection back down before each run -
-    // the component waits for the websocket to drop before watching for it to come back.
-    isConnected$.next(false);
-    spectator = createComponent();
+    // Starts down and is brought up per test, so the reconnect the component waits for is a
+    // real transition rather than state left behind by an earlier test.
+    isConnected$ = new BehaviorSubject(false);
+    spectator = createComponent({
+      providers: [
+        mockProvider(WebSocketStatusService, { isConnected$ }),
+      ],
+    });
     isConnected$.next(true);
   });
 

@@ -6,7 +6,6 @@ import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { SystemTaskRedirectService } from 'app/pages/system-tasks/services/system-task-redirect.service';
@@ -30,7 +29,6 @@ export class FailoverComponent implements OnInit {
   private wsManager = inject(WebSocketHandlerService);
   private wsStatus = inject(WebSocketStatusService);
   private router = inject(Router);
-  private loader = inject(LoaderService);
   private dialogService = inject(DialogService);
   private location = inject(Location);
   private store$ = inject<Store<AlertSlice>>(Store);
@@ -56,7 +54,6 @@ export class FailoverComponent implements OnInit {
         this.store$.dispatch(passiveNodeReplaced());
 
         this.wsManager.prepareShutdown();
-        this.loader.open();
         this.redirect.goToSigninWhenSystemIsBack(this.destroyRef);
       },
     });

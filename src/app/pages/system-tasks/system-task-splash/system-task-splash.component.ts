@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TnCardComponent, TnIconComponent } from '@truenas/ui-components';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 /**
  * Full screen splash shown while the system is restarting, shutting down, failing over or
@@ -19,9 +20,8 @@ import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyri
 })
 export class SystemTaskSplashComponent {
   /**
-   * Already translated status line, announced through its own `role="status"`. Required:
-   * these screens are shown for minutes at a time, so a logo with no text leaves a screen
-   * reader with nothing to announce.
+   * Status line for the task in progress. Required: these screens are shown for minutes at a
+   * time, so a logo with no text leaves a screen reader with nothing to announce.
    */
-  readonly message = input.required<string>();
+  readonly message = input.required<TranslatedString>();
 }
