@@ -16,7 +16,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
  * is held behind a minimum-duration timer so the panel's loader is actually perceptible, which
  * makes the close asynchronous; `0` restores the un-delayed path so a spec can assert the `closed`
  * emission synchronously after submitting. Override it back to a non-zero value in the rare spec
- * that asserts the delay itself.
+ * that asserts the delay itself. Note this applies to EVERY spec using this helper, so the real
+ * timer path has a single owner: the "minimum submit feedback (side-panel host)" block in
+ * `ix-form.component.spec.ts`, which re-provides the real duration.
  *
  * Returned as a factory so each test gets its own `jest.fn()` for
  * `openSlideIns` — avoids shared call counts leaking between tests.

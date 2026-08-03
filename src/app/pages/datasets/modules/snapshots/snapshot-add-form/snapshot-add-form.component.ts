@@ -8,12 +8,12 @@ import {
 } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import {
-  catchError, combineLatest, merge, Observable, of, switchMap, tap,
+  catchError, combineLatest, merge, Observable, of, Subject, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
@@ -33,6 +33,9 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 
+/** Validation error key the failed VM lookup parks on the `dataset` control. */
+const vmCheckError = 'vmCheckFailed';
+
 @Component({
   selector: 'ix-snapshot-add-form',
   templateUrl: './snapshot-add-form.component.html',
@@ -45,6 +48,7 @@ import { StorageService } from 'app/services/storage.service';
     TnSelectComponent,
     TnInputComponent,
     TnCheckboxComponent,
+    TnButtonComponent,
     TranslateModule,
     AsyncPipe,
   ],
@@ -67,14 +71,20 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   protected isFormLoading = signal(true);
 
   /**
-   * The background `vmware.dataset_has_vms` lookup, re-run on every dataset/recursive change. Only
-   * gates Save — routing it through the panel's busy state would dim and lock the whole form
-   * mid-edit each time either field is touched.
+   * The background `vmware.dataset_has_vms` lookup, re-run on every dataset/recursive change (and
+   * on {@link retryVmCheck}). Only gates Save — routing it through the panel's busy state would dim
+   * and lock the whole form mid-edit each time either field is touched.
    */
   protected isCheckingVms = signal(false);
 
-  /** Latches once the VM check has failed, so its error is surfaced only once. */
-  private hasReportedVmCheckFailure = false;
+  /**
+   * Whether the last VM lookup failed. Mirrored onto the `dataset` control as {@link vmCheckError}
+   * so the field explains itself and the form goes INVALID — see {@link setVmCheckFailed}.
+   */
+  protected readonly vmCheckFailed = signal(false);
+
+  /** Re-runs the VM lookup without the user having to disturb a field to trigger one. */
+  private readonly retryVmCheck$ = new Subject<void>();
 
   /** Dataset to preset, supplied by the `<tn-side-panel>` host. */
   readonly presetDatasetId = input<string | undefined>(undefined);
@@ -108,23 +118,31 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
 
   readonly helptext = helptextSnapshots;
 
+  /** Renders {@link vmCheckError} on the dataset field instead of the raw error key. */
+  protected readonly datasetErrorMessages = {
+    [vmCheckError]: this.translate.instant(helptextSnapshots.vmCheckFailed),
+  };
+
   ngOnInit(): void {
     // Subscribed before the preset below sets `dataset`, so that first check isn't dropped. Only
-    // field changes trigger a check — with no preset the dataset is empty and there is nothing to
-    // ask about, and with one the `setValue` covers it (a separate on-load request would just
-    // duplicate it).
+    // field changes (and an explicit retry) trigger a check — with no preset the dataset is empty
+    // and there is nothing to ask about, and with one the `setValue` covers it (a separate on-load
+    // request would just duplicate it).
     // `switchMap` cancels an in-flight lookup when either field changes again, so only the newest
     // response can clear the Save gate or set `hasVmsInDataset` — an earlier, slower response can
     // neither re-enable Save early nor leave a stale flag behind (which would silently drop
     // `vmware_sync` from the payload).
     merge(
       this.form.controls.recursive.valueChanges,
-      // Re-arm the failure report per dataset: whether THIS dataset holds VMs is what decides the
-      // checkbox and the payload, so a failure that's been reported once for an earlier dataset
-      // must not stay silent for the one the user actually snapshots.
-      this.form.controls.dataset.valueChanges.pipe(tap(() => { this.hasReportedVmCheckFailure = false; })),
+      this.form.controls.dataset.valueChanges,
+      this.retryVmCheck$,
     ).pipe(
-      tap(() => this.isCheckingVms.set(true)),
+      tap(() => {
+        this.isCheckingVms.set(true);
+        // Cleared per attempt, not per dataset: each run is a fresh answer, and leaving the previous
+        // failure parked would keep Save blocked after a successful retry.
+        this.setVmCheckFailed(false);
+      }),
       // Guarded inside the projection rather than by a `filter` before it: a filter would drop the
       // emission after `isCheckingVms` was already set, latching Save disabled forever. With no
       // dataset there is nothing to ask about — toggling Recursive first would otherwise call
@@ -175,6 +193,8 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
       params.name = values.name;
     }
 
+    // Only ever reached with a settled lookup: a failed one blocks Save (see `setVmCheckFailed`),
+    // so a `false` here means "checked, no VMs" rather than "never found out".
     if (this.hasVmsInDataset()) {
       params.vmware_sync = values.vmware_sync;
     }
@@ -211,6 +231,11 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
     );
   }
 
+  /** Re-runs the lookup after a failure, from the retry button on the dataset field. */
+  protected retryVmCheck(): void {
+    this.retryVmCheck$.next();
+  }
+
   /**
    * No `timeout(...)`: a timer here keeps the Angular zone unstable for the whole lookup (hanging
    * harness-driven tests), and every settled outcome — success, error, or being superseded by
@@ -221,15 +246,38 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
       .call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
       .pipe(
         // Caught inside the switchMap projection so a failed lookup doesn't kill the outer stream
-        // and stop every later check. Surfaced as a modal (a read-only lookup can't map onto a
-        // control), once per dataset, and non-blocking — hence falling back to `false`.
+        // and stop every later check. The modal carries the backend's own wording; the blocking
+        // part of the report is the control error `setVmCheckFailed` parks on the field.
         catchError((error: unknown) => {
-          if (!this.hasReportedVmCheckFailure) {
-            this.hasReportedVmCheckFailure = true;
-            this.errorHandler.showErrorModal(error);
-          }
+          this.setVmCheckFailed(true);
+          this.errorHandler.showErrorModal(error);
           return of(false);
         }),
       );
+  }
+
+  /**
+   * Mirrors the lookup's failure onto the `dataset` control. Without VMs answered for, `vmware_sync`
+   * cannot be decided — falling through to `false` would silently take an unsynchronised snapshot of
+   * a dataset that does hold VMs — so the failure is parked as a validation error: the form goes
+   * INVALID (blocking both Saves, which read `form.invalid`) and the field says why, right where the
+   * retry sits.
+   */
+  private setVmCheckFailed(failed: boolean): void {
+    this.vmCheckFailed.set(failed);
+    const dataset = this.form.controls.dataset;
+
+    if (failed) {
+      dataset.setErrors({ [vmCheckError]: true });
+      // `tn-form-field` only renders an error on an interacted control, and a preset dataset is
+      // never touched by the user — without this the block would be silent on the very path that
+      // opens the form with a dataset already chosen.
+      dataset.markAsTouched();
+    } else if (dataset.hasError(vmCheckError)) {
+      // `setErrors(null)` rather than `updateValueAndValidity()`: the latter re-emits `valueChanges`
+      // and would retrigger the very stream that calls this. Nothing else can be erroring here —
+      // the lookup only runs with a dataset picked, so `required` passes.
+      dataset.setErrors(null);
+    }
   }
 }

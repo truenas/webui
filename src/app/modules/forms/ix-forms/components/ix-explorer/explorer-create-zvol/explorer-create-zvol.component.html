@@ -1,8 +1,12 @@
 <!--
   TODO: NAS-141021 — deliberately still mat-button + [ixTest] while the rest of this component is
   migrated. It is a text button blended into the explorer panel (`background: inherit`), and
-  tn-button ships no text variant; `variant="outline"` was the closest match and read as a visual
-  regression. Convert once the library grows one, alongside the rest of ix-explorer.
+  tn-button ships no text variant (0.3.26: `filled` | `outline` only); `variant="outline"` was the
+  closest match and read as a visual regression.
+
+  Owned by the ix-explorer child ticket of NAS-141021, not the datasets one — this component lives
+  under modules/forms, and converting it needs the library to grow a text/flat button variant first.
+  Convert the whole ix-explorer surface together once it does.
 -->
 <button
   *ixRequiresRoles="requiredRoles"

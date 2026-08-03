@@ -117,13 +117,13 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   });
 
   /**
-   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
-   * change detection, so the label flips with {@link isAdvancedMode}.
+   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save), so the label
+   * flips with {@link isAdvancedMode}.
    *
    * Create only: on edit, quotas and encryption are create-only and Other Options is advanced-only,
    * so switching back to basic would leave nothing on screen but the disabled Name field.
    */
-  get footerActions(): SidePanelFooterAction[] {
+  private readonly footerActionList = computed<SidePanelFooterAction[]>(() => {
     if (!this.isNew()) {
       return [];
     }
@@ -134,6 +134,15 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
       testId: 'toggle-advanced',
       onClick: () => this.toggleAdvancedMode(),
     }];
+  });
+
+  /**
+   * Still a getter because `HostedSidePanelForm` types `footerActions` as a plain array and the
+   * container reads it each change detection — but backed by a `computed`, so the array is rebuilt
+   * only when the mode actually changes rather than allocated on every pass.
+   */
+  get footerActions(): SidePanelFooterAction[] {
+    return this.footerActionList();
   }
 
   protected readonly parentDataset = signal<Dataset | undefined>(undefined);

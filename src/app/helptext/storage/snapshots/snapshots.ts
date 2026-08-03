@@ -3,6 +3,9 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export const helptextSnapshots = {
   addTitle: T('Add Snapshot'),
   checkingForVms: T('Checking this dataset for VMs…'),
+  vmCheckFailed: T('Could not check this dataset for VMs. A snapshot of a dataset holding VMs needs\
+ VMWare Sync, so saving is blocked until the check succeeds.'),
+  retryVmCheck: T('Retry VM Check'),
   datasetLabel: T('Dataset'),
 
   nameLabel: T('Name'),

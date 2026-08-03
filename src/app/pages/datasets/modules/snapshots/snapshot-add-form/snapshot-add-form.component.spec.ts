@@ -2,7 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of, Subject, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -214,38 +216,64 @@ describe('SnapshotAddFormComponent', () => {
       ));
     };
 
-    it('reports a failed lookup once, however many times it re-runs for the same dataset', async () => {
+    it('blocks Save when the lookup fails, rather than silently taking an unsynced snapshot', async () => {
+      failVmChecks();
+
+      await (await getSelect('dataset')).selectOption('APPS');
+      await (await getInput('name')).setValue('test-snapshot-name');
+
+      // Unanswered means `vmware_sync` cannot be decided — the save must not go through as `false`.
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      save();
+
+      expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create', expect.anything());
+    });
+
+    it('explains the block on the dataset field', async () => {
+      failVmChecks();
+
+      await (await getSelect('dataset')).selectOption('APPS');
+
+      const datasetField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Dataset' }));
+
+      expect(await datasetField.getErrorMessage()).toBe(
+        'Could not check this dataset for VMs. A snapshot of a dataset holding VMs needs VMWare Sync,'
+        + ' so saving is blocked until the check succeeds.',
+      );
+    });
+
+    it('reports every failed attempt, since each one follows an explicit user action', async () => {
       failVmChecks();
 
       await (await getSelect('dataset')).selectOption('APPS');
       await (await getCheckbox('recursive')).check();
       await (await getCheckbox('recursive')).uncheck();
 
-      // Re-running on every recursive toggle must not raise a modal each time.
-      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledTimes(1);
+      // Recursion is precisely what changes the answer for nested VM datasets, so a second failure
+      // must not be swallowed just because an earlier one was reported for the same dataset.
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledTimes(3);
     });
 
-    it('re-reports on a new dataset, since that is what decides the payload', async () => {
-      failVmChecks();
-
-      await (await getSelect('dataset')).selectOption('APPS');
-      await (await getSelect('dataset')).selectOption('POOL');
-
-      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledTimes(2);
-    });
-
-    it('leaves Save usable and omits vmware_sync when the lookup fails', async () => {
+    it('retries the lookup on demand, and clears the block once it succeeds', async () => {
       failVmChecks();
 
       await (await getSelect('dataset')).selectOption('APPS');
       await (await getInput('name')).setValue('test-snapshot-name');
 
+      const retry = await loader.getHarness(TnButtonHarness.with({ label: 'Retry VM Check' }));
+      (api.call as jest.Mock).mockImplementation(() => of(true));
+      await retry.click();
+
+      expect(api.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', false]);
       expect(spectator.component.canSubmit()).toBe(true);
 
+      // The answer arrived, so the VMWare Sync checkbox is back and its value reaches the payload.
+      await (await getCheckbox('vmware_sync')).check();
       save();
 
       expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
-        expect.not.objectContaining({ vmware_sync: expect.anything() }),
+        expect.objectContaining({ vmware_sync: true }),
       ]);
     });
   });

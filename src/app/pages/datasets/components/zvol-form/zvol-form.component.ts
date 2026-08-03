@@ -286,7 +286,10 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
           return this.api.call('pool.dataset.update', [this.parentOrZvolId(), payload]);
         }),
       ),
-      // See `buildCreateResult` — the message is the form's, not the opener's.
+      // See `buildCreateResult` — the message is the form's, not the opener's. On edit
+      // `parentOrZvolId()` IS the zvol's own id (create passes the parent), and it names the zvol
+      // correctly only because the Name control is disabled in edit mode — a rename would have to
+      // read the submitted value instead.
       successMessage: this.translate.instant('Zvol «{name}» updated.', {
         name: getDatasetLabel({ name: this.parentOrZvolId() }),
       }),
