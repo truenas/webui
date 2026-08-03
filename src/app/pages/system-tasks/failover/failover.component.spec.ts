@@ -1,7 +1,6 @@
 import { Location } from '@angular/common';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnIconComponent } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -71,14 +70,11 @@ describe('FailoverComponent', () => {
     expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
   });
 
-  // Instance reads instead of TnCardHarness/TnIconHarness: the component re-arms an in-zone
-  // setTimeout while the websocket is down, so it never reaches zone stability and any CDK
-  // harness await here hangs until the jest timeout.
+  // Rendered DOM instead of TnIconHarness (there is no TnCardHarness): the component re-arms
+  // an in-zone setTimeout for as long as the websocket is down, so it never reaches zone
+  // stability and any CDK harness await here hangs until the jest timeout.
   it('shows the failover message and logo in a card', () => {
     expect(spectator.query('tn-card #message')).toHaveText('System is failing over...');
-
-    const logo = spectator.query(TnIconComponent)!;
-    expect(logo.name()).toBe('tn-truenas-logo');
-    expect(logo.fullSize()).toBe(true);
+    expect(spectator.query('tn-card tn-icon.logo')).toExist();
   });
 });

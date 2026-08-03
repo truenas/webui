@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent, TnIconComponent } from '@truenas/ui-components';
+import { Timeout } from 'app/interfaces/timeout.interface';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -41,6 +42,8 @@ export class FailoverComponent implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
+  /** Only one reconnect poll is ever pending, so a single handle covers both schedule sites. */
+  private reconnectTimeout: Timeout;
 
   isWsConnected(): void {
     this.wsStatus.isConnected$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -51,7 +54,7 @@ export class FailoverComponent implements OnInit {
           this.authService.clearAuthToken();
           this.router.navigate(['/signin']);
         } else {
-          setTimeout(() => {
+          this.reconnectTimeout = setTimeout(() => {
             this.isWsConnected();
           }, 5000);
         }
@@ -60,6 +63,8 @@ export class FailoverComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.destroyRef.onDestroy(() => clearTimeout(this.reconnectTimeout));
+
     // Replace URL so that we don't restart again if page is refreshed.
     this.location.replaceState('/signin');
     this.wsStatus.setReconnectAllowed(false);
@@ -79,7 +84,7 @@ export class FailoverComponent implements OnInit {
 
         this.wsManager.prepareShutdown();
         this.loader.open();
-        setTimeout(() => {
+        this.reconnectTimeout = setTimeout(() => {
           this.isWsConnected();
         }, 1000);
       },

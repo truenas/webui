@@ -15,7 +15,7 @@
 }
 
 .card-body {
-  @include tn-card-splash-body;
+  @include tn-card-centered-column;
 }
 
 .copyright-txt {
@@ -32,6 +32,12 @@
   #reset-card {
     top: 20px;
     width: 225px;
+  }
+
+  // Set on the projected wrapper, not the card host: `.tn-card__content` declares an
+  // explicit font-size that a host-level rule would no longer cascade past.
+  .card-body {
+    font-size: 80%;
   }
 
   .logo {

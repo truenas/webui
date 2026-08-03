@@ -68,9 +68,10 @@ export class RestartComponent implements OnInit {
         this.wsManager.prepareShutdown();
         this.authService.clearAuthToken();
         this.wsManager.reconnect();
-        setTimeout(() => {
+        const navigateTimeout = setTimeout(() => {
           this.router.navigate(['/signin']);
         }, 5000);
+        this.destroyRef.onDestroy(() => clearTimeout(navigateTimeout));
       },
     });
   }

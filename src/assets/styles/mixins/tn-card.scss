@@ -50,22 +50,13 @@
   display: block;
 }
 
-// The system-task screens (shutdown, restart, failover, config-reset) project a plain
-// wrapper into `tn-card`'s default content slot, since that slot carries no layout of its
-// own. Include on that wrapper.
+// `tn-card`'s default content slot carries no layout of its own, so a card whose content is
+// a single centered column has to bring it. Include on the wrapper projected into the slot.
 //
-// The short-viewport step-down is nested here rather than living on the card host because
-// `.tn-card__content` declares an explicit font-size, which a host-level rule would no
-// longer cascade past.
-//
-//   .card-body { @include tn-card-splash-body; }
-@mixin tn-card-splash-body {
+//   .card-body { @include tn-card-centered-column; }
+@mixin tn-card-centered-column {
   align-items: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
-
-  @media screen and (max-height: 700px) {
-    font-size: 80%;
-  }
 }

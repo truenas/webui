@@ -2,14 +2,12 @@
 <div id="wrapper">
   <tn-card id="shutdown-card" elevation="low" padding="small">
     <div class="card-body">
-      <div id="shutdown-message" role="status">
+      <h1 id="message">
         {{ 'System is shutting down...' | translate }}
-      </div>
+      </h1>
       <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>
-      <div>
-        <span class="copyright-txt">
-          <ix-copyright-line></ix-copyright-line>
-        </span>
+      <div class="copyright-txt">
+        <ix-copyright-line></ix-copyright-line>
       </div>
     </div>
   </tn-card>

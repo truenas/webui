@@ -53,9 +53,10 @@ export class ShutdownComponent implements OnInit {
       },
     });
     // fade to black after 60 sec on shut down
-    setTimeout(() => {
+    const blackoutTimeout = setTimeout(() => {
       const overlay = document.getElementById('overlay');
       overlay?.setAttribute('class', 'blackout');
     }, 60000);
+    this.destroyRef.onDestroy(() => clearTimeout(blackoutTimeout));
   }
 }

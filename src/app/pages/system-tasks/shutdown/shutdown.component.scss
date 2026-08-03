@@ -1,9 +1,16 @@
 @import 'mixins/tn-card';
 
 .copyright-txt,
-#shutdown-message,
+#message,
 .logo {
   text-align: center;
+}
+
+// Heading for document structure only - the splash screen keeps the surrounding body type.
+#message {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
 }
 
 .logo {
@@ -33,7 +40,7 @@
 }
 
 .card-body {
-  @include tn-card-splash-body;
+  @include tn-card-centered-column;
 }
 
 #overlay {
@@ -56,6 +63,12 @@
   #shutdown-card {
     top: 20px;
     width: 80%;
+  }
+
+  // Set on the projected wrapper, not the card host: `.tn-card__content` declares an
+  // explicit font-size that a host-level rule would no longer cascade past.
+  .card-body {
+    font-size: 80%;
   }
 
   .logo {
