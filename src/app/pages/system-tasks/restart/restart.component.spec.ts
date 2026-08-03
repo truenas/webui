@@ -2,11 +2,13 @@ import { Location } from '@angular/common';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { BehaviorSubject } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { RestartComponent } from 'app/pages/system-tasks/restart/restart.component';
@@ -17,6 +19,7 @@ import { selectIsEnterprise, selectProductType } from 'app/store/system-info/sys
 
 describe('RestartComponent', () => {
   let spectator: Spectator<RestartComponent>;
+  const isConnected$ = new BehaviorSubject(false);
   const createComponent = createComponentFactory({
     component: RestartComponent,
     providers: [
@@ -44,8 +47,12 @@ describe('RestartComponent', () => {
         reconnect: jest.fn(),
       }),
       mockProvider(WebSocketStatusService, {
+        isConnected$,
         setReconnectAllowed: jest.fn(),
       }),
+      // Injected by SystemTaskRedirectService rather than by the component, so they are easy
+      // to miss - mock them anyway to keep this spec off the real implementations.
+      mockProvider(LoaderService),
       mockProvider(AuthService, {
         clearAuthToken: jest.fn(),
       }),
@@ -59,6 +66,9 @@ describe('RestartComponent', () => {
 
   describe('without reason query parameter', () => {
     beforeEach(() => {
+      // The subject is shared across tests, so put the connection back down before each run -
+      // the component waits for the websocket to drop before watching for it to come back.
+      isConnected$.next(false);
       spectator = createComponent();
     });
 
@@ -74,15 +84,29 @@ describe('RestartComponent', () => {
       expect(spectator.inject(DialogService).closeAllDialogs).toHaveBeenCalled();
     });
 
-    // Rendered DOM instead of a CDK harness: ngOnInit schedules an in-zone timer before
-    // navigating to /signin, so awaiting a harness here blocks for the whole 5s.
+    // Rendered DOM instead of a harness: there is no TnCardHarness in @truenas/ui-components.
     it('shows the restarting message in the splash screen', () => {
       expect(spectator.query('ix-system-task-splash .message')).toHaveText('System is restarting...');
+    });
+
+    it('tears down the connection and reconnects once the reboot job returns', () => {
+      expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketHandlerService).reconnect).toHaveBeenCalled();
+    });
+
+    it('stays on the splash screen until the websocket comes back after the reboot', () => {
+      expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
+
+      isConnected$.next(true);
+
+      expect(spectator.inject(AuthService).clearAuthToken).toHaveBeenCalled();
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/signin']);
     });
   });
 
   describe('with reason query parameter', () => {
     beforeEach(() => {
+      isConnected$.next(false);
       spectator = createComponent({
         providers: [
           mockProvider(ActivatedRoute, {

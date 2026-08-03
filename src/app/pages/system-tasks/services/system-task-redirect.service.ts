@@ -14,8 +14,10 @@ export class SystemTaskRedirectService {
   private router = inject(Router);
 
   /**
-   * Shared tail of the tasks that take the system down and expect it back: keep the loader up
+   * Shared tail of the tasks that take the system down and expect it back: stay on the splash
    * until the middleware answers again, then drop the now stale token and return to sign-in.
+   * The loader is closed for the callers that put one up on top of the splash; it is a no-op
+   * for the ones that don't.
    *
    * `destroyRef` is passed in because this is called from a job callback, outside of an
    * injection context.

@@ -19,7 +19,7 @@ import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyri
 })
 export class SystemTaskSplashComponent {
   /**
-   * Already translated status line, announced through the wrapper's `role="status"`. Required:
+   * Already translated status line, announced through its own `role="status"`. Required:
    * these screens are shown for minutes at a time, so a logo with no text leaves a screen
    * reader with nothing to announce.
    */

@@ -6,7 +6,9 @@ import { BehaviorSubject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ConfigResetComponent } from 'app/pages/system-tasks/config-reset/config-reset.component';
@@ -31,6 +33,12 @@ describe('ConfigResetComponent', () => {
       mockProvider(Location),
       mockProvider(WebSocketHandlerService, {
         prepareShutdown: jest.fn(),
+      }),
+      // Injected by SystemTaskRedirectService rather than by the component, so they are easy
+      // to miss - mock them anyway to keep this spec off the real implementations.
+      mockProvider(LoaderService),
+      mockProvider(AuthService, {
+        clearAuthToken: jest.fn(),
       }),
       mockProvider(WebSocketStatusService, {
         isConnected$,

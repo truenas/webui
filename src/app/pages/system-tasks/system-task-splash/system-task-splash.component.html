@@ -1,7 +1,9 @@
-<div class="wrapper" role="status">
+<div class="wrapper">
   <tn-card class="splash-card" elevation="low" padding="small">
     <div class="card-body">
-      <h1 class="message">
+      <!-- role="status" is on the heading only: it implies aria-atomic="true", so a wider
+           region would have the logo and copyright line announced along with the message. -->
+      <h1 class="message" role="status">
         {{ message() }}
       </h1>
       <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>

@@ -29,7 +29,9 @@ describe('SystemTaskSplashComponent', () => {
     expect(spectator.query('ix-copyright-line')).toExist();
   });
 
+  // Scoped to the heading so the logo and copyright line are not announced with the message.
   it('announces the message as a status region', () => {
-    expect(spectator.query('.wrapper')).toHaveAttribute('role', 'status');
+    expect(spectator.query('h1.message')).toHaveAttribute('role', 'status');
+    expect(spectator.query('.wrapper')).not.toHaveAttribute('role', 'status');
   });
 });

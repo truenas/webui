@@ -4,19 +4,16 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { timer } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { SystemTaskRedirectService } from 'app/pages/system-tasks/services/system-task-redirect.service';
 import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-
-/** Time the splash screen is kept up after the reboot job returns, before returning to sign-in. */
-const navigateToSigninDelay = 5 * 1000;
 
 @Component({
   selector: 'ix-restart',
@@ -38,6 +35,7 @@ export class RestartComponent implements OnInit {
   private wsStatus = inject(WebSocketStatusService);
   private store$ = inject<Store<AppState>>(Store);
   private authService = inject(AuthService);
+  private redirect = inject(SystemTaskRedirectService);
   private destroyRef = inject(DestroyRef);
 
   private isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
@@ -64,11 +62,13 @@ export class RestartComponent implements OnInit {
           this.wsStatus.setReconnectAllowed(false);
         }
         this.wsManager.prepareShutdown();
-        this.authService.clearAuthToken();
+        // Keep the splash up for the whole reboot instead of a fixed few seconds - a reboot
+        // takes minutes, so the old timer dropped the user on a sign-in page that could not
+        // reach middleware yet.
+        this.redirect.goToSigninWhenSystemIsBack(this.destroyRef);
+        // Drop the socket ourselves so the reconnect loop starts now, rather than waiting for
+        // the reboot to break the connection.
         this.wsManager.reconnect();
-        timer(navigateToSigninDelay)
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe(() => this.router.navigate(['/signin']));
       },
     });
   }
