@@ -243,16 +243,14 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
   };
 
   /**
-   * `<ix-form>`'s own `closed` only signals success — it carries no payload — so re-emit the zvol
-   * captured in the submit `onSuccess` hook, which openers like the explorer's "Create Zvol" need
-   * to select the newly created zvol.
+   * `<ix-form>`'s own `closed` carries no payload, so re-emit the zvol captured in the submit
+   * `onSuccess` hook — openers like the explorer's "Create Zvol" need it to select the new zvol.
+   *
+   * Emitted unconditionally: the panel host tears down on this event alone, so gating on
+   * `savedDataset` would leave the panel open after a save that succeeded but returned no record.
+   * `null` is the "saved, but no record" payload — hence the `Dataset | null` on this class.
    */
   protected onFormClosed(): void {
-    // Emitted unconditionally: `<ix-form>` only fires `closed` on a successful submit, and the
-    // panel host tears down on this event alone. Gating it on `savedDataset` would mean a save
-    // that succeeded but returned no record leaves the panel open with no feedback. `null` is the
-    // "saved, but no record" payload `FormSidePanelService.open` collapses to a cancel, which is
-    // why openers can dereference the record they do get (`response.id`).
     this.closed.emit(this.savedDataset ?? null);
   }
 

@@ -46,15 +46,13 @@ export function createNamespaceForm(formBuilder: NonNullableFormBuilder): Namesp
  *
  * Owning the validator here — rather than declaring it once in {@link createNamespaceForm} — is
  * what makes the group self-consistent: no state has a control carrying `required` that no visible
- * input can satisfy, so a group built by the factory is valid on every branch without depending on
- * this having run — while the branch that does render them still gets the `*` that `tn-form-field`
- * infers from the validator. Disabling on top of that keeps the controls out of group validity even
- * if something else attaches a validator.
+ * input can satisfy, while the branch that does render them still gets the `*` that `tn-form-field`
+ * infers from the validator.
  *
  * Leaving the branch also CLEARS them, mirroring the `device_path` reset the caller does on every
- * device-type change. {@link toNamespaceChanges} reads `getRawValue()`, so a disabled leftover is
- * still in the payload — without the reset, New File → Zvol → New File would silently resurrect
- * values the user last saw two branches ago.
+ * device-type change: {@link toNamespaceChanges} reads `getRawValue()`, so without the reset a
+ * disabled leftover stays in the payload and New File → Zvol → New File silently resurrects values
+ * the user last saw two branches ago.
  */
 export function syncNewFileControls(form: NamespaceFormGroup, type: FormNamespaceType): void {
   const { filename, filesize } = form.controls;
