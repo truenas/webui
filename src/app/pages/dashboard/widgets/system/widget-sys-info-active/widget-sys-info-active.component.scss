@@ -31,11 +31,4 @@
   @media (max-width: $breakpoint-sm) {
     min-height: calc(48px * 1.2);
   }
-
-  // tn-list-item truncates its primary text to a single line, but marketing messages are sentences.
-  ::ng-deep .tn-list-item__primary-text {
-    overflow: visible;
-    text-overflow: clip;
-    white-space: normal;
-  }
 }

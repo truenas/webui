@@ -24,7 +24,6 @@ import {
   type TnSortEvent,
   TnDialog,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import {
   filter, startWith, tap,
 } from 'rxjs';
@@ -45,6 +44,7 @@ import {
   convertStringToId, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -183,9 +183,7 @@ export class IscsiCardComponent implements OnInit {
   protected readonly trackByIscsiId = (_index: number, row: IscsiTarget): number => row.id;
 
   protected uniqueRowTag(row: IscsiTarget): string {
-    // Pre-split with lodash kebabCase so digit-bearing target names resolve identically
-    // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-    return kebabCase(convertStringToId('card-iscsi-target-' + row.name));
+    return normalizeTestIdString(convertStringToId('card-iscsi-target-' + row.name));
   }
 
   protected ariaLabel(row: IscsiTarget): string {

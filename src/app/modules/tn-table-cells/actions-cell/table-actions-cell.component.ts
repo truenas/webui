@@ -27,8 +27,8 @@ import { stopRowActivationKeys } from 'app/modules/tn-table-cells/stop-row-activ
  *   (parity with `actionsColumn`, used by the WebShare card).
  *
  * Test IDs are produced by each tn component's native `testId` input, which the
- * library prefixes with its element type (`button-…`, `menu-item-…`) via
- * `composeTestId` — matching the legacy `ixTest` output for icon buttons.
+ * library prefixes with its element type via `composeTestId` — `button-…` for both
+ * the icon buttons and the menu items, matching the legacy `ixTest` output.
  */
 @Component({
   selector: 'ix-table-actions-cell',

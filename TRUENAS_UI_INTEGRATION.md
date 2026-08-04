@@ -303,10 +303,83 @@ See the full list in: `node_modules/@truenas/ui-components/assets/tn-icons/sprit
 - **Type-safe**: Full TypeScript support with proper types
 - **Accessible**: Built with WCAG accessibility standards in mind
 
+## Known Library Gaps
+
+Migration work under epic NAS-141021 turned up several places where
+`@truenas/ui-components` had to be worked around.
+
+### Fixed upstream
+
+The four gaps below were fixed in the library and **require
+`@truenas/ui-components` >= 0.4.7** (the version this app pins). This app now uses the
+library APIs directly and carries no `::ng-deep` workaround for them.
+
+| # | Library gap | Fix | Now used by |
+|---|---|---|---|
+| 1 | `tn-list-item`'s `[tnListIcon]` / `[tnListAvatar]` / `[tnListItemLine]` / `[tnListItemTrailing]` slots never rendered: the flags gating them were set from a `querySelector` in `ngAfterContentInit`, which cannot see content whose slot has not rendered yet. | Signal `contentChildren` queries | `dual-listbox`, `ordered-list`, `network-configuration-card` |
+| 2 | No dense / wrapping `tn-list-item` variant — fixed at 48px rows and single-line ellipsis. | `[dense]` and `[wrap]` inputs | `network-configuration-card` (`[dense]`), `dual-listbox` and `widget-sys-info-active` (`[wrap]`) |
+| 3 | No full-width `tn-button`. | `[fullWidth]` input | `ix-oauth-button`, which re-exposes its own `fullWidth` |
+| 4 | No full-width `tn-slide-toggle` — `inline-flex`, so it shrink-wraps its label and track. | `[fullWidth]` input | `ordered-list` |
+
+### Still outstanding
+
+| # | Library gap | Current workaround |
+|---|---|---|
+| 5a | No control over `tn-list-item`'s leading-slot gap. Three consumers reset the library's standard 16px `margin-right` to a different value (`dual-listbox` 5px, `ordered-list` 2px, `network-configuration-card` 0). A `[leadingGap]` input — or having `[dense]` tighten the leading slot too — would remove all three. | `tn-list-item-leading-gap($gap)` |
+| 5b | No control over `tn-list-item`'s row metrics beyond `[dense]`. `dual-listbox` needs a 23px row with 12px/16px padding, `inspect-vdevs-dialog` an asymmetric 11px/21px/13px one; neither is expressible, and the host is forced to `padding: 0` by the library, so the padding can only be set on the internal content wrapper. | `tn-list-item-content` |
+| 5c | No control over the primary-text span. `dual-listbox` recolours it to `--fg2`; `widget-sys-info` has to make it a flex row to seat a copy button beside the version text (a trailing-slot / rich-label API would cover the latter). | `tn-list-item-primary-text` |
+| 6 | No flat / embedded `tn-list` variant. `tn-list` ships a standalone card look (own background, rounded corners, vertical padding), so a list rendered inside an already-bordered container has to flatten it back out. | `ordered-list.component.scss` resets `background` / `border-radius` / `padding` on `tn-list` |
+| 7 | `TnMenuHarness` exposes no per-item harness, and so no `getTestId()`. | Menu-item test ids are left unasserted — reaching into the overlay for `.tn-menu-item[data-test]` couples a spec to library-internal markup |
+| 8 | No `TnListHarness` / `TnListItemHarness` at all as of 0.4.7, so a spec cannot assert a `tn-list-item` slot rendered without selecting on the library's internal classes. | `dual-listbox.component.spec.ts` queries `.tn-list-item__leading` |
+
+Gaps 5 and 6 are the same signal that produced gaps 1–4: without them, every new
+`tn-list-item` consumer adds another `::ng-deep` override.
+
+Because `.tn-list-item__*` is internal markup rather than public API, the three
+workarounds under gap 5 live in `src/assets/styles/mixins/tn-list.scss` (alongside the
+existing `mixins/tn-card.scss` and `mixins/tn-table.scss`) rather than being spelled out
+per consumer. A library class rename is then a one-file fix, and each gap disappears
+with a single edit once the corresponding input ships.
+
+That only holds while the mixins are the *only* place the classes are named, so both
+linters enforce it rather than leaving it to review:
+
+- `.stylelintrc.json`'s `selector-disallowed-list` bans `.tn-list-item__` selectors in
+  every `.scss` file. `mixins/tn-list.scss` carries a `stylelint-disable-next-line` on
+  each of its three rules — a per-selector exemption rather than an `overrides` entry,
+  because an override would replace the whole disallowed list and a selector banned
+  globally later would silently stop being banned inside the mixins.
+- `eslint.config.mjs` adds a `no-restricted-syntax` entry matching the string in
+  TypeScript, so a spec query or class-name literal can't route around stylelint. Gap 8's
+  query in `dual-listbox.component.spec.ts` is the single `eslint-disable-next-line`, and
+  goes away with the gap.
+
+A new consumer reaching for `::ng-deep` therefore gets a lint error pointing at the
+mixins, and should either use one or, if none fits, add one.
+
+### Local library builds
+
+Unrelated to the gaps above, but useful whenever a library fix has to be tried before
+it is published. To run this app against an unreleased library build:
+
+```bash
+cd ../truenas-ui-components && yarn build
+cd ../webui
+rm -rf node_modules/@truenas/ui-components
+cp -R ../truenas-ui-components/dist/truenas-ui node_modules/@truenas/ui-components
+```
+
+Use a real copy, not a symlink: Jest resolves a symlink to a path outside
+`node_modules`, so `transformIgnorePatterns` never applies, the Angular linker never
+runs over the partial-Ivy FESM, and every `TestBed` fails with "class doesn't have
+@Component decorator". Re-run the copy after any library rebuild — and after any
+`yarn install`, which restores the published package.
+
 ## Migration follow-ups
 
-Gaps found while migrating pages to `tn-*` (Epic NAS-141021) that are deliberately
-carried rather than fixed in the migrating PR. Library items belong in
+Further gaps found while migrating pages to `tn-*` (Epic NAS-141021) — the same class
+of thing as "Still outstanding" above — that are deliberately carried rather than fixed
+in the migrating PR. Library items belong in
 [webui-components](https://github.com/truenas/webui-components); webui items belong on
 the epic's follow-up list.
 
@@ -317,11 +390,10 @@ the epic's follow-up list.
 | `tn-empty` caps `[description]` at a readable measure but not `[title]`, so a paragraph-length message stretches the full page width | `tn-empty` rule in `src/assets/styles/components/_tn-empty.scss` | library |
 | Replication "Enabled" is read-only Yes/No in the detail row when the picker hides the column (it was an interactive toggle before); a dead toggle would be worse, so the toggle stays in the visible column only | `replication-list.component.ts` | webui |
 
-### Adopted from the library, pending its release
+### Adopted from the library
 
-Implemented in `@truenas/ui-components` and already used here, so this branch needs a
-`@truenas/ui-components` newer than `~0.3.26` to build. Bump the dependency once the library
-release lands.
+Implemented in `@truenas/ui-components` and used here directly, so these need the
+pinned `~0.4.9` (they landed after `0.3.26`, the version this work started against).
 
 | Library addition | What it replaced here |
 | --- | --- |

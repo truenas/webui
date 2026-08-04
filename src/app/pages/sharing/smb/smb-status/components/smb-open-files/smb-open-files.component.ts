@@ -8,7 +8,6 @@ import {
   TnTableComponent, TnTablePagerComponent,
   TnTestIdDirective,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { of, switchMap } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
@@ -18,6 +17,7 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 
 @Component({
   selector: 'ix-smb-open-files',
@@ -90,9 +90,7 @@ export class SmbOpenFilesComponent implements OnChanges {
   }
 
   protected uniqueRowTag(row: SmbOpenInfo): string {
-    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
-    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-    return kebabCase(convertStringToId(`smb-open-file-${row.username}-${row.uid}`));
+    return normalizeTestIdString(convertStringToId(`smb-open-file-${row.username}-${row.uid}`));
   }
 
   private createProvider(): void {

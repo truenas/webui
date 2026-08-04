@@ -6,7 +6,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnBannerComponent, TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnDialog, TnIconButtonComponent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -14,6 +13,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfNamespace, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import {
   NamespaceDescriptionComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/namespace-description/namespace-description.component';
@@ -56,10 +56,8 @@ export class SubsystemNamespacesCardComponent {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
-  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
   protected namespaceTestIdSlug(namespace: NvmeOfNamespace): string {
-    return kebabCase(namespace.device_path);
+    return normalizeTestIdString(namespace.device_path);
   }
 
   protected onAddNamespace(): void {

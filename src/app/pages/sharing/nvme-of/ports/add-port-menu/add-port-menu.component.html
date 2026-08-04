@@ -17,12 +17,12 @@
   ></tn-button>
 
   <tn-menu #addMenu>
-    @for (port of unusedPorts(); track port.id) {
+    @for (row of unusedPorts(); track row.port.id) {
       <tn-menu-item
-        [testId]="addPortTestId(port)"
-        (itemClick)="selectPort(port)"
+        [testId]="row.testId"
+        (itemClick)="selectPort(row.port)"
       >
-        <ix-port-description [port]="port"></ix-port-description>
+        <ix-port-description [port]="row.port"></ix-port-description>
       </tn-menu-item>
     }
 
