@@ -6,13 +6,13 @@ import {
   TnIconButtonComponent, TnMenuComponent, TnMenuItem, TnMenuTriggerDirective,
 } from '@truenas/ui-components';
 import ipRegex from 'ip-regex';
-import { kebabCase } from 'lodash-es';
 import { AppState } from 'app/enums/app-state.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -62,7 +62,7 @@ export class AppControlsComponent {
     return this.otherPortals().map((portal) => ({
       id: portal.label,
       label: portal.label,
-      testId: `button-apps-web-portal-${kebabCase(portal.label)}`,
+      testId: `button-apps-web-portal-${normalizeTestIdString(portal.label)}`,
       action: () => this.openPortal(portal.url),
     }));
   });

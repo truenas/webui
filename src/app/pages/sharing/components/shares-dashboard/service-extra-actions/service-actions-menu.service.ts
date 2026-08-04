@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import type { TnCardHeaderStatus, TnMenuItem } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -12,6 +11,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { normalizeTestIdParts, normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -112,7 +112,7 @@ export class ServiceActionsMenuService {
       return undefined;
     }
     const label = this.translate.instant(this.titleCase(service.state));
-    const testId = `button-service-status-${kebabCase(service.service)}`;
+    const testId = `button-service-status-${normalizeTestIdString(service.service)}`;
     switch (service.state) {
       case ServiceStatus.Running:
         return { label, type: 'success', testId };
@@ -175,7 +175,7 @@ export class ServiceActionsMenuService {
   }
 
   serviceControlTestId(service: Service): string {
-    return `service-${kebabCase(service.service)}`;
+    return `service-${normalizeTestIdString(service.service)}`;
   }
 
   toggleServiceState(service: Service): void {
@@ -194,12 +194,12 @@ export class ServiceActionsMenuService {
    * `Config Service` yields `button-iscsi-target-actions-menu-config-service`.
    */
   menuItemTestId(service: Service, actionLabel: string): string {
-    return [
+    return normalizeTestIdParts([
       'button',
-      kebabCase(service.service),
+      service.service,
       'actions-menu',
-      kebabCase(actionLabel),
-    ].join('-');
+      actionLabel,
+    ]).join('-');
   }
 
   private changeServiceState(service: Service): void {

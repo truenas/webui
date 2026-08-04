@@ -1,12 +1,22 @@
 <ng-container [formGroup]="form">
   <tn-form-field>
     <!-- This group has no visible label, so the accessible name is supplied explicitly. -->
+    <!--
+      Options are projected rather than passed via `[options]` so each one can carry the
+      legacy `radio-button-*` test id; see "Radio groups" in the tn-migration playbook.
+    -->
     <tn-radio-group
       formControlName="dispersalStrategy"
-      [options]="dispersalOptions()"
       [ariaLabel]="'Enclosure dispersal strategy' | translate"
-      [testId]="['radio-button', 'dispersal-strategy']"
-    ></tn-radio-group>
+    >
+      @for (option of dispersalOptions(); track option.value) {
+        <tn-radio
+          [label]="option.label"
+          [value]="option.value"
+          [testId]="['radio-button', 'dispersal-strategy', option.label]"
+        ></tn-radio>
+      }
+    </tn-radio-group>
   </tn-form-field>
 
   @if (isLimitingToSingle) {

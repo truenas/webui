@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnRadioGroupComponent,
+  TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent,
   TnSelectComponent, TnStepperNextDirective,
 } from '@truenas/ui-components';
 import {
@@ -44,6 +44,7 @@ const defaultEncryptionStandard = 'AES-256-GCM';
     ReactiveFormsModule,
     TnFormFieldComponent,
     TnInputComponent,
+    TnRadioComponent,
     TnRadioGroupComponent,
     TnSelectComponent,
     PoolWarningsComponent,

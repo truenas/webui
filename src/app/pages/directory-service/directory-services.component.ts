@@ -8,7 +8,6 @@ import {
   TnButtonComponent, TnCardAction, TnCardComponent, TnDialog, TnEmptyComponent, TnListComponent, TnListItemComponent,
   TnMenuItem,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import {
   forkJoin,
 } from 'rxjs';
@@ -32,6 +31,7 @@ import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DirectoryServicesFormComponent } from 'app/pages/directory-service/components/directory-services-form/directory-services-form.component';
@@ -129,7 +129,7 @@ export class DirectoryServicesComponent implements OnInit {
 
     return {
       label: this.translate.instant('Settings'),
-      testId: `button-${kebabCase(card.title)}-settings`,
+      testId: `button-${normalizeTestIdString(card.title)}-settings`,
       handler: () => card.onSettingsPressed(),
     };
   });
@@ -140,7 +140,7 @@ export class DirectoryServicesComponent implements OnInit {
       return [];
     }
 
-    const baseTestId = kebabCase(card.title);
+    const baseTestId = normalizeTestIdString(card.title);
     const items: TnMenuItem[] = [];
 
     if (this.hasDirectoryServiceWrite()) {

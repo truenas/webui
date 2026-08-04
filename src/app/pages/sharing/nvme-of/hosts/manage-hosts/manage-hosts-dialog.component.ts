@@ -5,7 +5,6 @@ import {
   TnButtonComponent, TnCellDefDirective, TnDialog, TnDialogShellComponent, TnHeaderCellDefDirective,
   TnTableColumnDirective, TnTableComponent, TnTestIdDirective, tnIconMarker,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost, PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
@@ -16,6 +15,7 @@ import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/mo
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
@@ -62,10 +62,8 @@ export class ManageHostsDialog implements OnInit {
 
   protected readonly trackByHostId = (_: number, row: NvmeOfHostAndUsage): number => row.id;
 
-  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
-  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
   protected uniqueRowTag(row: NvmeOfHostAndUsage): string {
-    return kebabCase(convertStringToId('host-' + row.hostnqn));
+    return normalizeTestIdString(convertStringToId('host-' + row.hostnqn));
   }
 
   protected readonly actions: IconActionConfig<NvmeOfHostAndUsage>[] = [

@@ -17,12 +17,13 @@
           <tn-list-item
             cdkDrag
             tabindex="0"
+            [wrap]="true"
             [ngClass]="{ selected: isItemSelected(availableList(), idx) }"
             (click)="onItemClick('available', idx, $event)"
             (keydown)="onItemKeydown('available', idx, $event)"
           >
             @if (listItemIcon(); as icon) {
-              <tn-icon tnListIcon [name]="icon"></tn-icon>
+              <tn-icon tnListIcon aria-hidden="true" [name]="icon"></tn-icon>
             }
 
             <label>{{ getDisplayValue(item) }}</label>
@@ -100,12 +101,13 @@
           <tn-list-item
             cdkDrag
             tabindex="0"
+            [wrap]="true"
             [ngClass]="{ selected: isItemSelected(selectedList(), idx) }"
             (click)="onItemClick('selected', idx, $event)"
             (keydown)="onItemKeydown('selected', idx, $event)"
           >
             @if (listItemIcon(); as icon) {
-              <tn-icon tnListIcon [name]="icon"></tn-icon>
+              <tn-icon tnListIcon aria-hidden="true" [name]="icon"></tn-icon>
             }
 
             <label>{{ getDisplayValue(item) }}</label>

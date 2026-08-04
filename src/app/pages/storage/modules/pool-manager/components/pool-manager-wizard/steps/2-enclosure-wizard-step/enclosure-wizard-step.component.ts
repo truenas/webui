@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnFormFieldComponent, TnRadioGroupComponent, TnSelectComponent,
+  TnButtonComponent, TnFormFieldComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
   TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { timer } from 'rxjs';
@@ -34,6 +34,7 @@ export enum DispersalStrategy {
     AsyncPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,
+    TnRadioComponent,
     TnRadioGroupComponent,
     TnSelectComponent,
     FormActionsComponent,

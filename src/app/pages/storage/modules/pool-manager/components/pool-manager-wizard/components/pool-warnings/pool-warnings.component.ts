@@ -4,7 +4,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent, TnRadioGroupComponent,
+  TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent, TnRadioComponent,
+  TnRadioGroupComponent,
 } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { combineLatest, startWith } from 'rxjs';
@@ -30,6 +31,7 @@ import { hasNonUniqueSerial, hasExportedPool, isSedCapable } from 'app/pages/sto
     ReactiveFormsModule,
     WarningComponent,
     TnFormFieldComponent,
+    TnRadioComponent,
     TnRadioGroupComponent,
     IxLabelComponent,
     TnCheckboxComponent,

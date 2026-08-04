@@ -7,12 +7,22 @@
         [tooltip]="nonUniqueSerialDisksTooltip | translate"
         [required]="true"
       >
+        <!--
+          Options are projected rather than passed via `[options]` so each one can carry the
+          legacy `radio-button-*` test id; see "Radio groups" in the tn-migration playbook.
+        -->
         <tn-radio-group
           formControlName="allowNonUniqueSerialDisks"
-          [options]="allowNonUniqueSerialDisksOptions()"
           [inline]="true"
-          [testId]="['radio-button', 'allow-non-unique-serial-disks']"
-        ></tn-radio-group>
+        >
+          @for (option of allowNonUniqueSerialDisksOptions(); track option.value) {
+            <tn-radio
+              [label]="option.label"
+              [value]="option.value"
+              [testId]="['radio-button', 'allow-non-unique-serial-disks', option.label]"
+            ></tn-radio>
+          }
+        </tn-radio-group>
       </tn-form-field>
     </div>
   }

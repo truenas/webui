@@ -9,11 +9,19 @@
   @if (!isAddingVdevs()) {
     <!-- Encryption type radio group -->
     <tn-form-field [label]="'Encryption' | translate">
-      <tn-radio-group
-        formControlName="encryptionType"
-        [options]="encryptionTypeOptions()"
-        [testId]="['radio-button', 'encryption-type']"
-      ></tn-radio-group>
+      <!--
+        Options are projected rather than passed via `[options]` so each one can carry the
+        legacy `radio-button-*` test id; see "Radio groups" in the tn-migration playbook.
+      -->
+      <tn-radio-group formControlName="encryptionType">
+        @for (option of encryptionTypeOptions(); track option.value) {
+          <tn-radio
+            [label]="option.label"
+            [value]="option.value"
+            [testId]="['radio-button', 'encryption-type', option.label]"
+          ></tn-radio>
+        }
+      </tn-radio-group>
     </tn-form-field>
 
     <!-- Software Encryption Standard dropdown -->

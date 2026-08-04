@@ -67,6 +67,24 @@ class WizardTestFormComponent extends SidePanelForm {
   }
 }
 
+/** Closes with whatever the static payload signal holds, to exercise the truthiness contract. */
+@Component({
+  selector: 'ix-payload-test-form',
+  template: '<p>payload form body</p>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class PayloadTestFormComponent extends SidePanelForm<unknown> {
+  /** Static so the test can set it without a handle on the portaled instance. */
+  static readonly payload = signal<unknown>(true);
+
+  protected readonly form = new FormControl('');
+  readonly canSubmit = signal(true);
+
+  protected onSubmit(): void {
+    this.closeWith(PayloadTestFormComponent.payload());
+  }
+}
+
 @Component({ selector: 'ix-test-host', template: '', changeDetection: ChangeDetectionStrategy.OnPush })
 class TestHostComponent {}
 
@@ -96,7 +114,7 @@ describe('FormSidePanelService', () => {
     TestBed.configureTestingModule({
       imports: [
         TestHostComponent, TestFormComponent, SecondTestFormComponent, WizardTestFormComponent,
-        TranslateModule.forRoot(),
+        PayloadTestFormComponent, TranslateModule.forRoot(),
       ],
       providers: [
         mockAuth(),
@@ -233,5 +251,40 @@ describe('FormSidePanelService', () => {
     expect(await rootLoader.hasHarness(TnSidePanelHarness)).toBe(false);
     expect(onCancel).toHaveBeenCalled();
     expect(onSuccess).not.toHaveBeenCalled();
+  });
+
+  // Locks the truthiness contract documented on `SidePanelForm.closeWith` / `SubmitResult.closeWith`:
+  // this host is deliberately narrower than SlideInResult's `=== undefined` rule, because a plain
+  // boolean form emits `false` to mean "closed without saving".
+  describe('close payload truthiness', () => {
+    async function closeWithPayload(payload: unknown): Promise<{ onSuccess: jest.Mock; onCancel: jest.Mock }> {
+      PayloadTestFormComponent.payload.set(payload);
+      const onSuccess = jest.fn();
+      const onCancel = jest.fn();
+      const destroyRef = fixture.componentRef.injector.get(DestroyRef);
+      const result$ = service.open(PayloadTestFormComponent, { title: 'Payload' });
+      result$.onSuccess(onSuccess, destroyRef);
+      result$.onCancel(onCancel, destroyRef);
+      fixture.detectChanges();
+
+      await (await rootLoader.getHarness(TnButtonHarness.with({ label: 'Save' }))).click();
+      flushPanelClose();
+
+      return { onSuccess, onCancel };
+    }
+
+    it('resolves an empty array as a success, so an all-failed bulk still reloads', async () => {
+      const { onSuccess, onCancel } = await closeWithPayload([]);
+
+      expect(onSuccess).toHaveBeenCalledWith([]);
+      expect(onCancel).not.toHaveBeenCalled();
+    });
+
+    it('resolves a falsy payload as a cancel', async () => {
+      const { onSuccess, onCancel } = await closeWithPayload(0);
+
+      expect(onSuccess).not.toHaveBeenCalled();
+      expect(onCancel).toHaveBeenCalled();
+    });
   });
 });

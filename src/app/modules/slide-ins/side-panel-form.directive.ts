@@ -180,6 +180,10 @@ export abstract class SidePanelForm<R = boolean> implements SidePanelHostForm<R>
    * Closes through whichever host opened the form, handing back the full `R` payload. Use from
    * forms whose `R` is richer than `boolean` (e.g. a picker's "Add New" that returns the created
    * record) so the legacy SlideIn host is honored too — not just the `<tn-side-panel>` output.
+   *
+   * Under `FormSidePanelService` only a TRUTHY payload resolves as a save — anything falsy is a
+   * cancel, which is how {@link close}`(false)` reports "closed without saving". See
+   * `FormSidePanelService.open`, which documents the rule and owns the coercion.
    */
   protected closeWith(payload: R): void {
     if (this.slideInRef) {

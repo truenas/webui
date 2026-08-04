@@ -15,7 +15,7 @@ import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { ReplaceDiskDialog } from 'app/pages/storage/modules/vdevs/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
@@ -49,7 +49,7 @@ describe('DiskInfoCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(ActivatedRoute, {
@@ -60,7 +60,9 @@ describe('DiskInfoCardComponent', () => {
           closed: of(),
         })),
       }),
-      mockProvider(VDevsStore),
+      // `reloadList` is a ComponentStore effect assigned at construction, so it is not on the
+      // prototype for mockProvider to auto-stub.
+      mockProvider(VDevsStore, { reloadList: jest.fn() }),
     ],
   });
 
@@ -102,11 +104,24 @@ describe('DiskInfoCardComponent', () => {
     expect(descriptionItem.nextElementSibling).toHaveText('N/A');
   });
 
-  it('opens slide to edit Disk when clicks Edit button', async () => {
+  it('opens the disk edit form in a side panel when clicks Edit button', async () => {
     const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { data: disk });
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(DiskFormComponent, {
+      title: 'Edit Disk',
+      inputs: { diskToEdit: disk },
+    });
+  });
+
+  it('reloads the vdev list after the disk edit form is saved', async () => {
+    jest.spyOn(spectator.inject(FormSidePanelService), 'open')
+      .mockReturnValue(SlideInResult.success(true));
+
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
+    await editButton.click();
+
+    expect(spectator.inject(VDevsStore).reloadList).toHaveBeenCalled();
   });
 
   it('opens a ReplaceDiskDialogComponent when clicks Replace button', async () => {

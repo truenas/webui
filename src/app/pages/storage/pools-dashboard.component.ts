@@ -8,6 +8,7 @@ import { TnButtonComponent, TnEmptyComponent, TnTestIdDirective } from '@truenas
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -101,7 +102,7 @@ export class PoolsDashboardComponent implements OnInit {
 
   protected onImportPool(): void {
     this.formPanel.open(ImportPoolComponent, {
-      title: this.translate.instant('Import Pool'),
+      title: this.translate.instant(helptextImport.title),
       footerless: true,
     }).onSuccess(() => this.store.loadDashboard(), this.destroyRef);
   }

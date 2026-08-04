@@ -148,7 +148,7 @@ the ticket and document it in the PR.
 | Angular Material | @truenas/ui-components | Notes |
 |---|---|---|
 | `<mat-menu>` | `<tn-menu>` | `[items]` input takes `TnMenuItem[]`. See `ServiceActionsMenuService` for the composition pattern (Recipe 2). |
-| `<button mat-menu-item>` | `<tn-menu-item>` | Test IDs resolve to `button-*`, matching the legacy value — `tn-menu-panel` renders each item as a `<button tnTestIdType="button">`. Pass the bare semantic base (`[testId]="['expand', name]"` → `button-expand-<name>`). Do NOT edit `test.directive.ts`. See "Test IDs." |
+| `<button mat-menu-item>` | `<tn-menu-item>` | Test IDs resolve to `button-*`, matching the legacy value — `tn-menu-panel` renders each item as a `<button tnTestIdType="button">`, so a legacy `button-foo` survives from `testId="foo"`. Pass the bare semantic base (`[testId]="['expand', name]"` → `button-expand-<name>`). Do NOT edit `test.directive.ts`. See "Test IDs." |
 | `[matMenuTriggerFor]` | `[tnMenuTriggerFor]` | `TnMenuTriggerDirective`; same usage shape. |
 | `[matTooltip]` | `[tnTooltip]` | `TnTooltipDirective`. ⚠ Tooltips are not accessible descriptions on their own — for form controls prefer the `[tooltip]` input on `ix-input`/`ix-checkbox`/etc., reserve `[tnTooltip]` for hover-only context (disabled-state hints, etc.). |
 
@@ -167,7 +167,7 @@ read-only views) unless a feature-ticket explicitly carries `ix-*` work.
 | `<mat-select-trigger>` | *(use `tn-select`'s `[displayWith]` if available, else hold)* | Verify against d.ts; the trigger-template pattern may not be supported. |
 | `<mat-autocomplete>` / `[matAutocomplete]` | `<tn-autocomplete>` | `TnAutocompleteComponent`/`TnAutocompleteHarness`. Verify input shape against d.ts. |
 | `<mat-checkbox>` | `<tn-checkbox>` *(non-form)* or `<ix-checkbox>` *(forms)* | `TnCheckboxComponent`/`TnCheckboxLabelDirective`. Forms keep `ix-checkbox`. |
-| `<mat-radio-group>` / `<mat-radio-button>` | `<tn-radio-group>` + `<tn-radio>` *(non-form)* or `<ix-radio>` *(forms)* | `TnRadioGroupComponent`/`TnRadioGroupHarness` own the value for the whole set — never bind one form control to several standalone `tn-radio`s, which renders stale. Pass `[options]` (`TnRadioOption[]` — webui's `Option` fits) or project `<tn-radio>` children; `[inline]="true"` replaces `[inlineFields]`; `[compareWith]` for object values. Inside a `tn-form-field` the group is a normal control (name, required indicator, error text). |
+| `<mat-radio-group>` / `<mat-radio-button>` | `<tn-radio-group>` + `<tn-radio>` *(non-form)* or `<ix-radio>` *(forms)* | `TnRadioGroupComponent`/`TnRadioGroupHarness` own the value for the whole set — never bind one form control to several standalone `tn-radio`s, which renders stale. Pass `[options]` (`TnRadioOption[]` — webui's `Option` fits) or project `<tn-radio>` children; `[inline]="true"` replaces `[inlineFields]`; `[compareWith]` for object values. Inside a `tn-form-field` the group is a normal control (name, required indicator, error text). ⚠ **Test IDs: project the options** — `[options]` gives no per-option test-id override, and the legacy `radio-button-*` ids can only be preserved per `<tn-radio>`. See "Radio groups" under Test IDs. |
 | `<mat-slide-toggle>` | `<tn-slide-toggle>` *(non-form)* or `<ix-slide-toggle>` *(forms)* | |
 | `<mat-slider>` | `<tn-slider>` + `[tnSliderThumb]` | Also `TnSliderWithLabelDirective`. |
 | `<mat-chip-grid>` / `<mat-chip-row>` (input pattern) | *(use `ix-chips` — NAS-141028 owns)* | |
@@ -694,16 +694,21 @@ the component's `testId` input, and the library assembles `${type}-${base}`, keb
 ```
 
 Verified prefixes: `tn-button`/`tn-icon-button` → `button`, `tn-menu-item` → `button` (the
-panel renders each item as a `<button tnTestIdType="button">`), `tn-card` `[footerLink]` →
-`link`, `tn-select` → `select` (options `option`), `tn-checkbox` → `checkbox`, `tn-radio` →
-`radio`, `tn-slide-toggle` → `toggle`, `tn-input` → `input` (textarea `textarea`),
+owning `tn-menu-panel` renders each item as a `<button tnTestIdType="button">`), `tn-card`
+title link / `[footerLink]` → `link`, `tn-select` → `select` (options `option`),
+`tn-checkbox` → `checkbox`, `tn-radio` → `radio`, `tn-radio-group` → `radio-group`,
+`tn-slide-toggle` → `toggle`, `tn-input` → `input` (textarea `textarea`),
 `tn-button-toggle` → `button-toggle`. Exception: `tn-table`, `tn-tree`, `tn-selection-list`,
 `tn-calendar` are **not yet typed** — they write `testId` verbatim, so pass the full value
 (prefix included) on those.
 
 Three properties make this safe:
-- **Kebab-parity** with the legacy directive (mirrors lodash `kebabCase`), so a migrated
-  base resolves byte-identically (`sshPort` → `ssh-port`).
+- **Kebab-parity** with the legacy directive for a *static* base, so it resolves
+  byte-identically (`sshPort` → `ssh-port`). It is **not** parity for values carrying
+  digits: the library does not split a letter→digit boundary the way lodash does, so
+  `eth0` stays `eth0` where `[ixTest]` produced `eth-0`. Pre-normalize any **dynamic**
+  value with `normalizeTestIdString` / `normalizeTestIdParts`
+  (`app/modules/test-id/normalize-test-id.utils`) before handing it to a `testId` input.
 - **Idempotent prefix** — a base that already starts with its prefix is not doubled
   (`button-save` stays `button-save`). The migration is therefore order-independent, but
   **pass the bare semantic base** (`'save'`, not `'button-save'`) — let the component supply
@@ -773,6 +778,44 @@ type, changing the type changes the resolved value even when the base is identic
   items are the one element→component conversion that needs **no** prefix compensation. Pass
   the bare base; do NOT pass `testId="button-foo"` (it survives only because of the idempotent
   guard) and do NOT edit `test.directive.ts`.
+
+**Radio groups: the one sanctioned use of the idempotent guard.** `<mat-radio-button>` mapped to
+the prefix `radio-button`, but `tn-radio` declares `radio` — and unlike every other case above,
+the prefix cannot be pinned on a host. `TnRadioGroupComponent` and `TnRadioComponent` both resolve
+their id through `controlTestId()`, which falls back to the bound `formControlName`, so their inner
+elements *always* emit a `data-test`; adding `tnTestIdType`/`tnTestId` to the host would leave two
+`data-test` attributes in the DOM rather than one, which is why the `<tn-button>` remedy does not
+transfer. The only way to keep the legacy option ids is to let the guard absorb the prefix:
+
+```html
+<!-- group id ← formControlName: radio-group-encryption-type (legacy parity, nothing passed) -->
+<tn-radio-group formControlName="encryptionType">
+  @for (option of encryptionTypeOptions(); track option.value) {
+    <!-- composeTestId('radio', ['radio-button', …]) → body already starts with `radio-`,
+         so the guard skips the prefix: radio-button-encryption-type-<label> -->
+    <tn-radio
+      [label]="option.label"
+      [value]="option.value"
+      [testId]="['radio-button', 'encryption-type', option.label]"
+    ></tn-radio>
+  }
+</tn-radio-group>
+```
+
+Two rules follow, and both matter:
+
+- **Project the options; do not pass `[options]`.** The group's `[options]` path renders each
+  child with `[testId]="scopeTestId(resolvedTestId(), option.label)"`, a hardcoded expression with
+  no per-option override (there is no `optionTestIdKey` as on `tn-select`). Pushing `radio-button`
+  into the *group's* base to reach the options is the trap: it also feeds the group's own element,
+  which resolves `radio-group-radio-button-encryption-type` instead of the legacy
+  `radio-group-encryption-type`. Projection is the only shape that keeps both halves.
+- **Never put `radio-button` on the `<tn-radio-group>`.** Its base stays bare, or absent entirely
+  so the control name supplies it.
+
+Call sites: `general-wizard-step`, `enclosure-wizard-step`, `pool-warnings`. Retire the whole
+pattern if the library ever exposes a per-option test-id key or adopts `radio-button` as `tn-radio`'s
+prefix.
 
 ## Spec / test updates
 
