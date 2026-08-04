@@ -1,17 +1,22 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnStepperNextDirective, TnStepperPreviousDirective } from '@truenas/ui-components';
-import { of, timer } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnFormFieldComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
+  TnStepperNextDirective, TnStepperPreviousDirective,
+} from '@truenas/ui-components';
+import { timer } from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
+import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 export enum DispersalStrategy {
@@ -26,9 +31,12 @@ export enum DispersalStrategy {
   styleUrls: ['./enclosure-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxRadioGroupComponent,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnRadioComponent,
+    TnRadioGroupComponent,
+    TnSelectComponent,
     FormActionsComponent,
     TnButtonComponent,
     TnStepperPreviousDirective,
@@ -38,10 +46,11 @@ export enum DispersalStrategy {
 })
 export class EnclosureWizardStepComponent implements OnInit, OnChanges {
   private store = inject(PoolManagerStore);
-  private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
+
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   readonly isStepActive = input<boolean>();
   readonly stepWarning = input<string | null>();
@@ -60,20 +69,29 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
     }),
   );
 
-  protected readonly dispersalOptions$ = of([
+  // `translatedSignal`, not a plain field: the labels are composed in TypeScript rather than
+  // piped in the template, so `instant()` alone would freeze them in whatever language was
+  // active when the component was constructed.
+  protected readonly dispersalOptions = translatedSignal((translate) => [
     {
-      label: this.translate.instant('No Enclosure Dispersal Strategy'),
+      label: translate.instant('No Enclosure Dispersal Strategy'),
       value: DispersalStrategy.None,
     },
     {
-      label: this.translate.instant('Maximize Enclosure Dispersal'),
+      label: translate.instant('Maximize Enclosure Dispersal'),
       value: DispersalStrategy.Maximize,
     },
     {
-      label: this.translate.instant('Limit Pool To A Single Enclosure'),
+      label: translate.instant('Limit Pool To A Single Enclosure'),
       value: DispersalStrategy.LimitToSingle,
     },
   ]);
+
+  /**
+   * The option label is the enclosure name while the value is its id, so the test id is pinned
+   * to the label to keep the pre-migration `option-limit-to-enclosure-<name>`.
+   */
+  protected readonly enclosureOptionTestIdKey = optionTestIdByLabel;
 
   protected readonly helptext = helptextPoolCreation;
 
@@ -101,9 +119,11 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
     ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
     this.store.startOver$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      // `tn-radio-group` owns the checked state of its options, so a plain reset is enough here.
       this.form.reset({
         dispersalStrategy: DispersalStrategy.None,
       });
+      this.cdr.markForCheck();
     });
   }
 

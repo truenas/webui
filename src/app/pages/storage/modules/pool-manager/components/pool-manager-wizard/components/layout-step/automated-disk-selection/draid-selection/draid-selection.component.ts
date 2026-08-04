@@ -1,7 +1,9 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { range } from 'lodash-es';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -11,8 +13,7 @@ import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { DiskSizeSelectsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/disk-size-selects/disk-size-selects.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
@@ -35,10 +36,11 @@ const maxDisksInDraidGroup = 255;
   styleUrls: ['./draid-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
     DiskSizeSelectsComponent,
-    IxSelectComponent,
-    TestOverrideDirective,
+    TnFormFieldComponent,
+    TnSelectComponent,
     TranslateModule,
   ],
 })
@@ -46,6 +48,8 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
   private formBuilder = inject(FormBuilder);
   private store = inject(PoolManagerStore);
   private destroyRef = inject(DestroyRef);
+
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   readonly type = input.required<VDevType>();
   readonly layout = input.required<CreateVdevLayout.Draid1 | CreateVdevLayout.Draid2 | CreateVdevLayout.Draid3>();
@@ -111,6 +115,18 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
           spares: 0,
           vdevsNumber: 1,
         });
+
+        // Restoring the declared defaults is only half a reset: they are starting values, not
+        // necessarily *valid* ones. `tn-select` renders a value verbatim even when no option
+        // matches it (`ix-select` used to blank exactly that state), so a reset that clears the
+        // disk selection would otherwise leave every control showing its default over a
+        // "No options" dropdown. Re-deriving the option lists here blanks whatever the current
+        // disks don't support and keeps the defaults that they do.
+        //
+        // Done here rather than left to the disk-size child's own reset — which emits an empty
+        // selection and re-enters through `onDisksSelected` — so the panel ends up consistent
+        // whichever of the two reset subscribers the store notifies first.
+        this.updateDataDevicesOptions();
       });
   }
 
@@ -180,7 +196,12 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
       nextOptions = generateOptionsRange(0, maxPossibleSpares);
     }
 
-    if (!nextOptions.some((option) => option.value === this.form.controls.spares.value)) {
+    if (!nextOptions.length) {
+      // Nothing to fall back to — not even 0, which is only an option once the selected disks
+      // can cover the parity and data devices. Blank the control rather than leaving its
+      // declared default rendered over a "No options" dropdown, matching the sibling selects.
+      unsetControlIfNoMatchingOption(this.form.controls.spares, nextOptions);
+    } else if (!nextOptions.some((option) => option.value === this.form.controls.spares.value)) {
       setValueIfNotSame(
         this.form.controls.spares,
         0,
@@ -210,7 +231,12 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
 
     unsetControlIfNoMatchingOption(this.form.controls.children, nextOptions);
 
-    if (this.isStepActive()) {
+    // Only default to the optimal width when there is one. With no disks selected
+    // `maxPossibleWidth` is 0, and defaulting to it would leave a meaningless "Children: 0"
+    // in the control — invisible with `ix-select` (which blanked a value that matched no
+    // option) but rendered verbatim by `tn-select`. `unsetControlIfNoMatchingOption` above has
+    // already blanked the control by then, so skipping the default leaves it empty.
+    if (this.isStepActive() && maxPossibleWidth) {
       setValueIfNotSame(
         this.form.controls.children,
         maxPossibleWidth,

@@ -34,6 +34,10 @@ describe('IxFormHostForm', () => {
       expect(spectator.component.isBusy()).toBe(false);
     });
 
+    it('reports isSubmitting() as false', () => {
+      expect(spectator.component.isSubmitting()).toBe(false);
+    });
+
     it('does not throw when submit() is called', () => {
       expect(() => spectator.component.submit()).not.toThrow();
     });

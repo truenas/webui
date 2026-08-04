@@ -3,10 +3,10 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnFormFieldComponent, TnSelectComponent, TnSelectOption } from '@truenas/ui-components';
+import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { filter, map } from 'rxjs';
+import { optionTestIdByKebabLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -45,7 +45,7 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
   protected poolOptions = toSignal(this.poolOptions$, { initialValue: [] });
 
   // Legacy [ixTest] discriminated options by kebab-cased label (pool name), not value (pool id).
-  protected poolOptionTestId = (option: TnSelectOption): string => normalizeTestIdString(option.label);
+  protected poolOptionTestId = optionTestIdByKebabLabel;
 
   private firstOption = toSignal(this.poolOptions$.pipe(map((opts) => opts[0]?.value)));
 

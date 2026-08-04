@@ -1,20 +1,20 @@
-<mat-card class="card" [ixUiSearch]="searchableElements.elements.diskHealth">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'Disk Health' | translate }}
-      <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
-    </h3>
+<tn-card class="card" [ixUiSearch]="searchableElements.elements.diskHealth">
+  <h3 tnCardHeader class="tn-card__title">
+    {{ 'Disk Health' | translate }}
+    <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
+  </h3>
 
-    <a
-      mat-button
-      ixTest="view-disks"
+  <ng-template tnCardFooterActions>
+    <!-- Host-pinned to keep the legacy `link-view-disks` id — see the playbook's upstream-defects table. -->
+    <tn-button
+      tnTestIdType="link"
+      [tnTestId]="'view-disks'"
       [routerLink]="['/storage', 'disks']"
-    >
-      {{ 'View Disks' | translate }}
-    </a>
-  </mat-card-header>
+      [label]="'View Disks' | translate"
+    ></tn-button>
+  </ng-template>
 
-  <mat-card-content class="content">
+  <div class="content">
     <div class="details-item">
       <div class="label">
         {{ 'Disks temperature related alerts' | translate }}:
@@ -60,7 +60,8 @@
           }
         </div>
         <a
-          ixTest="view-disk-reports"
+          tnTestIdType="link"
+          [tnTestId]="'view-disk-reports'"
           [routerLink]="['/reportsdashboard', 'disk']"
           [queryParams]="{ disks: disksNames }"
         >
@@ -72,5 +73,5 @@
         <div class="label">{{ 'No disk temperature is available' | translate }}.</div>
       </div>
     }
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>

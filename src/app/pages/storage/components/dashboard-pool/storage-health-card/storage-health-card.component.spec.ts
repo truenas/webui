@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent, MockComponents } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
@@ -21,7 +21,7 @@ import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -108,7 +108,7 @@ describe('StorageHealthCardComponent', () => {
       mockProvider(Router, {
         navigate: jest.fn(),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DialogService, {
@@ -294,21 +294,24 @@ describe('StorageHealthCardComponent', () => {
       it('opens the form to create/edit scrub task when Configure link is pressed', () => {
         const detailsItem = spectator.query(byText('Scheduled Scrub:'))!.parentElement!;
 
-        const link = detailsItem.querySelector('a')!;
+        const link = detailsItem.querySelector('button.link-button')!;
         expect(link).toHaveText('Configure');
 
         spectator.click(link);
 
-        expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ScrubFormComponent, {
-          data: {
-            poolId: pool.id,
-            existingScrubTask: scrubTask,
+        expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(ScrubFormComponent, {
+          title: 'Configure Scheduled Scrub',
+          inputs: {
+            scrubParams: {
+              poolId: pool.id,
+              existingScrubTask: scrubTask,
+            },
           },
         });
       });
 
       it('starts a scrub when Scrub Now is pressed', async () => {
-        const scrubButton = await loader.getHarness(MatButtonHarness.with({ text: 'Scrub Now' }));
+        const scrubButton = await loader.getHarness(TnButtonHarness.with({ label: 'Scrub Now' }));
         await scrubButton.click();
 
         expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();

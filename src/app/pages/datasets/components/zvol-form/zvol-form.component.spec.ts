@@ -2,7 +2,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
@@ -10,6 +9,7 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
@@ -29,7 +29,7 @@ import { DetailsTableHarness } from 'app/modules/details-table/details-table.har
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -79,12 +79,6 @@ describe('ZvolFormComponent', () => {
   let loader: HarnessLoader;
   let spectator: Spectator<ZvolFormComponent>;
   let mainDetails: DetailsTableHarness;
-
-  const slideInRef: SlideInRef<{ isNew: boolean; parentId: string } | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const dataset = {
     id: 'test pool',
@@ -163,8 +157,9 @@ describe('ZvolFormComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('pool.dataset.create'),
-        mockCall('pool.dataset.update'),
+        // `name` matters: the success snackbars are built from the saved record, not the payload.
+        mockCall('pool.dataset.create', { id: 'parentId/new zvol', name: 'parentId/new zvol' } as Dataset),
+        mockCall('pool.dataset.update', { id: 'zvolId', name: 'zvolId' } as Dataset),
         mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
         mockCall('pool.dataset.query', (params) => {
           if ((params[0][0] as QueryFilter<Dataset>)[2] === 'parentId') {
@@ -200,7 +195,6 @@ describe('ZvolFormComponent', () => {
       ]),
       mockProvider(DialogService),
       ...ixFormTestingProviders(),
-      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
       provideMockStore({
         initialState: {
@@ -217,14 +211,7 @@ describe('ZvolFormComponent', () => {
 
   describe('adds a new zvol', () => {
     beforeEach(async () => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: jest.fn(() => ({ isNew: true, parentOrZvolId: 'parentId' })),
-          }),
-        ],
-      });
+      spectator = createComponent({ props: { params: { isNew: true, parentOrZvolId: 'parentId' } } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
       mainDetails = await loader.getHarness(DetailsTableHarness);
@@ -253,8 +240,9 @@ describe('ZvolFormComponent', () => {
       await setEditableTnSelect(loader, encryptionDetails, 'Algorithm', 'algorithm', 'AES-128-CCM');
       await setEditableTnInput(loader, encryptionDetails, 'pbkdf2iters', 'pbkdf2iters', '1400000');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.create', [{
         name: 'parentId/new zvol',
@@ -277,15 +265,39 @@ describe('ZvolFormComponent', () => {
         },
         type: DatasetType.Volume,
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'parentId/new zvol' }));
+    });
+
+    it('still closes the panel when a save completes without a record', async () => {
+      // `closed` is the only signal that tears the panel down, so an unexpected response must
+      // still emit — falsy, which `FormSidePanelService` reads as a cancel — rather than leaving
+      // the panel wedged open with no Save in flight.
+      spectator.inject(MockApiService).mockCall('pool.dataset.create', undefined);
+
+      await setTnInput(loader, 'name', 'new zvol');
+      await setTnInput(loader, 'volsize', '1 GiB');
+
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+      spectator.component.submit();
+
+      expect(closed).toHaveBeenCalledWith(undefined);
+    });
+
+    it('announces the created zvol – openers rely on the form for the success message', async () => {
+      await setTnInput(loader, 'name', 'new zvol');
+      await setTnInput(loader, 'volsize', '1 GiB');
+
+      spectator.component.submit();
+
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Zvol «new zvol» created.');
     });
 
     it('does not allow creating zvol with existing name', async () => {
       await setTnInput(loader, 'name', 'existing-child');
       await setTnInput(loader, 'volsize', '1 GiB');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
       expect(spectator.component.form.controls.name.hasError('forbidden')).toBe(true);
     });
 
@@ -300,8 +312,7 @@ describe('ZvolFormComponent', () => {
       await setTnInput(loader, 'name', 'new zvol');
       await setTnInput(loader, 'volsize', '0');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
       expect(spectator.component.form.invalid).toBe(true);
       expect(spectator.component.form.controls.volsize.hasError('min')).toBe(true);
     });
@@ -315,14 +326,7 @@ describe('ZvolFormComponent', () => {
     });
 
     async function setupVisibilityTest(isEnterprise: boolean, hasDedupLicense: boolean): Promise<void> {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: jest.fn(() => ({ isNew: true, parentOrZvolId: 'parentId' })),
-          }),
-        ],
-      });
+      spectator = createComponent({ props: { params: { isNew: true, parentOrZvolId: 'parentId' } } });
       const store$ = spectator.inject(MockStore);
       store$.overrideSelector(selectIsEnterprise, isEnterprise);
       store$.overrideSelector(selectSystemInfo, {
@@ -360,8 +364,7 @@ describe('ZvolFormComponent', () => {
       await setTnInput(loader, 'name', 'new zvol');
       await setTnInput(loader, 'volsize', '1 GiB');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'pool.dataset.create',
@@ -427,16 +430,14 @@ describe('ZvolFormComponent', () => {
         ]),
         mockProvider(DialogService),
         ...ixFormTestingProviders(),
-        mockProvider(SlideInRef, {
-          ...slideInRef,
-          getData: jest.fn(() => ({ isNew: true, parentOrZvolId: 'parentId' })),
-        }),
         mockAuth(),
       ],
     });
 
     beforeEach(async () => {
-      encryptedSpectator = createComponentWithEncryptedParent();
+      encryptedSpectator = createComponentWithEncryptedParent({
+        props: { params: { isNew: true, parentOrZvolId: 'parentId' } },
+      });
       encryptedLoader = TestbedHarnessEnvironment.loader(encryptedSpectator.fixture);
       await encryptedSpectator.fixture.whenStable();
     });
@@ -445,8 +446,7 @@ describe('ZvolFormComponent', () => {
       await setTnInput(encryptedLoader, 'name', 'encrypted-zvol');
       await setTnInput(encryptedLoader, 'volsize', '1 GiB');
 
-      const saveButton = await encryptedLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      encryptedSpectator.component.submit();
 
       // Wait for the async operations to complete
       await encryptedSpectator.fixture.whenStable();
@@ -467,14 +467,7 @@ describe('ZvolFormComponent', () => {
 
   describe('edits zvol', () => {
     beforeEach(async () => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: jest.fn(() => ({ isNew: false, parentOrZvolId: 'zvolId' })),
-          }),
-        ],
-      });
+      spectator = createComponent({ props: { params: { isNew: false, parentOrZvolId: 'zvolId' } } });
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
@@ -505,14 +498,23 @@ describe('ZvolFormComponent', () => {
     it('sends only changed properties when form opened for edit is saved', async () => {
       await setTnInput(loader, 'volsize', '2 GiB');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
         volsize: 2147483648,
       }]);
 
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'zvolId' }));
+    });
+
+    it('announces the updated zvol – openers rely on the form for the success message', async () => {
+      await setTnInput(loader, 'volsize', '2 GiB');
+
+      spectator.component.submit();
+
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Zvol «zvolId» updated.');
     });
 
     it('treats size change above 0.1% threshold as a change requiring alignment', async () => {
@@ -522,8 +524,7 @@ describe('ZvolFormComponent', () => {
       // Change size to 1.002 GiB (1075890585 bytes) - just above 0.1% threshold
       await setTnInput(loader, 'volsize', '1.002 GiB');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.update');
@@ -543,8 +544,7 @@ describe('ZvolFormComponent', () => {
       // This simulates formatter precision causing small rounding
       await setTnInput(loader, 'volsize', '1.0001 GiB');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.update');
@@ -558,6 +558,7 @@ describe('ZvolFormComponent', () => {
   describe('Use Metadata (Special) VDEVs', () => {
     beforeEach(async () => {
       spectator = createComponent({
+        props: { params: { isNew: true, parentOrZvolId: 'parentId' } },
         providers: [
           mockProvider(ApiService, {
             call: jest.fn((method) => {
@@ -588,11 +589,6 @@ describe('ZvolFormComponent', () => {
               return of(null);
             }),
           }),
-          mockProvider(SlideInRef, {
-            getData: () => ({ isNew: true, parentOrZvolId: 'parentId' }),
-            requireConfirmationWhen: jest.fn(),
-            close: jest.fn(),
-          }),
           mockProvider(DialogService),
           ...ixFormTestingProviders(),
           mockProvider(ErrorHandlerService, {
@@ -609,8 +605,7 @@ describe('ZvolFormComponent', () => {
       await setTnInput(loader, 'name', 'zvol1');
       await setTnInput(loader, 'volsize', '1 GiB');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.create');
@@ -627,8 +622,7 @@ describe('ZvolFormComponent', () => {
         special_small_block_size: OnOff.Off,
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.create');
@@ -645,8 +639,7 @@ describe('ZvolFormComponent', () => {
         special_small_block_size: OnOff.On,
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.create');
@@ -664,8 +657,7 @@ describe('ZvolFormComponent', () => {
         special_small_block_size_custom: 262144, // 256 KiB
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.create');
@@ -683,14 +675,7 @@ describe('ZvolFormComponent', () => {
 
   describe('readonly and volsize interaction', () => {
     beforeEach(async () => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: jest.fn(() => ({ isNew: false, parentOrZvolId: 'zvolId' })),
-          }),
-        ],
-      });
+      spectator = createComponent({ props: { params: { isNew: false, parentOrZvolId: 'zvolId' } } });
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
@@ -761,7 +746,7 @@ describe('ZvolFormComponent', () => {
       expect(spectator.query('.volsize-warning')).toBeNull();
     });
 
-    it('does not send volsize in payload when readonly is toggled', async () => {
+    it('does not send volsize in payload when readonly is toggled', () => {
       // Simulate component state after loading a zvol with readonly OFF
       (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
       spectator.component.form.controls.readonly.setValue(OnOff.Off);
@@ -771,8 +756,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.form.controls.readonly.setValue(OnOff.On);
       spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.update');

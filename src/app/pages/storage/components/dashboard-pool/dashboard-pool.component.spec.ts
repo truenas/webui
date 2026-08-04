@@ -2,10 +2,10 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, flush, tick } from '@angular/core/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -93,7 +93,7 @@ describe('DashboardPoolComponent', () => {
   });
 
   it('opens a Disconnect dialog when Disconnect button is pressed', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Disconnect' }));
     await deleteButton.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(ExportDisconnectModalComponent, {
@@ -103,14 +103,13 @@ describe('DashboardPoolComponent', () => {
 
   it('expands a pool with confirmation when Expand Pool menu item is clicked', async () => {
     // Find and click the Advanced Actions menu trigger
-    const menuTrigger = await loader.getHarness(MatButtonHarness.with({
-      selector: '[mat-icon-button]',
-    }));
+    const menuTrigger = await loader.getHarness(TnIconButtonHarness);
     await menuTrigger.click();
 
-    // Find the menu and click the Expand Pool item
-    const menu = await loader.getHarness(MatMenuHarness);
-    await menu.clickItem({ text: 'Expand Pool' });
+    // Find the menu and click the Expand Pool item (menu renders in a CDK overlay)
+    const rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
+    const menu = await rootLoader.getHarness(TnMenuHarness);
+    await menu.clickItem({ label: 'Expand Pool' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: helptextVolumes.expandPoolDialog.title,
@@ -122,14 +121,13 @@ describe('DashboardPoolComponent', () => {
 
   it('opens Auto TRIM dialog when Auto TRIM menu item is clicked', async () => {
     // Find and click the Advanced Actions menu trigger
-    const menuTrigger = await loader.getHarness(MatButtonHarness.with({
-      selector: '[mat-icon-button]',
-    }));
+    const menuTrigger = await loader.getHarness(TnIconButtonHarness);
     await menuTrigger.click();
 
-    // Find the menu and click the Auto TRIM item
-    const menu = await loader.getHarness(MatMenuHarness);
-    await menu.clickItem({ text: 'Auto TRIM' });
+    // Find the menu and click the Auto TRIM item (menu renders in a CDK overlay)
+    const rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
+    const menu = await rootLoader.getHarness(TnMenuHarness);
+    await menu.clickItem({ label: 'Auto TRIM' });
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AutotrimDialog, {
       data: pool,
@@ -137,7 +135,7 @@ describe('DashboardPoolComponent', () => {
   });
 
   it('shows an Upgrade button that upgrades pool with confirmation when pool is not upgraded', async () => {
-    const upgradeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));
+    const upgradeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Upgrade' }));
     await upgradeButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
@@ -147,7 +145,7 @@ describe('DashboardPoolComponent', () => {
 
   it('hides the Upgrade button when pool is offline', async () => {
     spectator.setInput('pool', { ...pool, status: PoolStatus.Offline });
-    const upgradeButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Upgrade' }));
+    const upgradeButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Upgrade' }));
     spectator.detectChanges();
     expect(upgradeButton).toBeNull();
   });

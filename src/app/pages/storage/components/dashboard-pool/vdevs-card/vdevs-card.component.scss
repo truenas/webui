@@ -1,5 +1,8 @@
 @import 'mixins/cards';
 
+@include tn-detail-card;
+@include tn-card-inline-title;
+
 :host {
   display: flex;
 }
@@ -13,7 +16,6 @@ tn-icon.pool-icon {
 }
 
 .card {
-  @include details-card();
   flex: 1;
 
   .content-container {
@@ -59,4 +61,3 @@ tn-icon.pool-icon {
   display: flex;
   padding: 0 6px;
 }
-

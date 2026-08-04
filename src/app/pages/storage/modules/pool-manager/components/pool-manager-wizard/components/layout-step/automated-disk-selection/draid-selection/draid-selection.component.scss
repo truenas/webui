@@ -2,6 +2,10 @@
   border: 1px solid var(--lines);
   margin: 20px 0;
   padding: 20px 30px;
+
+  h3 {
+    margin: 0 0 16px;
+  }
 }
 
 .columns {
@@ -22,4 +26,5 @@
 
 .explanation {
   color: var(--fg2);
+  margin-bottom: 20px;
 }

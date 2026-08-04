@@ -6,12 +6,10 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent } from '@truenas/ui-components';
+import { TranslateService } from '@ngx-translate/core';
 import {
-  catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap,
+  catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap, throwError,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -20,11 +18,12 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   EncryptionSectionComponent,
@@ -44,48 +43,52 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
+/** The saved dataset, paired with whether the user accepted the post-save ACL-editor prompt. */
+type SaveDatasetResult = [Dataset, boolean];
+
+/** What {@link DatasetFormComponent.preparePayload} needs from a section, whichever one it is. */
+interface DatasetFormSection {
+  getPayload: () => Partial<DatasetCreate> | Partial<DatasetUpdate>;
+}
+
+/**
+ * Closes with the saved dataset, or `null` on the name length/depth bail-out — `FormSidePanelService`
+ * reads that falsy payload as a cancel, so openers can safely `open<Dataset>(…)`.
+ */
 @Component({
   selector: 'ix-dataset-form',
   templateUrl: './dataset-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    RequiresRolesDirective,
     ReactiveFormsModule,
+    IxFormComponent,
     NameAndOptionsSectionComponent,
     QuotasSectionComponent,
     EncryptionSectionComponent,
     OtherOptionsSectionComponent,
-    FormActionsComponent,
-    TnButtonComponent,
-    TranslateModule,
   ],
 })
-export class DatasetFormComponent extends SidePanelForm<Dataset> implements OnInit, AfterViewInit {
+export class DatasetFormComponent extends IxFormHostForm<Dataset | null> implements OnInit, AfterViewInit {
   private api = inject(ApiService);
   private dialog = inject(DialogService);
   private datasetFormService = inject(DatasetFormService);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
-  private snackbar = inject(SnackbarService);
+  private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
 
   private destroyRef = inject(DestroyRef);
 
-  /**
-   * Edit parameters when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to carry
-   * data). Unused in the legacy SlideIn host (which supplies them via `slideInRef.getData()`).
-   */
-  readonly params = input<{ datasetId: string; isNew?: boolean }>();
+  /** Create/edit parameters supplied by the `<tn-side-panel>` host. */
+  readonly params = input.required<{ datasetId: string; isNew: boolean }>();
 
   private nameAndOptionsSection = viewChild.required(NameAndOptionsSectionComponent);
   private encryptionSection = viewChild(EncryptionSectionComponent);
   private quotasSection = viewChild(QuotasSectionComponent);
   private otherOptionsSection = viewChild(OtherOptionsSectionComponent);
 
-  protected readonly requiredRoles = [Role.DatasetWrite];
-  protected slideInData: { datasetId: string; isNew?: boolean };
+  readonly requiredRoles = [Role.DatasetWrite];
 
   protected readonly isNameAndOptionsValid = signal(true);
   protected readonly isQuotaValid = signal(true);
@@ -98,85 +101,118 @@ export class DatasetFormComponent extends SidePanelForm<Dataset> implements OnIn
 
   form = new FormGroup({});
 
+  /**
+   * A plain AND: each signal stays meaningful whether or not its section is on screen. Encryption
+   * counts even in basic mode, where its fields are hidden — its payload is part of every create.
+   */
   protected readonly areSubFormsValid = computed(() => {
-    return this.isNameAndOptionsValid() && this.isQuotaValid()
-      && this.isEncryptionValid() && this.isOtherOptionsValid();
+    return this.isNameAndOptionsValid()
+      && this.isQuotaValid()
+      && this.isEncryptionValid()
+      && this.isOtherOptionsValid();
   });
 
-  private readonly baseCanSubmit = this.trackCanSubmit(this.isLoading);
-  readonly canSubmit = computed(() => this.baseCanSubmit() && this.areSubFormsValid());
-
   /**
-   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
-   * change detection, so the label flips with {@link isAdvancedMode}.
+   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer. Create only: on edit,
+   * quotas and encryption are create-only and Other Options is advanced-only, so switching back to
+   * basic would leave nothing on screen but the disabled Name field.
    */
-  get footerActions(): SidePanelFooterAction[] {
+  private readonly footerActionList = computed<SidePanelFooterAction[]>(() => {
+    if (!this.isNew()) {
+      return [];
+    }
+
     // Labels are extraction markers — the panel container pipes them through `translate`.
     return [{
       label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
       testId: 'toggle-advanced',
       onClick: () => this.toggleAdvancedMode(),
     }];
+  });
+
+  /** A getter because `HostedSidePanelForm` types `footerActions` as a plain array. */
+  get footerActions(): SidePanelFooterAction[] {
+    return this.footerActionList();
   }
 
   protected readonly parentDataset = signal<Dataset | undefined>(undefined);
   protected readonly existingDataset = signal<Dataset | undefined>(undefined);
 
-  get isNew(): boolean {
-    return !this.existingDataset();
-  }
+  /** Mountpoint to open the ACL editor at, set only when the post-save ACL prompt was accepted. */
+  private aclEditorPath: string | undefined;
 
-  get createSections(): [
-    NameAndOptionsSectionComponent,
-    EncryptionSectionComponent,
-    OtherOptionsSectionComponent,
-    QuotasSectionComponent?,
-  ] {
-    const sections: [
-      NameAndOptionsSectionComponent,
-      EncryptionSectionComponent,
-      OtherOptionsSectionComponent,
-      QuotasSectionComponent?,
-    ] = [
+  /**
+   * Taken from the host's params rather than `!existingDataset()`: that record only lands once the
+   * edit load resolves, so deriving from it would report "new" for the whole load and mount (then
+   * immediately tear down) the create-only sections.
+   */
+  protected readonly isNew = computed(() => this.params().isNew);
+
+  /**
+   * An edit panel whose load in {@link setForEdit} failed. Blocks Save: the Name field stays enabled
+   * until `existing` lands, so the user could otherwise fill in a name, satisfy every section, and
+   * submit a create payload rooted at the pool from an edit panel.
+   */
+  protected readonly isMissingEditRecord = computed(() => !this.isNew() && !this.existingDataset());
+
+  /**
+   * A create panel whose parent load in {@link setForNew} failed. Blocks Save: a create is filed
+   * under `${parent.name}/${name}`, so submitting without one asks for `undefined/my-dataset`.
+   */
+  protected readonly isMissingParent = computed(() => this.isNew() && !this.parentDataset());
+
+  /** Filtered, not positional: three of the four section view queries are optional. */
+  private get createSections(): DatasetFormSection[] {
+    return this.toSections([
       this.nameAndOptionsSection(),
       this.encryptionSection(),
       this.otherOptionsSection(),
-    ];
-
-    if (this.isAdvancedMode()) {
-      sections.push(this.quotasSection());
-    }
-
-    return sections;
+      this.isAdvancedMode() ? this.quotasSection() : undefined,
+    ]);
   }
 
-  get updateSections(): [NameAndOptionsSectionComponent, OtherOptionsSectionComponent] {
-    return [
+  private get updateSections(): DatasetFormSection[] {
+    return this.toSections([
       this.nameAndOptionsSection(),
       this.otherOptionsSection(),
-    ];
+    ]);
+  }
+
+  private toSections(sections: (DatasetFormSection | undefined)[]): DatasetFormSection[] {
+    return sections.filter((section): section is DatasetFormSection => Boolean(section));
+  }
+
+  /**
+   * The `FormGroup`s that actually hold fields, for backend validation errors to be resolved
+   * against. An unmounted section has no field on screen to carry an error, so it is skipped and
+   * the handler falls back to a modal for that message.
+   */
+  private sectionForms(): FormGroup[] {
+    const nameAndOptions = this.nameAndOptionsSection();
+
+    return [
+      nameAndOptions.form,
+      // Its own group (SMB/NFS share presets), sibling to the section's main one.
+      nameAndOptions.datasetPresetForm,
+      this.quotasSection()?.form,
+      this.encryptionSection()?.form,
+      this.otherOptionsSection()?.form,
+    ].filter((form): form is FormGroup => Boolean(form));
   }
 
   override hasUnsavedChanges(): boolean {
-    return Boolean(
-      this.form.dirty
-      || this.nameAndOptionsSection()?.form?.dirty
-      || this.encryptionSection()?.form?.dirty
-      || this.otherOptionsSection()?.form?.dirty
-      || this.quotasSection()?.form.dirty,
-    );
+    // The root group holds no fields, so the sections' own groups are what carries edits — including
+    // the share-preset one, whose "Create SMB Share" toggle would otherwise discard silently.
+    return this.form.dirty || this.sectionForms().some((form) => form.dirty);
   }
 
   ngOnInit(): void {
-    this.slideInData = this.slideInRef
-      ? this.slideInRef.getData() as { datasetId: string; isNew?: boolean }
-      : (this.params() ?? { datasetId: '' });
+    const { isNew } = this.params();
 
-    if (this.slideInData.datasetId && !this.slideInData.isNew) {
-      this.setForEdit();
-    }
-    if (this.slideInData.datasetId && this.slideInData.isNew) {
+    if (isNew) {
       this.setForNew();
+    } else {
+      this.setForEdit();
     }
   }
 
@@ -190,14 +226,16 @@ export class DatasetFormComponent extends SidePanelForm<Dataset> implements OnIn
   private setForNew(): void {
     this.isLoading.set(true);
 
-    this.datasetFormService.checkAndWarnForLengthAndDepth(this.slideInData.datasetId).pipe(
+    this.datasetFormService.checkAndWarnForLengthAndDepth(this.params().datasetId).pipe(
       filter((isValidLengthAndDepth) => {
         if (!isValidLengthAndDepth) {
-          this.close(false);
+          // Falsy payload — the host reads it as a cancel and just closes the panel.
+          this.isLoading.set(false);
+          this.closed.emit(null);
         }
         return isValidLengthAndDepth;
       }),
-      switchMap(() => this.datasetFormService.loadDataset(this.slideInData.datasetId)),
+      switchMap(() => this.datasetFormService.loadDataset(this.params().datasetId)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (dataset) => {
@@ -211,12 +249,16 @@ export class DatasetFormComponent extends SidePanelForm<Dataset> implements OnIn
     });
   }
 
-  setForEdit(): void {
+  private setForEdit(): void {
+    // Edit renders Other Options only in advanced mode (quotas/encryption stay create-only), so a
+    // basic-mode edit panel would show nothing but the disabled Name field. Start expanded.
+    this.isAdvancedMode.set(true);
+
     const requests = [
-      this.datasetFormService.loadDataset(this.slideInData.datasetId),
+      this.datasetFormService.loadDataset(this.params().datasetId),
     ];
 
-    const parentId = this.slideInData.datasetId.split('/').slice(0, -1).join('/');
+    const parentId = this.params().datasetId.split('/').slice(0, -1).join('/');
     if (parentId) {
       requests.push(this.datasetFormService.loadDataset(parentId));
     }
@@ -237,67 +279,110 @@ export class DatasetFormComponent extends SidePanelForm<Dataset> implements OnIn
   }
 
   protected toggleAdvancedMode(): void {
-    this.isAdvancedMode.update((advanced) => !advanced);
+    const isAdvanced = !this.isAdvancedMode();
+
+    if (!isAdvanced) {
+      // Leaving advanced unmounts the quotas section, so its last verdict goes with it. A stale
+      // `false` left parked here would be flipped by the remounted section's on-mount emission
+      // during the same CD pass that already read it — NG0100 in dev mode.
+      this.isQuotaValid.set(true);
+    }
+
+    this.isAdvancedMode.set(isAdvanced);
   }
 
   protected onSwitchToAdvanced(): void {
     this.isAdvancedMode.set(true);
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
-
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult<Dataset, SaveDatasetResult> => {
     const payload = this.preparePayload();
     const existingDataset = this.existingDataset();
-    // `!existingDataset` is redundant with `isNew` (which is `!existingDataset()`) but narrows the
-    // type so `existingDataset.id` on the update branch is non-null — keep both.
-    const request$ = this.isNew || !existingDataset
-      ? this.api.call('pool.dataset.create', [payload as DatasetCreate])
-      : this.api.call('pool.dataset.update', [existingDataset.id, payload as DatasetUpdate]);
 
-    request$.pipe(
+    let request$: Observable<Dataset>;
+    if (this.isNew()) {
+      request$ = this.api.call('pool.dataset.create', [payload as DatasetCreate]);
+    } else if (existingDataset) {
+      request$ = this.api.call('pool.dataset.update', [existingDataset.id, payload as DatasetUpdate]);
+    } else {
+      // Unreachable — `isMissingEditRecord` keeps Save disabled until the edit load lands. An
+      // erroring request$ rather than a `throw` (which `onFormSubmit` calls outside its try-less
+      // subscribe, so it would escape to the global ErrorHandler) and rather than falling back to
+      // create, which would file a stray dataset from an edit panel.
+      request$ = throwError(() => new Error('Cannot save: the dataset being edited was not loaded.'));
+    }
+
+    return {
+      request$: this.saveDataset(request$),
+      // Owned by the form, not its openers, so every entry point confirms identically.
+      successMessage: ([savedDataset, shouldGoToAclEditor]) => {
+        // Accepting the ACL prompt navigates away; a toast about the dataset would land on a page
+        // the user has already left.
+        if (shouldGoToAclEditor) {
+          return null;
+        }
+        return this.isNew()
+          ? this.translate.instant('Dataset «{name}» created.', { name: getDatasetLabel(savedDataset) })
+          : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(savedDataset) });
+      },
+      onSuccess: ([savedDataset, shouldGoToAclEditor]) => this.onSaved(savedDataset, shouldGoToAclEditor),
+      closeWith: ([savedDataset]) => savedDataset,
+      // `<ix-form>`'s default handler maps errors against its own `[formGroup]`, which here is the
+      // empty root — every field lives in a section's own group. Run the same handler over those
+      // instead, so a duplicate name or an out-of-range quota lands on the control that caused it;
+      // anything it can't place still falls back to an error modal inside the handler.
+      onError: (error: unknown) => {
+        this.formErrorHandler.handleValidationErrors(error, this.sectionForms());
+        return true;
+      },
+    };
+  };
+
+  /** Runs the post-save chain: optional SMB/NFS shares, then the parent-ACL prompt. */
+  private saveDataset(request$: Observable<Dataset>): Observable<SaveDatasetResult> {
+    return request$.pipe(
       switchMap((dataset) => this.createSmb(dataset)),
       switchMap((dataset) => this.createNfs(dataset)),
       switchMap((dataset) => {
         return this.checkForAclOnParent().pipe(
-          switchMap((isAcl) => combineLatest([of(dataset), isAcl ? this.aclDialog() : of(false)])),
+          switchMap((isAcl): Observable<SaveDatasetResult> => {
+            return combineLatest([of(dataset), isAcl ? this.aclDialog() : of(false)]);
+          }),
         );
       }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: ([createdDataset, shouldGoToEditor]) => {
-        const datasetPresetFormValue = this.nameAndOptionsSection().datasetPresetForm.value;
-        if (this.nameAndOptionsSection().canCreateSmb && datasetPresetFormValue.create_smb) {
-          this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-        }
-        if (this.nameAndOptionsSection().canCreateNfs && datasetPresetFormValue.create_nfs) {
-          this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
-        }
-        this.isLoading.set(false);
-        this.closeWith(createdDataset);
-        if (shouldGoToEditor) {
-          this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-            queryParams: { path: createdDataset.mountpoint },
-          });
-        } else {
-          this.snackbar.success(
-            this.isNew
-              ? this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(createdDataset) })
-              : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(createdDataset) }),
-          );
-        }
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    );
+  }
+
+  private onSaved(savedDataset: Dataset, shouldGoToAclEditor: boolean): void {
+    const datasetPresetFormValue = this.nameAndOptionsSection().datasetPresetForm.value;
+    if (this.nameAndOptionsSection().canCreateSmb && datasetPresetFormValue.create_smb) {
+      this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
+    }
+    if (this.nameAndOptionsSection().canCreateNfs && datasetPresetFormValue.create_nfs) {
+      this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
+    }
+
+    this.aclEditorPath = shouldGoToAclEditor ? savedDataset.mountpoint : undefined;
+  }
+
+  /**
+   * Forwards the `closeWith` payload to the opener, then navigates to the ACL editor if the
+   * post-save prompt was accepted. In that branch the opener's `onSuccess` may never run — the host
+   * resolves the payload on panel teardown, by which point `router.navigate` has destroyed the
+   * opener. Intended: we're leaving the page anyway, and it matches the pre-migration behaviour.
+   */
+  protected onFormClosed(savedDataset: Dataset): void {
+    this.closed.emit(savedDataset);
+
+    if (this.aclEditorPath) {
+      this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+        queryParams: { path: this.aclEditorPath },
+      });
+    }
   }
 
   private preparePayload(): DatasetCreate | DatasetUpdate {
-    const sections: { getPayload: () => Partial<DatasetCreate> | Partial<DatasetUpdate> }[] = this.isNew
-      ? this.createSections
-      : this.updateSections;
+    const sections = this.isNew() ? this.createSections : this.updateSections;
 
     return sections.reduce((payload, section) => {
       return { ...payload, ...section.getPayload() } as DatasetCreate | DatasetUpdate;
@@ -326,7 +411,7 @@ export class DatasetFormComponent extends SidePanelForm<Dataset> implements OnIn
 
   private createSmb(dataset: Dataset): Observable<Dataset> {
     const datasetPresetFormValue = this.nameAndOptionsSection().datasetPresetForm.value;
-    if (!this.isNew || !datasetPresetFormValue.create_smb || !this.nameAndOptionsSection().canCreateSmb) {
+    if (!this.isNew() || !datasetPresetFormValue.create_smb || !this.nameAndOptionsSection().canCreateSmb) {
       return of(dataset);
     }
     const isMultiprotocol = this.nameAndOptionsSection().form.value.share_type === DatasetPreset.Multiprotocol;
@@ -342,7 +427,7 @@ export class DatasetFormComponent extends SidePanelForm<Dataset> implements OnIn
 
   private createNfs(dataset: Dataset): Observable<Dataset> {
     const datasetPresetFormValue = this.nameAndOptionsSection().datasetPresetForm.value;
-    if (!this.isNew || !datasetPresetFormValue.create_nfs || !this.nameAndOptionsSection().canCreateNfs) {
+    if (!this.isNew() || !datasetPresetFormValue.create_nfs || !this.nameAndOptionsSection().canCreateNfs) {
       return of(dataset);
     }
     return this.api.call('sharing.nfs.create', [{

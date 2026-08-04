@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { Subject } from 'rxjs';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -46,7 +46,7 @@ describe('CustomLayoutAppliedComponent', () => {
 
   it('calls store.openManualSelectionDialog when button clicked', async () => {
     const editButton = await loader.getHarness(
-      MatButtonHarness.with({ text: 'Edit Manual Disk Selection' }),
+      TnButtonHarness.with({ label: 'Edit Manual Disk Selection' }),
     );
 
     await editButton.click();

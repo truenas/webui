@@ -1,46 +1,39 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'Unassigned Disks' | translate }}
-      @if ((encryptionType$ | async) === EncryptionType.Sed) {
-        <span class="sed-badge">{{ 'SED' | translate }}</span>
-      }
-    </h3>
-  </mat-card-header>
+<tn-card class="card">
+  <h3 tnCardHeader class="tn-card__title">
+    {{ 'Unassigned Disks' | translate }}
+    @if ((encryptionType$ | async) === EncryptionType.Sed) {
+      <span class="sed-badge">{{ 'SED' | translate }}</span>
+    }
+  </h3>
+
   @if (!(isLoading$| async)) {
-    <mat-card-content>
-      @if (hasDisks$ | async) {
-        @for (item of sizeDisksMap[DiskType.Hdd] | keyvalue: orderBySize; track item.key) {
-          <div>
-            @if (item.value) {
-              <div class="details-item">
-                <tn-icon name="hdd" library="custom"></tn-icon>
-                <div class="label">{{ getFilesize(item.key) }} </div>
-                <div class="value"> × {{ item.value.length }}</div>
-              </div>
-            }
-          </div>
-        }
-        @for (item of sizeDisksMap[DiskType.Ssd] | keyvalue: orderBySize; track item.key) {
-          <div>
-            @if (item.value) {
-              <div class="details-item">
-                <tn-icon name="ssd" library="custom"></tn-icon>
-                <div class="label">{{ getFilesize(item.key) }} </div>
-                <div class="value"> × {{ item.value.length }}</div>
-              </div>
-            }
-          </div>
-        }
-      } @else {
-        {{ 'No disks available.' | translate }}
+    @if (hasDisks$ | async) {
+      @for (item of sizeDisksMap[DiskType.Hdd] | keyvalue: orderBySize; track item.key) {
+        <div>
+          @if (item.value) {
+            <div class="details-item">
+              <tn-icon name="hdd" library="custom"></tn-icon>
+              <div class="label">{{ getFilesize(item.key) }} </div>
+              <div class="value"> × {{ item.value.length }}</div>
+            </div>
+          }
+        </div>
       }
-    </mat-card-content>
+      @for (item of sizeDisksMap[DiskType.Ssd] | keyvalue: orderBySize; track item.key) {
+        <div>
+          @if (item.value) {
+            <div class="details-item">
+              <tn-icon name="ssd" library="custom"></tn-icon>
+              <div class="label">{{ getFilesize(item.key) }} </div>
+              <div class="value"> × {{ item.value.length }}</div>
+            </div>
+          }
+        </div>
+      }
+    } @else {
+      {{ 'No disks available.' | translate }}
+    }
   } @else {
     <div class="loading">{{ 'Loading disks...' | translate }}</div>
   }
-</mat-card>
-
-<ng-template #loading>
-  <div class="loading">{{ 'Loading disks...' | translate }}</div>
-</ng-template>
+</tn-card>
