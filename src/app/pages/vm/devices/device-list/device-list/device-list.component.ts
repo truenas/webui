@@ -30,7 +30,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import {
-  dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toUniqueRowTag,
+  dataProviderLoading, dataProviderRows, mapTnSortToTableSort, memoizedRowTag,
 } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -109,6 +109,11 @@ export class DeviceListComponent implements OnInit {
   };
 
   protected readonly trackByDeviceId = (_index: number, row: VmDevice): number => row.id;
+
+  /** Row tag the template's `[tnTestId]`s are keyed on; memoized — every cell asks per pass. */
+  protected readonly uniqueRowTag = memoizedRowTag<VmDevice>(
+    (row) => `vm-device-${row.attributes.dtype}-${row.order}`,
+  );
 
   private get vmId(): number {
     return Number(this.route.snapshot.params['pk']);
@@ -284,10 +289,6 @@ export class DeviceListComponent implements OnInit {
     this.dataProvider.setSorting(
       mapTnSortToTableSort(event, this.displayedColumns, { sortAccessors: this.sortAccessors }),
     );
-  }
-
-  protected uniqueRowTag(row: VmDevice): string {
-    return toUniqueRowTag(`vm-device-${row.attributes.dtype}-${row.order}`);
   }
 
   protected getDeviceTypeLabel(device: VmDevice): string {

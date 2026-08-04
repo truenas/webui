@@ -69,8 +69,12 @@ export class VmEditFormComponent extends IxFormHostForm implements OnInit {
   private criticalGpuPrevention = inject(CriticalGpuPreventionService);
   private destroyRef = inject(DestroyRef);
 
-  /** The VM to edit, supplied by the `<tn-side-panel>` host. */
-  readonly vmToEdit = input<VirtualMachine | undefined>(undefined);
+  /**
+   * The VM to edit, supplied by the `<tn-side-panel>` host. Required: this form has no add
+   * mode, and `handleSubmit` dereferences the VM's id — without it the panel would open a
+   * form that looks fine and then throws on Save.
+   */
+  readonly vmToEdit = input.required<VirtualMachine>();
 
   readonly requiredRoles = [Role.VmWrite];
 
@@ -140,10 +144,7 @@ export class VmEditFormComponent extends IxFormHostForm implements OnInit {
 
     this.listenForFormValueChanges();
     this.setupCriticalGpuPrevention();
-
-    if (this.existingVm) {
-      this.setVmForEdit();
-    }
+    this.setVmForEdit();
   }
 
   private setVmForEdit(): void {

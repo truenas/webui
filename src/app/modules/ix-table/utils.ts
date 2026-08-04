@@ -37,6 +37,30 @@ export function toUniqueRowTag(value: string): string {
   return kebabCase(convertStringToId(value));
 }
 
+/**
+ * Wraps {@link toUniqueRowTag} in a per-row cache, for the template-side `[tnTestId]` of a
+ * migrated tn-table.
+ *
+ * Every cell of every row calls its table's row-tag function on every change-detection pass, so
+ * on a wide table that is (columns × rows) string rewrites per pass — and a list fed by a
+ * websocket subscription runs a lot of passes. The tag is a pure function of the row, so cache
+ * it against the row object; rows replaced by a reload drop out of the `WeakMap` on their own.
+ *
+ * @param build the raw, un-kebab-ed tag for a row, e.g. ``(vm) => `virtual-machine-${vm.name}` ``.
+ */
+export function memoizedRowTag<T extends object>(build: (row: T) => string): (row: T) => string {
+  const cache = new WeakMap<T, string>();
+
+  return (row: T) => {
+    let tag = cache.get(row);
+    if (tag === undefined) {
+      tag = toUniqueRowTag(build(row));
+      cache.set(row, tag);
+    }
+    return tag;
+  };
+}
+
 export function createTable<T>(
   columns: Column<T, ColumnComponent<T>>[],
   config?: { uniqueRowTag: (row: T) => string; ariaLabels: (row: T) => string[] },

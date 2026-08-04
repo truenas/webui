@@ -4,10 +4,12 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VmDeviceType, VmDiskMode, VmState } from 'app/enums/vm.enum';
+import { ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -104,15 +106,18 @@ describe('DeviceListComponent', () => {
     return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
   }
 
-  // These members are template-facing (`protected`) or component-internal (`private`); the
-  // typed accessors keep the cases below readable without a suppression at every call site.
-  /* eslint-disable @typescript-eslint/dot-notation */
-  const isDiskDevice = (device: VmDevice): boolean => spectator.component['isDiskDevice'](device);
-  const setVmRunning = (running: boolean): void => spectator.component['isVmRunning'].set(running);
-  const isVmRunning = (): boolean => spectator.component['isVmRunning']();
-  const onExportDisk = (device: VmDevice): void => spectator.component['onExportDisk'](device);
-  const loadVmName = (): void => spectator.component['loadVmName']();
-  /* eslint-enable @typescript-eslint/dot-notation */
+  /**
+   * Pushes a `vm.query` websocket event, the same path production uses to learn the VM
+   * started or stopped. Preferred over poking the component's running-state signal: it also
+   * covers the subscription that reads it, and keeps these cases off the component's internals.
+   */
+  function emitVmState(state: VmState): void {
+    spectator.inject(MockApiService).emitSubscribeEvent({
+      id: 76,
+      fields: { id: 76, name: 'Test VM', status: { state } },
+    } as ApiEventTyped);
+    spectator.detectChanges();
+  }
 
   it('loads devices using virtual machine id from url', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.device.query', [[['vm', '=', 76]]]);
@@ -189,9 +194,8 @@ describe('DeviceListComponent', () => {
       expect(await menu.getItemLabels()).toEqual(['Edit', 'Delete', 'Details', 'Export to Image']);
     });
 
-    it('disables Export to Image and says why while the VM is running', async () => {
-      setVmRunning(true);
-      spectator.detectChanges();
+    it('disables Export to Image and says why once the VM reports itself running', async () => {
+      emitVmState(VmState.Running);
 
       const menu = await openRowMenu(1);
 
@@ -209,29 +213,7 @@ describe('DeviceListComponent', () => {
       );
     });
 
-    it('correctly identifies disk devices', () => {
-      expect(isDiskDevice(devices[0])).toBe(false); // CD-ROM
-      expect(isDiskDevice(devices[1])).toBe(true); // Disk
-
-      // Test with null/undefined
-      expect(isDiskDevice(null)).toBe(false);
-      expect(isDiskDevice(undefined)).toBe(false);
-      expect(isDiskDevice({} as VmDevice)).toBe(false);
-    });
-
-    it('sets VM running state based on VM query', () => {
-      const apiService = spectator.inject(ApiService);
-
-      (apiService.call as jest.Mock).mockReturnValue(
-        of([{ id: 76, name: 'Test VM', status: { state: VmState.Running } } as VirtualMachine]),
-      );
-
-      loadVmName();
-
-      expect(isVmRunning()).toBe(true);
-    });
-
-    it('handles successful export with job dialog and success message', () => {
+    it('handles successful export with job dialog and success message', async () => {
       const dialogService = spectator.inject(DialogService);
       const snackbar = spectator.inject(SnackbarService);
       const tnDialog = spectator.inject(TnDialog);
@@ -252,8 +234,8 @@ describe('DeviceListComponent', () => {
         afterClosed: () => of({ result: true }),
       });
 
-      // Trigger export
-      onExportDisk(devices[1]);
+      const menu = await openRowMenu(1);
+      await menu.clickItem({ label: 'Export to Image' });
 
       expect(snackbar.success).toHaveBeenCalledWith(
         'Disk image successfully exported to /mnt/exports/vm-disk.qcow2',

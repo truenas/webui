@@ -50,8 +50,8 @@
     [expandable]="true"
     [clickable]="true"
     [loading]="isLoading()"
-    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
-    [emptyIcon]="emptyConf?.icon || emptyService.iconForType(emptyType())"
+    [emptyMessage]="emptyConf.title | translate"
+    [emptyIcon]="emptyConf.icon || emptyService.iconForType(emptyType())"
     (rowClick)="onRowClick($event)"
     (sortChange)="onSortChange($event)"
   >

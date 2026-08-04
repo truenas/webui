@@ -45,7 +45,7 @@ import {
 } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import {
-  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, memoizedRowTag, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -148,9 +148,10 @@ export class VmListComponent implements OnInit {
    * `propertyName` that names its `tnColumnDef`.
    *
    * The two toggle columns are declared as text columns here on purpose: the interactive
-   * switch is rendered by `<ix-table-toggle-cell>` in the template, and this model only
-   * needs a readable value for the case where the user hides the column and it falls
-   * through to the detail row.
+   * switch is rendered by `<ix-table-toggle-cell>` in the template, so this model only carries
+   * the readable Yes/No the detail row shows once the user hides the column. That readout is
+   * therefore text where it used to be a live toggle — deliberately, since the detail row
+   * already offers Start/Stop/Power Off buttons, so no action is actually lost with the column.
    */
   protected readonly columns = signal(createTable<VirtualMachine>([
     textColumn({
@@ -248,10 +249,21 @@ export class VmListComponent implements OnInit {
 
   protected readonly trackByVmId = (_index: number, row: VirtualMachine): number => row.id;
 
+  /**
+   * Row tag every `[tnTestId]` in the template is keyed on. Memoized because each of the 11
+   * columns asks for it on every change-detection pass, and `subscribeToVmEvents` forces one
+   * per websocket event.
+   */
+  protected readonly uniqueRowTag = memoizedRowTag<VirtualMachine>((row) => `virtual-machine-${row.name}`);
+
   // TEMP: tn-table allows several rows expanded at once and exposes no single-expand input
   // (0.3.26 has only `expandable` / `isRowExpandable`), so restore the previous ix-table
   // behaviour here: whenever a second row opens, collapse back to just the newly-opened one.
-  // Remove once the library grows a single-expand mode — see NAS-141021 library follow-ups.
+  // This corrects the state after the fact rather than preventing it — the chevron the
+  // `[expandable]` table renders itself never reaches `onRowClick`, so there is no handler to
+  // intercept — which means both rows paint expanded for a single frame before the older one
+  // collapses. Remove once the library grows a single-expand mode; see NAS-141021 library
+  // follow-ups.
   private previousExpandedRows = new Set<unknown>();
 
   constructor() {
@@ -375,10 +387,6 @@ export class VmListComponent implements OnInit {
     // Sort by the lowest port number if multiple display devices exist
     const ports = displayDevices.map((device) => device.attributes.port);
     return Math.min(...ports);
-  }
-
-  protected uniqueRowTag(row: VirtualMachine): string {
-    return toUniqueRowTag('virtual-machine-' + row.name);
   }
 
   /** Base accessible name identifying a row: "<name> Virtual Machine". */
