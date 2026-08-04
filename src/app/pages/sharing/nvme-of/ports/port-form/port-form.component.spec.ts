@@ -58,9 +58,14 @@ describe('PortFormComponent', () => {
     const closedSpy = jest.fn();
     spectator.component.closed.subscribe(closedSpy);
 
+    // The host panel's footer Save reads canSubmit(), so assert the gate here — address is required.
+    expect(spectator.component.canSubmit()).toBe(false);
+
     await (await getTnSelect('addr_trtype')).selectOption('TCP');
     await (await getTnInput('addr_trsvcid')).setValue('20000');
     await (await getTnSelect('addr_traddr')).selectOption('10.220.8.1');
+
+    expect(spectator.component.canSubmit()).toBe(true);
 
     spectator.component.submit();
 

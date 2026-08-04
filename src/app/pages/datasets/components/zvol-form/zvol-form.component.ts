@@ -247,8 +247,11 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
    * `onSuccess` hook — openers like the explorer's "Create Zvol" need it to select the new zvol.
    *
    * Emitted unconditionally: the panel host tears down on this event alone, so gating on
-   * `savedDataset` would leave the panel open after a save that succeeded but returned no record.
-   * `null` is the "saved, but no record" payload — hence the `Dataset | null` on this class.
+   * `savedDataset` would leave the panel open after a save that succeeded but returned no record —
+   * hence the `Dataset | null` on this class. That `null` is a safety net, not a routine path: it
+   * is falsy, so `FormSidePanelService` reads it as a cancel and the opener's `onSuccess` (snackbar,
+   * dataset refresh, explorer selection) is skipped. Both `pool.dataset.create` and
+   * `pool.dataset.update` return the record, so it should never fire in practice.
    */
   protected onFormClosed(): void {
     this.closed.emit(this.savedDataset ?? null);

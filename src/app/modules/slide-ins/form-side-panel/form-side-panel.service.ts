@@ -123,12 +123,15 @@ export class FormSidePanelService {
    * `''`, `null` or `false` to mean success — hand back the record, or a non-empty wrapper. (An
    * empty array is truthy, so a bulk save that changed nothing still resolves as a success.)
    *
-   * Hence the hosted form may close with `R | null` while the opener only ever sees `R | undefined`:
-   * that is what lets a form emit `null` on a save that returned no record (so the panel still tears
-   * down) without every `onSuccess` callback having to null-check.
+   * A form whose payload has a `null` fallback (`IxFormHostForm<Dataset | null>`) is still accepted
+   * here, and emitting that `null` does tear the panel down — but it resolves as a CANCEL, not a
+   * save: the opener's `onSuccess` never runs, so its snackbar and store refresh are skipped. Use
+   * that fallback only as a safety net for an endpoint that is expected to return the saved record
+   * (without it, a record-less success would leave the panel stuck open), never as a routine
+   * "saved, no record" path.
    */
   open<R = boolean>(
-    component: Type<SidePanelHostCloseable<R | null>>,
+    component: Type<SidePanelHostCloseable<R>>,
     options: FormSidePanelOptions = {},
   ): SlideInResult<R> {
     const top = this.stack[this.stack.length - 1];
@@ -142,7 +145,7 @@ export class FormSidePanelService {
     // Defaults to a cancel; overwritten with the form's response when it closes itself via save.
     let pendingResponse: R | undefined;
 
-    const portal = new ComponentPortal<SidePanelHostCloseable<R | null>>(component, null, this.injector);
+    const portal = new ComponentPortal<SidePanelHostCloseable<R>>(component, null, this.injector);
     const containerRef = createComponent(FormSidePanelContainerComponent, {
       environmentInjector: this.environmentInjector,
     });
@@ -176,7 +179,7 @@ export class FormSidePanelService {
       // Form-initiated close (save / cancel). A truthy payload is a success — `true` for the
       // default boolean form, or the created record for a richer `R`; any falsy value is a
       // cancellation, matching SlideInResult's `=== undefined` convention.
-      (form as SidePanelHostCloseable<R | null>).closed.subscribe((saved) => {
+      (form as SidePanelHostCloseable<R>).closed.subscribe((saved) => {
         pendingResponse = saved || undefined;
         containerRef.setInput('open', false);
       });

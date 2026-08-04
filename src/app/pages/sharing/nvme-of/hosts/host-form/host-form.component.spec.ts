@@ -63,6 +63,9 @@ describe('HostFormComponent', () => {
     const closedSpy = jest.fn();
     spectator.component.closed.subscribe(closedSpy);
 
+    // The host panel's footer Save reads canSubmit(), so assert the gate here — hostnqn is required.
+    expect(component.canSubmit()).toBe(false);
+
     await (await getTnInput('hostnqn')).setValue('nqn.2014-08.org');
     await (await getTnCheckbox('requireHostAuthentication')).check();
     await (await getTnInput('dhchap_key')).setValue('1234567890');
@@ -72,6 +75,8 @@ describe('HostFormComponent', () => {
     await setEditableSelect(0, 'dhchap_hash', 'SHA-512');
     // The DH Group editable only renders after addDhKeyExchange is checked above.
     await setEditableSelect(1, 'dhchap_dhgroup', '2048-BIT');
+
+    expect(component.canSubmit()).toBe(true);
 
     spectator.component.submit();
 

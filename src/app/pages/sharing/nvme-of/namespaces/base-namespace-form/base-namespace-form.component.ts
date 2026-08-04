@@ -88,6 +88,10 @@ export class BaseNamespaceFormComponent implements OnInit {
    * The group to render into, built by the host with `createNamespaceForm`. It backs both the
    * template's `[formGroup]` and the `device_type` branching below, so "the group I branch on" and
    * "the group my controls write to" are the same object by construction.
+   *
+   * Expected to be STABLE for the component's lifetime — `ngOnInit` reads it once to wire the
+   * branch sync, so swapping the instance later would leave that wiring on the old group (New File
+   * controls never re-enabled). Both hosts build it as a field initializer and never reassign it.
    */
   readonly group = input.required<NamespaceFormGroup>();
 
