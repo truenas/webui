@@ -4,10 +4,9 @@ import {
   inject, input, OnDestroy, OnInit, Signal, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnSpinnerComponent, TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnSpinnerComponent, TnIconComponent } from '@truenas/ui-components';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal } from '@xterm/xterm';
 import FontFaceObserver from 'fontfaceobserver';
@@ -31,7 +30,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   providers: [ShellService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
+    TnButtonComponent,
     TnSpinnerComponent,
     NgStyle,
     TranslateModule,
