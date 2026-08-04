@@ -2,33 +2,56 @@
   @if (nonUniqueSerialDisks.length) {
     <div class="spacer-top">
       <ix-warning [message]="nonUniqueSerialDisksTooltip"></ix-warning>
-      <ix-radio-group
-        formControlName="allowNonUniqueSerialDisks"
+      <tn-form-field
         [label]="'Allow non-unique serialed disks (not recommended)' | translate"
         [tooltip]="nonUniqueSerialDisksTooltip | translate"
         [required]="true"
-        [options]="allowNonUniqueSerialDisksOptions$"
-        [inlineFields]="true"
-      ></ix-radio-group>
+      >
+        <!--
+          Options are projected rather than passed via `[options]` so each one can carry the
+          legacy `radio-button-*` test id; see "Radio groups" in the tn-migration playbook.
+        -->
+        <tn-radio-group
+          formControlName="allowNonUniqueSerialDisks"
+          [inline]="true"
+        >
+          @for (option of allowNonUniqueSerialDisksOptions(); track option.value) {
+            <tn-radio
+              [label]="option.label"
+              [value]="option.value"
+              [testId]="['radio-button', 'allow-non-unique-serial-disks', option.label]"
+            ></tn-radio>
+          }
+        </tn-radio-group>
+      </tn-form-field>
     </div>
   }
 
   @if (disksWithExportedPools.length) {
     <div class="spacer-bottom">
-      <ix-warning [message]="exportedPoolsWarning"></ix-warning>
+      <ix-warning [message]="exportedPoolsWarning | translate"></ix-warning>
       <ix-label [label]="'Select disks you want to use' | translate"></ix-label>
       @for (item of poolAndDisks | keyvalue; track item.key) {
-        <mat-checkbox
-          color="primary"
-          [ixTest]="[item.key, 'exported_pool']"
-          [value]="item.key"
-          (change)="checkboxChanged($event)"
+        <!--
+          `label` is what tn-checkbox emits as the input's `aria-label`, which overrides the
+          projected content as the accessible name — without it every row in this loop would be
+          announced as the default "Checkbox", with no way to tell the pools apart.
+
+          The pool and disk names are data, but the punctuation between them is not: it goes
+          through a translatable pattern rather than a hard-coded `+ ': ' +`, so the separator and
+          the clause order stay in the translator's hands. The `, ` joining the disk names stays
+          hard-coded on purpose — it mirrors the visible list rendered right below.
+        -->
+        <tn-checkbox
+          [testId]="[item.key, 'exported_pool']"
+          [label]="'{pool}: {disks}' | translate: { pool: item.key, disks: item.value.join(', ') }"
+          (change)="checkboxChanged(item.key, $event)"
         >
-          <div class="label">
+          <div tnCheckboxLabel class="label">
             <strong class="pool-name">{{ item.key }}</strong>
             <small class="disk-name">{{ item.value.join(', ') }}</small>
           </div>
-        </mat-checkbox>
+        </tn-checkbox>
       }
     </div>
   }

@@ -1,12 +1,12 @@
 import {
-  ComponentHarness, ComponentHarnessConstructor, HarnessQuery, parallel,
+  ComponentHarness, HarnessQuery, parallel,
 } from '@angular/cdk/testing';
 import { TnButtonHarness, TnStepperHarness } from '@truenas/ui-components';
+import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import {
-  fillControlValues,
+  fillControlValues, formControlHarnessTypes,
   getControlValues, getDisabledStates,
-  indexControlsByLabel, IxFormBasicValueType, SupportedFormControlHarness,
-  supportedFormControlSelectors,
+  indexControlsByLabel, IxFormBasicValueType,
 } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { ConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.harness';
 import { ExistingConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/existing-configuration-preview/existing-configuration-preview.harness';
@@ -57,17 +57,17 @@ export class PoolManagerHarness extends ComponentHarness {
 
   // TODO: This is similar to ix-form.harness.ts and ix-fieldset-harness.
   // TODO: Find a way to apply IxFormHarness to portions of components.
-  async getControlHarnessesInStep(): Promise<Record<string, SupportedFormControlHarness>> {
+  async getControlHarnessesInStep(): Promise<Record<string, IxFormControlHarness>> {
     // Only the active step's content is rendered, so querying the host is
-    // equivalent to scoping to the active step.
+    // equivalent to scoping to the active step. Controls migrated to tn-* are
+    // wrapped in `tn-form-field` and driven through TnFormControlHarness so a
+    // step mixing ix-* and tn-* controls can still be filled/read by label.
     const controlsByTypes = await parallel(() => {
-      return supportedFormControlSelectors.map((selector) => {
-        return this.locatorForAll(selector as ComponentHarnessConstructor<ComponentHarness>)();
-      });
+      return formControlHarnessTypes.map((harnessType) => this.locatorForAll(harnessType)());
     });
 
     const controls = controlsByTypes.flatMap((controlsInType) => controlsInType.flat());
-    return indexControlsByLabel(controls as SupportedFormControlHarness[]);
+    return indexControlsByLabel(controls);
   }
 
   async getConfigurationPreviewSummary(): Promise<Record<string, string>> {
@@ -107,7 +107,7 @@ export class PoolManagerHarness extends ComponentHarness {
     return fillControlValues(controls, values);
   }
 
-  async getControl(label: string): Promise<SupportedFormControlHarness> {
+  async getControl(label: string): Promise<IxFormControlHarness> {
     const controlsDict = await this.getControlHarnessesInStep();
     return controlsDict[label];
   }

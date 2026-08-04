@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent, TnSpinnerComponent,
+} from '@truenas/ui-components';
 import {
   Observable, forkJoin, last, map, of, switchMap,
 } from 'rxjs';
@@ -17,13 +18,11 @@ import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { LockedSedDisksComponent } from './locked-sed-disks/locked-sed-disks.component';
@@ -35,24 +34,23 @@ type ImportStep = 'loading' | 'locked-sed' | 'unlock-sed' | 'import';
 @Component({
   selector: 'ix-import-pool',
   templateUrl: './import-pool.component.html',
+  styleUrls: ['./import-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    TnSpinnerComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     FormActionsComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
     LockedSedDisksComponent,
     UnlockSedDisksComponent,
   ],
 })
-export class ImportPoolComponent implements OnInit {
+export class ImportPoolComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
@@ -62,39 +60,55 @@ export class ImportPoolComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   protected readonly requiredRoles = [Role.PoolWrite];
 
-  readonly helptext = helptextImport;
+  protected readonly helptext = helptextImport;
   protected isLoading = signal(false);
   protected currentStep = signal<ImportStep>('loading');
   protected lockedSedDisks = signal<LockedSedDisk[]>([]);
   protected globalSedPassword = signal('');
 
-  importablePools: {
+  private importablePools: {
     name: string;
     guid: string;
   }[] = [];
 
-  formGroup = this.fb.nonNullable.group({
+  readonly form = this.fb.nonNullable.group({
     guid: ['' as string, Validators.required],
   });
 
-  pool = {
-    fcName: 'guid',
-    label: helptextImport.poolLabel,
-    options: of<Option[]>([]),
-  };
+  /**
+   * Required by {@link SidePanelForm}, but inert here: `PoolsDashboardComponent` opens this form
+   * `footerless`, so the panel renders no Save action to read it and the template carries its own
+   * submit button. Wire the footer to it before deleting the in-template one, not the other way
+   * round — the multi-step flow (locked SED -> unlock -> import) has steps with no submit at all.
+   */
+  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.formGroup.dirty);
-    });
-  }
+  protected readonly poolLabel = helptextImport.poolLabel;
+  protected readonly poolOptions = signal<Option[]>([]);
+
+  /**
+   * The option label is `<name> | <guid>` while the value is the bare guid, so the
+   * test id is pinned to the label to keep the pre-migration `option-guid-<name>-<guid>`.
+   */
+  protected readonly poolOptionTestIdKey = optionTestIdByLabel;
+
+  private readonly unlockSedDisks = viewChild(UnlockSedDisksComponent);
 
   ngOnInit(): void {
     this.checkForLockedDisks();
+  }
+
+  /**
+   * The unlock-SED step edits a form owned by the child component, which the inherited guard
+   * (which only sees `form`) can't see — so a half-typed SED password would be discarded silently.
+   */
+  override hasUnsavedChanges(): boolean {
+    return super.hasUnsavedChanges() || Boolean(this.unlockSedDisks()?.hasUnsavedChanges());
   }
 
   private checkForLockedDisks(): void {
@@ -145,11 +159,10 @@ export class ImportPoolComponent implements OnInit {
           guid: pool.guid,
         }));
 
-        const opts = result.map((pool) => ({
+        this.poolOptions.set(result.map((pool) => ({
           label: `${pool.name} | ${pool.guid}`,
           value: pool.guid,
-        } as Option));
-        this.pool.options = of(opts);
+        } as Option)));
 
         this.currentStep.set('import');
       },
@@ -178,7 +191,7 @@ export class ImportPoolComponent implements OnInit {
 
   protected onSubmit(): void {
     this.dialogService.jobDialog(
-      this.api.job('pool.import_pool', [{ guid: this.formGroup.getRawValue().guid }]),
+      this.api.job('pool.import_pool', [{ guid: this.form.getRawValue().guid }]),
       { title: this.translate.instant('Importing Pool') },
     )
       .afterClosed()
@@ -189,7 +202,7 @@ export class ImportPoolComponent implements OnInit {
       )
       .subscribe({
         next: ([datasets, shouldTryUnlocking]) => {
-          this.slideInRef.close({ response: true });
+          this.close(true);
           this.snackbar.success(this.translate.instant('Pool imported successfully.'));
           if (shouldTryUnlocking) {
             this.router.navigate(['/datasets', datasets[0].id, 'unlock']);
@@ -202,7 +215,7 @@ export class ImportPoolComponent implements OnInit {
   }
 
   private checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
-    const selectedPool = this.importablePools.find((pool) => pool.guid === this.formGroup.value.guid);
+    const selectedPool = this.importablePools.find((pool) => pool.guid === this.form.value.guid);
     if (!selectedPool) {
       return of([[], false]);
     }

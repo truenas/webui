@@ -1,7 +1,14 @@
 @import 'mixins/cards';
 
+@include tn-detail-card;
+@include tn-card-block-host;
+
+.loading {
+  padding: 16px;
+}
+
 .card {
-  @include details-card();
+  @include tn-details-item();
 }
 
 .details-item {
@@ -10,10 +17,6 @@
   tn-icon {
     margin-right: 10px;
   }
-}
-
-.loading {
-  padding: 16px;
 }
 
 .sed-badge {

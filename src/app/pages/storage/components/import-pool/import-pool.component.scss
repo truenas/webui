@@ -1,0 +1,14 @@
+.loading-step {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+  padding: 48px 16px;
+  text-align: center;
+}
+
+.loading-message {
+  color: var(--fg2);
+  margin: 0;
+}

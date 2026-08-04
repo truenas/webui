@@ -1,9 +1,7 @@
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import {
-  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
-} from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { omitBy } from 'lodash-es';
 import { map } from 'rxjs';
 import { VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
@@ -21,10 +19,7 @@ import {
   styleUrls: ['./new-devices-preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
+    TnCardComponent,
     TranslateModule,
     CastPipe,
     MapValuePipe,

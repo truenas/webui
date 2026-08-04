@@ -1,8 +1,7 @@
-import { computed, inject, Provider } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Provider } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { TranslateService } from '@ngx-translate/core';
 import { TN_TABLE_PAGER_LABELS, type TnTablePagerLabels } from '@truenas/ui-components';
+import { translatedSignal } from 'app/modules/translate/translated-signal';
 
 const labelKeys: Record<keyof TnTablePagerLabels, string> = {
   itemsPerPage: T('Items per page'),
@@ -17,22 +16,14 @@ const labelKeys: Record<keyof TnTablePagerLabels, string> = {
 export function provideTnTablePagerLabels(): Provider {
   return {
     provide: TN_TABLE_PAGER_LABELS,
-    useFactory: () => {
-      const translate = inject(TranslateService);
-      const langChange = toSignal(translate.onLangChange, { initialValue: null });
-      return computed<TnTablePagerLabels>(() => {
-        // Read the lang-change signal so the computed re-runs after each language switch.
-        langChange();
-        return {
-          itemsPerPage: translate.instant(labelKeys.itemsPerPage),
-          of: translate.instant(labelKeys.of),
-          firstPage: translate.instant(labelKeys.firstPage),
-          previousPage: translate.instant(labelKeys.previousPage),
-          nextPage: translate.instant(labelKeys.nextPage),
-          lastPage: translate.instant(labelKeys.lastPage),
-          tablePagination: translate.instant(labelKeys.tablePagination),
-        };
-      });
-    },
+    useFactory: () => translatedSignal<TnTablePagerLabels>((translate) => ({
+      itemsPerPage: translate.instant(labelKeys.itemsPerPage),
+      of: translate.instant(labelKeys.of),
+      firstPage: translate.instant(labelKeys.firstPage),
+      previousPage: translate.instant(labelKeys.previousPage),
+      nextPage: translate.instant(labelKeys.nextPage),
+      lastPage: translate.instant(labelKeys.lastPage),
+      tablePagination: translate.instant(labelKeys.tablePagination),
+    })),
   };
 }
