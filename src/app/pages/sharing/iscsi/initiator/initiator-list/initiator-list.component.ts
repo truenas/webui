@@ -10,7 +10,6 @@ import {
   TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -26,6 +25,7 @@ import { TableColumnPickerComponent } from 'app/modules/ix-table/components/tabl
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { initiatorListElements } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.elements';
@@ -125,9 +125,7 @@ export class InitiatorListComponent implements OnInit {
   protected readonly trackByInitiatorId = (_index: number, row: IscsiInitiatorGroup): number => row.id;
 
   protected uniqueRowTag(row: IscsiInitiatorGroup): string {
-    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
-    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-    return kebabCase(convertStringToId(`iscsi-initiator-${row.id}`));
+    return normalizeTestIdString(convertStringToId(`iscsi-initiator-${row.id}`));
   }
 
   protected ariaLabel(row: IscsiInitiatorGroup): string {
@@ -154,7 +152,9 @@ export class InitiatorListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<IscsiInitiatorGroup>(event, this.displayedColumns()));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort<IscsiInitiatorGroup>(event, this.displayedColumns(), { columns: this.columns() }),
+    );
   }
 
   protected onListFiltered(query: string): void {

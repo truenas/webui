@@ -104,7 +104,7 @@ export class DeviceListComponent implements OnInit {
    * raw value lives under `attributes`), so it needs an explicit accessor to sort by what
    * the user actually sees.
    */
-  private readonly sortByMap: Record<string, (row: VmDevice) => string | number> = {
+  private readonly sortAccessors: Record<string, (row: VmDevice) => string | number> = {
     dtype: (row) => this.getDeviceTypeLabel(row),
   };
 
@@ -281,7 +281,9 @@ export class DeviceListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns, this.sortByMap));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort(event, this.displayedColumns, { sortAccessors: this.sortAccessors }),
+    );
   }
 
   protected uniqueRowTag(row: VmDevice): string {

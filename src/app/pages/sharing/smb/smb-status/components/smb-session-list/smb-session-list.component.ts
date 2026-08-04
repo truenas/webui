@@ -8,7 +8,6 @@ import {
   TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbSession } from 'app/interfaces/smb-status.interface';
@@ -20,6 +19,7 @@ import { TableColumnPickerComponent } from 'app/modules/ix-table/components/tabl
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -115,9 +115,7 @@ export class SmbSessionListComponent implements OnInit {
   }
 
   protected uniqueRowTag(row: SmbSession): string {
-    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
-    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-    return kebabCase(convertStringToId('smb-session-' + row.session_id));
+    return normalizeTestIdString(convertStringToId('smb-session-' + row.session_id));
   }
 
   protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
@@ -126,6 +124,8 @@ export class SmbSessionListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<SmbSession>(event, this.displayedColumns()));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort<SmbSession>(event, this.displayedColumns(), { columns: this.columns() }),
+    );
   }
 }

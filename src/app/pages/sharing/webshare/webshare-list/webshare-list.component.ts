@@ -11,7 +11,6 @@ import {
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { filter, map } from 'rxjs';
 import { combineLatestWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -34,6 +33,7 @@ import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -163,10 +163,7 @@ export class WebShareListComponent implements OnInit {
   protected readonly trackByWebShareId = (_index: number, row: WebShareTableRow): number => row.id;
 
   protected uniqueRowTag(row: WebShareTableRow): string {
-    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('docs2' → 'docs-2')
-    // while the library's kebab does not, so the tag resolves identically through the legacy
-    // [ixTest] directive and the tn cell components — byte-matching pre-migration data-test values.
-    return kebabCase(convertStringToId(row.name));
+    return normalizeTestIdString(convertStringToId(row.name));
   }
 
   protected ariaLabel(row: WebShareTableRow): string {
@@ -203,7 +200,9 @@ export class WebShareListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<WebShareTableRow>(event, this.displayedColumns()));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort<WebShareTableRow>(event, this.displayedColumns(), { columns: this.columns() }),
+    );
   }
 
   onListFiltered(query: string): void {

@@ -58,6 +58,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
         doStop: jest.fn(() => of()),
         doRestart: jest.fn(() => of()),
         doPowerOff: jest.fn(() => of()),
+        doReset: jest.fn(() => of(true)),
         openDisplay: jest.fn(() => of()),
       }),
       mockProvider(FormSidePanelService, {
@@ -92,6 +93,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
     expect(testIds).toEqual(expect.arrayContaining([
       'button-stop-2',
       'button-restart-2',
+      'button-reset-2',
       'button-power-off-2',
       'button-edit-2',
       'button-delete-2',
@@ -189,6 +191,25 @@ describe('VirtualMachineDetailsRowComponent', () => {
     expect(spectator.inject(VmService).doPowerOff).toHaveBeenCalledWith(virtualMachine);
   });
 
+  it('should call service to reset the VM', async () => {
+    const resetButton = await loader.getHarness(TnButtonHarness.with({ label: /Reset/ }));
+    expect(await resetButton.getIconName()).toBe('mdi-restart-alert');
+
+    await resetButton.click();
+
+    expect(spectator.inject(VmService).doReset).toHaveBeenCalledWith(virtualMachine);
+  });
+
+  it('spells out the hard reset in the accessible name of the Reset button', () => {
+    // tn-button renders `ariaLabel` onto the inner native button, which is what AT focuses.
+    const ariaLabel = spectator.query('tn-button button[data-test="button-reset-2"]')
+      ?.getAttribute('aria-label');
+
+    expect(ariaLabel).toContain('hard reset');
+    // The consequences belong in the tooltip and the confirmation dialog, not in the name.
+    expect(ariaLabel).not.toContain('data loss');
+  });
+
   it('should call service to open display', async () => {
     const openDisplayButton = await loader.getHarness(TnButtonHarness.with({ label: /Display/ }));
     await openDisplayButton.click();
@@ -219,12 +240,14 @@ describe('VirtualMachineDetailsRowComponent', () => {
       expect(spectator.inject(VmService).doStartResume).toHaveBeenCalledWith(suspendedVirtualMachine);
     });
 
-    it('should not show Stop or Restart buttons for suspended VM', async () => {
+    it('should not show Stop, Restart or Reset buttons for suspended VM', async () => {
       const stopButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: /Stop/ }));
       const restartButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: /Restart/ }));
+      const resetButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: /Reset/ }));
 
       expect(stopButtons).toHaveLength(0);
       expect(restartButtons).toHaveLength(0);
+      expect(resetButtons).toHaveLength(0);
     });
 
     it('should not show Display button for suspended VM', async () => {

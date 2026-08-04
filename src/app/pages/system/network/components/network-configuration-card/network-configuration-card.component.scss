@@ -1,4 +1,5 @@
 @import 'scss-imports/variables';
+@import 'mixins/tn-list';
 
 .card {
   width: 100%;
@@ -32,6 +33,10 @@
 
 .list {
   margin-bottom: 10px;
+
+  // The leading slot centres the icon for us; keep this row's own tighter gap
+  // rather than the library's standard 16px.
+  @include tn-list-item-leading-gap(0);
 
   .list-icon {
     min-width: 30px;

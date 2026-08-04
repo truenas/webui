@@ -38,18 +38,4 @@ export const helptextServiceSnmp = {
  href="http://net-snmp.sourceforge.net/docs/man/snmpd.conf.html"\
  target="_blank">snmpd.conf(5)</a> options. Add one\
  option for each line.'),
-
-  loglevelTooltip: T('Choose how many log entries to create. Choices range\
- from the least log entries (<i>Emergency</i>) to the\
- most (<i>Debug</i>).'),
-  loglevelOptions: [
-    { label: 'Emergency', value: 0 },
-    { label: 'Alert', value: 1 },
-    { label: 'Critical', value: 2 },
-    { label: 'Error', value: 3 },
-    { label: 'Warning', value: 4 },
-    { label: 'Notice', value: 5 },
-    { label: 'Info', value: 6 },
-    { label: 'Debug', value: 7 },
-  ],
 };

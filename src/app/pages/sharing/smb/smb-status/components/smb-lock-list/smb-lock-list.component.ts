@@ -9,7 +9,6 @@ import {
   TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
@@ -21,6 +20,7 @@ import { TableColumnPickerComponent } from 'app/modules/ix-table/components/tabl
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SmbOpenFilesComponent } from 'app/pages/sharing/smb/smb-status/components/smb-open-files/smb-open-files.component';
 
@@ -81,6 +81,11 @@ export class SmbLockListComponent implements OnInit {
       getValue: (row) => {
         return Object.values(row.fileid).join(':');
       },
+      // The rendered id is a colon-joined numeric triple, so sorting the text puts "10:5:0"
+      // before "2:9:0". Order by the parts numerically, most significant first.
+      sortBy: (row) => [row.fileid.devid, row.fileid.inode, row.fileid.extid]
+        .map((part) => String(part).padStart(20, '0'))
+        .join(':'),
     }),
     textColumn({
       title: this.translate.instant('Open Files'),
@@ -88,6 +93,9 @@ export class SmbLockListComponent implements OnInit {
       getValue: (row) => {
         return this.translate.instant('{n, plural, =0 {No open files} one {# open file} other {# open files}}', { n: Object.keys(row.opens).length });
       },
+      // Sort by the count, not by the pluralized text — otherwise "10 open files" sorts
+      // before "2 open files".
+      sortBy: (row) => Object.keys(row.opens).length,
     }),
     textColumn({
       title: this.translate.instant('Num Pending Deletes'),
@@ -132,9 +140,9 @@ export class SmbLockListComponent implements OnInit {
   }
 
   protected uniqueRowTag(row: SmbLockInfo): string {
-    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
-    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-    return kebabCase(convertStringToId(`smb-lock-${row.filename}-${row.fileid.devid}-${row.fileid.extid}`));
+    return normalizeTestIdString(
+      convertStringToId(`smb-lock-${row.filename}-${row.fileid.devid}-${row.fileid.extid}`),
+    );
   }
 
   protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
@@ -143,6 +151,8 @@ export class SmbLockListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<SmbLockInfo>(event, this.displayedColumns()));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort<SmbLockInfo>(event, this.displayedColumns(), { columns: this.columns() }),
+    );
   }
 }

@@ -207,7 +207,7 @@ export class VmListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Display Port'),
-      // The cast is nominal: `propertyName` only names the `tnColumnDef`, and `sortByMap`
+      // The cast is nominal: `propertyName` only names the `tnColumnDef`, and `sortAccessors`
       // supplies the actual sort accessor, so the value is never read off the row.
       propertyName: displayPortColumn as keyof VirtualMachine,
       hidden: true,
@@ -241,7 +241,7 @@ export class VmListComponent implements OnInit {
    * Sort accessors for the columns tn-table can't sort by `propertyName` alone —
    * `status` is an object and `display_port` is derived from the VM's devices.
    */
-  private readonly sortByMap: Record<string, (row: VirtualMachine) => string | number> = {
+  private readonly sortAccessors: Record<string, (row: VirtualMachine) => string | number> = {
     status: (row) => (row.status.state === VmState.Running ? 1 : 0),
     [displayPortColumn]: (row) => this.getDisplayPortSortValue(row),
   };
@@ -404,7 +404,9 @@ export class VmListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns(), this.sortByMap));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort(event, this.displayedColumns(), { sortAccessors: this.sortAccessors }),
+    );
   }
 
   protected onListFiltered(query: string): void {

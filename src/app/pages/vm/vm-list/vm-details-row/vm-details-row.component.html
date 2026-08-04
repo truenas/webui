@@ -19,6 +19,16 @@
 
   <tn-button
     *ixRequiresRoles="requiredRoles"
+    icon="mdi-restart-alert"
+    [label]="'Reset' | translate"
+    [ariaLabel]="resetAriaLabel"
+    [tnTooltip]="resetTooltip"
+    [testId]="['reset', vm().id]"
+    (onClick)="doReset()"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
     icon="mdi-power"
     [label]="'Power Off' | translate"
     [ariaLabel]="'Power Off' | translate"

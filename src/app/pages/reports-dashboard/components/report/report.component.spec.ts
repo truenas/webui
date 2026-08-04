@@ -111,6 +111,7 @@ describe('ReportComponent', () => {
 
   describe('resize functionality', () => {
     beforeEach(() => {
+      jest.useFakeTimers();
       spectator = createComponent({
         props: {
           report: {
@@ -127,55 +128,41 @@ describe('ReportComponent', () => {
       });
     });
 
-    it('should initialize viewport change detection on init', () => {
-      // Simply verify that ngOnInit completes without errors
-      expect(() => {
-        spectator.component.ngOnInit();
-      }).not.toThrow();
+    afterEach(() => {
+      jest.useRealTimers();
     });
 
-    it('should resize chart when window resize event occurs', async () => {
-      spectator.component.ngOnInit();
+    it('should initialize viewport change detection on init', () => {
+      // Spectator already ran ngOnInit; calling it again would subscribe to resize twice.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((spectator.component as any).resizeSubscription).toBeDefined();
+    });
+
+    it('should resize chart when window resize event occurs', () => {
       spectator.component.isReady = true;
 
       // Trigger window resize event
-      const resizeEvent = new Event('resize');
-      global.dispatchEvent(resizeEvent);
+      global.dispatchEvent(new Event('resize'));
 
-      // Wait for debounce
-      await new Promise<void>((resolve): void => {
-        setTimeout(() => resolve(), 150);
-      });
+      // Fast-forward past the 100ms debounce and the setTimeout in resizeChart
+      jest.advanceTimersByTime(200);
 
       expect(mockLineChart.render).toHaveBeenCalledWith(true);
     });
 
-    it('should not resize chart before component is ready', async () => {
-      spectator.component.ngOnInit();
+    it('should not resize chart before component is ready', () => {
       spectator.component.isReady = false;
 
       // Trigger window resize event
-      const resizeEvent = new Event('resize');
-      global.dispatchEvent(resizeEvent);
+      global.dispatchEvent(new Event('resize'));
 
-      // Wait for debounce
-      await new Promise<void>((resolve): void => {
-        setTimeout(() => resolve(), 150);
-      });
+      // Fast-forward past the 100ms debounce and the setTimeout in resizeChart
+      jest.advanceTimersByTime(200);
 
       expect(mockLineChart.render).not.toHaveBeenCalled();
     });
 
     it('should resize chart when menu state changes', () => {
-      jest.useFakeTimers();
-
-      // Mock the line chart first
-      Object.defineProperty(spectator.component, 'lineChart', {
-        value: jest.fn(() => mockLineChart),
-        configurable: true,
-      });
-      spectator.component.ngOnInit();
-
       // Trigger resize manually - need to use setTimeout like the actual code
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (spectator.component as any).resizeChart();
@@ -184,8 +171,6 @@ describe('ReportComponent', () => {
       jest.runAllTimers();
 
       expect(mockLineChart.render).toHaveBeenCalledWith(true);
-
-      jest.useRealTimers();
     });
 
     it('should handle resize when line chart is not available', () => {
@@ -201,7 +186,6 @@ describe('ReportComponent', () => {
     });
 
     it('should unsubscribe from resize events on destroy', () => {
-      spectator.component.ngOnInit();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const subscription = (spectator.component as any).resizeSubscription;
 

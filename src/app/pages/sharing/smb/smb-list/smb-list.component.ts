@@ -11,7 +11,6 @@ import {
   TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { of, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -37,6 +36,7 @@ import {
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -214,10 +214,7 @@ export class SmbListComponent implements OnInit {
   protected readonly trackBySmbId = (_index: number, row: SmbShare): number => row.id;
 
   protected uniqueRowTag(row: SmbShare): string {
-    // Pre-split with lodash kebabCase: it breaks letter–digit boundaries ('share1' → 'share-1')
-    // while the library's kebab does not, so the tag resolves identically through the legacy
-    // [ixTest] directive and the tn cell components — byte-matching pre-migration data-test values.
-    return kebabCase(convertStringToId('smb-' + row.name));
+    return normalizeTestIdString(convertStringToId('smb-' + row.name));
   }
 
   protected ariaLabel(row: SmbShare): string {
@@ -305,7 +302,9 @@ export class SmbListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<SmbShare>(event, this.displayedColumns()));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort<SmbShare>(event, this.displayedColumns(), { columns: this.columns() }),
+    );
   }
 
   protected onListFiltered(query: string): void {

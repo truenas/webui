@@ -15,7 +15,9 @@
     "selector-pseudo-element-no-unknown": [true, {
       "ignorePseudoElements": ["ng-deep"]
     }],
-    "selector-disallowed-list": ["mat-icon"]
+    "selector-disallowed-list": [["mat-icon", "/\\.tn-list-item__/"], {
+      "message": "Disallowed selector. `mat-icon` is Angular Material — use `ix-icon`/`tn-icon`. `.tn-list-item__*` is internal @truenas/ui-components markup — use (or add) a mixin in src/assets/styles/mixins/tn-list.scss instead, see \"Known Library Gaps\" in TRUENAS_UI_INTEGRATION.md."
+    }]
   },
   "ignoreFiles": [
     "src/assets/iconfont/mdi/scss/_functions.scss"

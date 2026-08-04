@@ -275,6 +275,12 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       payload.all_sed = true;
     }
 
+    // Community Edition only. The flag is gated to CE in the UI, so state.forceTopology
+    // is never true on Enterprise, where middleware rejects it outright.
+    if (this.state.forceTopology) {
+      payload.force_topology = true;
+    }
+
     return payload;
   }
 
@@ -283,6 +289,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       topology: topologyToPayload(this.state.topology),
       allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,
     };
+
+    if (this.state.forceTopology) {
+      payload.force_topology = true;
+    }
 
     this.dialogService.jobDialog(
       this.api.job('pool.update', [this.existingPool.id, payload]),

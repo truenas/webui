@@ -37,8 +37,8 @@ interface ListState<T> {
     TnIconComponent,
     TnIconButtonComponent,
     TnListComponent,
-    TnListItemComponent,
     TnListIconDirective,
+    TnListItemComponent,
     TranslateModule,
   ],
 })

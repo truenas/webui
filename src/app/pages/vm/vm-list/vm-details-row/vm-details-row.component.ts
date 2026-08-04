@@ -4,10 +4,11 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmState } from 'app/enums/vm.enum';
+import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -26,6 +27,7 @@ import { VmService } from 'app/services/vm.service';
   imports: [
     RequiresRolesDirective,
     TnButtonComponent,
+    TnTooltipDirective,
     TranslateModule,
   ],
 })
@@ -43,6 +45,25 @@ export class VirtualMachineDetailsRowComponent {
 
   protected readonly requiredReadRoles = [Role.VmRead];
   protected readonly requiredRoles = [Role.VmWrite];
+
+  /**
+   * TEMP (NAS-141021): `tn-button` has no tooltip input, so `[tnTooltip]` sits on the host
+   * element rather than the native button it renders — the hover tooltip still works, but its
+   * `aria-describedby` lands on a non-focusable wrapper. The warning is not lost: the
+   * confirmation dialog repeats it where the user has to act. Bind a real input once the
+   * library grows one.
+   */
+  protected readonly resetTooltip = this.translate.instant(
+    helptextVmList.resetButton.tooltip,
+    { warning: this.translate.instant(helptextVmList.hardResetWarning) },
+  );
+
+  /**
+   * The Reset button sits next to Restart and the two sound alike, so the accessible name spells
+   * out that this one is a hard reset. The consequences stay out of the name — the tooltip carries
+   * them as a description and the confirmation dialog repeats them where the user has to act.
+   */
+  protected readonly resetAriaLabel = this.translate.instant(helptextVmList.resetButton.ariaLabel);
 
   readonly vmStateInfo = computed(() => {
     const state = this.vm().status.state;
@@ -74,6 +95,13 @@ export class VirtualMachineDetailsRowComponent {
         complete: () => this.vmService.checkMemory(),
         error: (error: unknown) => this.errorHandler.showErrorModal(error),
       });
+  }
+
+  protected doReset(): void {
+    this.vmService
+      .doReset(this.vm())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
   }
 
   protected doPowerOff(): void {

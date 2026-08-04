@@ -1,8 +1,12 @@
-import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
+import { Component, ChangeDetectionStrategy, computed, effect, inject } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { MarketingMessage, getMarketingMessages } from 'app/constants/marketing-messages.constant';
 import { hashMessage } from 'app/helpers/hash-message';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+
+const lastShownDateKey = 'marketingMessageLastShownDate';
+const lastMessageHashKey = 'marketingMessageLastHash';
 
 @Component({
   selector: 'ix-use-enterprise-marketing-link',
@@ -15,44 +19,53 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class UseEnterpriseMarketingLinkComponent {
-  private translate = inject(TranslateService);
+  private tnConnect = inject(TruenasConnectService);
 
-  messages = [
-    this.translate.instant('More Performance, More Protection'),
-    this.translate.instant('Boost Performance & Support'),
-    this.translate.instant('Unlock High Performance Solutions'),
-    this.translate.instant('Expert Support When You Need It'),
-    this.translate.instant('Achieve 99.999% Uptime with HA'),
-  ];
+  // Snapshot the rotation state once at construction so message selection stays a
+  // pure computed. The pool can still change when TrueNAS Connect config resolves
+  // asynchronously, but the "which slot to show today" decision is made against a
+  // stable pointer rather than being re-read (and advanced) on every recompute.
+  private readonly today = new Date().toDateString();
+  private readonly isNewDay = localStorage.getItem(lastShownDateKey) !== this.today;
+  private readonly storedMessageHash = localStorage.getItem(lastMessageHashKey);
 
-  currentMessage = computed(() => this.getTodaysMessage());
-  currentMessageHref = computed(() => `${exploreNasEnterpriseLink}?m=${hashMessage(this.currentMessage())}`);
+  private messages = computed<MarketingMessage[]>(() => getMarketingMessages(this.tnConnect.config()));
 
-  getTodaysMessage(): string {
-    const today = new Date().toDateString();
-    const lastShownDate = localStorage.getItem('marketingMessageLastShownDate');
-    const lastMessageHash = localStorage.getItem('marketingMessageLastHash');
+  protected currentMessage = computed<MarketingMessage>(() => {
+    const messages = this.messages();
+    return this.isNewDay
+      ? this.getNextMessage(messages, this.storedMessageHash)
+      : this.getCurrentMessage(messages, this.storedMessageHash);
+  });
 
-    if (lastShownDate !== today) {
-      const nextMessage = this.getNextMessage(lastMessageHash);
-
-      localStorage.setItem('marketingMessageLastShownDate', today);
-      localStorage.setItem('marketingMessageLastHash', hashMessage(nextMessage));
-
-      return nextMessage;
+  protected currentMessageHref = computed<string | null>(() => {
+    const message = this.currentMessage();
+    if (!message.href) {
+      return null;
     }
+    return `${message.href}?m=${hashMessage(message.text)}`;
+  });
 
-    return this.getCurrentMessage(lastMessageHash);
+  constructor() {
+    // Persist the day's selection as an explicit side-effect, keeping the computed
+    // pure. Re-runs if the resolved config swaps the pool after first render.
+    if (this.isNewDay) {
+      effect(() => {
+        const message = this.currentMessage();
+        localStorage.setItem(lastShownDateKey, this.today);
+        localStorage.setItem(lastMessageHashKey, hashMessage(message.text));
+      });
+    }
   }
 
-  private getNextMessage(lastMessageHash: string | null): string {
-    const lastIndex = this.messages.findIndex((message) => hashMessage(message) === lastMessageHash);
-    const nextIndex = lastIndex >= 0 ? (lastIndex + 1) % this.messages.length : 0;
-    return this.messages[nextIndex];
+  private getNextMessage(messages: MarketingMessage[], lastMessageHash: string | null): MarketingMessage {
+    const lastIndex = messages.findIndex((message) => hashMessage(message.text) === lastMessageHash);
+    const nextIndex = lastIndex >= 0 ? (lastIndex + 1) % messages.length : 0;
+    return messages[nextIndex];
   }
 
-  private getCurrentMessage(lastMessageHash: string | null): string {
-    const currentIndex = this.messages.findIndex((message) => hashMessage(message) === lastMessageHash);
-    return currentIndex >= 0 ? this.messages[currentIndex] : this.messages[0];
+  private getCurrentMessage(messages: MarketingMessage[], lastMessageHash: string | null): MarketingMessage {
+    const currentIndex = messages.findIndex((message) => hashMessage(message.text) === lastMessageHash);
+    return currentIndex >= 0 ? messages[currentIndex] : messages[0];
   }
 }

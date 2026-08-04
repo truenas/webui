@@ -1,4 +1,5 @@
 @import 'scss-imports/cssvars';
+@import 'mixins/tn-list';
 
 .card {
   box-sizing: border-box;
@@ -10,15 +11,17 @@
   }
 }
 
-:host ::ng-deep {
-  // TEMP: .tn-list-item__* are not public API — replace when tn-list-item
-  // exposes a public content-layout hook (tracked with NAS-141021 follow-ups).
-  tn-list-item .tn-list-item__primary-text {
+// The version row packs a copy button next to the version text, so the label span
+// has to become a flex row.
+:host tn-list-item {
+  @include tn-list-item-primary-text {
     align-items: center;
     display: flex;
     gap: 8px;
   }
+}
 
+:host ::ng-deep {
   .card {
     &.half {
       .product-logo-container,
