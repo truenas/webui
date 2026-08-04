@@ -202,9 +202,12 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('System Clock'),
       propertyName: 'time',
       hidden: true,
-      // vmTimeNames values are T()-marked, so they need translating; `?? ''` guards a VM
-      // whose `time` is absent, which `translate.instant(undefined)` would throw on.
-      getValue: (row) => this.translate.instant(vmTimeNames.get(row.time) ?? ''),
+      // vmTimeNames values are T()-marked, so they need translating. `instant()` throws on an
+      // absent *or* empty key, so a VM whose `time` isn't in the map renders an empty cell.
+      getValue: (row) => {
+        const label = vmTimeNames.get(row.time);
+        return label ? this.translate.instant(label) : '';
+      },
     }),
     textColumn({
       title: this.translate.instant('Display Port'),

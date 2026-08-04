@@ -1,7 +1,7 @@
 import { isDevMode, isSignal, Signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import type { TnSortEvent } from '@truenas/ui-components';
-import { get, kebabCase } from 'lodash-es';
+import { get } from 'lodash-es';
 import { Observable, switchMap } from 'rxjs';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
@@ -9,6 +9,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
 import { SortValue, TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 
 export function convertStringToId(inputString: string): string {
   let result = inputString;
@@ -28,13 +29,12 @@ export function convertStringToId(inputString: string): string {
 /**
  * Builds the per-row test-id fragment a migrated tn-table cell passes to `[tnTestId]`.
  *
- * Pre-splits with lodash `kebabCase` so the tag resolves identically through the legacy
- * `[ixTest]` directive and the library's `[tnTestId]`: the library's kebab does not break
- * letter–digit boundaries ('vm1' stays 'vm1') where lodash does ('vm-1'). Without this every
- * row-keyed cell id would silently shift for any row whose name ends in a digit.
+ * Pre-normalizes through {@link normalizeTestIdString} so the tag resolves identically through
+ * the legacy `[ixTest]` directive and the library's `[tnTestId]` — see that helper for why the
+ * two kebab implementations disagree.
  */
 export function toUniqueRowTag(value: string): string {
-  return kebabCase(convertStringToId(value));
+  return normalizeTestIdString(convertStringToId(value));
 }
 
 /**
