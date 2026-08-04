@@ -95,11 +95,7 @@ export class DatasetDetailsPanelComponent {
     this.formPanel.open<Dataset>(ZvolFormComponent, {
       title: this.translate.instant(helptextZvol.addTitle),
       inputs: { params: { isNew: true, parentOrZvolId: this.dataset().id } },
-    }).onSuccess((response) => {
-      // No snackbar here: `ZvolFormComponent` owns the success message so every entry point
-      // confirms identically.
-      this.switchToNewDateset(response.id);
-    }, this.destroyRef);
+    }).onSuccess((response) => this.switchToNewDateset(response.id), this.destroyRef);
   }
 
   private switchToNewDateset(id: string): void {

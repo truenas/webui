@@ -268,8 +268,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     return {
       request$: this.api.call('pool.dataset.create', [data as DatasetCreate]),
       // Owned by the form so every entry point (details panel, details card, explorer) confirms
-      // identically — the openers deliberately raise no snackbar of their own. Named from the
-      // created record rather than the payload, so the toast can't drift from what was saved.
+      // identically; the openers deliberately raise no snackbar of their own.
       successMessage: (created) => this.translate.instant('Zvol «{name}» created.', {
         name: getDatasetLabel(created),
       }),
@@ -289,9 +288,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
           return this.api.call('pool.dataset.update', [this.parentOrZvolId(), payload]);
         }),
       ),
-      // See `buildCreateResult` — the message is the form's, not the opener's, and it names the
-      // updated record rather than `parentOrZvolId()`, so it stays correct if Name ever becomes
-      // editable on edit.
+      // See `buildCreateResult` — the message is the form's, not the opener's.
       successMessage: (updated) => this.translate.instant('Zvol «{name}» updated.', {
         name: getDatasetLabel(updated),
       }),

@@ -1243,10 +1243,9 @@ describe('IxFormComponent', () => {
       component: TestHostComponent,
       imports: [ReactiveFormsModule],
       providers: [
-        ...ixFormTestingProviders(),
-        // This block asserts the delay itself, so restore the real duration that
+        // This block asserts the delay itself, so keep the real duration that
         // `ixFormTestingProviders()` zeroes for every other spec.
-        { provide: ixFormMinSubmitFeedbackMs, useValue: defaultMinSubmitFeedbackMs },
+        ...ixFormTestingProviders({ realSubmitFeedback: true }),
         // Force the `<tn-side-panel>` host: `null` is exactly what `inject(SlideInRef,
         // {optional: true})` sees when nothing provides one, and stating it here keeps the block
         // independent of whatever the surrounding suite happens to provide.

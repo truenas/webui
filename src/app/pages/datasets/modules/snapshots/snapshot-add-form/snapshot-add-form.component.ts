@@ -72,17 +72,12 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   protected isFormLoading = signal(true);
 
   /**
-   * The background `vmware.dataset_has_vms` lookup, re-run on every dataset/recursive change (and
-   * on {@link retryVmCheck}). Only gates Save — routing it through the panel's busy state would dim
-   * and lock the whole form mid-edit each time either field is touched.
+   * The background `vmware.dataset_has_vms` lookup. Only gates Save — routing it through the panel's
+   * busy state would dim and lock the whole form mid-edit each time a field is touched.
    */
   protected isCheckingVms = signal(false);
 
-  /**
-   * Whether the last VM lookup failed. Blocks Save through `[extraDisabled]`, and is mirrored onto
-   * the `dataset` control as {@link vmCheckError} so the field explains why — see
-   * {@link setVmCheckFailed}.
-   */
+  /** Whether the last VM lookup failed. Blocks Save — see {@link setVmCheckFailed}. */
   protected readonly vmCheckFailed = signal(false);
 
   /**
@@ -137,9 +132,8 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   namingSchemaOptions$: Observable<Option[]>;
 
   /**
-   * Whether the selected dataset holds VMs, which decides both the VMWare Sync checkbox's
-   * visibility and whether `vmware_sync` reaches the payload. A signal so the template re-renders
-   * on its own account, rather than riding on the `isCheckingVms` write that happens beside it.
+   * Whether the selected dataset holds VMs, which decides both the VMware Sync checkbox's
+   * visibility and whether `vmware_sync` reaches the payload.
    */
   protected readonly hasVmsInDataset = signal(false);
 
@@ -151,10 +145,7 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   };
 
   ngOnInit(): void {
-    // Subscribed before the preset below sets `dataset`, so that first check isn't dropped. Only
-    // field changes (and an explicit retry) trigger a check — with no preset the dataset is empty
-    // and there is nothing to ask about, and with one the `setValue` covers it (a separate on-load
-    // request would just duplicate it).
+    // Subscribed before the preset below sets `dataset`, so that first check isn't dropped.
     // `switchMap` cancels an in-flight lookup when either field changes again, so only the newest
     // response can clear the Save gate or set `hasVmsInDataset` — an earlier, slower response can
     // neither re-enable Save early nor leave a stale flag behind (which would silently drop
@@ -166,20 +157,18 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
     ).pipe(
       tap((trigger) => {
         if (trigger === 'dataset') {
-          // A different dataset is a different question, so a retry button left over from the
-          // previous one has nothing to retry — see {@link canRetryVmCheck} for why only this
-          // trigger clears it.
+          // A different dataset is a different question, so a leftover retry button has nothing to
+          // retry — see {@link canRetryVmCheck} for why only this trigger clears it.
           this.canRetryVmCheck.set(false);
         }
         this.isCheckingVms.set(true);
-        // Cleared per attempt, not per dataset: each run is a fresh answer, and leaving the previous
-        // failure parked would keep Save blocked after a successful retry.
+        // Per attempt, not per dataset: a parked failure would keep Save blocked after a good retry.
         this.setVmCheckFailed(false);
       }),
       // Guarded inside the projection rather than by a `filter` before it: a filter would drop the
       // emission after `isCheckingVms` was already set, latching Save disabled forever. With no
       // dataset there is nothing to ask about — toggling Recursive first would otherwise call
-      // `vmware.dataset_has_vms` with '' and raise an error modal at the user.
+      // `vmware.dataset_has_vms` with ''.
       switchMap((trigger) => {
         return this.form.controls.dataset.value ? this.queryVmsInDataset(trigger === 'retry') : of(false);
       }),
@@ -228,16 +217,15 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
       params.name = values.name;
     }
 
-    // Only ever reached with a settled lookup: a failed one blocks Save (see `setVmCheckFailed`),
-    // so a `false` here means "checked, no VMs" rather than "never found out".
+    // Only reached with a settled lookup — a failed one blocks Save (see `setVmCheckFailed`) — so a
+    // `false` here means "checked, no VMs" rather than "never found out".
     if (this.hasVmsInDataset()) {
       params.vmware_sync = values.vmware_sync;
     }
 
     return {
       request$: this.api.call('pool.snapshot.create', [params]),
-      // Owned by the form so every entry point confirms identically — the data-protection card
-      // used to raise this itself, and the snapshot list confirmed nothing at all.
+      // Owned by the form so every entry point confirms identically.
       successMessage: this.translate.instant('Snapshot added successfully.'),
       onSuccess: () => this.datasetStore.datasetUpdated(),
     };
@@ -298,13 +286,12 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   }
 
   /**
-   * Records the lookup's failure and mirrors it onto the `dataset` control. Without VMs answered
-   * for, `vmware_sync` cannot be decided — falling through to `false` would silently take an
+   * Records the lookup's failure and mirrors it onto the `dataset` control. With VMs unanswered,
+   * `vmware_sync` cannot be decided — falling through to `false` would silently take an
    * unsynchronised snapshot of a dataset that does hold VMs — so the failure blocks Save.
    *
    * The block is the {@link vmCheckFailed} signal, read by `[extraDisabled]`; the control error is
-   * only how the field says why. Nothing about Save depends on it, so a stray
-   * `updateValueAndValidity()` elsewhere can't quietly unblock the save.
+   * only how the field says why, so a stray `updateValueAndValidity()` can't unblock Save.
    */
   private setVmCheckFailed(failed: boolean): void {
     this.vmCheckFailed.set(failed);

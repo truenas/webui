@@ -238,7 +238,7 @@ describe('SnapshotAddFormComponent', () => {
       const datasetField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Dataset' }));
 
       expect(await datasetField.getErrorMessage()).toBe(
-        'Could not check this dataset for VMs. A snapshot of a dataset holding VMs needs VMWare Sync,'
+        'Could not check this dataset for VMs. A snapshot of a dataset holding VMs needs VMware Sync,'
         + ' so saving is blocked until the check succeeds.',
       );
     });
@@ -288,7 +288,7 @@ describe('SnapshotAddFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', false]);
       expect(spectator.component.canSubmit()).toBe(true);
 
-      // The answer arrived, so the VMWare Sync checkbox is back and its value reaches the payload.
+      // The answer arrived, so the VMware Sync checkbox is back and its value reaches the payload.
       await (await getCheckbox('vmware_sync')).check();
       save();
 

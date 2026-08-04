@@ -68,10 +68,8 @@ export class QuotasSectionComponent implements OnInit {
     this.setFormRelations();
 
     // `startWith` makes the contract "always reports its current validity" rather than "reports
-    // changes": this section mounts and unmounts with the Advanced toggle, so a host that only ever
-    // hears about changes would be left guessing at a fresh instance's state. The host clears the
-    // gate on unmount, so this first emission agrees with what it already believes — it exists so
-    // the contract holds on its own, not to repair a stale `false`.
+    // changes": this section mounts and unmounts with the Advanced toggle, so a host that only
+    // hears about changes would be left guessing at a fresh instance's state.
     this.form.statusChanges.pipe(
       startWith(this.form.status),
       takeUntilDestroyed(this.destroyRef),

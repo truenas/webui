@@ -8,7 +8,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap,
+  catchError, combineLatest, filter, forkJoin, map, Observable, of, switchMap, throwError,
 } from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -102,12 +102,8 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   form = new FormGroup({});
 
   /**
-   * A plain AND, because each signal is kept meaningful whether or not its section is on screen.
-   * Quotas is the only one that comes and goes (with the Advanced toggle): {@link toggleAdvancedMode}
-   * resets its signal on the way out, and the section re-reports on mount.
-   *
-   * Encryption counts even in basic mode, where its fields are hidden — its payload is part of every
-   * create, so an invalid value still ships.
+   * A plain AND: each signal stays meaningful whether or not its section is on screen. Encryption
+   * counts even in basic mode, where its fields are hidden — its payload is part of every create.
    */
   protected readonly areSubFormsValid = computed(() => {
     return this.isNameAndOptionsValid()
@@ -117,11 +113,9 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   });
 
   /**
-   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save), so the label
-   * flips with {@link isAdvancedMode}.
-   *
-   * Create only: on edit, quotas and encryption are create-only and Other Options is advanced-only,
-   * so switching back to basic would leave nothing on screen but the disabled Name field.
+   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer. Create only: on edit,
+   * quotas and encryption are create-only and Other Options is advanced-only, so switching back to
+   * basic would leave nothing on screen but the disabled Name field.
    */
   private readonly footerActionList = computed<SidePanelFooterAction[]>(() => {
     if (!this.isNew()) {
@@ -155,26 +149,19 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   protected readonly isNew = computed(() => this.params().isNew);
 
   /**
-   * An edit panel with no record to edit — the load in {@link setForEdit} failed, so only the error
-   * modal happened and `existingDataset` never arrived. Blocks Save: the Name field is left enabled
-   * (the section un-disables it only once `existing` lands), so the user can otherwise fill in a
-   * name, satisfy every section, and submit a create payload rooted at the pool from an edit panel.
+   * An edit panel whose load in {@link setForEdit} failed. Blocks Save: the Name field stays enabled
+   * until `existing` lands, so the user could otherwise fill in a name, satisfy every section, and
+   * submit a create payload rooted at the pool from an edit panel.
    */
   protected readonly isMissingEditRecord = computed(() => !this.isNew() && !this.existingDataset());
 
   /**
-   * A create panel with no parent — the load in {@link setForNew} failed. Blocks Save for the same
-   * reason as {@link isMissingEditRecord}: the name a create is filed under is
-   * `${parent.name}/${name}`, so submitting without one asks the backend to create
-   * `undefined/my-dataset`.
+   * A create panel whose parent load in {@link setForNew} failed. Blocks Save: a create is filed
+   * under `${parent.name}/${name}`, so submitting without one asks for `undefined/my-dataset`.
    */
   protected readonly isMissingParent = computed(() => this.isNew() && !this.parentDataset());
 
-  /**
-   * Every section view query is optional (three of the four sections mount conditionally), so the
-   * lists are filtered rather than positional — {@link preparePayload} calls `getPayload()` on
-   * whatever comes back, and an unresolved query would be a TypeError instead of a skipped section.
-   */
+  /** Filtered, not positional: three of the four section view queries are optional. */
   private get createSections(): DatasetFormSection[] {
     return this.toSections([
       this.nameAndOptionsSection(),
@@ -197,8 +184,8 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
   /**
    * The `FormGroup`s that actually hold fields, for backend validation errors to be resolved
-   * against. Only mounted sections contribute — an unmounted one has no field on screen to carry
-   * an error, so its group is skipped and the handler falls back to a modal for that message.
+   * against. An unmounted section has no field on screen to carry an error, so it is skipped and
+   * the handler falls back to a modal for that message.
    */
   private sectionForms(): FormGroup[] {
     const nameAndOptions = this.nameAndOptionsSection();
@@ -295,10 +282,9 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
     const isAdvanced = !this.isAdvancedMode();
 
     if (!isAdvanced) {
-      // Leaving advanced unmounts the quotas section, so its last verdict goes with it. Without this
-      // a stale `false` would still be parked here when the section remounts, and the fresh
-      // instance's on-mount emission would flip `areSubFormsValid()` during the same change
-      // detection pass that already read it — NG0100 in dev mode.
+      // Leaving advanced unmounts the quotas section, so its last verdict goes with it. A stale
+      // `false` left parked here would be flipped by the remounted section's on-mount emission
+      // during the same CD pass that already read it — NG0100 in dev mode.
       this.isQuotaValid.set(true);
     }
 
@@ -319,19 +305,19 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
     } else if (existingDataset) {
       request$ = this.api.call('pool.dataset.update', [existingDataset.id, payload as DatasetUpdate]);
     } else {
-      // Unreachable — `isMissingEditRecord` keeps Save disabled until the edit load lands. Explicit
-      // rather than falling back to create, which would file a stray dataset from an edit panel.
-      throw new Error('Cannot save: the dataset being edited was not loaded.');
+      // Unreachable — `isMissingEditRecord` keeps Save disabled until the edit load lands. An
+      // erroring request$ rather than a `throw` (which `onFormSubmit` calls outside its try-less
+      // subscribe, so it would escape to the global ErrorHandler) and rather than falling back to
+      // create, which would file a stray dataset from an edit panel.
+      request$ = throwError(() => new Error('Cannot save: the dataset being edited was not loaded.'));
     }
 
     return {
       request$: this.saveDataset(request$),
-      // Owned by the form (not its openers) so every entry point confirms identically, and phrased
-      // as plain "created"/"updated" to match the zvol form — a message that has to hold for every
-      // opener can't assume the user is being taken to the new record.
+      // Owned by the form, not its openers, so every entry point confirms identically.
       successMessage: ([savedDataset, shouldGoToAclEditor]) => {
-        // Accepting the ACL prompt navigates to the ACL editor; a toast about the dataset would
-        // land on a page the user has already left.
+        // Accepting the ACL prompt navigates away; a toast about the dataset would land on a page
+        // the user has already left.
         if (shouldGoToAclEditor) {
           return null;
         }
@@ -341,12 +327,10 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
       },
       onSuccess: ([savedDataset, shouldGoToAclEditor]) => this.onSaved(savedDataset, shouldGoToAclEditor),
       closeWith: ([savedDataset]) => savedDataset,
-      // `<ix-form>`'s default handler maps backend validation errors against its own `[formGroup]`,
-      // which here is the empty root — every field lives in a section's own group. Run the same
-      // handler over those groups instead, so a duplicate name or an out-of-range quota lands on the
-      // control that caused it. Anything it can't place (a non-validation error, or a share-creation
-      // failure naming `sharingsmb_create.*` fields) still falls back to an error modal inside the
-      // handler, which is what this form did before the migration.
+      // `<ix-form>`'s default handler maps errors against its own `[formGroup]`, which here is the
+      // empty root — every field lives in a section's own group. Run the same handler over those
+      // instead, so a duplicate name or an out-of-range quota lands on the control that caused it;
+      // anything it can't place still falls back to an error modal inside the handler.
       onError: (error: unknown) => {
         this.formErrorHandler.handleValidationErrors(error, this.sectionForms());
         return true;
@@ -354,11 +338,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
     };
   };
 
-  /**
-   * Runs the post-save chain (optional SMB/NFS shares, then the parent-ACL prompt) and types its
-   * result, so the tuple `onSaved` destructures is declared in one place rather than being asserted
-   * at the `onSuccess` boundary against a shape produced further up.
-   */
+  /** Runs the post-save chain: optional SMB/NFS shares, then the parent-ACL prompt. */
   private saveDataset(request$: Observable<Dataset>): Observable<SaveDatasetResult> {
     return request$.pipe(
       switchMap((dataset) => this.createSmb(dataset)),
@@ -387,12 +367,9 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
   /**
    * Forwards the `closeWith` payload to the opener, then navigates to the ACL editor if the
-   * post-save prompt was accepted.
-   *
-   * The emit does NOT guarantee the opener's `onSuccess` runs in the ACL branch: the host records
-   * the payload here but only resolves it on panel teardown, after the close animation, by which
-   * point `router.navigate` has destroyed the opener and the `DestroyRef` its callback is bound to.
-   * That's intended — we're leaving the page anyway — and matches the pre-migration behaviour.
+   * post-save prompt was accepted. In that branch the opener's `onSuccess` may never run — the host
+   * resolves the payload on panel teardown, by which point `router.navigate` has destroyed the
+   * opener. Intended: we're leaving the page anyway, and it matches the pre-migration behaviour.
    */
   protected onFormClosed(savedDataset: Dataset): void {
     this.closed.emit(savedDataset);

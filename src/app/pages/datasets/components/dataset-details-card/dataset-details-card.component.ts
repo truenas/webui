@@ -182,10 +182,6 @@ export class DatasetDetailsCardComponent {
     this.formPanel.open<Dataset>(ZvolFormComponent, {
       title: this.translate.instant(helptextZvol.editTitle),
       inputs: { params: { isNew: false, parentOrZvolId: this.dataset().id } },
-    }).onSuccess(() => {
-      // No snackbar here: `ZvolFormComponent` owns the success message so every entry point
-      // confirms identically.
-      this.datasetStore.datasetUpdated();
-    }, this.destroyRef);
+    }).onSuccess(() => this.datasetStore.datasetUpdated(), this.destroyRef);
   }
 }

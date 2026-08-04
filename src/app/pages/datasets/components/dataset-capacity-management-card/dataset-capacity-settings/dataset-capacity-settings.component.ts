@@ -118,7 +118,6 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
     });
   }
 
-  /** Read several times per change detection in the template, so memoize rather than re-deriving. */
   protected readonly isRoot = computed(() => isRootDataset(this.datasetToEdit()));
 
   private setDatasetForEdit(dataset: DatasetDetails): void {

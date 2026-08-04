@@ -4,7 +4,7 @@ export const helptextSnapshots = {
   addTitle: T('Add Snapshot'),
   checkingForVms: T('Checking this dataset for VMs…'),
   vmCheckFailed: T('Could not check this dataset for VMs. A snapshot of a dataset holding VMs needs\
- VMWare Sync, so saving is blocked until the check succeeds.'),
+ VMware Sync, so saving is blocked until the check succeeds.'),
   vmCheckSucceeded: T('This dataset was checked for VMs. Saving is no longer blocked.'),
   retryVmCheck: T('Retry VM Check'),
   datasetLabel: T('Dataset'),
