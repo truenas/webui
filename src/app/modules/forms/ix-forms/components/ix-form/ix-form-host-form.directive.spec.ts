@@ -38,6 +38,16 @@ class TestFormHostComponent extends IxFormHostForm<boolean, { name: string }> {
   isLoading(): boolean {
     return this.dataLoading();
   }
+
+  isFormPristine(): boolean {
+    return this.form.pristine;
+  }
+
+  /** A `patch` that dirties the group — `setValue` on a control does, unlike `patchValue`. */
+  markDirtyWhilePatching(config: { name: string }): void {
+    this.form.controls.name.setValue(config.name);
+    this.form.markAsDirty();
+  }
 }
 
 describe('IxFormHostForm', () => {
@@ -83,6 +93,14 @@ describe('IxFormHostForm', () => {
       expect(spectator.component.readSnapshot()).toEqual({ name: 'loaded' });
       expect(spectator.component.isLoading()).toBe(false);
       expect(spectator.component.hasLoadFailed()).toBe(false);
+    });
+
+    it('leaves the form pristine, so a patching load never trips the unsaved-changes guard', () => {
+      spectator.component.load(of({ name: 'loaded' }), (config) => {
+        spectator.component.markDirtyWhilePatching(config);
+      });
+
+      expect(spectator.component.isFormPristine()).toBe(true);
     });
 
     it('reports the error and latches loadFailed when the load fails', () => {

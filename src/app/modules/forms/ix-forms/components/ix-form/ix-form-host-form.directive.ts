@@ -146,6 +146,11 @@ implements SidePanelHostForm<R> {
           return;
         }
         this.loadedSnapshot.set(this.form.getRawValue() as object);
+        // Defensive, same guard `<ix-form>` applies after patching `editData`: no `patch` today
+        // dirties the group (patchValue and FormArray.push both leave it pristine), but this is the
+        // shared entry point for every config form, and `hasUnsavedChanges()` is just the group's
+        // `dirty` — one that did would make the panel demand a discard confirmation on open.
+        this.form.markAsPristine();
         this.dataLoading.set(false);
       },
       error: (error: unknown) => this.handleLoadFailure(error),
