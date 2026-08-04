@@ -1,7 +1,7 @@
-@import 'mixins/sr-only';
+@import 'mixins/a11y';
 
 // Global utility, so a component only has to add the class rather than re-declare
 // the rule in its own stylesheet.
 .sr-only {
-  @include sr-only;
+  @include visually-hidden;
 }
