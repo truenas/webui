@@ -3,22 +3,17 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnBannerComponent } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import {
+  InputType,
+  TnBannerComponent, TnCheckboxComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -27,30 +22,26 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   templateUrl: './tier-config-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxCheckboxComponent,
-    IxInputComponent,
-    FormActionsComponent,
-    MatButton,
-    TestDirective,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnCheckboxComponent,
+    TnInputComponent,
     TnBannerComponent,
     TranslateModule,
   ],
 })
-export class TierConfigFormComponent implements OnInit {
+export class TierConfigFormComponent extends SidePanelForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private globalErrorHandler = inject(ErrorHandlerService);
-  slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  isFormLoading = signal(false);
-  showEnabledWarning = signal(false);
+  protected readonly InputType = InputType;
+
+  protected isFormLoading = signal(false);
+  protected showEnabledWarning = signal(false);
 
   protected readonly enabledWarningHeading = T('Shares will be locked to a single dataset');
   protected readonly enabledWarningMessage = T('Once tiering is on, SMB shares and Webshares stop following nested datasets. Each share will expose only its own dataset, and any child datasets under it will no longer be visible to clients through that share. Create a separate share for each dataset you want to expose.');
@@ -62,7 +53,7 @@ export class TierConfigFormComponent implements OnInit {
 
   private static readonly defaultMaxConcurrentJobs = 1;
 
-  formGroup = this.fb.nonNullable.group({
+  readonly form = this.fb.nonNullable.group({
     enabled: [false],
     max_concurrent_jobs: [
       TierConfigFormComponent.defaultMaxConcurrentJobs,
@@ -74,14 +65,14 @@ export class TierConfigFormComponent implements OnInit {
     ],
   });
 
+  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
   private initialEnabled = false;
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.formGroup.dirty);
-    });
+    super();
 
-    this.formGroup.controls.enabled.valueChanges.pipe(
+    this.form.controls.enabled.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((enabled) => {
       this.showEnabledWarning.set(enabled && !this.initialEnabled);
@@ -95,7 +86,7 @@ export class TierConfigFormComponent implements OnInit {
     ).subscribe({
       next: (config: ZfsTierConfig) => {
         this.initialEnabled = config.enabled;
-        this.formGroup.patchValue(config);
+        this.form.patchValue(config);
         this.isFormLoading.set(false);
       },
       error: (error: unknown) => {
@@ -105,9 +96,9 @@ export class TierConfigFormComponent implements OnInit {
     });
   }
 
-  protected submit(): void {
+  protected onSubmit(): void {
     if (this.isFormLoading()) return;
-    const values = this.formGroup.getRawValue();
+    const values = this.form.getRawValue();
     this.isFormLoading.set(true);
 
     this.api.call('zfs.tier.update', [values]).pipe(
@@ -115,11 +106,11 @@ export class TierConfigFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true });
+        this.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.formGroup);
+        this.errorHandler.handleValidationErrors(error, this.form);
       },
     });
   }

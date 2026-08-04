@@ -1,17 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
@@ -55,6 +52,14 @@ describe('UnlockSedDisksComponent', () => {
     ],
   });
 
+  function getGlobalPassword(harnessLoader: HarnessLoader = loader): Promise<TnInputHarness> {
+    return harnessLoader.getHarness(TnInputHarness.with({ selector: '[formControlName="globalPassword"]' }));
+  }
+
+  function getUnlockButton(harnessLoader: HarnessLoader = loader): Promise<TnButtonHarness> {
+    return harnessLoader.getHarness(TnButtonHarness.with({ label: 'Unlock Disks' }));
+  }
+
   beforeEach(() => {
     spectator = createComponent({
       props: { lockedDisks },
@@ -63,39 +68,31 @@ describe('UnlockSedDisksComponent', () => {
   });
 
   it('shows global password input', async () => {
-    const passwordInput = await loader.getHarness(IxInputHarness.with({ label: 'Global SED Password' }));
-    expect(passwordInput).toBeTruthy();
+    expect(await getGlobalPassword()).toBeTruthy();
   });
 
   it('prefills global password from input', async () => {
     spectator.setInput('globalSedPassword', 'existingpassword');
 
-    const passwordInput = await loader.getHarness(IxInputHarness.with({ label: 'Global SED Password' }));
-    expect(await passwordInput.getValue()).toBe('existingpassword');
+    expect(await (await getGlobalPassword()).getValue()).toBe('existingpassword');
   });
 
   it('unlock button is disabled when password is empty', async () => {
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock Disks' }));
-    expect(await unlockButton.isDisabled()).toBe(true);
+    expect(await (await getUnlockButton()).isDisabled()).toBe(true);
   });
 
   it('unlock button is enabled when password is entered', async () => {
-    const passwordInput = await loader.getHarness(IxInputHarness.with({ label: 'Global SED Password' }));
-    await passwordInput.setValue('testpassword');
+    await (await getGlobalPassword()).setValue('testpassword');
 
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock Disks' }));
-    expect(await unlockButton.isDisabled()).toBe(false);
+    expect(await (await getUnlockButton()).isDisabled()).toBe(false);
   });
 
   it('calls system.advanced.update and core.bulk when unlock is clicked with default settings', async () => {
     const api = spectator.inject(ApiService);
     jest.spyOn(spectator.component.unlocked, 'emit');
 
-    const passwordInput = await loader.getHarness(IxInputHarness.with({ label: 'Global SED Password' }));
-    await passwordInput.setValue('testpassword');
-
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock Disks' }));
-    await unlockButton.click();
+    await (await getGlobalPassword()).setValue('testpassword');
+    await (await getUnlockButton()).click();
 
     expect(api.call).toHaveBeenCalledWith('system.advanced.update', [{ sed_passwd: 'testpassword' }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -112,14 +109,12 @@ describe('UnlockSedDisksComponent', () => {
   it('does not call system.advanced.update when updateGlobalSettings is unchecked', async () => {
     const api = spectator.inject(ApiService);
 
-    const passwordInput = await loader.getHarness(IxInputHarness.with({ label: 'Global SED Password' }));
-    await passwordInput.setValue('testpassword');
+    await (await getGlobalPassword()).setValue('testpassword');
 
-    const checkbox = await loader.getHarness(MatCheckboxHarness);
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
     await checkbox.uncheck();
 
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock Disks' }));
-    await unlockButton.click();
+    await (await getUnlockButton()).click();
 
     expect(api.call).not.toHaveBeenCalledWith('system.advanced.update', expect.anything());
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -128,21 +123,60 @@ describe('UnlockSedDisksComponent', () => {
   it('emits skip event when skip button is clicked', async () => {
     jest.spyOn(spectator.component.skip, 'emit');
 
-    const skipButton = await loader.getHarness(MatButtonHarness.with({ text: 'Skip' }));
+    const skipButton = await loader.getHarness(TnButtonHarness.with({ label: 'Skip' }));
     await skipButton.click();
 
     expect(spectator.component.skip.emit).toHaveBeenCalled();
   });
 
-  it('allows adding disk exceptions with ix-select and ix-input', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disk Exception' }));
+  it('allows adding disk exceptions with tn-select and tn-input', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Disk Exception' }));
     await addButton.click();
 
-    const diskSelects = await loader.getAllHarnesses(IxSelectHarness.with({ label: 'Disk' }));
+    const diskSelects = await loader.getAllHarnesses(
+      TnSelectHarness.with({ selector: '[formControlName="diskName"]' }),
+    );
     expect(diskSelects).toHaveLength(1);
 
-    const passwordInputs = await loader.getAllHarnesses(IxInputHarness.with({ label: 'Password' }));
+    const passwordInputs = await loader.getAllHarnesses(
+      TnInputHarness.with({ selector: '[formControlName="password"]' }),
+    );
     expect(passwordInputs).toHaveLength(1);
+  });
+
+  it('stops adding exception rows once every locked disk has a row, picked or not', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Disk Exception' }));
+
+    // Two locked disks, so two rows — even though neither has picked a disk yet, and so neither
+    // has claimed one. A third row would render over a "No options" dropdown.
+    await addButton.click();
+    await addButton.click();
+
+    expect(await addButton.isDisabled()).toBe(true);
+    expect(await loader.getAllHarnesses(
+      TnSelectHarness.with({ selector: '[formControlName="diskName"]' }),
+    )).toHaveLength(2);
+  });
+
+  it('gives each exception row its own test ids and remove-button label', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Disk Exception' }));
+    await addButton.click();
+    await addButton.click();
+
+    // One row per locked disk, so nothing here may resolve to a shared id — repeated rows would
+    // otherwise trip Playwright's strict mode and leave the remove buttons indistinguishable.
+    const testIds = Array.from(spectator.queryAll('.exception-item [data-test]'))
+      .map((element) => element.getAttribute('data-test'));
+
+    expect(testIds).toEqual([...new Set(testIds)]);
+    expect(testIds).toEqual(expect.arrayContaining([
+      'button-remove-exception-1', 'select-disk-name-1', 'input-password-1',
+      'button-remove-exception-2', 'select-disk-name-2', 'input-password-2',
+    ]));
+    // `tn-icon-button` mirrors `ariaLabel` onto its host as well as the button it renders.
+    expect(spectator.queryAll('.exception-item button[aria-label^="Remove disk exception"]').map(
+      (element) => element.getAttribute('aria-label'),
+    )).toEqual(['Remove disk exception 1', 'Remove disk exception 2']);
   });
 
   describe('partial success', () => {
@@ -178,11 +212,8 @@ describe('UnlockSedDisksComponent', () => {
 
       jest.spyOn(spectatorPartial.component.unlocked, 'emit');
 
-      const passwordInput = await partialLoader.getHarness(IxInputHarness.with({ label: 'Global SED Password' }));
-      await passwordInput.setValue('testpassword');
-
-      const unlockButton = await partialLoader.getHarness(MatButtonHarness.with({ text: 'Unlock Disks' }));
-      await unlockButton.click();
+      await (await getGlobalPassword(partialLoader)).setValue('testpassword');
+      await (await getUnlockButton(partialLoader)).click();
 
       expect(spectatorPartial.inject(SnackbarService).success).toHaveBeenCalledWith(
         expect.stringContaining('1 of 2'),
@@ -225,11 +256,8 @@ describe('UnlockSedDisksComponent', () => {
 
       jest.spyOn(spectatorFail.component.unlocked, 'emit');
 
-      const passwordInput = await failLoader.getHarness(IxInputHarness.with({ label: 'Global SED Password' }));
-      await passwordInput.setValue('testpassword');
-
-      const unlockButton = await failLoader.getHarness(MatButtonHarness.with({ text: 'Unlock Disks' }));
-      await unlockButton.click();
+      await (await getGlobalPassword(failLoader)).setValue('testpassword');
+      await (await getUnlockButton(failLoader)).click();
 
       expect(spectatorFail.inject(DialogService).error).toHaveBeenCalledWith(
         expect.objectContaining({

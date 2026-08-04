@@ -1024,11 +1024,11 @@ tn-form-section {
   padding-bottom: 1.25rem;
 }
 
-// Hand-rolled tn-radio groups (repeated `<tn-radio>` via `@for`, since @truenas/ui-components has no
-// radio-group wrapper yet) need stacking — tn-radio defaults to inline-block. Stack every radio and
-// space only CONSECUTIVE siblings, so a radio sitting alone in its own tn-form-field (e.g. a
-// per-option tooltip row) isn't given a stray top gap. Drop once the library ships a radio-group.
-// Tracked under NAS-141021.
+// Hand-rolled tn-radio groups (repeated `<tn-radio>` via `@for`) need stacking — tn-radio defaults
+// to inline-block. Stack every radio and space only CONSECUTIVE siblings, so a radio sitting alone
+// in its own tn-form-field (e.g. a per-option tooltip row) isn't given a stray top gap. The library
+// now ships `tn-radio-group`, which owns its own layout and cancels both rules inside itself; drop
+// this once the remaining hand-rolled groups have moved over to it. Tracked under NAS-141021.
 tn-radio {
   display: block;
 }

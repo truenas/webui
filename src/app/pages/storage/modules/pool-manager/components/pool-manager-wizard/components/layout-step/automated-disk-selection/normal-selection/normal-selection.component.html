@@ -9,22 +9,26 @@
       (disksSelected)="onDisksSelected($event)"
     ></ix-disk-size-dropdowns>
 
-    <ix-select
-      formControlName="width"
-      [ixTestOverride]="['width', type()]"
-      [label]="'Width' | translate"
-      [options]="widthOptions$"
-      [required]="true"
-    ></ix-select>
+    <tn-form-field [label]="'Width' | translate" [required]="true">
+      <tn-select
+        formControlName="width"
+        [testId]="['width', type()]"
+        [options]="(widthOptions$ | async) ?? []"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+      ></tn-select>
+    </tn-form-field>
 
     @if (!isNumberOfVdevsLimitedToOne()) {
-      <ix-select
-        formControlName="vdevsNumber"
-        [ixTestOverride]="['vdevs-number', type()]"
-        [label]="'Number of VDEVs' | translate"
-        [options]="numberOptions$"
-        [required]="true"
-      ></ix-select>
+      <tn-form-field [label]="'Number of VDEVs' | translate" [required]="true">
+        <tn-select
+          formControlName="vdevsNumber"
+          [testId]="['vdevs-number', type()]"
+          [options]="(numberOptions$ | async) ?? []"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+        ></tn-select>
+      </tn-form-field>
     }
   </div>
   <div class="advanced-options-container">
@@ -32,15 +36,12 @@
 
     <p>{{ 'Manual disk selection allows you to create VDEVs and add disks to those VDEVs individually.' | translate }}</p>
 
-    <button
-      mat-button
-      type="button"
+    <tn-button
       class="manual-disk-selection"
-      [ixTest]="['manual', type()]"
+      [testId]="['manual', type()]"
+      [label]="'Manual Disk Selection' | translate"
       [disabled]="!layout()"
-      (click)="store.openManualSelectionDialog(type())"
-    >
-      {{ 'Manual Disk Selection' | translate }}
-    </button>
+      (onClick)="store.openManualSelectionDialog(type())"
+    ></tn-button>
   </div>
 </div>

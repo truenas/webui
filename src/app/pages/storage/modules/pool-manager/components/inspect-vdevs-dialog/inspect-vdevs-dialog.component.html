@@ -20,10 +20,11 @@
 
     <tn-divider class="header-divider"></tn-divider>
     <div class="vdevs-container">
-      @for (vdev of vdevs; track vdev) {
+      @for (vdev of vdevs; track vdev; let index = $index) {
         <ix-manual-selection-vdev
           [vdev]="vdev"
           [layout]="layout"
+          [position]="index + 1"
           [enclosures]="data.enclosures"
         ></ix-manual-selection-vdev>
       }

@@ -3,10 +3,6 @@
   margin-bottom: 16px;
   margin-top: 16px;
 
-  ix-radio-group {
-    margin-top: 0;
-  }
-
   .spacer-top {
     margin-top: 16px;
   }
@@ -15,7 +11,7 @@
     margin-bottom: 16px;
   }
 
-  mat-checkbox,
+  tn-checkbox,
   .pool-name,
   .disk-name {
     display: block;
@@ -30,7 +26,7 @@
     line-height: 1.25;
   }
 
-  mat-checkbox:not(:last-child) {
+  tn-checkbox:not(:last-child) {
     margin-bottom: 4px;
   }
 }

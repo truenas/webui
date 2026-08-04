@@ -1,12 +1,7 @@
 @import 'scss-imports/cssvars';
-@import 'mixins/cards';
 
 :host {
   display: block;
-}
-
-.card {
-  @include details-card();
 }
 
 .pool-header {
@@ -28,10 +23,6 @@
   align-items: center;
   display: flex;
   gap: 8px;
-
-  button {
-    margin-left: 6px;
-  }
 }
 
 .cards {

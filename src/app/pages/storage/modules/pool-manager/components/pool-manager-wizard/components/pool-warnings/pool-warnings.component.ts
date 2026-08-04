@@ -2,20 +2,20 @@ import { KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { uniq } from 'lodash-es';
 import {
-  of, Observable, combineLatest, startWith,
-} from 'rxjs';
+  TnCheckboxComponent, TnCheckboxLabelDirective, TnFormFieldComponent, TnRadioComponent,
+  TnRadioGroupComponent,
+} from '@truenas/ui-components';
+import { uniq } from 'lodash-es';
+import { combineLatest, startWith } from 'rxjs';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ignoreTranslation } from 'app/modules/translate/translate.helper';
+import { isTnCheckboxChange } from 'app/modules/forms/ix-forms/utils/tn-checkbox-change.utils';
+import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
@@ -30,10 +30,12 @@ import { hasNonUniqueSerial, hasExportedPool, isSedCapable } from 'app/pages/sto
   imports: [
     ReactiveFormsModule,
     WarningComponent,
-    IxRadioGroupComponent,
+    TnFormFieldComponent,
+    TnRadioComponent,
+    TnRadioGroupComponent,
     IxLabelComponent,
-    MatCheckbox,
-    TestDirective,
+    TnCheckboxComponent,
+    TnCheckboxLabelDirective,
     TranslateModule,
     KeyValuePipe,
   ],
@@ -51,32 +53,44 @@ export class PoolWarningsComponent implements OnInit {
     allowExportedPools: [[] as string[]],
   });
 
-  exportedPoolsWarning = this.translate.instant(helptextPoolCreation.exportedDisksWarning);
+  // The key, not the resolved string — the template pipes it, so it re-translates on a language
+  // switch instead of freezing at construction time.
+  protected readonly exportedPoolsWarning = helptextPoolCreation.exportedDisksWarning;
 
   nonUniqueSerialDisks: DetailsDisk[] = [];
   nonUniqueSerialDisksTooltip: string;
 
   disksWithExportedPools: DetailsDisk[] = [];
-  exportedPoolsOptions$ = of<Option[]>([]);
   poolAndDisks = new Map<string, string[]>();
 
-  allowNonUniqueSerialDisksOptions$: Observable<Option<boolean>[]> = of([
-    { label: this.translate.instant('Allow'), value: true },
-    { label: this.translate.instant('Don\'t Allow'), value: false },
-  ]);
+  // `translatedSignal`, not a plain field: the labels are composed in TypeScript rather than
+  // piped in the template, so `instant()` alone would freeze them in whatever language was
+  // active when the component was constructed.
+  protected readonly allowNonUniqueSerialDisksOptions = translatedSignal<Option<boolean>[]>(
+    (translate) => [
+      { label: translate.instant('Allow'), value: true },
+      { label: translate.instant('Don\'t Allow'), value: false },
+    ],
+  );
 
   ngOnInit(): void {
     this.initUnsafeDisksWarnings();
     this.connectWarningsToStore();
   }
 
-  checkboxChanged(event: MatCheckboxChange): void {
+  protected checkboxChanged(pool: string, event: boolean | Event): void {
+    // Only act on the component's boolean emission — see the helper for why the handler is
+    // invoked a second time with a DOM Event.
+    if (!isTnCheckboxChange(event)) {
+      return;
+    }
+
     let allowExportedPools = [...this.form.controls.allowExportedPools.value];
 
-    if (event.checked) {
-      allowExportedPools = [...allowExportedPools, event.source.value];
+    if (event) {
+      allowExportedPools = [...allowExportedPools, pool];
     } else {
-      allowExportedPools = allowExportedPools.filter((pool) => pool !== event.source.value);
+      allowExportedPools = allowExportedPools.filter((item) => item !== pool);
     }
     this.form.patchValue({ allowExportedPools });
   }
@@ -109,11 +123,26 @@ export class PoolWarningsComponent implements OnInit {
     const exportedPools = this.disksWithExportedPools
       .map((disk) => disk.exported_zpool)
       .filter((pool): pool is string => !!pool);
-    const options = uniq(exportedPools).map((pool) => {
+    uniq(exportedPools).forEach((pool) => {
       this.poolAndDisks.set(pool, this.getDiskNamesByPool(pool));
-      return { label: ignoreTranslation(pool), value: pool };
     });
-    this.exportedPoolsOptions$ = of(options);
+    this.pruneAllowedExportedPools();
+  }
+
+  /**
+   * Drops allowances for pools that no longer have a checkbox. The disk list is re-filtered
+   * whenever the encryption type changes (SED keeps only SED-capable disks), so a pool the user
+   * allowed can disappear from the form — and without this the store would keep being told to
+   * allow a pool the user can neither see nor uncheck.
+   */
+  private pruneAllowedExportedPools(): void {
+    const allowedPools = this.form.controls.allowExportedPools.value;
+    const survivingPools = allowedPools.filter((pool) => this.poolAndDisks.has(pool));
+
+    // Guarded so an unchanged list doesn't push a redundant update to the store.
+    if (survivingPools.length !== allowedPools.length) {
+      this.form.controls.allowExportedPools.setValue(survivingPools);
+    }
   }
 
   private getDiskNamesByPool(pool: string): string[] {

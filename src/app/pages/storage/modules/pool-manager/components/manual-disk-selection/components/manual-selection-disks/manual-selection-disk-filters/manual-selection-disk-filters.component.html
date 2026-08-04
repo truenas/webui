@@ -1,25 +1,47 @@
 <div class="filter-container">
   <form [formGroup]="filterForm">
-    <ix-input
-      formControlName="search"
-      [prefixIcon]="tnIconMarker('magnify', 'mdi')"
-      [placeholder]="'Search' | translate"
-    ></ix-input>
+    <!--
+      Label-less by design — the magnifier icon and placeholder carry the meaning visually.
+      A placeholder is not an accessible name, so the name comes from [ariaLabel].
+    -->
+    <tn-form-field>
+      <tn-input
+        formControlName="search"
+        [prefixIcon]="tnIconMarker('magnify', 'mdi')"
+        [placeholder]="'Search' | translate"
+        [ariaLabel]="'Search' | translate"
+      ></tn-input>
+    </tn-form-field>
     <div class="select-container">
-      <ix-select
-        formControlName="diskType"
-        [label]="'Filter by Disk Type' | translate"
-        [options]="typeOptions$"
-      ></ix-select>
-      <ix-select
-        formControlName="diskSize"
-        [label]="'Filter by Disk Size' | translate"
-        [options]="sizeOptions$"
-      ></ix-select>
+      <tn-form-field [label]="'Filter by Disk Type' | translate">
+        <tn-select
+          formControlName="diskType"
+          [allowEmpty]="true"
+          [options]="(typeOptions$ | async) ?? []"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+        ></tn-select>
+      </tn-form-field>
+      <tn-form-field [label]="'Filter by Disk Size' | translate">
+        <tn-select
+          formControlName="diskSize"
+          [allowEmpty]="true"
+          [options]="(sizeOptions$ | async) ?? []"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+        ></tn-select>
+      </tn-form-field>
     </div>
-    <ix-checkbox
-      formControlName="sedCapable"
-      [label]="'SED Capable' | translate"
-    ></ix-checkbox>
+    <!--
+      Label-less by design: the checkbox carries its own label. The wrapper is not decoration —
+      it keeps this control on the same 12px field rhythm as its siblings (see the SCSS) and
+      keeps it addressable by label through TnFormControlHarness, which hosts on tn-form-field.
+    -->
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="sedCapable"
+        [label]="'SED Capable' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   </form>
 </div>
