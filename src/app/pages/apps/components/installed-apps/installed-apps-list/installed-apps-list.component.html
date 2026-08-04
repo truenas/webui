@@ -43,7 +43,7 @@
     [selectable]="true"
     [clickable]="true"
     [fixedLayout]="true"
-    [minWidth]="'760px'"
+    [minColumnWidth]="tableMinColumnWidth()"
     [activeRow]="selectedApp ?? null"
     [loading]="isLoading()"
     (sortChange)="onSortChange($event)"

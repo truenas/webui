@@ -1,7 +1,7 @@
 import { AsyncPipe, Location } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef,
-  inject, OnInit, output, signal, viewChild,
+  inject, input, OnInit, output, signal, viewChild,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -115,7 +115,20 @@ export class InstalledAppsListComponent implements OnInit {
   private navigateAndHighlight = inject(NavigateAndHighlightService);
 
   readonly appId = toSignal<string | undefined>(this.activatedRoute.params.pipe(map((params) => params['appId'])));
+  /** Passed down from `ix-master-detail-view` so the table's width floor can follow the layout. */
+  readonly isMobileView = input(false);
   readonly toggleShowMobileDetails = output<boolean>();
+
+  /**
+   * Per-column floor below which the table scrolls horizontally instead of shrinking further.
+   *
+   * Only wanted in the single-column layout, where the table spans the viewport and fitting eight
+   * columns into a phone width squashes every value to a couple of characters per line. In the
+   * split layout the table shares the row with the details panel, so its container is already well
+   * under any useful floor — applying one there would scroll the master pane on an ordinary
+   * desktop. Empty opts out, leaving `[fixedLayout]` to fit the columns to the container and wrap.
+   */
+  protected readonly tableMinColumnWidth = computed(() => (this.isMobileView() ? '84px' : ''));
 
   protected readonly searchableElements = installedAppsElements;
   readonly isLoading = toSignal(this.installedAppsStore.isLoading$, { requireSync: true });
