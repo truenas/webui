@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnBannerComponent, TnCardComponent, TnCardFooterActionsDirective, TnIconButtonComponent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -12,12 +11,24 @@ import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 import { AddPortMenuComponent } from 'app/pages/sharing/nvme-of/ports/add-port-menu/add-port-menu.component';
 import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-description/port-description.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { subsystemPortsCardElements } from 'app/pages/sharing/nvme-of/subsystem-details/subsystem-ports-card/subsystem-ports-card.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+interface PortRow {
+  port: NvmeOfPort;
+  /**
+   * Ports with no `addr_trsvcid` (FC, RDMA) lose the literal `-undefined` suffix the
+   * pre-migration id carried — see `UnusedPortRow` in add-port-menu for the full note.
+   * Resolved with the row for the same reason: `[testId]` is a signal input, so a
+   * template method would hand it a new array on every change detection pass.
+   */
+  testId: string[];
+}
 
 @Component({
   selector: 'ix-subsystem-ports-card',
@@ -53,11 +64,14 @@ export class SubsystemPortsCardComponent {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
-  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-  protected removePortTestId(port: NvmeOfPort): string[] {
-    return ['remove-port-association', kebabCase(port.addr_trtype), kebabCase(port.addr_traddr), kebabCase(String(port.addr_trsvcid))];
-  }
+  protected portRows = computed<PortRow[]>(() => {
+    return (this.subsystem().ports ?? []).map((port) => ({
+      port,
+      testId: normalizeTestIdParts([
+        'remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid,
+      ]),
+    }));
+  });
 
   protected onPortAdded(port: NvmeOfPort): void {
     this.nvmeOfService.associatePorts(this.subsystem(), [port])

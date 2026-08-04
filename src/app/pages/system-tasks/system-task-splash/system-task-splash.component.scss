@@ -1,0 +1,72 @@
+@import 'mixins/tn-card';
+
+// The splash used to be inlined in each page component, so the wrapper sized itself against
+// that page's host element. Keep this host transparent to layout so nothing changes.
+:host {
+  display: block;
+  height: 100%;
+}
+
+.wrapper {
+  align-items: center;
+  background-color: #0095d5;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+}
+
+.splash-card {
+  @include tn-card-webui-palette;
+
+  margin: auto;
+  width: 275px;
+}
+
+.card-body {
+  @include tn-card-centered-column;
+}
+
+.copyright-txt,
+.message,
+.logo {
+  text-align: center;
+}
+
+// Heading for document structure only - the splash screen keeps the surrounding body type.
+.message {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+
+  // The heading is focused programmatically to announce the message, never by keyboard, so
+  // the ring would sit on the screen for the whole task with nothing to act on.
+  &:focus {
+    outline: none;
+  }
+}
+
+.logo {
+  height: auto;
+  width: 256px;
+}
+
+.copyright-txt {
+  margin-top: 10px;
+}
+
+@media screen and (max-height: 700px) {
+  .splash-card {
+    max-width: 480px;
+    width: 80%;
+  }
+
+  // Set on the projected wrapper, not the card host: `.tn-card__content` declares an
+  // explicit font-size that a host-level rule would no longer cascade past.
+  .card-body {
+    font-size: 80%;
+  }
+
+  .logo {
+    width: 206px;
+  }
+}

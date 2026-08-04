@@ -1,18 +1,15 @@
 import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { SystemTaskRedirectService } from 'app/pages/system-tasks/services/system-task-redirect.service';
+import { SystemTaskSplashComponent } from 'app/pages/system-tasks/system-task-splash/system-task-splash.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
@@ -20,46 +17,23 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 @Component({
   selector: 'ix-failover',
   templateUrl: './failover.component.html',
-  styleUrls: ['./failover.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
-    TnIconComponent,
-    CopyrightLineComponent,
+    SystemTaskSplashComponent,
     TranslateModule,
   ],
 })
 export class FailoverComponent implements OnInit {
-  protected api = inject(ApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private wsManager = inject(WebSocketHandlerService);
   private wsStatus = inject(WebSocketStatusService);
-  protected router = inject(Router);
-  protected loader = inject(LoaderService);
+  private router = inject(Router);
   private dialogService = inject(DialogService);
   private location = inject(Location);
   private store$ = inject<Store<AlertSlice>>(Store);
-  private authService = inject(AuthService);
+  private redirect = inject(SystemTaskRedirectService);
   private destroyRef = inject(DestroyRef);
-
-
-  isWsConnected(): void {
-    this.wsStatus.isConnected$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (isConnected) => {
-        if (isConnected) {
-          this.loader.close();
-          // ws is connected
-          this.authService.clearAuthToken();
-          this.router.navigate(['/signin']);
-        } else {
-          setTimeout(() => {
-            this.isWsConnected();
-          }, 5000);
-        }
-      },
-    });
-  }
 
   ngOnInit(): void {
     // Replace URL so that we don't restart again if page is refreshed.
@@ -80,10 +54,7 @@ export class FailoverComponent implements OnInit {
         this.store$.dispatch(passiveNodeReplaced());
 
         this.wsManager.prepareShutdown();
-        this.loader.open();
-        setTimeout(() => {
-          this.isWsConnected();
-        }, 1000);
+        this.redirect.goToSigninWhenSystemIsBack(this.destroyRef);
       },
     });
   }

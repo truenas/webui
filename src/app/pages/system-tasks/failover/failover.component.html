@@ -1,13 +1,1 @@
-<div id="wrapper">
-  <mat-card id="shutdown-card">
-    <mat-card-content id="message">
-      {{ 'System is failing over...' | translate }}
-    </mat-card-content>
-    <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>
-    <div>
-      <span class="copyright-txt">
-        <ix-copyright-line></ix-copyright-line>
-      </span>
-    </div>
-  </mat-card>
-</div>
+<ix-system-task-splash [message]="'System is failing over...' | translate"></ix-system-task-splash>

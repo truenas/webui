@@ -100,7 +100,9 @@
         }
       </div>
       <ix-oauth-button
+        class="oauth-login"
         testId="login-to-oauth-provider"
+        [fullWidth]="true"
         [oauthType]="oauthType"
         [oauthUrl]="oauthUrl"
         [isLoggedIn]="hasOauthAuthorization()"

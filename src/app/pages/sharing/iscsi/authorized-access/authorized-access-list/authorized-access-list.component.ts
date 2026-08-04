@@ -9,7 +9,6 @@ import {
   TnTablePagerComponent, TnTestIdDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -26,6 +25,7 @@ import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -137,9 +137,7 @@ export class AuthorizedAccessListComponent implements OnInit {
   protected readonly trackByAuthId = (_index: number, row: IscsiAuthAccess): number => row.id;
 
   protected uniqueRowTag(row: IscsiAuthAccess): string {
-    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
-    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-    return kebabCase(convertStringToId('iscsi-authorized-access-' + row.user + '-' + row.peeruser));
+    return normalizeTestIdString(convertStringToId('iscsi-authorized-access-' + row.user + '-' + row.peeruser));
   }
 
   protected ariaLabel(row: IscsiAuthAccess): string {

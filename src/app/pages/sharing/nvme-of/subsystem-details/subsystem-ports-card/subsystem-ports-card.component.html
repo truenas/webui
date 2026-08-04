@@ -7,7 +7,7 @@
     ></ix-add-port-menu>
   </ng-template>
 
-  @if (!subsystem().ports?.length) {
+  @if (!portRows().length) {
     <tn-banner
       type="warning"
       [heading]="helptext.noPortsWarningHeading | translate"
@@ -15,10 +15,10 @@
     ></tn-banner>
   } @else {
     <ul class="port-list">
-      @for (port of subsystem().ports; track port.id) {
+      @for (row of portRows(); track row.port.id) {
         <li>
           <span class="port">
-            <ix-port-description [port]="port"></ix-port-description>
+            <ix-port-description [port]="row.port"></ix-port-description>
 
             <span class="port-actions">
               <tn-icon-button
@@ -28,8 +28,8 @@
                 iconClass="icon"
                 [ariaLabel]="'Remove port from the subsystem' | translate"
                 [tooltip]="'Remove port from the subsystem' | translate"
-                [testId]="removePortTestId(port)"
-                (onClick)="onRemoveAssociation(port)"
+                [testId]="row.testId"
+                (onClick)="onRemoveAssociation(row.port)"
               ></tn-icon-button>
             </span>
           </span>

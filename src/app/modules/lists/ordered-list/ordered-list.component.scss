@@ -1,16 +1,8 @@
+@import 'mixins/tn-list';
+
 :host {
   margin-top: 12px;
   padding: 8px 0;
-}
-
-mat-slide-toggle {
-  width: 100%;
-
-  ::ng-deep .mdc-form-field {
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    width: 100%;
-  }
 }
 
 .container-items {
@@ -18,21 +10,21 @@ mat-slide-toggle {
   box-sizing: border-box;
   overflow-y: auto;
 
-  .mat-mdc-list {
+  // tn-list ships a standalone card look (own background, rounded corners, vertical
+  // padding). Here it fills a bordered box, so flatten it back out.
+  tn-list {
+    background: none;
+    border-radius: 0;
+    padding: 0;
     width: 100%;
   }
 }
 
-.mat-mdc-list-item {
+tn-list-item {
   cursor: move;
-  padding-left: 0;
 
-  .toggle-label {
-    align-items: center;
-    cursor: move;
-    display: flex;
-    gap: 2px;
-  }
+  // The drag handle sits closer to the label than a standard leading icon would.
+  @include tn-list-item-leading-gap(2px);
 }
 
 .cdk-drag-preview {

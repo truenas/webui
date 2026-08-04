@@ -1,10 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { when } from 'jest-when';
 import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -144,7 +145,7 @@ describe('EmailFormComponent', () => {
     it('opens new window with OAuth page when user presses Log In To Gmail', async () => {
       await form.fillForm({ 'Send Mail Method': 'GMail OAuth' });
 
-      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
+      const logInButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Gmail' }));
       await logInButton.click();
 
       const window = spectator.inject<Window>(WINDOW);
@@ -163,7 +164,7 @@ describe('EmailFormComponent', () => {
     it('calls removeEventListener when gmail oAuth callback is called', async () => {
       await form.fillForm({ 'Send Mail Method': 'GMail OAuth' });
 
-      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
+      const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Gmail' }));
       await loginButton.click();
 
       expect(spectator.inject<Window>(WINDOW).removeEventListener)
@@ -175,7 +176,7 @@ describe('EmailFormComponent', () => {
 
       expect(spectator.component.canSubmit()).toBe(false);
 
-      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
+      const logInButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Gmail' }));
       await logInButton.click();
 
       expect(spectator.component.canSubmit()).toBe(true);
@@ -186,7 +187,7 @@ describe('EmailFormComponent', () => {
       await (await getInput('fromname')).setValue('Johnny');
       await form.fillForm({ 'Send Mail Method': 'GMail OAuth' });
 
-      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
+      const logInButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Gmail' }));
       await logInButton.click();
 
       spectator.component.submit();
@@ -209,7 +210,7 @@ describe('EmailFormComponent', () => {
     it('sends test email with Gmail Oauth config when Gmail used and Send Test Mail is pressed', async () => {
       await form.fillForm({ 'Send Mail Method': 'GMail OAuth' });
 
-      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
+      const logInButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Gmail' }));
       await logInButton.click();
 
       clickSendTestMail();
@@ -241,7 +242,7 @@ describe('EmailFormComponent', () => {
     it('opens new window with OAuth page when user presses Log In To Outlook', async () => {
       await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
 
-      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
+      const logInButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Outlook' }));
       await logInButton.click();
 
       const window = spectator.inject<Window>(WINDOW);
@@ -268,7 +269,7 @@ describe('EmailFormComponent', () => {
     it('calls removeEventListener when outlook oAuth callback is called', async () => {
       await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
 
-      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
+      const loginButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Outlook' }));
       await loginButton.click();
 
       expect(spectator.inject<Window>(WINDOW).removeEventListener)
@@ -280,7 +281,7 @@ describe('EmailFormComponent', () => {
       await (await getInput('fromname')).setValue('Johnny');
       await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
 
-      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
+      const logInButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Outlook' }));
       await logInButton.click();
 
       spectator.component.submit();
@@ -306,7 +307,7 @@ describe('EmailFormComponent', () => {
     it('sends test email with Outlook Oauth config when Outlook used and Send Test Mail is pressed', async () => {
       await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
 
-      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
+      const logInButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Outlook' }));
       await logInButton.click();
 
       clickSendTestMail();

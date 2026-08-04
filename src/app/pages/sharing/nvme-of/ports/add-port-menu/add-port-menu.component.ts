@@ -6,15 +6,32 @@ import {
   TnButtonComponent, TnDialog, TnDividerComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
   tnIconMarker,
 } from '@truenas/ui-components';
-import { kebabCase, sortBy } from 'lodash-es';
+import { sortBy } from 'lodash-es';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 import { ManagePortsDialog } from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
 import { PortDescriptionComponent } from 'app/pages/sharing/nvme-of/ports/port-description/port-description.component';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+
+interface UnusedPortRow {
+  port: NvmeOfPort;
+  /**
+   * `addr_trsvcid` is optional (FC and RDMA ports carry none), and
+   * {@link normalizeTestIdParts} drops empty segments — so those rows now resolve to
+   * `add-port-fc-<addr>` where the pre-migration code stringified the missing value and
+   * emitted a literal `add-port-fc-<addr>-undefined`. Deliberate: the trailing `undefined`
+   * was a bug, and RE has been told the ids of those rows change. Every port that does have
+   * a service id is unaffected.
+   *
+   * Resolved with the row rather than by a template method, so the `[testId]` signal input
+   * isn't handed a freshly allocated array on every change detection pass.
+   */
+  testId: string[];
+}
 
 @Component({
   selector: 'ix-add-port-menu',
@@ -45,19 +62,17 @@ export class AddPortMenuComponent {
 
   protected noPortsExist = computed(() => !this.allPorts().length);
 
-  protected unusedPorts = computed(() => {
+  protected unusedPorts = computed<UnusedPortRow[]>(() => {
     const usedPortIds = this.subsystemPorts().map((port) => port.id);
     const unusedPorts = this.allPorts().filter((port) => !usedPortIds.includes(port.id));
-    return sortBy(unusedPorts, ['addr_trtype', 'addr_traddr', 'addr_trsvcid']);
+
+    return sortBy(unusedPorts, ['addr_trtype', 'addr_traddr', 'addr_trsvcid']).map((port) => ({
+      port,
+      testId: normalizeTestIdParts(['add-port', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]),
+    }));
   });
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
-
-  // Pre-split with lodash kebabCase so digit-bearing values resolve identically
-  // through the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-  protected addPortTestId(port: NvmeOfPort): string[] {
-    return ['add-port', kebabCase(port.addr_trtype), kebabCase(port.addr_traddr), kebabCase(String(port.addr_trsvcid))];
-  }
 
   protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');
 
