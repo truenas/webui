@@ -10,7 +10,10 @@ import {
   TnBannerHarness, TnButtonHarness, TnIconButtonHarness, TnIconTesting, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { Role } from 'app/enums/role.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import {
   FormSidePanelContainerComponent,
 } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
@@ -307,5 +310,120 @@ describe('FormSidePanelContainerComponent footer actions', () => {
     await nextButton.click();
     expect(nextClick).toHaveBeenCalled();
     expect(backClick).not.toHaveBeenCalled();
+  });
+});
+
+const saveSubmit = jest.fn();
+
+@Component({
+  selector: 'ix-save-test-form',
+  template: '<p>form body</p>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class SaveTestFormComponent extends SidePanelForm {
+  protected readonly form = new FormControl('');
+  readonly canSubmit = signal(true);
+  readonly requiredRoles = [Role.DatasetWrite];
+
+  // Drives the host's "Saving…" label, which reads `isSubmitting` (not `isBusy`), so a form
+  // merely loading its data never mislabels Save.
+  readonly submitting = signal(false);
+
+  override readonly isSubmitting = computed(() => this.submitting());
+
+  override submit(): void {
+    saveSubmit();
+  }
+
+  protected onSubmit(): void {
+    this.close(true);
+  }
+}
+
+describe('FormSidePanelContainerComponent footer Save', () => {
+  let fixture: ComponentFixture<FormSidePanelContainerComponent>;
+
+  const getForm = (): SaveTestFormComponent => fixture.debugElement.query(
+    (node) => node.componentInstance instanceof SaveTestFormComponent,
+  ).componentInstance as SaveTestFormComponent;
+
+  /**
+   * `MockAuthService.hasRole` is a hardcoded `of(true)`, so `*ixRequiresRoles` can only be
+   * exercised by overriding it before the container (and its footer) first renders.
+   */
+  const setUp = (hasRequiredRole = true): void => {
+    TestBed.configureTestingModule({
+      imports: [FormSidePanelContainerComponent, SaveTestFormComponent, TranslateModule.forRoot()],
+      providers: [
+        mockAuth(),
+        {
+          provide: UnsavedChangesService,
+          useValue: { showConfirmDialog: jest.fn(() => of(true)) },
+        },
+        ...TnIconTesting.jest.providers(),
+      ],
+    });
+
+    const authService = TestBed.inject(AuthService) as unknown as MockAuthService;
+    authService.hasRole.mockReturnValue(of(hasRequiredRole));
+
+    fixture = TestBed.createComponent(FormSidePanelContainerComponent);
+    fixture.componentRef.setInput('portal', new ComponentPortal(SaveTestFormComponent));
+    fixture.componentRef.setInput('open', true);
+    fixture.detectChanges();
+  };
+
+  beforeEach(() => {
+    saveSubmit.mockClear();
+  });
+
+  it('renders a Save button that submits the hosted form', async () => {
+    setUp();
+    const saveButton = await TnMenuTesting.rootLoader(fixture).getHarness(TnButtonHarness.with({ label: 'Save' }));
+
+    expect(await saveButton.isDisabled()).toBe(false);
+
+    await saveButton.click();
+    expect(saveSubmit).toHaveBeenCalled();
+  });
+
+  it('disables Save while the hosted form reports it cannot submit', async () => {
+    setUp();
+    const saveButton = await TnMenuTesting.rootLoader(fixture).getHarness(TnButtonHarness.with({ label: 'Save' }));
+
+    getForm().canSubmit.set(false);
+    fixture.detectChanges();
+
+    expect(await saveButton.isDisabled()).toBe(true);
+  });
+
+  it('switches Save to Saving… while a save is in flight', async () => {
+    setUp();
+    const loader = TnMenuTesting.rootLoader(fixture);
+
+    getForm().submitting.set(true);
+    fixture.detectChanges();
+
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Save' }))).toBeNull();
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Saving…' }))).not.toBeNull();
+  });
+
+  it('gates Save behind the missing-access wrapper for a user lacking the requiredRoles', async () => {
+    setUp(false);
+
+    // `*ixRequiresRoles` doesn't remove the button — it wraps it, disabling its focusable
+    // elements and explaining why via a tooltip. Assert the wrapper, not an absent button.
+    expect(document.querySelector('ix-missing-access-wrapper')).not.toBeNull();
+
+    const saveButton = await TnMenuTesting.rootLoader(fixture)
+      .getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+    expect(saveSubmit).not.toHaveBeenCalled();
+  });
+
+  it('renders Save unwrapped for a user holding the requiredRoles', () => {
+    setUp();
+
+    expect(document.querySelector('ix-missing-access-wrapper')).toBeNull();
   });
 });

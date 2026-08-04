@@ -173,9 +173,10 @@ implements SidePanelHostForm<R> {
   }
 
   /**
-   * Whether a save is actually in flight, as opposed to the initial data load that also trips
-   * {@link isBusy}. The host reads this (as `HostedSidePanelForm.isSubmitting`) to flip the panel's
-   * Save to "Saving…", so a slow config load never mislabels the button.
+   * Whether a save is actually in flight — distinct from {@link isBusy}, which also covers a form's
+   * `externalLoading` (initial/background data load). The host reads this (as
+   * `HostedSidePanelForm.isSubmitting`) to switch its Save to "Saving…", so a form merely loading
+   * data never mislabels the button.
    */
   isSubmitting(): boolean {
     return this.ixForm()?.isSubmitting() ?? false;
