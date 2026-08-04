@@ -1,17 +1,15 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnBannerHarness, TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { TierConfigFormComponent } from 'app/pages/storage/components/tier-config-form/tier-config-form.component';
 
@@ -26,25 +24,17 @@ describe('TierConfigFormComponent', () => {
     max_used_percentage: 80,
   } as ZfsTierConfig;
 
-  const slideInRef: SlideInRef<void, boolean> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
-  };
-
+  // pools-dashboard opens this form through FormSidePanelService, which is its only host: no
+  // SlideInRef, no in-form Save, submission driven by the panel footer calling `submit()`.
   const createComponent = createComponentFactory({
     component: TierConfigFormComponent,
-    imports: [
-      ReactiveFormsModule,
-    ],
+    imports: [ReactiveFormsModule],
     providers: [
       mockApi([
         mockCall('zfs.tier.config', mockConfig),
         mockCall('zfs.tier.update', mockConfig),
       ]),
-      mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
-      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -55,35 +45,42 @@ describe('TierConfigFormComponent', () => {
     api = spectator.inject(ApiService);
   });
 
-  it('loads config on init and populates form fields', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
+  function getInput(formControlName: string): Promise<TnInputHarness> {
+    return loader.getHarness(TnInputHarness.with({ selector: `[formControlName="${formControlName}"]` }));
+  }
 
+  function getCheckbox(formControlName: string): Promise<TnCheckboxHarness> {
+    return loader.getHarness(TnCheckboxHarness.with({ selector: `[formControlName="${formControlName}"]` }));
+  }
+
+  it('loads config on init and populates form fields', async () => {
     expect(api.call).toHaveBeenCalledWith('zfs.tier.config');
-    expect(values).toEqual({
-      Enabled: true,
-      'Max Concurrent Jobs': '3',
-      'Max Used Percentage': '80',
-    });
+
+    expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
+    expect(await (await getInput('max_concurrent_jobs')).getValue()).toBe('3');
+    expect(await (await getInput('max_used_percentage')).getValue()).toBe('80');
   });
 
-  it('submits updated values via zfs.tier.update', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Enabled: false,
-      'Max Concurrent Jobs': 5,
-      'Max Used Percentage': 90,
-    });
+  it('renders no in-form Save', async () => {
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Save' }))).toBeNull();
+  });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+  it('submits updated values via zfs.tier.update and emits closed', async () => {
+    const closed = jest.fn();
+    spectator.component.closed.subscribe(closed);
+
+    await (await getCheckbox('enabled')).uncheck();
+    await (await getInput('max_concurrent_jobs')).setValue('5');
+    await (await getInput('max_used_percentage')).setValue('90');
+
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('zfs.tier.update', [{
       enabled: false,
       max_concurrent_jobs: 5,
       max_used_percentage: 90,
     }]);
-    expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
+    expect(closed).toHaveBeenCalledWith(true);
   });
 
   it('shows warning when enabling tiering for the first time', async () => {
@@ -91,34 +88,32 @@ describe('TierConfigFormComponent', () => {
     jest.spyOn(api, 'call').mockReturnValueOnce(of(disabledConfig));
 
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     spectator.detectChanges();
 
-    expect(spectator.query('tn-banner')).not.toExist();
+    expect(await loader.getHarnessOrNull(TnBannerHarness)).toBeNull();
 
-    const form = await TestbedHarnessEnvironment.loader(spectator.fixture).getHarness(IxFormHarness);
-    await form.fillForm({ Enabled: true });
+    await (await getCheckbox('enabled')).check();
 
-    expect(spectator.query('tn-banner')).toExist();
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain('Shares will be locked to a single dataset');
   });
 
-  it('does not show warning when tiering is already enabled', () => {
-    expect(spectator.query('tn-banner')).not.toExist();
+  it('does not show warning when tiering is already enabled', async () => {
+    expect(await loader.getHarnessOrNull(TnBannerHarness)).toBeNull();
   });
 
-  it('shows validation errors and disables Save when max_used_percentage > 100 or max_concurrent_jobs < 1', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Max Used Percentage': 150,
-      'Max Concurrent Jobs': 0,
-    });
+  it('shows validation errors and blocks submission when values are out of range', async () => {
+    await (await getInput('max_used_percentage')).setValue('150');
+    await (await getInput('max_concurrent_jobs')).setValue('0');
 
-    const percentInput = await loader.getHarness(IxInputHarness.with({ label: 'Max Used Percentage' }));
-    const jobsInput = await loader.getHarness(IxInputHarness.with({ label: 'Max Concurrent Jobs' }));
+    const percentField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Used Percentage' }));
+    const jobsField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Concurrent Jobs' }));
 
-    expect(await percentInput.getErrorText()).toBe('Maximum value is 100');
-    expect(await jobsInput.getErrorText()).toBe('Minimum value is 1');
+    expect(await percentField.getErrorMessage()).toBe('Maximum value is 100');
+    expect(await jobsField.getErrorMessage()).toBe('Minimum value is 1');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    expect(await saveButton.isDisabled()).toBe(true);
+    // The panel footer's Save reads canSubmit(); there is no in-form button to assert against.
+    expect(spectator.component.canSubmit()).toBe(false);
   });
 });

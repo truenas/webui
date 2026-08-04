@@ -1,41 +1,41 @@
 <ix-page-header>
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    ixTest="import-pool"
-    mat-button
+    [testId]="'import-pool'"
     [ixUiSearch]="searchableElements.elements.importPool"
-    (click)="onImportPool()"
-  >
-    {{ 'Import Pool' | translate }}
-  </button>
+    [label]="'Import Pool' | translate"
+    (onClick)="onImportPool()"
+  ></tn-button>
 
-  <a mat-button ixTest="disks" [routerLink]="['/storage', 'disks']">
-    {{ 'Disks' | translate }}
-  </a>
+  <!-- Host-pinned to keep the legacy `link-disks` id — see the playbook's upstream-defects table. -->
+  <tn-button
+    tnTestIdType="link"
+    [tnTestId]="'disks'"
+    [routerLink]="['/storage', 'disks']"
+    [label]="'Disks' | translate"
+  ></tn-button>
 
   @if (isEnterprise()) {
-    <button
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="tiering"
+      [testId]="'tiering'"
       [ixUiSearch]="searchableElements.elements.tiering"
-      (click)="onTiering()"
-    >
-      {{ 'Tiering' | translate }}
-    </button>
+      [label]="'Tiering' | translate"
+      (onClick)="onTiering()"
+    ></tn-button>
   }
 
   @if (!hasNoPools() && !arePoolsLoading()) {
-    <a
+    <!-- Host-pinned `link-create-pool`, as is the empty-state button below. -->
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
       color="primary"
-      ixTest="create-pool"
+      tnTestIdType="link"
+      [tnTestId]="'create-pool'"
       [ixUiSearch]="searchableElements.elements.createPool"
       [routerLink]="['/storage', 'create']"
-    >
-      {{ 'Create Pool' | translate }}
-    </a>
+      [label]="'Create Pool' | translate"
+    ></tn-button>
   }
 </ix-page-header>
 
@@ -54,10 +54,28 @@
 
   @if (hasNoPools() && !arePoolsLoading()) {
     <div class="entity-empty-wrapper">
-      <ix-empty
-        [conf]="emptyConfig"
-        [requiredRoles]="requiredRoles"
-      ></ix-empty>
+      <tn-empty
+        icon="dns"
+        iconLibrary="material"
+        iconSize="56px"
+        [title]="emptyTitle | translate"
+        [description]="emptyMessage | translate"
+      ></tn-empty>
+
+      <!--
+        Rendered outside tn-empty rather than through its `actionText` input: the action button
+        tn-empty renders internally carries no test id, and the input exposes no way to set one.
+      -->
+      <!-- Host-pinned `link-create-pool`, same id as the header button. -->
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        color="primary"
+        variant="outline"
+        tnTestIdType="link"
+        [tnTestId]="'create-pool'"
+        [routerLink]="['/storage', 'create']"
+        [label]="'Create Pool' | translate"
+      ></tn-button>
     </div>
   }
 

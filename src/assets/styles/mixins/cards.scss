@@ -156,27 +156,12 @@
   }
 }
 
-@mixin resource-card {
-  @include details-card();
-
-  mat-card-header {
-    border-bottom: none;
-  }
-
-  mat-card-content {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-
-    .value {
-      font-size: 3.5em;
-      white-space: nowrap;
-    }
-  }
-}
-
 // Shared overrides for the apps detail cards migrated to tn-card (app-info,
 // app-metadata, app-notes). Hoisted here so the three siblings can't drift.
+//
+// Every `TEMP (NAS-141021)` block below works around a defect in the pinned
+// @truenas/ui-components; they are indexed in the tn-migration playbook's
+// "Known upstream defects" table, which is the checklist for the cleanup pass.
 @mixin tn-detail-card {
   // TEMP (NAS-141021): cards that pass tn-card's [title] input get the library's
   // own scoped .tn-card__title; cards that project a custom header (app-info,
@@ -198,6 +183,37 @@
   :host ::ng-deep .tn-card__header,
   :host ::ng-deep .tn-card__footer {
     border-color: var(--lines);
+  }
+}
+
+// TEMP (NAS-141021): the library's `.tn-card__title` style is scoped to tn-card, so a consumer
+// that projects an adornment (a status icon) next to the title text can't lay the row out without
+// restating the class on its own heading. Hoisted here so the pool dashboard's four sibling cards
+// — disk-health, storage-health, pool-usage, vdevs — can't drift. Drop once the library exposes a
+// styled-title projection slot. Kept separate from `tn-detail-card` so title-only cards aren't
+// made flex.
+//
+// No `::ng-deep` here, unlike `tn-detail-card`: these four cards project their own
+// `<h3 tnCardHeader class="tn-card__title">` from their own template, so the heading already
+// carries the consumer's encapsulation attribute and a plain descendant selector reaches it.
+// `tn-detail-card` needs `::ng-deep` because it also has to reach the heading tn-card itself
+// renders from its `[title]` input, which carries the library's attribute instead.
+@mixin tn-card-inline-title {
+  :host .tn-card__title {
+    align-items: center;
+    column-gap: 5px;
+    display: flex;
+  }
+}
+
+// TEMP (NAS-141021): tn-card declares no host `display`, so it defaults to `inline`. An inline box
+// wrapping block content is split into fragments that each paint the host background and padding,
+// which shows up as stray rectangles above and below the card. Hoisted here so the pool-manager
+// preview cards can't drift. Drop once the library sets a block host display.
+@mixin tn-card-block-host {
+  :host,
+  .card {
+    display: block;
   }
 }
 
@@ -230,7 +246,11 @@
       white-space: normal;
     }
 
-    a {
+    // `a` for real navigations. `.link-button` is for row actions that only run a handler:
+    // those are `<button>`s so that role, focusability and Enter/Space activation come from
+    // the element, and only the link *appearance* has to be restored here.
+    a,
+    .link-button {
       color: var(--primary);
       cursor: pointer;
       margin-left: auto;
@@ -239,6 +259,14 @@
       text-decoration: underline;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .link-button {
+      background: none;
+      border: 0;
+      font: inherit;
+      padding: 0;
+      text-align: inherit;
     }
 
     ngx-skeleton-loader {

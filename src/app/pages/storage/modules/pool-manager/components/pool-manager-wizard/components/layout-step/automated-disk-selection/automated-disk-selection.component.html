@@ -1,27 +1,33 @@
 @if (canChangeLayout()) {
   <div class="layout-container">
-    <ix-select
-      [ixTestOverride]="['layout']"
-      [keepLastPart]="true"
-      [formControl]="layoutControl"
+    <tn-form-field
       [label]="'Layout' | translate"
-      [tooltip]="'Select VDEV layout. This is the first step in setting up your VDEVs.' | translate"
-      [options]="vdevLayoutOptions$ | translateOptions"
       [required]="true"
+      [tooltip]="'Select VDEV layout. This is the first step in setting up your VDEVs.' | translate"
       [hint]="layoutRestrictionHint()"
-    ></ix-select>
+    >
+      <tn-select
+        [testId]="['layout']"
+        [formControl]="layoutControl"
+        [options]="(vdevLayoutOptions$ | translateOptions | async) ?? []"
+        [optionTestIdKey]="layoutOptionTestIdKey"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+      ></tn-select>
+    </tn-form-field>
   </div>
 } @else {
   @if (isDataVdev()) {
-    <ix-input
-      [ixTestOverride]="['layout']"
-      [keepLastPart]="true"
-      [formControl]="layoutControl"
+    <tn-form-field
       [label]="'Layout' | translate"
-      [readonly]="true"
       [tooltip]="dataLayoutTooltip()"
-      [required]="false"
-    ></ix-input>
+    >
+      <tn-input
+        [testId]="['layout']"
+        [formControl]="layoutControl"
+        [readonly]="true"
+      ></tn-input>
+    </tn-form-field>
   }
 }
 

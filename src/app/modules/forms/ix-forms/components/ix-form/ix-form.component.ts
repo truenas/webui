@@ -32,6 +32,12 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 /**
+ * Default for {@link ixFormMinSubmitFeedbackMs}. Exported so a spec asserting the delay can
+ * re-provide the real duration (and drive its `tick()`s from it) without restating the number.
+ */
+export const defaultMinSubmitFeedbackMs = 500;
+
+/**
  * Minimum time (ms) the submitting indicator stays up on a successful `<tn-side-panel>`-hosted save.
  * A local API call can resolve in a few ms, closing the panel before the host's progress bar / dim
  * overlay are perceptible — the save reads as if nothing happened. Holding success handling
@@ -39,11 +45,11 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
  * Only the success path waits; errors surface immediately (see {@link IxFormComponent.onFormSubmit}).
  *
  * Injectable so specs that assert a synchronous close can set it to `0` (which skips the timer
- * entirely, restoring the un-delayed path).
+ * entirely, restoring the un-delayed path); `ixFormTestingProviders()` does this by default.
  */
 export const ixFormMinSubmitFeedbackMs = new InjectionToken<number>('ixFormMinSubmitFeedbackMs', {
   providedIn: 'root',
-  factory: () => 500,
+  factory: () => defaultMinSubmitFeedbackMs,
 });
 
 export interface FormSubmitEvent<T = Record<string, unknown>> {
@@ -76,12 +82,15 @@ interface SubmitResultBase<R, TResult> {
   request$: Observable<TResult>;
 
   /**
-   * Success snackbar text. Required, but nullable: pass `null` — visibly, at the callsite — for a
-   * form that raises its own snackbar (or deliberately raises none) under
-   * `[suppressSuccessSnackbar]`. A `null` without that input set is a silent save, and warns in
-   * dev mode.
+   * Success snackbar text — a string, or a function of the request result for a confirmation that
+   * names the saved record.
+   *
+   * Required, but nullable: pass `null` — visibly, at the callsite — for a form that reports success
+   * itself under `[suppressSuccessSnackbar]`. A `null` without that input is a silent save and warns
+   * in dev mode; a function that returns `null` (e.g. the success path navigates away) is a
+   * per-result decision and never warns.
    */
-  successMessage: TranslatedString | null;
+  successMessage: TranslatedString | ((result: TResult) => TranslatedString | null) | null;
 
   /** Runs after success, before close (store/navigation fire pre-animation). */
   onSuccess?: (result: TResult) => void;
@@ -410,9 +419,12 @@ export class IxFormComponent<
         handledSuccess = true;
         this.hadSuccessfulSubmit = true;
         if (!this.suppressSuccessSnackbar()) {
-          if (successMessage) {
-            this.snackbar.success(successMessage);
-          } else if (isDevMode()) {
+          const message = typeof successMessage === 'function' ? successMessage(result) : successMessage;
+          if (message) {
+            this.snackbar.success(message);
+          } else if (successMessage === null && isDevMode()) {
+            // Only a statically `null` successMessage warns — a function that returned `null` chose
+            // silence for this particular result, which is a supported outcome.
             console.warn(
               '[ix-form] submitHandler returned a null successMessage and suppressSuccessSnackbar is not '
               + 'set, so this save gives the user no confirmation. Provide a successMessage, or set '

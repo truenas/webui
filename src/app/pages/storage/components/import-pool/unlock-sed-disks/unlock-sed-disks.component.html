@@ -1,83 +1,99 @@
 <div class="unlock-sed-disks">
   <form class="form-container" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <ix-input
-      formControlName="globalPassword"
-      type="password"
+    <tn-form-field
       [label]="'Global SED Password' | translate"
       [hint]="'This password will be used to unlock all selected disks.' | translate"
       [required]="true"
-    ></ix-input>
+    >
+      <tn-input
+        formControlName="globalPassword"
+        [inputType]="InputType.Password"
+      ></tn-input>
+    </tn-form-field>
 
-    <mat-checkbox formControlName="updateGlobalSettings" ixTest="update-global-settings" aria-describedby="update-global-hint">
-      <span class="checkbox-label">{{ 'Update global settings (applies to all disks/pools)' | translate }}</span>
-      <span id="update-global-hint" class="checkbox-hint">{{ 'Save this password to the system configuration for future use with these disks.' | translate }}</span>
-    </mat-checkbox>
+    <!-- See `updateGlobalSettingsAriaLabel` for why `label` repeats the projected hint. -->
+    <tn-checkbox
+      formControlName="updateGlobalSettings"
+      [label]="updateGlobalSettingsAriaLabel()"
+    >
+      <div tnCheckboxLabel>
+        <span class="checkbox-label">{{ updateGlobalSettingsLabel | translate }}</span>
+        <span class="checkbox-hint">{{ updateGlobalSettingsHint | translate }}</span>
+      </div>
+    </tn-checkbox>
 
     <div class="exceptions-section">
       <h3 class="section-title">{{ 'Individual Disk Passwords (Optional)' | translate }}</h3>
       <p class="section-hint">{{ 'Override the global password for specific disks that use a different password.' | translate }}</p>
 
       <div class="exceptions-list" formArrayName="exceptions" role="list" [attr.aria-label]="'Disk password exceptions' | translate">
-        @for (exception of form.controls.exceptions.controls; track $index) {
+        <!-- The row's controls are reached through `formGroupName`, so the loop only needs `$index`. -->
+        @for (_ of form.controls.exceptions.controls; track $index) {
           <div class="exception-item" role="listitem" [formGroupName]="$index">
-            <button
-              mat-icon-button
-              type="button"
+            <!--
+              Ids and labels carry the 1-based row position: without it the repeated rows resolve
+              to the same data-test (a Playwright strict-mode violation) and to identically-named
+              remove buttons.
+            -->
+            <tn-icon-button
               class="remove-button"
-              ixTest="remove-exception"
-              [attr.aria-label]="'Remove disk exception' | translate"
-              (click)="removeException($index)"
-            >
-              <tn-icon name="close" library="mdi"></tn-icon>
-            </button>
-            <ix-select
-              formControlName="diskName"
-              [label]="'Disk' | translate"
-              [options]="getOptionsForException($index)"
-              [required]="true"
-            ></ix-select>
-            <ix-input
-              formControlName="password"
-              type="password"
-              [label]="'Password' | translate"
-              [required]="true"
-            ></ix-input>
+              name="close"
+              library="mdi"
+              [testId]="['remove-exception', $index + 1]"
+              [ariaLabel]="'Remove disk exception {position}' | translate: { position: $index + 1 }"
+              (onClick)="removeException($index)"
+            ></tn-icon-button>
+            <tn-form-field [label]="'Disk' | translate" [required]="true">
+              <tn-select
+                formControlName="diskName"
+                [testId]="['disk-name', $index + 1]"
+                [options]="exceptionOptions()[$index] ?? []"
+                [optionTestIdKey]="diskOptionTestIdKey"
+                [placeholder]="tnSelectLabels.placeholder | translate"
+                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+              ></tn-select>
+            </tn-form-field>
+            <tn-form-field [label]="'Password' | translate" [required]="true">
+              <tn-input
+                formControlName="password"
+                [testId]="['password', $index + 1]"
+                [inputType]="InputType.Password"
+              ></tn-input>
+            </tn-form-field>
           </div>
         }
       </div>
 
-      <button
-        mat-button
-        type="button"
+      <!--
+        `type="button"` is spelled out on every non-submit button in this form rather than
+        inherited from tn-button's default: submitting fires a real `disk.sed_unlock`.
+      -->
+      <tn-button
         class="add-exception-button"
-        ixTest="add-exception"
-        [disabled]="availableDisksForException().length === 0"
-        (click)="addException()"
-      >
-        <tn-icon name="plus" library="mdi" customSize="18px"></tn-icon>
-        {{ 'Add Disk Exception' | translate }}
-      </button>
+        icon="mdi-plus"
+        type="button"
+        [testId]="'add-exception'"
+        [disabled]="availableDiskCountForException() <= 0"
+        [label]="'Add Disk Exception' | translate"
+        (onClick)="addException()"
+      ></tn-button>
     </div>
 
     <ix-form-actions>
-      <button
-        mat-button
+      <tn-button
         type="button"
-        ixTest="skip"
-        (click)="onSkip()"
-      >
-        {{ 'Skip' | translate }}
-      </button>
-      <button
+        [testId]="'skip'"
+        [label]="'Skip' | translate"
+        (onClick)="onSkip()"
+      ></tn-button>
+      <tn-button
         *ixRequiresRoles="[Role.DiskWrite]"
-        mat-button
         type="submit"
         color="primary"
-        ixTest="unlock-disks"
+        [testId]="'unlock-disks'"
         [disabled]="form.invalid || isUnlocking()"
-      >
-        {{ 'Unlock Disks' | translate }}
-      </button>
+        [label]="'Unlock Disks' | translate"
+      ></tn-button>
     </ix-form-actions>
   </form>
 </div>

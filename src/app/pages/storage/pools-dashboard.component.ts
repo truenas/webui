@@ -1,20 +1,19 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { MatButton, MatAnchor } from '@angular/material/button';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { storageEmptyConfig } from 'app/constants/empty-configs';
+import { TnButtonComponent, TnEmptyComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { DashboardPoolComponent } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
@@ -33,13 +32,12 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   imports: [
     PageHeaderComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    UiSearchDirective,
-    MatAnchor,
     RouterLink,
+    TnButtonComponent,
+    TnTestIdDirective,
+    UiSearchDirective,
     DashboardPoolComponent,
-    EmptyComponent,
+    TnEmptyComponent,
     UnusedResourcesComponent,
     TranslateModule,
   ],
@@ -48,34 +46,40 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class PoolsDashboardComponent implements OnInit {
-  protected router = inject(Router);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
   private store = inject(PoolsDashboardStore);
-  protected translate = inject(TranslateService);
+  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
   private tierService = inject(SharingTierService);
 
   protected readonly requiredRoles = [Role.PoolWrite];
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  readonly searchableElements = storageElements;
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly searchableElements = storageElements;
 
-  rootDatasets: Record<string, Dataset> = {};
+  protected readonly emptyTitle = T('No Pools');
 
-  protected readonly emptyConfig = {
-    ...storageEmptyConfig,
-    button: {
-      label: this.translate.instant('Create Pool'),
-      action: () => this.router.navigate(['/storage', 'create']),
-    },
-  };
+  /**
+   * The pre-migration copy carried `<br>` markup for its line breaks, which `tn-empty` — it
+   * renders `description` as text — would have shown verbatim. Re-keyed without the tags rather
+   * than stripped at render time: extraction is automated and the locale files are generated, so
+   * this costs one re-translation instead of a permanently misleading source string plus a
+   * regex on every render. Run `yarn translations` to pick the new key up.
+   *
+   * The three sentences run together as one paragraph now that the breaks are gone.
+   * `.tn-empty__description` caps itself at 420px and centres, so it still wraps to a short,
+   * readable column rather than a single full-width line — no extra styling needed here.
+   */
+  protected readonly emptyMessage = T('Storage features in TrueNAS require at least one Pool to exist. A Pool is a group of disks working together to store and protect your data. Once you have a pool, this page will provide an overview of your pool’s health and status.');
 
-  readonly pools = this.store.pools;
-  readonly arePoolsLoading = this.store.arePoolsLoading;
-  readonly isLoadingPoolDetails = this.store.isLoadingPoolDetails;
+  protected rootDatasets: Record<string, Dataset> = {};
 
-  readonly hasNoPools = computed(() => this.pools().length === 0);
+  protected readonly pools = this.store.pools;
+  protected readonly arePoolsLoading = this.store.arePoolsLoading;
+  protected readonly isLoadingPoolDetails = this.store.isLoadingPoolDetails;
+
+  protected readonly hasNoPools = computed(() => this.pools().length === 0);
 
   ngOnInit(): void {
     this.store.rootDatasets$
@@ -97,11 +101,16 @@ export class PoolsDashboardComponent implements OnInit {
   }
 
   protected onImportPool(): void {
-    this.slideIn.open(ImportPoolComponent).onSuccess(() => this.store.loadDashboard(), this.destroyRef);
+    this.formPanel.open(ImportPoolComponent, {
+      title: this.translate.instant(helptextImport.title),
+      footerless: true,
+    }).onSuccess(() => this.store.loadDashboard(), this.destroyRef);
   }
 
   protected onTiering(): void {
-    this.slideIn.open(TierConfigFormComponent).onSuccess(() => {
+    this.formPanel.open(TierConfigFormComponent, {
+      title: this.translate.instant('Tiering'),
+    }).onSuccess(() => {
       this.tierService.invalidate();
       // Re-prime so tierService.tierEnabled reflects the new config for child cards.
       this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();

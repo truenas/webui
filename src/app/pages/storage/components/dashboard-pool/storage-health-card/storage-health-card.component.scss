@@ -1,13 +1,21 @@
 @import 'mixins/cards';
 @import 'mixins/animations';
 
+@include tn-detail-card;
+@include tn-card-inline-title;
+
 :host {
   display: flex;
 }
 
 :host ::ng-deep {
   .card {
-    @include details-card();
+    // Restores the label/value/link row styling the legacy `details-card()` mixin used to
+    // provide — bold labels and, for this card, the "View"/"Configure"/"Schedule" affordances
+    // reading as links. Applied deeply, as `details-card()` was, because the scan and dedup
+    // child components render their own `.details-item` rows into this card.
+    @include tn-details-item();
+
     flex: 1;
 
     .content-container {
@@ -15,9 +23,6 @@
     }
 
     .details-item {
-      align-items: center;
-      column-gap: 8px;
-      display: flex;
       margin: 8px 0;
 
       ix-missing-access-wrapper {
@@ -35,7 +40,6 @@
     width: 24px;
   }
 }
-
 
 .card-content {
   display: flex;

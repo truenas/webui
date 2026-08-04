@@ -9,20 +9,16 @@
     </p>
   </div>
   <div class="warning-actions">
-    <button
-      mat-button
-      ixTest="view-disks"
-      (click)="onViewDisks()"
-    >
-      {{ 'View Disks' | translate }}
-    </button>
-    <button
-      mat-button
+    <tn-button
+      [testId]="'view-disks'"
+      [label]="'View Disks' | translate"
+      (onClick)="onViewDisks()"
+    ></tn-button>
+    <tn-button
       color="primary"
-      ixTest="import-again"
-      (click)="onImportAgain()"
-    >
-      {{ 'Import Again' | translate }}
-    </button>
+      [testId]="'import-again'"
+      [label]="'Import Again' | translate"
+      (onClick)="onImportAgain()"
+    ></tn-button>
   </div>
 </div>

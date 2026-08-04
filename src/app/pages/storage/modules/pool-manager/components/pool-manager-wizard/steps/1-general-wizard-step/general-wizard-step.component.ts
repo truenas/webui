@@ -1,10 +1,14 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnStepperNextDirective } from '@truenas/ui-components';
+import {
+  InputType,
+  TnButtonComponent, TnFormFieldComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent,
+  TnStepperNextDirective,
+} from '@truenas/ui-components';
 import {
   combineLatest, map, Observable,
 } from 'rxjs';
@@ -14,11 +18,10 @@ import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
@@ -35,8 +38,10 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   imports: [
     AsyncPipe,
     ReactiveFormsModule,
-    IxInputComponent,
-    IxRadioGroupComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnRadioComponent,
+    TnRadioGroupComponent,
     PoolWarningsComponent,
     FormActionsComponent,
     TnButtonComponent,
@@ -75,6 +80,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   });
 
   protected readonly EncryptionType = EncryptionType;
+  protected readonly InputType = InputType;
   protected readonly helptext = helptextPoolCreation;
 
   isLoading$ = this.store.isLoading$;
@@ -88,26 +94,27 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   isEnterprise$ = this.store$.select(selectIsEnterprise);
   isSedPasswordSet$ = this.api.call('system.advanced.sed_global_password_is_set');
 
-  encryptionTypeOptions$: Observable<Option<EncryptionType>[]> = combineLatest([
-    this.hasSedCapableDisks$,
-    this.isEnterprise$,
-  ]).pipe(
-    map(([hasSedDisks, isEnterprise]) => {
-      const options: Option<EncryptionType>[] = [
-        { label: this.translate.instant(helptextPoolCreation.encryptionTypeNone), value: EncryptionType.None },
-        { label: this.translate.instant(helptextPoolCreation.encryptionTypeSoftware), value: EncryptionType.Software },
-      ];
+  private readonly hasSedCapableDisks = toSignal(this.hasSedCapableDisks$, { initialValue: false });
+  private readonly isEnterprise = toSignal(this.isEnterprise$, { initialValue: false });
 
-      if (hasSedDisks && isEnterprise) {
-        options.push({
-          label: this.translate.instant(helptextPoolCreation.encryptionTypeSed),
-          value: EncryptionType.Sed,
-        });
-      }
+  // `translatedSignal`, not a plain `computed`: the labels are composed with `instant()` in
+  // TypeScript rather than piped in the template, so they would otherwise freeze at whatever was
+  // loaded the first time this ran — including the raw keys, if the bundle had not been merged yet.
+  protected readonly encryptionTypeOptions = translatedSignal<Option<EncryptionType>[]>((translate) => {
+    const options: Option<EncryptionType>[] = [
+      { label: translate.instant(helptextPoolCreation.encryptionTypeNone), value: EncryptionType.None },
+      { label: translate.instant(helptextPoolCreation.encryptionTypeSoftware), value: EncryptionType.Software },
+    ];
 
-      return options;
-    }),
-  );
+    if (this.hasSedCapableDisks() && this.isEnterprise()) {
+      options.push({
+        label: translate.instant(helptextPoolCreation.encryptionTypeSed),
+        value: EncryptionType.Sed,
+      });
+    }
+
+    return options;
+  });
 
   ngOnChanges(): void {
     if (this.isAddingVdevs()) {

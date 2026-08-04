@@ -1,6 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnCheckboxHarness, TnRadioHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -8,7 +8,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
@@ -159,7 +158,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
 
     expect(await wizard.getStepValues()).toMatchObject({
       Width: '',
-      'Number of VDEVs': '--',
+      'Number of VDEVs': '',
     });
     expect(Object.keys(await wizard.getConfigurationPreviewSummary())).not.toContain('Data');
   });
@@ -183,8 +182,10 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
     });
 
     await wizard.clickBack();
-    const enclosureOptions = await (await wizard.getActiveStep()).getHarness(IxRadioGroupHarness);
-    await enclosureOptions.setValue('Limit Pool To A Single Enclosure');
+    const enclosureOption = await (await wizard.getActiveStep()).getHarness(
+      TnRadioHarness.with({ label: 'Limit Pool To A Single Enclosure' }),
+    );
+    await enclosureOption.check();
     await wizard.fillStep({
       Enclosure: 'Second Enclosure',
     });
@@ -203,7 +204,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
     await wizard.fillStep({
       Name: 'newpool',
     });
-    const exportedPoolCheckbox = await (await wizard.getActiveStep()).getHarness(MatCheckboxHarness.with({ label: /oldpool/ }));
+    const exportedPoolCheckbox = await (await wizard.getActiveStep()).getHarness(TnCheckboxHarness.with({ label: /oldpool/ }));
     await exportedPoolCheckbox.check();
 
     await wizard.clickNext();
@@ -234,7 +235,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
 
     expect(await wizard.getStepValues()).toMatchObject({
       'Disk Size': '',
-      Width: '--',
+      Width: '',
     });
   });
 
@@ -242,7 +243,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
     await wizard.fillStep({
       Name: 'newpool',
     });
-    const anotherExportedPoolCheckbox = await (await wizard.getActiveStep()).getHarness(MatCheckboxHarness.with({ label: /anotherpool/ }));
+    const anotherExportedPoolCheckbox = await (await wizard.getActiveStep()).getHarness(TnCheckboxHarness.with({ label: /anotherpool/ }));
     await anotherExportedPoolCheckbox.check();
 
     await wizard.clickNext();
@@ -262,7 +263,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
     await wizard.clickBack();
     await wizard.clickBack();
 
-    const oldPoolExportedCheckbox = await (await wizard.getActiveStep()).getHarness(MatCheckboxHarness.with({ label: /oldpool/ }));
+    const oldPoolExportedCheckbox = await (await wizard.getActiveStep()).getHarness(TnCheckboxHarness.with({ label: /oldpool/ }));
     await oldPoolExportedCheckbox.check();
     await anotherExportedPoolCheckbox.uncheck();
 

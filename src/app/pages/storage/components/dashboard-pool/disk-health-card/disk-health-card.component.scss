@@ -1,11 +1,17 @@
 @import 'mixins/cards';
 
+@include tn-detail-card;
+@include tn-card-inline-title;
+
 :host {
   display: flex;
 }
 
 .card {
-  @include details-card();
+  // Restores the label/value row layout the legacy `details-card()` mixin used to
+  // provide; without it each `.label`/`.value` stacks onto its own line.
+  @include tn-details-item();
+
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -24,8 +30,3 @@
   }
 }
 
-.header {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-}

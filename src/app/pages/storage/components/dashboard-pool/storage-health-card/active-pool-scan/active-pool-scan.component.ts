@@ -1,9 +1,8 @@
 import { PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnButtonComponent, TnProgressBarComponent } from '@truenas/ui-components';
 import { formatDuration } from 'date-fns';
 import { filter, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -13,18 +12,16 @@ import { Role } from 'app/enums/role.enum';
 import { secondsToDuration } from 'app/helpers/time.helpers';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-active-pool-scan',
   imports: [
-    MatProgressBar,
+    TnProgressBarComponent,
     PercentPipe,
-    MatButton,
+    TnButtonComponent,
     RequiresRolesDirective,
-    TestDirective,
     TranslateModule,
   ],
   templateUrl: './active-pool-scan.component.html',

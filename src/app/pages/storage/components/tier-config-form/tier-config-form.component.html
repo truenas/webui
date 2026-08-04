@@ -1,48 +1,40 @@
-<ix-modal-header
-  [title]="'Tiering' | translate"
-  [loading]="isFormLoading()"
-></ix-modal-header>
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="formGroup" (submit)="submit()">
-      <ix-fieldset [title]="'Tiering Configuration' | translate">
-        <ix-checkbox
-          formControlName="enabled"
-          [label]="'Enabled' | translate"
-        ></ix-checkbox>
+<!-- Implicit (Enter-key) submission routes through the host-facing submit() — not onSubmit() —
+     so the panel footer's Save still latches to "Saving…" if this form ever drops to one field. -->
+<form class="ix-form-container" [formGroup]="form" (submit)="submit()">
+  <tn-form-section [heading]="'Tiering Configuration' | translate">
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="enabled"
+        [label]="'Enabled' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
 
-        @if (showEnabledWarning()) {
-          <tn-banner
-            type="warning"
-            [heading]="enabledWarningHeading | translate"
-            [message]="enabledWarningMessage | translate"
-          ></tn-banner>
-        }
-        <ix-input
-          formControlName="max_concurrent_jobs"
-          type="number"
-          [label]="'Max Concurrent Jobs' | translate"
-          [hint]="helptext.maxConcurrentJobs | translate"
-        ></ix-input>
-        <ix-input
-          formControlName="max_used_percentage"
-          type="number"
-          [label]="'Max Used Percentage' | translate"
-          [hint]="helptext.maxUsedPercentage | translate"
-        ></ix-input>
-      </ix-fieldset>
+    @if (showEnabledWarning()) {
+      <tn-banner
+        type="warning"
+        [heading]="enabledWarningHeading | translate"
+        [message]="enabledWarningMessage | translate"
+      ></tn-banner>
+    }
 
-      <ix-form-actions>
-        <button
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="save"
-          [disabled]="formGroup.invalid || isFormLoading()"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+    <tn-form-field
+      [label]="'Max Concurrent Jobs' | translate"
+      [hint]="helptext.maxConcurrentJobs | translate"
+    >
+      <tn-input
+        formControlName="max_concurrent_jobs"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Max Used Percentage' | translate"
+      [hint]="helptext.maxUsedPercentage | translate"
+    >
+      <tn-input
+        formControlName="max_used_percentage"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+  </tn-form-section>
+</form>

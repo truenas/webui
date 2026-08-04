@@ -3,14 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnStepperComponent } from '@truenas/ui-components';
+import {
+  TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnStepperComponent,
+} from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import {
   GeneralWizardStepComponent,
@@ -70,8 +70,16 @@ describe('GeneralWizardStepComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
+  function getNameInput(): Promise<TnInputHarness> {
+    return loader.getHarness(TnInputHarness.with({ selector: '[formControlName="name"]' }));
+  }
+
+  function selectEncryptionType(label: string): Promise<void> {
+    return loader.getHarness(TnRadioHarness.with({ label })).then((radio) => radio.check());
+  }
+
   it('updates store when name is edited', async () => {
-    const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+    const nameInput = await getNameInput();
     await nameInput.setValue('newpool');
 
     expect(spectator.inject(PoolManagerStore).setGeneralOptions).toHaveBeenCalledWith({
@@ -81,17 +89,19 @@ describe('GeneralWizardStepComponent', () => {
   });
 
   it('shows encryption type radio group with None and Software options when no SED disks', async () => {
-    const encryptionRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Encryption' }));
-    const optionLabels = await encryptionRadio.getOptionLabels();
+    // The group label lives on the wrapping tn-form-field; assert it so the options aren't
+    // just checked positionally against whatever radios happen to be in the DOM.
+    expect(await loader.getHarness(TnFormFieldHarness.with({ label: 'Encryption' }))).toBeTruthy();
 
-    expect(optionLabels).toHaveLength(2);
-    expect(optionLabels[0]).toBe('None');
-    expect(optionLabels[1]).toBe('Software Encryption (ZFS)');
+    const radios = await loader.getAllHarnesses(TnRadioHarness);
+
+    expect(radios).toHaveLength(2);
+    expect(await radios[0].getLabelText()).toBe('None');
+    expect(await radios[1].getLabelText()).toBe('Software Encryption (ZFS)');
   });
 
   it('shows warning when Software Encryption is selected', async () => {
-    const encryptionRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Encryption' }));
-    await encryptionRadio.setValue('Software Encryption (ZFS)');
+    await selectEncryptionType('Software Encryption (ZFS)');
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -102,11 +112,10 @@ describe('GeneralWizardStepComponent', () => {
   });
 
   it('updates store when Software Encryption is selected', async () => {
-    const encryptionRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Encryption' }));
-    await encryptionRadio.setValue('Software Encryption (ZFS)');
+    await selectEncryptionType('Software Encryption (ZFS)');
     spectator.detectChanges();
 
-    const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+    const nameInput = await getNameInput();
     await nameInput.setValue('test');
 
     expect(spectator.inject(PoolManagerStore).setEncryptionOptions).toHaveBeenCalledWith({
@@ -199,9 +208,56 @@ describe('GeneralWizardStepComponent', () => {
       expect(form.value.name).toBe('');
     });
   });
+});
 
-  it('shows info message when no global SED password is set', () => {
-    spectator.component.form.patchValue({ encryptionType: EncryptionType.Sed });
+describe('GeneralWizardStepComponent with SED disks and no global password', () => {
+  let spectator: Spectator<GeneralWizardStepComponent>;
+  let loader: HarnessLoader;
+
+  const startOver$ = new Subject<void>();
+
+  const createComponent = createComponentFactory({
+    component: GeneralWizardStepComponent,
+    imports: [ReactiveFormsModule, PoolWarningsComponent],
+    providers: [
+      mockProvider(TnStepperComponent),
+      mockApi([
+        mockCall('pool.query', []),
+        mockCall('pool.validate_name', true),
+        mockCall('system.advanced.sed_global_password_is_set', false),
+      ]),
+      mockProvider(PoolWizardNameValidationService, {
+        validatePoolName: () => of(null),
+      }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(PoolManagerStore, {
+        startOver$,
+        hasSedCapableDisks$: of(true),
+        encryptionType$: of(EncryptionType.None),
+        setGeneralOptions: jest.fn(),
+        setEncryptionOptions: jest.fn(),
+        setDiskWarningOptions: jest.fn(),
+      }),
+      mockProvider(DiskStore, {
+        selectableDisks$: of([]),
+      }),
+      provideMockStore({
+        selectors: [
+          { selector: selectIsEnterprise, value: true },
+        ],
+      }),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('shows info message when no global SED password is set', async () => {
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Self Encrypting Drives (SED)' }))).check();
     spectator.detectChanges();
 
     const infoMessage = spectator.query('ix-warning');
@@ -212,6 +268,7 @@ describe('GeneralWizardStepComponent', () => {
 
 describe('GeneralWizardStepComponent with existing SED password', () => {
   let spectator: Spectator<GeneralWizardStepComponent>;
+  let loader: HarnessLoader;
 
   const startOver$ = new Subject<void>();
 
@@ -252,10 +309,11 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows warning message when global SED password is already set', () => {
-    spectator.component.form.patchValue({ encryptionType: EncryptionType.Sed });
+  it('shows warning message when global SED password is already set', async () => {
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Self Encrypting Drives (SED)' }))).check();
     spectator.detectChanges();
 
     const warningMessage = spectator.query('ix-warning');

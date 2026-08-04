@@ -1,5 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnRadioHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -8,7 +9,6 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
@@ -150,8 +150,10 @@ describe('PoolManagerComponent – start over functionality', () => {
 
     // ENCLOSURE step activated
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Enclosure Options');
-    const enclosureOptions = await (await wizard.getActiveStep()).getHarness(IxRadioGroupHarness);
-    await enclosureOptions.setValue('Limit Pool To A Single Enclosure');
+    const enclosureOption = await (await wizard.getActiveStep()).getHarness(
+      TnRadioHarness.with({ label: 'Limit Pool To A Single Enclosure' }),
+    );
+    await enclosureOption.check();
     // "Limit to a single enclosure" makes the enclosure control required, so the
     // step's own "Next" is disabled with no enclosures to pick. The non-linear
     // stepper still allows jumping to the next step by clicking its header.
@@ -245,7 +247,8 @@ describe('PoolManagerComponent – start over functionality', () => {
     // ENCLOSURE step activated and reset to default
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Enclosure Options');
     expect(await wizard.getStepValues()).toStrictEqual({
-      '': 'No Enclosure Dispersal Strategy',
+      // The group carries no visible field label, so it indexes under its accessible name.
+      'Enclosure dispersal strategy': 'No Enclosure Dispersal Strategy',
     });
     await wizard.clickNext();
 

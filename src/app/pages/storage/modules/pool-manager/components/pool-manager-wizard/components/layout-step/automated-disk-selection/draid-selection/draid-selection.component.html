@@ -10,45 +10,51 @@
         (disksSelected)="onDisksSelected($event)"
       ></ix-disk-size-dropdowns>
 
-      <ix-select
-        class="select"
-        formControlName="dataDevicesPerGroup"
-        [ixTestOverride]="['data-devices-per-group', type()]"
-        [label]="'Data Devices' | translate"
-        [options]="dataDevicesPerGroupOptions$"
-        [required]="true"
-      ></ix-select>
+      <tn-form-field class="select" [label]="'Data Devices' | translate" [required]="true">
+        <tn-select
+          formControlName="dataDevicesPerGroup"
+          [testId]="['data-devices-per-group', type()]"
+          [options]="(dataDevicesPerGroupOptions$ | async) ?? []"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+        ></tn-select>
+      </tn-form-field>
 
-      <ix-select
-        class="select"
-        formControlName="spares"
-        [ixTestOverride]="['spares', type()]"
-        [label]="'Distributed Hot Spares' | translate"
-        [options]="sparesOptions$"
-        [required]="true"
-      ></ix-select>
+      <tn-form-field class="select" [label]="'Distributed Hot Spares' | translate" [required]="true">
+        <tn-select
+          formControlName="spares"
+          [testId]="['spares', type()]"
+          [options]="(sparesOptions$ | async) ?? []"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+        ></tn-select>
+      </tn-form-field>
     </div>
 
     <div class="column">
-      <ix-select
-        formControlName="children"
-        [ixTestOverride]="['children', type()]"
-        [label]="'Children' | translate"
-        [required]="true"
-        [options]="widthOptions$"
-      ></ix-select>
+      <tn-form-field [label]="'Children' | translate" [required]="true">
+        <tn-select
+          formControlName="children"
+          [testId]="['children', type()]"
+          [options]="(widthOptions$ | async) ?? []"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+        ></tn-select>
+      </tn-form-field>
 
       <div class="explanation">
         {{ helptext.dRaidChildrenExplanation | translate }}
       </div>
 
-      <ix-select
-        formControlName="vdevsNumber"
-        [ixTestOverride]="['vdevs-number', type()]"
-        [label]="'Number of VDEVs' | translate"
-        [options]="vdevsNumberOptions$"
-        [required]="true"
-      ></ix-select>
+      <tn-form-field [label]="'Number of VDEVs' | translate" [required]="true">
+        <tn-select
+          formControlName="vdevsNumber"
+          [testId]="['vdevs-number', type()]"
+          [options]="(vdevsNumberOptions$ | async) ?? []"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+        ></tn-select>
+      </tn-form-field>
     </div>
   </div>
 </div>
