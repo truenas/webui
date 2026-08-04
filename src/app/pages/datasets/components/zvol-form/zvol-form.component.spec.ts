@@ -235,8 +235,7 @@ describe('ZvolFormComponent', () => {
       await setEditableTnSelect(loader, mainDetails, 'Read-only', 'readonly', 'On');
       await setEditableTnSelect(loader, mainDetails, 'Snapdev', 'snapdev', 'Visible');
 
-      const encryptionDetails = (await loader.getAllHarnesses(DetailsTableHarness))[1];
-      await setEditableTnInput(loader, encryptionDetails, 'pbkdf2iters', 'pbkdf2iters', '1400000');
+      await setTnInput(loader, 'pbkdf2iters', '1400000');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

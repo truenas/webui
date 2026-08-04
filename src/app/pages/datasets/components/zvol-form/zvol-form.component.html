@@ -287,24 +287,17 @@
       }
 
       @if (form.controls.pbkdf2iters.enabled) {
-        <ix-details-table class="encryption-details">
-          <ix-details-item
-            [label]="helptext.encryption.pbkdf2itersLabel | translate"
-            [tooltip]="helptext.encryption.pbkdf2itersTooltip | translate"
-          >
-            <ix-editable>
-              <div view>{{ form.value.pbkdf2iters }}</div>
-              <div edit>
-                <tn-input
-                  formControlName="pbkdf2iters"
-                  [inputType]="InputType.Number"
-                  [ariaLabel]="helptext.encryption.pbkdf2itersLabel | translate"
-                  [required]="true"
-                ></tn-input>
-              </div>
-            </ix-editable>
-          </ix-details-item>
-        </ix-details-table>
+        <tn-form-field
+          [label]="helptext.encryption.pbkdf2itersLabel | translate"
+          [tooltip]="helptext.encryption.pbkdf2itersTooltip | translate"
+          [required]="true"
+        >
+          <tn-input
+            formControlName="pbkdf2iters"
+            [inputType]="InputType.Number"
+            [required]="true"
+          ></tn-input>
+        </tn-form-field>
       }
     </tn-form-section>
   }
