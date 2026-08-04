@@ -14,7 +14,7 @@ import { format } from 'date-fns';
 import {
   debounceTime, map, merge, Observable, of, startWith, switchMap,
 } from 'rxjs';
-import { emptyRootNode, datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
+import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -690,8 +690,10 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     this.sourceNodeProvider = !this.isRemoteSource ? localProvider : remoteProvider;
     this.targetNodeProvider = this.isRemoteTarget ? remoteProvider : localProvider;
-    this.targetDatasetsRootNodes = this.isRemoteTarget ? [emptyRootNode] : [datasetsRootNode];
-    this.sourceDatasetsRootNodes = this.isRemoteSource ? [emptyRootNode] : [datasetsRootNode];
+    // Both the local and the remote dataset providers work with relative dataset
+    // names ("tank/child"), so the explorer always gets the empty root node.
+    this.targetDatasetsRootNodes = [emptyRootNode];
+    this.sourceDatasetsRootNodes = [emptyRootNode];
 
     this.cdr.markForCheck();
   }
