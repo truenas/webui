@@ -1,16 +1,15 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ScrubFormComponent, ScrubFormParams,
@@ -33,18 +32,8 @@ describe('ScrubTaskFormComponent', () => {
     },
   } as ScrubTask;
 
-  const slideInRef: SlideInRef<ScrubFormParams, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => ({
-      poolId: 2,
-      existingScrubTask: null as ScrubTask | null,
-    })),
-  };
-
   let spectator: Spectator<ScrubFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: ScrubFormComponent,
     imports: [
@@ -68,26 +57,36 @@ describe('ScrubTaskFormComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
+  function getInput(formControlName: string): Promise<TnInputHarness> {
+    return loader.getHarness(TnInputHarness.with({ selector: `[formControlName="${formControlName}"]` }));
+  }
+
+  function getCheckbox(formControlName: string): Promise<TnCheckboxHarness> {
+    return loader.getHarness(TnCheckboxHarness.with({ selector: `[formControlName="${formControlName}"]` }));
+  }
+
+  // The only production opener is storage-health-card's `formPanel.open(ScrubFormComponent, { inputs:
+  // { scrubParams } })`, so every test drives the panel host: data in through the input, submission
+  // through the base's `submit()`, and the result out through the `closed` output.
+  function setupWith(scrubParams: ScrubFormParams): void {
+    spectator = createComponent({ props: { scrubParams } });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  }
+
   describe('adds new task when form is opened without an existing task', () => {
-    beforeEach(async () => {
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
-    });
+    beforeEach(() => setupWith({ poolId: 2, existingScrubTask: null }));
 
     it('adds new scrub task', async () => {
-      await form.fillForm({
-        Enabled: true,
-        Schedule: '* * 1,2 * *',
-        'Threshold Days': '30',
-      });
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await (await loader.getHarness(SchedulerHarness)).setValue('* * 1,2 * *');
+      await (await getInput('threshold')).setValue('30');
+
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.scrub.create', [{
         pool: 2,
@@ -101,46 +100,29 @@ describe('ScrubTaskFormComponent', () => {
         },
         threshold: 30,
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
   describe('edits existing scrub task', () => {
-    beforeEach(async () => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: jest.fn(() => ({
-              existingScrubTask,
-              poolId: 2,
-            })),
-          }),
-        ],
-      });
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
-    });
+    beforeEach(() => setupWith({ poolId: 2, existingScrubTask }));
 
     it('shows current values', async () => {
-      const formValues = await form.getValues();
-
-      expect(formValues).toEqual({
-        Enabled: true,
-        Schedule: 'Custom At 15:10 (03:10 PM), on day 1 and 2 of the month, and on Sunday',
-        'Threshold Days': '40',
-      });
+      expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
+      expect(await (await loader.getHarness(SchedulerHarness)).getValue())
+        .toBe('Custom At 15:10 (03:10 PM), on day 1 and 2 of the month, and on Sunday');
+      expect(await (await getInput('threshold')).getValue()).toBe('40');
     });
 
     it('edits existing Scrub test task when form is opened for edit', async () => {
-      await form.fillForm({
-        Enabled: false,
-        Schedule: '0 * * * *',
-        'Threshold Days': '20',
-      });
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      await (await getCheckbox('enabled')).uncheck();
+      await (await loader.getHarness(SchedulerHarness)).setValue('0 * * * *');
+      await (await getInput('threshold')).setValue('20');
+
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.scrub.update', [13, {
         enabled: false,
@@ -154,7 +136,11 @@ describe('ScrubTaskFormComponent', () => {
         },
         threshold: 20,
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closed).toHaveBeenCalledWith(true);
+    });
+
+    it('renders no in-form Save — the panel footer owns it', async () => {
+      expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Save' }))).toBeNull();
     });
   });
 });

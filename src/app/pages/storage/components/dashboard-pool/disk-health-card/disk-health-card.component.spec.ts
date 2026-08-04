@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, Spectator, mockProvider, byText,
 } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
@@ -68,11 +68,12 @@ describe('DiskHealthCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows a button to manage all disks', async () => {
-    const manageDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'View Disks' }));
+  it('links to the disks page under its legacy link-* test id', async () => {
+    const manageDisksButton = await loader.getHarness(TnButtonHarness.with({ label: 'View Disks' }));
 
-    expect(manageDisksButton).toBeTruthy();
-    expect(await (await manageDisksButton.host()).getAttribute('href')).toBe('/storage/disks');
+    expect(await manageDisksButton.getHref()).toBe('/storage/disks');
+    // Id is host-pinned, not passed through `[testId]` — see the note in the template.
+    expect(spectator.query('[data-test="link-view-disks"]')).toExist();
   });
 
   describe('Temperatures', () => {
