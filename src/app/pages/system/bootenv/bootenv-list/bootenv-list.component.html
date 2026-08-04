@@ -61,6 +61,8 @@
     [trackBy]="trackByBootenvId"
     [selectable]="true"
     [loading]="!!(dataProvider.isLoading$ | async)"
+    [(sortColumn)]="sortColumn"
+    [(sortDirection)]="sortDirection"
     (selectionChange)="onSelectionChange($event)"
     (sortChange)="onSortChange($event)"
   >

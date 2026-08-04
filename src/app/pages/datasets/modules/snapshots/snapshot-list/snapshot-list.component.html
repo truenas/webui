@@ -65,9 +65,10 @@
     [selectable]="true"
     [expandable]="true"
     [clickable]="true"
+    [expandOnRowClick]="true"
+    [singleExpand]="true"
     [loading]="isLoading()"
     (selectionChange)="onSelectionChange($event)"
-    (rowClick)="onRowClick($event)"
     (sortChange)="onSortChange($event)"
   >
     <ng-container tnColumnDef="dataset" [sortable]="true">

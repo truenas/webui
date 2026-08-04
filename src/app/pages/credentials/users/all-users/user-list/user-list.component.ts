@@ -18,7 +18,6 @@ import { UserAccessCellComponent } from './user-access-cell/user-access-cell.com
 @Component({
   selector: 'ix-user-list',
   templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,

@@ -37,7 +37,6 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { reflectSortIntoTable } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolDeleteDialog } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
@@ -108,18 +107,16 @@ export class BootEnvironmentListComponent implements OnInit {
 
   /**
    * The sort the list opens with. One declaration for both halves of it — `setDefaultSort` maps
-   * it into the data provider (accessors included) and `activeSort` seeds the header arrow from
-   * it — so the arrow can't end up pointing at a column the provider isn't sorting by.
+   * it into the data provider (accessors included) and the two-way `[(sortColumn)]`/
+   * `[(sortDirection)]` bindings seed the header arrow from it — so the arrow can't end up
+   * pointing at a column the provider isn't sorting by. The table writes them back on every
+   * header click and re-reads them when it is destroyed and rebuilt, so the arrow survives a
+   * rebuild too.
    */
   private readonly defaultSort: TnSortEvent = { column: 'created', direction: 'desc' };
 
-  // Remembered so the arrow shows from the start and survives a table rebuild; see
-  // `reflectSortIntoTable`.
-  private readonly activeSort = signal<TnSortEvent | null>(this.defaultSort);
-
-  constructor() {
-    reflectSortIntoTable(this.tnTable, this.activeSort);
-  }
+  protected readonly sortColumn = signal(this.defaultSort.column);
+  protected readonly sortDirection = signal(this.defaultSort.direction);
 
   protected readonly selectedBootenvs = signal<BootEnvironment[]>([]);
 
@@ -296,7 +293,6 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    this.activeSort.set(event);
     this.dataProvider.setSorting(
       mapTnSortToTableSort(event, this.displayedColumns, { sortAccessors: this.sortAccessors }),
     );

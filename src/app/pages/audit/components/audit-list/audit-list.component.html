@@ -8,6 +8,7 @@
   [displayedColumns]="displayedColumns"
   [trackBy]="trackByAuditId"
   [clickable]="true"
+  [fixedLayout]="true"
   [activeRow]="dataProvider().expandedRow"
   [loading]="(dataProvider().isLoading$ | async) ?? false"
   [loadingMessage]="loadingTitle | translate"

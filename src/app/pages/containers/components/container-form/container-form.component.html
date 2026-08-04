@@ -57,7 +57,7 @@
       }
     </tn-form-section>
 
-    @if (isAdvancedMode) {
+    @if (isAdvancedMode()) {
       @if (!isEditMode() && hasPreferredPool()) {
         <tn-form-section [heading]="'Storage' | translate">
           <tn-form-field [tooltip]="'Use the system preferred pool for this container' | translate">
@@ -210,12 +210,5 @@
           [disabled]="!canSubmit()"
         ></tn-button>
       }
-
-      <tn-button
-        type="button"
-        [testId]="'advanced-options'"
-        [label]="isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate)"
-        (onClick)="isAdvancedMode = !isAdvancedMode"
-      ></tn-button>
     </ix-form-actions>
   </form>

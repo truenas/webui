@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal, viewChild,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { select, Store } from '@ngrx/store';
@@ -23,7 +23,6 @@ import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provi
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { getGroupFormConfig } from 'app/pages/credentials/groups/group-form/group.form-config';
@@ -37,7 +36,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 @Component({
   selector: 'ix-group-list',
   templateUrl: './group-list.component.html',
-  styleUrls: ['./group-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BasicSearchComponent,
@@ -70,26 +68,22 @@ export class GroupListComponent implements OnInit {
 
   protected readonly dataProvider = new ArrayDataProvider<Group>();
   protected readonly currentPage = toSignal(this.dataProvider.currentPage$, { initialValue: [] as Group[] });
-  protected readonly table = viewChild(TnTableComponent<Group>);
 
   protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
   protected readonly trackById = (_: number, row: Group): number => row.id;
 
   /**
    * The sort the list opens with. One declaration for both halves of it — `setDefaultSort` maps
-   * it into the data provider and `activeSort` seeds the header arrow from it — so the arrow
-   * can't end up pointing at a column the provider isn't sorting by.
+   * it into the data provider and the two-way `[(sortColumn)]`/`[(sortDirection)]` bindings seed
+   * the header arrow from it — so the arrow can't end up pointing at a column the provider isn't
+   * sorting by. The table writes the bindings back on every header click, and re-reads them when
+   * it is destroyed and rebuilt (the empty state replaces it whenever the list empties out), so
+   * the arrow survives searching down to zero results and back.
    */
   private readonly defaultSort: TnSortEvent = { column: 'gid', direction: 'asc' };
 
-  // Remembered so the arrow shows from the start and survives a table rebuild; see
-  // `reflectSortIntoTable`.
-  private readonly activeSort = signal<TnSortEvent | null>(this.defaultSort);
-
-  constructor() {
-    restrictToSingleExpandedRow(this.table);
-    reflectSortIntoTable(this.table, this.activeSort);
-  }
+  protected readonly sortColumn = signal(this.defaultSort.column);
+  protected readonly sortDirection = signal(this.defaultSort.direction);
 
   protected hideBuiltinGroups = true;
   protected readonly searchQuery = signal('');
@@ -127,12 +121,7 @@ export class GroupListComponent implements OnInit {
     return formatRoleNames(row.roles, (key) => this.translate.instant(key)) || this.translate.instant('N/A');
   }
 
-  protected onRowClick(row: Group): void {
-    this.table()?.toggleRowExpansion(row);
-  }
-
   protected onSortChange(event: TnSortEvent): void {
-    this.activeSort.set(event);
     this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns));
   }
 

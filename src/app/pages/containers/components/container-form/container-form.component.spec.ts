@@ -122,6 +122,16 @@ describe('ContainerFormComponent', () => {
     TnSelectHarness.with({ selector: `[formControlName="${formControlName}"]` }),
   );
 
+  // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`, not by the
+  // form's own template, so there is no button harness to drive here.
+  const clickAdvancedOptions = async (): Promise<void> => {
+    const [toggleAdvanced] = spectator.component.footerActions;
+    expect(toggleAdvanced.label).toBe('Advanced Options');
+    toggleAdvanced.onClick();
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+  };
+
   describe('creating new container', () => {
     beforeEach(() => {
       spectator = createComponent();
@@ -136,21 +146,21 @@ describe('ContainerFormComponent', () => {
 
     it('sets isAdvancedMode to false by default', () => {
       // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['isAdvancedMode']).toBe(false);
+      expect(spectator.component['isAdvancedMode']()).toBe(false);
     });
 
-    it('toggles isAdvancedMode when Advanced Options is clicked', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+    it('toggles isAdvancedMode from the footer action the side-panel host renders', () => {
+      const [toggleAdvanced] = spectator.component.footerActions;
+      expect(toggleAdvanced.label).toBe('Advanced Options');
 
+      toggleAdvanced.onClick();
       // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['isAdvancedMode']).toBe(true);
+      expect(spectator.component['isAdvancedMode']()).toBe(true);
+      expect(spectator.component.footerActions[0].label).toBe('Basic Options');
 
-      const basicButton = await loader.getHarness(TnButtonHarness.with({ label: 'Basic Options' }));
-      await basicButton.click();
-
+      spectator.component.footerActions[0].onClick();
       // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['isAdvancedMode']).toBe(false);
+      expect(spectator.component['isAdvancedMode']()).toBe(false);
     });
 
     it('shows Browse Catalog button for image selection', async () => {
@@ -256,8 +266,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('shows CPU Set field in Advanced Settings', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await clickAdvancedOptions();
 
       const cpusetInput = await getInput('cpuset');
       expect(cpusetInput).toBeTruthy();
@@ -402,8 +411,7 @@ describe('ContainerFormComponent', () => {
     it('shows "Use Preferred Pool" checkbox in Advanced Settings when preferred pool is configured', async () => {
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await clickAdvancedOptions();
       spectator.detectChanges();
 
       await spectator.fixture.whenStable();
@@ -415,8 +423,7 @@ describe('ContainerFormComponent', () => {
     it('shows pool selector when "Use Preferred Pool" is unchecked', async () => {
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await clickAdvancedOptions();
       spectator.detectChanges();
 
       await spectator.fixture.whenStable();
@@ -525,8 +532,7 @@ describe('ContainerFormComponent', () => {
     it('does not show pool selector in Advanced Settings when no preferred pool is configured', async () => {
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await clickAdvancedOptions();
       spectator.detectChanges();
 
       await spectator.fixture.whenStable();
@@ -543,16 +549,14 @@ describe('ContainerFormComponent', () => {
     });
 
     it('shows ID Map Type in advanced mode for create', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await clickAdvancedOptions();
 
       const idmapSelect = await getSelect('idmap_type');
       expect(idmapSelect).toBeTruthy();
     });
 
     it('shows slice input when Isolated is selected', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await clickAdvancedOptions();
 
       const idmapSelect = await getSelect('idmap_type');
       await idmapSelect.selectOption('Isolated');
@@ -563,8 +567,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('shows privileged warning when Privileged is selected', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await clickAdvancedOptions();
 
       const idmapSelect = await getSelect('idmap_type');
       await idmapSelect.selectOption('Privileged');
@@ -575,8 +578,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('does not show slice input for Default idmap type', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await clickAdvancedOptions();
 
       await expect(
         getInput('idmap_slice'),
@@ -622,8 +624,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('does not show ID Map Type in edit mode', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await clickAdvancedOptions();
 
       await expect(
         getSelect('idmap_type'),
@@ -638,8 +639,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('has only Default and Allow All options', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await clickAdvancedOptions();
 
       const capabilitiesSelect = await getSelect('capabilities_policy');
       const options = await capabilitiesSelect.getOptions();

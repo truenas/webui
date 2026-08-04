@@ -12,6 +12,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
@@ -59,6 +60,7 @@ import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -133,7 +135,25 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
       .filter((name) => name !== this.editingContainer?.name)),
   );
 
-  protected isAdvancedMode = false;
+  /**
+   * A signal rather than a plain field because the toggle now lives in the `<tn-side-panel>`
+   * footer: the click handler runs in the host container, which never marks this OnPush form
+   * dirty, so a plain field would flip without the advanced sections re-rendering.
+   */
+  protected readonly isAdvancedMode = signal(false);
+
+  /**
+   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
+   * change detection, so the label flips with {@link isAdvancedMode}.
+   */
+  get footerActions(): SidePanelFooterAction[] {
+    // Labels are extraction markers — the panel container pipes them through `translate`.
+    return [{
+      label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
+      testId: 'toggle-advanced-options',
+      onClick: () => this.isAdvancedMode.update((isAdvanced) => !isAdvanced),
+    }];
+  }
 
   protected readonly isEditMode = signal<boolean>(false);
   protected editingContainer: Container | null = null;
