@@ -1,0 +1,17 @@
+<div class="wrapper">
+  <tn-card class="splash-card" elevation="low" padding="small">
+    <div class="card-body">
+      <!-- tabindex="-1" so the component can move focus here after render. A live region
+           would not do: the message is there from the first render and never changes, and
+           regions are only announced when their content mutates. An explicit role="status"
+           would also cost the page its only heading. -->
+      <h1 #heading class="message" tabindex="-1">
+        {{ message() }}
+      </h1>
+      <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>
+      <div class="copyright-txt">
+        <ix-copyright-line></ix-copyright-line>
+      </div>
+    </div>
+  </tn-card>
+</div>

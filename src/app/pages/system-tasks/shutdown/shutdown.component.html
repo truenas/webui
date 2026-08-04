@@ -1,14 +1,2 @@
-<div id="overlay"></div>
-<div id="wrapper">
-  <mat-card id="shutdown-card">
-    <mat-card-content id="shutdown-message">
-      {{ 'System is shutting down...' | translate }}
-    </mat-card-content>
-    <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>
-    <div>
-      <span class="copyright-txt">
-        <ix-copyright-line></ix-copyright-line>
-      </span>
-    </div>
-  </mat-card>
-</div>
+<div class="overlay" [class.blackout]="isBlackedOut()"></div>
+<ix-system-task-splash [message]="'System is shutting down...' | translate"></ix-system-task-splash>
