@@ -15,7 +15,6 @@ import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -83,7 +82,6 @@ describe('ServiceNfsComponent', () => {
         ],
       }),
       ...ixFormTestingProviders(),
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

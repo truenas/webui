@@ -11,7 +11,6 @@ import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SnmpConfig } from 'app/interfaces/snmp-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -60,7 +59,6 @@ describe('ServiceSnmpComponent', () => {
         } as SnmpConfig),
       ]),
       ...ixFormTestingProviders(),
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockAuth(),
     ],
   });

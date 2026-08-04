@@ -12,7 +12,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { UpsMode, UpsShutdownMode } from 'app/enums/ups-mode.enum';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
@@ -75,7 +74,6 @@ describe('ServiceUpsComponent', () => {
         mockCall('ups.update'),
       ]),
       ...ixFormTestingProviders(),
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(DialogService),
       mockAuth(),
     ],

@@ -13,7 +13,6 @@ import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ss
 import { Group } from 'app/interfaces/group.interface';
 import { SshConfig } from 'app/interfaces/ssh-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
@@ -84,7 +83,6 @@ describe('ServiceSshComponent', () => {
         mockCall('ssh.update'),
       ]),
       ...ixFormTestingProviders(),
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(DialogService),
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of(fakeGroupDataSource)),

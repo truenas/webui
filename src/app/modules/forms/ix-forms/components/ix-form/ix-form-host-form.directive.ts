@@ -1,5 +1,5 @@
 import {
-  DestroyRef, Directive, inject, output, signal, viewChild,
+  afterNextRender, DestroyRef, Directive, inject, Injector, isDevMode, output, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup } from '@angular/forms';
@@ -56,6 +56,7 @@ implements SidePanelHostForm<R> {
   // a base member of the same name would clash with them.
   private readonly hostDestroyRef = inject(DestroyRef);
   private readonly hostErrorHandler = inject(ErrorHandlerService);
+  private readonly hostInjector = inject(Injector);
 
   /** The form group the subclass renders inside its `<ix-form>`. */
   protected abstract readonly form: FormGroup;
@@ -128,6 +129,13 @@ implements SidePanelHostForm<R> {
    * snapshot are cleared, so a retry (or a second load) starts clean rather than racing the
    * previous attempt — a late stale response could otherwise re-latch a failure over a successful
    * retry. The arguments are kept so {@link retryLoad} can replay them.
+   *
+   * `patch` must therefore be IDEMPOTENT: it runs again on every retry, against a group that still
+   * holds whatever the previous attempt left behind. `patchValue` is naturally re-runnable, but a
+   * patch that PUSHES (e.g. a `FormArray` row per loaded item) has to clear the array first —
+   * replaying it would otherwise come back with every row duplicated. The base can't reset the
+   * group on its behalf: it knows neither the form's defaults nor which array rows were structure
+   * rather than data.
    */
   protected loadFormConfig<C>(config$: Observable<C>, patch: (config: C) => void): void {
     this.loadSubscription?.unsubscribe();
@@ -146,6 +154,7 @@ implements SidePanelHostForm<R> {
           return;
         }
         this.loadedSnapshot.set(this.form.getRawValue() as object);
+        this.verifyLoadBindings();
         // Defensive, same guard `<ix-form>` applies after patching `editData`: no `patch` today
         // dirties the group (patchValue and FormArray.push both leave it pristine), but this is the
         // shared entry point for every config form, and `hasUnsavedChanges()` is just the group's
@@ -166,6 +175,50 @@ implements SidePanelHostForm<R> {
     this.dataLoading.set(false);
     this.loadFailed.set(true);
     this.hostErrorHandler.showErrorModal(error);
+    this.verifyLoadBindings();
+  }
+
+  /**
+   * Dev-only guard on the two bindings the subclass still writes by hand. {@link loadFailed} and
+   * {@link initialFormSnapshot} do nothing until they reach `<ix-form>`, and forgetting them fails
+   * SILENTLY — a template missing `[extraDisabled]="loadFailed()"` still gets the container's
+   * "settings could not be loaded" banner while Save stays enabled and happily submits the
+   * untouched defaults, which is the exact scenario `loadFailed` exists to prevent, with the UI
+   * claiming otherwise. Neither review nor CI catches that today.
+   *
+   * Runs on the render after a load settles, i.e. once the state is real enough to be observable on
+   * the inner form's inputs: an unbound `extraDisabled` reads `false` under a latched failure, an
+   * unbound `initialFormSnapshot` reads `null` after one was captured.
+   */
+  private verifyLoadBindings(): void {
+    if (!isDevMode()) {
+      return;
+    }
+
+    afterNextRender(() => {
+      const ixForm = this.ixForm();
+      if (!ixForm) {
+        return;
+      }
+
+      const missing: string[] = [];
+      if (this.loadFailed() && !ixForm.extraDisabled()) {
+        missing.push('[extraDisabled]="loadFailed()"');
+      }
+      if (this.loadedSnapshot() !== null && ixForm.initialFormSnapshot() == null) {
+        missing.push('[initialFormSnapshot]="initialFormSnapshot()"');
+      }
+      if (!missing.length) {
+        return;
+      }
+
+      console.warn(
+        `[ix-form] ${this.constructor.name} loads its config through loadFormConfig(), but its `
+        + `<ix-form> is missing ${missing.join(' and ')}. Without those bindings the form ignores `
+        + 'the load state: Save stays enabled on defaults the user never saw, and changedValues '
+        + 'diffs against nothing.',
+      );
+    }, { injector: this.hostInjector });
   }
 
   /**

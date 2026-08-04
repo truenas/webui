@@ -9,7 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
@@ -20,7 +20,6 @@ import { SmbShare, SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -31,6 +30,30 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { UserService } from 'app/services/user.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+
+const smbConfig = {
+  id: 1,
+  netbiosname: 'truenas',
+  workgroup: 'WORKGROUP',
+  description: 'TrueNAS Server',
+  unixcharset: 'UTF-8',
+  debug: true,
+  syslog: false,
+  aapl_extensions: false,
+  localmaster: true,
+  guest: 'nobody',
+  filemask: '',
+  dirmask: '',
+  bindip: [] as string[],
+  cifs_SID: 'mockSid',
+  ntlmv1_auth: false,
+  minimum_protocol: SmbMinProtocol.Smb2,
+  admin_group: null,
+  next_rid: 0,
+  encryption: SmbEncryption.Negotiate,
+  search_protocols: [smbSearchSpotlight],
+  stateful_failover: false,
+} as SmbConfig;
 
 describe('ServiceSmbComponent', () => {
   let spectator: Spectator<ServiceSmbComponent>;
@@ -67,29 +90,7 @@ describe('ServiceSmbComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
-        mockCall('smb.config', {
-          id: 1,
-          netbiosname: 'truenas',
-          workgroup: 'WORKGROUP',
-          description: 'TrueNAS Server',
-          unixcharset: 'UTF-8',
-          debug: true,
-          syslog: false,
-          aapl_extensions: false,
-          localmaster: true,
-          guest: 'nobody',
-          filemask: '',
-          dirmask: '',
-          bindip: [] as string[],
-          cifs_SID: 'mockSid',
-          ntlmv1_auth: false,
-          minimum_protocol: SmbMinProtocol.Smb2,
-          admin_group: null,
-          next_rid: 0,
-          encryption: SmbEncryption.Negotiate,
-          search_protocols: [smbSearchSpotlight],
-          stateful_failover: false,
-        } as SmbConfig),
+        mockCall('smb.config', smbConfig),
         mockCall('sharing.smb.query', [] as SmbShare[]),
         mockCall('smb.unixcharset_choices', {
           'UTF-8': 'UTF-8',
@@ -110,7 +111,6 @@ describe('ServiceSmbComponent', () => {
         ),
       ]),
       ...ixFormTestingProviders(),
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(DialogService),
       mockProvider(SystemGeneralService),
       mockProvider(UserService, {
@@ -167,6 +167,32 @@ describe('ServiceSmbComponent', () => {
     // extraDisabled is bound to; that binding blocking Save is covered in the ix-form spec.
     expect(failed.componentInstance.hasLoadFailed()).toBe(true);
     expect(failed.componentInstance.canSubmit()).toBe(false);
+  });
+
+  it('does not duplicate bind IP rows when the config load is replayed', async () => {
+    // `loadFormConfig` replays the same patch on every `retryLoad`, and this form's `bindip` rows
+    // are PUSHED rather than patched — without the clear at the top of the patch the replay comes
+    // back with each address twice.
+    const call = api.call as unknown as jest.Mock<Observable<unknown>, [string, unknown?]>;
+    const respond = call.getMockImplementation();
+    call.mockImplementation((method, params) => {
+      return method === 'smb.config'
+        ? of({ ...smbConfig, bindip: ['1.1.1.1', '2.2.2.2'] } as SmbConfig)
+        : respond(method, params);
+    });
+
+    const reloaded = TestBed.createComponent(ServiceSmbComponent);
+    reloaded.detectChanges();
+
+    reloaded.componentInstance.retryLoad();
+    reloaded.detectChanges();
+    await reloaded.whenStable();
+
+    reloaded.componentInstance.submit();
+
+    expect(api.call).toHaveBeenLastCalledWith('smb.update', [
+      expect.objectContaining({ bindip: ['1.1.1.1', '2.2.2.2'] }),
+    ]);
   });
 
   it('loads and shows current settings for Smb service when form is opened', async () => {

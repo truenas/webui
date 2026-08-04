@@ -12,7 +12,6 @@ import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -55,7 +54,6 @@ describe('ServiceWebshareComponent', () => {
       ]),
       ...ixFormTestingProviders(),
       mockProvider(ErrorHandlerService),
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(TruenasConnectService, {
         config: tnConnectConfig,
       }),

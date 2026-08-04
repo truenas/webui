@@ -298,6 +298,10 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
 
     this.loadFormConfig(this.api.call('smb.config'), (config) => {
       const searchProtocolEnabled = config.search_protocols.includes(smbSearchSpotlight);
+      // The rows are pushed, not patched, so the patch has to start from an empty array to stay
+      // idempotent — `loadFormConfig` replays it on retry, and without this every bind IP would
+      // come back duplicated.
+      this.form.controls.bindip.clear();
       config.bindip.forEach(() => this.addBindIp());
       this.form.patchValue({
         ...config,

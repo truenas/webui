@@ -162,6 +162,8 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
 
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
+  private wiredFieldDependencies = false;
+
   ngOnInit(): void {
     // Only `nfs.config` gates the form: it is what populates the controls, so its failure is what
     // leaves them on defaults the user must not save. The other two calls merely enrich the UI
@@ -235,6 +237,13 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
   }
 
   private setFieldDependencies(): void {
+    // Wired from the load patch, which `loadFormConfig` replays on retry — subscribe once, or every
+    // protocols change would run the dependency update as many times as the config was loaded.
+    if (this.wiredFieldDependencies) {
+      return;
+    }
+    this.wiredFieldDependencies = true;
+
     this.form.controls.protocols.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((protocols) => {
       const nfs4Enabled = protocols.includes(NfsProtocol.V4);
       if (!nfs4Enabled) {
