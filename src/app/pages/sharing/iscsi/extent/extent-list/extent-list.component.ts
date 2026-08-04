@@ -9,7 +9,6 @@ import {
   TnTablePagerComponent, TnTestIdDirective, TnTooltipDirective,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -29,6 +28,7 @@ import {
 } from 'app/modules/ix-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import {
@@ -140,9 +140,7 @@ export class ExtentListComponent implements OnInit {
   protected readonly trackByExtentId = (_index: number, row: IscsiExtent): number => row.id;
 
   protected uniqueRowTag(row: IscsiExtent): string {
-    // Pre-split with lodash kebabCase so digit-bearing values resolve identically through
-    // the legacy [ixTest] directive and the library [tnTestId] directive (see nfs-list).
-    return kebabCase(convertStringToId('iscsi-extent-' + row.name));
+    return normalizeTestIdString(convertStringToId('iscsi-extent-' + row.name));
   }
 
   protected ariaLabel(row: IscsiExtent): string {
