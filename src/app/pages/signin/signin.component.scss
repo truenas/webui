@@ -1,4 +1,5 @@
 @import 'scss-imports/cssvars';
+@import 'mixins/tn-card';
 
 .session-form-hold {
   margin: 0 auto;
@@ -31,12 +32,7 @@
 }
 
 tn-card {
-  // Keep the card on the active webui theme palette even for custom themes,
-  // where the component-library theme sync falls back to a preset.
-  --tn-bg2: var(--bg2);
-
-  color: var(--fg2);
-  display: block;
+  @include tn-card-webui-palette;
 }
 
 // TEMP: until @truenas/ui-components ships a full-width input on tn-button.
