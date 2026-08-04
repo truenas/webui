@@ -38,11 +38,10 @@ export class DirectoryServiceValidationService {
    * Calculate overall form validity based on selected service type and component validities
    */
   calculateFormValidity(
-    mainForm: FormGroup,
+    mainFormValid: boolean,
     selectedServiceType: DirectoryServiceType | null,
   ): boolean {
     const credentialValid = this.credentialValid();
-    const formValid = mainForm.valid;
 
     // Only validate the configuration component for the selected service type
     // If no service type is selected, form should be invalid
@@ -55,7 +54,7 @@ export class DirectoryServiceValidationService {
       configValid = this.ipaValid();
     }
 
-    return configValid && credentialValid && formValid;
+    return configValid && credentialValid && mainFormValid;
   }
 
   /**
