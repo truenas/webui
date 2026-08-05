@@ -1,0 +1,64 @@
+name: Check Ticket
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check-ticket:
+    name: Check PR references a ticket
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check ticket reference in PR title
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const TICKET_PATTERN = /\bNAS-\d+\b/;
+            const SKIP_LABEL = 'no-ticket';
+            const TRANSLATIONS_PATH = 'src/assets/i18n/';
+
+            const pr = context.payload.pull_request;
+            const title = pr.title || '';
+
+            // Bots (dependabot, translation bots) do not have tickets.
+            if (pr.user.type === 'Bot' || pr.user.login.endsWith('[bot]')) {
+              core.info(`Skipping: PR is authored by bot ${pr.user.login}.`);
+              return;
+            }
+
+            // Explicit opt-out for changes that genuinely have no ticket.
+            if ((pr.labels || []).some((label) => label.name === SKIP_LABEL)) {
+              core.info(`Skipping: PR is labeled "${SKIP_LABEL}".`);
+              return;
+            }
+
+            // Community translation PRs only touch generated locale files.
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              per_page: 100,
+            });
+            if (files.length && files.every((file) => file.filename.startsWith(TRANSLATIONS_PATH))) {
+              core.info(`Skipping: PR only changes ${TRANSLATIONS_PATH} files.`);
+              return;
+            }
+
+            if (TICKET_PATTERN.test(title)) {
+              core.info(`Found ticket ${title.match(TICKET_PATTERN)[0]} in PR title.`);
+              return;
+            }
+
+            core.setFailed(
+              `This pull request does not reference a ticket.\n\n` +
+              `Current title: "${title}"\n\n` +
+              `Add the ticket number to the pull request title, for example:\n` +
+              `  NAS-12345: Fix broken thing\n` +
+              `  NAS-12345 / 27.0.0-BETA.1 / Fix broken thing\n\n` +
+              `If this change genuinely has no ticket, add the "${SKIP_LABEL}" label to the pull request.`
+            );

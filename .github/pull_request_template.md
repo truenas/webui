@@ -1,3 +1,5 @@
+<!-- Pull request title must reference a ticket, e.g. "NAS-12345: Fix broken thing". -->
+
 **Changes:**
 
 <!-- Briefly describe what changed. -->
