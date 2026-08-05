@@ -27,7 +27,9 @@ export function convertStringToId(inputString: string): string {
 }
 
 /**
- * Builds the per-row test-id fragment a migrated tn-table cell passes to `[tnTestId]`.
+ * Builds the per-row test-id fragment a migrated tn-table cell passes to `[tnTestId]`. The one
+ * spelling of it — every migrated table calls this rather than composing the two helpers by
+ * hand, so a change to how row tags are normalized lands everywhere at once.
  *
  * Pre-normalizes through {@link normalizeTestIdString} so the tag resolves identically through
  * the legacy `[ixTest]` directive and the library's `[tnTestId]` — see that helper for why the
@@ -45,6 +47,11 @@ export function toUniqueRowTag(value: string): string {
  * on a wide table that is (columns × rows) string rewrites per pass — and a list fed by a
  * websocket subscription runs a lot of passes. The tag is a pure function of the row, so cache
  * it against the row object; rows replaced by a reload drop out of the `WeakMap` on their own.
+ *
+ * The tables that call {@link toUniqueRowTag} directly are under the same pressure and can
+ * graduate to this the moment it is worth measuring; they were left alone only because caching
+ * against the row object assumes rows are replaced rather than mutated in place, which is worth
+ * checking per data provider rather than in bulk.
  *
  * @param build the raw, un-kebab-ed tag for a row, e.g. ``(vm) => `virtual-machine-${vm.name}` ``.
  */

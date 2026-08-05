@@ -47,8 +47,9 @@ export class VirtualMachineDetailsRowComponent {
   protected readonly requiredRoles = [Role.VmWrite];
 
   /**
-   * TEMP (NAS-141021): `tn-button` has no tooltip input, so `[tnTooltip]` sits on the host
-   * element rather than the native button it renders — the hover tooltip still works, but its
+   * TEMP (NAS-141021): `tn-button` has no tooltip input (still the case in 0.4.9 — only
+   * `tn-icon-button` and `tn-icon` have one), so `[tnTooltip]` sits on the host element rather
+   * than the native button it renders — the hover tooltip still works, but its
    * `aria-describedby` lands on a non-focusable wrapper. The warning is not lost: the
    * confirmation dialog repeats it where the user has to act. Bind a real input once the
    * library grows one.

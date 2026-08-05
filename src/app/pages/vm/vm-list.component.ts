@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit,
-  computed, effect, inject, signal, viewChild,
+  computed, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -135,8 +135,6 @@ export class VmListComponent implements OnInit {
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
 
-  private readonly table = viewChild(TnTableComponent<VirtualMachine>);
-
   /**
    * ix-table column model retained purely to drive `<ix-table-column-picker>` (visibility
    * + saved `vmList` prefs) and the hidden-column readout in the expanded detail row.
@@ -250,34 +248,6 @@ export class VmListComponent implements OnInit {
    * per websocket event.
    */
   protected readonly uniqueRowTag = memoizedRowTag<VirtualMachine>((row) => `virtual-machine-${row.name}`);
-
-  // TEMP: tn-table allows several rows expanded at once and exposes no single-expand input
-  // (0.3.26 has only `expandable` / `isRowExpandable`), so restore the previous ix-table
-  // behaviour here: whenever a second row opens, collapse back to just the newly-opened one.
-  // This corrects the state after the fact rather than preventing it — the chevron the
-  // `[expandable]` table renders itself never reaches `onRowClick`, so there is no handler to
-  // intercept — which means both rows paint expanded for a single frame before the older one
-  // collapses. Remove once the library grows a single-expand mode; see NAS-141021 library
-  // follow-ups.
-  private previousExpandedRows = new Set<unknown>();
-
-  constructor() {
-    effect(() => {
-      const table = this.table();
-      if (!table) {
-        return;
-      }
-      const expanded = table.expandedRows();
-      if (expanded.size <= 1) {
-        this.previousExpandedRows = new Set(expanded);
-        return;
-      }
-      const newest = [...expanded].find((row) => !this.previousExpandedRows.has(row));
-      const collapsed = newest ? new Set<unknown>([newest]) : new Set<unknown>();
-      this.previousExpandedRows = collapsed;
-      table.expandedRows.set(collapsed);
-    });
-  }
 
   ngOnInit(): void {
     this.refresh();
@@ -439,10 +409,6 @@ export class VmListComponent implements OnInit {
 
   protected onColumnsChange(columns: Column<VirtualMachine, ColumnComponent<VirtualMachine>>[]): void {
     this.columns.set([...columns]);
-  }
-
-  protected onRowClick(row: VirtualMachine): void {
-    this.table()?.toggleRowExpansion(row);
   }
 
   protected onSortChange(event: TnSortEvent): void {

@@ -23,9 +23,8 @@ import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import {
-  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/ix-table/utils';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { initiatorListElements } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.elements';
@@ -125,7 +124,7 @@ export class InitiatorListComponent implements OnInit {
   protected readonly trackByInitiatorId = (_index: number, row: IscsiInitiatorGroup): number => row.id;
 
   protected uniqueRowTag(row: IscsiInitiatorGroup): string {
-    return normalizeTestIdString(convertStringToId(`iscsi-initiator-${row.id}`));
+    return toUniqueRowTag(`iscsi-initiator-${row.id}`);
   }
 
   protected ariaLabel(row: IscsiInitiatorGroup): string {

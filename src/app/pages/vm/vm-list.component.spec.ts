@@ -4,15 +4,17 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnEmptyHarness, TnSlideToggleHarness, TnTableHarness,
+  TnButtonHarness, TnEmptyHarness, TnSelectHarness, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { VmBootloader, VmDeviceType, VmDisplayType, VmState } from 'app/enums/vm.enum';
+import { ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -23,7 +25,6 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
   VirtualMachineDetailsRowComponent,
 } from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
@@ -96,17 +97,6 @@ describe('VmListComponent', () => {
   let spectator: Spectator<VmListComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
-  let vmSubscriptionSubject$: Subject<unknown>;
-
-  // The members below are template-facing (`protected`) or component-internal (`private`).
-  // These typed accessors keep the pure-logic cases below unit-testable without a
-  // bracket-access suppression at every one of their ~15 call sites.
-  /* eslint-disable @typescript-eslint/dot-notation */
-  const getDisplayPort = (vm: VirtualMachine): boolean | number | string => spectator.component['getDisplayPort'](vm);
-  const getDisplayPortSortValue = (vm: VirtualMachine): number => spectator.component['getDisplayPortSortValue'](vm);
-  const vmMap = (): Map<string | number, VirtualMachine> => spectator.component['vmMap'];
-  const subscribeToVmEvents = (): void => spectator.component['subscribeToVmEvents']();
-  /* eslint-enable @typescript-eslint/dot-notation */
 
   const createComponent = createComponentFactory({
     component: VmListComponent,
@@ -148,27 +138,36 @@ describe('VmListComponent', () => {
   });
 
   beforeEach(async () => {
-    vmSubscriptionSubject$ = new Subject();
-
     spectator = createComponent();
-
-    // Mock the subscribe method after component creation
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    jest.spyOn(spectator.inject(ApiService), 'subscribe').mockImplementation((): any => {
-      return vmSubscriptionSubject$.asObservable();
-    });
-
-    // Initialize the vmMap with test data
-    virtualMachines.forEach((vm) => {
-      vmMap().set(vm.id, vm);
-    });
-
-    // Initialize the subscription by calling the method directly
-    subscribeToVmEvents();
-
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
   });
+
+  /**
+   * Pushes a `vm.query` websocket event, the same path production uses to learn a VM was added,
+   * changed or removed. Preferred over seeding the component's row map directly: it also covers
+   * the subscription that maintains it, and keeps these cases off the component's internals.
+   */
+  function emitVmEvent(event: Partial<ApiEventTyped>): void {
+    spectator.inject(MockApiService).emitSubscribeEvent(event as ApiEventTyped);
+    spectator.detectChanges();
+  }
+
+  /**
+   * Reveals a column the picker hides by default, so the cell it renders can be asserted on. The
+   * picker is a multiselect, so selecting adds to the visible set rather than replacing it.
+   */
+  async function showColumn(title: string): Promise<void> {
+    const picker = await loader.getHarness(TnSelectHarness);
+    await picker.selectOption(title);
+    await picker.close();
+    spectator.detectChanges();
+  }
+
+  async function getNames(): Promise<string[]> {
+    const rows = await table.getAllRowTexts();
+    return rows.map((cells) => cells[0]);
+  }
 
   it('should show table rows', async () => {
     expect(await table.getHeaderTexts()).toEqual(['Name', 'Running', 'Start on Boot']);
@@ -279,175 +278,118 @@ describe('VmListComponent', () => {
     });
   });
 
-  describe('getDisplayPort', () => {
-    it('returns "N/A" when display is not available', () => {
-      const vm = virtualMachines[1]; // test_refactoring with display_available: false
-      const result = getDisplayPort(vm);
-      expect(result).toBe('N/A');
+  describe('Display Port column', () => {
+    beforeEach(async () => {
+      await showColumn('Display Port');
     });
 
-    it('returns false when no devices exist', () => {
-      const vm = { ...virtualMachines[0], devices: [] as VmDisplayDevice[] };
-      const result = getDisplayPort(vm);
-      expect(result).toBe(false);
+    it('renders a port per display device, and N/A where display is unavailable', async () => {
+      expect(await table.getCellText(0, 'display_port')).toBe('VNC:5900');
+      expect(await table.getCellText(1, 'display_port')).toBe('N/A');
+      expect(await table.getCellText(2, 'display_port')).toBe('SPICE:5901');
     });
 
-    it('returns false when no display devices exist', () => {
-      const vm = {
-        ...virtualMachines[0],
-        devices: [] as VmDisplayDevice[],
-      };
-      const result = getDisplayPort(vm);
-      expect(result).toBe(false);
+    it('lists every display device a VM has', async () => {
+      emitVmEvent({
+        msg: CollectionChangeType.Changed,
+        id: virtualMachines[0].id,
+        fields: {
+          id: virtualMachines[0].id,
+          devices: [
+            { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc, port: 5900 } },
+            { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Spice, port: 5901 } },
+          ] as VmDisplayDevice[],
+        },
+      });
+
+      expect(await table.getCellText(0, 'display_port')).toBe('VNC:5900, SPICE:5901');
     });
 
-    it('returns VNC port for VNC display device', () => {
-      const vm = virtualMachines[0]; // test with VNC display
-      const result = getDisplayPort(vm);
-      expect(result).toBe('VNC:5900');
-    });
+    // Covers `sortAccessors`: the cells are derived text, so sorting them as rendered would
+    // order 'N/A' < 'SPICE:5901' < 'VNC:5900'. The accessor sorts by the lowest port instead,
+    // with the VMs that have no port pushed to the end.
+    it('sorts by the lowest port number rather than by the rendered text', async () => {
+      // Ports deliberately out of order: taking the first (5902) rather than the lowest (5900)
+      // would drop this VM behind test_with_spice's 5901.
+      emitVmEvent({
+        msg: CollectionChangeType.Changed,
+        id: virtualMachines[0].id,
+        fields: {
+          id: virtualMachines[0].id,
+          devices: [
+            { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc, port: 5902 } },
+            { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc, port: 5900 } },
+            { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc, port: 5901 } },
+          ] as VmDisplayDevice[],
+        },
+      });
 
-    it('returns SPICE port for SPICE display device', () => {
-      const vm = virtualMachines[2]; // test_with_spice
-      const result = getDisplayPort(vm);
-      expect(result).toBe('SPICE:5901');
-    });
+      await table.clickSortHeader('display_port');
+      spectator.detectChanges();
 
-    it('returns multiple ports when multiple display devices exist', () => {
-      const vm = {
-        ...virtualMachines[0],
-        devices: [
-          {
-            attributes: {
-              dtype: VmDeviceType.Display,
-              type: VmDisplayType.Vnc,
-              port: 5900,
-            },
-          },
-          {
-            attributes: {
-              dtype: VmDeviceType.Display,
-              type: VmDisplayType.Spice,
-              port: 5901,
-            },
-          },
-        ] as VmDisplayDevice[],
-      };
-      const result = getDisplayPort(vm);
-      expect(result).toBe('VNC:5900, SPICE:5901');
+      expect(await getNames()).toEqual(['test', 'test_with_spice', 'test_refactoring']);
     });
   });
 
-  describe('subscribeToVmEvents', () => {
-    it('should preserve devices when VM update does not include devices', () => {
-      // Initial VM has devices
-      const originalVm = virtualMachines[0];
-      vmMap().set(originalVm.id, originalVm);
-
-      // Simulate a partial update without devices (like a state change)
-      const partialUpdate = {
-        id: originalVm.id,
-        status: { state: VmState.Stopped },
-      };
-
-      vmSubscriptionSubject$.next({
-        msg: CollectionChangeType.Changed,
-        id: originalVm.id,
-        fields: partialUpdate,
-      });
-
-      const updatedVm = vmMap().get(originalVm.id);
-      expect(updatedVm?.devices).toEqual(originalVm.devices);
-      expect(updatedVm?.status?.state).toBe(VmState.Stopped);
-    });
-
-    it('should update devices when VM update includes devices', () => {
-      const originalVm = virtualMachines[0];
-      vmMap().set(originalVm.id, originalVm);
-
-      const newDevices = [
-        {
-          id: 3,
-          attributes: {
-            dtype: VmDeviceType.Display,
-            type: VmDisplayType.Spice,
-            port: 5999,
-          },
-        },
-      ] as VmDisplayDevice[];
-
-      const updateWithDevices = {
-        id: originalVm.id,
-        devices: newDevices,
-        status: originalVm.status,
-      };
-
-      vmSubscriptionSubject$.next({
-        msg: CollectionChangeType.Changed,
-        id: originalVm.id,
-        fields: updateWithDevices,
-      });
-
-      const updatedVm = vmMap().get(originalVm.id);
-      expect(updatedVm?.devices).toEqual(newDevices);
-    });
-
-    it('should add new VM to map when VM is added', () => {
-      const newVm = {
-        id: 999,
-        name: 'new_vm',
-        devices: [],
-        display_available: false,
-        status: {
-          state: VmState.Stopped,
-          pid: null,
-          domain_state: 'SHUTOFF',
-        },
-        autostart: false,
-        bootloader: VmBootloader.Uefi,
-      } as VirtualMachine;
-
-      vmSubscriptionSubject$.next({
+  describe('vm.query subscription', () => {
+    it('adds a row when a VM is added', async () => {
+      emitVmEvent({
         msg: CollectionChangeType.Added,
-        id: newVm.id,
-        fields: newVm,
+        id: 999,
+        fields: {
+          id: 999,
+          name: 'new_vm',
+          devices: [],
+          display_available: false,
+          status: { state: VmState.Stopped, pid: null, domain_state: 'SHUTOFF' },
+          autostart: false,
+          bootloader: VmBootloader.Uefi,
+        } as VirtualMachine,
       });
 
-      expect(vmMap().get(newVm.id)).toEqual(newVm);
+      expect(await getNames()).toEqual(['test', 'test_refactoring', 'test_with_spice', 'new_vm']);
     });
 
-    it('should remove VM from map when VM is removed', () => {
-      const vmToRemove = virtualMachines[0];
-      vmMap().set(vmToRemove.id, vmToRemove);
+    it('drops the row when a VM is removed', async () => {
+      emitVmEvent({ msg: CollectionChangeType.Removed, id: virtualMachines[0].id });
 
-      vmSubscriptionSubject$.next({
-        msg: CollectionChangeType.Removed,
-        id: vmToRemove.id,
+      expect(await getNames()).toEqual(['test_refactoring', 'test_with_spice']);
+    });
+
+    // Regression: a state-change event carries no `devices`, and merging it naively over the
+    // cached VM would blank the Display Port cell for as long as the list stays open.
+    it('applies a partial update without losing the devices it omits', async () => {
+      await showColumn('Display Port');
+
+      emitVmEvent({
+        msg: CollectionChangeType.Changed,
+        id: virtualMachines[0].id,
+        fields: { id: virtualMachines[0].id, status: { state: VmState.Stopped } },
       });
 
-      expect(vmMap().has(vmToRemove.id)).toBe(false);
-    });
-  });
+      expect(await table.getCellText(0, 'display_port')).toBe('VNC:5900');
 
-  describe('getDisplayPortSortValue', () => {
-    it('returns MAX_SAFE_INTEGER for VMs without display available', () => {
-      const vm = virtualMachines[1]; // display_available: false
-      const result = getDisplayPortSortValue(vm);
-      expect(result).toBe(Number.MAX_SAFE_INTEGER);
+      const running = await loader.getHarness(TnSlideToggleHarness.with({
+        testId: 'toggle-running-virtual-machine-test-row-toggle',
+      }));
+      expect(await running.isChecked()).toBe(false);
     });
 
-    it('returns lowest port number for sorting when multiple display devices exist', () => {
-      const vm = {
-        ...virtualMachines[0],
-        devices: [
-          { attributes: { dtype: VmDeviceType.Display, port: 5902 } },
-          { attributes: { dtype: VmDeviceType.Display, port: 5900 } },
-          { attributes: { dtype: VmDeviceType.Display, port: 5901 } },
-        ] as VmDisplayDevice[],
-      };
+    it('applies the devices an update does carry', async () => {
+      await showColumn('Display Port');
 
-      const result = getDisplayPortSortValue(vm);
-      expect(result).toBe(5900);
+      emitVmEvent({
+        msg: CollectionChangeType.Changed,
+        id: virtualMachines[0].id,
+        fields: {
+          id: virtualMachines[0].id,
+          devices: [
+            { id: 3, attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Spice, port: 5999 } },
+          ] as VmDisplayDevice[],
+        },
+      });
+
+      expect(await table.getCellText(0, 'display_port')).toBe('SPICE:5999');
     });
   });
 });
