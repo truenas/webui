@@ -47,11 +47,13 @@ export class TierConfigFormComponent extends SidePanelForm implements OnInit {
   protected readonly enabledWarningMessage = T('Once tiering is on, SMB shares and Webshares stop following nested datasets. Each share will expose only its own dataset, and any child datasets under it will no longer be visible to clients through that share. Create a separate share for each dataset you want to expose.');
 
   protected readonly helptext = {
-    maxConcurrentJobs: T('Maximum number of tiering rewrite jobs that can run in parallel. Higher values speed up data movement between tiers but increase CPU and I/O load on the system.'),
-    maxUsedPercentage: T('Pool capacity threshold (in percent) above which tiering will move data off the performance tier to keep free space available. Lower values reserve more free space; higher values let the performance tier fill more before data is migrated.'),
+    maxConcurrentJobs: T('Maximum number of tiering jobs that can run at the same time. Higher values speed up data movement between tiers but increase CPU and I/O load on the system.'),
+    maxUsedPercentage: T('Stop moving data between tiers when the pool reaches this percentage full (70–95). This keeps tiering from using up the last of the pool\'s free space.'),
+    performanceTierReserve: T('Percentage of the performance tier kept in reserve (10–30). When only this much space is left on the performance tier, new data goes to the regular tier instead. Shown as reserved space on the pool Usage card.'),
   };
 
   private static readonly defaultMaxConcurrentJobs = 1;
+  private static readonly defaultReservePercent = 25;
 
   readonly form = this.fb.nonNullable.group({
     enabled: [false],
@@ -61,7 +63,11 @@ export class TierConfigFormComponent extends SidePanelForm implements OnInit {
     ],
     max_used_percentage: [
       poolLowCapacityPercent,
-      [Validators.required, Validators.min(0), Validators.max(100)],
+      [Validators.required, Validators.min(70), Validators.max(95)],
+    ],
+    special_class_metadata_reserve_pct: [
+      TierConfigFormComponent.defaultReservePercent,
+      [Validators.required, Validators.min(10), Validators.max(30)],
     ],
   });
 
