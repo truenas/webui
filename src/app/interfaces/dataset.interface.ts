@@ -173,7 +173,7 @@ export interface DatasetDetails {
   id: string;
   encrypted: boolean;
   available: ZfsProperty<string, number>;
-  encryption_algorithm: ZfsProperty<string>;
+  encryption_algorithm: ZfsProperty<string | null>;
   encryption_root: string;
   key_format: ZfsProperty<EncryptionKeyFormat>;
   key_loaded: boolean;

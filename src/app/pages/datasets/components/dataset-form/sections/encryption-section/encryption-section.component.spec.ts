@@ -134,4 +134,53 @@ describe('EncryptionSectionComponent', () => {
       expect(await (await getInput('pbkdf2iters')).getValue()).toBe('1300000');
     });
   });
+
+  describe('getPayload', () => {
+    it('returns an empty payload when encryption is inherited', () => {
+      expect(spectator.component.getPayload()).toEqual({});
+    });
+
+    it('only disables encryption when Encryption checkbox is unticked', async () => {
+      await (await getCheckbox('inherit_encryption')).uncheck();
+      await (await getCheckbox('encryption')).uncheck();
+
+      expect(spectator.component.getPayload()).toEqual({ encryption: false });
+    });
+
+    it('sends encryption options without an algorithm when key is generated', async () => {
+      await (await getCheckbox('inherit_encryption')).uncheck();
+
+      expect(spectator.component.getPayload()).toEqual({
+        encryption: true,
+        encryption_options: { generate_key: true },
+        inherit_encryption: false,
+      });
+    });
+
+    it('sends the key entered by the user when Generate Key is unticked', async () => {
+      const key = 'k'.repeat(64);
+      await (await getCheckbox('inherit_encryption')).uncheck();
+      await (await getCheckbox('generate_key')).uncheck();
+      await (await getInput('key')).setValue(key);
+
+      expect(spectator.component.getPayload()).toEqual({
+        encryption: true,
+        encryption_options: { key },
+        inherit_encryption: false,
+      });
+    });
+
+    it('sends passphrase options when Passphrase encryption is used', async () => {
+      await (await getCheckbox('inherit_encryption')).uncheck();
+      await (await getSelect('encryption_type')).selectOption('Passphrase');
+      await (await getInput('passphrase')).setValue('12345678');
+      await (await getInput('confirm_passphrase')).setValue('12345678');
+
+      expect(spectator.component.getPayload()).toEqual({
+        encryption: true,
+        encryption_options: { passphrase: '12345678', pbkdf2iters: 1300000 },
+        inherit_encryption: false,
+      });
+    });
+  });
 });
