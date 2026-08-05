@@ -1,10 +1,10 @@
 import {
-  afterNextRender, DestroyRef, Directive, inject, Injector, isDevMode, output, signal, viewChild,
+  computed, DestroyRef, Directive, effect, inject, output, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
-import { IxFormComponent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { IxFormComponent, IxFormLoadState } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -15,15 +15,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
  * `FormSidePanelService` and its container can drive the panel Save and unsaved-changes guard.
  *
  * Centralizes the four-member surface (`closed` / `hasUnsavedChanges` / `canSubmit` / `submit`) that
- * every `<ix-form>`-wrapping migration otherwise re-implements by hand, plus the config-load triple
- * ({@link dataLoading} / {@link loadFailed} / {@link initialFormSnapshot}) that a config form binds
- * to `<ix-form>` — see {@link loadFormConfig}. Because it satisfies {@link SidePanelHostForm},
- * subclasses can be handed to `open()` by their real type — no `as unknown as Type<SidePanelForm>`
- * cast.
+ * every `<ix-form>`-wrapping migration otherwise re-implements by hand, plus the config-load state
+ * that {@link loadFormConfig} owns. Because it satisfies {@link SidePanelHostForm}, subclasses can
+ * be handed to `open()` by their real type — no `as unknown as Type<SidePanelForm>` cast.
  *
  * Subclasses render exactly one `<ix-form>` in their template and forward its `closed` to
  * {@link closed} (`(closed)="closed.emit($event)"`), or emit a richer payload from their own close
- * handler when `R` is not `boolean`.
+ * handler when `R` is not `boolean`. The load state reaches that `<ix-form>` through the view query
+ * below — a config form's template carries no load-state bindings of its own.
  *
  * @typeParam R success payload emitted through {@link closed} (defaults to `boolean`).
  * @typeParam V the {@link form}'s raw value shape, which types {@link initialFormSnapshot} so it
@@ -56,7 +55,6 @@ implements SidePanelHostForm<R> {
   // a base member of the same name would clash with them.
   private readonly hostDestroyRef = inject(DestroyRef);
   private readonly hostErrorHandler = inject(ErrorHandlerService);
-  private readonly hostInjector = inject(Injector);
 
   /** The form group the subclass renders inside its `<ix-form>`. */
   protected abstract readonly form: FormGroup;
@@ -67,12 +65,12 @@ implements SidePanelHostForm<R> {
    */
   readonly closed = output<R>();
 
-  /** True while {@link loadFormConfig} is in flight. Bind to `<ix-form>`'s `externalLoading`. */
+  /** True while {@link loadFormConfig} is in flight. Reaches `<ix-form>` as `externalLoading`. */
   protected readonly dataLoading = signal(false);
 
   /**
    * Latched when the initial config load fails, which leaves the form on untouched defaults the
-   * user never saw. Bind to `<ix-form>`'s `extraDisabled` so Save (in-body and the panel footer's)
+   * user never saw. Reaches `<ix-form>` as `extraDisabled`, so Save (in-body and the panel footer's)
    * can't submit them. Cleared by a subsequent {@link loadFormConfig} — see its re-entrancy note.
    *
    * Also read by the `<tn-side-panel>` host (through {@link hasLoadFailed}) to explain the state:
@@ -112,11 +110,34 @@ implements SidePanelHostForm<R> {
 
   /**
    * The post-load baseline `<ix-form>` diffs `changedValues` against, captured by
-   * {@link loadFormConfig}. Bind to `<ix-form>`'s `initialFormSnapshot`. Typed as the subclass's
+   * {@link loadFormConfig}. Reaches `<ix-form>` as `initialFormSnapshot`. Typed as the subclass's
    * own `V`, so it lines up with the `<ix-form>` generic the same subclass's `submitHandler` pins.
    */
   protected initialFormSnapshot(): Partial<V> | null {
     return this.loadedSnapshot() as Partial<V> | null;
+  }
+
+  /**
+   * Everything {@link loadFormConfig} tracks, in the shape `<ix-form>` consumes.
+   *
+   * Pushed into the inner form through the view query this base already owns, rather than asked of
+   * every subclass template as `[externalLoading]` + `[extraDisabled]` + `[initialFormSnapshot]`.
+   * Those three bindings did nothing until they were written out, and omitting them failed SILENTLY
+   * — the panel still showed its "settings could not be loaded" banner while Save stayed enabled
+   * over the untouched defaults, which is the exact scenario {@link loadFailed} exists to prevent.
+   * Wiring it here instead rides on the same `ixForm` query that already backs `submit()` /
+   * `canSubmit()`, so there is no longer a partial state to get wrong: either the subclass renders
+   * an `<ix-form>` and gets the whole contract, or it renders none and breaks loudly.
+   */
+  private readonly loadState = computed<IxFormLoadState>(() => ({
+    loading: this.dataLoading(),
+    failed: this.loadFailed(),
+    snapshot: this.initialFormSnapshot(),
+  }));
+
+  constructor() {
+    // The view query settles on first render; hand the inner form its load state as soon as it does.
+    effect(() => this.ixForm()?.connectLoadState(this.loadState));
   }
 
   /**
@@ -136,6 +157,9 @@ implements SidePanelHostForm<R> {
    * replaying it would otherwise come back with every row duplicated. The base can't reset the
    * group on its behalf: it knows neither the form's defaults nor which array rows were structure
    * rather than data.
+   *
+   * For the same reason `patch` is the wrong place to WIRE anything (a `valueChanges` subscription,
+   * a validator): a replay would register it a second time. Set those up once, before the load.
    */
   protected loadFormConfig<C>(config$: Observable<C>, patch: (config: C) => void): void {
     this.loadSubscription?.unsubscribe();
@@ -154,7 +178,6 @@ implements SidePanelHostForm<R> {
           return;
         }
         this.loadedSnapshot.set(this.form.getRawValue() as object);
-        this.verifyLoadBindings();
         // Defensive, same guard `<ix-form>` applies after patching `editData`: no `patch` today
         // dirties the group (patchValue and FormArray.push both leave it pristine), but this is the
         // shared entry point for every config form, and `hasUnsavedChanges()` is just the group's
@@ -175,50 +198,6 @@ implements SidePanelHostForm<R> {
     this.dataLoading.set(false);
     this.loadFailed.set(true);
     this.hostErrorHandler.showErrorModal(error);
-    this.verifyLoadBindings();
-  }
-
-  /**
-   * Dev-only guard on the two bindings the subclass still writes by hand. {@link loadFailed} and
-   * {@link initialFormSnapshot} do nothing until they reach `<ix-form>`, and forgetting them fails
-   * SILENTLY — a template missing `[extraDisabled]="loadFailed()"` still gets the container's
-   * "settings could not be loaded" banner while Save stays enabled and happily submits the
-   * untouched defaults, which is the exact scenario `loadFailed` exists to prevent, with the UI
-   * claiming otherwise. Neither review nor CI catches that today.
-   *
-   * Runs on the render after a load settles, i.e. once the state is real enough to be observable on
-   * the inner form's inputs: an unbound `extraDisabled` reads `false` under a latched failure, an
-   * unbound `initialFormSnapshot` reads `null` after one was captured.
-   */
-  private verifyLoadBindings(): void {
-    if (!isDevMode()) {
-      return;
-    }
-
-    afterNextRender(() => {
-      const ixForm = this.ixForm();
-      if (!ixForm) {
-        return;
-      }
-
-      const missing: string[] = [];
-      if (this.loadFailed() && !ixForm.extraDisabled()) {
-        missing.push('[extraDisabled]="loadFailed()"');
-      }
-      if (this.loadedSnapshot() !== null && ixForm.initialFormSnapshot() == null) {
-        missing.push('[initialFormSnapshot]="initialFormSnapshot()"');
-      }
-      if (!missing.length) {
-        return;
-      }
-
-      console.warn(
-        `[ix-form] ${this.constructor.name} loads its config through loadFormConfig(), but its `
-        + `<ix-form> is missing ${missing.join(' and ')}. Without those bindings the form ignores `
-        + 'the load state: Save stays enabled on defaults the user never saw, and changedValues '
-        + 'diffs against nothing.',
-      );
-    }, { injector: this.hostInjector });
   }
 
   /**
@@ -227,7 +206,10 @@ implements SidePanelHostForm<R> {
    * the inner `<ix-form>` so every wrapped form gets the indicator for free.
    */
   isBusy(): boolean {
-    return this.ixForm()?.isLoading() ?? false;
+    // Answered from this base's own state as well as the inner form's, so the panel reflects the
+    // config load from the moment it starts — the inner form only learns of it once the view query
+    // has settled, one render later.
+    return this.dataLoading() || (this.ixForm()?.isLoading() ?? false);
   }
 
   /**
@@ -245,9 +227,13 @@ implements SidePanelHostForm<R> {
     return this.ixForm()?.hasUnsavedChanges() ?? false;
   }
 
-  /** Whether the form may be submitted right now. Delegates to the inner `<ix-form>`. */
+  /**
+   * Whether the form may be submitted right now. Delegates to the inner `<ix-form>`, gated on this
+   * base's own load state for the same reason as {@link isBusy}: the panel footer's Save must never
+   * be live over a config that is still loading, or that failed to.
+   */
   canSubmit(): boolean {
-    return this.ixForm()?.canSubmit() ?? false;
+    return !this.dataLoading() && !this.loadFailed() && (this.ixForm()?.canSubmit() ?? false);
   }
 
   /** Host entry point (`<tn-side-panel>` footer Save) to trigger submission. */

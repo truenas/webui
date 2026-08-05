@@ -11,9 +11,9 @@ import {
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  combineLatest, forkJoin, Observable, of, tap,
+  forkJoin, Observable, of, tap,
 } from 'rxjs';
-import { catchError, map, take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
@@ -137,40 +137,44 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
     userd_manage_gids: helptextServiceNfs.userdManageGids,
   };
 
-  readonly ipChoices$ = combineLatest([
-    this.api.call('nfs.bindip_choices').pipe(choicesToOptions()),
-    // Read only to fold already-selected addresses into the option list. The gated load reports a
-    // `nfs.config` failure already, so fall back to no extras rather than letting the error reach
-    // the template's async pipe and take the whole select down with it.
-    this.api.call('nfs.config').pipe(
-      map((config) => config.bindip),
-      catchError(() => of([] as string[])),
+  /**
+   * The addresses the saved config binds to, captured by the gated `nfs.config` load. Folded into
+   * the choice list below because `nfs.bindip_choices` only offers addresses the system currently
+   * has: one the config still binds to but that has since gone away would otherwise be missing from
+   * the options and silently dropped from the select.
+   */
+  private readonly configuredBindIps = signal<string[]>([]);
+
+  private readonly availableBindIps = toSignal(
+    this.api.call('nfs.bindip_choices').pipe(
+      choicesToOptions(),
+      map((options) => options.map((option) => String(option.value))),
     ),
-  ]).pipe(
-    map(([options, selectedIps]) => {
-      return [
-        ...new Set<string>([
-          ...selectedIps,
-          ...options.map((option) => String(option.value)),
-        ]),
-      ].map((value) => ({ label: value, value }));
-    }),
+    { initialValue: [] as string[] },
   );
+
+  protected readonly ipChoices = computed(() => {
+    return [...new Set([...this.configuredBindIps(), ...this.availableBindIps()])]
+      .map((value) => ({ label: value, value }));
+  });
 
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
   readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
 
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
-  private wiredFieldDependencies = false;
-
   ngOnInit(): void {
+    // Wired up front, once — not from the load patch, which `loadFormConfig` replays on retry and
+    // would therefore re-subscribe. `applyConfig` writes `protocols` silently so this still only
+    // ever sees a user-driven change.
+    this.setFieldDependencies();
+
     // Only `nfs.config` gates the form: it is what populates the controls, so its failure is what
     // leaves them on defaults the user must not save. The other two calls merely enrich the UI
     // (RDMA availability, Add SPN visibility) and fail soft below — folding them into the same
     // load would let a `directoryservices.status` hiccup disable Save over a form that actually
     // holds the real configuration.
-    this.loadFormConfig(this.loadConfig(), () => this.setFieldDependencies());
+    this.loadFormConfig(this.api.call('nfs.config'), (config) => this.applyConfig(config));
 
     forkJoin([this.checkForRdmaSupport(), this.loadActiveDirectoryState()]).pipe(
       // Both enrichments already default to the conservative option (RDMA disabled, Add SPN
@@ -192,18 +196,23 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
     };
   };
 
-  private loadConfig(): Observable<NfsConfig> {
-    return this.api.call('nfs.config')
-      .pipe(
-        tap((config) => {
-          this.isAddSpnDisabled.set(!config.v4_krb);
-          this.hasNfsStatus.set(config.keytab_has_nfs_spn);
-          this.form.patchValue({
-            ...config,
-            servers_auto: config.managed_nfsd,
-          });
-        }),
-      );
+  /**
+   * Idempotent, as {@link loadFormConfig} requires: every write is a plain (re-runnable) patch.
+   */
+  private applyConfig(config: NfsConfig): void {
+    this.isAddSpnDisabled.set(!config.v4_krb);
+    this.hasNfsStatus.set(config.keytab_has_nfs_spn);
+    this.configuredBindIps.set(config.bindip);
+
+    // Silently, so loading a config is not mistaken for the user changing the protocols: the
+    // dependency below blanks `v4_domain` whenever NFSv4 is off, and a stored value must survive
+    // its own load rather than be cleared out from under a config the user never touched.
+    const { protocols, ...rest } = config;
+    this.form.controls.protocols.setValue(protocols, { emitEvent: false });
+    this.form.patchValue({
+      ...rest,
+      servers_auto: config.managed_nfsd,
+    });
   }
 
   private checkForRdmaSupport(): Observable<void> {
@@ -237,13 +246,6 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
   }
 
   private setFieldDependencies(): void {
-    // Wired from the load patch, which `loadFormConfig` replays on retry — subscribe once, or every
-    // protocols change would run the dependency update as many times as the config was loaded.
-    if (this.wiredFieldDependencies) {
-      return;
-    }
-    this.wiredFieldDependencies = true;
-
     this.form.controls.protocols.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((protocols) => {
       const nfs4Enabled = protocols.includes(NfsProtocol.V4);
       if (!nfs4Enabled) {

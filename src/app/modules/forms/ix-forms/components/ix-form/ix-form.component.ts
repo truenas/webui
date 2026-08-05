@@ -9,6 +9,7 @@ import {
   isDevMode,
   OnInit,
   output,
+  Signal,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -128,6 +129,24 @@ export type SubmitResult<R = boolean, TResult = unknown> = boolean extends R
   : SubmitResultBase<R, TResult> & { closeWith: (result: TResult) => R };
 
 /**
+ * Config-load state a wrapping `IxFormHostForm` hands to the `<ix-form>` it renders, covering the
+ * same ground as the {@link IxFormComponent.externalLoading} / {@link IxFormComponent.extraDisabled}
+ * / {@link IxFormComponent.initialFormSnapshot} inputs. Pushed through
+ * {@link IxFormComponent.connectLoadState} rather than bound in the subclass's template, so the
+ * three-part contract can't be half-written — see the directive for the full rationale.
+ */
+export interface IxFormLoadState {
+  /** True while the host's initial config load is in flight (as `externalLoading`). */
+  loading: boolean;
+
+  /** True once that load has failed, which must block Save over defaults the user never saw. */
+  failed: boolean;
+
+  /** Baseline captured after a successful load, which `changedValues` diffs against. */
+  snapshot: object | null;
+}
+
+/**
  * Unified form wrapper: modal header + card + save/actions chrome, change
  * tracking (snapshot + submit diff), loading state, dirty confirmation, and the
  * submit lifecycle (loading → API call → snackbar + close / error handling).
@@ -240,11 +259,30 @@ export class IxFormComponent<
    */
   readonly dirtyPredicate = input<(() => Observable<boolean>) | null>(null);
 
+  // Wired once by a wrapping `IxFormHostForm`; absent (null) under every other host.
+  private readonly loadStateSource = signal<Signal<IxFormLoadState> | null>(null);
+
+  private readonly loadState = computed<IxFormLoadState | null>(() => this.loadStateSource()?.() ?? null);
+
+  /**
+   * Hands this form the config-load state of the `IxFormHostForm` that renders it. Called by the
+   * directive through the view query it already owns — NOT an input, because the whole point is
+   * that no subclass template has to remember to bind it.
+   */
+  connectLoadState(state: Signal<IxFormLoadState>): void {
+    this.loadStateSource.set(state);
+  }
+
   /** Submit-only loading. Consumer-stable (read via template ref). */
   readonly isSubmitting = signal(false);
 
-  /** Submit OR externalLoading. Consumer-stable. */
-  readonly isLoading = computed(() => this.isSubmitting() || this.externalLoading());
+  /** Submit OR externalLoading (or a wrapping host's config load). Consumer-stable. */
+  readonly isLoading = computed(
+    () => this.isSubmitting() || this.externalLoading() || (this.loadState()?.loading ?? false),
+  );
+
+  /** {@link extraDisabled}, plus a wrapping host's failed config load. */
+  private readonly isExtraDisabled = computed(() => this.extraDisabled() || (this.loadState()?.failed ?? false));
 
   /**
    * Emitted on a successful submit when hosted OUTSIDE a SlideIn (i.e. inside a
@@ -276,7 +314,7 @@ export class IxFormComponent<
    * PENDING, so the SlideIn Save stayed enabled there — match it.
    */
   readonly canSubmit = computed(
-    () => this.formStatus() !== 'INVALID' && !this.isLoading() && !this.extraDisabled(),
+    () => this.formStatus() !== 'INVALID' && !this.isLoading() && !this.isExtraDisabled(),
   );
 
   private readonly internalSnapshot = signal<Partial<T> | null>(null);
@@ -297,7 +335,7 @@ export class IxFormComponent<
   private destroyRef = inject(DestroyRef);
 
   private readonly snapshot = computed<Partial<T> | null>(() => {
-    return this.initialFormSnapshot() ?? this.internalSnapshot();
+    return this.initialFormSnapshot() ?? (this.loadState()?.snapshot as Partial<T> | null) ?? this.internalSnapshot();
   });
 
   readonly isEdit = computed(() => {
@@ -324,7 +362,7 @@ export class IxFormComponent<
     return form.invalid
       || this.isLoading()
       || (this.requireDirty() && form.pristine)
-      || this.extraDisabled();
+      || this.isExtraDisabled();
   }
 
   /** Public entry point for a host (e.g. `<tn-side-panel>` footer) to submit. */

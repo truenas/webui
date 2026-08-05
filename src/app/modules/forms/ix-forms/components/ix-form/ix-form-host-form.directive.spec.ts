@@ -1,5 +1,5 @@
-/* eslint-disable @angular-eslint/component-max-inline-declarations, max-classes-per-file */
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+/* eslint-disable max-classes-per-file */
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
@@ -55,32 +55,17 @@ class TestFormHostComponent extends IxFormHostForm<boolean, { name: string }> {
 }
 
 /**
- * Renders a real `<ix-form>`, so the base can see whether the load-state inputs made it across.
- * `bindLoadState` mirrors the binding a config form's template is supposed to carry — flipping it
- * off reproduces the template that forgot them.
+ * Renders a real `<ix-form>` carrying NO load-state bindings of its own — the shape every config
+ * form now has. The load state has to reach the inner form through the base's view query alone.
  */
 @Component({
   selector: 'ix-test-bound-form-host',
-  template: `
-    @if (bindLoadState()) {
-      <ix-form
-        [formGroup]="form"
-        [externalLoading]="dataLoading()"
-        [extraDisabled]="loadFailed()"
-        [initialFormSnapshot]="initialFormSnapshot()"
-        [submitHandler]="handleSubmit"
-      ></ix-form>
-    } @else {
-      <ix-form [formGroup]="form" [submitHandler]="handleSubmit"></ix-form>
-    }
-  `,
+  template: '<ix-form [formGroup]="form" [submitHandler]="handleSubmit"></ix-form>',
   imports: [IxFormComponent, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class BoundFormHostComponent extends IxFormHostForm<boolean, { name: string }> {
   private fb = inject(FormBuilder);
-
-  readonly bindLoadState = input(true);
 
   protected readonly form = this.fb.nonNullable.group({
     name: [''],
@@ -227,9 +212,11 @@ describe('IxFormHostForm', () => {
   });
 });
 
-describe('IxFormHostForm load-state bindings', () => {
+// The load state reaching the inner <ix-form> is what actually blocks Save over defaults the user
+// never saw, and it now travels through the base's view query rather than three template bindings
+// a config form has to remember to write.
+describe('IxFormHostForm load state', () => {
   let spectator: Spectator<BoundFormHostComponent>;
-  let warn: jest.SpyInstance;
 
   const createComponent = createComponentFactory({
     component: BoundFormHostComponent,
@@ -239,46 +226,48 @@ describe('IxFormHostForm load-state bindings', () => {
     ],
   });
 
-  beforeEach(() => {
-    warn = jest.spyOn(console, 'warn').mockImplementation();
-  });
-
-  afterEach(() => {
-    warn.mockRestore();
-  });
-
-  // The <ix-form> inputs, not the base's own signals: a form that never binds them keeps Save
-  // enabled over defaults the user never saw, which is what the warning is there to surface.
-  it('warns when a form that loads its config does not bind extraDisabled', async () => {
-    spectator = createComponent({ props: { bindLoadState: false } });
-    spectator.component.load(throwError(() => new Error('Failed to load config')));
-
+  async function settle(): Promise<void> {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
+  }
 
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('[extraDisabled]="loadFailed()"'));
-  });
-
-  it('warns when a form that loads its config does not bind initialFormSnapshot', async () => {
-    spectator = createComponent({ props: { bindLoadState: false } });
-    spectator.component.load(of({ name: 'loaded' }));
-
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
-
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('[initialFormSnapshot]="initialFormSnapshot()"'));
-  });
-
-  it('stays quiet when the bindings are in place', async () => {
+  it('hands the inner <ix-form> the captured snapshot, so changedValues has a baseline', async () => {
     spectator = createComponent();
     spectator.component.load(of({ name: 'loaded' }));
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
+    await settle();
 
+    // `isEdit` is inferred from the snapshot, so it only flips once the snapshot has landed.
+    expect(spectator.query(IxFormComponent).isEdit()).toBe(true);
+  });
+
+  it('blocks submitting the inner <ix-form> while the load is in flight', async () => {
+    spectator = createComponent();
+    spectator.component.load(NEVER);
+    await settle();
+
+    expect(spectator.query(IxFormComponent).isLoading()).toBe(true);
+    expect(spectator.query(IxFormComponent).canSubmit()).toBe(false);
+    expect(spectator.component.canSubmit()).toBe(false);
+  });
+
+  it('blocks submitting the inner <ix-form> over defaults when the load fails', async () => {
+    spectator = createComponent();
     spectator.component.load(throwError(() => new Error('Failed to load config')));
-    spectator.detectChanges();
-    await spectator.fixture.whenStable();
+    await settle();
 
-    expect(warn).not.toHaveBeenCalled();
+    expect(spectator.query(IxFormComponent).canSubmit()).toBe(false);
+    expect(spectator.component.canSubmit()).toBe(false);
+  });
+
+  it('releases the inner <ix-form> once a retry succeeds', async () => {
+    spectator = createComponent();
+    spectator.component.load(throwError(() => new Error('Failed to load config')));
+    await settle();
+
+    spectator.component.load(of({ name: 'loaded' }));
+    await settle();
+
+    expect(spectator.query(IxFormComponent).canSubmit()).toBe(true);
+    expect(spectator.component.canSubmit()).toBe(true);
   });
 });

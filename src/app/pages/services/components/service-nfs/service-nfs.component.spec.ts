@@ -142,6 +142,14 @@ describe('ServiceNfsComponent', () => {
     expect(loaded.componentInstance.canSubmit()).toBe(true);
   });
 
+  // The Bind IP option list needs the addresses the config already selects; it takes them from this
+  // load rather than issuing a second `nfs.config` of its own.
+  it('reads nfs.config once', () => {
+    const calls = (api.call as unknown as jest.Mock).mock.calls as [string][];
+
+    expect(calls.filter(([method]) => method === 'nfs.config')).toHaveLength(1);
+  });
+
   it('shows current settings for NFS service when form is opened', async () => {
     expect(api.call).toHaveBeenCalledWith('nfs.config');
 

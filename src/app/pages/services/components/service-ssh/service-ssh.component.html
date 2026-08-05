@@ -1,8 +1,5 @@
 <ix-form
   [formGroup]="form"
-  [externalLoading]="dataLoading()"
-  [extraDisabled]="loadFailed()"
-  [initialFormSnapshot]="initialFormSnapshot()"
   [requiredRoles]="requiredRoles"
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"

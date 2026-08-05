@@ -10,7 +10,7 @@ import {
   TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, of, shareReplay, switchMap, tap,
+  BehaviorSubject, catchError, debounceTime, distinctUntilChanged, of, shareReplay, switchMap, tap,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
@@ -217,19 +217,26 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
 
   readonly unixCharsetOptions$ = this.api.call('smb.unixcharset_choices').pipe(choicesToOptions());
 
-  readonly bindIpAddressOptions$ = combineLatest([
-    this.api.call('smb.bindip_choices').pipe(choicesToOptions()),
-    this.api.call('smb.config'),
-  ]).pipe(
-    map(([options, config]) => {
-      return [
-        ...new Set<string>([
-          ...config.bindip,
-          ...options.map((option) => `${option.value}`),
-        ]),
-      ].map((value) => ({ label: value, value }));
-    }),
+  /**
+   * The addresses the saved config binds to, captured by the gated `smb.config` load. Folded into
+   * the choice list below because `smb.bindip_choices` only offers addresses the system currently
+   * has: one the config still binds to but that has since gone away would otherwise be missing from
+   * the options and silently dropped from the select.
+   */
+  private readonly configuredBindIps = signal<string[]>([]);
+
+  private readonly availableBindIps = toSignal(
+    this.api.call('smb.bindip_choices').pipe(
+      choicesToOptions(),
+      map((options) => options.map((option) => `${option.value}`)),
+    ),
+    { initialValue: [] as string[] },
   );
+
+  protected readonly bindIpAddressOptions = computed(() => {
+    return [...new Set([...this.configuredBindIps(), ...this.availableBindIps()])]
+      .map((value) => ({ label: value, value }));
+  });
 
   readonly encryptionOptions = mapToOptions(smbEncryptionLabels, this.translate);
 
@@ -303,6 +310,7 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
       // come back duplicated.
       this.form.controls.bindip.clear();
       config.bindip.forEach(() => this.addBindIp());
+      this.configuredBindIps.set(config.bindip);
       this.form.patchValue({
         ...config,
         spotlight_search: searchProtocolEnabled,
