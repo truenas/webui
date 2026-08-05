@@ -2,12 +2,11 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness, TnRadioGroupHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -45,8 +44,8 @@ describe('PruneDedupTableDialogComponent', () => {
   });
 
   it('prunes the table with percentage settings', async () => {
-    const pruneByRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Prune By' }));
-    await pruneByRadio.setValue('Percentage');
+    const pruneByRadio = await loader.getHarness(TnRadioGroupHarness.with({ testId: 'radio-group-prune-by' }));
+    await pruneByRadio.select('Percentage');
 
     const sliderThumb = spectator.query('input[tnSliderThumb]') as HTMLInputElement;
     sliderThumb.value = '50';
@@ -63,8 +62,8 @@ describe('PruneDedupTableDialogComponent', () => {
   });
 
   it('prunes the table with age setting', async () => {
-    const pruneByRadio = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Prune By' }));
-    await pruneByRadio.setValue('Age');
+    const pruneByRadio = await loader.getHarness(TnRadioGroupHarness.with({ testId: 'radio-group-prune-by' }));
+    await pruneByRadio.select('Age');
 
     const daysInput = await loader.getHarness(TnInputHarness);
     await daysInput.setValue('10');

@@ -6,16 +6,15 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  TnRadioComponent, TnRadioGroupComponent,
   TnSliderComponent, TnSliderThumbDirective, TnTestIdDirective,
   InputType,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { Pool, PruneDedupTableParams } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -44,7 +43,8 @@ export const pruneByLabels = new Map<PruneBy, string>([
     ReactiveFormsModule,
     TnTestIdDirective,
     TranslateModule,
-    IxRadioGroupComponent,
+    TnRadioGroupComponent,
+    TnRadioComponent,
     TnSliderComponent,
     TnSliderThumbDirective,
     IxLabelComponent,
@@ -68,7 +68,8 @@ export class PruneDedupTableDialog {
     days: [null as number | null],
   });
 
-  protected readonly pruneByOptions$ = of(mapToOptions(pruneByLabels, this.translate));
+  /** Held in a field, not rebuilt per change-detection pass: `tn-radio-group` tracks options by `value`. */
+  protected readonly pruneByOptions = mapToOptions(pruneByLabels, this.translate);
 
   get isPruningByPercentage(): boolean {
     return this.form.value.pruneBy === PruneBy.Percentage;
