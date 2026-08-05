@@ -15,7 +15,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # A PAT/app token makes the PR trigger workflows (GITHUB_TOKEN does not),
+          # so required status checks can report on it. Falls back when unset.
+          token: ${{ secrets.TRANSLATIONS_PAT || secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Install
@@ -43,7 +45,7 @@ jobs:
         if: steps.changes.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TRANSLATIONS_PAT || secrets.GITHUB_TOKEN }}
           commit-message: 'Update translations'
           title: 'Update translations - Week of ${{ steps.date.outputs.date }}'
           body: |
@@ -68,5 +70,6 @@ jobs:
           labels: |
             translations
             automated
+            no-ticket
           assignees: '' # Add usernames if needed
           reviewers: '' # Add reviewer usernames if needed
