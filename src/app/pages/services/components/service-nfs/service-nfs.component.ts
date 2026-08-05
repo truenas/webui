@@ -11,7 +11,7 @@ import {
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  forkJoin, Observable, of, tap,
+  catchError, forkJoin, Observable, of, tap,
 } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -149,6 +149,11 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
     this.api.call('nfs.bindip_choices').pipe(
       choicesToOptions(),
       map((options) => options.map((option) => String(option.value))),
+      // Fails soft, like the other enrichments: `toSignal` latches an error and re-throws it on
+      // every read, and this one is read from `ipChoices()` during template evaluation — so an
+      // uncaught failure would take down the whole form render instead of emptying one select.
+      // The configured addresses still reach the options through `configuredBindIps`.
+      catchError(() => of([] as string[])),
     ),
     { initialValue: [] as string[] },
   );

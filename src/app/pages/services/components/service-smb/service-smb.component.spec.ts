@@ -169,6 +169,20 @@ describe('ServiceSmbComponent', () => {
     expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 
+  it('keeps rendering when the bind IP choices fail to load', async () => {
+    // The choices reach the template through a `toSignal`, which latches an error and re-throws it
+    // on every read — so a failure that isn't caught takes down the whole form render rather than
+    // emptying one select. The addresses the config binds to still come from `smb.config`.
+    failApiCall(api, 'smb.bindip_choices');
+
+    const loaded = TestBed.createComponent(ServiceSmbComponent);
+    loaded.detectChanges();
+    await loaded.whenStable();
+
+    expect(loaded.componentInstance.hasLoadFailed()).toBe(false);
+    expect(loaded.componentInstance.canSubmit()).toBe(true);
+  });
+
   it('does not duplicate bind IP rows when the config load is replayed', async () => {
     // `loadFormConfig` replays the same patch on every `retryLoad`, and this form's `bindip` rows
     // are PUSHED rather than patched — without the clear at the top of the patch the replay comes

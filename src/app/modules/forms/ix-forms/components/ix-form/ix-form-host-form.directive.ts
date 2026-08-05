@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, take } from 'rxjs';
 import { IxFormComponent, IxFormLoadState } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -167,7 +167,11 @@ implements SidePanelHostForm<R> {
     this.loadFailed.set(false);
     this.loadedSnapshot.set(null);
     this.dataLoading.set(true);
-    this.loadSubscription = config$.pipe(takeUntilDestroyed(this.hostDestroyRef)).subscribe({
+    // `take(1)` enforces the single-emission contract the rest of this method assumes rather than
+    // trusting every caller to pass a single-emit source: a second emission would re-run `patch`,
+    // re-capture the snapshot and `markAsPristine()` over the user's in-progress edits. It also
+    // makes the `complete` safety net's "completion always means the load is over" literally true.
+    this.loadSubscription = config$.pipe(take(1), takeUntilDestroyed(this.hostDestroyRef)).subscribe({
       next: (config) => {
         try {
           // Wrapped so a throwing `patch` takes the same path as a failed request, instead of

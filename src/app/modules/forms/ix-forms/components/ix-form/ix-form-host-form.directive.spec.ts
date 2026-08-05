@@ -173,6 +173,15 @@ describe('IxFormHostForm', () => {
       expect(spectator.component.readSnapshot()).toBeNull();
     });
 
+    it('patches from the first emission only, so a multi-emit source cannot overwrite user edits', () => {
+      spectator.component.load(of({ name: 'first' }, { name: 'second' }));
+
+      // Every caller passes a single-emit `api.call` today, but a second emission would re-run the
+      // patch, re-capture the snapshot and mark the group pristine over whatever the user typed.
+      expect(spectator.component.readFormValue()).toEqual({ name: 'first' });
+      expect(spectator.component.readSnapshot()).toEqual({ name: 'first' });
+    });
+
     it('drops the previous snapshot while a reload is in flight', () => {
       spectator.component.load(of({ name: 'loaded' }));
       expect(spectator.component.readSnapshot()).toEqual({ name: 'loaded' });

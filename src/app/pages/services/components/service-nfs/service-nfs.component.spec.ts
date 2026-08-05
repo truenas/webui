@@ -142,6 +142,24 @@ describe('ServiceNfsComponent', () => {
     expect(loaded.componentInstance.canSubmit()).toBe(true);
   });
 
+  it('keeps rendering when the bind IP choices fail to load', async () => {
+    // The choices reach the template through a `toSignal`, which latches an error and re-throws it
+    // on every read — so a failure that isn't caught takes down the whole form render rather than
+    // emptying one select. The addresses the config binds to still come from `nfs.config`.
+    failApiCall(api, 'nfs.bindip_choices');
+
+    const loaded = TestBed.createComponent(ServiceNfsComponent);
+    loaded.detectChanges();
+    await loaded.whenStable();
+
+    expect(loaded.componentInstance.hasLoadFailed()).toBe(false);
+    expect(loaded.componentInstance.canSubmit()).toBe(true);
+
+    const bindIp = await TestbedHarnessEnvironment.loader(loaded)
+      .getHarness(TnSelectHarness.with({ selector: '[formControlName="bindip"]' }));
+    expect(await bindIp.getDisplayText()).toBe('192.168.1.117, 192.168.1.118');
+  });
+
   // The Bind IP option list needs the addresses the config already selects; it takes them from this
   // load rather than issuing a second `nfs.config` of its own.
   it('reads nfs.config once', () => {

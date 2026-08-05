@@ -229,6 +229,11 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
     this.api.call('smb.bindip_choices').pipe(
       choicesToOptions(),
       map((options) => options.map((option) => `${option.value}`)),
+      // Fails soft, like the other choice streams: `toSignal` latches an error and re-throws it on
+      // every read, and this one is read from `bindIpAddressOptions()` during template evaluation —
+      // so an uncaught failure would take down the whole form render instead of emptying one
+      // select. The configured addresses still reach the options through `configuredBindIps`.
+      catchError(() => of([] as string[])),
     ),
     { initialValue: [] as string[] },
   );
