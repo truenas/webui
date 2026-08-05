@@ -10,6 +10,14 @@
   ></tn-button>
 </ix-page-header>
 
+@if (showExportBlockedNotice()) {
+  <tn-banner
+    class="export-blocked-notice"
+    type="info"
+    [message]="'Export is not allowed when Virtual Machine is running.' | translate"
+  ></tn-banner>
+}
+
 @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
 <tn-table
   [testId]="'table-table'"
@@ -87,19 +95,21 @@
         </tn-menu-item>
         @if (isDiskDevice(device)) {
           <!--
-            The "VM must be stopped" reason is carried by the label rather than a tooltip:
-            tn-menu-panel projects each item into a NATIVE <button> and forwards [disabled] to
-            it, and browsers dispatch no pointer events to a disabled button's descendants — so
-            a tooltip could never be shown in the one state it explains. An aria-label is
-            likewise omitted: the projected content lands on a role=generic element, where ARIA
-            1.2 prohibits it, and the visible label is an adequate accessible name on its own.
+            A disabled item cannot explain itself here: tn-menu-panel projects each item into a
+            NATIVE <button> and forwards [disabled] to it, and browsers dispatch no pointer
+            events to a disabled button's descendants — so neither this item's own tooltip nor
+            one on a projected icon could ever be shown in the one state it explains. The reason
+            is surfaced once by the banner above the table instead, which keeps this item's label
+            (and therefore its accessible name) the same in both states. An aria-label is omitted
+            for a separate reason: the projected content lands on a role=generic element, where
+            ARIA 1.2 prohibits it, and the visible label names the item adequately on its own.
           -->
           <tn-menu-item
             [testId]="[device.id, 'export']"
             [disabled]="isVmRunning()"
             (itemClick)="handleExportDisk(device)"
           >
-            {{ (isVmRunning() ? 'Export to Image (VM must be stopped)' : 'Export to Image') | translate }}
+            {{ 'Export to Image' | translate }}
           </tn-menu-item>
         }
       </tn-menu>

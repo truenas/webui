@@ -1,7 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { TestbedHarnessEnvironment, UnitTestElement } from '@angular/cdk/testing/testbed';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness } from '@truenas/ui-components';
+import {
+  TnBannerComponent, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -136,13 +138,12 @@ describe('DeviceListComponent', () => {
     expect(await menu.getItemLabels()).toEqual(['Edit', 'Delete', 'Details']);
 
     // White-box: TnMenuHarness exposes no test-id getter yet, so the resolved data-test values
-    // are read off the DOM. Replace with a harness filter once the library adds one
-    // (see NAS-141021 library follow-ups). Scoped to the single open panel rather than
-    // `document`, so a leaked overlay from an earlier test cannot contribute nodes.
-    const panels = document.querySelectorAll('.tn-menu');
-    expect(panels).toHaveLength(1);
-
-    const itemTestIds = Array.from(panels[0].querySelectorAll('.tn-menu-item'))
+    // are read off the DOM. Replace with a harness filter once the library adds one (see
+    // NAS-141021 library follow-ups). The nodes are reached through the menu harness' own host
+    // element — no library-internal class names in the selector, and a leaked overlay from an
+    // earlier test cannot contribute nodes.
+    const panel = (await menu.host()) as UnitTestElement;
+    const itemTestIds = Array.from(panel.element.querySelectorAll('[data-test]'))
       .map((el) => el.getAttribute('data-test'));
     expect(itemTestIds).toEqual([
       'button-1-edit',
@@ -194,13 +195,26 @@ describe('DeviceListComponent', () => {
       expect(await menu.getItemLabels()).toEqual(['Edit', 'Delete', 'Details', 'Export to Image']);
     });
 
-    it('disables Export to Image and says why once the VM reports itself running', async () => {
+    it('disables Export to Image once the VM reports itself running, leaving its label alone', async () => {
       emitVmState(VmState.Running);
 
       const menu = await openRowMenu(1);
 
-      expect(await menu.getItemLabels()).toContain('Export to Image (VM must be stopped)');
-      expect(await menu.isItemDisabled({ label: 'Export to Image (VM must be stopped)' })).toBe(true);
+      expect(await menu.getItemLabels()).toContain('Export to Image');
+      expect(await menu.isItemDisabled({ label: 'Export to Image' })).toBe(true);
+    });
+
+    it('states the reason in a banner while the VM runs, and drops it when it stops', () => {
+      expect(spectator.query('tn-banner')).toBeNull();
+
+      emitVmState(VmState.Running);
+
+      expect(spectator.query(TnBannerComponent)?.message())
+        .toBe('Export is not allowed when Virtual Machine is running.');
+
+      emitVmState(VmState.Stopped);
+
+      expect(spectator.query('tn-banner')).toBeNull();
     });
 
     it('opens the export dialog from the menu item when the VM is stopped', async () => {

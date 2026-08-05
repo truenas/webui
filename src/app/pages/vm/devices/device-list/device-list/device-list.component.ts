@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
+  TnBannerComponent,
   TnButtonComponent,
   TnCellDefDirective,
   TnDialog,
@@ -53,6 +56,7 @@ import { ExportDiskDialogComponent } from 'app/pages/vm/devices/device-list/expo
     PageHeaderComponent,
     BasicSearchComponent,
     RequiresRolesDirective,
+    TnBannerComponent,
     TnButtonComponent,
     TnTableComponent,
     TnTableColumnDirective,
@@ -98,6 +102,15 @@ export class DeviceListComponent implements OnInit {
   protected readonly rows = dataProviderRows(this.dataProvider);
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
+
+  /**
+   * The Export to Image item is disabled while the VM runs, and a disabled item cannot carry
+   * its own tooltip (see the template). The reason is stated once above the table instead, and
+   * only when it applies to something on screen — a running VM with at least one disk device.
+   */
+  protected readonly showExportBlockedNotice = computed(() => {
+    return this.isVmRunning() && this.rows().some((device) => this.isDiskDevice(device));
+  });
 
   /**
    * `dtype` is a display-only column (the label comes from `getDeviceTypeLabel`, and the

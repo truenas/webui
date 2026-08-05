@@ -1,5 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { TestbedHarnessEnvironment, UnitTestElement } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -200,10 +200,13 @@ describe('VirtualMachineDetailsRowComponent', () => {
     expect(spectator.inject(VmService).doReset).toHaveBeenCalledWith(virtualMachine);
   });
 
-  it('spells out the hard reset in the accessible name of the Reset button', () => {
-    // tn-button renders `ariaLabel` onto the inner native button, which is what AT focuses.
-    const ariaLabel = spectator.query('tn-button button[data-test="button-reset-2"]')
-      ?.getAttribute('aria-label');
+  it('spells out the hard reset in the accessible name of the Reset button', async () => {
+    // tn-button renders `ariaLabel` onto the inner native button, which is what AT focuses,
+    // so the assertion has to reach past the harness host — but it starts from the harness,
+    // not from a test ID or a library class name.
+    const resetButton = await loader.getHarness(TnButtonHarness.with({ label: /Reset/ }));
+    const host = (await resetButton.host()) as UnitTestElement;
+    const ariaLabel = host.element.querySelector('button')?.getAttribute('aria-label');
 
     expect(ariaLabel).toContain('hard reset');
     // The consequences belong in the tooltip and the confirmation dialog, not in the name.
