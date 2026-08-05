@@ -12,6 +12,15 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
+      # `secrets` is not available in a step-level `if:`, so the check runs in the shell.
+      - name: Warn if PAT missing
+        env:
+          TRANSLATIONS_PAT: ${{ secrets.TRANSLATIONS_PAT }}
+        run: |
+          if [ -z "$TRANSLATIONS_PAT" ]; then
+            echo "::warning::TRANSLATIONS_PAT is unset — the PR will be created with GITHUB_TOKEN, which does not trigger workflow runs. Required status checks will never report on it and it cannot be merged."
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
         with:

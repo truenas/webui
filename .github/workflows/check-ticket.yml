@@ -1,5 +1,9 @@
 name: Check Ticket
 
+# NOTE: if this is made a required status check, remember that PRs opened with the
+# default GITHUB_TOKEN never fire pull_request events, so this workflow never runs and
+# never reports — neither the bot skip nor the no-ticket label can unblock them. Such
+# PRs must be opened with a PAT/app token (see update-translations.yml).
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize, labeled, unlabeled]
