@@ -112,9 +112,9 @@ describe('TierConfigFormComponent', () => {
     expect(await loader.getHarnessOrNull(TnBannerHarness)).toBeNull();
   });
 
-  it('shows validation errors and blocks submission when values are out of range', async () => {
+  it('shows validation errors and blocks submission when values exceed their maximums', async () => {
     await (await getInput('max_used_percentage')).setValue('96');
-    await (await getInput('max_concurrent_jobs')).setValue('0');
+    await (await getInput('max_concurrent_jobs')).setValue('11');
     await (await getInput('special_class_metadata_reserve_pct')).setValue('31');
 
     const percentField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Used Percentage' }));
@@ -122,17 +122,26 @@ describe('TierConfigFormComponent', () => {
     const reserveField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Performance Tier Reserve' }));
 
     expect(await percentField.getErrorMessage()).toBe('Maximum value is 95');
-    expect(await jobsField.getErrorMessage()).toBe('Minimum value is 1');
+    expect(await jobsField.getErrorMessage()).toBe('Maximum value is 10');
     expect(await reserveField.getErrorMessage()).toBe('Maximum value is 30');
 
     // The panel footer's Save reads canSubmit(); there is no in-form button to assert against.
     expect(spectator.component.canSubmit()).toBe(false);
+  });
 
+  it('shows validation errors and blocks submission when values fall below their minimums', async () => {
     await (await getInput('max_used_percentage')).setValue('69');
+    await (await getInput('max_concurrent_jobs')).setValue('0');
     await (await getInput('special_class_metadata_reserve_pct')).setValue('9');
 
+    const percentField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Used Percentage' }));
+    const jobsField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Concurrent Jobs' }));
+    const reserveField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Performance Tier Reserve' }));
+
     expect(await percentField.getErrorMessage()).toBe('Minimum value is 70');
+    expect(await jobsField.getErrorMessage()).toBe('Minimum value is 1');
     expect(await reserveField.getErrorMessage()).toBe('Minimum value is 10');
+
     expect(spectator.component.canSubmit()).toBe(false);
   });
 });
