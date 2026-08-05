@@ -1147,7 +1147,7 @@
   "You must log in as a user other than root with admin access, because root must have its password disabled.": "Tem de iniciar sessão como um utilizador que não seja o root e que tenha acesso de administrador, uma vez que a palavra-passe do root deve estar desativada.",
   "You will be unable to contact support after {date}. Contact your account team to renew.": "A partir de {data}, já não poderá contactar o apoio ao cliente. Contacte a sua equipa de conta para renovar.",
   "You will not be able to access the exported pool's data until you import it again. Back up critical data before exporting your pool!": "Não poderá aceder aos dados do conjunto exportado até os importar novamente. Faça uma cópia de segurança dos dados essenciais antes de exportar o seu conjunto!",
-  "Your support contract expires in {n, plural, one {# day} other {# days}}": "O seu contrato de assistência expira dentro de {n, plural, um {# day} mais {# days}}",
+  "Your support contract expires in {n, plural, one {# day} other {# days}}": "O seu contrato de assistência expira dentro de {n, plural, one {# dia} other {# dias}}",
   "Your system is running on hardware that is not officially supported by iXsystems. This may affect stability, performance, and support eligibility.": "O seu sistema está a ser executado em hardware que não é oficialmente suportado pela iXsystems. Isto pode afetar a estabilidade, o desempenho e a elegibilidade para assistência técnica.",
   "Your user permissions do not allow Web Shell access.": "As suas permissões de utilizador não permitem o acesso ao Web Shell.",
   "ZFS Resource Delete": "Eliminação de recursos do ZFS",
