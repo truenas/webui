@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnDialog, TnTestIdDirective } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   PruneDedupTableDialog,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/prune-dedup-table-dialog/prune-dedup-table-dialog.component';
@@ -24,7 +23,7 @@ import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-st
   imports: [
     TranslateModule,
     RequiresRolesDirective,
-    TestDirective,
+    TnTestIdDirective,
   ],
   providers: [FileSizePipe],
 })
