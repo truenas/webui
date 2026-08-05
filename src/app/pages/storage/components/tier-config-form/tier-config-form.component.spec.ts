@@ -110,10 +110,30 @@ describe('TierConfigFormComponent', () => {
     const percentField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Used Percentage' }));
     const jobsField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Concurrent Jobs' }));
 
-    expect(await percentField.getErrorMessage()).toBe('Maximum value is 100');
+    expect(await percentField.getErrorMessage()).toBe('Maximum value is 95');
     expect(await jobsField.getErrorMessage()).toBe('Minimum value is 1');
 
     // The panel footer's Save reads canSubmit(); there is no in-form button to assert against.
     expect(spectator.component.canSubmit()).toBe(false);
+  });
+
+  // 96-100 used to pass the client-side max of 100 and be rejected by the API with a
+  // contradictory "less than or equal to 95", so the ceiling is reported once, here.
+  it('reports the same 95 ceiling for values between 95 and 100', async () => {
+    await (await getInput('max_used_percentage')).setValue('99');
+
+    const percentField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Used Percentage' }));
+
+    expect(await percentField.getErrorMessage()).toBe('Maximum value is 95');
+    expect(spectator.component.canSubmit()).toBe(false);
+  });
+
+  it('accepts the 95 ceiling itself', async () => {
+    await (await getInput('max_used_percentage')).setValue('95');
+
+    const percentField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Used Percentage' }));
+
+    expect(await percentField.getErrorMessage()).toBeFalsy();
+    expect(spectator.component.canSubmit()).toBe(true);
   });
 });

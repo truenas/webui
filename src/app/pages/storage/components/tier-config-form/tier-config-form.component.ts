@@ -10,7 +10,7 @@ import {
   TnBannerComponent, TnCheckboxComponent,
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
-import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
+import { poolLowCapacityPercent, tierMaxUsedCapacityPercent } from 'app/constants/pool-capacity.constant';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -61,7 +61,7 @@ export class TierConfigFormComponent extends SidePanelForm implements OnInit {
     ],
     max_used_percentage: [
       poolLowCapacityPercent,
-      [Validators.required, Validators.min(0), Validators.max(100)],
+      [Validators.required, Validators.min(0), Validators.max(tierMaxUsedCapacityPercent)],
     ],
   });
 
