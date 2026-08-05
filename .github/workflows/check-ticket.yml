@@ -18,7 +18,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const TICKET_PATTERN = /\bNAS-\d+\b/i;
+            // Case-sensitive on purpose: bugclerk only links the Jira ticket for uppercase NAS-.
+            const TICKET_PATTERN = /\bNAS-\d+\b/;
+            const WRONG_CASE_PATTERN = /\bNAS-\d+\b/i;
             const SKIP_LABEL = 'no-ticket';
             const TRANSLATIONS_PATH = 'src/assets/i18n/';
 
@@ -60,8 +62,12 @@ jobs:
               return;
             }
 
+            const wrongCase = title.match(WRONG_CASE_PATTERN);
+
             core.setFailed(
-              `This pull request does not reference a ticket.\n\n` +
+              (wrongCase
+                ? `This pull request references "${wrongCase[0]}", but the ticket must be uppercase (NAS-).\n\n`
+                : `This pull request does not reference a ticket.\n\n`) +
               `Current title: "${title}"\n\n` +
               `Add the ticket number to the pull request title, for example:\n` +
               `  NAS-12345: Fix broken thing\n` +
