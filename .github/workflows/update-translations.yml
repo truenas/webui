@@ -79,6 +79,5 @@ jobs:
           labels: |
             translations
             automated
-            no-ticket
           assignees: '' # Add usernames if needed
           reviewers: '' # Add reviewer usernames if needed

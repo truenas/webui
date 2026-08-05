@@ -2,11 +2,11 @@ name: Check Ticket
 
 # NOTE: if this is made a required status check, remember that PRs opened with the
 # default GITHUB_TOKEN never fire pull_request events, so this workflow never runs and
-# never reports — neither the bot skip nor the no-ticket label can unblock them. Such
-# PRs must be opened with a PAT/app token (see update-translations.yml).
+# never reports — such a PR is unmergeable with no way to unblock it from the PR side.
+# PRs opened by automation must use a PAT/app token (see update-translations.yml).
 on:
   pull_request:
-    types: [opened, edited, reopened, synchronize, labeled, unlabeled]
+    types: [opened, edited, reopened, synchronize]
 
 permissions:
   contents: read
@@ -27,22 +27,9 @@ jobs:
             // Case-sensitive on purpose: bugclerk only links the Jira ticket for uppercase NAS-.
             const TICKET_PATTERN = /\bNAS-\d+\b/;
             const WRONG_CASE_PATTERN = new RegExp(TICKET_PATTERN.source, 'i');
-            const SKIP_LABEL = 'no-ticket';
 
-            const pr = context.payload.pull_request;
-            const title = pr.title || '';
-
-            // Bots (dependabot, translation bots) do not have tickets.
-            if (pr.user.type === 'Bot') {
-              core.info(`Skipping: PR is authored by bot ${pr.user.login}.`);
-              return;
-            }
-
-            // Explicit opt-out for changes that genuinely have no ticket.
-            if ((pr.labels || []).some((label) => label.name === SKIP_LABEL)) {
-              core.info(`Skipping: PR is labeled "${SKIP_LABEL}".`);
-              return;
-            }
+            // Every pull request needs a ticket — no bot or label exemptions.
+            const title = context.payload.pull_request.title || '';
 
             if (TICKET_PATTERN.test(title)) {
               core.info(`Found ticket ${title.match(TICKET_PATTERN)[0]} in PR title.`);
@@ -58,6 +45,5 @@ jobs:
               `Current title: "${title}"\n\n` +
               `Add the ticket number to the pull request title, for example:\n` +
               `  NAS-12345: Fix broken thing\n` +
-              `  NAS-12345 / 27.0.0-BETA.1 / Fix broken thing\n\n` +
-              `If this change genuinely has no ticket, ask a maintainer to add the "${SKIP_LABEL}" label to the pull request.`
+              `  NAS-12345 / 27.0.0-BETA.1 / Fix broken thing`
             );
