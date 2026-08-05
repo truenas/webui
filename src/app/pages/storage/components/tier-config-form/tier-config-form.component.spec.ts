@@ -24,6 +24,7 @@ describe('TierConfigFormComponent', () => {
     enabled: true,
     max_concurrent_jobs: 3,
     max_used_percentage: 80,
+    special_class_metadata_reserve_pct: 25,
   } as ZfsTierConfig;
 
   const slideInRef: SlideInRef<void, boolean> = {
@@ -64,6 +65,7 @@ describe('TierConfigFormComponent', () => {
       Enabled: true,
       'Max Concurrent Jobs': '3',
       'Max Used Percentage': '80',
+      'Performance Tier Reserve': '25',
     });
   });
 
@@ -73,6 +75,7 @@ describe('TierConfigFormComponent', () => {
       Enabled: false,
       'Max Concurrent Jobs': 5,
       'Max Used Percentage': 90,
+      'Performance Tier Reserve': 20,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -82,12 +85,18 @@ describe('TierConfigFormComponent', () => {
       enabled: false,
       max_concurrent_jobs: 5,
       max_used_percentage: 90,
+      special_class_metadata_reserve_pct: 20,
     }]);
     expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
   });
 
   it('shows warning when enabling tiering for the first time', async () => {
-    const disabledConfig = { enabled: false, max_concurrent_jobs: 1, max_used_percentage: 80 } as ZfsTierConfig;
+    const disabledConfig = {
+      enabled: false,
+      max_concurrent_jobs: 1,
+      max_used_percentage: 80,
+      special_class_metadata_reserve_pct: 25,
+    } as ZfsTierConfig;
     jest.spyOn(api, 'call').mockReturnValueOnce(of(disabledConfig));
 
     spectator = createComponent();
@@ -105,18 +114,21 @@ describe('TierConfigFormComponent', () => {
     expect(spectator.query('tn-banner')).not.toExist();
   });
 
-  it('shows validation errors and disables Save when max_used_percentage > 100 or max_concurrent_jobs < 1', async () => {
+  it('shows validation errors and disables Save when values are out of range', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Max Used Percentage': 150,
+      'Max Used Percentage': 96,
       'Max Concurrent Jobs': 0,
+      'Performance Tier Reserve': 31,
     });
 
     const percentInput = await loader.getHarness(IxInputHarness.with({ label: 'Max Used Percentage' }));
     const jobsInput = await loader.getHarness(IxInputHarness.with({ label: 'Max Concurrent Jobs' }));
+    const reserveInput = await loader.getHarness(IxInputHarness.with({ label: 'Performance Tier Reserve' }));
 
-    expect(await percentInput.getErrorText()).toBe('Maximum value is 100');
+    expect(await percentInput.getErrorText()).toBe('Maximum value is 95');
     expect(await jobsInput.getErrorText()).toBe('Minimum value is 1');
+    expect(await reserveInput.getErrorText()).toBe('Maximum value is 30');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     expect(await saveButton.isDisabled()).toBe(true);
