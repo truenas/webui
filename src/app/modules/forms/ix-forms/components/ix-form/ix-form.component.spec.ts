@@ -23,8 +23,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import {
-  defaultMinSubmitFeedbackMs, FormSubmitEvent, IxFormComponent, ixFormMinSubmitFeedbackMs,
-  PreSubmitOverrides, SubmitResult,
+  defaultMinSubmitFeedbackMs, FormSubmitEvent, IxFormComponent, ixFormMinSubmitFeedbackMs, SubmitResult,
 } from './ix-form.component';
 
 describe('IxFormComponent', () => {
@@ -699,103 +698,6 @@ describe('IxFormComponent', () => {
       expect(submitHandlerSpy).toHaveBeenCalledWith(
         expect.objectContaining({ changedValues: { name: 'Edited' } }),
       );
-    });
-  });
-
-  describe('preSubmit', () => {
-    @Component({
-      template: `
-        <ix-form
-          [formGroup]="form"
-          [title]="'PreSubmit'"
-          [requiredRoles]="[role]"
-          [preSubmit]="preSubmit()"
-          [submitHandler]="handleSubmit"
-        >
-          <ix-fieldset>
-            <ix-input formControlName="name" [label]="'Name'" />
-          </ix-fieldset>
-        </ix-form>
-      `,
-      standalone: true,
-      changeDetection: ChangeDetectionStrategy.OnPush,
-      selector: 'ix-pre-submit-host',
-      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
-    })
-    class PreSubmitHostComponent {
-      ixForm = viewChild.required(IxFormComponent);
-      role = Role.FullAdmin;
-      // Signal so tests can swap the hook between cases — reassigning a plain
-      // class field after init isn't picked up by the wrapper's `input()`.
-      preSubmit = signal<((event: FormSubmitEvent) => PreSubmitOverrides<Record<string, unknown>> | false) | null>(
-        null,
-      );
-
-      private fb = inject(FormBuilder);
-
-      form = this.fb.group({ name: ['initial'] });
-
-      handleSubmit = (event: FormSubmitEvent): SubmitResult<unknown> => submitHandlerSpy(event);
-    }
-
-    const createPreSubmitComponent = createComponentFactory({
-      component: PreSubmitHostComponent,
-      imports: [ReactiveFormsModule],
-      providers: [
-        ...ixFormTestingProviders(),
-        mockProvider(SlideInRef, slideInRef),
-        mockAuth(),
-      ],
-    });
-
-    it('forwards the transformed event to submitHandler', async () => {
-      const preSubmitSpectator = createPreSubmitComponent();
-      preSubmitSpectator.component.preSubmit.set((event) => ({
-        allValues: { ...event.allValues, name: 'overridden' },
-      }));
-      preSubmitSpectator.detectChanges();
-      const preSubmitLoader = TestbedHarnessEnvironment.loader(preSubmitSpectator.fixture);
-
-      const saveButton = await preSubmitLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      expect(submitHandlerSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ allValues: { name: 'overridden' } }),
-      );
-    });
-
-    it('diffs changedValues against the overridden allValues, and only when read', async () => {
-      const preSubmitSpectator = createPreSubmitComponent();
-      const readsChangedValues = jest.fn((_: Partial<Record<string, unknown>>) => undefined);
-      preSubmitSpectator.component.preSubmit.set((event) => ({
-        allValues: { ...event.allValues, name: 'overridden' },
-      }));
-      submitHandlerSpy.mockImplementation((event: FormSubmitEvent) => {
-        readsChangedValues(event.changedValues);
-        return { request$: of(undefined), successMessage: 'Saved!' as TranslatedString };
-      });
-      preSubmitSpectator.detectChanges();
-      const preSubmitLoader = TestbedHarnessEnvironment.loader(preSubmitSpectator.fixture);
-
-      const saveButton = await preSubmitLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      // Create mode (no snapshot), so every active key is "changed" — and it carries the value
-      // preSubmit substituted, not the raw form value.
-      expect(readsChangedValues).toHaveBeenCalledWith({ name: 'overridden' });
-    });
-
-    it('cancels the submit when preSubmit returns false', async () => {
-      const preSubmitSpectator = createPreSubmitComponent();
-      preSubmitSpectator.component.preSubmit.set(() => false);
-      preSubmitSpectator.detectChanges();
-      const preSubmitLoader = TestbedHarnessEnvironment.loader(preSubmitSpectator.fixture);
-
-      const saveButton = await preSubmitLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      expect(submitHandlerSpy).not.toHaveBeenCalled();
-      expect(slideInRef.close).not.toHaveBeenCalled();
     });
   });
 

@@ -74,19 +74,6 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
 }
 
 /**
- * What a {@link IxFormComponent.preSubmit} hook returns to amend the event before it reaches the
- * submit handler: only the fields it wants to replace (typically a reshaped `allValues`), merged
- * over the original.
- *
- * Deliberately NOT the whole {@link FormSubmitEvent}: returning `{ ...event, allValues }` would
- * spread — and therefore evaluate — the lazy `changedValues` getter, forcing the diff (and its
- * nested-group advisory) on handlers that never read it, and leaving the diff computed against the
- * pre-reshape values. Returning overrides lets the wrapper rebuild the event with a fresh, still
- * lazy `changedValues` diffed against whatever `allValues` ends up being.
- */
-export type PreSubmitOverrides<T> = Partial<Pick<FormSubmitEvent<T>, 'isEdit' | 'allValues'>>;
-
-/**
  * Shared shape of a submit descriptor. Consumers write {@link SubmitResult}, which layers the
  * "`closeWith` is mandatory once `R` isn't boolean" rule on top of this.
  *
@@ -225,12 +212,6 @@ export class IxFormComponent<
    * type safety — templates can't pass the generic.
    */
   readonly submitHandler = input.required<(event: FormSubmitEvent<T>) => SubmitResult<R, TResult>>();
-
-  /**
-   * Hook before submitHandler: return {@link PreSubmitOverrides} to amend the event (e.g. a
-   * reshaped `allValues`), an empty object to leave it as-is, or `false` to cancel the submit.
-   */
-  readonly preSubmit = input<((event: FormSubmitEvent<T>) => PreSubmitOverrides<T> | false) | null>(null);
 
   /** Fires when destroyed without a successful submit (cancel/escape/swap). */
   readonly onCancel = input<(() => void) | null>(null);
@@ -398,36 +379,23 @@ export class IxFormComponent<
       return;
     }
 
+    const allValues = this.formGroup().getRawValue() as T;
+
     // `changedValues` is diffed on first read and cached, so a handler that builds its payload from
     // `allValues` pays neither the diff nor the nested-group advisory — which only matter to
     // handlers that actually consume the diff.
-    const buildEvent = (isEdit: boolean, allValues: T): FormSubmitEvent<T> => {
-      let changed: Partial<T> | undefined;
-      const readChangedValues = (): Partial<T> => {
-        changed ??= this.getChangedValues(allValues);
-        return changed;
-      };
-      return {
-        isEdit,
-        allValues,
-        get changedValues(): Partial<T> {
-          return readChangedValues();
-        },
-      };
+    let changed: Partial<T> | undefined;
+    const readChangedValues = (): Partial<T> => {
+      changed ??= this.getChangedValues(allValues);
+      return changed;
     };
-
-    let event = buildEvent(this.isEdit(), this.formGroup().getRawValue() as T);
-
-    const preSubmit = this.preSubmit();
-    if (preSubmit) {
-      const overrides = preSubmit(event);
-      if (overrides === false) {
-        return;
-      }
-      // Rebuilt rather than spread, so `changedValues` stays lazy and re-diffs against a
-      // reshaped `allValues` (see {@link PreSubmitOverrides}).
-      event = buildEvent(overrides.isEdit ?? event.isEdit, overrides.allValues ?? event.allValues);
-    }
+    const event: FormSubmitEvent<T> = {
+      isEdit: this.isEdit(),
+      allValues,
+      get changedValues(): Partial<T> {
+        return readChangedValues();
+      },
+    };
 
     // Read through the base shape: `SubmitResult`'s conditional only tightens `closeWith` for
     // callers, and stays unresolved while `R` is still a type parameter here.
