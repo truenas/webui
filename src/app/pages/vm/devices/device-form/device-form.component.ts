@@ -118,17 +118,20 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   /**
    * Gates the panel footer Save on the same controls `hasUnsavedChanges()` guards: the three
    * standalone controls live outside `typeSpecificForm` but are part of the same submission,
-   * and `typeControl` carries `Validators.required`. `.valid` rather than `!.invalid` so a
-   * PENDING async validator doesn't read as submittable.
+   * and `typeControl` carries `Validators.required`. They use `!.invalid` rather than `.valid`
+   * because `.valid` is false for a *disabled* control, which would silently lock Save with
+   * nothing on screen to explain it should a type-specific branch ever disable one of them.
+   * `typeSpecificForm` keeps the `.valid` spelling so a PENDING async validator inside it
+   * doesn't read as submittable.
    *
    * `typeControl` is checked first on purpose: `typeSpecificForm` is keyed off its value and
    * resolves to `undefined` for one outside `VmDeviceType`, so the short-circuit is what keeps
    * a cleared type from dereferencing it.
    */
   canSubmit(): boolean {
-    return this.typeControl.valid
-      && this.orderControl.valid
-      && this.newOrExistingControl.valid
+    return !this.typeControl.invalid
+      && !this.orderControl.invalid
+      && !this.newOrExistingControl.invalid
       && this.typeSpecificForm.valid
       && !this.isLoading();
   }

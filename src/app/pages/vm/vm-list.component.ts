@@ -330,7 +330,10 @@ export class VmListComponent implements OnInit {
   }
 
   protected shutdownTimeoutLabel(row: VirtualMachine): string {
-    return this.translate.instant('{n} seconds', { n: row.shutdown_timeout });
+    return this.translate.instant(
+      '{seconds, plural, =1 {# second} other {# seconds}}',
+      { seconds: row.shutdown_timeout },
+    );
   }
 
   protected doAdd(): void {
