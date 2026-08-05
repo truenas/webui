@@ -18,7 +18,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const TICKET_PATTERN = /\bNAS-\d+\b/;
+            const TICKET_PATTERN = /\bNAS-\d+\b/i;
             const SKIP_LABEL = 'no-ticket';
             const TRANSLATIONS_PATH = 'src/assets/i18n/';
 
@@ -37,20 +37,26 @@ jobs:
               return;
             }
 
-            // Community translation PRs only touch generated locale files.
-            const files = await github.paginate(github.rest.pulls.listFiles, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pr.number,
-              per_page: 100,
-            });
-            if (files.length && files.every((file) => file.filename.startsWith(TRANSLATIONS_PATH))) {
-              core.info(`Skipping: PR only changes ${TRANSLATIONS_PATH} files.`);
+            // The common case: title already references a ticket, so no API calls are needed.
+            if (TICKET_PATTERN.test(title)) {
+              core.info(`Found ticket ${title.match(TICKET_PATTERN)[0]} in PR title.`);
               return;
             }
 
-            if (TICKET_PATTERN.test(title)) {
-              core.info(`Found ticket ${title.match(TICKET_PATTERN)[0]} in PR title.`);
+            // Community translation PRs only touch generated locale files.
+            let files = [];
+            try {
+              files = await github.paginate(github.rest.pulls.listFiles, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                per_page: 100,
+              });
+            } catch (error) {
+              core.warning(`Could not list PR files, skipping translations exemption: ${error.message}`);
+            }
+            if (files.length && files.every((file) => file.filename.startsWith(TRANSLATIONS_PATH))) {
+              core.info(`Skipping: PR only changes ${TRANSLATIONS_PATH} files.`);
               return;
             }
 
