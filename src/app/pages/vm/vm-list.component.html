@@ -79,7 +79,7 @@
           [title]="'Running' | translate"
           [uniqueRowTag]="uniqueRowTag(row)"
           [ariaLabel]="ariaLabel(row, 'Running' | translate)"
-          [checked]="row.status.state === VmState.Running"
+          [checked]="isRunning(row)"
           [requiredRoles]="requiredRoles"
           (toggled)="handleVmStatusToggle(row, $event, runningToggle)"
         ></ix-table-toggle-cell>
@@ -94,7 +94,7 @@
           [title]="'Start on Boot' | translate"
           [uniqueRowTag]="uniqueRowTag(row)"
           [ariaLabel]="ariaLabel(row, 'Start on Boot' | translate)"
-          [checked]="!!row.autostart"
+          [checked]="isAutostartEnabled(row)"
           [requiredRoles]="requiredRoles"
           (toggled)="handleAutostartToggle(row, autostartToggle)"
         ></ix-table-toggle-cell>
@@ -134,11 +134,12 @@
     <ng-container [tnColumnDef]="'memory'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Memory Size' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
+        @let memory = memoryLabel(row);
         <span
           tnTestIdType="text"
-          [tnTooltip]="row.memory * MiB | ixFileSize"
+          [tnTooltip]="memory"
           [tnTestId]="[('Memory Size' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.memory * MiB | ixFileSize }}</span>
+        >{{ memory }}</span>
       </ng-template>
     </ng-container>
 
@@ -156,7 +157,7 @@
     <ng-container [tnColumnDef]="'time'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'System Clock' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        @let systemClock = (vmTimeNames.get(row.time) ?? '') | translate;
+        @let systemClock = systemClockLabel(row);
         <span
           tnTestIdType="text"
           [tnTooltip]="systemClock"
@@ -168,8 +169,7 @@
     <ng-container [tnColumnDef]="'display_port'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Display Port' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <!-- Concatenated because getDisplayPort can return a boolean/number and tnTooltip is typed string. -->
-        @let displayPort = '' + getDisplayPort(row);
+        @let displayPort = displayPortLabel(row);
         <span
           tnTestIdType="text"
           [tnTooltip]="displayPort"
@@ -192,7 +192,7 @@
     <ng-container [tnColumnDef]="'shutdown_timeout'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Shutdown Timeout' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        @let shutdownTimeout = '{n} seconds' | translate: { n: row.shutdown_timeout };
+        @let shutdownTimeout = shutdownTimeoutLabel(row);
         <span
           tnTestIdType="text"
           [tnTooltip]="shutdownTimeout"

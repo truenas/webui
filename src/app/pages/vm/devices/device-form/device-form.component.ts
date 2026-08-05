@@ -115,8 +115,22 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   private readonly isLoading = signal(false);
   private vmName: string;
 
+  /**
+   * Gates the panel footer Save on the same controls `hasUnsavedChanges()` guards: the three
+   * standalone controls live outside `typeSpecificForm` but are part of the same submission,
+   * and `typeControl` carries `Validators.required`. `.valid` rather than `!.invalid` so a
+   * PENDING async validator doesn't read as submittable.
+   *
+   * `typeControl` is checked first on purpose: `typeSpecificForm` is keyed off its value and
+   * resolves to `undefined` for one outside `VmDeviceType`, so the short-circuit is what keeps
+   * a cleared type from dereferencing it.
+   */
   canSubmit(): boolean {
-    return !this.typeSpecificForm.invalid && !this.isLoading();
+    return this.typeControl.valid
+      && this.orderControl.valid
+      && this.newOrExistingControl.valid
+      && this.typeSpecificForm.valid
+      && !this.isLoading();
   }
 
   /** Whether the form is currently submitting; the host shows a progress bar while true. */

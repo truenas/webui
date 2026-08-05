@@ -113,9 +113,6 @@ export class VmListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.VmWrite];
   protected readonly searchableElements = vmListElements;
-  protected readonly VmState = VmState;
-  protected readonly MiB = MiB;
-  protected readonly vmTimeNames = vmTimeNames;
 
   private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   private vmMachines: VirtualMachine[] = [];
@@ -152,6 +149,10 @@ export class VmListComponent implements OnInit {
    * the readable Yes/No the detail row shows once the user hides the column. That readout is
    * therefore text where it used to be a live toggle — deliberately, since the detail row
    * already offers Start/Stop/Power Off buttons, so no action is actually lost with the column.
+   *
+   * Every derived value goes through one of the `*Label()` / `is*()` helpers below, which the
+   * template cells call too, so the value a hidden column renders in the detail row can't
+   * drift from the one its visible counterpart renders.
    */
   protected readonly columns = signal(createTable<VirtualMachine>([
     textColumn({
@@ -161,14 +162,12 @@ export class VmListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Running'),
       propertyName: 'status',
-      getValue: (row) => (row.status.state === VmState.Running
-        ? this.translate.instant('Yes')
-        : this.translate.instant('No')),
+      getValue: (row) => this.yesNo(this.isRunning(row)),
     }),
     textColumn({
       title: this.translate.instant('Start on Boot'),
       propertyName: 'autostart',
-      getValue: (row) => (row.autostart ? this.translate.instant('Yes') : this.translate.instant('No')),
+      getValue: (row) => this.yesNo(this.isAutostartEnabled(row)),
     }),
     textColumn({
       title: this.translate.instant('Virtual CPUs'),
@@ -189,9 +188,7 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Memory Size'),
       propertyName: 'memory',
       hidden: true,
-      getValue: (row) => {
-        return this.fileSizePipe.transform(row.memory * MiB);
-      },
+      getValue: (row) => this.memoryLabel(row),
     }),
     textColumn({
       title: this.translate.instant('Boot Loader Type'),
@@ -202,12 +199,7 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('System Clock'),
       propertyName: 'time',
       hidden: true,
-      // vmTimeNames values are T()-marked, so they need translating. `instant()` throws on an
-      // absent *or* empty key, so a VM whose `time` isn't in the map renders an empty cell.
-      getValue: (row) => {
-        const label = vmTimeNames.get(row.time);
-        return label ? this.translate.instant(label) : '';
-      },
+      getValue: (row) => this.systemClockLabel(row),
     }),
     textColumn({
       title: this.translate.instant('Display Port'),
@@ -215,7 +207,7 @@ export class VmListComponent implements OnInit {
       // supplies the actual sort accessor, so the value is never read off the row.
       propertyName: displayPortColumn as keyof VirtualMachine,
       hidden: true,
-      getValue: (row) => this.getDisplayPort(row),
+      getValue: (row) => this.displayPortLabel(row),
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -226,7 +218,7 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Shutdown Timeout'),
       propertyName: 'shutdown_timeout',
       hidden: true,
-      getValue: (row) => this.translate.instant('{n} seconds', { n: row.shutdown_timeout }),
+      getValue: (row) => this.shutdownTimeoutLabel(row),
     }),
   ], {
     // Both delegate to the helpers the template cells use, so the row tag a hidden column
@@ -332,6 +324,45 @@ export class VmListComponent implements OnInit {
       });
   }
 
+  /**
+   * Single source for every cell value that isn't a bare row property. The template cells and
+   * the column model's `getValue` both go through these, so a column reads identically whether
+   * it is visible in the table or hidden and rendered by the expanded detail row.
+   */
+  protected isRunning(row: VirtualMachine): boolean {
+    return row.status.state === VmState.Running;
+  }
+
+  protected isAutostartEnabled(row: VirtualMachine): boolean {
+    return !!row.autostart;
+  }
+
+  private yesNo(value: boolean): string {
+    return value ? this.translate.instant('Yes') : this.translate.instant('No');
+  }
+
+  protected memoryLabel(row: VirtualMachine): string {
+    return this.fileSizePipe.transform(row.memory * MiB);
+  }
+
+  /**
+   * vmTimeNames values are T()-marked, so they need translating. `instant()` throws on an
+   * absent *or* empty key, so a VM whose `time` isn't in the map renders an empty cell.
+   */
+  protected systemClockLabel(row: VirtualMachine): string {
+    const label = vmTimeNames.get(row.time);
+    return label ? this.translate.instant(label) : '';
+  }
+
+  /** Stringified because `getDisplayPort` can return a boolean/number and `tnTooltip` is typed string. */
+  protected displayPortLabel(row: VirtualMachine): string {
+    return String(this.getDisplayPort(row));
+  }
+
+  protected shutdownTimeoutLabel(row: VirtualMachine): string {
+    return this.translate.instant('{n} seconds', { n: row.shutdown_timeout });
+  }
+
   protected doAdd(): void {
     // Footerless — the wizard's stepper owns its own Back/Save buttons.
     this.formPanel.open(VmWizardComponent, {
@@ -344,7 +375,7 @@ export class VmListComponent implements OnInit {
     }, this.destroyRef);
   }
 
-  protected getDisplayPort(vm: VirtualMachine): boolean | number | string {
+  private getDisplayPort(vm: VirtualMachine): boolean | number | string {
     if (!vm.display_available) {
       return this.translate.instant('N/A');
     }

@@ -278,6 +278,15 @@ describe('DeviceFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(true);
     });
 
+    it('gates the panel Save on the standalone controls too, not just the type-specific form', () => {
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      // Device Type lives outside `typeSpecificForm` but is required, so clearing it must
+      // disable Save rather than leaving it enabled over an invalid form.
+      spectator.component.typeControl.setValue(null);
+      expect(spectator.component.canSubmit()).toBe(false);
+    });
+
     it('takes its VM context from the deviceFormData input', async () => {
       await fillForm({ Type: 'CD-ROM', 'CD-ROM Path': '/mnt/cdrom' });
       await saveButton.click();
