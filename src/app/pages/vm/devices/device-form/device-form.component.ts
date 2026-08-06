@@ -164,10 +164,14 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   hasUnsavedChanges(): boolean {
     // The three standalone controls live outside `typeSpecificForm` but are rendered in the
     // same panel, so edits confined to them must still trip the host's close guard.
-    return this.typeSpecificForm.dirty
-      || this.typeControl.dirty
+    // `typeSpecificForm` is read last and optionally for the same reason `canSubmit()`
+    // short-circuits on `typeControl`: it resolves to `undefined` for a value outside
+    // `VmDeviceType`, and a throw here comes from the host's close guard, leaving the panel
+    // unclosable.
+    return this.typeControl.dirty
       || this.orderControl.dirty
-      || this.newOrExistingControl.dirty;
+      || this.newOrExistingControl.dirty
+      || !!this.typeSpecificForm?.dirty;
   }
 
   get isNew(): boolean {
@@ -621,9 +625,17 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
     return true;
   }
 
-  /** Implicit form submission (Enter in a field); the panel footer Save goes through `submit()`. */
+  /**
+   * Implicit form submission (Enter in a field); the panel footer Save goes through `submit()`.
+   * Gated on the same predicate as that footer Save so an invalid form can't be submitted, and so
+   * a second Enter can't fire a duplicate create while a submit is in flight — the container's
+   * busy overlay blocks the mouse, not the keyboard.
+   */
   protected onSubmit(event: SubmitEvent): void {
     event.preventDefault();
+    if (!this.canSubmit()) {
+      return;
+    }
     this.confirmAndSend();
   }
 
