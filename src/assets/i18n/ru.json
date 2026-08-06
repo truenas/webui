@@ -1,6 +1,6 @@
 {
   "0": "0",
-  "{n, plural, one {# disk selected} other {# disks selected}}": "{n, plural, one {выбран # диск} few {выбраны # диска}} other {выбраны # дисков}}",
+  "{n, plural, one {# disk selected} other {# disks selected}}": "{n, plural, one {выбран # диск} few {выбраны # диска} other {выбраны # дисков}}",
   "Authenticated With": "Прошёл проверку подлинности с помощью",
   "Bypass topology recommendation checks (equal data VDEV width, RAIDZ/mirror width limits, and special/dedup redundancy). Not recommended.": "Обход проверки рекомендаций по топологии (одинаковая ширина данных виртуального устройства, ограничения ширины RAIDZ/зеркало и специальная/дедуплицированная избыточность). Не рекомендуется.",
   "Centralized Visibility. Simplified Management.": "Централизованная видимость. Упрощенное управление.",
