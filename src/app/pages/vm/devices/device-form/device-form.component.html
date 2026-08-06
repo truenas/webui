@@ -3,18 +3,13 @@
     @if (isNew) {
       <tn-form-field [label]="'Type' | translate" [required]="true">
         <!--
-          `device-type-select` is a spec anchor. Unlike every other control here this one is
-          bound to a standalone `[formControl]`, so it has no `formControlName` to select on,
-          and `TnFormFieldHarness` is a plain ComponentHarness that can't scope a nested
-          harness lookup by its label. Same for `device-order-input` below.
-
-          The test id is `device-type`, not `type`: several branches below bind a control
-          literally named `type` (Disk Mode, NIC Adapter Type, Display Type), whose
-          control-name fallback also resolves `select-type` — and this picker renders at the
-          same time as them, so a bare `type` would put two `select-type` nodes in the DOM.
+          Explicit testId: a standalone `[formControl]` has no control name for tn-select's
+          fallback to derive one from. It is `device-type`, not `type`, because several branches
+          below bind a control literally named `type` (Disk Mode, NIC Adapter Type, Display Type)
+          whose fallback resolves `select-type` — and this picker renders alongside them, so a
+          bare `type` would put two `select-type` nodes in the DOM.
         -->
         <tn-select
-          class="device-type-select"
           [formControl]="typeControl"
           [testId]="'device-type'"
           [options]="(deviceTypes$ | async) ?? []"
@@ -387,8 +382,8 @@
     </ng-container>
 
     <tn-form-field [label]="'Device Order' | translate">
+      <!-- Explicit testId for the same reason as Type above: no control name to fall back on. -->
       <tn-input
-        class="device-order-input"
         [formControl]="orderControl"
         [testId]="'order'"
         [inputType]="InputType.Number"

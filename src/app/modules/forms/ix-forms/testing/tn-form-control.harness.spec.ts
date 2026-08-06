@@ -100,6 +100,15 @@ describe('TnFormControlHarness', () => {
     expect(labels).toEqual(['Choice', 'Enabled', 'Letter', 'Name', 'Tags']);
   });
 
+  it('finds a self-naming control under the label the index files it under', async () => {
+    const field = await loader.getHarness(TnFormControlHarness.with({ label: 'Enabled' }));
+
+    // The wrapping field carries no label of its own — matching on the checkbox's own name is
+    // exactly what the inherited `TnFormFieldHarness.with()` would miss.
+    expect(await field.getLabel()).toBe('');
+    expect(await field.getValue()).toBe(false);
+  });
+
   describe('tn-input', () => {
     it('reads and writes the value', async () => {
       const control = (await getControls()).Name;
@@ -137,6 +146,12 @@ describe('TnFormControlHarness', () => {
       spectator.detectChanges();
 
       expect(await (await getControls()).Letter.isDisabled()).toBe(true);
+    });
+
+    it('reads the options it offers, addressed by the field label', async () => {
+      const field = await loader.getHarness(TnFormControlHarness.with({ label: 'Letter' }));
+
+      expect(await field.getSelectOptions()).toEqual(['Alpha', 'Beta']);
     });
   });
 
@@ -220,6 +235,14 @@ describe('TnFormControlHarness', () => {
     it('throws on setValue, naming the field', async () => {
       await expect((await getControls()).Tags.setValue('a')).rejects.toThrow(
         'tn-form-field "Tags" holds no control TnFormControlHarness can set',
+      );
+    });
+
+    it('throws on getSelectOptions, naming the field', async () => {
+      const field = await loader.getHarness(TnFormControlHarness.with({ label: 'Tags' }));
+
+      await expect(field.getSelectOptions()).rejects.toThrow(
+        'tn-form-field "Tags" holds no tn-select to read options from.',
       );
     });
   });

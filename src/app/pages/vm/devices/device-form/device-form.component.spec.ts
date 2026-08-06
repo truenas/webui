@@ -2,9 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
-} from '@truenas/ui-components';
+import { TnButtonHarness, TnRadioHarness } from '@truenas/ui-components';
 import { NEVER, of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -29,7 +27,10 @@ import {
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import {
+  fillControlValues, getControlValues, indexFormControls, IxFormBasicValueType,
+} from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
+import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { ApiCallError } from 'app/services/errors/error.classes';
@@ -42,7 +43,6 @@ const tenGibibytes = 10 * (2 ** 30);
 describe('DeviceFormComponent', () => {
   let spectator: Spectator<DeviceFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let closedSpy: jest.Mock;
 
   /**
@@ -67,106 +67,27 @@ describe('DeviceFormComponent', () => {
   let api: ApiService;
 
   /**
-   * Label → tn-* control map. The form's fields migrated from `ix-*` to `tn-*`, so
-   * `IxFormHarness`'s label indexing no longer reaches them; `fillForm`/`getValues` below
-   * keep the label-keyed call sites in this spec working by driving the tn harnesses
-   * directly and delegating the remaining `ix-*` controls (explorer, combobox and the two
-   * byte-formatted size inputs) to `IxFormHarness`.
+   * The form mixes `ix-*` controls (explorer, combobox, and the two byte-formatted size inputs)
+   * with `tn-*` ones; `indexFormControls` indexes both by label, so the label-keyed call sites
+   * below reach either kind through one lookup.
    *
-   * Only one branch of the device-type `@switch` renders at a time, so a `formControlName`
-   * that repeats across branches (`type`, `sectorsize`, `path`) is unambiguous in context.
+   * Re-indexed per value rather than once per call because the fields are branch-switched on the
+   * device type: filling `Type` changes which controls exist before the next value is filled.
    */
-  const tnControls: Record<string, { kind: 'select' | 'input' | 'checkbox'; selector: string }> = {
-    Type: { kind: 'select', selector: '.device-type-select' },
-    'Zvol Location': { kind: 'select', selector: '[formControlName="datastore"]' },
-    Zvol: { kind: 'select', selector: '[formControlName="path"]' },
-    Mode: { kind: 'select', selector: '[formControlName="type"]' },
-    'Disk Sector Size': { kind: 'select', selector: '[formControlName="sectorsize"]' },
-    'Adapter Type': { kind: 'select', selector: '[formControlName="type"]' },
-    'NIC To Attach': { kind: 'select', selector: '[formControlName="nic_attach"]' },
-    'Controller Type': { kind: 'select', selector: '[formControlName="controller_type"]' },
-    Device: { kind: 'select', selector: '[formControlName="device"]' },
-    'Display Type': { kind: 'select', selector: '[formControlName="type"]' },
-    Bind: { kind: 'select', selector: '[formControlName="bind"]' },
-    Resolution: { kind: 'select', selector: '[formControlName="resolution"]' },
-    'MAC Address': { kind: 'input', selector: '[formControlName="mac"]' },
-    'Vendor ID': { kind: 'input', selector: '[formControlName="vendor_id"]' },
-    'Product ID': { kind: 'input', selector: '[formControlName="product_id"]' },
-    Password: { kind: 'input', selector: '[formControlName="password"]' },
-    'Port (optional)': { kind: 'input', selector: '[formControlName="port"]' },
-    'Web Port': { kind: 'input', selector: '[formControlName="web_port"]' },
-    'Device Order': { kind: 'input', selector: '.device-order-input' },
-    'Trust Guest Filters': { kind: 'checkbox', selector: '[formControlName="trust_guest_rx_filters"]' },
-    'Web Interface': { kind: 'checkbox', selector: '[formControlName="web"]' },
-  };
-
   async function fillForm(values: Record<string, unknown>): Promise<void> {
     for (const [label, value] of Object.entries(values)) {
-      const control = tnControls[label];
-      if (!control) {
-        await form.fillForm({ [label]: value });
-        continue;
-      }
-      if (control.kind === 'select') {
-        const select = await loader.getHarness(TnSelectHarness.with({ selector: control.selector }));
-        await select.selectOption(String(value));
-      } else if (control.kind === 'input') {
-        const input = await loader.getHarness(TnInputHarness.with({ selector: control.selector }));
-        await input.setValue(value === null || value === undefined ? '' : String(value));
-      } else {
-        const checkbox = await loader.getHarness(TnCheckboxHarness.with({ selector: control.selector }));
-        if (value) {
-          await checkbox.check();
-        } else {
-          await checkbox.uncheck();
-        }
-      }
+      await fillControlValues(await indexFormControls(loader), { [label]: value });
       spectator.detectChanges();
     }
   }
 
-  async function getValues(): Promise<Record<string, unknown>> {
-    const values: Record<string, unknown> = { ...(await form.getValues()) };
-    for (const [label, control] of Object.entries(tnControls)) {
-      if (control.kind === 'checkbox') {
-        // A checkbox carries its own label; the wrapping tn-form-field has none.
-        const [checkbox] = await loader.getAllHarnesses(TnCheckboxHarness.with({ selector: control.selector }));
-        if (checkbox && await checkbox.getLabelText() === label) {
-          values[label] = await checkbox.isChecked();
-        }
-        continue;
-      }
-
-      // A formControlName repeats across the device-type branches under different labels
-      // (`type` is Mode / Adapter Type / Display Type), so only report a control when a
-      // form field carrying THIS label is actually rendered.
-      const [field] = await loader.getAllHarnesses(TnFormFieldHarness.with({ label }));
-      if (!field) {
-        continue;
-      }
-
-      if (control.kind === 'select') {
-        const [select] = await loader.getAllHarnesses(TnSelectHarness.with({ selector: control.selector }));
-        if (select) {
-          values[label] = await select.getDisplayText();
-        }
-      } else {
-        const [input] = await loader.getAllHarnesses(TnInputHarness.with({ selector: control.selector }));
-        if (input) {
-          values[label] = await input.getValue();
-        }
-      }
-    }
-    return values;
-  }
-
   /**
-   * Asserts a field is genuinely absent from the DOM. `getValues()` degrades a lookup miss to
-   * "key absent", so a bare `expect(values).not.toHaveProperty(label)` would also pass if a
-   * selector in `tnControls` went stale — this cannot.
+   * Keyed by the label each control actually renders, so a missing key means the field is not on
+   * screen — `expect(values).not.toHaveProperty(label)` is an assertion about the DOM, not about
+   * this spec's bookkeeping.
    */
-  async function expectNoField(label: string): Promise<void> {
-    expect(await loader.getAllHarnesses(TnFormFieldHarness.with({ label }))).toHaveLength(0);
+  async function getValues(): Promise<Record<string, IxFormBasicValueType>> {
+    return getControlValues(await indexFormControls(loader));
   }
 
   const createComponent = createComponentFactory({
@@ -251,14 +172,13 @@ describe('DeviceFormComponent', () => {
   // input were renamed or `canSubmit`/`closed` were dropped — the panel would just open an
   // empty form, or render a Save that never enables.
   describe('side-panel host contract', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent({
         props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
       });
       closedSpy = jest.fn();
       spectator.component.closed.subscribe(closedSpy);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(ApiService);
     });
 
@@ -358,14 +278,13 @@ describe('DeviceFormComponent', () => {
     } as VmDevice;
 
     describe('add new', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -407,14 +326,13 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edit', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, device: existingCdRom, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -461,14 +379,13 @@ describe('DeviceFormComponent', () => {
     } as VmDevice;
 
     describe('adds new', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -528,14 +445,13 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, device: existingNic } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -567,14 +483,13 @@ describe('DeviceFormComponent', () => {
     } as VmDiskDevice;
 
     describe('adds disk', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -606,14 +521,13 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits disk', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, device: existingDisk, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -655,14 +569,13 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('adds disk with create new zvol', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -688,7 +601,6 @@ describe('DeviceFormComponent', () => {
         expect(values).toHaveProperty('Zvol Location');
         expect(values).toHaveProperty('Size');
         expect(values).not.toHaveProperty('Zvol');
-        await expectNoField('Zvol');
       });
 
       it('shows Zvol select when Use existing is selected', async () => {
@@ -700,9 +612,7 @@ describe('DeviceFormComponent', () => {
         const values = await getValues();
         expect(values).toHaveProperty('Zvol');
         expect(values).not.toHaveProperty('Zvol Location');
-        await expectNoField('Zvol Location');
         expect(values).not.toHaveProperty('Size');
-        await expectNoField('Size');
       });
 
       it('submits with create_zvol when Create new is selected', async () => {
@@ -755,14 +665,13 @@ describe('DeviceFormComponent', () => {
     } as VmRawFileDevice;
 
     describe('adds raw file', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -795,14 +704,13 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits raw file', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, device: existingRawFile, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -866,14 +774,13 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('adds raw file with existing file', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -911,14 +818,13 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('adds raw file with size (new file creation)', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -984,14 +890,13 @@ describe('DeviceFormComponent', () => {
         return fallback(method);
       };
 
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -1099,14 +1004,13 @@ describe('DeviceFormComponent', () => {
     } as VmPciPassthroughDevice;
 
     describe('adds PCI Passthrough Device', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -1134,14 +1038,13 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits PCI Passthrough Device', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, device: existingPassthrough, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -1212,14 +1115,13 @@ describe('DeviceFormComponent', () => {
     } as VmDisplayDevice;
 
     describe('edits SPICE display', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, device: existingSpiceDisplay, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -1248,7 +1150,6 @@ describe('DeviceFormComponent', () => {
         // Web Port field should no longer be in the form values
         values = await getValues();
         expect(values).not.toHaveProperty('Web Port');
-        await expectNoField('Web Port');
 
         // Re-enable Web Interface
         await fillForm({ 'Web Interface': true });
@@ -1261,14 +1162,13 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits display to 46', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 46 } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -1277,22 +1177,20 @@ describe('DeviceFormComponent', () => {
           { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Spice } },
           { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc } },
         ] as VmDisplayDevice[]);
-        const typeSelect = await loader.getHarness(TnSelectHarness.with({ selector: '.device-type-select' }));
+        const typeField = await loader.getHarness(TnFormControlHarness.with({ label: 'Type' }));
         expect(api.call).toHaveBeenCalledWith('vm.get_display_devices', [46]);
-        await typeSelect.open();
-        expect(await typeSelect.getOptions()).not.toContain('Display');
+        expect(await typeField.getSelectOptions()).not.toContain('Display');
       });
     });
 
     describe('edits VNC display', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, device: existingVncDisplay, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -1306,9 +1204,7 @@ describe('DeviceFormComponent', () => {
 
         // Verify Web Interface is disabled for VNC
         expect(values).not.toHaveProperty('Web Interface');
-        await expectNoField('Web Interface');
         expect(values).not.toHaveProperty('Web Port');
-        await expectNoField('Web Port');
       });
 
       it('updates an existing VNC display device', async () => {
@@ -1383,12 +1279,11 @@ describe('DeviceFormComponent', () => {
         ],
       });
 
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponentForAdding({ props: { deviceFormData: { virtualMachineId: 45 } } });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -1488,12 +1383,11 @@ describe('DeviceFormComponent', () => {
         ],
       });
 
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponentForSwitching({ props: { deviceFormData: { virtualMachineId: 45 } } });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
       });
 
       it('disables web interface when switching from SPICE to VNC', async () => {
@@ -1513,7 +1407,6 @@ describe('DeviceFormComponent', () => {
 
         const values = await getValues();
         expect(values).not.toHaveProperty('Web Interface');
-        await expectNoField('Web Interface');
       });
 
       it('enables web interface when switching from VNC to SPICE', async () => {
@@ -1548,14 +1441,13 @@ describe('DeviceFormComponent', () => {
     } as VmUsbPassthroughDevice;
 
     describe('adds USB Passthrough Device', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
@@ -1582,14 +1474,13 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits USB Passthrough Device', () => {
-      beforeEach(async () => {
+      beforeEach(() => {
         spectator = createComponent({
           props: { deviceFormData: { virtualMachineId: 45, device: existingUsb, vmName: 'test-vm' } },
         });
         closedSpy = jest.fn();
         spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        form = await loader.getHarness(IxFormHarness);
         api = spectator.inject(ApiService);
       });
 
