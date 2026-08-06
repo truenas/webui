@@ -1,3 +1,9 @@
+# Automation opening PRs here must use a PAT/app token (see update-translations.yml):
+# GITHUB_TOKEN does not fire pull_request, so this would never report on such a PR.
+#
+# Reports as "check-ticket / <job name in ux-github-workflows>". Branch protection
+# matches that whole string, so the shared workflow's job name is API — renaming it
+# there silently stops this check reporting here.
 name: Check Ticket
 on:
   pull_request:
