@@ -55,7 +55,7 @@ import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 
 if (environment.production) {
-  enableProdMode();
+  enableProdMode();  
 }
 
 bootstrapApplication(AppComponent, {
