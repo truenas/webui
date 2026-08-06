@@ -1,22 +1,14 @@
-# The rule lives in iXsystems/ux-github-workflows. What stays here is only what a
-# reusable workflow cannot own for its caller: the trigger, the token ceiling and
-# the concurrency policy — don't drop them assuming the shared copy covers it.
+# The rule lives in iXsystems/ux-github-workflows, which owns the concurrency policy
+# too. Only the trigger and the token ceiling are here — a reusable workflow cannot
+# declare either on its caller's behalf.
 #
-# NOTE: if this is made a required status check, remember that PRs opened with the
-# default GITHUB_TOKEN never fire pull_request events, so it never runs and never
-# reports — such a PR is unmergeable with no way to unblock it from the PR side.
-# PRs opened by automation must use a PAT/app token (see update-translations.yml).
+# Automation opening PRs here must use a PAT/app token (see update-translations.yml):
+# GITHUB_TOKEN does not fire pull_request, so this would never report on such a PR.
 name: Check Ticket
 
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
-
-# Must not collide with the group the shared workflow declares for itself: a caller
-# sharing a concurrency group with its own callee can cancel or deadlock the run.
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
 
 jobs:
   check-ticket:
