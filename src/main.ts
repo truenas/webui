@@ -55,12 +55,12 @@ import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 
 if (environment.production) {
-  enableProdMode();  
+  enableProdMode();
 }
 
 bootstrapApplication(AppComponent, {
   providers: [
-    // Align @truenas/ui-components with webui's long-standing data-test attribute convention
+    // Align @truenas/ui-components with webui's TEST long-standing data-test attribute convention
     // (see the [ixTest] directive). Library default is data-testid; this single provider
     // routes every component-level testId input and TnTestIdDirective binding through data-test
     // so existing automated tests keep matching their selectors.
