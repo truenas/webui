@@ -43,7 +43,8 @@ describe('InventoryComponent', () => {
   });
 
   it('shows inventory card by default', () => {
-    expect(spectator.query('.card')).toExist();
+    expect(spectator.query('tn-card')).toExist();
+    expect(spectator.query('.tn-card__title')).toHaveText('Unassigned Disks');
   });
 
   it('shows inventory card details when state is loaded', () => {

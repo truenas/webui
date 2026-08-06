@@ -1,10 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
 
 @Component({
@@ -14,8 +12,7 @@ import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/se
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })

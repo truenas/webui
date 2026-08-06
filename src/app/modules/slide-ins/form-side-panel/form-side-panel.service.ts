@@ -165,12 +165,23 @@ export class FormSidePanelService {
       containerRef.destroy();
     };
 
+    // The open below is deferred by two frames, so a form can close itself before it ever runs
+    // (e.g. a validation bail-out in `ngOnInit`). Setting `open` to false while it is still false
+    // is a no-op — tn-side-panel would never emit `panelClosed` and the panel would then animate
+    // open on a form that has already given up. Latch that early close instead and tear down.
+    let isOpened = false;
+    let closedBeforeOpen = false;
+
     containerRef.instance.formAttached.subscribe((form) => {
       // Form-initiated close (save / cancel). A truthy payload is a success — `true` for the
       // default boolean form, or the created record for a richer `R`; any falsy value is a
       // cancellation, matching SlideInResult's `=== undefined` convention.
       (form as SidePanelHostCloseable<R>).closed.subscribe((saved) => {
         pendingResponse = saved || undefined;
+        if (!isOpened) {
+          closedBeforeOpen = true;
+          return;
+        }
         containerRef.setInput('open', false);
       });
     });
@@ -184,9 +195,16 @@ export class FormSidePanelService {
     // tn-side-panel's transform transition has nothing to animate from and the panel just
     // appears. Two frames guarantee a paint with the `--initialized` class applied first.
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      if (!containerRef.hostView.destroyed) {
-        containerRef.setInput('open', true);
+      if (containerRef.hostView.destroyed) {
+        return;
       }
+      if (closedBeforeOpen) {
+        // Never opened, so there is no close animation to wait on — resolve straight away.
+        teardown();
+        return;
+      }
+      isOpened = true;
+      containerRef.setInput('open', true);
     }));
 
     const result$ = new SlideInResult<R>(close$);

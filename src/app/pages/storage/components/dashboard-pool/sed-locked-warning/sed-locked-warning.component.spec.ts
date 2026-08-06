@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -52,7 +52,7 @@ describe('SedLockedWarningComponent', () => {
   it('navigates to disks page when View Disks button is clicked', async () => {
     const router = spectator.inject(Router);
 
-    const viewDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'View Disks' }));
+    const viewDisksButton = await loader.getHarness(TnButtonHarness.with({ label: 'View Disks' }));
     await viewDisksButton.click();
 
     expect(router.navigate).toHaveBeenCalledWith(['/storage', 'disks']);
@@ -61,7 +61,7 @@ describe('SedLockedWarningComponent', () => {
   it('calls pool.reimport and emits importSuccess when Import Again succeeds', async () => {
     const importSuccessSpy = jest.spyOn(spectator.component.importSuccess, 'emit');
 
-    const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import Again' }));
+    const importButton = await loader.getHarness(TnButtonHarness.with({ label: 'Import Again' }));
     await importButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.reimport', [pool.id]);
@@ -76,7 +76,7 @@ describe('SedLockedWarningComponent', () => {
       afterClosed: () => throwError(() => new Error('Import failed')),
     } as unknown as ReturnType<DialogService['jobDialog']>);
 
-    const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import Again' }));
+    const importButton = await loader.getHarness(TnButtonHarness.with({ label: 'Import Again' }));
     await importButton.click();
 
     expect(importSuccessSpy).not.toHaveBeenCalled();

@@ -276,7 +276,7 @@ export class SnapshotListComponent implements OnInit {
 
   doAdd(): void {
     this.formPanel.open(SnapshotAddFormComponent, {
-      title: this.translate.instant('Add Snapshot'),
+      title: this.translate.instant(helptextSnapshots.addTitle),
     });
   }
 

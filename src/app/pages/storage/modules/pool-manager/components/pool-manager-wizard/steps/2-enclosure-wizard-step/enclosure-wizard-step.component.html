@@ -1,17 +1,35 @@
 <ng-container [formGroup]="form">
-  <ix-radio-group
-    formControlName="dispersalStrategy"
-    [options]="dispersalOptions$"
-  ></ix-radio-group>
+  <tn-form-field>
+    <!-- This group has no visible label, so the accessible name is supplied explicitly. -->
+    <!--
+      Options are projected rather than passed via `[options]` so each one can carry the
+      legacy `radio-button-*` test id; see "Radio groups" in the tn-migration playbook.
+    -->
+    <tn-radio-group
+      formControlName="dispersalStrategy"
+      [ariaLabel]="'Enclosure dispersal strategy' | translate"
+    >
+      @for (option of dispersalOptions(); track option.value) {
+        <tn-radio
+          [label]="option.label"
+          [value]="option.value"
+          [testId]="['radio-button', 'dispersal-strategy', option.label]"
+        ></tn-radio>
+      }
+    </tn-radio-group>
+  </tn-form-field>
 
   @if (isLimitingToSingle) {
     <div class="limiting">
-      <ix-select
-        formControlName="limitToEnclosure"
-        [required]="true"
-        [options]="enclosureOptions$"
-        [label]="'Enclosure' | translate"
-      ></ix-select>
+      <tn-form-field [label]="'Enclosure' | translate" [required]="true">
+        <tn-select
+          formControlName="limitToEnclosure"
+          [options]="(enclosureOptions$ | async) ?? []"
+          [optionTestIdKey]="enclosureOptionTestIdKey"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+        ></tn-select>
+      </tn-form-field>
 
       <div class="description">
         {{ helptext.enclosureOptionsDescription | translate }}

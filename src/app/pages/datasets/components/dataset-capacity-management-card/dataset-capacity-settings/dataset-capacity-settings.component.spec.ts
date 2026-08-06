@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -11,8 +11,7 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -58,12 +57,6 @@ describe('DatasetCapacitySettingsComponent', () => {
     } as Record<string, ZfsProperty<string, string | number | null>>,
   } as DatasetDetails;
 
-  const slideInRef: SlideInRef<DatasetDetails | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => dataset),
-  };
-
   const createComponent = createComponentFactory({
     component: DatasetCapacitySettingsComponent,
     imports: [
@@ -73,10 +66,8 @@ describe('DatasetCapacitySettingsComponent', () => {
       mockApi([
         mockCall('pool.dataset.update'),
       ]),
-      mockProvider(SnackbarService),
+      ...ixFormTestingProviders(),
       mockProvider(DialogService),
-      mockProvider(SlideIn),
-      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -87,13 +78,11 @@ describe('DatasetCapacitySettingsComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  const clickSave = async (): Promise<void> => {
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
-  };
+  // The `<tn-side-panel>` host owns the Save button and drives submission through `submit()`.
+  const save = (): void => spectator.component.submit();
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({ props: { datasetToEdit: dataset } });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -147,7 +136,9 @@ describe('DatasetCapacitySettingsComponent', () => {
     // Harness rejects an empty setValue, so clear the control directly.
     spectator.component.form.controls.refquota.setValue(null);
 
-    await clickSave();
+    const closed = jest.fn();
+    spectator.component.closed.subscribe(closed);
+    save();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', [
       'root/path',
@@ -162,7 +153,7 @@ describe('DatasetCapacitySettingsComponent', () => {
       },
     ]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(closed).toHaveBeenCalledWith(true);
   });
 
   it('only sends updated properties on form submit', async () => {
@@ -170,7 +161,7 @@ describe('DatasetCapacitySettingsComponent', () => {
     await (await getInput('quota')).setValue('105 GiB');
     await (await getInput('quota_critical')).setValue('93');
 
-    await clickSave();
+    save();
 
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
       'root/path',

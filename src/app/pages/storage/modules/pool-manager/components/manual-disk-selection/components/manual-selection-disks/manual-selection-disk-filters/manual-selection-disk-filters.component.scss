@@ -5,7 +5,13 @@
     padding: 0;
   }
 
-  ix-input {
-    padding: 0;
+  // Bare tn-form-fields (no <ix-form>/<tn-form-section> host to space them): restore the
+  // inter-field gap the legacy ix-* controls used to carry.
+  tn-form-field {
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: 12px;
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { filterLockedSedDisks, LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
@@ -46,7 +46,7 @@ describe('LockedSedDisksComponent', () => {
   it('emits skip event when skip button is clicked', async () => {
     jest.spyOn(spectator.component.skip, 'emit');
 
-    const skipButton = await loader.getHarness(MatButtonHarness.with({ text: 'Skip' }));
+    const skipButton = await loader.getHarness(TnButtonHarness.with({ label: 'Skip' }));
     await skipButton.click();
 
     expect(spectator.component.skip.emit).toHaveBeenCalled();
@@ -55,7 +55,7 @@ describe('LockedSedDisksComponent', () => {
   it('emits unlock event when unlock button is clicked', async () => {
     jest.spyOn(spectator.component.unlock, 'emit');
 
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
     await unlockButton.click();
 
     expect(spectator.component.unlock.emit).toHaveBeenCalled();
