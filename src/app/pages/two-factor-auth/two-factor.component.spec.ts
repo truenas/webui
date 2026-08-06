@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { TnBannerComponent, TnBannerHarness, TnButtonHarness } from '@truenas/ui-components';
+import { MockComponent, ngMocks } from 'ng-mocks';
 import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -14,10 +14,14 @@ import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-f
 import { AuthService } from 'app/modules/auth/auth.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
+
+// `MockComponent(QrViewerComponent)` deep-mocks that child's whole import graph,
+// which now includes TnBannerComponent — the primitive this component renders itself.
+// Keep it real so the page's own banner still renders (ng-mocks#8634).
+ngMocks.globalKeep(TnBannerComponent);
 
 describe('TwoFactorComponent', () => {
   let spectator: Spectator<TwoFactorComponent>;
@@ -29,7 +33,6 @@ describe('TwoFactorComponent', () => {
     imports: [
       QrCodeComponent,
       QrCodeDirective,
-      MockComponent(WarningComponent),
       MockComponent(QrViewerComponent),
       MockComponent(CopyButtonComponent),
     ],
@@ -93,34 +96,34 @@ describe('TwoFactorComponent', () => {
     expect(copyButton).toHaveProperty('text', 'KYC123');
   });
 
-  it('shows warning when global setting is disabled', () => {
+  it('shows warning when global setting is disabled', async () => {
     jest.spyOn(spectator.inject(AuthService), 'getGlobalTwoFactorConfig').mockImplementation(() => of({
       enabled: true,
     } as GlobalTwoFactorConfig));
-    const warning = spectator.query(WarningComponent);
-    expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', helptext2fa.globallyDisabled);
+
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain(helptext2fa.globallyDisabled);
   });
 
-  it('shows warning when global setting is enabled but user disabled', () => {
+  it('shows warning when global setting is enabled but user disabled', async () => {
     spectator.component.ngOnInit();
     spectator.component.userTwoFactorAuthConfigured.set(false);
     spectator.detectChanges();
-    const warning = spectator.query(WarningComponent);
-    expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', helptext2fa.enabledGloballyButNotForUser);
+
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain(helptext2fa.enabledGloballyButNotForUser);
   });
 
-  it('shows warning when global setting is enabled and user enabled', () => {
+  it('shows warning when global setting is enabled and user enabled', async () => {
     spectator.component.ngOnInit();
     spectator.detectChanges();
-    const warning = spectator.query(WarningComponent);
-    expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', helptext2fa.allSetUp);
+
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain(helptext2fa.allSetUp);
   });
 
   it('renews secret when button is clicked', async () => {
-    const renewBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Renew 2FA Secret' }));
+    const renewBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Renew 2FA Secret' }));
     await renewBtn.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -140,7 +143,7 @@ describe('TwoFactorComponent', () => {
     spectator.component.userTwoFactorAuthConfigured.set(true);
     spectator.detectChanges();
 
-    const unsetBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Unset 2FA Secret' }));
+    const unsetBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Unset 2FA Secret' }));
     await unsetBtn.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -162,7 +165,7 @@ describe('TwoFactorComponent', () => {
     spectator.component.userTwoFactorAuthConfigured.set(false);
     spectator.detectChanges();
 
-    const skipBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Skip Setup' }));
+    const skipBtn = await loader.getHarness(TnButtonHarness.with({ label: 'Skip Setup' }));
     await skipBtn.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -181,13 +184,13 @@ describe('TwoFactorComponent', () => {
     spectator.component.userTwoFactorAuthConfigured.set(false);
     spectator.detectChanges();
 
-    let unsetBtn = spectator.query('button[ixTest="unset-2fa-secret"]');
+    let unsetBtn = spectator.query('[data-test="button-unset-2fa-secret"]');
     expect(unsetBtn).toBeFalsy();
 
     spectator.component.userTwoFactorAuthConfigured.set(true);
     spectator.detectChanges();
 
-    unsetBtn = spectator.query('button[ixTest="unset-2fa-secret"]');
+    unsetBtn = spectator.query('[data-test="button-unset-2fa-secret"]');
     expect(unsetBtn).toBeTruthy();
   });
 
@@ -196,13 +199,13 @@ describe('TwoFactorComponent', () => {
     spectator.component.userTwoFactorAuthConfigured.set(false);
     spectator.detectChanges();
 
-    let skipBtn = spectator.query('button[ixTest="skip-2fa-setup"]');
+    let skipBtn = spectator.query('[data-test="button-skip-2fa-setup"]');
     expect(skipBtn).toBeFalsy();
 
     spectator.setInput('isSetupDialog', true);
     spectator.detectChanges();
 
-    skipBtn = spectator.query('button[ixTest="skip-2fa-setup"]');
+    skipBtn = spectator.query('[data-test="button-skip-2fa-setup"]');
     expect(skipBtn).toBeTruthy();
   });
 });
