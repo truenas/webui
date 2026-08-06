@@ -1,18 +1,9 @@
-# The rule lives in iXsystems/ux-github-workflows, which owns the concurrency policy
-# too. Only the trigger and the token ceiling are here — a reusable workflow cannot
-# declare either on its caller's behalf.
-#
-# Automation opening PRs here must use a PAT/app token (see update-translations.yml):
-# GITHUB_TOKEN does not fire pull_request, so this would never report on such a PR.
 name: Check Ticket
-
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
-
 jobs:
   check-ticket:
-    name: Check PR references a ticket
     permissions:
       contents: read
     uses: iXsystems/ux-github-workflows/.github/workflows/check-ticket.yml@v1
