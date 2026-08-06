@@ -17,6 +17,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { formatRoleNames, Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
@@ -62,6 +63,7 @@ export class GroupListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private formPanel = inject(FormSidePanelService);
   private api = inject(ApiService);
+  private authService = inject(AuthService);
 
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = groupListElements;
@@ -71,6 +73,19 @@ export class GroupListComponent implements OnInit {
 
   protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
   protected readonly trackById = (_: number, row: Group): number => row.id;
+
+  private readonly hasAccountWrite = toSignal(this.authService.hasRole(this.requiredRoles), {
+    initialValue: false,
+  });
+
+  /**
+   * Only expand rows whose detail panel would actually render an action: `ix-group-details-row`
+   * shows Members for local groups, Edit for editable local ones, and Delete for non-builtin
+   * groups with AccountWrite. Without this, builtin/non-local rows expand into a blank panel.
+   */
+  protected readonly canExpandGroup = (group: Group): boolean => {
+    return group.local || (!group.builtin && this.hasAccountWrite());
+  };
 
   /**
    * The sort the list opens with. One declaration for both halves of it — `setDefaultSort` maps
@@ -116,6 +131,15 @@ export class GroupListComponent implements OnInit {
   );
 
   protected readonly emptyMessage = toSignal(this.emptyMessage$, { initialValue: '' });
+
+  private readonly emptyDescription$: Observable<string> = this.emptyType$.pipe(
+    map((type) => {
+      const message = this.emptyService.defaultEmptyConfig(type).message;
+      return message ? this.translate.instant(message) : '';
+    }),
+  );
+
+  protected readonly emptyDescription = toSignal(this.emptyDescription$, { initialValue: '' });
 
   protected getRolesValue(row: Group): string {
     return formatRoleNames(row.roles, (key) => this.translate.instant(key)) || this.translate.instant('N/A');

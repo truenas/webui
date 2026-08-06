@@ -25,6 +25,7 @@ const fakeGroupDataSource: Group[] = [{
   group: 'mock',
   gid: 1000,
   builtin: true,
+  local: true,
   sudo_commands: [] as string[],
   sudo_commands_nopasswd: [] as string[],
   roles: [] as Role[],
@@ -35,12 +36,23 @@ const fakeGroupDataSource: Group[] = [{
   group: 'fake',
   gid: 1001,
   builtin: true,
+  local: true,
   sudo_commands: ['ls'],
   sudo_commands_nopasswd: [],
   roles: [Role.FullAdmin],
   smb: true,
   users: [2],
 }] as Group[];
+
+// Neither local nor deletable, so `ix-group-details-row` would render no action at all.
+const nonExpandableGroup = {
+  id: 3,
+  group: 'remote',
+  gid: 1002,
+  builtin: true,
+  local: false,
+  roles: [] as Role[],
+} as Group;
 
 describe('GroupListComponent', () => {
   let spectator: Spectator<GroupListComponent>;
@@ -147,6 +159,18 @@ describe('GroupListComponent', () => {
     expect(await table.isRowExpanded(1)).toBe(true);
     expect(await table.isRowExpanded(0)).toBe(false);
     expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
+  });
+
+  it('does not expand a group whose details row would be empty', async () => {
+    store$.overrideSelector(selectGroups, [nonExpandableGroup]);
+    store$.refreshState();
+
+    const table = await loader.getHarness(TnTableHarness);
+
+    await table.clickRow(0);
+
+    expect(await table.isRowExpanded(0)).toBe(false);
+    expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(0);
   });
 
   it('reflects the default ascending GID sort in the column header on first paint', async () => {
