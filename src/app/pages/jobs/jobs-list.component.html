@@ -1,7 +1,7 @@
 <ix-page-header>
   <tn-button-toggle-group
     [ngModel]="selectedIndex"
-    [ariaLabel]="'Tabs' | translate"
+    [ariaLabel]="'Filter jobs by state' | translate"
     [disabled]="!!(isLoading$ | async)"
     (ngModelChange)="onTabChange($event)"
   >

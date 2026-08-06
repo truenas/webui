@@ -61,7 +61,7 @@
     <div class="qr-section">
       <ix-qr-viewer
         [qrInfo]="qrInfo?.provisioning_uri"
-        [showWarning]="globalTwoFactorEnabled && showQrCodeWarning"
+        [showWarning]="globalTwoFactorEnabled() && showQrCodeWarning"
       ></ix-qr-viewer>
     </div>
 

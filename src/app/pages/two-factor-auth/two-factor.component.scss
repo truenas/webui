@@ -8,10 +8,6 @@
 }
 
 .card {
-  // TEMP (NAS-141021): tn-card declares no host `display`, so it defaults to
-  // `inline` and `max-width` would not apply. Drop once the library sets a
-  // block host display.
-  display: block;
   margin-left: auto;
   margin-right: auto;
   max-width: 960px;

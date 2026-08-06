@@ -180,32 +180,32 @@ describe('TwoFactorComponent', () => {
     expect(spectator.component.skipSetup.emit).toHaveBeenCalled();
   });
 
-  it('shows unset button only when 2FA is configured', () => {
+  it('shows unset button only when 2FA is configured', async () => {
+    const unsetButtons = TnButtonHarness.with({ label: 'Unset 2FA Secret' });
+
     spectator.component.userTwoFactorAuthConfigured.set(false);
     spectator.detectChanges();
 
-    let unsetBtn = spectator.query('[data-test="button-unset-2fa-secret"]');
-    expect(unsetBtn).toBeFalsy();
+    expect(await loader.getAllHarnesses(unsetButtons)).toHaveLength(0);
 
     spectator.component.userTwoFactorAuthConfigured.set(true);
     spectator.detectChanges();
 
-    unsetBtn = spectator.query('[data-test="button-unset-2fa-secret"]');
-    expect(unsetBtn).toBeTruthy();
+    expect(await loader.getAllHarnesses(unsetButtons)).toHaveLength(1);
   });
 
-  it('shows skip button only in setup dialog when 2FA is not configured', () => {
+  it('shows skip button only in setup dialog when 2FA is not configured', async () => {
+    const skipButtons = TnButtonHarness.with({ label: 'Skip Setup' });
+
     spectator.setInput('isSetupDialog', false);
     spectator.component.userTwoFactorAuthConfigured.set(false);
     spectator.detectChanges();
 
-    let skipBtn = spectator.query('[data-test="button-skip-2fa-setup"]');
-    expect(skipBtn).toBeFalsy();
+    expect(await loader.getAllHarnesses(skipButtons)).toHaveLength(0);
 
     spectator.setInput('isSetupDialog', true);
     spectator.detectChanges();
 
-    skipBtn = spectator.query('[data-test="button-skip-2fa-setup"]');
-    expect(skipBtn).toBeTruthy();
+    expect(await loader.getAllHarnesses(skipButtons)).toHaveLength(1);
   });
 });
