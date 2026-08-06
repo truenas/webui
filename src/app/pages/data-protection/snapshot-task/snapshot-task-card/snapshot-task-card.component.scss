@@ -1,7 +1,6 @@
 @import '../../card-title';
 
 @include card-title;
-@include card-table-scroll;
 @include card-flush-table;
 
 // Hand-rolled footer mirroring tn-card's small-padding footer. The card renders its
