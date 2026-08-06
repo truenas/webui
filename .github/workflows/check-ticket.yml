@@ -12,4 +12,4 @@ jobs:
   check-ticket:
     permissions:
       contents: read
-    uses: iXsystems/ux-github-workflows/.github/workflows/check-ticket.yml@v1
+    uses: iXsystems/ux-github-workflows/.github/workflows/check-ticket.yml@master
