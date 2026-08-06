@@ -56,13 +56,15 @@
 }
 
 <ng-template #tableTpl>
+  @let emptyConf = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
   <tn-table
     class="table"
     [dataSource]="(dataProvider.currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByRealmId"
     [loading]="!!(dataProvider.isLoading$ | async)"
-    [emptyMessage]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async).title"
+    [emptyMessage]="emptyConf.title | translate"
+    [emptyDescription]="emptyConf.message ? (emptyConf.message | translate) : ''"
     (sortChange)="onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'realm'" [sortable]="true">

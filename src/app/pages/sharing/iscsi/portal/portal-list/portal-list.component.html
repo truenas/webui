@@ -33,6 +33,7 @@
     [trackBy]="trackByPortalId"
     [loading]="isLoading()"
     [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyDescription]="emptyConf?.message ? (emptyConf.message | translate) : ''"
     [emptyIcon]="emptyConf?.icon ?? ''"
     (sortChange)="onSortChange($event)"
   >

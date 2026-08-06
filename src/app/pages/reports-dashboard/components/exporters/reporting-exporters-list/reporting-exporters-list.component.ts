@@ -123,6 +123,15 @@ export class ReportingExporterListComponent implements OnInit {
 
   protected readonly emptyMessage = toSignal(this.emptyMessage$, { initialValue: '' });
 
+  private readonly emptyDescription$ = this.emptyType$.pipe(
+    map((type) => {
+      const message = this.emptyService.defaultEmptyConfig(type).message;
+      return message ? this.translate.instant(message) : '';
+    }),
+  );
+
+  protected readonly emptyDescription = toSignal(this.emptyDescription$, { initialValue: '' });
+
   ngOnInit(): void {
     this.getExporters();
   }

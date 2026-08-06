@@ -8,6 +8,7 @@
     [trackBy]="trackByHostId"
     [loading]="isLoading()"
     [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyDescription]="emptyConf?.message ? (emptyConf.message | translate) : ''"
     [emptyIcon]="emptyConf?.icon ?? ''"
   >
     <ng-container [tnColumnDef]="'hostnqn'">
