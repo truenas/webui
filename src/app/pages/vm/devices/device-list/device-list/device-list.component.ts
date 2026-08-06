@@ -28,7 +28,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -70,7 +70,7 @@ import { ExportDiskDialogComponent } from 'app/pages/vm/devices/device-list/expo
 export class DeviceListComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
   private tnDialog = inject(TnDialog);
@@ -154,20 +154,26 @@ export class DeviceListComponent implements OnInit {
   }
 
   onAdd(): void {
-    this.slideIn.open(DeviceFormComponent, {
-      data: {
-        virtualMachineId: this.vmId,
-        vmName: this.vmName,
+    this.formPanel.open(DeviceFormComponent, {
+      title: this.translate.instant('Add Device for {vmName}', { vmName: this.vmName }),
+      inputs: {
+        deviceFormData: {
+          virtualMachineId: this.vmId,
+          vmName: this.vmName,
+        },
       },
     }).onSuccess(() => this.loadDevices(), this.destroyRef);
   }
 
   onEdit(device: VmDevice): void {
-    this.slideIn.open(DeviceFormComponent, {
-      data: {
-        device,
-        virtualMachineId: this.vmId,
-        vmName: this.vmName,
+    this.formPanel.open(DeviceFormComponent, {
+      title: this.translate.instant('Edit Device for {vmName}', { vmName: this.vmName }),
+      inputs: {
+        deviceFormData: {
+          device,
+          virtualMachineId: this.vmId,
+          vmName: this.vmName,
+        },
       },
     }).onSuccess(() => this.loadDevices(), this.destroyRef);
   }

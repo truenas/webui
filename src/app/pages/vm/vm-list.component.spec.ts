@@ -21,7 +21,7 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VmListComponent } from 'app/pages/vm/vm-list.component';
@@ -130,7 +130,7 @@ describe('VmListComponent', () => {
         getAvailableMemory: jest.fn(() => of(4096)),
         hasVirtualizationSupport$: of(true),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
@@ -175,7 +175,10 @@ describe('VmListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(VmWizardComponent);
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+      VmWizardComponent,
+      { title: 'Create Virtual Machine', wide: true, footerless: true },
+    );
   });
 
   describe('getDisplayPort', () => {

@@ -12,7 +12,7 @@ import { VmState } from 'app/enums/vm.enum';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
@@ -37,7 +37,7 @@ import { VmService } from 'app/services/vm.service';
 })
 export class VirtualMachineDetailsRowComponent {
   private loader = inject(LoaderService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private tnDialog = inject(TnDialog);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
@@ -118,7 +118,10 @@ export class VirtualMachineDetailsRowComponent {
   }
 
   protected doEdit(): void {
-    this.slideIn.open(VmEditFormComponent, { data: this.vm() });
+    this.formPanel.open(VmEditFormComponent, {
+      title: this.translate.instant('Edit VM'),
+      inputs: { vmToEdit: this.vm() },
+    });
   }
 
   protected doDelete(): void {

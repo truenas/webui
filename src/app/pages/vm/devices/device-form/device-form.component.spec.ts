@@ -1,9 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of, throwError } from 'rxjs';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
+} from '@truenas/ui-components';
+import { NEVER, of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -26,12 +28,8 @@ import {
   VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { ApiCallError } from 'app/services/errors/error.classes';
@@ -45,14 +43,131 @@ describe('DeviceFormComponent', () => {
   let spectator: Spectator<DeviceFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let saveButton: MatButtonHarness;
+  let closedSpy: jest.Mock;
+
+  /**
+   * Stands in for the `<tn-side-panel>` footer Save, which is what actually submits this form —
+   * it renders no Save of its own. Mirrors the host: gate on `canSubmit()`, then `submit()`.
+   */
+  const saveButton = {
+    async click(): Promise<void> {
+      // The real footer renders Save as [disabled]="!form.canSubmit()", so a test that saves an
+      // unsubmittable form would be asserting a flow the user cannot reach. Thrown rather than
+      // expect()ed because this runs outside a test block (jest/no-standalone-expect).
+      if (!spectator.component.canSubmit()) {
+        throw new Error('Save clicked while canSubmit() is false — the panel footer would have disabled it.');
+      }
+
+      spectator.component.submit();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+    },
+  };
   let api: ApiService;
 
-  const slideInRef: SlideInRef<{ virtualMachineId: number; device: VmDevice } | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
+  /**
+   * Label → tn-* control map. The form's fields migrated from `ix-*` to `tn-*`, so
+   * `IxFormHarness`'s label indexing no longer reaches them; `fillForm`/`getValues` below
+   * keep the label-keyed call sites in this spec working by driving the tn harnesses
+   * directly and delegating the remaining `ix-*` controls (explorer, combobox and the two
+   * byte-formatted size inputs) to `IxFormHarness`.
+   *
+   * Only one branch of the device-type `@switch` renders at a time, so a `formControlName`
+   * that repeats across branches (`type`, `sectorsize`, `path`) is unambiguous in context.
+   */
+  const tnControls: Record<string, { kind: 'select' | 'input' | 'checkbox'; selector: string }> = {
+    Type: { kind: 'select', selector: '.device-type-select' },
+    'Zvol Location': { kind: 'select', selector: '[formControlName="datastore"]' },
+    Zvol: { kind: 'select', selector: '[formControlName="path"]' },
+    Mode: { kind: 'select', selector: '[formControlName="type"]' },
+    'Disk Sector Size': { kind: 'select', selector: '[formControlName="sectorsize"]' },
+    'Adapter Type': { kind: 'select', selector: '[formControlName="type"]' },
+    'NIC To Attach': { kind: 'select', selector: '[formControlName="nic_attach"]' },
+    'Controller Type': { kind: 'select', selector: '[formControlName="controller_type"]' },
+    Device: { kind: 'select', selector: '[formControlName="device"]' },
+    'Display Type': { kind: 'select', selector: '[formControlName="type"]' },
+    Bind: { kind: 'select', selector: '[formControlName="bind"]' },
+    Resolution: { kind: 'select', selector: '[formControlName="resolution"]' },
+    'MAC Address': { kind: 'input', selector: '[formControlName="mac"]' },
+    'Vendor ID': { kind: 'input', selector: '[formControlName="vendor_id"]' },
+    'Product ID': { kind: 'input', selector: '[formControlName="product_id"]' },
+    Password: { kind: 'input', selector: '[formControlName="password"]' },
+    'Port (optional)': { kind: 'input', selector: '[formControlName="port"]' },
+    'Web Port': { kind: 'input', selector: '[formControlName="web_port"]' },
+    'Device Order': { kind: 'input', selector: '.device-order-input' },
+    'Trust Guest Filters': { kind: 'checkbox', selector: '[formControlName="trust_guest_rx_filters"]' },
+    'Web Interface': { kind: 'checkbox', selector: '[formControlName="web"]' },
   };
+
+  async function fillForm(values: Record<string, unknown>): Promise<void> {
+    for (const [label, value] of Object.entries(values)) {
+      const control = tnControls[label];
+      if (!control) {
+        await form.fillForm({ [label]: value });
+        continue;
+      }
+      if (control.kind === 'select') {
+        const select = await loader.getHarness(TnSelectHarness.with({ selector: control.selector }));
+        await select.selectOption(String(value));
+      } else if (control.kind === 'input') {
+        const input = await loader.getHarness(TnInputHarness.with({ selector: control.selector }));
+        await input.setValue(value === null || value === undefined ? '' : String(value));
+      } else {
+        const checkbox = await loader.getHarness(TnCheckboxHarness.with({ selector: control.selector }));
+        if (value) {
+          await checkbox.check();
+        } else {
+          await checkbox.uncheck();
+        }
+      }
+      spectator.detectChanges();
+    }
+  }
+
+  async function getValues(): Promise<Record<string, unknown>> {
+    const values: Record<string, unknown> = { ...(await form.getValues()) };
+    for (const [label, control] of Object.entries(tnControls)) {
+      if (control.kind === 'checkbox') {
+        // A checkbox carries its own label; the wrapping tn-form-field has none.
+        const [checkbox] = await loader.getAllHarnesses(TnCheckboxHarness.with({ selector: control.selector }));
+        if (checkbox && await checkbox.getLabelText() === label) {
+          values[label] = await checkbox.isChecked();
+        }
+        continue;
+      }
+
+      // A formControlName repeats across the device-type branches under different labels
+      // (`type` is Mode / Adapter Type / Display Type), so only report a control when a
+      // form field carrying THIS label is actually rendered.
+      const [field] = await loader.getAllHarnesses(TnFormFieldHarness.with({ label }));
+      if (!field) {
+        continue;
+      }
+
+      if (control.kind === 'select') {
+        const [select] = await loader.getAllHarnesses(TnSelectHarness.with({ selector: control.selector }));
+        if (select) {
+          values[label] = await select.getDisplayText();
+        }
+      } else {
+        const [input] = await loader.getAllHarnesses(TnInputHarness.with({ selector: control.selector }));
+        if (input) {
+          values[label] = await input.getValue();
+        }
+      }
+    }
+    return values;
+  }
+
+  /**
+   * Asserts a field is genuinely absent from the DOM. `getValues()` degrades a lookup miss to
+   * "key absent", so a bare `expect(values).not.toHaveProperty(label)` would also pass if a
+   * selector in `tnControls` went stale — this cannot.
+   */
+  async function expectNoField(label: string): Promise<void> {
+    expect(await loader.getAllHarnesses(TnFormFieldHarness.with({ label }))).toHaveLength(0);
+  }
 
   const createComponent = createComponentFactory({
     component: DeviceFormComponent,
@@ -121,9 +236,7 @@ describe('DeviceFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideIn),
       mockProvider(FilesystemService),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(VmService, {
         hasVirtualizationSupport$: of(true),
       }),
@@ -131,6 +244,82 @@ describe('DeviceFormComponent', () => {
       // correctly if we mock the `FormErrorHandlerService`
       mockProvider(FormErrorHandlerService),
     ],
+  });
+
+  // The form is opened only through `FormSidePanelService`, so this whole surface is driven by
+  // the host rather than by anything in the template: nothing here would fail to compile if an
+  // input were renamed or `canSubmit`/`closed` were dropped — the panel would just open an
+  // empty form, or render a Save that never enables.
+  describe('side-panel host contract', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
+      });
+      closedSpy = jest.fn();
+      spectator.component.closed.subscribe(closedSpy);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+    });
+
+    it('renders no Save of its own — the panel footer owns it', async () => {
+      expect(await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Save' }))).toHaveLength(0);
+    });
+
+    it('gates the panel Save on canSubmit()', async () => {
+      // CD-ROM defaults its path to /mnt, so the form starts out submittable...
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      // ...but switching to Disk leaves a required, empty Zvol path behind.
+      await fillForm({ Type: 'Disk' });
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      await fillForm({ Zvol: 'bassein/zvol1' });
+      expect(spectator.component.canSubmit()).toBe(true);
+    });
+
+    it('gates the panel Save on the standalone controls too, not just the type-specific form', () => {
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      // Device Type lives outside `typeSpecificForm` but is required, so clearing it must
+      // disable Save rather than leaving it enabled over an invalid form.
+      spectator.component.typeControl.setValue(null);
+      expect(spectator.component.canSubmit()).toBe(false);
+    });
+
+    it('takes its VM context from the deviceFormData input', async () => {
+      await fillForm({ Type: 'CD-ROM', 'CD-ROM Path': '/mnt/cdrom' });
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith('vm.device.create', [
+        expect.objectContaining({ vm: 45 }),
+      ]);
+    });
+
+    it('emits closed(true) after a successful save', async () => {
+      await fillForm({ Type: 'CD-ROM', 'CD-ROM Path': '/mnt/cdrom' });
+      await saveButton.click();
+
+      expect(closedSpy).toHaveBeenCalledWith(true);
+    });
+
+    it('does not emit closed when the save fails', async () => {
+      jest.spyOn(spectator.inject(ApiService), 'call')
+        .mockReturnValue(throwError(() => new Error('Device could not be created')));
+
+      await fillForm({ Type: 'CD-ROM', 'CD-ROM Path': '/mnt/cdrom' });
+      await saveButton.click();
+
+      expect(closedSpy).not.toHaveBeenCalled();
+    });
+
+    it('reports unsaved changes once the form is dirty', async () => {
+      expect(spectator.component.hasUnsavedChanges()).toBe(false);
+
+      await fillForm({ Type: 'CD-ROM', 'CD-ROM Path': '/mnt/cdrom' });
+
+      expect(spectator.component.hasUnsavedChanges()).toBe(true);
+    });
   });
 
   describe('CD-ROM', () => {
@@ -147,18 +336,33 @@ describe('DeviceFormComponent', () => {
     describe('add new', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
+      // The side-panel host reads `isBusy()` OPTIONALLY (`form()?.isBusy?.()`) to render its
+      // progress bar and dim overlay, so dropping the method would silently lose the save
+      // loader rather than fail to compile.
+      it('reports busy to the side-panel host while a save is in flight', async () => {
+        await fillForm({
+          Type: 'CD-ROM',
+          'CD-ROM Path': '/mnt/cdrom',
+        });
+        expect(spectator.component.isBusy()).toBe(false);
+
+        jest.spyOn(api, 'call').mockReturnValue(NEVER);
+        spectator.component.submit();
+
+        expect(spectator.component.isBusy()).toBe(true);
+      });
+
       it('adds a new CD-ROM device', async () => {
-        await form.fillForm({
+        await fillForm({
           Type: 'CD-ROM',
           'CD-ROM Path': '/mnt/cdrom',
           'Device Order': 1002,
@@ -174,28 +378,24 @@ describe('DeviceFormComponent', () => {
           order: 1002,
           vm: 45,
         }]);
-        expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+        expect(closedSpy).toHaveBeenCalledWith(true);
       });
     });
 
     describe('edit', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, {
-              ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingCdRom, vmName: 'test-vm' })),
-            }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, device: existingCdRom, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('shows values for an existing CD-ROM device', async () => {
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).toEqual({
           'CD-ROM Path': '/mnt/bassein/cdrom',
           'Device Order': '4',
@@ -203,7 +403,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('updates an existing CD-ROM device', async () => {
-        await form.fillForm({
+        await fillForm({
           'CD-ROM Path': '/mnt/newcdrom',
         });
         spectator.component.cdromForm.markAsDirty();
@@ -239,18 +439,17 @@ describe('DeviceFormComponent', () => {
     describe('adds new', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('adds a new NIC device', async () => {
-        await form.fillForm(
+        await fillForm(
           {
             Type: 'NIC',
             'Adapter Type': 'VirtIO',
@@ -276,11 +475,11 @@ describe('DeviceFormComponent', () => {
       });
 
       it('generate a new MAC when Type is selected', async () => {
-        await form.fillForm({
+        await fillForm({
           Type: 'NIC',
         });
 
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).toMatchObject({
           'MAC Address': '00:a0:98:30:09:90',
         });
@@ -288,15 +487,15 @@ describe('DeviceFormComponent', () => {
       });
 
       it('generates a new MAC when Generate button is pressed', async () => {
-        await form.fillForm({
+        await fillForm({
           Type: 'NIC',
         });
         spectator.inject(MockApiService).call.mockClear();
 
-        const generateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate' }));
+        const generateButton = await loader.getHarness(TnButtonHarness.with({ label: 'Generate' }));
         await generateButton.click();
 
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).toMatchObject({
           'MAC Address': '00:a0:98:30:09:90',
         });
@@ -307,24 +506,17 @@ describe('DeviceFormComponent', () => {
     describe('edits', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, {
-              ...slideInRef,
-              getData: jest.fn(() => ({
-                virtualMachineId: 45,
-                device: existingNic,
-              })),
-            }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, device: existingNic } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('shows values for an existing NIC device', async () => {
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).toEqual({
           'Adapter Type': 'Intel e82585 (e1000)',
           'Device Order': '1002',
@@ -353,18 +545,17 @@ describe('DeviceFormComponent', () => {
     describe('adds disk', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('adds a new disk', async () => {
-        await form.fillForm(
+        await fillForm(
           {
             Type: 'Disk',
             Zvol: 'bassein/zvol1',
@@ -393,21 +584,17 @@ describe('DeviceFormComponent', () => {
     describe('edits disk', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, {
-              ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingDisk, vmName: 'test-vm' })),
-            }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, device: existingDisk, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('shows values for an existing Disk', async () => {
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).toEqual({
           Zvol: 'bassein/zvol1',
           'Disk Sector Size': '4096',
@@ -417,7 +604,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('updates an existing Disk', async () => {
-        await form.fillForm({
+        await fillForm({
           Mode: 'AHCI',
           'Disk Sector Size': 'Default',
         });
@@ -438,67 +625,69 @@ describe('DeviceFormComponent', () => {
       });
 
       it('does not show radio toggle when editing existing disk', async () => {
-        const radioGroups = await loader.getAllHarnesses(IxRadioGroupHarness);
-        expect(radioGroups).toHaveLength(0);
+        const radios = await loader.getAllHarnesses(TnRadioHarness);
+        expect(radios).toHaveLength(0);
       });
     });
 
     describe('adds disk with create new zvol', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('shows radio toggle when adding new disk device', async () => {
-        await form.fillForm({ Type: 'Disk' });
-        const radioGroups = await loader.getAllHarnesses(IxRadioGroupHarness);
-        expect(radioGroups).toHaveLength(1);
+        await fillForm({ Type: 'Disk' });
+        const radios = await loader.getAllHarnesses(TnRadioHarness);
+        expect(radios).toHaveLength(2);
       });
 
       it('defaults to Use existing disk image', async () => {
-        await form.fillForm({ Type: 'Disk' });
-        const radioGroup = await loader.getHarness(IxRadioGroupHarness);
-        expect(await radioGroup.getValue()).toBe('Use existing disk image');
+        await fillForm({ Type: 'Disk' });
+        const existingRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Use existing disk image' }));
+        expect(await existingRadio.isChecked()).toBe(true);
       });
 
       it('shows Zvol Location and Size when Create new is selected', async () => {
-        await form.fillForm({ Type: 'Disk' });
-        const radioGroup = await loader.getHarness(IxRadioGroupHarness);
-        await radioGroup.setValue('Create new disk image');
+        await fillForm({ Type: 'Disk' });
+        const newRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Create new disk image' }));
+        await newRadio.check();
         spectator.detectChanges();
 
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).toHaveProperty('Zvol Location');
         expect(values).toHaveProperty('Size');
         expect(values).not.toHaveProperty('Zvol');
+        await expectNoField('Zvol');
       });
 
       it('shows Zvol select when Use existing is selected', async () => {
-        await form.fillForm({ Type: 'Disk' });
-        const radioGroup = await loader.getHarness(IxRadioGroupHarness);
-        await radioGroup.setValue('Use existing disk image');
+        await fillForm({ Type: 'Disk' });
+        const existingRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Use existing disk image' }));
+        await existingRadio.check();
         spectator.detectChanges();
 
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).toHaveProperty('Zvol');
         expect(values).not.toHaveProperty('Zvol Location');
+        await expectNoField('Zvol Location');
         expect(values).not.toHaveProperty('Size');
+        await expectNoField('Size');
       });
 
       it('submits with create_zvol when Create new is selected', async () => {
-        await form.fillForm({ Type: 'Disk' });
-        const radioGroup = await loader.getHarness(IxRadioGroupHarness);
-        await radioGroup.setValue('Create new disk image');
+        await fillForm({ Type: 'Disk' });
+        const newRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Create new disk image' }));
+        await newRadio.check();
         spectator.detectChanges();
 
-        await form.fillForm({
+        await fillForm({
           'Zvol Location': 'bassein',
           Size: '10 GiB',
           Mode: 'VirtIO',
@@ -544,18 +733,17 @@ describe('DeviceFormComponent', () => {
     describe('adds raw file', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('adds a new Raw File device', async () => {
-        await form.fillForm(
+        await fillForm(
           {
             Type: 'Raw File',
             'Raw File': '/mnt/bassein/newraw',
@@ -585,21 +773,17 @@ describe('DeviceFormComponent', () => {
     describe('edits raw file', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, {
-              ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingRawFile, vmName: 'test-vm' })),
-            }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, device: existingRawFile, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('shows values for an existing Raw File device', async () => {
-        const values = await form.getValues();
+        const values = await getValues();
 
         expect(values).toEqual({
           'Raw File': '/mnt/bassein/raw',
@@ -611,7 +795,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('updates an existing Raw File device', async () => {
-        await form.fillForm({
+        await fillForm({
           'Raw Filesize': '10 GiB',
         });
         await saveButton.click();
@@ -636,7 +820,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('still submits null when size box contains whitespace', async () => {
-        await form.fillForm({
+        await fillForm({
           'Raw Filesize': '   \n\t',
         });
         await saveButton.click();
@@ -660,18 +844,17 @@ describe('DeviceFormComponent', () => {
     describe('adds raw file with existing file', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('includes exists: true when selecting existing file from path input', async () => {
-        await form.fillForm(
+        await fillForm(
           {
             Type: 'Raw File',
             'Raw File': '/mnt/bassein/existingfile.raw',
@@ -706,18 +889,17 @@ describe('DeviceFormComponent', () => {
     describe('adds raw file with size (new file creation)', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('does not include exists field when creating new file with size specified', async () => {
-        await form.fillForm(
+        await fillForm(
           {
             Type: 'Raw File',
             'Raw File': '/mnt/bassein/newfile.raw',
@@ -780,13 +962,12 @@ describe('DeviceFormComponent', () => {
 
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -794,7 +975,7 @@ describe('DeviceFormComponent', () => {
         const spy = spectator.inject(MockApiService);
         spy.call.mockImplementation(mockApiCall(apiErrorToGetTransformed, spy.call));
 
-        await form.fillForm(
+        await fillForm(
           {
             Type: 'Raw File',
             'Raw File': '/mnt/bassein/newfile.raw',
@@ -833,7 +1014,7 @@ describe('DeviceFormComponent', () => {
         const spy = spectator.inject(MockApiService);
         spy.call.mockImplementation(mockApiCall(apiErrorWontGetTransformed, spy.call));
 
-        await form.fillForm(
+        await fillForm(
           {
             Type: 'Raw File',
             'Raw File': '/mnt/bassein/newfile.raw',
@@ -868,7 +1049,7 @@ describe('DeviceFormComponent', () => {
         const spy = spectator.inject(MockApiService);
         spy.call.mockImplementation(mockApiCall(apiErrorWontGetTransformed, spy.call));
 
-        await form.fillForm({
+        await fillForm({
           Type: 'CD-ROM',
           'CD-ROM Path': '/mnt/cdrom',
           'Device Order': 1002,
@@ -896,18 +1077,17 @@ describe('DeviceFormComponent', () => {
     describe('adds PCI Passthrough Device', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('adds a new PCI Passthrough device', async () => {
-        await form.fillForm(
+        await fillForm(
           {
             Type: 'PCI Passthrough Device',
             'PCI Passthrough Device': 'pci_0000_00_1c_0',
@@ -932,22 +1112,17 @@ describe('DeviceFormComponent', () => {
     describe('edits PCI Passthrough Device', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, {
-              ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingPassthrough, vmName: 'test-vm' })),
-            }),
-
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, device: existingPassthrough, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('shows values for an existing PCI Passthrough device', async () => {
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).toEqual({
           'PCI Passthrough Device': 'pci_0000_00_1c_0',
           'Device Order': '5',
@@ -955,7 +1130,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('updates an existing PCI Passthrough device', async () => {
-        await form.fillForm({
+        await fillForm({
           'PCI Passthrough Device': 'pci_0000_00_1c_5',
         });
         await saveButton.click();
@@ -1015,21 +1190,17 @@ describe('DeviceFormComponent', () => {
     describe('edits SPICE display', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, {
-              ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingSpiceDisplay, vmName: 'test-vm' })),
-            }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, device: existingSpiceDisplay, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('shows values for an existing Display device', async () => {
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).toEqual({
           Bind: '0.0.0.0',
           'Device Order': '1002',
@@ -1043,23 +1214,24 @@ describe('DeviceFormComponent', () => {
 
       it('shows web_port field only when Web Interface is enabled', async () => {
         // Initially web is true, so web_port should be visible
-        let values = await form.getValues();
+        let values = await getValues();
         expect(values).toHaveProperty('Web Port', '5901');
 
         // Disable Web Interface
-        await form.fillForm({ 'Web Interface': false });
+        await fillForm({ 'Web Interface': false });
         spectator.detectChanges();
 
         // Web Port field should no longer be in the form values
-        values = await form.getValues();
+        values = await getValues();
         expect(values).not.toHaveProperty('Web Port');
+        await expectNoField('Web Port');
 
         // Re-enable Web Interface
-        await form.fillForm({ 'Web Interface': true });
+        await fillForm({ 'Web Interface': true });
         spectator.detectChanges();
 
         // Web Port field should be visible again (though value may be cleared)
-        values = await form.getValues();
+        values = await getValues();
         expect(values).toHaveProperty('Web Port');
       });
     });
@@ -1067,13 +1239,12 @@ describe('DeviceFormComponent', () => {
     describe('edits display to 46', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 46 })) }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 46 } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -1082,30 +1253,27 @@ describe('DeviceFormComponent', () => {
           { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Spice } },
           { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc } },
         ] as VmDisplayDevice[]);
-        const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Type' }));
+        const typeSelect = await loader.getHarness(TnSelectHarness.with({ selector: '.device-type-select' }));
         expect(api.call).toHaveBeenCalledWith('vm.get_display_devices', [46]);
-        expect(await typeSelect.getOptionLabels()).not.toContain('Display');
+        await typeSelect.open();
+        expect(await typeSelect.getOptions()).not.toContain('Display');
       });
     });
 
     describe('edits VNC display', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, {
-              ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingVncDisplay, vmName: 'test-vm' })),
-            }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, device: existingVncDisplay, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('shows values for an existing VNC display device', async () => {
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).toMatchObject({
           'Device Order': '1003',
           Password: 'vncpass',
@@ -1114,11 +1282,13 @@ describe('DeviceFormComponent', () => {
 
         // Verify Web Interface is disabled for VNC
         expect(values).not.toHaveProperty('Web Interface');
+        await expectNoField('Web Interface');
         expect(values).not.toHaveProperty('Web Port');
+        await expectNoField('Web Port');
       });
 
       it('updates an existing VNC display device', async () => {
-        await form.fillForm({
+        await fillForm({
           Bind: '0.0.0.0',
           Password: 'newpass',
         });
@@ -1142,7 +1312,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('validates VNC password length (8 character limit)', async () => {
-        await form.fillForm({
+        await fillForm({
           Password: '123456789', // 9 characters - should be invalid for VNC
         });
 
@@ -1182,12 +1352,7 @@ describe('DeviceFormComponent', () => {
           ]),
           mockAuth(),
           mockProvider(DialogService),
-          mockProvider(SlideIn),
           mockProvider(FilesystemService),
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: jest.fn(() => ({ virtualMachineId: 45 })),
-          }),
           mockProvider(VmService, {
             hasVirtualizationSupport$: of(true),
           }),
@@ -1195,15 +1360,16 @@ describe('DeviceFormComponent', () => {
       });
 
       beforeEach(async () => {
-        spectator = createComponentForAdding();
+        spectator = createComponentForAdding({ props: { deviceFormData: { virtualMachineId: 45 } } });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('adds a new SPICE display device', async () => {
-        await form.fillForm({
+        await fillForm({
           Type: 'Display',
           'Display Type': 'SPICE',
           Bind: '0.0.0.0',
@@ -1232,7 +1398,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new VNC display device', async () => {
-        await form.fillForm({
+        await fillForm({
           Type: 'Display',
           'Display Type': 'VNC',
           Bind: '0.0.0.0',
@@ -1291,12 +1457,7 @@ describe('DeviceFormComponent', () => {
           ]),
           mockAuth(),
           mockProvider(DialogService),
-          mockProvider(SlideIn),
           mockProvider(FilesystemService),
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: jest.fn(() => ({ virtualMachineId: 45 })),
-          }),
           mockProvider(VmService, {
             hasVirtualizationSupport$: of(true),
           }),
@@ -1304,44 +1465,47 @@ describe('DeviceFormComponent', () => {
       });
 
       beforeEach(async () => {
-        spectator = createComponentForSwitching();
+        spectator = createComponentForSwitching({ props: { deviceFormData: { virtualMachineId: 45 } } });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
       });
 
       it('disables web interface when switching from SPICE to VNC', async () => {
-        await form.fillForm({
+        await fillForm({
           Type: 'Display',
           'Display Type': 'SPICE',
           'Web Interface': true,
         });
 
         // Switch to VNC
-        await form.fillForm({ 'Display Type': 'VNC' });
+        await fillForm({ 'Display Type': 'VNC' });
         spectator.detectChanges();
 
         // Web Interface should be disabled and hidden
         expect(spectator.component.displayForm.controls.web.value).toBe(false);
         expect(spectator.component.displayForm.controls.web.disabled).toBe(true);
 
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).not.toHaveProperty('Web Interface');
+        await expectNoField('Web Interface');
       });
 
       it('enables web interface when switching from VNC to SPICE', async () => {
-        await form.fillForm({
+        await fillForm({
           Type: 'Display',
           'Display Type': 'VNC',
         });
 
         // Switch to SPICE
-        await form.fillForm({ 'Display Type': 'SPICE' });
+        await fillForm({ 'Display Type': 'SPICE' });
         spectator.detectChanges();
 
         // Web Interface should be enabled and visible
         expect(spectator.component.displayForm.controls.web.enabled).toBe(true);
 
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).toHaveProperty('Web Interface');
       });
     });
@@ -1362,18 +1526,17 @@ describe('DeviceFormComponent', () => {
     describe('adds USB Passthrough Device', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45, vmName: 'test-vm' })) }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('adds a new USB Passthrough device', async () => {
-        await form.fillForm(
+        await fillForm(
           {
             Type: 'USB Passthrough Device',
             'Controller Type': 'pci-ohci',
@@ -1397,21 +1560,17 @@ describe('DeviceFormComponent', () => {
     describe('edits USB Passthrough Device', () => {
       beforeEach(async () => {
         spectator = createComponent({
-          providers: [
-            mockProvider(SlideInRef, {
-              ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingUsb, vmName: 'test-vm' })),
-            }),
-          ],
+          props: { deviceFormData: { virtualMachineId: 45, device: existingUsb, vmName: 'test-vm' } },
         });
+        closedSpy = jest.fn();
+        spectator.component.closed.subscribe(closedSpy);
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
       it('shows values for an existing USB Passthrough device', async () => {
-        const values = await form.getValues();
+        const values = await getValues();
         expect(values).toEqual({
           'Controller Type': 'pci-ohci',
           Device: 'usb_device_2 prod_2 (vendor_2)',
@@ -1420,7 +1579,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('updates an existing USB Passthrough when device is selected', async () => {
-        await form.fillForm({
+        await fillForm({
           'Controller Type': 'piix3-uhci',
           Device: 'usb_device_1 prod_1 (vendor_1)',
         });
@@ -1438,7 +1597,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('updates an existing USB Passthrough when custom is selected', async () => {
-        await form.fillForm(
+        await fillForm(
           {
             'Controller Type': 'piix3-uhci',
             Device: 'Specify custom',

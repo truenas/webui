@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialog, TnStepperNextDirective, TnStepperPreviousDirective,
+  TnButtonComponent, TnDialog, TnFormSectionComponent, TnStepperNextDirective, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -26,6 +26,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
     IxExplorerComponent,
     RequiresRolesDirective,
     TnButtonComponent,
+    TnFormSectionComponent,
     FormActionsComponent,
     TnStepperPreviousDirective,
     TnStepperNextDirective,

@@ -1,91 +1,93 @@
 <form [formGroup]="form">
-  <tn-form-field
-    [label]="'Disk' | translate"
-    [tooltip]="helptext.disk_radio_tooltip | translate"
-  >
-    @for (option of (newOrExistingOptions$ | async) ?? []; track option.value) {
-      <tn-radio
-        name="newOrExisting"
-        formControlName="newOrExisting"
-        [value]="option.value"
-        [label]="option.label"
-        [testId]="['newOrExisting', option.value]"
-      ></tn-radio>
-    }
-  </tn-form-field>
-
-  <tn-form-field
-    [tooltip]="'Import a disk image (qcow2, qed, raw, vdi, vhdx, vmdk) to the zvol' | translate"
-  >
-    <tn-checkbox
-      formControlName="import_image"
-      [label]="'Import Image' | translate"
-    ></tn-checkbox>
-  </tn-form-field>
-
-  @if (isImportingImage) {
-    <ix-explorer
-      formControlName="image_source"
-      [label]="'Image Source' | translate"
-      [required]="true"
-      [nodeProvider]="treeNodeProvider"
-      [tooltip]="'Path to the disk image file to import. Supported formats: qcow2, qed, raw, vdi, vhdx, vmdk' | translate"
-    ></ix-explorer>
-  }
-
-  <tn-form-field
-    [label]="'Select Disk Type' | translate"
-    [tooltip]="helptext.hdd_type_tooltip | translate"
-    [required]="true"
-  >
-    <tn-select
-      formControlName="hdd_type"
-      [options]="(hddTypeOptions$ | async) ?? []"
-    ></tn-select>
-  </tn-form-field>
-
-  @if (isCreatingNewDisk) {
+  <tn-form-section>
     <tn-form-field
-      [label]="'Zvol Location' | translate"
-      [tooltip]="helptext.datastore_tooltip | translate"
+      [label]="'Disk' | translate"
+      [tooltip]="helptext.disk_radio_tooltip | translate"
+    >
+      @for (option of (newOrExistingOptions$ | async) ?? []; track option.value) {
+        <tn-radio
+          name="newOrExisting"
+          formControlName="newOrExisting"
+          [value]="option.value"
+          [label]="option.label"
+          [testId]="['newOrExisting', option.value]"
+        ></tn-radio>
+      }
+    </tn-form-field>
+
+    <tn-form-field
+      [tooltip]="'Import a disk image (qcow2, qed, raw, vdi, vhdx, vmdk) to the zvol' | translate"
+    >
+      <tn-checkbox
+        formControlName="import_image"
+        [label]="'Import Image' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    @if (isImportingImage) {
+      <ix-explorer
+        formControlName="image_source"
+        [label]="'Image Source' | translate"
+        [required]="true"
+        [nodeProvider]="treeNodeProvider"
+        [tooltip]="'Path to the disk image file to import. Supported formats: qcow2, qed, raw, vdi, vhdx, vmdk' | translate"
+      ></ix-explorer>
+    }
+
+    <tn-form-field
+      [label]="'Select Disk Type' | translate"
+      [tooltip]="helptext.hdd_type_tooltip | translate"
       [required]="true"
     >
       <tn-select
-        formControlName="datastore"
-        [options]="(datastoreOptions$ | async) ?? []"
+        formControlName="hdd_type"
+        [options]="(hddTypeOptions$ | async) ?? []"
       ></tn-select>
     </tn-form-field>
 
-    <tn-form-field
-      [label]="'Size' | translate"
-      [tooltip]="helptext.volsize_tooltip | translate"
-    >
-      <tn-input
-        formControlName="volsize"
-        [inputType]="InputType.Size"
-      ></tn-input>
-    </tn-form-field>
-  } @else {
-    <tn-form-field
-      [label]="'Select Existing Zvol' | translate"
-      [tooltip]="helptext.hdd_path_tooltip | translate"
-      [required]="true"
-    >
-      <tn-select
-        formControlName="hdd_path"
-        [options]="(hddPathOptions$ | async) ?? []"
-      ></tn-select>
-    </tn-form-field>
+    @if (isCreatingNewDisk) {
+      <tn-form-field
+        [label]="'Zvol Location' | translate"
+        [tooltip]="helptext.datastore_tooltip | translate"
+        [required]="true"
+      >
+        <tn-select
+          formControlName="datastore"
+          [options]="(datastoreOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
 
-    @if (selectedZvolOtherVmNames.length > 0) {
-      <tn-banner
-        class="zvol-warning"
-        type="warning"
-        [heading]="'This zvol is already in use by {vmNames}.'
-          | translate: { vmNames: selectedZvolOtherVmNames.join(', ') }"
-      ></tn-banner>
+      <tn-form-field
+        [label]="'Size' | translate"
+        [tooltip]="helptext.volsize_tooltip | translate"
+      >
+        <tn-input
+          formControlName="volsize"
+          [inputType]="InputType.Size"
+        ></tn-input>
+      </tn-form-field>
+    } @else {
+      <tn-form-field
+        [label]="'Select Existing Zvol' | translate"
+        [tooltip]="helptext.hdd_path_tooltip | translate"
+        [required]="true"
+      >
+        <tn-select
+          formControlName="hdd_path"
+          [options]="(hddPathOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
+
+      @if (selectedZvolOtherVmNames.length > 0) {
+        <tn-banner
+          class="zvol-warning"
+          type="warning"
+          [heading]="'This zvol is already in use by {vmNames}.'
+            | translate: { vmNames: selectedZvolOtherVmNames.join(', ') }"
+        ></tn-banner>
+      }
     }
-  }
+  </tn-form-section>
 
   <ix-form-actions>
     <tn-button

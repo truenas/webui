@@ -42,7 +42,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualMachineDetailsRowComponent } from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
@@ -87,7 +87,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class VmListComponent implements OnInit {
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -254,7 +254,12 @@ export class VmListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideIn.open(VmWizardComponent).onSuccess(() => {
+    // Opened footerless — the wizard's stepper owns its own Back/Save buttons.
+    this.formPanel.open(VmWizardComponent, {
+      title: this.translate.instant('Create Virtual Machine'),
+      wide: true,
+      footerless: true,
+    }).onSuccess(() => {
       this.vmService.checkMemory();
       this.refresh();
     }, this.destroyRef);

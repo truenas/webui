@@ -18,7 +18,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -75,7 +75,7 @@ describe('DeviceListComponent', () => {
         mockJob('vm.device.convert', fakeSuccessfulJob(true)),
       ]),
       mockAuth(),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog, {
@@ -118,11 +118,14 @@ describe('DeviceListComponent', () => {
     const menu = await loader.getHarness(MatMenuHarness);
     await menu.clickItem({ text: 'Edit' });
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DeviceFormComponent, {
-      data: {
-        device: devices[0],
-        virtualMachineId: 76,
-        vmName: 'Test VM',
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(DeviceFormComponent, {
+      title: 'Edit Device for Test VM',
+      inputs: {
+        deviceFormData: {
+          device: devices[0],
+          virtualMachineId: 76,
+          vmName: 'Test VM',
+        },
       },
     });
   });
