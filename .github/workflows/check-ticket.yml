@@ -12,8 +12,10 @@ on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
 
+# Must not collide with the group the shared workflow declares for itself: a caller
+# sharing a concurrency group with its own callee can cancel or deadlock the run.
 concurrency:
-  group: check-ticket-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
