@@ -11,7 +11,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
-  TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnSelectComponent,
+  TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -40,6 +40,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
@@ -77,6 +78,7 @@ export interface DeviceFormData {
     TnInputComponent,
     TnCheckboxComponent,
     TnRadioComponent,
+    TnRadioGroupComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     IxComboboxComponent,
@@ -102,8 +104,12 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   private fileValidator = inject(FileValidatorService);
   private destroyRef = inject(DestroyRef);
 
-  /** Device + VM context, supplied by the `<tn-side-panel>` host. */
-  readonly deviceFormData = input<DeviceFormData | undefined>(undefined);
+  /**
+   * Device + VM context, supplied by the `<tn-side-panel>` host. Required: `onSend()` posts
+   * `vm: this.virtualMachineId`, which is only ever assigned from this input, so a panel opened
+   * without it would render a form that looks fine and then save against an undefined VM.
+   */
+  readonly deviceFormData = input.required<DeviceFormData>();
 
   /** Emitted to the hosting `<tn-side-panel>` after a successful save. */
   readonly closed = output<boolean>();
@@ -111,6 +117,7 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   readonly requiredRoles = [Role.VmDeviceWrite];
   protected formatter = inject(IxFormatterService);
   protected readonly InputType = InputType;
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   private readonly isLoading = signal(false);
   private vmName: string;
@@ -210,7 +217,7 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   }
 
   existingDevice: VmDevice;
-  private hostData: DeviceFormData | undefined;
+  private hostData: DeviceFormData;
 
   readonly rawFileExplorer = viewChild<IxExplorerComponent>('rawFileExplorer');
 
@@ -387,9 +394,9 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
    */
   private resolveHostData(): void {
     this.hostData = this.deviceFormData();
-    this.vmName = this.hostData?.vmName;
+    this.vmName = this.hostData.vmName;
 
-    const existingDiskPath = this.hostData?.device?.attributes?.dtype === VmDeviceType.Disk
+    const existingDiskPath = this.hostData.device?.attributes?.dtype === VmDeviceType.Disk
       ? (this.hostData.device as VmDiskDevice).attributes.path
       : null;
 
@@ -406,7 +413,7 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
           choices,
           diskDevices,
           vms,
-          this.hostData?.virtualMachineId ?? null,
+          this.hostData.virtualMachineId ?? null,
           existingDiskPath,
         );
       }),
@@ -441,12 +448,12 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
       this.setDiskFormValidators(value as 'new' | 'existing');
     });
 
-    if (this.hostData?.virtualMachineId) {
+    if (this.hostData.virtualMachineId) {
       this.virtualMachineId = this.hostData.virtualMachineId;
       this.setVirtualMachineId();
     }
 
-    if (this.hostData?.device) {
+    if (this.hostData.device) {
       this.existingDevice = this.hostData.device;
       this.setDeviceForEdit();
     }

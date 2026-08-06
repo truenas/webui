@@ -111,6 +111,21 @@ describe('DeviceListComponent', () => {
     ]);
   });
 
+  it('opens the add form with the VM name in the panel title', async () => {
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    await addButton.click();
+
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(DeviceFormComponent, {
+      title: 'Add Device for Test VM',
+      inputs: {
+        deviceFormData: {
+          virtualMachineId: 76,
+          vmName: 'Test VM',
+        },
+      },
+    });
+  });
+
   it('opens the edit form when Edit menu item is selected', async () => {
     const menuButton = await table.getHarnessInCell(MatButtonHarness, 1, 3);
     await menuButton.click();

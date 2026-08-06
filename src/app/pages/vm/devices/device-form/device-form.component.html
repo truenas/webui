@@ -7,12 +7,19 @@
           bound to a standalone `[formControl]`, so it has no `formControlName` to select on,
           and `TnFormFieldHarness` is a plain ComponentHarness that can't scope a nested
           harness lookup by its label. Same for `device-order-input` below.
+
+          The test id is `device-type`, not `type`: several branches below bind a control
+          literally named `type` (Disk Mode, NIC Adapter Type, Display Type), whose
+          control-name fallback also resolves `select-type` — and this picker renders at the
+          same time as them, so a bare `type` would put two `select-type` nodes in the DOM.
         -->
         <tn-select
           class="device-type-select"
           [formControl]="typeControl"
-          [testId]="'type'"
+          [testId]="'device-type'"
           [options]="(deviceTypes$ | async) ?? []"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
     }
@@ -32,17 +39,23 @@
         }
         @case (VmDeviceType.Disk) {
           @if (isNew) {
-            <!-- Labelled to match the wizard's equivalent control and to give the radio group an accessible name. -->
+            <!--
+              Labelled to match the wizard's equivalent control; `tn-radio-group` picks the label
+              up as the group's accessible name. The control is bound ONCE on the group — binding
+              it to each standalone `tn-radio` leaves the deselected option rendering stale — and
+              the options are projected rather than passed as `[options]` so the per-option test
+              ids survive.
+            -->
             <tn-form-field [label]="'Disk' | translate">
-              @for (option of newOrExistingOptions; track option.value) {
-                <tn-radio
-                  name="newOrExisting"
-                  [formControl]="newOrExistingControl"
-                  [label]="option.label"
-                  [value]="option.value"
-                  [testId]="['new-or-existing', option.value]"
-                ></tn-radio>
-              }
+              <tn-radio-group [formControl]="newOrExistingControl">
+                @for (option of newOrExistingOptions; track option.value) {
+                  <tn-radio
+                    [label]="option.label"
+                    [value]="option.value"
+                    [testId]="['new-or-existing', option.value]"
+                  ></tn-radio>
+                }
+              </tn-radio-group>
             </tn-form-field>
           }
 
@@ -55,6 +68,8 @@
               <tn-select
                 formControlName="datastore"
                 [options]="(datastoreOptions$ | async) ?? []"
+                [placeholder]="tnSelectLabels.placeholder | translate"
+                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>
             </tn-form-field>
 
@@ -80,6 +95,8 @@
               <tn-select
                 formControlName="path"
                 [options]="(zvolOptions$ | async) ?? []"
+                [placeholder]="tnSelectLabels.placeholder | translate"
+                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>
             </tn-form-field>
 
@@ -100,6 +117,8 @@
             <tn-select
               formControlName="type"
               [options]="(diskModes$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
 
@@ -111,6 +130,8 @@
             <tn-select
               formControlName="sectorsize"
               [options]="(sectorSizes$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
         }
@@ -123,6 +144,8 @@
             <tn-select
               formControlName="type"
               [options]="(nicTypes$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
 
@@ -152,6 +175,8 @@
             <tn-select
               formControlName="nic_attach"
               [options]="(nicOptions$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
 
@@ -182,6 +207,8 @@
             <tn-select
               formControlName="sectorsize"
               [options]="(sectorSizes$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
 
@@ -193,6 +220,8 @@
             <tn-select
               formControlName="type"
               [options]="(diskModes$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
 
@@ -220,12 +249,16 @@
             <tn-select
               formControlName="controller_type"
               [options]="(usbControllerOptions$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
           <tn-form-field [label]="'Device' | translate" [required]="true">
             <tn-select
               formControlName="device"
               [options]="(usbDeviceOptions$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
           @if (usbForm.controls.usb.enabled) {
@@ -250,6 +283,8 @@
               <tn-select
                 formControlName="type"
                 [options]="(displayTypes$ | async) ?? []"
+                [placeholder]="tnSelectLabels.placeholder | translate"
+                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>
             </tn-form-field>
           } @else {
@@ -268,6 +303,8 @@
               <tn-select
                 formControlName="bind"
                 [options]="(bindOptions$ | async) ?? []"
+                [placeholder]="tnSelectLabels.placeholder | translate"
+                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>
             </tn-form-field>
 
@@ -297,6 +334,8 @@
               <tn-select
                 formControlName="resolution"
                 [options]="(resolutions$ | async) ?? []"
+                [placeholder]="tnSelectLabels.placeholder | translate"
+                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>
             </tn-form-field>
 

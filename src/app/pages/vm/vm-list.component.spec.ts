@@ -103,7 +103,6 @@ describe('VmListComponent', () => {
       IxTableColumnsSelectorComponent,
       FileSizePipe,
       IxTableDetailsRowDirective,
-      MockComponent(VmWizardComponent),
     ],
     providers: [
       mockAuth(),
