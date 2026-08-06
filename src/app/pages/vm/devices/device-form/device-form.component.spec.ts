@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnRadioHarness } from '@truenas/ui-components';
-import { NEVER, of, throwError } from 'rxjs';
+import { NEVER, Subject, of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -33,6 +33,7 @@ import {
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { VmService } from 'app/services/vm.service';
@@ -1077,6 +1078,40 @@ describe('DeviceFormComponent', () => {
           order: 5,
           vm: 45,
         }]);
+      });
+
+      it('stays busy while the reset mechanism warning is open, so Save cannot fire twice', async () => {
+        const confirmation$ = new Subject<boolean>();
+        jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(confirmation$);
+
+        await fillForm({
+          'PCI Passthrough Device': 'pci_0000_00_1c_5',
+        });
+        await saveButton.click();
+
+        expect(spectator.component.isBusy()).toBe(true);
+        expect(spectator.component.canSubmit()).toBe(false);
+
+        confirmation$.next(false);
+        confirmation$.complete();
+
+        expect(spectator.component.isBusy()).toBe(false);
+        expect(spectator.component.canSubmit()).toBe(true);
+        expect(api.call).not.toHaveBeenCalledWith('vm.device.update', expect.anything());
+      });
+
+      it('reports a failed pre-flight call and releases the busy state', async () => {
+        const preflightError = new Error('Failed to load advanced config');
+        jest.spyOn(api, 'call').mockImplementation((method) => {
+          return method === 'system.advanced.config' ? throwError(() => preflightError) : of({});
+        });
+
+        await saveButton.click();
+
+        expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(preflightError);
+        expect(spectator.component.isBusy()).toBe(false);
+        expect(spectator.component.canSubmit()).toBe(true);
+        expect(api.call).not.toHaveBeenCalledWith('vm.device.update', expect.anything());
       });
     });
   });

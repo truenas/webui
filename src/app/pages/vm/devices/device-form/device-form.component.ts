@@ -13,8 +13,8 @@ import {
   InputType, TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
   TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, forkJoin, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -642,31 +642,63 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   /**
    * Submits, first confirming with the user when a PCI passthrough device has no reset
    * mechanism.
+   *
+   * The busy flag is raised before the pre-flight calls rather than inside `onSend()`, so that
+   * the footer Save is disabled (and the panel shows progress) for the whole window instead of
+   * only once the create/update starts — otherwise a second click during the two round-trips
+   * and the confirmation dialog could stack another dialog and a duplicate create.
    */
   private confirmAndSend(): void {
-    if (this.typeControl.value === VmDeviceType.Pci) {
-      forkJoin([
-        this.api.call('vm.device.passthrough_device_choices'),
-        this.api.call('system.advanced.config'),
-      ])
-        .pipe(
-          this.errorHandler.withErrorHandler(),
-          takeUntilDestroyed(this.destroyRef),
-        )
-        .subscribe(([passthroughDevices, advancedConfig]) => {
-          const dev = this.pciForm.controls.pptdev.value;
-          if (!passthroughDevices[dev]?.reset_mechanism_defined && !advancedConfig.isolated_gpu_pci_ids.includes(dev)) {
-            this.dialogService.confirm({
-              title: this.translate.instant('Warning'),
-              message: this.translate.instant('PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.'),
-            }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => confirmed && this.onSend());
-          } else {
-            this.onSend();
-          }
-        });
-    } else {
+    if (this.typeControl.value !== VmDeviceType.Pci) {
       this.onSend();
+      return;
     }
+
+    this.isLoading.set(true);
+
+    this.confirmPciResetMechanism()
+      .pipe(
+        // Spelled out rather than `withErrorHandler()` because a failed pre-flight call has to
+        // release the busy flag as well — that operator swallows the failure into EMPTY, which
+        // never reaches the subscriber below and would leave the form locked.
+        catchError((error: unknown) => {
+          this.isLoading.set(false);
+          this.errorHandler.showErrorModal(error);
+          return EMPTY;
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((confirmed) => {
+        if (!confirmed) {
+          this.isLoading.set(false);
+          return;
+        }
+        // `onSend()` takes over the flag that is already raised.
+        this.onSend();
+      });
+  }
+
+  /**
+   * Emits whether the PCI device may be submitted: `true` outright when it has a reset mechanism
+   * (or is an isolated GPU), otherwise whatever the user answers in the warning dialog.
+   */
+  private confirmPciResetMechanism(): Observable<boolean> {
+    return forkJoin([
+      this.api.call('vm.device.passthrough_device_choices'),
+      this.api.call('system.advanced.config'),
+    ]).pipe(
+      switchMap(([passthroughDevices, advancedConfig]) => {
+        const dev = this.pciForm.controls.pptdev.value;
+        if (passthroughDevices[dev]?.reset_mechanism_defined || advancedConfig.isolated_gpu_pci_ids.includes(dev)) {
+          return of(true);
+        }
+
+        return this.dialogService.confirm({
+          title: this.translate.instant('Warning'),
+          message: this.translate.instant('PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.'),
+        });
+      }),
+    );
   }
 
   private onSend(): void {
