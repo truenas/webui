@@ -1,8 +1,6 @@
 import { Directive, ElementRef, HostBinding, input, inject } from '@angular/core';
-import { kebabCase } from 'lodash-es';
+import { normalizeTestIdParts, SupportedTestId } from 'app/modules/test-id/normalize-test-id.utils';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
-
-type SupportedTestId = number | string | null | undefined | (string | number | null | undefined)[];
 
 /**
  * Adds test attribute to the element for the benefit of Release Engineering.
@@ -28,23 +26,27 @@ export class TestDirective {
     alias: 'ixTest',
   });
 
-  get normalizedDescription(): string[] {
+  private get normalizedDescription(): string[] {
     const description = this.overrideDirective?.overrideDescription() ?? this.description();
-    let normalizedDescription = Array.isArray(description) ? description : [description];
-
-    normalizedDescription = normalizedDescription
-      .filter((part) => part)
-      .map((part) => kebabCase(String(part)));
+    const segments = Array.isArray(description) ? description : [description];
+    // `[ixTest]` has always filtered on plain falsiness, which drops a numeric `0`
+    // segment as well as `null`/`undefined`/`''`. Kept here, and deliberately not in
+    // `normalizeTestIdParts`, so the ids this directive resolves stay byte-identical
+    // without new tn-* call sites inheriting the quirk.
+    const normalizedDescription = normalizeTestIdParts(segments.filter((part) => Boolean(part)));
 
     if (this.overrideDirective?.keepLastPart()) {
       const initialDescription = this.description();
       const normalizedInitialDescription = Array.isArray(initialDescription)
         ? initialDescription
         : [initialDescription];
-      normalizedDescription.push(normalizedInitialDescription[normalizedInitialDescription.length - 1]);
+      const lastPart = normalizedInitialDescription[normalizedInitialDescription.length - 1];
+      if (lastPart) {
+        normalizedDescription.push(String(lastPart));
+      }
     }
 
-    return normalizedDescription as string[];
+    return normalizedDescription;
   }
 
   @HostBinding('attr.data-test')
@@ -87,11 +89,14 @@ export class TestDirective {
       case 'ix-icon':
       case 'tn-icon':
         return 'icon';
+      // `tn-menu-panel` renders every item as a `<button tnTestIdType="button">`, so the
+      // library composes `button-*` for menu items as well. Nothing uses `[ixTest]` on a
+      // `tn-menu-item` today — prefer its own `[testId]` input — but the mapping is kept in
+      // agreement with the library for whoever adds the next one.
       case 'tn-button':
       case 'tn-icon-button':
-        return 'button';
       case 'tn-menu-item':
-        return 'menu-item';
+        return 'button';
       case 'tn-select':
         return 'select';
       case 'div':

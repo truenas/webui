@@ -136,7 +136,7 @@ the ticket and document it in the PR.
 | `<button mat-raised-button>` | `<tn-button variant="filled">` | |
 | `<button mat-stroked-button>` | `<tn-button variant="outline">` | |
 | `<button mat-flat-button>` | `<tn-button variant="filled" color="default">` | |
-| `<a mat-button [routerLink]>` | `<tn-button [routerLink]>` | ⚠ `tn-button` accepts `[routerLink]`/`[href]` but renders an internal `<button>`, not `<a>`. Verify middle-click "open in new tab," right-click context menu, and focus parity. The test-id prefix also shifts (`link-*` → `button-*`); see "Test IDs." |
+| `<a mat-button [routerLink]>` | `<tn-button [routerLink]>` | `tn-button` renders a real `<a routerLink>` in anchor mode (`[routerLink]`/`[href]`), so middle-click "open in new tab" and right-click "copy link" are preserved — verified in 0.3.26. ⚠ The test-id prefix still shifts (`link-*` → `button-*`): the anchor arm hard-codes `tnTestIdType="button"`, and `composeTestId` only skips a prefix the base already starts with, so a legacy `link-*` value cannot be pinned through the `testId` input. Drop `[testId]` and put `tnTestIdType="link" [tnTestId]="…"` on the `<tn-button>` **host** instead — the inner anchor then emits no id and the host carries the legacy value verbatim (`pools-dashboard`, `disk-health-card`, `pool-usage-card` do this). See "Test IDs." |
 | `<button mat-icon-button>` | `<tn-icon-button>` | ⚠ Bare icon-only buttons MUST have `[ariaLabel]` — no accessible name otherwise. |
 | `<button mat-fab>` / `<button mat-mini-fab>` | *(no equivalent — hold)* | No FAB component. Rework to a primary action button or surface to lead. |
 | `<mat-button-toggle-group>` / `<mat-button-toggle>` | `<tn-button-toggle-group>` / `<tn-button-toggle>` | See **Recipe 7**. ⚠ No `[label]` input — must provide `[ariaLabel]` or `[ariaLabelledby]`. ⚠ Per-option test IDs are not auto-synthesized; set `[testId]` per `<tn-button-toggle>`. |
@@ -148,7 +148,7 @@ the ticket and document it in the PR.
 | Angular Material | @truenas/ui-components | Notes |
 |---|---|---|
 | `<mat-menu>` | `<tn-menu>` | `[items]` input takes `TnMenuItem[]`. See `ServiceActionsMenuService` for the composition pattern (Recipe 2). |
-| `<button mat-menu-item>` | `<tn-menu-item>` | ⚠ Test IDs resolve to `menu-item-*`, not `button-*` (tn-menu-item declares the `menu-item` prefix). To preserve a legacy `button-foo`, pass `testId="button-foo"` — a per-item `testId` is written verbatim. Do NOT edit `test.directive.ts`. See "Test IDs." |
+| `<button mat-menu-item>` | `<tn-menu-item>` | Test IDs resolve to `button-*`, matching the legacy value — `tn-menu-panel` renders each item as a `<button tnTestIdType="button">`, so a legacy `button-foo` survives from `testId="foo"`. Pass the bare semantic base (`[testId]="['expand', name]"` → `button-expand-<name>`). Do NOT edit `test.directive.ts`. See "Test IDs." |
 | `[matMenuTriggerFor]` | `[tnMenuTriggerFor]` | `TnMenuTriggerDirective`; same usage shape. |
 | `[matTooltip]` | `[tnTooltip]` | `TnTooltipDirective`. ⚠ Tooltips are not accessible descriptions on their own — for form controls prefer the `[tooltip]` input on `ix-input`/`ix-checkbox`/etc., reserve `[tnTooltip]` for hover-only context (disabled-state hints, etc.). |
 
@@ -167,7 +167,7 @@ read-only views) unless a feature-ticket explicitly carries `ix-*` work.
 | `<mat-select-trigger>` | *(use `tn-select`'s `[displayWith]` if available, else hold)* | Verify against d.ts; the trigger-template pattern may not be supported. |
 | `<mat-autocomplete>` / `[matAutocomplete]` | `<tn-autocomplete>` | `TnAutocompleteComponent`/`TnAutocompleteHarness`. Verify input shape against d.ts. |
 | `<mat-checkbox>` | `<tn-checkbox>` *(non-form)* or `<ix-checkbox>` *(forms)* | `TnCheckboxComponent`/`TnCheckboxLabelDirective`. Forms keep `ix-checkbox`. |
-| `<mat-radio-group>` / `<mat-radio-button>` | `<tn-radio>` *(non-form)* or `<ix-radio>` *(forms)* | |
+| `<mat-radio-group>` / `<mat-radio-button>` | `<tn-radio-group>` + `<tn-radio>` *(non-form)* or `<ix-radio>` *(forms)* | `TnRadioGroupComponent`/`TnRadioGroupHarness` own the value for the whole set — never bind one form control to several standalone `tn-radio`s, which renders stale. Pass `[options]` (`TnRadioOption[]` — webui's `Option` fits) or project `<tn-radio>` children; `[inline]="true"` replaces `[inlineFields]`; `[compareWith]` for object values. Inside a `tn-form-field` the group is a normal control (name, required indicator, error text). ⚠ **Test IDs: project the options** — `[options]` gives no per-option test-id override, and the legacy `radio-button-*` ids can only be preserved per `<tn-radio>`. See "Radio groups" under Test IDs. |
 | `<mat-slide-toggle>` | `<tn-slide-toggle>` *(non-form)* or `<ix-slide-toggle>` *(forms)* | |
 | `<mat-slider>` | `<tn-slider>` + `[tnSliderThumb]` | Also `TnSliderWithLabelDirective`. |
 | `<mat-chip-grid>` / `<mat-chip-row>` (input pattern) | *(use `ix-chips` — NAS-141028 owns)* | |
@@ -261,6 +261,27 @@ Material UI). Leave these alone:
 | `OverlayContainerHarness` (snackbar) | `TnToastMock` + `TnToastTesting.providers(...)` | See NAS-141027 spec for the pattern. |
 
 Keep `EmptyService` (used by data providers) — only `EmptyComponent` is replaced.
+
+## Known upstream defects (worked around in webui)
+
+Defects observed in the **pinned** `@truenas/ui-components` (`package.json` currently `~0.3.26`).
+Every workaround in webui should carry a `TEMP (NAS-141021)` marker and a "drop once …" condition
+so this table stays the single index for the cleanup pass. **Check this list before inventing a new
+workaround** — and add to it when you find a new one, rather than leaving the knowledge in one
+component's comment.
+
+| Defect | Symptom | Workaround | Drop when |
+|---|---|---|---|
+| `tn-checkbox` does not `stopPropagation()` the inner `<input>`'s native `change` | Ivy invokes a `(change)` binding for both the component output and the bubbled DOM event, so handlers fire twice — the second time with an `Event`, not the boolean | Guard with `isTnCheckboxChange(event)` (`modules/forms/ix-forms/utils/tn-checkbox-change.utils.ts`; call site: `pool-warnings.component.ts`). Handlers that ignore the payload entirely (e.g. `services.component.html`'s `enableToggle(row)`) fire twice with no signal at all — check these | Fixed in **0.4.x**; drop once the dependency range moves past 0.4.0. `tn-radio` already stops it in 0.3.26 |
+| `tn-select`'s `writeValue` unwraps an array to its first element in single-select mode | An array-valued option can never be written back into the control | Model the value as an object, not a tuple (see `size-and-type.interface.ts`) | Library preserves array values in single-select |
+| `tn-card` declares no host `display`, so it defaults to `inline` | An inline box wrapping block content fragments, each painting the host background — stray rectangles above/below the card | `tn-card-block-host` mixin in `mixins/cards.scss` | Library sets a block host display |
+| `.tn-card__title` is style-scoped to `tn-card` | A consumer projecting an adornment next to the title can't lay the row out without `::ng-deep` | `tn-card-inline-title` / `tn-detail-card` mixins in `mixins/cards.scss` | Library exposes a styled-title projection slot |
+| `tn-card` header/footer dividers use the unmapped `--tn-lines` token | Divider falls back to a light colour that reads wrong in the dark theme | `tn-detail-card` repoints them at webui's `--lines` | Design tokens are bridged |
+| `tn-empty`'s internal action button carries no test id, and the input exposes no way to set one | Empty-state CTAs are unaddressable by automation | Render the button outside `tn-empty` instead of via `actionText` | Library accepts a test id for the action |
+| `tn-checkbox` does not consume `TN_FORM_FIELD_CONTEXT` | Only `tn-input`, `tn-select`, `tn-autocomplete` and `tn-chip-input` call `injectTnFormFieldAria` in 0.3.26. A `tn-form-field [hint]` wrapping a checkbox renders the hint visibly but never links it via `aria-describedby` — the checkbox's `aria-describedby` is hard-wired to its own error id | Fold the hint into the checkbox's `[label]` (which becomes its `aria-label`), accepting name-vs-description as the lesser loss. See `unlock-sed-disks.component.ts` | `tn-checkbox` wires up the field context |
+| `tn-select`'s default `placeholder` / `noOptionsLabel` are English literals inside the library | They never reach webui's `TranslateService`, so omitting the bindings ships untranslated English | Always pass both, via `tnSelectLabels` (`modules/forms/ix-forms/constants/tn-select-labels.constant.ts`) piped through `translate` | Library accepts translated defaults via DI |
+| No `TnCardHarness` | Card titles can only be asserted by reaching for `.tn-card__title` in the DOM | White-box query, commented as such | Library ships a card harness |
+| `tn-button`'s anchor arm hard-codes `tnTestIdType="button"` | A `tn-button` that renders a real `<a routerLink>` still resolves `[testId]="'x'"` to `button-x`, renaming a legacy `link-x` id | Pin the id on the host instead — `tnTestIdType="link"` + `[tnTestId]`. Do this for **every** call site of a given action, so one action never has two ids depending on which branch rendered it | Library derives the type from the rendered element |
 
 ## Recipe 1 — Card (`mat-card` → `tn-card`)
 
@@ -398,6 +419,17 @@ protected addAction = computed<TnCardAction | undefined>(() => {
 - A role-gated action returns `undefined` when the role is absent — this replaces
   `*ixRequiresRoles` on the old `<button>`.
 - Import the input types: `TnCardAction`, `TnCardHeaderStatus`, `TnMenuItem`.
+
+### Translated strings inside a signal
+
+Moving a string from the template into a `computed()` loses the `translate` pipe's language
+tracking: `instant()` reads the translations current at first evaluation and the signal never
+re-runs. **Prefer keeping the pipe** — `[description]="messageKey | translate"` — whenever the
+string goes straight into a tn-* input. When it genuinely has to be composed in TypeScript
+(several keys folded into one string, a labels object handed to a library token, an `instant()`
+used as an interpolation parameter), build it with `translatedSignal()`
+(`modules/translate/translated-signal.ts`) rather than re-deriving the
+`toSignal(translate.onLangChange)` idiom per component.
 
 ### Shared service-menu builders
 
@@ -661,20 +693,40 @@ the component's `testId` input, and the library assembles `${type}-${base}`, keb
 <li [tnTestId]="['username', option.value]" tnTestIdType="option"></li>
 ```
 
-Verified prefixes: `tn-button`/`tn-icon-button` → `button`, `tn-card` title link → `link`,
-`tn-menu-item` → `menu-item`, `tn-select` → `select` (options `option`), `tn-checkbox` →
-`checkbox`, `tn-radio` → `radio`, `tn-slide-toggle` → `toggle`, `tn-input` → `input`
-(textarea `textarea`), `tn-button-toggle` → `button-toggle`. Exception: `tn-table`,
-`tn-tree`, `tn-selection-list`, `tn-calendar` are **not yet typed** — they write `testId`
-verbatim, so pass the full value (prefix included) on those.
+Verified prefixes: `tn-button`/`tn-icon-button` → `button`, `tn-menu-item` → `button` (the
+owning `tn-menu-panel` renders each item as a `<button tnTestIdType="button">`), `tn-card`
+title link / `[footerLink]` → `link`, `tn-select` → `select` (options `option`),
+`tn-checkbox` → `checkbox`, `tn-radio` → `radio`, `tn-radio-group` → `radio-group`,
+`tn-slide-toggle` → `toggle`, `tn-input` → `input` (textarea `textarea`),
+`tn-button-toggle` → `button-toggle`. Exception: `tn-table`, `tn-tree`, `tn-selection-list`,
+`tn-calendar` are **not yet typed** — they write `testId` verbatim, so pass the full value
+(prefix included) on those.
 
-Two properties make this safe:
-- **Kebab-parity** with the legacy directive (mirrors lodash `kebabCase`), so a migrated
-  base resolves byte-identically (`sshPort` → `ssh-port`).
+Three properties make this safe:
+- **Kebab-parity** with the legacy directive for a *static* base, so it resolves
+  byte-identically (`sshPort` → `ssh-port`). It is **not** parity for values carrying
+  digits: the library does not split a letter→digit boundary the way lodash does, so
+  `eth0` stays `eth0` where `[ixTest]` produced `eth-0`. Pre-normalize any **dynamic**
+  value with `normalizeTestIdString` / `normalizeTestIdParts`
+  (`app/modules/test-id/normalize-test-id.utils`) before handing it to a `testId` input.
 - **Idempotent prefix** — a base that already starts with its prefix is not doubled
   (`button-save` stays `button-save`). The migration is therefore order-independent, but
   **pass the bare semantic base** (`'save'`, not `'button-save'`) — let the component supply
   the prefix.
+- **Form controls fall back to the bound control name.** `tn-input`, `tn-select`,
+  `tn-checkbox`, `tn-radio`, `tn-slide-toggle`, `tn-autocomplete` and `tn-file-picker` route
+  `testId` through the library's `controlTestId()`, which reads `formControlName` (or a named
+  `[formControl]`/`ngModel`) when no explicit `testId` is given. So `<tn-input
+  formControlName="sshPort">` emits `input-ssh-port` with no `testId` at all — matching what
+  `ix-input`'s `[ixTest]="controlDirective.name"` produced. Passing an explicit `testId` on a
+  bound control is redundant, not required; it is only needed to *override* the control name.
+- **Options key off the value, not the label.** `tn-select`/`tn-autocomplete` derive an option's
+  id from its `value`, where `[ixTest]` used the `label` — so any select whose two differ
+  silently renames every option id. Pin it back with the shared callbacks in
+  `modules/forms/ix-forms/constants/tn-select-option-test-id.constant.ts`
+  (`[optionTestIdKey]="optionTestIdByLabel"`, or `optionTestIdByKebabLabel` when the legacy id
+  had collapsed case/spaces the label still carries). Only write a bespoke callback when the id
+  comes from neither.
 
 **Attribute name (required once, at the app root).** `{ provide: TN_TEST_ATTR, useValue:
 'data-test' }` makes the library write `data-test` instead of its default `data-testid`.
@@ -700,13 +752,70 @@ menu-item IDs — reuse it, don't hand-roll the string.
 type, changing the type changes the resolved value even when the base is identical:
 
 - `<a mat-button [ixTest]="'foo'">` resolved to `link-foo`. `<tn-button [testId]="'foo'">`
-  resolves to `button-foo` (tn-button declares `button`). Intentional anchor → button change,
-  but RE-visible: if a legacy `link-*` selector is referenced anywhere, pin the full legacy
-  value verbatim on a typeless host or coordinate the rename.
-- `<button mat-menu-item [ixTest]="'foo'">` resolved to `button-foo`. `<tn-menu-item
-  [testId]="'foo'">` resolves to `menu-item-foo` because `tn-menu-item` declares the
-  `menu-item` prefix. To preserve the legacy `button-foo`, pass `testId="button-foo"` on the
-  menu item — a per-item `testId` is written verbatim. Do NOT edit `test.directive.ts`.
+  resolves to `button-foo` — tn-button declares `button` on all three arms, including the two
+  that render an `<a>`. There is no escape hatch through the component: passing
+  `testId="link-foo"` yields `button-link-foo`, because `composeTestId`'s idempotent guard only
+  skips a prefix the base *already* starts with. So if a legacy `link-*` selector is referenced
+  anywhere, **pin it on the `<tn-button>` host** — drop `[testId]` and add
+  `tnTestIdType="link" [tnTestId]="'foo'"` to the host element:
+
+  ```html
+  <tn-button tnTestIdType="link" [tnTestId]="'disks'" [routerLink]="['/storage', 'disks']" …>
+  ```
+
+  `TnTestIdDirective` matches any element, so the host resolves to `link-disks`, and with no
+  `testId` input the inner `<a>` composes an empty id and `writeTestId` *removes* the attribute —
+  exactly one `data-test` in the DOM, identical to what `<a mat-button ixTest="disks">` produced.
+  This keeps the button's appearance and the library's anchor semantics; do **not** hand-roll an
+  `<a>` styled like a button (the `.storybook-button` classes are encapsulated inside
+  `TnButtonComponent` and can't be reused from a consumer). Established in `pools-dashboard`,
+  `disk-health-card`, `pool-usage-card`. Prefer this over coordinating a rename with whoever owns
+  the e2e selectors.
+- `<button mat-menu-item [ixTest]="'foo'">` resolved to `button-foo`, and `<tn-menu-item
+  [testId]="'foo'">` also resolves to `button-foo` — the `menu-item` prefix this playbook
+  previously documented is not what the library emits. `tn-menu-panel` renders every item
+  (projected or from `[items]`) as `<button tnTestIdType="button" [tnTestId]="…">`, so menu
+  items are the one element→component conversion that needs **no** prefix compensation. Pass
+  the bare base; do NOT pass `testId="button-foo"` (it survives only because of the idempotent
+  guard) and do NOT edit `test.directive.ts`.
+
+**Radio groups: the one sanctioned use of the idempotent guard.** `<mat-radio-button>` mapped to
+the prefix `radio-button`, but `tn-radio` declares `radio` — and unlike every other case above,
+the prefix cannot be pinned on a host. `TnRadioGroupComponent` and `TnRadioComponent` both resolve
+their id through `controlTestId()`, which falls back to the bound `formControlName`, so their inner
+elements *always* emit a `data-test`; adding `tnTestIdType`/`tnTestId` to the host would leave two
+`data-test` attributes in the DOM rather than one, which is why the `<tn-button>` remedy does not
+transfer. The only way to keep the legacy option ids is to let the guard absorb the prefix:
+
+```html
+<!-- group id ← formControlName: radio-group-encryption-type (legacy parity, nothing passed) -->
+<tn-radio-group formControlName="encryptionType">
+  @for (option of encryptionTypeOptions(); track option.value) {
+    <!-- composeTestId('radio', ['radio-button', …]) → body already starts with `radio-`,
+         so the guard skips the prefix: radio-button-encryption-type-<label> -->
+    <tn-radio
+      [label]="option.label"
+      [value]="option.value"
+      [testId]="['radio-button', 'encryption-type', option.label]"
+    ></tn-radio>
+  }
+</tn-radio-group>
+```
+
+Two rules follow, and both matter:
+
+- **Project the options; do not pass `[options]`.** The group's `[options]` path renders each
+  child with `[testId]="scopeTestId(resolvedTestId(), option.label)"`, a hardcoded expression with
+  no per-option override (there is no `optionTestIdKey` as on `tn-select`). Pushing `radio-button`
+  into the *group's* base to reach the options is the trap: it also feeds the group's own element,
+  which resolves `radio-group-radio-button-encryption-type` instead of the legacy
+  `radio-group-encryption-type`. Projection is the only shape that keeps both halves.
+- **Never put `radio-button` on the `<tn-radio-group>`.** Its base stays bare, or absent entirely
+  so the control name supplies it.
+
+Call sites: `general-wizard-step`, `enclosure-wizard-step`, `pool-warnings`. Retire the whole
+pattern if the library ever exposes a per-option test-id key or adopts `radio-button` as `tn-radio`'s
+prefix.
 
 ## Spec / test updates
 
@@ -718,6 +827,16 @@ type, changing the type changes the resolved value even when the base is identic
   import.
 - Signal-based `viewChild` (e.g. `viewChild(ServiceSmbComponent)`) needs the real child
   rendered for panel tests — don't mock it away if the test exercises the side panel.
+- **`MockComponents(...)` deep-mocks a standalone child's whole import graph**, so mocking a
+  migrated child also mocks the tn-* primitives *the parent itself* renders — the parent's own
+  fields come back blank, and signal queries trip
+  [ng-mocks#8634](https://github.com/help-me-mom/ng-mocks/issues/8634). Fix with
+  `ngMocks.globalKeep(TnFormFieldComponent)` etc. **at module scope**, above the `describe`:
+  ng-mocks reads its global config when the TestBed is configured, which for Spectator happens
+  inside the `beforeEach` that `createComponentFactory` registers, and Jest's per-file module
+  registry keeps the mutation from reaching another spec. Established in
+  `automated-disk-selection`, `widget-group-slot-form`, `widget-group-form`,
+  `dashboard.component.spec.ts`.
 - Run `yarn test src/app/.../file.spec.ts` per file; `yarn lint <file>` before commit.
 
 ## Accessibility — verify per migration

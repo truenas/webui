@@ -3,15 +3,12 @@
     <h3>{{ 'Manually Configured VDEVs' | translate }}</h3>
     <p>{{ manualDiskSelectionMessage | translate }}</p>
     <div class="selection-actions">
-      <button
-        mat-button
-        type="button"
+      <tn-button
         class="manual-disk-selection"
-        [ixTest]="['manual', type()]"
-        (click)="poolManagerStore.openManualSelectionDialog(type())"
-      >
-        {{ 'Edit Manual Disk Selection' | translate }}
-      </button>
+        [testId]="['manual', type()]"
+        [label]="'Edit Manual Disk Selection' | translate"
+        (onClick)="poolManagerStore.openManualSelectionDialog(type())"
+      ></tn-button>
     </div>
   </div>
   <div class="right-column">

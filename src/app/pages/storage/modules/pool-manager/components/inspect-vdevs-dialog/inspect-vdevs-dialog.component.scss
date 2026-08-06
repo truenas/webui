@@ -1,3 +1,5 @@
+@import 'mixins/tn-list';
+
 :host {
   display: block;
   height: 85vh;
@@ -67,10 +69,9 @@
     cursor: pointer;
     position: relative;
 
-    // Text lives in tn-list-item's internal content wrapper, which scoped
-    // styles can't reach without ::ng-deep. Set padding there so it's the
-    // single source of truth (the host is forced to padding: 0 by the lib).
-    ::ng-deep .tn-list-item__content {
+    // Text lives in tn-list-item's internal content wrapper, so padding set here
+    // is the single source of truth (the host is forced to padding: 0 by the lib).
+    @include tn-list-item-content {
       padding: 11px 21px 13px;
     }
 

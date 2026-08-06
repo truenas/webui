@@ -8,7 +8,6 @@ import {
   TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
 import {
   defer, filter, forkJoin, map, Subject,
 } from 'rxjs';
@@ -33,6 +32,7 @@ import {
 } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
@@ -366,13 +366,11 @@ export class DiskListComponent {
   }
 
   /**
-   * Test-id fragment for a row's action buttons. Split with lodash `kebabCase`, not the library's
-   * test-id kebab, which doesn't break letter–digit boundaries (`nvme0n1` → `nvme-0-n-1`) and
-   * would silently rename every NVMe row's ids out from under the e2e locators. A method rather
-   * than a {@link DiskRow} field so `toDisk` doesn't have to strip a test-id concern back off.
+   * Test-id fragment for a row's action buttons. A method rather than a {@link DiskRow} field
+   * so `toDisk` doesn't have to strip a test-id concern back off.
    */
   protected testIdTag(row: DiskRow): string {
-    return kebabCase(row.name);
+    return normalizeTestIdString(row.name);
   }
 
   protected onRowClick(row: DiskRow): void {

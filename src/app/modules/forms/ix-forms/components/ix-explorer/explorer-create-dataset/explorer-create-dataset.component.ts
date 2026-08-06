@@ -1,128 +1,119 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, input, computed, signal, AfterViewInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NgControl } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent } from '@truenas/ui-components';
-import { filter } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DatasetPreset } from 'app/enums/dataset.enum';
+import { ChangeDetectionStrategy, Component, forwardRef, inject, input } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { TranslateService } from '@ngx-translate/core';
+import { firstValueFrom, MonoTypeOperatorFunction } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { maxDatasetPath } from 'app/constants/dataset.constants';
+import { nameValidatorRegex } from 'app/constants/name-validator.constant';
+import { DatasetCaseSensitivity, DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
-import { CreateDatasetDialog } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { ExplorerCreateAction } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-action';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 export const genericCreateDatasetProps: Omit<DatasetCreate, 'name'> = {
   share_type: DatasetPreset.Generic,
 };
 
+/**
+ * Renderless component: projected into `ix-explorer`, where it surfaces as a
+ * "Create Dataset" button in the file-picker popup footer that opens the
+ * picker's inline name row.
+ */
 @Component({
   selector: 'ix-explorer-create-dataset',
-  templateUrl: './explorer-create-dataset.component.html',
-  styleUrls: ['./explorer-create-dataset.component.scss'],
+  template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [
-    MatButton,
-    TnIconComponent,
-    TranslateModule,
-    RequiresRolesDirective,
-    TestDirective,
+  providers: [
+    { provide: ExplorerCreateAction, useExisting: forwardRef(() => ExplorerCreateDatasetComponent) },
   ],
 })
-export class ExplorerCreateDatasetComponent implements AfterViewInit {
+export class ExplorerCreateDatasetComponent implements ExplorerCreateAction {
   private explorer = inject(IxExplorerComponent);
-  private tnDialog = inject(TnDialog);
-  private ngControl = inject(NgControl);
-  private destroyRef = inject(DestroyRef);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private authService = inject(AuthService);
+  private errorParser = inject(ErrorParserService);
 
   readonly datasetProperties = input<Omit<DatasetCreate, 'name'>>(genericCreateDatasetProps);
 
-  protected readonly requiredRoles = [Role.DatasetWrite];
+  readonly id = 'create-dataset';
+  readonly label = this.translate.instant('Create Dataset');
+  // Same icon the picker uses for dataset rows; the library marks it for
+  // sprite inclusion itself.
+  readonly icon = 'tn-dataset';
 
-  private isExplorerDisabled = computed(() => this.explorer.isDisabled());
-  private hasValidParent = computed(() => {
-    const parent = this.parent();
+  readonly canCreate = toSignal(this.authService.hasRole([Role.DatasetWrite]), { initialValue: false });
+
+  canCreateAt(parentPath: string): boolean {
+    const parent = this.toParentDatasetId(parentPath);
     // After stripping the /mnt/ prefix, a real dataset path is either bare ("tank") or
-    // nested ("tank/foo"). A leading slash means the selection isn't under /mnt/ (e.g.
-    // /dev/zvol/<pool>) and pool.dataset.create would reject it.
-    return !!parent && !parent.startsWith('/');
-  });
-
-  private isMultiSelect = computed(() => Array.isArray(this.explorerValue()));
-  private isSingleSelectionPresent = computed(() => {
-    const currentValue = this.explorerValue();
-    if (Array.isArray(currentValue)) {
-      // The explorer clears lastSelectedNode when the most recently clicked node is
-      // deselected, so we can't rely on it in multi-select mode. Selections in the
-      // form value can only come from tree-node clicks or paths that resolved to a
-      // tree node, so accept the first value as the parent when exactly one is left.
-      return currentValue.length === 1;
-    }
-    return !!currentValue && this.explorer.lastSelectedNode()?.data.path === currentValue;
-  });
-
-  protected isButtonDisabled = computed(() => {
-    if (this.isExplorerDisabled() || !this.hasValidParent() || !this.isSingleSelectionPresent()) {
-      return true;
-    }
-    if (this.isMultiSelect()) {
+    // nested ("tank/foo"). A leading slash means the browsed directory isn't under /mnt/
+    // (e.g. /dev/zvol/<pool>) and pool.dataset.create would reject it.
+    if (!parent || parent.startsWith('/')) {
       return false;
     }
-    return !this.explorer.lastSelectedNode()?.data.isMountpoint;
-  });
+    // Datasets can only be created under another dataset, not a plain directory.
+    // Remote trees (replication) never mark mountpoints, which also hides the
+    // action there — creating through a local flow would be wrong.
+    return this.explorer.nodeAt(parentPath)?.isMountpoint === true;
+  }
 
-  protected explorerValue = signal<string | string[]>('');
+  async createInline(parentPath: string, name: string): Promise<string> {
+    const parentId = this.toParentDatasetId(parentPath).replace(/\/$/, '');
+    const datasetName = name.trim();
 
-  ngAfterViewInit(): void {
-    // NgControl is not initialized at construction time — it's only available after view init.
-    // We listen to control value changes here to sync explorerValue for button logic.
-    this.ngControl.control?.valueChanges?.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    )?.subscribe((value: string | string[]) => {
-      this.explorerValue.set(value);
+    const parents = await firstValueFrom(
+      this.api.call('pool.dataset.query', [[['id', '=', parentId]]]).pipe(this.toInlineError()),
+    );
+    if (!parents.length) {
+      throw new Error(this.translate.instant('Parent dataset {name} not found.', { name: parentId }));
+    }
+    const parent = parents[0];
+    this.validateName(parent, datasetName);
+
+    const dataset = await firstValueFrom(
+      this.api.call('pool.dataset.create', [{
+        ...this.datasetProperties(),
+        name: `${parent.name}/${datasetName}`,
+      }]).pipe(this.toInlineError()),
+    );
+    return dataset.mountpoint;
+  }
+
+  private validateName(parent: Dataset, name: string): void {
+    if (!nameValidatorRegex.test(name)) {
+      throw new Error(this.translate.instant('Name is invalid.'));
+    }
+
+    if (parent.name.length + 1 + name.length >= maxDatasetPath) {
+      throw new Error(this.translate.instant('Dataset name is too long.'));
+    }
+
+    const isNameCaseInsensitive = parent.casesensitivity.value !== DatasetCaseSensitivity.Sensitive;
+    const namesInUse = (parent.children || [])
+      .map((child) => /[^/]*$/.exec(child.name)?.[0])
+      .filter((childName): childName is string => childName !== undefined);
+    const isInUse = isNameCaseInsensitive
+      ? namesInUse.some((usedName) => usedName.toLowerCase() === name.toLowerCase())
+      : namesInUse.includes(name);
+    if (isInUse) {
+      throw new Error(this.translate.instant('The name "{name}" is already in use.', { name }));
+    }
+  }
+
+  /** Maps api failures to Errors whose message the inline row can display. */
+  private toInlineError<T>(): MonoTypeOperatorFunction<T> {
+    return catchError((error: unknown) => {
+      throw new Error(this.errorParser.getFirstErrorMessage(error));
     });
   }
 
-  private parentPath = computed(() => {
-    const value = this.explorerValue();
-    return Array.isArray(value) ? value[0] : value;
-  });
-
-  private parent = computed(() => {
-    const selected = this.parentPath();
-    return selected ? selected.replace(/^(\/mnt\/?)/, '') : null;
-  });
-
-  protected onCreateDataset(): void {
-    const parentPath = this.parentPath();
-    this.tnDialog.open<CreateDatasetDialog, unknown, Dataset>(CreateDatasetDialog, {
-      data: {
-        parentId: this.parent(),
-        dataset: this.datasetProperties(),
-      },
-    }).closed.pipe(
-      filter(Boolean),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((dataset: Dataset) => {
-      const node = this.explorer.lastSelectedNode();
-      if (node) {
-        this.explorer.refreshNode(node);
-      } else if (parentPath) {
-        this.explorer.refreshNodeByPath(parentPath);
-      }
-
-      const control = this.ngControl?.control;
-      const currentValue = control?.value;
-      if (Array.isArray(currentValue)) {
-        const updatedValue = currentValue.map(
-          (path) => (path === parentPath ? dataset.mountpoint : path),
-        );
-        control?.setValue(updatedValue);
-      } else {
-        control?.setValue(dataset.mountpoint);
-      }
-    });
+  private toParentDatasetId(parentPath: string): string {
+    return parentPath.replace(/^(\/mnt\/?)/, '');
   }
 }

@@ -1,12 +1,14 @@
 @import 'mixins/cards';
 @import 'mixins/animations';
 
+@include tn-detail-card;
+@include tn-card-inline-title;
+
 :host {
   display: flex;
 }
 
 .card {
-  @include details-card();
   flex: 1;
 
   .content-container {
@@ -180,7 +182,6 @@
     background-color: color-mix(in srgb, var(--primary) 30%, transparent);
   }
 }
-
 
 .link {
   color: var(--primary);

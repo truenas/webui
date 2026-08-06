@@ -1,23 +1,21 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject, input } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent,
 } from '@truenas/ui-components';
 import { GiB } from 'app/constants/bytes.constant';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
@@ -27,39 +25,30 @@ import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/d
   styleUrls: ['./dataset-capacity-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
-    RequiresRolesDirective,
     ReactiveFormsModule,
     TranslateModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnCheckboxComponent,
-    FormActionsComponent,
-    TnButtonComponent,
   ],
 })
-export class DatasetCapacitySettingsComponent extends SidePanelForm implements OnInit {
+export class DatasetCapacitySettingsComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
-  private errorHandler = inject(FormErrorHandlerService);
-  private snackbarService = inject(SnackbarService);
   private translate = inject(TranslateService);
   private validators = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.DatasetWrite];
+  readonly requiredRoles = [Role.DatasetWrite];
   protected readonly InputType = InputType;
 
-  readonly isLoading = signal(false);
   readonly defaultQuotaWarning = 80;
   readonly defaultQuotaCritical = 95;
 
-  /**
-   * Dataset to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
-   * carry data). Unused in the legacy SlideIn host (which supplies it via `slideInRef.getData()`).
-   */
-  readonly datasetToEdit = input<DatasetDetails | undefined>(undefined);
+  /** Dataset to edit, supplied by the `<tn-side-panel>` host. */
+  readonly datasetToEdit = input.required<DatasetDetails>();
 
   form = this.formBuilder.group({
     refquota: [null as number | null, this.validators.withMessage(
@@ -96,10 +85,6 @@ export class DatasetCapacitySettingsComponent extends SidePanelForm implements O
     reservation: [null as number | null],
   });
 
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
-
-  protected dataset: DatasetDetails | undefined;
-
   readonly helptext = helptextDatasetForm;
 
   private oldValues: DatasetCapacitySettingsComponent['form']['value'];
@@ -116,12 +101,7 @@ export class DatasetCapacitySettingsComponent extends SidePanelForm implements O
   }
 
   ngOnInit(): void {
-    this.dataset = this.slideInRef
-      ? this.slideInRef.getData() as DatasetDetails | undefined
-      : this.datasetToEdit();
-    if (this.dataset) {
-      this.setDatasetForEdit(this.dataset);
-    }
+    this.setDatasetForEdit(this.datasetToEdit());
   }
 
   private setFormRelations(): void {
@@ -138,9 +118,7 @@ export class DatasetCapacitySettingsComponent extends SidePanelForm implements O
     });
   }
 
-  get isRoot(): boolean {
-    return !!this.dataset && isRootDataset(this.dataset);
-  }
+  protected readonly isRoot = computed(() => isRootDataset(this.datasetToEdit()));
 
   private setDatasetForEdit(dataset: DatasetDetails): void {
     const refquotaWarning = getUserProperty<number>(dataset, 'refquota_warning');
@@ -165,26 +143,12 @@ export class DatasetCapacitySettingsComponent extends SidePanelForm implements O
     this.form.patchValue(this.oldValues);
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
-    const payload = this.getChangedFormValues();
-
-    this.api.call('pool.dataset.update', [this.dataset.id, payload])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isLoading.set(false);
-          this.snackbarService.success(
-            this.translate.instant('Dataset settings updated.'),
-          );
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.errorHandler.handleValidationErrors(error, this.form);
-          this.isLoading.set(false);
-        },
-      });
-  }
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
+    return {
+      request$: this.api.call('pool.dataset.update', [this.datasetToEdit().id, this.getChangedFormValues()]),
+      successMessage: this.translate.instant('Dataset settings updated.'),
+    };
+  };
 
   private getChangedFormValues(): DatasetUpdate {
     const newValues = this.form.getRawValue();

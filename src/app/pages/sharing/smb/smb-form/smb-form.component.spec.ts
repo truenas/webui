@@ -162,7 +162,7 @@ describe('SmbFormComponent', () => {
         getTopLevelDatasetsNodes: jest.fn(() => {
           return of([
             {
-              path: 'pool',
+              path: '/mnt/pool',
               name: 'pool',
             },
           ]);

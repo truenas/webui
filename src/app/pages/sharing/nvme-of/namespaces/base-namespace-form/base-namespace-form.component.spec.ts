@@ -120,10 +120,13 @@ describe('BaseNamespaceFormComponent', () => {
       expect(form.status).toBe('VALID');
     });
 
-    // Pinned on both sides of the inference rather than on the rendered `*`: the validator is
-    // what `tn-form-field` / `ix-explorer` read, and `aria-required` is where that has to land for
-    // users. Dropping the factory's validator breaks both halves, without coupling the suite to
-    // library-internal class names or DOM nesting.
+    // Pinned on both sides of the inference: the validator is what `tn-form-field` / `ix-explorer`
+    // read, and the rendered required indicator is where that has to land for users. Dropping the
+    // factory's validator breaks both halves.
+    //
+    // Two indicators, because the two controls advertise required differently: `tn-input` inside
+    // `tn-form-field` emits `aria-required`, while `ix-explorer` — now a `<tn-file-picker>` wrapper
+    // (NAS-141877) — only marks its `<ix-label>`. Match either so every expected control counts.
     it.each([
       ['Zvol', ['device_path']],
       ['Existing File', ['device_path']],
@@ -137,7 +140,8 @@ describe('BaseNamespaceFormComponent', () => {
         expect(control.enabled).toBe(true);
       });
 
-      expect(spectator.queryAll('[aria-required="true"]')).toHaveLength(expectedControls.length);
+      expect(spectator.queryAll('[aria-required="true"], ix-explorer ix-label .required'))
+        .toHaveLength(expectedControls.length);
     });
 
     it('clears a previously chosen path when the device type changes', async () => {

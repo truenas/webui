@@ -34,22 +34,16 @@
   </p>
 
   <div class="actions">
-    <button
-      mat-button
-      type="button"
-      ixTest="skip"
-      (click)="onSkip()"
-    >
-      {{ 'Skip' | translate }}
-    </button>
-    <button
-      mat-button
-      type="button"
+    <tn-button
+      [testId]="'skip'"
+      [label]="'Skip' | translate"
+      (onClick)="onSkip()"
+    ></tn-button>
+    <tn-button
       color="primary"
-      ixTest="unlock"
-      (click)="onUnlock()"
-    >
-      {{ 'Unlock' | translate }}
-    </button>
+      [testId]="'unlock'"
+      [label]="'Unlock' | translate"
+      (onClick)="onUnlock()"
+    ></tn-button>
   </div>
 </div>

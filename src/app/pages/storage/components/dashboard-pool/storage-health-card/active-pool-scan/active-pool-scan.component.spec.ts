@@ -1,8 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatProgressBarHarness } from '@angular/material/progress-bar/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -52,12 +51,15 @@ describe('ActivePoolScanComponent', () => {
       } as PoolScanUpdate);
     });
 
-    it('shows current progress', async () => {
+    it('shows current progress', () => {
       const description = spectator.query('.scan-description');
       expect(description).toHaveText('Scrub In Progress:  50.00%');
 
-      const progressBar = await loader.getHarness(MatProgressBarHarness);
-      expect(await progressBar.getValue()).toBe(50);
+      // White-box: @truenas/ui-components ships no TnProgressBarHarness. Assert the ARIA
+      // attribute directly (never `ng-reflect-*`, which is dev-mode-only Angular debug output)
+      // so a regression in the progressbar contract actually fails the test.
+      const progressBar = spectator.query('tn-progress-bar')!;
+      expect(progressBar.getAttribute('aria-valuenow')).toBe('50');
     });
 
     it('shows time left', () => {
@@ -66,14 +68,14 @@ describe('ActivePoolScanComponent', () => {
     });
 
     it('stops scrub when Stop Scrub is pressed', async () => {
-      const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop Scrub' }));
+      const stopButton = await loader.getHarness(TnButtonHarness.with({ label: 'Stop Scrub' }));
       await stopButton.click();
 
       expect(spectator.inject(ApiService).startJob).toHaveBeenCalledWith('pool.scrub', [1, PoolScrubAction.Stop]);
     });
 
     it('pauses scrub when Pause Scrub is pressed', async () => {
-      const pauseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Pause Scrub' }));
+      const pauseButton = await loader.getHarness(TnButtonHarness.with({ label: 'Pause Scrub' }));
       await pauseButton.click();
 
       expect(spectator.inject(ApiService).startJob).toHaveBeenCalledWith('pool.scrub', [1, PoolScrubAction.Pause]);
@@ -93,16 +95,19 @@ describe('ActivePoolScanComponent', () => {
       } as PoolScanUpdate);
     });
 
-    it('shows current progress', async () => {
+    it('shows current progress', () => {
       const description = spectator.query('.scan-description');
       expect(description).toHaveText('Scrub Paused  50.00%');
 
-      const progressBar = await loader.getHarness(MatProgressBarHarness);
-      expect(await progressBar.getValue()).toBe(50);
+      // White-box: @truenas/ui-components ships no TnProgressBarHarness. Assert the ARIA
+      // attribute directly (never `ng-reflect-*`, which is dev-mode-only Angular debug output)
+      // so a regression in the progressbar contract actually fails the test.
+      const progressBar = spectator.query('tn-progress-bar')!;
+      expect(progressBar.getAttribute('aria-valuenow')).toBe('50');
     });
 
     it('resumes scrub when Resume Scrub is pressed', async () => {
-      const resumeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Resume Scrub' }));
+      const resumeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Resume Scrub' }));
       await resumeButton.click();
 
       expect(spectator.inject(ApiService).startJob).toHaveBeenCalledWith('pool.scrub', [1, PoolScrubAction.Start]);
@@ -119,12 +124,15 @@ describe('ActivePoolScanComponent', () => {
       } as PoolScanUpdate);
     });
 
-    it('shows current progress', async () => {
+    it('shows current progress', () => {
       const description = spectator.query('.scan-description');
       expect(description).toHaveText('Resilvering:  50.00%');
 
-      const progressBar = await loader.getHarness(MatProgressBarHarness);
-      expect(await progressBar.getValue()).toBe(50);
+      // White-box: @truenas/ui-components ships no TnProgressBarHarness. Assert the ARIA
+      // attribute directly (never `ng-reflect-*`, which is dev-mode-only Angular debug output)
+      // so a regression in the progressbar contract actually fails the test.
+      const progressBar = spectator.query('tn-progress-bar')!;
+      expect(progressBar.getAttribute('aria-valuenow')).toBe('50');
     });
 
     it('shows time left', () => {
@@ -133,7 +141,7 @@ describe('ActivePoolScanComponent', () => {
     });
 
     it('does not show buttons to controls scrub', async () => {
-      const buttons = await loader.getAllHarnesses(MatButtonHarness);
+      const buttons = await loader.getAllHarnesses(TnButtonHarness);
       expect(buttons).toHaveLength(0);
     });
   });

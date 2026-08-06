@@ -12,10 +12,13 @@ import {
   TnButtonHarness, TnIconButtonHarness, TnIconTesting, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { Role } from 'app/enums/role.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
-  defaultIxFormMinSubmitFeedbackMs, IxFormComponent, SubmitResult,
+  defaultMinSubmitFeedbackMs, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import {
@@ -239,6 +242,8 @@ describe('FormSidePanelContainerComponent footer actions', () => {
   });
 });
 
+const saveSubmit = jest.fn();
+
 /**
  * Minimal hosted form exposing the two signals the footer Save reads. Mirrors what
  * `IxFormHostForm` delegates to its inner `<ix-form>`: `isSubmitting` labels the button,
@@ -252,7 +257,12 @@ describe('FormSidePanelContainerComponent footer actions', () => {
 class SaveTestFormComponent extends SidePanelForm {
   protected readonly form = new FormControl('');
   readonly canSubmit = signal(true);
+  readonly requiredRoles = [Role.DatasetWrite];
+
   readonly busy = signal(false);
+
+  // Drives the host's "Saving…" label, which reads `isSubmitting` (not `isBusy`), so a form
+  // merely loading its data never mislabels Save.
   readonly submitting = signal(false);
 
   override isBusy(): boolean {
@@ -260,6 +270,10 @@ class SaveTestFormComponent extends SidePanelForm {
   }
 
   override readonly isSubmitting = computed(() => this.submitting());
+
+  override submit(): void {
+    saveSubmit();
+  }
 
   protected onSubmit(): void {
     this.close(true);
@@ -277,7 +291,11 @@ describe('FormSidePanelContainerComponent footer Save', () => {
   const getSaveButton = (): Promise<TnButtonHarness> => TnMenuTesting.rootLoader(fixture)
     .getHarness(TnButtonHarness.with({ selector: saveButtonSelector }));
 
-  beforeEach(() => {
+  /**
+   * `MockAuthService.hasRole` is a hardcoded `of(true)`, so `*ixRequiresRoles` can only be
+   * exercised by overriding it before the container (and its footer) first renders.
+   */
+  const setUp = (hasRequiredRole = true): void => {
     TestBed.configureTestingModule({
       imports: [FormSidePanelContainerComponent, SaveTestFormComponent, TranslateModule.forRoot()],
       providers: [
@@ -290,25 +308,73 @@ describe('FormSidePanelContainerComponent footer Save', () => {
       ],
     });
 
+    const authService = TestBed.inject(AuthService) as unknown as MockAuthService;
+    authService.hasRole.mockReturnValue(of(hasRequiredRole));
+
     fixture = TestBed.createComponent(FormSidePanelContainerComponent);
     fixture.componentRef.setInput('portal', new ComponentPortal(SaveTestFormComponent));
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
+  };
+
+  beforeEach(() => {
+    saveSubmit.mockClear();
   });
 
-  it('swaps Save for Saving… only while the form reports isSubmitting()', async () => {
-    expect(await (await getSaveButton()).getLabel()).toBe('Save');
+  it('renders a Save button that submits the hosted form', async () => {
+    setUp();
+    const saveButton = await TnMenuTesting.rootLoader(fixture).getHarness(TnButtonHarness.with({ label: 'Save' }));
 
-    getForm().submitting.set(true);
-    getForm().busy.set(true);
+    expect(await saveButton.isDisabled()).toBe(false);
+
+    await saveButton.click();
+    expect(saveSubmit).toHaveBeenCalled();
+  });
+
+  it('disables Save while the hosted form reports it cannot submit', async () => {
+    setUp();
+    const saveButton = await TnMenuTesting.rootLoader(fixture).getHarness(TnButtonHarness.with({ label: 'Save' }));
+
+    getForm().canSubmit.set(false);
     fixture.detectChanges();
 
-    expect(await (await getSaveButton()).getLabel()).toBe('Saving…');
+    expect(await saveButton.isDisabled()).toBe(true);
+  });
+
+  it('switches Save to Saving… while a save is in flight', async () => {
+    setUp();
+    const loader = TnMenuTesting.rootLoader(fixture);
+
+    getForm().submitting.set(true);
+    fixture.detectChanges();
+
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Save' }))).toBeNull();
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Saving…' }))).not.toBeNull();
+  });
+
+  it('gates Save behind the missing-access wrapper for a user lacking the requiredRoles', async () => {
+    setUp(false);
+
+    // `*ixRequiresRoles` doesn't remove the button — it wraps it, disabling its focusable
+    // elements and explaining why via a tooltip. Assert the wrapper, not an absent button.
+    expect(document.querySelector('ix-missing-access-wrapper')).not.toBeNull();
+
+    const saveButton = await TnMenuTesting.rootLoader(fixture)
+      .getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+    expect(saveSubmit).not.toHaveBeenCalled();
+  });
+
+  it('renders Save unwrapped for a user holding the requiredRoles', () => {
+    setUp();
+
+    expect(document.querySelector('ix-missing-access-wrapper')).toBeNull();
   });
 
   // The distinction IxFormHostForm.isSubmitting() exists for: a form fetching its initial config
   // is busy (Save disabled) but is not saving, so the label must stay "Save".
   it('keeps the Save label while merely busy, and disables it', async () => {
+    setUp();
     getForm().busy.set(true);
     fixture.detectChanges();
 
@@ -316,13 +382,6 @@ describe('FormSidePanelContainerComponent footer Save', () => {
 
     expect(await save.getLabel()).toBe('Save');
     expect(await save.isDisabled()).toBe(true);
-  });
-
-  it('disables Save when the form cannot be submitted', async () => {
-    getForm().canSubmit.set(false);
-    fixture.detectChanges();
-
-    expect(await (await getSaveButton()).isDisabled()).toBe(true);
   });
 });
 
@@ -372,7 +431,7 @@ describe('FormSidePanelContainerComponent footer Save with a real <ix-form>', ()
       providers: [
         mockAuth(),
         // The hold is the point of this suite; everywhere else it is zeroed.
-        ...ixFormTestingProviders({ holdSubmitFeedback: true }),
+        ...ixFormTestingProviders({ realSubmitFeedback: true }),
         // No SlideInRef → `<ix-form>` takes the side-panel path, which is the one that holds.
         { provide: SlideInRef, useValue: null },
         {
@@ -397,7 +456,7 @@ describe('FormSidePanelContainerComponent footer Save with a real <ix-form>', ()
 
     expect(getSaveLabel()).toBe('Saving…');
 
-    tick(defaultIxFormMinSubmitFeedbackMs - 1);
+    tick(defaultMinSubmitFeedbackMs - 1);
     fixture.detectChanges();
     expect(getSaveLabel()).toBe('Saving…');
 

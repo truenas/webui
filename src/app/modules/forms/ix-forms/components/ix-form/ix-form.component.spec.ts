@@ -23,7 +23,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import {
-  FormSubmitEvent, IxFormComponent, ixFormMinSubmitFeedbackMs, SubmitResult,
+  defaultMinSubmitFeedbackMs, FormSubmitEvent, IxFormComponent, ixFormMinSubmitFeedbackMs, SubmitResult,
 } from './ix-form.component';
 
 describe('IxFormComponent', () => {
@@ -1238,15 +1238,17 @@ describe('IxFormComponent', () => {
   describe('minimum submit feedback (side-panel host)', () => {
     // No SlideInRef provided → the form is hosted in a `<tn-side-panel>`, where success is held for
     // a minimum duration so the host's progress bar / dim overlay stay visible long enough to see.
+    // The `tick()`s below step across this boundary.
     const createSidePanelComponent = createComponentFactory({
       component: TestHostComponent,
       imports: [ReactiveFormsModule],
       providers: [
-        // The hold is what's under test here, so keep it — every other spec takes the helper's
-        // default, which zeroes it so a successful close is synchronous.
-        ...ixFormTestingProviders({ holdSubmitFeedback: true }),
-        // Force the `<tn-side-panel>` host: no SlideInRef (the harness would otherwise auto-mock
-        // one, taking the un-delayed legacy path). `null` is what `inject(…, {optional:true})` sees.
+        // This block asserts the delay itself, so keep the real duration that
+        // `ixFormTestingProviders()` zeroes for every other spec.
+        ...ixFormTestingProviders({ realSubmitFeedback: true }),
+        // Force the `<tn-side-panel>` host: `null` is exactly what `inject(SlideInRef,
+        // {optional: true})` sees when nothing provides one, and stating it here keeps the block
+        // independent of whatever the surrounding suite happens to provide.
         { provide: SlideInRef, useValue: null },
         mockAuth(),
       ],
@@ -1271,7 +1273,7 @@ describe('IxFormComponent', () => {
       expect(closedSpy).not.toHaveBeenCalled();
       expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
 
-      tick(499);
+      tick(defaultMinSubmitFeedbackMs - 1);
       expect(ixForm.isSubmitting()).toBe(true);
       expect(closedSpy).not.toHaveBeenCalled();
 
@@ -1289,11 +1291,24 @@ describe('IxFormComponent', () => {
 
       const sidePanelSpectator = createSidePanelComponent();
       const ixForm = sidePanelSpectator.component.ixForm();
+      const closedSpy = jest.fn();
+      ixForm.closed.subscribe(closedSpy);
 
       ixForm.submit();
 
+      // No `tick()` above: the failure is reported before a single millisecond of the min-duration
+      // timer, so a broken save never sits behind the loader waiting it out.
       expect(ixForm.isSubmitting()).toBe(false);
       expect(sidePanelSpectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalled();
+      expect(closedSpy).not.toHaveBeenCalled();
+      expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+
+      // The paired timer is torn down with the errored forkJoin, so nothing closes or confirms
+      // late once the duration would have elapsed (and `fakeAsync` would throw on a leftover timer).
+      tick(defaultMinSubmitFeedbackMs);
+
+      expect(closedSpy).not.toHaveBeenCalled();
+      expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
     }));
 
     it('emits the closeWith payload through closed, so the host can hand it to its opener', () => {
@@ -1345,6 +1360,37 @@ describe('IxFormComponent', () => {
 
       expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
       expect(warn).not.toHaveBeenCalled();
+      warn.mockRestore();
+    });
+
+    it('builds the snackbar from the request result when successMessage is a function', () => {
+      submitHandlerSpy.mockReturnValue({
+        request$: of({ id: 1, name: 'saved-record' }),
+        successMessage: (result: { name: string }) => `Saved «${result.name}».` as TranslatedString,
+      });
+
+      const sidePanelSpectator = createSidePanelComponent({
+        providers: [{ provide: ixFormMinSubmitFeedbackMs, useValue: 0 }],
+      });
+      sidePanelSpectator.component.ixForm().submit();
+
+      expect(sidePanelSpectator.inject(SnackbarService).success).toHaveBeenCalledWith('Saved «saved-record».');
+    });
+
+    it('stays silent without warning when a successMessage function returns null', () => {
+      // A function returning `null` decided, for this result, that no confirmation is wanted (the
+      // dataset form does exactly that when the save navigates on to the ACL editor). That's an
+      // explicit choice, unlike a statically `null` message, so it must not dev-warn.
+      const warn = jest.spyOn(console, 'warn').mockImplementation();
+      submitHandlerSpy.mockReturnValue({ request$: of({ id: 1 }), successMessage: () => null });
+
+      const sidePanelSpectator = createSidePanelComponent({
+        providers: [{ provide: ixFormMinSubmitFeedbackMs, useValue: 0 }],
+      });
+      sidePanelSpectator.component.ixForm().submit();
+
+      expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+      expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('null successMessage'));
       warn.mockRestore();
     });
   });

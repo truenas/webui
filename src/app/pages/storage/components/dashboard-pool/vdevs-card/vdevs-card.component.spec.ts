@@ -1,5 +1,8 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { Router } from '@angular/router';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -32,6 +35,7 @@ describe('VDevsCardComponent', () => {
     ],
     providers: [
       mockApi([]),
+      mockProvider(Router),
     ],
   });
 
@@ -1680,7 +1684,7 @@ describe('VDevsCardComponent', () => {
     it('rendering VDEVs rows', () => {
       const captions = spectator.queryAll('.vdev-line b');
       const values = spectator.queryAll('.vdev-line .vdev-value');
-      expect(spectator.queryAll('.vdev-line .warning .tn-icon')).toHaveLength(1);
+      expect(spectator.queryAll('.vdev-line .warning tn-icon')).toHaveLength(1);
       expect(captions).toHaveLength(6);
       expect(values).toHaveLength(6);
 
@@ -2487,6 +2491,36 @@ describe('VDevsCardComponent', () => {
       });
 
       expect(spectator.queryAll('.tier-label')).toHaveLength(0);
+    });
+  });
+
+  // The action moved from a button in the card header into an <ng-template tnCardFooterActions>.
+  // A footer template that fails to project renders nothing at all, so cover it explicitly.
+  describe('View VDEVs footer action', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          poolState: {
+            id: 7,
+            healthy: true,
+            name: 'pool1',
+            status: PoolStatus.Online,
+            topology: {
+              data: [], special: [], log: [], cache: [], spare: [], dedup: [],
+            },
+          } as unknown as Pool,
+          disks: [],
+        },
+      });
+    });
+
+    it('renders in the card footer and navigates to the pool VDEVs page', async () => {
+      const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      const viewVdevsButton = await loader.getHarness(TnButtonHarness.with({ label: 'View VDEVs' }));
+
+      await viewVdevsButton.click();
+
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 7, 'vdevs']);
     });
   });
 });

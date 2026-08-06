@@ -1,7 +1,7 @@
 // cspell:ignore zvol zvols volsize volblocksize snapdev Snapdev Vdev helptext ngneat rawvalue pbkdf
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -53,8 +53,13 @@ import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
+import {
+  VolsizeValidationError,
+} from 'app/pages/datasets/components/zvol-form/volsize-validation-error';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
-import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
+import {
+  getDatasetLabel, getUserProperty, transformSpecialSmallBlockSizeForPayload,
+} from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { LicenseService } from 'app/services/license.service';
 
@@ -86,7 +91,7 @@ const volsizeUnchangedRelativeTolerance = 0.001;
     FileSizePipe,
   ],
 })
-export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements OnInit {
+export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit {
   private formatter = inject(IxFormatterService);
   private translate = inject(TranslateService);
   private formBuilder = inject(NonNullableFormBuilder);
@@ -98,18 +103,13 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
 
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.DatasetWrite];
+  readonly requiredRoles = [Role.DatasetWrite];
 
-  /**
-   * Edit/create parameters, supplied by the `<tn-side-panel>` host, which sets inputs before
-   * `ngOnInit` — so this can be required rather than defensively optional.
-   */
+  /** Edit/create parameters supplied by the `<tn-side-panel>` host. */
   readonly params = input.required<{ isNew: boolean; parentOrZvolId: string }>();
 
-  private savedDataset: Dataset | undefined;
-
-  protected parentOrZvolId: string;
-  protected isNew = true;
+  protected readonly parentOrZvolId = computed(() => this.params().parentOrZvolId);
+  protected readonly isNew = computed(() => this.params().isNew);
 
   readonly helptext = helptextZvol;
   readonly OnOff = OnOff;
@@ -204,10 +204,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
   }
 
   ngOnInit(): void {
-    const data = this.params();
-    this.isNew = data.isNew;
-    this.parentOrZvolId = data.parentOrZvolId;
-
     this.checkIfDedupIsSupported();
 
     // Set up conditional validation for special_small_block_size_custom
@@ -230,32 +226,15 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
       customControl.updateValueAndValidity();
     });
 
-    if (this.parentOrZvolId) {
-      this.setupForm();
-    }
+    this.setupForm();
   }
 
-  protected handleSubmit = (event: FormSubmitEvent<ZvolFormData>): SubmitResult => {
-    if (this.isNew) {
+  protected handleSubmit = (event: FormSubmitEvent<ZvolFormData>): SubmitResult<Dataset, Dataset> => {
+    if (this.isNew()) {
       return this.buildCreateResult(event);
     }
     return this.buildEditResult(event);
   };
-
-  /**
-   * `<ix-form>`'s own `closed` carries no payload, so re-emit the zvol captured in the submit
-   * `onSuccess` hook — openers like the explorer's "Create Zvol" need it to select the new zvol.
-   *
-   * Emitted unconditionally: the panel host tears down on this event alone, so gating on
-   * `savedDataset` would leave the panel open after a save that succeeded but returned no record —
-   * hence the `Dataset | null` on this class. That `null` is a safety net, not a routine path: it
-   * is falsy, so `FormSidePanelService` reads it as a cancel and the opener's `onSuccess` (snackbar,
-   * dataset refresh, explorer selection) is skipped. Both `pool.dataset.create` and
-   * `pool.dataset.update` return the record, so it should never fire in practice.
-   */
-  protected onFormClosed(): void {
-    this.closed.emit(this.savedDataset ?? null);
-  }
 
   protected getOptionLabel(options: Option[], value: unknown): string {
     return options.find((option) => option.value === value)?.label ?? String(value ?? '');
@@ -284,34 +263,38 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
     control.updateValueAndValidity({ emitEvent: false });
   }
 
-  private buildCreateResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult {
+  private buildCreateResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult<Dataset, Dataset> {
     const data = this.buildCreatePayload(event.allValues);
     return {
       request$: this.api.call('pool.dataset.create', [data as DatasetCreate]),
-      successMessage: this.translate.instant('Zvol created'),
-      onSuccess: (result) => {
-        this.savedDataset = result as Dataset;
-      },
+      // Owned by the form so every entry point (details panel, details card, explorer) confirms
+      // identically; the openers deliberately raise no snackbar of their own.
+      successMessage: (created) => this.translate.instant('Zvol «{name}» created.', {
+        name: getDatasetLabel(created),
+      }),
+      // The opener needs the record to switch to the new zvol.
+      closeWith: (result) => result,
     };
   }
 
-  private buildEditResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult {
+  private buildEditResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult<Dataset, Dataset> {
     return {
-      request$: this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId]]]).pipe(
+      request$: this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId()]]]).pipe(
         switchMap((datasets) => {
           const { payload, canSubmit } = this.buildEditPayload(event, datasets);
           if (!canSubmit) {
-            return throwError(() => new Error('VOLSIZE_VALIDATION'));
+            return throwError(() => new VolsizeValidationError('Zvol volsize cannot be shrunk.'));
           }
-          return this.api.call('pool.dataset.update', [this.parentOrZvolId, payload]);
+          return this.api.call('pool.dataset.update', [this.parentOrZvolId(), payload]);
         }),
       ),
-      successMessage: this.translate.instant('Zvol updated'),
-      onSuccess: (result) => {
-        this.savedDataset = result as Dataset;
-      },
+      // See `buildCreateResult` — the message is the form's, not the opener's.
+      successMessage: (updated) => this.translate.instant('Zvol «{name}» updated.', {
+        name: getDatasetLabel(updated),
+      }),
+      closeWith: (result) => result,
       onError: (error: unknown) => {
-        if (error instanceof Error && error.message === 'VOLSIZE_VALIDATION') {
+        if (error instanceof VolsizeValidationError) {
           this.dialogService.error({
             title: helptextZvol.zvolSaveError.title,
             message: helptextZvol.zvolSaveError.msg,
@@ -326,7 +309,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
   private buildCreatePayload(allValues: ZvolFormData): ZvolFormData {
     const data: ZvolFormData = { ...allValues };
     data.type = DatasetType.Volume;
-    data.name = this.parentOrZvolId + '/' + (data.name || '');
+    data.name = this.parentOrZvolId() + '/' + (data.name || '');
 
     // Handle special_small_block_size transformation
     const transformedValue = transformSpecialSmallBlockSizeForPayload(
@@ -504,14 +487,14 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
   }
 
   private setupForm(): void {
-    if (!this.isNew) {
+    if (!this.isNew()) {
       this.disableEncryptionFields();
       this.form.controls.name.disable();
     }
 
     this.setupLoading.set(true);
     forkJoin([
-      this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId]]]),
+      this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId()]]]),
       this.loadRecommendedBlocksize(),
       this.api.call('pool.dataset.compression_choices').pipe(choicesToOptions()),
     ])
@@ -537,7 +520,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
           if (parentOrZvol?.type === DatasetType.Filesystem) {
             this.setReadonlyField(parentOrZvol, parentOrZvol);
             this.inheritFileSystemProperties(parentOrZvol);
-            if (!this.isNew) {
+            if (!this.isNew()) {
               this.formSnapshot.set(this.form.getRawValue());
             }
           } else {
@@ -561,7 +544,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
                 this.inheritSnapdev(parentOrZvol, parentDataset);
                 this.inheritSpecialSmallBlockSize(parentDataset);
 
-                if (!this.isNew) {
+                if (!this.isNew()) {
                   this.formSnapshot.set(this.form.getRawValue());
                 }
 
@@ -636,7 +619,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
       this.inheritEncryptPlaceholder = helptextZvol.encryption.inheritEncrypted;
     }
 
-    if (this.isNew) {
+    if (this.isNew()) {
       if (this.encryptedParent && parent.encryption_algorithm) {
         this.form.controls.algorithm.setValue(parent.encryption_algorithm.value);
       }
@@ -868,7 +851,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
   }
 
   private loadRecommendedBlocksize(): Observable<unknown> {
-    const root = this.parentOrZvolId.split('/')[0];
+    const root = this.parentOrZvolId().split('/')[0];
 
     return this.api.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
       tap((recommendedSize) => {
@@ -904,7 +887,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
     });
 
     let readonlyValue;
-    if (this.isNew) {
+    if (this.isNew()) {
       readonlyValue = inherit;
     } else {
       readonlyValue = zvol.readonly.value;
@@ -917,7 +900,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset | null> implements
     }
     this.form.controls.readonly.setValue(readonlyValue);
 
-    if (!this.isNew) {
+    if (!this.isNew()) {
       this.originalReadonlyValue = readonlyValue;
       this.updateVolsizeStateBasedOnReadonly(readonlyValue);
 

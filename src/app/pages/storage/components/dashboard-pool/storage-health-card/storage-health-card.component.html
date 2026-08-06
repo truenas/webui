@@ -1,38 +1,47 @@
-<mat-card class="card" [ixUiSearch]="searchableElements.elements.zfsHealth">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'Storage Health' | translate }}
-      <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
-    </h3>
+<tn-card class="card" [ixUiSearch]="searchableElements.elements.zfsHealth">
+  <h3 tnCardHeader class="tn-card__title">
+    {{ 'Storage Health' | translate }}
+    <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
+  </h3>
 
+  <ng-template tnCardFooterActions>
     @if (!wasScanInitiated()) {
-      <button
+      <tn-button
         *ixRequiresRoles="[Role.PoolScrubWrite]"
-        mat-button
-        ixTest="scrub"
+        [testId]="'scrub'"
         [ixUiSearch]="searchableElements.elements.scrubNow"
-        (click)="onStartScrub()"
-      >
-        {{ 'Scrub Now' | translate }}
-      </button>
+        [label]="'Scrub Now' | translate"
+        (onClick)="onStartScrub()"
+      ></tn-button>
     } @else {
-      @if (isScrub()) {
-      } @else {
-        <button mat-button disabled ixTest="scrub-disabled">{{ 'Scrub' | translate }}</button>
+      @if (!isScrub()) {
+        <tn-button
+          [disabled]="true"
+          [testId]="'scrub-disabled'"
+          [label]="'Scrub' | translate"
+        ></tn-button>
       }
     }
-  </mat-card-header>
+  </ng-template>
 
-  <mat-card-content class="card-content">
+  <div class="card-content">
     <div class="details-item">
       <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
       <div class="label status">
         {{ getErrorText() }}
       </div>
       @if (hasErrors()) {
-        <a tabindex="0" (click)="goToVdevsPage()" (keydown.enter)="goToVdevsPage()">
+        <!-- A link-styled action, not a navigation: a <button> carries the role, focusability and
+             Enter/Space handling natively. `tnTestIdType="link"` keeps the pre-migration test id. -->
+        <button
+          type="button"
+          class="link-button"
+          tnTestIdType="link"
+          [tnTestId]="'view-errors'"
+          (click)="goToVdevsPage()"
+        >
           {{ 'View' | translate }}
-        </a>
+        </button>
       }
     </div>
 
@@ -52,17 +61,29 @@
         <div class="value">
           {{ scrub().schedule | scheduleDescription }}
         </div>
-        <a ixTest="configure-scrub" (click)="onConfigureScrub()">
+        <button
+          type="button"
+          class="link-button"
+          tnTestIdType="link"
+          [tnTestId]="'configure-scrub'"
+          (click)="onConfigureScrub()"
+        >
           {{ 'Configure' | translate }}
-        </a>
+        </button>
       }
       @else {
         <div class="value">
           {{ 'Not Set' | translate }}
         </div>
-        <a ixTest="configure-scrub" (click)="onConfigureScrub()">
+        <button
+          type="button"
+          class="link-button"
+          tnTestIdType="link"
+          [tnTestId]="'configure-scrub'"
+          (click)="onConfigureScrub()"
+        >
           {{ 'Schedule' | translate }}
-        </a>
+        </button>
       }
     </div>
 
@@ -88,5 +109,5 @@
     @if (pool().dedup_table_size > 0 || pool().topology?.dedup?.length > 0) {
       <ix-deduplication-stats [pool]="pool()"></ix-deduplication-stats>
     }
-  </mat-card-content>
-</mat-card>
+  </div>
+</tn-card>

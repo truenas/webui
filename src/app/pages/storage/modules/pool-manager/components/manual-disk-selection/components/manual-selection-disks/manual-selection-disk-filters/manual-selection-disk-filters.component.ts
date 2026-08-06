@@ -1,16 +1,17 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, input, output, inject, OnChanges } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker } from '@truenas/ui-components';
+import {
+  TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent, tnIconMarker,
+} from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { redundantListToUniqueOptions } from 'app/helpers/operators/options.operators';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import {
   ManualDiskSelectionStore,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
@@ -23,10 +24,12 @@ export type ManualDiskSelectionFilters = ManualSelectionDiskFiltersComponent['fi
   styleUrls: ['./manual-selection-disk-filters.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxInputComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     TranslateModule,
   ],
 })
@@ -34,6 +37,8 @@ export class ManualSelectionDiskFiltersComponent implements OnInit, OnChanges {
   private formBuilder = inject(FormBuilder);
   store$ = inject(ManualDiskSelectionStore);
   private destroyRef = inject(DestroyRef);
+
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   readonly isSedEncryption = input<boolean>(false);
   readonly filtersUpdated = output<ManualDiskSelectionFilters>();

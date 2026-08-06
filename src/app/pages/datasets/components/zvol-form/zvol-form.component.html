@@ -1,11 +1,10 @@
+<!-- Panel-hosted only: the title, Save and role gating live on the <tn-side-panel> host. -->
 <ix-form
   [formGroup]="form"
-  [isEditMode]="!isNew"
-  [requiredRoles]="requiredRoles"
   [externalLoading]="setupLoading()"
   [initialFormSnapshot]="formSnapshot()"
   [submitHandler]="handleSubmit"
-  (closed)="onFormClosed()"
+  (closed)="closed.emit($event)"
 >
   <tn-form-section>
     <tn-form-field
@@ -201,7 +200,7 @@
     </ix-details-table>
   </tn-form-section>
 
-  @if (isNew) {
+  @if (isNew()) {
     <tn-form-section [heading]="helptext.encryption.title | translate">
       <tn-form-field [tooltip]="helptext.encryption.inheritTooltip | translate">
         <tn-checkbox

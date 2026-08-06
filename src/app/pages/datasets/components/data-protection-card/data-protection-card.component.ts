@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -7,9 +7,9 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { dataProtectionCardElements } from 'app/pages/datasets/components/data-protection-card/data-protection-card.elements';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 
@@ -31,9 +31,7 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
 })
 export class DataProtectionCardComponent {
   private formPanel = inject(FormSidePanelService);
-  private snackbarService = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
 
   readonly dataset = input.required<DatasetDetails>();
 
@@ -72,11 +70,8 @@ export class DataProtectionCardComponent {
 
   addSnapshot(): void {
     this.formPanel.open(SnapshotAddFormComponent, {
-      title: this.translate.instant('Add Snapshot'),
+      title: this.translate.instant(helptextSnapshots.addTitle),
       inputs: { presetDatasetId: this.dataset().id },
-    })
-      .onSuccess(() => {
-        this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));
-      }, this.destroyRef);
+    });
   }
 }

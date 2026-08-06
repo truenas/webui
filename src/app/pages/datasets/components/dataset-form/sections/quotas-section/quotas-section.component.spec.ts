@@ -45,6 +45,19 @@ describe('QuotasSectionComponent', () => {
     expect(await (await getInput('reservation')).getValue()).toBe('');
   });
 
+  it('reports its current validity on mount, not only on later status changes', () => {
+    const emissions: boolean[] = [];
+    spectator = createComponent({ detectChanges: false });
+    spectator.component.formValidityChange.subscribe((isValid) => emissions.push(isValid));
+
+    // The section mounts and unmounts with the host's Advanced toggle. Without this first emission a
+    // fresh, valid instance would leave the host's last-known `false` in place, disabling Save with
+    // no invalid field on screen.
+    spectator.detectChanges();
+
+    expect(emissions).toEqual([true]);
+  });
+
   it('returns create payload when getPayload is called', async () => {
     await (await getCheckbox('refquota_warning_inherit')).uncheck();
     await (await getCheckbox('quota_critical_inherit')).uncheck();

@@ -1,15 +1,16 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, input, OnChanges, inject } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnFormFieldComponent, TnInputComponent, TnSelectComponent } from '@truenas/ui-components';
 import { filter, take } from 'rxjs/operators';
 import { CreateVdevLayout, vdevLayoutOptions, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
+import { optionTestIdByKebabLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasDeepChanges, setValueIfNotSame } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
@@ -23,10 +24,11 @@ import { NormalSelectionComponent } from './normal-selection/normal-selection.co
   styleUrls: ['./automated-disk-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxSelectComponent,
-    TestOverrideDirective,
+    AsyncPipe,
+    TnFormFieldComponent,
+    TnSelectComponent,
     ReactiveFormsModule,
-    IxInputComponent,
+    TnInputComponent,
     DraidSelectionComponent,
     NormalSelectionComponent,
     TranslateModule,
@@ -38,6 +40,8 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   protected store = inject(PoolManagerStore);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   readonly isStepActive = input<boolean>(false);
   readonly type = input<VDevType>();
@@ -64,9 +68,8 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   });
 
   /**
-   * Explains the parity lock on special/dedup layout dropdowns. Rendered as a
-   * mat-hint on the layout select so screen readers pick it up via the form
-   * field's aria-describedby wiring.
+   * Explains the parity lock on special/dedup layout dropdowns. Bound to the layout field's
+   * `[hint]` input, which tn-form-field associates with the control via aria-describedby.
    *   - No hint when the Stripe option is present (data has no redundancy, so
    *     there's no meaningful restriction to explain).
    *   - Exact-match copy when only one layout remains (pool already has vdevs
@@ -99,6 +102,12 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   protected vdevLayoutOptions$ = toObservable(computed(() => (
     vdevLayoutOptions.filter((option) => this.limitLayouts().includes(option.value))
   )));
+
+  /**
+   * Keeps `RAIDZ1`/`dRAID1` resolving to `option-layout-raidz-1`/`option-layout-d-raid-1`,
+   * which keying off the `CreateVdevLayout` value would not.
+   */
+  protected readonly layoutOptionTestIdKey = optionTestIdByKebabLabel;
 
   constructor() {
     this.updateStoreOnChanges();

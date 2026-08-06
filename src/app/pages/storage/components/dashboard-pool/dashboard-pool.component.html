@@ -4,60 +4,53 @@
       <h2 class="pool-name">{{ pool()?.name }}</h2>
       <div class="pool-actions">
         @if (!pool()?.is_upgraded && isOnline()) {
-          <button
+          <tn-button
             *ixRequiresRoles="requiredRoles"
-            mat-button
             color="primary"
-            [ixTest]="['upgrade-pool', pool()?.name]"
-            (click)="onUpgrade()"
-          >
-            {{ 'Upgrade' | translate }}
-          </button>
+            [testId]="['upgrade-pool', pool()?.name]"
+            [label]="'Upgrade' | translate"
+            (onClick)="onUpgrade()"
+          ></tn-button>
         }
 
-        <button
+        <tn-button
           *ixRequiresRoles="requiredRoles"
-          mat-button
-          color="accent"
-          [ixTest]="['disconnect', pool()?.name]"
+          color="secondary"
+          [testId]="['disconnect', pool()?.name]"
           [ixUiSearch]="searchableElements.elements.disconnect"
-          (click)="onDisconnect()"
-        >
-          {{ 'Disconnect' | translate }}
-        </button>
+          [label]="'Disconnect' | translate"
+          (onClick)="onDisconnect()"
+        ></tn-button>
 
-        <button
-          mat-icon-button
-          [tnTooltip]="'Advanced Actions' | translate"
-          [attr.aria-label]="'Advanced Actions' | translate"
-          [matMenuTriggerFor]="advancedMenu"
-          [ixTest]="['advanced-actions', pool()?.name]"
-        >
-          <tn-icon name="dots-vertical" library="mdi"></tn-icon>
-        </button>
+        <tn-icon-button
+          name="dots-vertical"
+          library="mdi"
+          [tooltip]="'Advanced Actions' | translate"
+          [ariaLabel]="'Advanced Actions' | translate"
+          [tnMenuTriggerFor]="advancedMenu"
+          [testId]="['advanced-actions', pool()?.name]"
+        ></tn-icon-button>
 
-        <mat-menu #advancedMenu="matMenu">
-          <button
+        <tn-menu #advancedMenu>
+          <tn-menu-item
             *ixRequiresRoles="requiredRoles"
-            mat-menu-item
-            [ixTest]="['expand', pool()?.name]"
+            icon="trending-up"
+            iconLibrary="mdi"
+            [testId]="['expand', pool()?.name]"
             [ixUiSearch]="searchableElements.elements.expand"
-            (click)="onExpand()"
-          >
-            <tn-icon name="trending-up" library="mdi"></tn-icon>
-            {{ 'Expand Pool' | translate }}
-          </button>
+            [label]="'Expand Pool' | translate"
+            (itemClick)="onExpand()"
+          ></tn-menu-item>
 
-          <button
+          <tn-menu-item
             *ixRequiresRoles="requiredRoles"
-            mat-menu-item
-            [ixTest]="['auto-trim', pool()?.name]"
-            (click)="onEditAutotrim()"
-          >
-            <tn-icon name="content-cut" library="mdi"></tn-icon>
-            {{ 'Auto TRIM' | translate }}
-          </button>
-        </mat-menu>
+            icon="content-cut"
+            iconLibrary="mdi"
+            [testId]="['auto-trim', pool()?.name]"
+            [label]="'Auto TRIM' | translate"
+            (itemClick)="onEditAutotrim()"
+          ></tn-menu-item>
+        </tn-menu>
       </div>
     </div>
 
@@ -94,13 +87,11 @@
     </div>
     <div class="cards">
       @for (_ of counter(4); track _) {
-        <mat-card class="card">
-          <mat-card-content>
-            @for (_ of counter(5); track _) {
-              <ngx-skeleton-loader></ngx-skeleton-loader>
-            }
-          </mat-card-content>
-        </mat-card>
+        <tn-card class="card">
+          @for (_ of counter(5); track _) {
+            <ngx-skeleton-loader></ngx-skeleton-loader>
+          }
+        </tn-card>
       }
     </div>
   </div>

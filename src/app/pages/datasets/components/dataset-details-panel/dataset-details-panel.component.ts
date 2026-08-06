@@ -9,11 +9,11 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
@@ -25,7 +25,7 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
 import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { doesDatasetHaveShares, getDatasetLabel, isIocageMounted } from 'app/pages/datasets/utils/dataset.utils';
+import { doesDatasetHaveShares, isIocageMounted } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
   selector: 'ix-dataset-details-panel',
@@ -53,7 +53,6 @@ export class DatasetDetailsPanelComponent {
   private datasetStore = inject(DatasetTreeStore);
   private router = inject(Router);
   private formPanel = inject(FormSidePanelService);
-  private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
@@ -85,7 +84,7 @@ export class DatasetDetailsPanelComponent {
   onAddDataset(): void {
     this.formPanel.open<Dataset>(DatasetFormComponent, {
       wide: true,
-      title: this.translate.instant('Add Dataset'),
+      title: this.translate.instant(helptextDatasetForm.addTitle),
       inputs: { params: { isNew: true, datasetId: this.dataset().id } },
     }).onSuccess((response) => {
       this.switchToNewDateset(response.id);
@@ -96,10 +95,7 @@ export class DatasetDetailsPanelComponent {
     this.formPanel.open<Dataset>(ZvolFormComponent, {
       title: this.translate.instant(helptextZvol.addTitle),
       inputs: { params: { isNew: true, parentOrZvolId: this.dataset().id } },
-    }).onSuccess((response) => {
-      this.snackbar.success(this.translate.instant('Switched to new zvol «{name}».', { name: getDatasetLabel(response) }));
-      this.switchToNewDateset(response.id);
-    }, this.destroyRef);
+    }).onSuccess((response) => this.switchToNewDateset(response.id), this.destroyRef);
   }
 
   private switchToNewDateset(id: string): void {

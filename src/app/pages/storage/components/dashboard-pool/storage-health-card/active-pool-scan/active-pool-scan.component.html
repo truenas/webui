@@ -12,38 +12,32 @@
     </div>
   }
 
-  <mat-progress-bar
+  <tn-progress-bar
     class="progress"
     [value]="scan().percentage"
-  ></mat-progress-bar>
+  ></tn-progress-bar>
 </div>
 
 @if (isScrub()) {
   <ng-container *ixRequiresRoles="[Role.PoolScrubWrite]">
     <div class="controls">
-      <button
-        mat-button
-        ixTest="stop-scrub"
-        (click)="onStopScrub()"
-      >
-        {{ 'Stop Scrub' | translate }}
-      </button>
+      <tn-button
+        [testId]="'stop-scrub'"
+        [label]="'Stop Scrub' | translate"
+        (onClick)="onStopScrub()"
+      ></tn-button>
       @if (isScrubPaused()) {
-        <button
-          mat-button
-          ixTest="resume-scrub"
-          (click)="onResumeScrub()"
-        >
-          {{ 'Resume Scrub' | translate }}
-        </button>
+        <tn-button
+          [testId]="'resume-scrub'"
+          [label]="'Resume Scrub' | translate"
+          (onClick)="onResumeScrub()"
+        ></tn-button>
       } @else {
-        <button
-          mat-button
-          ixTest="pause-scrub"
-          (click)="onPauseScrub()"
-        >
-          {{ 'Pause Scrub' | translate }}
-        </button>
+        <tn-button
+          [testId]="'pause-scrub'"
+          [label]="'Pause Scrub' | translate"
+          (onClick)="onPauseScrub()"
+        ></tn-button>
       }
     </div>
   </ng-container>
