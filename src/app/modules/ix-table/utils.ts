@@ -395,6 +395,17 @@ export interface TnTableListHost<T extends object> {
   readonly rows: Signal<T[]>;
   /** For `[loading]`. */
   readonly isLoading: Signal<boolean>;
+  /**
+   * Translated loading text, for `[loadingMessage]`.
+   *
+   * `tn-table` defaults that input to a bare English literal — the library takes no i18n
+   * dependency, so it can only ship the untranslated default and expects the app to pass a
+   * translated one. Resolved here, out of the same `EmptyService` catalog that supplies
+   * {@link empty}'s message, rather than written out as `'Loading...' | translate` in each
+   * template: webui already carries two spellings of that string (`Loading...` and `Loading…`)
+   * which translate differently, and every fresh copy is a chance to add a third.
+   */
+  readonly loadingMessage: Signal<string>;
   /** For `[emptyMessage]`/`[emptyIcon]` and the page-level empty state. */
   readonly empty: TableEmptyState;
   /** For `[displayedColumns]`. */
@@ -491,6 +502,17 @@ export function tnTableListHost<T extends object>(
   const isLoading = dataProviderLoading(provider);
   const empty = dataProviderEmptyState(provider);
   const lang = langChangeSignal();
+  const emptyService = inject(EmptyService);
+  const translate = inject(TranslateService);
+
+  // Keyed on `lang()` for the same reason `dataProviderEmptyState` keys its message: `instant()`
+  // alone would freeze whichever locale happened to be active when the list was built.
+  const loadingMessage = computed(() => {
+    lang();
+    // `title` is optional on EmptyConfig, though the loading config always carries one.
+    const title = emptyService.defaultEmptyConfig(EmptyType.Loading).title;
+    return title ? translate.instant(title) : '';
+  });
 
   function perRow<R>(derive: (row: T) => R): (row: T) => R {
     // A fresh cache per (rows, language), so invalidation is structural.
@@ -512,6 +534,7 @@ export function tnTableListHost<T extends object>(
   const base = {
     rows,
     isLoading,
+    loadingMessage,
     empty,
     perRow,
     rowTag: (tagBase: (row: T) => string) => perRow((row: T) => kebabCase(convertStringToId(tagBase(row)))),

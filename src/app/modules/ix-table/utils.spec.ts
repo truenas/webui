@@ -448,11 +448,15 @@ describe('tnTableListHost', () => {
   let currentPage$: BehaviorSubject<Row[]>;
   let setSorting: jest.Mock;
   let provider: BaseDataProvider<Row>;
+  // Identity by default, so most assertions read as the untranslated key; swapped out by the
+  // tests that check a binding follows a language change.
+  let translated: (key: string) => string;
 
   const tank = { name: 'tank' };
 
   beforeEach(() => {
     langChange$ = new Subject<LangChangeEvent>();
+    translated = (key: string) => key;
     currentPage$ = new BehaviorSubject<Row[]>([tank]);
     setSorting = jest.fn();
     provider = {
@@ -467,7 +471,7 @@ describe('tnTableListHost', () => {
       providers: [
         {
           provide: TranslateService,
-          useValue: { instant: (key: string) => key, onLangChange: langChange$ },
+          useValue: { instant: (key: string) => translated(key), onLangChange: langChange$ },
         },
       ],
     });
@@ -482,6 +486,28 @@ describe('tnTableListHost', () => {
         expect(list.isLoading()).toBe(false);
         expect(list.empty.type()).toBe(EmptyType.NoPageData);
         expect(list.empty.count()).toBe(1);
+      });
+    });
+
+    it('resolves the loading message from the empty-state catalog, not a per-template literal', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { displayedColumns: ['name'] });
+
+        // The catalog's `loadingConfig` title, so the six migrated lists can't drift onto a
+        // second spelling of it (webui carries both 'Loading...' and 'Loading…').
+        expect(list.loadingMessage()).toBe('Loading...');
+      });
+    });
+
+    it('re-translates the loading message when the language changes', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { displayedColumns: ['name'] });
+        expect(list.loadingMessage()).toBe('Loading...');
+
+        translated = () => 'Chargement…';
+        langChange$.next({ lang: 'fr' } as LangChangeEvent);
+
+        expect(list.loadingMessage()).toBe('Chargement…');
       });
     });
 

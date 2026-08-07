@@ -28,7 +28,7 @@
     [displayedColumns]="list.displayedColumns()"
     [trackBy]="trackBySnapshotId"
     [loading]="list.isLoading()"
-    [loadingMessage]="'Loading...' | translate"
+    [loadingMessage]="list.loadingMessage()"
     [expandable]="true"
     [clickable]="true"
     [emptyMessage]="list.empty.message()"

@@ -37,7 +37,7 @@
     [displayedColumns]="list.displayedColumns()"
     [trackBy]="trackByTaskId"
     [loading]="list.isLoading()"
-    [loadingMessage]="'Loading...' | translate"
+    [loadingMessage]="list.loadingMessage()"
     [expandable]="true"
     [clickable]="true"
     [emptyMessage]="list.empty.message()"

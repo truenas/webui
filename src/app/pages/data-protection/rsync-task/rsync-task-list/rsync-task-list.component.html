@@ -36,7 +36,7 @@
     [displayedColumns]="list.displayedColumns()"
     [trackBy]="trackByTaskId"
     [loading]="list.isLoading()"
-    [loadingMessage]="'Loading...' | translate"
+    [loadingMessage]="list.loadingMessage()"
     [emptyMessage]="list.empty.message()"
     [emptyIcon]="list.empty.icon()"
     (sortChange)="list.onSortChange($event)"
