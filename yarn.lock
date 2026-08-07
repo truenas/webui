@@ -3874,6 +3874,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@playwright/test@npm:~1.56.0":
+  version: 1.56.1
+  resolution: "@playwright/test@npm:1.56.1"
+  dependencies:
+    playwright: "npm:1.56.1"
+  bin:
+    playwright: cli.js
+  checksum: 10/9933fa9f8eb9e775e792421b99c984c310b92092e65de57508ae1951a2589d87bbb5f1c4114bfdf7f69c15c0a3acb3f31259e143fa597aa28e97f4b223e37637
+  languageName: node
+  linkType: hard
+
 "@popperjs/core@npm:^2.11.8, @popperjs/core@npm:^2.9.3":
   version: 2.11.8
   resolution: "@popperjs/core@npm:2.11.8"
@@ -4512,6 +4523,15 @@ __metadata:
     picocolors: "npm:1.1.1"
     pretty-format: "npm:^27.0.2"
   checksum: 10/7f93e09ea015f151f8b8f42cbab0b2b858999b5445f15239a72a612ef7716e672b14c40c421218194cf191cbecbde0afa6f3dc2cc83dda93ff6a4fb0237df6e6
+  languageName: node
+  linkType: hard
+
+"@truenas/api-client@npm:~1.0.3":
+  version: 1.0.6
+  resolution: "@truenas/api-client@npm:1.0.6"
+  peerDependencies:
+    rxjs: ^7.8.0
+  checksum: 10/3c23c725cd759303d2892043d4c9a91b9c8c91b25b01c234e4d842fa66aa44947db1643d4a28bbcc23b2d5ff1a281cee3d5486e537db5a1c9f94ccc38c438012
   languageName: node
   linkType: hard
 
@@ -13932,12 +13952,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"playwright-core@npm:1.56.1":
+  version: 1.56.1
+  resolution: "playwright-core@npm:1.56.1"
+  bin:
+    playwright-core: cli.js
+  checksum: 10/df785eb3b3a8392b10dcde5f768e09b7fe459a7b06ed81180da69e048f2154b761f86d79572c2b62037a1f18a44e4ace72f5b6547f4f473b4ab13ab1d94007d2
+  languageName: node
+  linkType: hard
+
 "playwright-core@npm:1.58.0-alpha-2026-01-16":
   version: 1.58.0-alpha-2026-01-16
   resolution: "playwright-core@npm:1.58.0-alpha-2026-01-16"
   bin:
     playwright-core: cli.js
   checksum: 10/a70cfcecba1ec3f8f4a8032474489da376e0684d16202db39a713ffafddef5135981ea96936fc5c6074c3b82b245f7cfd8bbd520d8b69b1130c2e4f59b46dd0b
+  languageName: node
+  linkType: hard
+
+"playwright@npm:1.56.1":
+  version: 1.56.1
+  resolution: "playwright@npm:1.56.1"
+  dependencies:
+    fsevents: "npm:2.3.2"
+    playwright-core: "npm:1.56.1"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    playwright: cli.js
+  checksum: 10/f1743f93b26f1d497257771428d93f3c9ed2d75b00d935f0cd1556ff2dc61d47f2df8b381d752fbd2c47082b685f0ffe4cc4b7ba440d7b4ba3a08572aec58fba
   languageName: node
   linkType: hard
 
@@ -16097,10 +16141,12 @@ __metadata:
     "@ngx-translate/core": "npm:~15.0.0"
     "@ngx-translate/http-loader": "npm:~8.0.0"
     "@playwright/mcp": "npm:latest"
+    "@playwright/test": "npm:~1.56.0"
     "@popperjs/core": "npm:^2.9.3"
     "@shopify/eslint-plugin": "npm:~50.0.0"
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
+    "@truenas/api-client": "npm:~1.0.3"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
     "@truenas/ui-components": "npm:~0.4.9"
     "@types/cheerio": "npm:~0.22.35"

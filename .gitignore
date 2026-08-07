@@ -115,3 +115,13 @@ src/app/testing-configs/*
 
 # Playwright MCP
 .playwright-mcp/
+
+# E2E suite (Playwright)
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+# Persisted authenticated browser state — contains a live session token
+/e2e/.auth/
+# Local E2E target configuration — never commit credentials
+/.env
