@@ -1,4 +1,6 @@
+@import 'scss-imports/status-pill';
+
+// Shares the pill shape and per-state colours with ix-task-state-cell through the mixin.
 .state-button {
-  line-height: initial;
-  padding: 0 8px;
+  @include status-pill;
 }

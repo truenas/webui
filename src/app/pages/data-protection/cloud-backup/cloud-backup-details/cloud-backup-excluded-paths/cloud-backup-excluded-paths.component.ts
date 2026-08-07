@@ -1,10 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import {
-  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
-} from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 
 @Component({
@@ -13,10 +11,7 @@ import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
   styleUrl: './cloud-backup-excluded-paths.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
+    TnCardComponent,
     TranslateModule,
   ],
 })

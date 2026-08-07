@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent, MockPipe } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -16,17 +16,12 @@ import { PeriodicSnapshotTaskUi, PeriodicSnapshotTask } from 'app/interfaces/per
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import {
-  IxCellScheduleComponent,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
-import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import {
   IxTableDetailsRowComponent,
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import {
+  TableColumnPickerComponent,
+} from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -44,7 +39,7 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 describe('SnapshotTaskListComponent', () => {
   let spectator: Spectator<SnapshotTaskListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
   const event$ = new Subject<ApiEvent<PeriodicSnapshotTask>>();
 
   const snapshotTasksList = [
@@ -78,13 +73,12 @@ describe('SnapshotTaskListComponent', () => {
     imports: [
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
-      IxTableDetailsRowDirective,
+      TableColumnPickerComponent,
       IxTableDetailsRowComponent,
     ],
     overrideComponents: [
       [
-        IxCellScheduleComponent, {
+        SnapshotTaskListComponent, {
           remove: { imports: [ScheduleDescriptionPipe] },
           add: { imports: [MockPipe(ScheduleDescriptionPipe, jest.fn(() => 'At 12:00 AM, every day'))] },
         },
@@ -131,12 +125,14 @@ describe('SnapshotTaskListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Pool/Dataset', 'Recursive', 'Naming Schema', 'When', 'Frequency', 'Enabled', 'State'],
+    expect(await table.getHeaderTexts()).toEqual([
+      'Pool/Dataset', 'Recursive', 'Naming Schema', 'When', 'Frequency', 'Enabled', 'State',
+    ]);
+    expect(await table.getAllRowTexts()).toEqual([
       [
         'm60pool/manual-2024-02-05_11-19-clone',
         'No',
@@ -146,16 +142,21 @@ describe('SnapshotTaskListComponent', () => {
         'Yes',
         'Pending',
       ],
-    ];
+    ]);
+  });
 
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+  it('expands the detail row when the row itself is clicked', async () => {
+    expect(await table.isRowExpanded(0)).toBe(false);
+
+    await table.clickRow(0);
+
+    expect(await table.isRowExpanded(0)).toBe(true);
   });
 
   it('shows form to edit an existing task when Edit button is pressed', async () => {
-    await table.expandRow(0);
+    await table.toggleRowExpansion(0);
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
     await editButton.click();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
@@ -173,9 +174,9 @@ describe('SnapshotTaskListComponent', () => {
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
 
-    await table.expandRow(0);
+    await table.toggleRowExpansion(0);
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

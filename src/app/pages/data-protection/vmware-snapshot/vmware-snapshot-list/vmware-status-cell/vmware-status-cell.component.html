@@ -1,10 +1,14 @@
-<button
-  mat-stroked-button
-  class="state-button"
+<span
   tnTooltipPosition="above"
-  disabled
-  [ngClass]="getButtonClass()"
-  [tnTooltip]="tooltip"
+  [class]="'state-button ' + stateClass()"
+  [tnTooltip]="tooltip()"
 >
-  {{ state().state | translate | titlecase }}
-</button>
+  {{ stateText() }}
+
+  <!-- ERROR/BLOCKED carry their explanation only in the tooltip, which is unreachable on a
+    non-focusable element. Append it for screen readers rather than replacing the pill with
+    an aria-label, which would take the visible state word out of the accessibility tree. -->
+  @if (explanation(); as explanation) {
+    <span class="sr-only">, {{ explanation }}</span>
+  }
+</span>

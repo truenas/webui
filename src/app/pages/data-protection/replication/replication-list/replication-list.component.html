@@ -4,104 +4,235 @@
     (queryChange)="onListFiltered($event)"
   ></ix-basic-search>
 
-  <ix-table-columns-selector
+  <ix-table-column-picker
+    [columns]="list.columns()"
     [columnPreferencesKey]="'replicationList'"
-    [columns]="columns"
-    (columnsChange)="columnsChange($event)"
-  ></ix-table-columns-selector>
+    (columnsChange)="list.columnsChange($event)"
+  ></ix-table-column-picker>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
     color="primary"
-    [ixTest]="['replication-task', 'add']"
+    [testId]="['replication-task', 'add']"
+    [label]="'Add' | translate"
     [ixUiSearch]="searchableElements.elements.add"
-    (click)="openForm()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    (onClick)="openForm()"
+  ></tn-button>
 </ix-page-header>
 
-@if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
-  <ix-empty [conf]="emptyConfig"></ix-empty>
+@if (list.empty.type() === EmptyType.NoPageData && !list.empty.count()) {
+  <tn-empty
+    [icon]="emptyIcon.name"
+    [iconLibrary]="emptyIcon.library"
+    [iconSize]="emptyIcon.size"
+    [title]="emptyConfig.message | translate | flattenEmptyMessage"
+  ></tn-empty>
 } @else {
-  <ix-table
+  <tn-table
     class="table"
+    [expandOnRowClick]="true"
+    [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.tasks"
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    [dataSource]="list.rows()"
+    [displayedColumns]="list.displayedColumns()"
+    [trackBy]="trackByTaskId"
+    [loading]="list.isLoading()"
+    [loadingMessage]="list.loadingMessage()"
+    [expandable]="true"
+    [clickable]="true"
+    [emptyMessage]="list.empty.message()"
+    [emptyIcon]="list.empty.icon()"
+    (sortChange)="list.onSortChange($event)"
   >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
-    >
-      <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
-        <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="task">
-          <div class="table-details-row-actions">
-            @if (!task.job || task.job.state !== jobState.Running) {
-              <button
-                *ixRequiresRoles="requiredRoles"
-                mat-button
-                [ixTest]="[task.id, 'run_now']"
-                (click)="runNow(task)"
-              >
-                <tn-icon name="play" library="mdi"></tn-icon>
-                <span>{{ 'Run Now' | translate }}</span>
-              </button>
-            }
-
-            <button
-              *ixRequiresRoles="requiredRoles"
-              mat-button
-              [ixTest]="[task.id, 'restore']"
-              (click)="restore(task)"
-            >
-              <tn-icon name="restore" library="mdi"></tn-icon>
-              <span>{{ 'Restore' | translate }}</span>
-            </button>
-
-            @if (task.has_encrypted_dataset_keys) {
-              <button
-                *ixRequiresRoles="requiredRoles"
-                mat-button
-                [ixTest]="[task.id, 'download']"
-                (click)="downloadKeys(task)"
-              >
-                <tn-icon name="download" library="mdi"></tn-icon>
-                <span>{{ 'Download Keys' | translate }}</span>
-              </button>
-            }
-
-            <button
-              mat-button
-              [ixTest]="[task.id, 'edit']"
-              (click)="openForm(task)"
-            >
-              <tn-icon name="pencil" library="mdi"></tn-icon>
-              <span>{{ 'Edit' | translate }}</span>
-            </button>
-
-            <button
-              *ixRequiresRoles="requiredRoles"
-              mat-button
-              [ixTest]="[task.id, 'delete']"
-              (click)="doDelete(task)"
-            >
-              <tn-icon name="delete" library="mdi"></tn-icon>
-              <span>{{ 'Delete' | translate }}</span>
-            </button>
-          </div>
-        </ix-table-details-row>
+    <ng-container [tnColumnDef]="'name'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().name }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.name"
+          [title]="titles().name"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [tooltip]="row.name || ''"
+        ></ix-table-text-cell>
       </ng-template>
-    </tbody>
-  </ix-table>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'direction'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().direction }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.direction"
+          [title]="titles().direction"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'transport'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().transport }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.transport"
+          [title]="titles().transport"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'ssh_credentials'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().sshConnection }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="getSshConnection(row)"
+          [title]="titles().sshConnection"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'source_datasets'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().sourceDataset }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.source_datasets"
+          [title]="titles().sourceDataset"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'target_dataset'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().targetDataset }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.target_dataset"
+          [title]="titles().targetDataset"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'recursive'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().recursive }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          testIdSuffix="row-yesno"
+          [value]="row.recursive | yesNo | translate"
+          [title]="titles().recursive"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'auto'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().auto }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          testIdSuffix="row-yesno"
+          [value]="row.auto | yesNo | translate"
+          [title]="titles().auto"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'last-run'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().lastRun }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-relative-date-cell
+          [value]="row.state?.datetime?.$date"
+          [title]="titles().lastRun"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-relative-date-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'state'" [sortable]="true" [width]="'120px'">
+      <ng-template tnHeaderCellDef>{{ titles().state }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-task-state-cell
+          [state]="row.state.state"
+          [job]="row.job"
+          [testId]="[titles().state, uniqueRowTag(row), 'row-state']"
+          [ariaLabel]="ariaLabel(row)"
+        ></ix-task-state-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
+      <ng-template tnHeaderCellDef>{{ titles().enabled }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-toggle-cell
+          #enabledToggle
+          [title]="titles().enabled"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [ariaLabel]="ariaLabel(row)"
+          [checked]="!!row.enabled"
+          [requiredRoles]="requiredRoles"
+          (toggled)="onChangeEnabledState(row, enabledToggle)"
+        ></ix-table-toggle-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'last-snapshot'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().lastSnapshot }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="getLastSnapshot(row)"
+          [title]="titles().lastSnapshot"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-template let-task tnDetailRowDef>
+      <ix-table-details-row [hiddenColumns]="list.hiddenColumns()" [row]="task">
+        <div class="table-details-row-actions">
+          @if (!task.job || task.job.state !== jobState.Running) {
+            <tn-button
+              *ixRequiresRoles="requiredRoles"
+              icon="mdi-play"
+              [testId]="detailActionTestId(task, 'run_now')"
+              [label]="'Run Now' | translate"
+              (onClick)="runNow(task)"
+            ></tn-button>
+          }
+
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            icon="mdi-restore"
+            [testId]="detailActionTestId(task, 'restore')"
+            [label]="'Restore' | translate"
+            (onClick)="restore(task)"
+          ></tn-button>
+
+          @if (task.has_encrypted_dataset_keys) {
+            <tn-button
+              *ixRequiresRoles="requiredRoles"
+              icon="mdi-download"
+              [testId]="detailActionTestId(task, 'download')"
+              [label]="'Download Keys' | translate"
+              (onClick)="downloadKeys(task)"
+            ></tn-button>
+          }
+
+          <tn-button
+            icon="mdi-pencil"
+            [testId]="detailActionTestId(task, 'edit')"
+            [label]="'Edit' | translate"
+            (onClick)="openForm(task)"
+          ></tn-button>
+
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            icon="mdi-delete"
+            [testId]="detailActionTestId(task, 'delete')"
+            [label]="'Delete' | translate"
+            (onClick)="doDelete(task)"
+          ></tn-button>
+        </div>
+      </ix-table-details-row>
+    </ng-template>
+  </tn-table>
 
   <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
 }

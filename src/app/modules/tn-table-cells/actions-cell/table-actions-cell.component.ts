@@ -12,6 +12,7 @@ import {
 import { Subscription } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { stopRowActivationKeys } from 'app/modules/tn-table-cells/stop-row-activation-keys';
 
 /**
  * tn-table replacement for the ix-table `actionsWithMenuColumn`/`actionsColumn`
@@ -52,6 +53,8 @@ export class TableActionsCellComponent<T = unknown> {
   readonly uniqueRowTag = input.required<string>();
   readonly ariaLabel = input.required<string>();
   readonly mode = input<'menu' | 'inline'>('menu');
+
+  protected readonly stopRowActivationKeys = stopRowActivationKeys;
 
   protected readonly visibleActions = signal<IconActionConfig<T>[]>([]);
 

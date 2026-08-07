@@ -4,46 +4,227 @@
     (queryChange)="onListFiltered($event)"
   ></ix-basic-search>
 
-  <ix-table-columns-selector
+  <ix-table-column-picker
+    [columns]="list.columns()"
     [columnPreferencesKey]="'rsyncList'"
-    [columns]="columns"
-    (columnsChange)="columnsChange($event)"
-  ></ix-table-columns-selector>
+    (columnsChange)="list.columnsChange($event)"
+  ></ix-table-column-picker>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
     color="primary"
-    ixTest="add-task"
+    [testId]="'add-task'"
+    [label]="'Add' | translate"
     [ixUiSearch]="searchableElements.elements.add"
-    (click)="add()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    (onClick)="add()"
+  ></tn-button>
 </ix-page-header>
 
-@if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
-  <ix-empty [conf]="emptyConfig"></ix-empty>
+@if (list.empty.type() === EmptyType.NoPageData && !list.empty.count()) {
+  <tn-empty
+    [icon]="emptyIcon.name"
+    [iconLibrary]="emptyIcon.library"
+    [iconSize]="emptyIcon.size"
+    [title]="emptyConfig.message | translate | flattenEmptyMessage"
+  ></tn-empty>
 } @else {
-  <ix-table
+  <tn-table
     class="table"
+    [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.tasks"
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    [dataSource]="list.rows()"
+    [displayedColumns]="list.displayedColumns()"
+    [trackBy]="trackByTaskId"
+    [loading]="list.isLoading()"
+    [loadingMessage]="list.loadingMessage()"
+    [emptyMessage]="list.empty.message()"
+    [emptyIcon]="list.empty.icon()"
+    (sortChange)="list.onSortChange($event)"
   >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
-    >
-    </tbody>
-  </ix-table>
+    <ng-container [tnColumnDef]="'path'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().path }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.path"
+          [title]="titles().path"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [tooltip]="row.path || ''"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'remotehost'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().remoteHost }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.remotehost"
+          [title]="titles().remoteHost"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'remoteport'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().remoteSshPort }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.remoteport"
+          [title]="titles().remoteSshPort"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'remotemodule'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().remoteModuleName }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.remotemodule"
+          [title]="titles().remoteModuleName"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'remotepath'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().remotePath }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.remotepath"
+          [title]="titles().remotePath"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'direction'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().direction }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.direction"
+          [title]="titles().direction"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'schedule'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().schedule }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          testIdSuffix="row-schedule"
+          [value]="row.schedule | scheduleDescription"
+          [title]="titles().schedule"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [tooltip]="row.schedule | scheduleDescription"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'frequency'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().frequency }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="getFrequency(row)"
+          [title]="titles().frequency"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'next-run'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().nextRun }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-relative-date-cell
+          [value]="getNextRun(row)"
+          [title]="titles().nextRun"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-relative-date-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'last-run'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().lastRun }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-relative-date-cell
+          [value]="row.job?.time_finished?.$date"
+          [title]="titles().lastRun"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-relative-date-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'desc'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().shortDescription }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.desc"
+          [title]="titles().shortDescription"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'user'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().user }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.user"
+          [title]="titles().user"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'delayupdates'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().delayUpdates }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          testIdSuffix="row-yesno"
+          [value]="row.delayupdates | yesNo | translate"
+          [title]="titles().delayUpdates"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'status'" [sortable]="true" [width]="'120px'">
+      <ng-template tnHeaderCellDef>{{ titles().status }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-task-state-cell
+          [state]="getTaskState(row)"
+          [job]="row.job"
+          [testId]="[titles().status, uniqueRowTag(row), 'row-state']"
+          [ariaLabel]="ariaLabel(row)"
+        ></ix-task-state-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
+      <ng-template tnHeaderCellDef>{{ titles().enabled }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          testIdSuffix="row-yesno"
+          [value]="row.enabled | yesNo | translate"
+          [title]="titles().enabled"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+      <!-- The actions column has no visible heading, but it still needs an accessible one. -->
+      <ng-template tnHeaderCellDef><span class="sr-only">{{ 'Actions' | translate }}</span></ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-actions-cell
+          [actions]="actions"
+          [row]="row"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [ariaLabel]="ariaLabel(row)"
+        ></ix-table-actions-cell>
+      </ng-template>
+    </ng-container>
+  </tn-table>
 
   <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
 }

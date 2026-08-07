@@ -1,8 +1,8 @@
 import {
   Component, ChangeDetectionStrategy, input,
 } from '@angular/core';
-import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnDividerComponent } from '@truenas/ui-components';
 import { IxTableBodyCellDirective } from 'app/modules/ix-table/directives/ix-body-cell.directive';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 
@@ -13,7 +13,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxTableBodyCellDirective,
-    MatDivider,
+    TnDividerComponent,
     TranslateModule,
   ],
 })

@@ -1,23 +1,16 @@
 <!-- No info as stats currently available on the Cloud Backup interface -->
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'Details' | translate }}
-    </h3>
-  </mat-card-header>
-  <mat-card-content>
-    <p>{{ 'Path' | translate }}: {{ backup().path || '-' }}</p>
-    <p>{{ 'Cache Path' | translate }}: {{ backup().cache_path || '-' }}</p>
-    <p>{{ 'Credentials' | translate }}: {{ backup().credentials.name || '-' }}</p>
-    <p>{{ 'Bucket' | translate }}: {{ backup().attributes.bucket || '-' }}</p>
-    <p>{{ 'Folder' | translate }}: {{ backup().attributes.folder || '-' }}</p>
-    <p>{{ 'Keep Last' | translate }}: {{ backup().keep_last || '-' }}</p>
-    <p>{{ 'Rate Limit' | translate }}: @if (backup().rate_limit) {{{ formatRateLimit(backup().rate_limit) }}} @else {{{ 'No limit' | translate }}}</p>
-    <p>
-      {{ 'Transfer Setting' | translate }}:
-      {{ (backup().transfer_setting | mapValue: cloudsyncTransferSettingLabels) || '-' }}
-    </p>
-    <p>{{ 'Post Script' | translate }}: {{ backup().post_script || '-' }}</p>
-    <p>{{ 'Pre Script' | translate }}: {{ backup().pre_script || '-' }}</p>
-  </mat-card-content>
-</mat-card>
+<tn-card class="card" [title]="'Details' | translate">
+  <p>{{ 'Path' | translate }}: {{ backup().path || '-' }}</p>
+  <p>{{ 'Cache Path' | translate }}: {{ backup().cache_path || '-' }}</p>
+  <p>{{ 'Credentials' | translate }}: {{ backup().credentials.name || '-' }}</p>
+  <p>{{ 'Bucket' | translate }}: {{ backup().attributes.bucket || '-' }}</p>
+  <p>{{ 'Folder' | translate }}: {{ backup().attributes.folder || '-' }}</p>
+  <p>{{ 'Keep Last' | translate }}: {{ backup().keep_last || '-' }}</p>
+  <p>{{ 'Rate Limit' | translate }}: @if (backup().rate_limit) {{{ formatRateLimit(backup().rate_limit) }}} @else {{{ 'No limit' | translate }}}</p>
+  <p>
+    {{ 'Transfer Setting' | translate }}:
+    {{ (backup().transfer_setting | mapValue: cloudsyncTransferSettingLabels) || '-' }}
+  </p>
+  <p>{{ 'Post Script' | translate }}: {{ backup().post_script || '-' }}</p>
+  <p>{{ 'Pre Script' | translate }}: {{ backup().pre_script || '-' }}</p>
+</tn-card>
