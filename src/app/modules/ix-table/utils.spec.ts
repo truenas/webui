@@ -9,7 +9,8 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
 import type { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
 import {
   createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows, detailActionTestId, filterTableRows,
-  mapTnSortToProviderSorting, mapTnSortToTableSort, tnTableListHost, toDisplayedColumns,
+  mapTnSortToProviderSorting, mapTnSortToTableSort, memoizedRowTag, tnTableListHost, toDisplayedColumns,
+  toUniqueRowTag,
 } from './utils';
 
 describe('dataProviderRows / dataProviderLoading', () => {
@@ -759,5 +760,37 @@ describe('dataProviderEmptyState', () => {
       expect(empty.type()).toBe(EmptyType.Loading);
       expect(empty.count()).toBe(0);
     });
+  });
+});
+
+describe('memoizedRowTag', () => {
+  interface Row { name: string }
+
+  it('kebabs the built tag the same way toUniqueRowTag does', () => {
+    const tag = memoizedRowTag<Row>((row) => `virtual-machine-${row.name}`);
+
+    expect(tag({ name: 'My VM1' })).toBe(toUniqueRowTag('virtual-machine-My VM1'));
+    // Letter-digit boundary is split, matching what the legacy [ixTest] directive resolved to.
+    expect(tag({ name: 'My VM1' })).toBe('virtual-machine-my-vm-1');
+  });
+
+  it('builds a tag once per row and reuses it on every later call', () => {
+    const build = jest.fn((row: Row) => row.name);
+    const tag = memoizedRowTag(build);
+    const row = { name: 'vm-a' };
+
+    expect(tag(row)).toBe('vm-a');
+    expect(tag(row)).toBe('vm-a');
+    expect(build).toHaveBeenCalledTimes(1);
+  });
+
+  it('treats a replaced row object as a new row', () => {
+    const build = jest.fn((row: Row) => row.name);
+    const tag = memoizedRowTag(build);
+
+    tag({ name: 'vm-a' });
+    tag({ name: 'vm-a' });
+
+    expect(build).toHaveBeenCalledTimes(2);
   });
 });

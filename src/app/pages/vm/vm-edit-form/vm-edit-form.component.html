@@ -1,152 +1,193 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="true"
   [title]="'Edit VM' | translate"
-  [loading]="isLoading"
-></ix-modal-header>
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section>
+    <tn-form-field
+      [label]="'Name' | translate"
+      [tooltip]="helptext.name_tooltip | translate"
+      [required]="true"
+    >
+      <tn-input formControlName="name"></tn-input>
+    </tn-form-field>
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset>
-        <ix-input
-          formControlName="name"
-          [label]="'Name' | translate"
-          [required]="true"
-          [tooltip]="helptext.name_tooltip | translate"
-        ></ix-input>
-        <ix-input
-          formControlName="description"
-          [label]="'Description' | translate"
-          [tooltip]="helptext.description_tooltip | translate"
-        ></ix-input>
-        <ix-select
-          formControlName="time"
-          [label]="'System Clock' | translate"
-          [required]="true"
-          [options]="timeOptions$"
-          [tooltip]="helptext.time_tooltip | translate"
-        ></ix-select>
-        <ix-select
-          formControlName="bootloader"
-          [label]="'Boot Method' | translate"
-          [required]="true"
-          [options]="bootloaderOptions$"
-          [tooltip]="helptext.bootloader_tooltip | translate"
-        ></ix-select>
-        <ix-input
-          formControlName="shutdown_timeout"
-          type="number"
-          [label]="'Shutdown Timeout' | translate"
-          [tooltip]="helptext.shutdown_timeout.tooltip | translate"
-        ></ix-input>
-        <ix-checkbox
-          formControlName="autostart"
-          [label]="'Start on Boot' | translate"
-          [tooltip]="helptext.autostart_tooltip | translate"
-        ></ix-checkbox>
-        <ix-checkbox
-          formControlName="hyperv_enlightenments"
-          [label]="'Enable Hyper-V Enlightenments' | translate"
-          [tooltip]="helptext.hyperv_enlightenments_tooltip | translate"
-        ></ix-checkbox>
+    <tn-form-field
+      [label]="'Description' | translate"
+      [tooltip]="helptext.description_tooltip | translate"
+    >
+      <tn-input formControlName="description"></tn-input>
+    </tn-form-field>
 
-        <ix-checkbox
-          formControlName="trusted_platform_module"
-          [label]="'Enable Trusted Platform Module (TPM)' | translate"
-          [tooltip]="helptext.enableTrustedPlatformModule | translate"
-        ></ix-checkbox>
-      </ix-fieldset>
-      <ix-fieldset [title]="'CPUs and Memory' | translate">
-        <ix-input
-          formControlName="vcpus"
-          type="number"
-          [label]="'Virtual CPUs' | translate"
-          [tooltip]="helptext.vcpus_tooltip | translate"
-        ></ix-input>
-        <ix-input
-          formControlName="cores"
-          type="number"
-          [label]="'Cores' | translate"
-          [tooltip]="helptext.cores.tooltip | translate"
-        ></ix-input>
-        <ix-input
-          formControlName="threads"
-          type="number"
-          [label]="'Threads' | translate"
-          [tooltip]="helptext.threads.tooltip | translate"
-        ></ix-input>
-        <ix-input
-          formControlName="cpuset"
-          [label]="'Optional: CPU Set (Examples: 0-3,8-11)' | translate"
-          [tooltip]="helptext.cpuset.tooltip | translate"
-        ></ix-input>
-        <ix-checkbox
-          formControlName="pin_vcpus"
-          [label]="'Pin vcpus' | translate"
-          [tooltip]="helptext.pin_vcpus.tooltip | translate"
-        ></ix-checkbox>
-        <ix-select
-          formControlName="cpu_mode"
-          [label]="'CPU Mode' | translate"
-          [options]="cpuModeOptions$"
-          [required]="true"
-        ></ix-select>
-        @if (showCpuModelField) {
-          <ix-select
-            formControlName="cpu_model"
-            [label]="'CPU Model' | translate"
-            [options]="cpuModelOptions$"
-          ></ix-select>
-        }
-        <ix-input
-          formControlName="memory"
-          [label]="'Memory Size' | translate"
-          [tooltip]="helptext.memory_tooltip | translate"
-          [format]="formatter.memorySizeFormatting"
-          [parse]="formatter.memorySizeParsing"
-        ></ix-input>
-        <ix-input
-          formControlName="min_memory"
-          [label]="'Minimum Memory Size' | translate"
-          [tooltip]="helptext.min_memory_tooltip | translate"
-          [format]="formatter.memorySizeFormatting"
-          [parse]="formatter.memorySizeParsing"
-        ></ix-input>
-        <ix-input
-          formControlName="nodeset"
-          [label]="'Optional: NUMA nodeset (Example: 0-1)' | translate"
-          [tooltip]="helptext.nodeset.tooltip | translate"
-        ></ix-input>
-      </ix-fieldset>
-      <ix-fieldset [title]="'GPU' | translate">
-        <ix-checkbox
-          formControlName="hide_from_msr"
-          [label]="'Hide from MSR' | translate"
-        ></ix-checkbox>
-        <ix-checkbox
-          formControlName="ensure_display_device"
-          [label]="'Ensure Display Device' | translate"
-        ></ix-checkbox>
-        <ix-select
-          formControlName="gpus"
-          [multiple]="true"
-          [options]="gpuOptions$"
-          [label]="'GPUs' | translate"
-        ></ix-select>
-      </ix-fieldset>
+    <tn-form-field
+      [label]="'System Clock' | translate"
+      [tooltip]="helptext.time_tooltip | translate"
+      [required]="true"
+    >
+      <tn-select
+        formControlName="time"
+        [options]="(timeOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          type="submit"
-          mat-button
-          color="primary"
-          ixTest="save"
-          [disabled]="form.invalid || isLoading"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+    <tn-form-field
+      [label]="'Boot Method' | translate"
+      [tooltip]="helptext.bootloader_tooltip | translate"
+      [required]="true"
+    >
+      <tn-select
+        formControlName="bootloader"
+        [options]="(bootloaderOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Shutdown Timeout' | translate"
+      [tooltip]="helptext.shutdown_timeout.tooltip | translate"
+    >
+      <tn-input
+        formControlName="shutdown_timeout"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="helptext.autostart_tooltip | translate">
+      <tn-checkbox
+        formControlName="autostart"
+        [label]="'Start on Boot' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="helptext.hyperv_enlightenments_tooltip | translate">
+      <tn-checkbox
+        formControlName="hyperv_enlightenments"
+        [label]="'Enable Hyper-V Enlightenments' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="helptext.enableTrustedPlatformModule | translate">
+      <tn-checkbox
+        formControlName="trusted_platform_module"
+        [label]="'Enable Trusted Platform Module (TPM)' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </tn-form-section>
+
+  <tn-form-section [heading]="'CPUs and Memory' | translate">
+    <tn-form-field
+      [label]="'Virtual CPUs' | translate"
+      [tooltip]="helptext.vcpus_tooltip | translate"
+    >
+      <tn-input
+        formControlName="vcpus"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Cores' | translate"
+      [tooltip]="helptext.cores.tooltip | translate"
+    >
+      <tn-input
+        formControlName="cores"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Threads' | translate"
+      [tooltip]="helptext.threads.tooltip | translate"
+    >
+      <tn-input
+        formControlName="threads"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Optional: CPU Set (Examples: 0-3,8-11)' | translate"
+      [tooltip]="helptext.cpuset.tooltip | translate"
+    >
+      <tn-input formControlName="cpuset"></tn-input>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="helptext.pin_vcpus.tooltip | translate">
+      <tn-checkbox
+        formControlName="pin_vcpus"
+        [label]="'Pin vcpus' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    <tn-form-field [label]="'CPU Mode' | translate" [required]="true">
+      <tn-select
+        formControlName="cpu_mode"
+        [options]="(cpuModeOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+
+    @if (showCpuModelField) {
+      <tn-form-field [label]="'CPU Model' | translate">
+        <tn-select
+          formControlName="cpu_model"
+          [options]="(cpuModelOptions$ | async) ?? []"
+          [allowEmpty]="true"
+        ></tn-select>
+      </tn-form-field>
+    }
+
+    <!--
+      Memory fields stay on ix-input: they round-trip an exact byte count through
+      `memorySizeFormatting`/`memorySizeParsing`, and tn-input's `InputType.Size`
+      re-formats on blur to the nearest round unit, which would silently shift the
+      submitted MiB value (e.g. 1000 MiB → 0.98 GiB → 1004 MiB).
+    -->
+    <ix-input
+      formControlName="memory"
+      [label]="'Memory Size' | translate"
+      [tooltip]="helptext.memory_tooltip | translate"
+      [format]="formatter.memorySizeFormatting"
+      [parse]="formatter.memorySizeParsing"
+    ></ix-input>
+    <ix-input
+      formControlName="min_memory"
+      [label]="'Minimum Memory Size' | translate"
+      [tooltip]="helptext.min_memory_tooltip | translate"
+      [format]="formatter.memorySizeFormatting"
+      [parse]="formatter.memorySizeParsing"
+    ></ix-input>
+
+    <tn-form-field
+      [label]="'Optional: NUMA nodeset (Example: 0-1)' | translate"
+      [tooltip]="helptext.nodeset.tooltip | translate"
+    >
+      <tn-input formControlName="nodeset"></tn-input>
+    </tn-form-field>
+  </tn-form-section>
+
+  <tn-form-section [heading]="'GPU' | translate">
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="hide_from_msr"
+        [label]="'Hide from MSR' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    <tn-form-field>
+      <tn-checkbox
+        formControlName="ensure_display_device"
+        [label]="'Ensure Display Device' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    <tn-form-field [label]="'GPUs' | translate">
+      <tn-select
+        formControlName="gpus"
+        [multiple]="true"
+        [options]="(gpuOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+  </tn-form-section>
+</ix-form>

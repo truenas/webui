@@ -11,6 +11,14 @@
 </ix-page-header>
 
 <div class="table-container">
+  <!--
+    No page-level `tn-empty` branch here, unlike the other data-protection lists. Those gate on
+    `EmptyType.NoPageData` because each has a first-use config in `app/constants/empty-configs`
+    carrying a `large` icon and a body `message` that `tn-table`'s title-only `[emptyMessage]` has
+    nowhere to render. VMware snapshots has no such config — it falls through to the generic
+    `noItemsConfig`, whose title is all there is, and `[emptyMessage]` already shows it inside the
+    table. Add the branch here if this page ever gains its own first-use copy.
+  -->
   <tn-table
     class="table"
     [expandOnRowClick]="true"
@@ -20,6 +28,7 @@
     [displayedColumns]="list.displayedColumns()"
     [trackBy]="trackBySnapshotId"
     [loading]="list.isLoading()"
+    [loadingMessage]="'Loading...' | translate"
     [expandable]="true"
     [clickable]="true"
     [emptyMessage]="list.empty.message()"

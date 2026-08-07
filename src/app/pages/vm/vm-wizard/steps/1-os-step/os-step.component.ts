@@ -5,9 +5,11 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
+  TnBannerComponent,
   TnButtonComponent,
   TnCheckboxComponent,
   TnFormFieldComponent,
+  TnFormSectionComponent,
   TnInputComponent,
   TnSelectComponent,
   TnStepperNextDirective,
@@ -42,9 +44,11 @@ import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
     AsyncPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,
+    TnFormSectionComponent,
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
+    TnBannerComponent,
     FormActionsComponent,
     TnButtonComponent,
     TnStepperNextDirective,

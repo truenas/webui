@@ -1,6 +1,9 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextDatasetForm = {
+  addTitle: T('Add Dataset'),
+  editTitle: T('Edit Dataset'),
+  capacitySettingsTitle: T('Capacity Settings'),
   nameTooltip: T('Enter a unique name for the dataset. The dataset name length is calculated by adding the length of this field\'s value and the length of the parent path field value. The length of \'Parent Path\' and \'Name\' added together cannot exceed 200 characters. Because of this length validation on this field accounts for the parent path as well. Furthermore, the maximum nested directory levels allowed is 50. You can\'t create a dataset that\'s at the 51st level in the directory hierarchy after you account for the nested levels in the parent path.'),
   syncTooltip: T('<i>Standard</i> uses the sync settings that have been\
  requested by the client software, <i>Always</i> waits for\
@@ -129,10 +132,6 @@ export const helptextDatasetForm = {
       { label: T('Key'), value: 'key' },
       { label: T('Passphrase'), value: 'passphrase' },
     ],
-    algorithmTooltip: T('Mathematical instruction sets that determine how plaintext is converted\
- into ciphertext. See\
- <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard" target="_blank">Advanced Encryption Standard (AES)</a>\
- for more details.'),
     passphraseTooltip: T('User-defined string used to decrypt the dataset. Can be used instead of an encryption key.<br>\
  WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a\
  memorable passphrase or physically secure the passphrase.'),

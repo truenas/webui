@@ -81,7 +81,6 @@ export class EncryptionOptionsDialog implements OnInit, OnDestroy {
     passphrase: ['', Validators.minLength(8)],
     confirm_passphrase: [''],
     pbkdf2iters: [minimumPbkdf2Iterations, Validators.min(minimumPbkdf2Iterations)],
-    algorithm: [''],
     confirm: [false, [Validators.requiredTrue]],
   }, {
     validators: [
@@ -233,14 +232,11 @@ export class EncryptionOptionsDialog implements OnInit, OnDestroy {
 
     this.form.patchValue({
       inherit_encryption: !isEncryptionRoot(this.data.dataset),
-      algorithm: this.data.dataset.encryption_algorithm?.value || '',
       encryption_type: encryptionType,
     });
   }
 
   private setControlDependencies(): void {
-    this.form.controls.algorithm.disable();
-
     if (this.hasPassphraseParent || this.hasKeyChild) {
       this.form.controls.encryption_type.disable();
     }

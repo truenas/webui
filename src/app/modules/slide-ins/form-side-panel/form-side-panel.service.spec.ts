@@ -2,7 +2,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal,
 } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
@@ -85,6 +85,23 @@ class PayloadTestFormComponent extends SidePanelForm<unknown> {
   }
 }
 
+/** Bails out in `ngOnInit`, i.e. before the service's deferred open has run. */
+@Component({
+  selector: 'ix-bail-out-test-form',
+  template: '<p>bail-out form body</p>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class BailOutTestFormComponent extends SidePanelForm implements OnInit {
+  protected readonly form = new FormControl('');
+  readonly canSubmit = signal(true);
+
+  ngOnInit(): void {
+    this.close(false);
+  }
+
+  protected onSubmit(): void {}
+}
+
 @Component({ selector: 'ix-test-host', template: '', changeDetection: ChangeDetectionStrategy.OnPush })
 class TestHostComponent {}
 
@@ -92,6 +109,8 @@ describe('FormSidePanelService', () => {
   let service: FormSidePanelService;
   let fixture: ComponentFixture<TestHostComponent>;
   let rootLoader: HarnessLoader;
+  /** Frames queued by the service while `deferAnimationFrames()` is in effect. */
+  let queuedFrames: FrameRequestCallback[];
 
   // Real CSS transitions don't run in jsdom, so the panel's `closed` output (fired on
   // transitionend) must be simulated to exercise the full open→save→close lifecycle.
@@ -104,7 +123,27 @@ describe('FormSidePanelService', () => {
     fixture.detectChanges();
   }
 
+  /**
+   * Restores the real (deferred) animation-frame timing for a test, queueing callbacks instead of
+   * running them — the only way to observe the window between `open()` and the panel opening.
+   */
+  function deferAnimationFrames(): void {
+    jest.spyOn(global, 'requestAnimationFrame').mockImplementation((callback) => {
+      queuedFrames.push(callback);
+      return 0;
+    });
+  }
+
+  /** Drains queued frames, including ones queued by the frames themselves. */
+  function flushAnimationFrames(): void {
+    while (queuedFrames.length) {
+      queuedFrames.splice(0, queuedFrames.length).forEach((callback) => callback(0));
+    }
+    fixture.detectChanges();
+  }
+
   beforeEach(() => {
+    queuedFrames = [];
     // The service defers opening across two animation frames; run them synchronously in tests.
     jest.spyOn(global, 'requestAnimationFrame').mockImplementation((callback) => {
       callback(0);
@@ -114,7 +153,7 @@ describe('FormSidePanelService', () => {
     TestBed.configureTestingModule({
       imports: [
         TestHostComponent, TestFormComponent, SecondTestFormComponent, WizardTestFormComponent,
-        PayloadTestFormComponent, TranslateModule.forRoot(),
+        PayloadTestFormComponent, BailOutTestFormComponent, TranslateModule.forRoot(),
       ],
       providers: [
         mockAuth(),
@@ -219,6 +258,22 @@ describe('FormSidePanelService', () => {
     fixture.detectChanges();
 
     expect(await rootLoader.hasHarness(TnSidePanelHarness)).toBe(false);
+  });
+
+  it('tears down instead of opening when the form closes before the deferred open runs', async () => {
+    deferAnimationFrames();
+    const onCancel = jest.fn();
+    const destroyRef = fixture.componentRef.injector.get(DestroyRef);
+    service.open(BailOutTestFormComponent, { title: 'Bail out' }).onCancel(onCancel, destroyRef);
+    // Renders the form, whose ngOnInit closes it — while `open` is still false.
+    fixture.detectChanges();
+
+    flushAnimationFrames();
+
+    // Without the latch, `setInput('open', false)` was a no-op, tn-side-panel never emitted
+    // `closed`, and the panel then animated open on a form that had already given up.
+    expect(await rootLoader.hasHarness(TnSidePanelHarness)).toBe(false);
+    expect(onCancel).toHaveBeenCalled();
   });
 
   it('allows opening a new panel after the previous one closed', async () => {

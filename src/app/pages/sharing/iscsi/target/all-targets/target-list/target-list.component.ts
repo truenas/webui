@@ -20,10 +20,9 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import {
-  convertStringToId, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
+  dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toUniqueRowTag,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { targetListElements } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.elements';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 
@@ -89,7 +88,7 @@ export class TargetListComponent implements OnInit {
   protected readonly trackByTargetId = (_index: number, row: IscsiTarget): number => row.id;
 
   protected uniqueRowTag(row: IscsiTarget): string {
-    return normalizeTestIdString(convertStringToId('iscsi-target-' + row.name));
+    return toUniqueRowTag('iscsi-target-' + row.name);
   }
 
   protected modeLabel(row: IscsiTarget): string {

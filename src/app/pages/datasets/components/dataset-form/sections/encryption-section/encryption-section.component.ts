@@ -10,13 +10,11 @@ import { of } from 'rxjs';
 import { minimumPbkdf2Iterations } from 'app/constants/dataset.constants';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-encryption-section',
@@ -36,7 +34,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class EncryptionSectionComponent implements OnChanges, OnInit {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
   readonly parent = input<Dataset>();
@@ -60,7 +57,6 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     passphrase: ['', Validators.minLength(8)],
     confirm_passphrase: [''],
     pbkdf2iters: [minimumPbkdf2Iterations, Validators.min(minimumPbkdf2Iterations)],
-    algorithm: ['AES-256-GCM'],
   }, {
     validators: [
       matchOthersFgValidator(
@@ -77,8 +73,6 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     { label: this.translate.instant('Key'), value: DatasetEncryptionType.Default },
     { label: this.translate.instant('Passphrase'), value: DatasetEncryptionType.Passphrase },
   ]);
-
-  algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(choicesToOptions());
 
   get hasEncryption(): boolean {
     return this.form.controls.encryption.value;
@@ -100,11 +94,11 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   });
 
   ngOnChanges(): void {
-    const parent = this.parent();
-    if (parent) {
-      this.setInheritValues(parent);
-      this.disableEncryptionIfParentEncrypted();
+    if (this.parentHasPassphrase()) {
+      this.form.controls.encryption_type.setValue(DatasetEncryptionType.Passphrase);
     }
+
+    this.disableEncryptionIfParentEncrypted();
   }
 
   ngOnInit(): void {
@@ -123,9 +117,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     }
 
     const values = this.form.value;
-    const encryptionOptions: DatasetCreate['encryption_options'] = {
-      algorithm: values.algorithm,
-    };
+    const encryptionOptions: DatasetCreate['encryption_options'] = {};
 
     if (this.isPassphrase) {
       encryptionOptions.pbkdf2iters = values.pbkdf2iters;
@@ -141,16 +133,6 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
       encryption_options: encryptionOptions,
       inherit_encryption: false,
     };
-  }
-
-  private setInheritValues(parent: Dataset): void {
-    if (this.parentHasPassphrase()) {
-      this.form.controls.encryption_type.setValue(DatasetEncryptionType.Passphrase);
-    }
-
-    if (parent.encrypted && parent.encryption_algorithm?.value) {
-      this.form.controls.algorithm.setValue(parent.encryption_algorithm.value);
-    }
   }
 
   private disableEncryptionIfParentEncrypted(): void {

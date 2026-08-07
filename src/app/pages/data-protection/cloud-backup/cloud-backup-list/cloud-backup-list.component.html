@@ -24,6 +24,7 @@
     [displayedColumns]="list.displayedColumns()"
     [trackBy]="trackByBackupId"
     [loading]="list.isLoading()"
+    [loadingMessage]="'Loading...' | translate"
     [clickable]="true"
     [activeRow]="activeRow()"
     [emptyMessage]="list.empty.message()"

@@ -15,6 +15,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
 import { SortValue, TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 
 export function convertStringToId(inputString: string): string {
   let result = inputString;
@@ -29,6 +30,53 @@ export function convertStringToId(inputString: string): string {
     .replace(/[/,#.[\]@!$%^&*()+={}|\\:;"'<>?`~]/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+/**
+ * Builds the per-row test-id fragment a migrated tn-table cell passes to `[tnTestId]`. The one
+ * spelling of it — every migrated table calls this rather than composing the two helpers by
+ * hand, so a change to how row tags are normalized lands everywhere at once.
+ *
+ * Pre-normalizes through {@link normalizeTestIdString} so the tag resolves identically through
+ * the legacy `[ixTest]` directive and the library's `[tnTestId]` — see that helper for why the
+ * two kebab implementations disagree.
+ */
+export function toUniqueRowTag(value: string): string {
+  return normalizeTestIdString(convertStringToId(value));
+}
+
+/**
+ * Wraps {@link toUniqueRowTag} in a per-row cache, for the template-side `[tnTestId]` of a
+ * migrated tn-table.
+ *
+ * Every cell of every row calls its table's row-tag function on every change-detection pass, so
+ * on a wide table that is (columns × rows) string rewrites per pass — and a list fed by a
+ * websocket subscription runs a lot of passes. The tag is a pure function of the row, so cache
+ * it against the row object; rows replaced by a reload drop out of the `WeakMap` on their own.
+ *
+ * The tables that call {@link toUniqueRowTag} directly are under the same pressure and can
+ * graduate to this the moment it is worth measuring; they were left alone only because caching
+ * against the row object assumes rows are replaced rather than mutated in place, which is worth
+ * checking per data provider rather than in bulk.
+ *
+ * A list built on {@link tnTableListHost} has no reason to reach for this: its `rowTag` already
+ * memoizes per row, and it keys the cache on (rows, language) rather than on the row object, so
+ * it also survives a row mutated in place. It normalizes differently, though — lodash `kebabCase`
+ * rather than {@link toUniqueRowTag} — so the two are not interchangeable mid-table.
+ *
+ * @param build the raw, un-kebab-ed tag for a row, e.g. ``(vm) => `virtual-machine-${vm.name}` ``.
+ */
+export function memoizedRowTag<T extends object>(build: (row: T) => string): (row: T) => string {
+  const cache = new WeakMap<T, string>();
+
+  return (row: T) => {
+    let tag = cache.get(row);
+    if (tag === undefined) {
+      tag = toUniqueRowTag(build(row));
+      cache.set(row, tag);
+    }
+    return tag;
+  };
 }
 
 /**

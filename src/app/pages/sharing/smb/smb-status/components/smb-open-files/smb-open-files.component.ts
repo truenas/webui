@@ -15,9 +15,8 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import {
-  convertStringToId, createTable, dataProviderLoading, dataProviderRows, toDisplayedColumns,
+  createTable, dataProviderLoading, dataProviderRows, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/ix-table/utils';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 
 @Component({
   selector: 'ix-smb-open-files',
@@ -90,7 +89,7 @@ export class SmbOpenFilesComponent implements OnChanges {
   }
 
   protected uniqueRowTag(row: SmbOpenInfo): string {
-    return normalizeTestIdString(convertStringToId(`smb-open-file-${row.username}-${row.uid}`));
+    return toUniqueRowTag(`smb-open-file-${row.username}-${row.uid}`);
   }
 
   private createProvider(): void {
