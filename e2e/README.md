@@ -1,37 +1,17 @@
 # E2E test suite
 
-End-to-end tests for the TrueNAS WebUI, driving a real browser against a real
-appliance. Preconditions are established over the middleware API and assertions
-are made through the UI, so each test's failure points at one feature rather
-than a chain of them.
+Playwright tests that drive a real browser against a real TrueNAS appliance.
 
-**Planning documents**
+Run every command from the repository root.
 
-| | |
-|---|---|
-| [`docs/01-requirements.md`](docs/01-requirements.md) | What the suite must do, and the constraints |
-| [`docs/02-technology.md`](docs/02-technology.md) | Technology choices and rationale |
-| [`docs/03-implementation-plan.md`](docs/03-implementation-plan.md) | Phased delivery plan |
-
-> These were written while the suite lived in a separate repository. The
-> repo-layout decision has since been reversed — the suite is in-tree — which
-> retires R6.1 (test-id drift is now caught by the PR that causes it) and makes
-> D1 (PR gating) reachable. R2.10 no longer applies either: reading webui's
-> source is now deliberate, and confined to `support/webui-environment.ts`.
-
-**Status:** two user-story journeys passing — an admin-user lifecycle, and a
-fresh-install journey covering pool, dataset and SMB share creation.
+> **These tests create and destroy pools.** Point them at a disposable VM, never
+> at a NAS you care about.
 
 ---
 
-## Requirements
-
-- webui's own toolchain (`yarn install` at the repository root)
-- A TrueNAS VM you are willing to have pools created and destroyed on
-
 ## Setup
 
-From the repository root:
+One-time, after `yarn install`:
 
 ```bash
 yarn playwright install chromium
@@ -41,145 +21,169 @@ yarn playwright install chromium
 cp .env.example .env
 ```
 
-Then point webui at your appliance — this configures the dev server, the API
-proxy, **and** the E2E suite in one step:
+Fill in `TN_PROFILE`, `TN_USERNAME` and `TN_PASSWORD`. Then point webui at your
+appliance — this configures the dev server, the API proxy **and** these tests
+together:
 
 ```bash
 yarn ui remote -i <vm>
 ```
 
-`TN_HOST` defaults to whatever that command wrote into
-`src/environments/environment.ts`, so `.env` only needs `TN_PROFILE`,
-`TN_USERNAME` and `TN_PASSWORD`. Set `TN_HOST` explicitly to override it — which
-is how CI targets a machine without a working tree.
+`TN_HOST` is read from `src/environments/environment.ts`, so that one command is
+all the targeting you need. Set `TN_HOST` in `.env` to override it.
 
 ## Running
 
-The suite runs against one of two targets, differing only in where the UI is
-served from. Everything else — selectors, API client, authentication — is
-identical.
-
-| Profile | UI | Middleware | Used by |
-|---|---|---|---|
-| `shipped` | `https://<host>/ui/` | `<host>` | Nightly |
-| `branch` | `http://localhost:4200/` | `<host>` | CI, local dev |
-
-The paths differ: `/ui/` is where the appliance's nginx serves the UI, while a
-locally served build defaults to `/` — only webui's `build:prod` passes
-`--base-href /ui/`. What both must have is a **trailing slash**, or relative
-navigation drops the last path segment. The suite checks this at startup.
-
-### Against the appliance's own UI
-
 ```bash
-TN_PROFILE=shipped TN_HOST=<vm> TN_USERNAME=<user> TN_PASSWORD=<pass> yarn e2e
+yarn e2e
 ```
 
-The suite disables Node's TLS verification for you, because the API client
-speaks `wss://` exclusively and test appliances present self-signed
-certificates. This applies in both profiles — the profile changes where the
-browser loads the UI from, not where the API client connects. Set
-`NODE_TLS_REJECT_UNAUTHORIZED` explicitly to override.
-
-### Against a webui branch
-
-Point webui's dev server at the same VM and start it:
-
 ```bash
-cd ../webui && yarn ui remote -i <vm> && yarn start
+yarn e2e --project=unauthenticated
 ```
 
-Then, from this repo:
-
 ```bash
-TN_PROFILE=branch TN_HOST=<vm> TN_USERNAME=<user> TN_PASSWORD=<pass> yarn e2e
+yarn e2e fresh-install
 ```
 
-Set `TN_UI_BASE_URL` if you serve the UI somewhere other than
-`http://localhost:4200/`.
+The last form filters by filename substring. Add `--retries=0` while iterating —
+a retry on a slow failure only doubles the wait.
 
-> **`TN_HOST` must be the same appliance the dev server points at.** The token
-> is minted against `TN_HOST` and redeemed by a UI that authenticates against
-> its own `environment.remote`. If they disagree, login fails with nothing
-> indicating why. Check with:
->
-> ```bash
-> grep remote: ../webui/src/environments/environment.ts
-> ```
+### Targets
 
-Serving a *production* build instead of `ng serve` needs a proxying server that
-does not exist here yet — see R2.11. It is a refinement, not a blocker.
+| Profile | UI served from | Set up with |
+|---|---|---|
+| `shipped` | `https://<host>/ui/` — the appliance's own UI | nothing; works out of the box |
+| `branch` | `http://localhost:4200/` — your working copy | `yarn start` in another terminal |
 
-### Watching and debugging a run
+Use `shipped` unless you are testing UI changes you have not pushed. `branch`
+runs your local code against the same appliance, but the dev server surfaces
+developer-only dialogs the shipped UI never shows, so a failure there is not
+always a real one.
 
-Watch it in a real browser, slowed down enough to follow:
+Whichever you use, **the dev server and `TN_HOST` must be the same appliance**.
+The login token is minted against one and redeemed by the other; when they
+disagree, sign-in fails with nothing explaining why.
+
+```bash
+grep remote: src/environments/environment.ts
+```
+
+## Watching and debugging
+
+Watch it run, slowed down enough to follow:
 
 ```bash
 TN_SLOW_MO=600 yarn e2e:headed
 ```
 
-`TN_SLOW_MO` pauses between browser actions. It is a launch option, not a CLI
-flag — there is no `--slow-mo`. Use it for observation only; as a standing
-setting it is a fixed delay on every action, which R8.3 rules out.
-
-Leave created test data on the appliance for inspection:
-
-```bash
-TN_KEEP_TEST_DATA=1 yarn e2e
-```
-
-Cleanup still runs at the *start* of each test, so this only changes what a run
-leaves behind — never what it finds.
-
-### Other commands
-
-```bash
-yarn e2e:headed
-```
+Step through interactively, with a DOM snapshot at every action and a locator
+picker — the best way to find a `data-test` value:
 
 ```bash
 yarn e2e:ui
 ```
 
-```bash
-yarn report
-```
+Record every test to `test-results/`:
 
 ```bash
-yarn check
+TN_VIDEO=1 yarn e2e
 ```
+
+Leave created pools, shares and users on the appliance to inspect:
+
+```bash
+TN_KEEP_TEST_DATA=1 yarn e2e
+```
+
+Cleanup still runs at the *start* of each test, so this changes only what a run
+leaves behind, never what it finds.
+
+After a run:
+
+```bash
+yarn e2e:report
+```
+
+For a failure, the trace is the fastest way in — network, console, and a DOM
+snapshot per step:
+
+```bash
+yarn playwright show-trace test-results/<dir>/trace.zip
+```
+
+`test-results/` is wiped at the start of every run. Copy anything you want to
+keep.
 
 ## Layout
 
 ```
 e2e/
-  tests/          user-story specs, named *.e2e.ts
-  flows/          UI-driving actions   — createPool(), signIn()
-  locators/       data-test values, per screen
-  fixtures/       API-driving setup    — givenPool(), ensurePoolAbsent()
-  support/        config, auth, API client
-  docs/           planning documents
-playwright.config.ts   at the repository root, where the CLI looks for it
+  tests/       journeys, named *.e2e.ts
+  flows/       UI-driving actions      — signIn(), createRaidz2Pool()
+  locators/    data-test values, one module per screen
+  fixtures/    API-driving setup and teardown
+  support/     config, auth, API client
+  docs/        why the suite is built this way
 ```
 
-**Specs are `*.e2e.ts`, not `*.spec.ts`.** `*.spec.ts` belongs to Jest, whose
-config sets no `testMatch` and would otherwise sweep these up. `e2e/` is also in
-Jest's `testPathIgnorePatterns`.
+`playwright.config.ts` lives at the repository root, where the CLI looks for it.
 
-## Conventions
+## Adding a test
 
-**Selectors are `[data-test="…"]` only** — no CSS classes, no text matching, no
-XPath. webui emits this attribute uniformly, from both the legacy `[ixTest]`
-directive and `@truenas/ui-components` `testId` inputs, because `main.ts`
-provides `{ provide: TN_TEST_ATTR, useValue: 'data-test' }`.
+**1. Name it `*.e2e.ts`** under `e2e/tests/`. Not `*.spec.ts` — that belongs to
+Jest, which would otherwise try to run it.
 
-A missing `data-test` is a defect to fix upstream — in webui or in
-`@truenas/ui-components` — not a reason to fall back to a fragile selector. Both
-are in-house. See `truenas-ui-components/docs/test_ids.md` for the patterns.
+Put it in `tests/unauthenticated/` if it covers sign-in, sign-out or session
+identity; those run without the token bypass. Everything else goes in `tests/`
+and starts already signed in.
 
-**API sets up, UI asserts.** A test must never use the API to perform the action
-it is testing. Naming carries the rule: UI actions are imperative
-(`createPool()`), API preconditions are `given*` (`givenPool()`).
+**2. Add selectors to `locators/`, never inline in the test.** Find the
+`data-test` value by searching the template for `testId` or `ixTest`, then work
+out what is emitted — components prefix by type, so
+`<tn-input [testId]="'username'">` becomes `data-test="input-username"`:
 
-**No fixed sleeps.** Wait on conditions — Playwright's auto-retrying assertions
-for the UI, job state for the API.
+| Template | Emitted |
+|---|---|
+| `<tn-input [testId]="'username'">` | `input-username` |
+| `<tn-button testId="save">` | `button-save` |
+| `<tn-checkbox formControlName="create_smb">` | `checkbox-create-smb` (falls back to the control name) |
+| `<tn-select [testId]="'role'">` | `select-role`, options `option-role-<value>` |
+
+Two gotchas. Option ids are kebab-cased, but a control declaring
+`[optionTestIdKey]` may use lodash `kebabCase` instead of the library's, and the
+two disagree — lodash turns `RAIDZ2` into `raidz-2`, the library into `raidz2`.
+And a few components (`tn-tree-node`) write the value verbatim with no prefix.
+When in doubt, `yarn e2e:ui` and click the element.
+
+**If the element has no `data-test`, add one upstream** — in the webui template
+or in `@truenas/ui-components`. Do not fall back to a CSS class or text match.
+Both repos are in-house; see `docs/test_ids.md` in the component library.
+
+**3. Put UI actions in `flows/`, preconditions in `fixtures/`.** A test must
+never use the API to do the thing it is testing — that is the difference between
+testing the UI and testing middleware. But it should use the API for state it
+merely depends on: driving the pool wizard to test a *share* makes one broken
+wizard fail six tests.
+
+**4. Clean up in `afterEach`, over the API, unconditionally.** It has to run
+after a failure too, which is when it matters most. A leaked pool holds its
+disks and starves every later run. If your test changes global state — a
+service, a system setting — restore that as well, or the next run silently
+tests a different scenario.
+
+**5. Wait on conditions, never on time.** No `waitForTimeout`. Playwright's
+assertions retry on their own; middleware operations are jobs, so poll their
+state with `expect.poll`. If you need a dialog, wait for it — `isVisible()`
+does not wait, and probing for a dialog right after the click that opens it will
+silently miss.
+
+## Troubleshooting
+
+| Symptom | Cause |
+|---|---|
+| `ConfigError` listing variables | `.env` incomplete; it names everything missing at once |
+| `[EBUSY] Rate Limit Exceeded` | 20 unauthenticated calls per method per IP per minute. Authenticated calls are exempt, so this is sign-ins — wait a minute, or run fewer times in quick succession |
+| Sign-in times out on `ix-admin-layout` | Usually `TN_HOST` and the dev server pointing at different appliances |
+| `Max Concurrent Calls` dialog | Dev-build only; the shipped UI cannot produce it. An artifact of `branch`, not a real failure |
+| Test needs *N* unused disks | A previous run leaked a pool, or the VM was provisioned with too few |
