@@ -1,76 +1,72 @@
-<mat-card class="card" [ixUiSearch]="searchableElements.elements.twoFactor">
-  <mat-toolbar-row>
-    <h3>{{ 'Set Up Two-Factor Authentication' | translate }}</h3>
-  </mat-toolbar-row>
-
+<tn-card
+  class="card"
+  [title]="'Set Up Two-Factor Authentication' | translate"
+  [ixUiSearch]="searchableElements.elements.twoFactor"
+>
   @if (isFormLoading() || isDataLoading()) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <tn-progress-bar
+      mode="indeterminate"
+      [ariaLabel]="'Loading' | translate"
+    ></tn-progress-bar>
   }
 
-  <mat-card-actions>
-    <div class="status-content">
-      @if (isDataLoading()) {
-        <ngx-skeleton-loader class="skeleton-loader"></ngx-skeleton-loader>
-      } @else {
-        <ix-warning
-          [message]="global2FaMsg"
-          [color]="!globalTwoFactorEnabled() || !userTwoFactorAuthConfigured() ? 'orange' : 'green'"
-        ></ix-warning>
-      }
-      @if (globalTwoFactorEnabled() && !userTwoFactorAuthConfigured()) {
-        <p>
-          {{ 'Two-Factor Authentication has been enabled on this system. It is strongly recommended to set up 2FA for your account to enhance security. Make sure to scan the QR code with your authenticator app before logging out or navigating away, otherwise you may have difficulty accessing your account later.' | translate }}
-        </p>
-      }
-      <div class="button-group">
-        <button
-          mat-button
-          color="primary"
+  <div class="status-content">
+    @if (isDataLoading()) {
+      <ngx-skeleton-loader class="skeleton-loader"></ngx-skeleton-loader>
+    } @else {
+      <tn-banner
+        class="status-banner"
+        [type]="!globalTwoFactorEnabled() || !userTwoFactorAuthConfigured() ? 'warning' : 'success'"
+        [message]="global2FaMsg"
+      ></tn-banner>
+    }
+    @if (globalTwoFactorEnabled() && !userTwoFactorAuthConfigured()) {
+      <p>
+        {{ 'Two-Factor Authentication has been enabled on this system. It is strongly recommended to set up 2FA for your account to enhance security. Make sure to scan the QR code with your authenticator app before logging out or navigating away, otherwise you may have difficulty accessing your account later.' | translate }}
+      </p>
+    }
+    <div class="button-group">
+      <tn-button
+        color="primary"
+        type="button"
+        [testId]="'renew-secret'"
+        [label]="userTwoFactorAuthConfigured() ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate)"
+        [disabled]="isFormLoading()"
+        [ixUiSearch]="searchableElements.elements.configure2FaSecret"
+        (onClick)="renewSecretOrEnable2Fa()"
+      ></tn-button>
+      @if (userTwoFactorAuthConfigured()) {
+        <tn-button
+          color="warn"
           type="button"
-          ixTest="renew-secret"
+          [testId]="'unset-2fa-secret'"
+          [label]="'Unset 2FA Secret' | translate"
           [disabled]="isFormLoading()"
-          [ixUiSearch]="searchableElements.elements.configure2FaSecret"
-          (click)="renewSecretOrEnable2Fa()"
-        >
-          {{ userTwoFactorAuthConfigured() ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate) }}
-        </button>
-        @if (userTwoFactorAuthConfigured()) {
-          <button
-            mat-button
-            color="warn"
-            type="button"
-            ixTest="unset-2fa-secret"
-            [disabled]="isFormLoading()"
-            (click)="unset2FaSecret()"
-          >
-            {{ 'Unset 2FA Secret' | translate }}
-          </button>
-        }
-        @if (showSkipButton()) {
-          <button
-            mat-button
-            type="button"
-            ixTest="skip-2fa-setup"
-            [disabled]="isFormLoading()"
-            (click)="onSkipSetup()"
-          >
-            {{ 'Skip Setup' | translate }}
-          </button>
-        }
-      </div>
+          (onClick)="unset2FaSecret()"
+        ></tn-button>
+      }
+      @if (showSkipButton()) {
+        <tn-button
+          type="button"
+          [testId]="'skip-2fa-setup'"
+          [label]="'Skip Setup' | translate"
+          [disabled]="isFormLoading()"
+          (onClick)="onSkipSetup()"
+        ></tn-button>
+      }
     </div>
-  </mat-card-actions>
+  </div>
 
   @if (userTwoFactorAuthConfigured() && (authService.userTwoFactorConfig$ | async); as qrInfo) {
-    <mat-card-actions>
+    <div class="qr-section">
       <ix-qr-viewer
         [qrInfo]="qrInfo?.provisioning_uri"
-        [showWarning]="globalTwoFactorEnabled && showQrCodeWarning"
+        [showWarning]="globalTwoFactorEnabled() && showQrCodeWarning"
       ></ix-qr-viewer>
-    </mat-card-actions>
+    </div>
 
     @if (getProvisioningUriSecret(qrInfo?.provisioning_uri); as secret) {
-      <mat-card-actions class="secret-actions">
+      <div class="secret-actions">
         <p>
           {{ 'If you can\'t use QR code, use this text code instead' | translate }}:
         </p>
@@ -82,7 +78,7 @@
 
           <ix-copy-button [text]="secret"></ix-copy-button>
         </div>
-      </mat-card-actions>
+      </div>
     }
   }
-</mat-card>
+</tn-card>

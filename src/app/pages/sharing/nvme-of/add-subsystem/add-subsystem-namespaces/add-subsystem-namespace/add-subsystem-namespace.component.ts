@@ -1,14 +1,23 @@
 import {
-  ChangeDetectionStrategy, Component, computed, viewChild,
+  ChangeDetectionStrategy, Component, inject, signal,
 } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
+import { NonNullableFormBuilder } from '@angular/forms';
 import { Role } from 'app/enums/role.enum';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
+import {
+  createNamespaceForm, toNamespaceChanges,
+} from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.utils';
 
+/**
+ * Collects one namespace for the Add Subsystem wizard. Unlike {@link NamespaceFormComponent} it
+ * issues no API call — the wizard accumulates namespaces in a form control and creates them all
+ * when the subsystem itself is created — so it stays on {@link SidePanelForm} rather than
+ * `<ix-form>`, whose contract is built around a submit request.
+ */
 @Component({
   selector: 'ix-add-subsystem-namespace',
   templateUrl: './add-subsystem-namespace.component.html',
@@ -18,29 +27,23 @@ import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-name
   ],
 })
 export class AddSubsystemNamespaceComponent extends SidePanelForm<NamespaceChanges> {
-  private baseForm = viewChild(BaseNamespaceFormComponent);
+  private formBuilder = inject(NonNullableFormBuilder);
 
   /** Gates the host-rendered footer Save. */
   readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  readonly canSubmit = computed(() => this.baseForm()?.canSubmit() ?? false);
+  // Owned here (not by the projected base form) so both namespace wrappers build their group the
+  // same way; the base form only renders into it.
+  protected readonly form = createNamespaceForm(this.formBuilder);
 
-  /** The form lives in the projected base form; only read through the guarded overrides below. */
-  protected get form(): Pick<AbstractControl, 'dirty' | 'status' | 'statusChanges'> {
-    return this.baseForm()?.form;
-  }
+  /** Nothing is ever in flight — the changes are handed to the wizard synchronously. */
+  readonly canSubmit = this.trackCanSubmit(signal(false));
 
-  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
-  override hasUnsavedChanges(): boolean {
-    return this.baseForm()?.isFormDirty || false;
-  }
-
-  /** Invoked by the host-facing `submit()`; delegates to the base form, which emits `submitted`. */
   protected onSubmit(): void {
-    this.baseForm()?.submit();
-  }
+    if (this.form.invalid) {
+      return;
+    }
 
-  protected onNamespaceSubmitted(newNamespace: NamespaceChanges): void {
-    this.closeWith(newNamespace);
+    this.closeWith(toNamespaceChanges(this.form.getRawValue()));
   }
 }

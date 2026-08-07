@@ -4,20 +4,19 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
   TnRadioComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { finalize, forkJoin } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { Option } from 'app/interfaces/option.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -31,32 +30,31 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './nvme-of-configuration.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     TranslateModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnRadioComponent,
     TnCheckboxComponent,
     ReactiveFormsModule,
-    FormActionsComponent,
-    TnButtonComponent,
-    RequiresRolesDirective,
     TnTooltipDirective,
   ],
 })
-export class NvmeOfConfigurationComponent extends SidePanelForm implements OnInit {
+export class NvmeOfConfigurationComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private nvmeOfService = inject(NvmeOfService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
 
   readonly requiredRoles = [Role.SharingNvmeTargetWrite];
-  readonly isLoading = signal(false);
+
+  /** Initial config fetch only — the submit lifecycle is owned by the inner `<ix-form>`. */
+  protected readonly isLoadingConfig = signal(false);
+
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly service = toSignal(this.store$.select(selectService(ServiceName.NvmeOf)));
@@ -81,22 +79,19 @@ export class NvmeOfConfigurationComponent extends SidePanelForm implements OnIni
     },
   ];
 
-  /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
-
   ngOnInit(): void {
     this.loadConfiguration();
   }
 
   private loadConfiguration(): void {
-    this.isLoading.set(true);
+    this.isLoadingConfig.set(true);
 
     forkJoin([
       this.api.call('nvmet.global.config'),
       this.nvmeOfService.isRdmaCapable(),
     ]).pipe(
       this.errorHandler.withErrorHandler(),
-      finalize(() => this.isLoading.set(false)),
+      finalize(() => this.isLoadingConfig.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(([config, isRdmaCapable]) => {
       this.form.patchValue(config);
@@ -116,19 +111,18 @@ export class NvmeOfConfigurationComponent extends SidePanelForm implements OnIni
     });
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
-
+  // Ignores the event: this form sends a full config every time, so `changedValues` (and the
+  // `initialFormSnapshot` that would make it meaningful) buys nothing. `isEdit` is likewise fixed
+  // via `[isEditMode]="true"` — a global config is never a create.
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
+    // `form.value` (not the event's raw values) so controls disabled by the loaded system
+    // capabilities — RDMA, ANA, Implementation — stay out of the payload.
     const { kernel, ...rest } = this.form.value;
     const payload = this.isEnterprise() ? { ...rest, kernel } : rest;
 
-    this.api.call('nvmet.global.update', [payload]).pipe(
-      this.errorHandler.withErrorHandler(),
-      finalize(() => this.isLoading.set(false)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.snackbar.success(this.translate.instant('Global configuration updated.'));
-      this.close(true);
-    });
-  }
+    return {
+      request$: this.api.call('nvmet.global.update', [payload]),
+      successMessage: this.translate.instant('Global configuration updated.'),
+    };
+  };
 }

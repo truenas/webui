@@ -11,7 +11,6 @@ import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
@@ -82,7 +81,6 @@ describe('GuiFormComponent', () => {
         }),
       }),
       ...ixFormTestingProviders(),
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       provideMockStore({
         selectors: [
           {

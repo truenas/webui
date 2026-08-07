@@ -1,10 +1,17 @@
+// Three host components are needed: one that renders no <ix-form> (fallback paths), and two that
+// render a real one — one for the config-load state, one for the delegating submit paths.
 /* eslint-disable max-classes-per-file */
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import {
+  ChangeDetectionStrategy, Component, inject, signal,
+} from '@angular/core';
+import {
+  FormBuilder, FormControl, FormGroup, ReactiveFormsModule,
+} from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  defer, EMPTY, NEVER, Observable, of, throwError,
+  defer, EMPTY, NEVER, Observable, of, Subject, throwError,
 } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
@@ -78,6 +85,39 @@ class BoundFormHostComponent extends IxFormHostForm<boolean, { name: string }> {
 
   load(config$: Observable<{ name: string }>): void {
     this.loadFormConfig(config$, (config) => this.form.patchValue(config));
+  }
+}
+
+/**
+ * Wraps a real `<ix-form>`, so the delegating half of the base can be exercised. Separate from
+ * {@link BoundFormHostComponent}: these tests need a submit held open mid-flight and a settable
+ * `externalLoading`, where that one submits synchronously and drives its load state through
+ * `loadFormConfig`.
+ */
+@Component({
+  selector: 'ix-test-form-wrapper',
+  // eslint-disable-next-line @angular-eslint/component-max-inline-declarations
+  template: `
+    <ix-form
+      [formGroup]="form"
+      [externalLoading]="externalLoading()"
+      [submitHandler]="handleSubmit"
+      (closed)="closed.emit($event)"
+    ></ix-form>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ReactiveFormsModule, IxFormComponent],
+})
+class TestFormWrapperComponent extends IxFormHostForm {
+  /** Held open so a submit can be observed mid-flight, then completed by the test. */
+  readonly request$ = new Subject<boolean>();
+
+  protected readonly form = new FormGroup({ name: new FormControl('') });
+  protected readonly externalLoading = signal(false);
+  protected handleSubmit = (): SubmitResult => ({ request$: this.request$, successMessage: 'Saved.' });
+
+  setExternalLoading(loading: boolean): void {
+    this.externalLoading.set(loading);
   }
 }
 
@@ -217,6 +257,45 @@ describe('IxFormHostForm', () => {
     it('does nothing when no load has been started', () => {
       expect(() => spectator.component.retryLoad()).not.toThrow();
       expect(spectator.component.isLoading()).toBe(false);
+    });
+  });
+
+  describe('with an inner <ix-form>', () => {
+    let wrapper: Spectator<TestFormWrapperComponent>;
+    const createWrapper = createComponentFactory({
+      component: TestFormWrapperComponent,
+      providers: [mockAuth(), ...ixFormTestingProviders()],
+    });
+
+    beforeEach(() => {
+      wrapper = createWrapper();
+    });
+
+    // The `<tn-side-panel>` footer reads this to swap Save for "Saving…", so it must track the
+    // inner form's submit-only signal rather than `isLoading()` (which also covers setup fetches).
+    // Driven through a real submit rather than by poking the signal, so the wiring is covered too:
+    // if `onFormSubmit` stopped setting `isSubmitting`, poking it directly would still pass.
+    it('reports isSubmitting() for the duration of a real submit', () => {
+      expect(wrapper.component.isSubmitting()).toBe(false);
+
+      wrapper.component.submit();
+
+      expect(wrapper.component.isSubmitting()).toBe(true);
+
+      wrapper.component.request$.next(true);
+      wrapper.component.request$.complete();
+
+      expect(wrapper.component.isSubmitting()).toBe(false);
+    });
+
+    // The whole reason isSubmitting() exists apart from isBusy(): a form fetching its initial
+    // config is busy, but Save must still read "Save", not "Saving…".
+    it('stays false while the form is only loading its initial data', () => {
+      wrapper.component.setExternalLoading(true);
+      wrapper.detectChanges();
+
+      expect(wrapper.component.isBusy()).toBe(true);
+      expect(wrapper.component.isSubmitting()).toBe(false);
     });
   });
 });

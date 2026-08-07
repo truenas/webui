@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnRadioHarness,
+  TnCheckboxHarness, TnInputHarness, TnRadioHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -12,8 +12,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfGlobalConfig } from 'app/interfaces/nvme-of.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   NvmeOfConfigurationComponent,
@@ -40,10 +39,7 @@ describe('NvmeOfConfigurationComponent', () => {
           basenqn: 'iqn.2005-10.org.freenas:ctl',
         } as NvmeOfGlobalConfig),
       ]),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      }),
+      ...ixFormTestingProviders(),
       provideMockStore({
         selectors: [
           {
@@ -69,7 +65,6 @@ describe('NvmeOfConfigurationComponent', () => {
       mockProvider(NvmeOfService, {
         isRdmaCapable: jest.fn(() => of(true)),
       }),
-      mockProvider(SnackbarService),
     ],
   });
 
@@ -100,15 +95,18 @@ describe('NvmeOfConfigurationComponent', () => {
     expect(await rdma.isChecked()).toBe(true);
   });
 
-  it('saves form values when Save is pressed', async () => {
+  it('saves form values when the side panel host submits', async () => {
+    const closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
+
     const basenqn = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="basenqn"]' }));
     await basenqn.setValue('new.2005-10.org.freenas:ctl');
 
     const spdkRadio = await loader.getHarness(TnRadioHarness.with({ label: 'SPDK (userspace)' }));
     await spdkRadio.check();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    expect(spectator.component.canSubmit()).toBe(true);
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.update', [{
       ana: true,
@@ -116,7 +114,16 @@ describe('NvmeOfConfigurationComponent', () => {
       rdma: true,
       kernel: false,
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(closedSpy).toHaveBeenCalledWith(true);
+  });
+
+  it('reports unsaved changes to the side panel close guard once the form is edited', async () => {
+    expect(spectator.component.hasUnsavedChanges()).toBe(false);
+
+    const basenqn = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="basenqn"]' }));
+    await basenqn.setValue('new.2005-10.org.freenas:ctl');
+
+    expect(spectator.component.hasUnsavedChanges()).toBe(true);
   });
 
   it('disables RDMA control if RDMA support is missing from the system', async () => {
@@ -165,14 +172,12 @@ describe('NvmeOfConfigurationComponent', () => {
     expect(radios).toHaveLength(0);
   });
 
-  it('does not include kernel in payload when saving on non-enterprise systems', async () => {
+  it('does not include kernel in payload when saving on non-enterprise systems', () => {
     spectator.inject(MockStore).overrideSelector(selectIsEnterprise, false);
     spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(true));
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.update', [{
       ana: true,
