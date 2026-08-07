@@ -8,7 +8,8 @@ import {
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent,
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { groupBy } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -17,8 +18,6 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
@@ -35,8 +34,9 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
     TnSelectComponent,
     ReactiveFormsModule,
     WarningComponent,
-    IxFieldsetComponent,
-    IxRadioGroupComponent,
+    TnFormSectionComponent,
+    TnRadioGroupComponent,
+    TnRadioComponent,
     TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
@@ -54,7 +54,8 @@ export class ManageUnusedDiskDialog implements OnInit {
 
   protected readonly requiredRoles = [Role.DiskWrite];
 
-  readonly toPoolOptions$: Observable<SelectOption<AddToPoolType>[]> = of([
+  /** Held in a field, not rebuilt per change-detection pass: `tn-radio-group` tracks options by `value`. */
+  readonly toPoolOptions: SelectOption<AddToPoolType>[] = [
     {
       label: this.translate.instant('New Pool'),
       value: AddToPoolType.New,
@@ -62,7 +63,7 @@ export class ManageUnusedDiskDialog implements OnInit {
       label: this.translate.instant('Existing Pool'),
       value: AddToPoolType.Existing,
     },
-  ]);
+  ];
 
   readonly poolOptions$: Observable<Option[]> = of(
     this.resource.pools.filter((pool) => pool.status !== PoolStatus.Offline).map((pool) => ({
