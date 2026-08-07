@@ -268,7 +268,7 @@ and passes a host and credentials in.
 
 ---
 
-## T9. Lint and formatting — lean local config
+## T9. Lint and formatting — webui's config, with an e2e override
 
 **Revised during Phase 0.** The original decision was to reuse
 `@truenas/common-typescript`, as webui does. On inspection it does not fit: the
@@ -279,14 +279,17 @@ dependency. `eslint/eslint-ts-rules-extra.mjs` alone carries 25 Angular
 references. Applying it to a Playwright suite would mean fighting rules written
 for a different kind of repository.
 
-Instead: a lean flat config (`eslint.config.mjs`) using `typescript-eslint`
-recommended-type-checked plus `@stylistic`, matching webui's actual style
-choices — single quotes with `avoidEscape`, 120-character lines, two-space
-indent per `.editorconfig`.
+**Revised again on moving in-tree.** The above was written for a standalone
+repository, where a lean local config was the right answer. In-tree the suite is
+simply linted by webui's own `eslint.config.mjs`, which is the correct default —
+one style for one repository.
 
-That delivers what T9 was for — stylistic consistency with webui — without the
-machinery. It also avoids a floating `#master` git dependency that would have
-broken lint unannounced.
+What it needs is a narrow override block for `e2e/**`, switching off rules that
+assume Angular (`angular-file-naming` expects `*.component.ts`-style names),
+Jest-oriented rules that misread Playwright's thenable `expect`, and
+`import/no-default-export` for `playwright.config.ts`, which Playwright
+requires. Everything else — including `strictCamelCase` naming and import
+ordering — applies, and the suite conforms to it.
 
 ---
 
