@@ -189,22 +189,29 @@ export class CloudSyncListComponent implements OnInit {
         hidden: true,
         getValue: (task) => this.getSchedule(task),
       }),
+      // The three columns below render one thing and order by another: a schedule object, a
+      // relative phrase ("in 3 days") and a formatted date all sort meaninglessly, so each names
+      // the sort key `CloudSyncDataTransformer` derives for it. Spelled out, because a column's
+      // `getValue` is otherwise what it sorts by.
       scheduleColumn({
         title: this.titles().frequency,
         getValue: (task) => task.schedule,
         propertyName: 'frequency_sort_key',
+        sortBy: (task) => task.frequency_sort_key,
       }),
       textColumn({
         title: this.titles().nextRun,
         hidden: true,
         getValue: (task: CloudSyncTaskUi) => this.getNextRun(task),
         propertyName: 'next_run_sort_key',
+        sortBy: (task) => task.next_run_sort_key,
       }),
       relativeDateColumn({
         title: this.titles().lastRun,
         hidden: true,
         getValue: (task) => task.job?.time_finished?.$date,
         propertyName: 'last_run_sort_key',
+        sortBy: (task) => task.last_run_sort_key,
       }),
       stateButtonColumn({
         title: this.titles().state,

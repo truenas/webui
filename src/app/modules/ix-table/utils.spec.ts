@@ -610,6 +610,42 @@ describe('tnTableListHost', () => {
       });
     });
 
+    // The precedence `ix-table-head` applied before the migration: a column declaring both renders
+    // something its raw property doesn't say, so ordering by the property sorts by a value that is
+    // nowhere on screen.
+    it('sorts a column carrying both a propertyName and a getValue by what it renders', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, {
+          columns: () => [
+            { propertyName: 'name', title: 'Name', getValue: (row: Row) => `${row.name} (pool)` },
+          ] as Column<Row, ColumnComponent<Row>>[],
+        });
+        list.onSortChange({ column: 'name', direction: 'asc' });
+
+        const applied = setSorting.mock.calls[0][0] as TableSort<Row>;
+        expect(applied.sortBy?.({ name: 'sda' } as Row)).toBe('sda (pool)');
+      });
+    });
+
+    // How a column opts back into its property — e.g. a hidden sort key behind a human-readable
+    // cell, as Cloud Sync's `*_sort_key` columns do.
+    it('prefers an explicit sortBy over the rendered value', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, {
+          columns: () => [{
+            propertyName: 'name',
+            title: 'Name',
+            getValue: (row: Row) => `${row.name} (pool)`,
+            sortBy: (row: Row) => row.name,
+          }] as Column<Row, ColumnComponent<Row>>[],
+        });
+        list.onSortChange({ column: 'name', direction: 'asc' });
+
+        const applied = setSorting.mock.calls[0][0] as TableSort<Row>;
+        expect(applied.sortBy?.({ name: 'sda' } as Row)).toBe('sda');
+      });
+    });
+
     it('leaves a real-property column to sort by its property', () => {
       TestBed.runInInjectionContext(() => {
         const list = tnTableListHost<Row>(provider, { columns: () => columns() });

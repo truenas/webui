@@ -290,18 +290,19 @@ function tnColumnName<T>(column: Column<T, ColumnComponent<T>>): string {
 }
 
 /**
- * The accessor a data provider should sort a column by. A column keyed by
- * `columnName` has no row property to order on, so it sorts by the value it
- * renders — which is what `ix-table` did for every column before the migration.
+ * The accessor a data provider should sort a column by: its `sortBy`, else the value it renders.
+ *
+ * `getValue` wins over `propertyName` — the precedence `ix-table-head` applied to every column
+ * before the migration. A column declaring both renders something the raw property doesn't say
+ * (a crontab built from a `schedule` object, a credential's name pulled off a nested record, a
+ * UI-only field the API never populates), so ordering by the property would sort by a value that
+ * is nowhere on screen — or, when the property holds an object, by nothing meaningful at all.
+ *
+ * A column that means the opposite — a hidden sort key it deliberately orders by, e.g. Cloud Sync's
+ * `*_sort_key` timestamps behind human-readable cells — says so with an explicit `sortBy`.
  */
 function columnSortBy<T>(column: Column<T, ColumnComponent<T>> | undefined): RowSortValue<T> | undefined {
-  if (column?.sortBy) {
-    return column.sortBy;
-  }
-  if (column?.propertyName) {
-    return undefined;
-  }
-  return column?.getValue as RowSortValue<T> | undefined;
+  return (column?.sortBy ?? column?.getValue) as RowSortValue<T> | undefined;
 }
 
 /**

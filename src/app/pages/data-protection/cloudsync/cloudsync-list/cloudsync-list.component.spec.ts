@@ -157,6 +157,17 @@ describe('CloudSyncListComponent', () => {
     ]);
   });
 
+  // The Frequency cell renders a `Schedule` object, which lodash cannot order — the column sorts
+  // by the sort key the data transformer derives instead.
+  it('sorts the Frequency column by its sort key rather than the schedule it renders', async () => {
+    jest.spyOn(spectator.component.dataProvider, 'setSorting');
+
+    await table.clickSortHeader('frequency_sort_key');
+
+    const [sorting] = jest.mocked(spectator.component.dataProvider.setSorting).mock.calls[0];
+    expect(sorting.sortBy?.({ frequency_sort_key: '*|*|*|00:00' } as CloudSyncTaskUi)).toBe('*|*|*|00:00');
+  });
+
   it('expands the detail row when the row itself is clicked', async () => {
     expect(await table.isRowExpanded(0)).toBe(false);
 
