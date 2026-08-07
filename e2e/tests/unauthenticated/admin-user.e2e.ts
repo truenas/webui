@@ -12,16 +12,11 @@
  * in sequence. That is a different case from S3–S8, where each step is a
  * feature in its own right and gets API-provisioned preconditions (R3.1).
  */
-import { expect, test } from '@playwright/test';
-import type { TrueNasApiClient } from '@truenas/api-client';
 import { ensureUserAbsent } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
 import { createTrueNasAdminUser } from '../../flows/users';
 import { topbarLocators } from '../../locators/topbar';
-import { connectAndLogin } from '../../support/api/client';
-import { loadTargetConfig } from '../../support/config';
-
-const config = loadTargetConfig();
+import { expect, test } from '../../support/fixtures';
 
 const bob = {
   username: 'bob',
@@ -44,19 +39,8 @@ const bob = {
  * Each connection costs a sign-in, and middleware rate-limits unauthenticated
  * calls at 20 per method per IP per 60 seconds (`RateLimitConfig`), with
  * authenticated calls exempt. Connecting per hook spent three sign-ins per run
- * on bookkeeping and was what tripped the limit under repeated local runs.
  */
-let api: TrueNasApiClient;
-
-test.beforeAll(async () => {
-  api = await connectAndLogin(config);
-});
-
-test.afterAll(() => {
-  api?.close();
-});
-
-test.beforeEach(async () => {
+test.beforeEach(async ({ api }) => {
   await ensureUserAbsent(api, bob.username);
 });
 
@@ -67,7 +51,7 @@ test.beforeEach(async () => {
  */
 const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 
-test.afterEach(async () => {
+test.afterEach(async ({ api }) => {
   if (keepTestData) {
     console.warn(`TN_KEEP_TEST_DATA=1 — leaving user "${bob.username}" on the appliance.`);
     return;
@@ -75,7 +59,7 @@ test.afterEach(async () => {
   await ensureUserAbsent(api, bob.username);
 });
 
-test('an admin creates a TrueNAS admin user who can then sign in', async ({ page }) => {
+test('an admin creates a TrueNAS admin user who can then sign in', async ({ page, config }) => {
   await test.step('sign in as the existing administrator', async () => {
     await signIn(page, config.username, config.password);
     await expectSignedInAs(page, config.username);
