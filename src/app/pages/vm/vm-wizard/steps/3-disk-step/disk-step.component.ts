@@ -8,9 +8,11 @@ import {
   TnBannerComponent,
   TnButtonComponent,
   TnCheckboxComponent,
-  TnFormFieldComponent, TnFormSectionComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
   TnInputComponent,
   TnRadioComponent,
+  TnRadioGroupComponent,
   TnSelectComponent,
   TnStepperNextDirective,
   TnStepperPreviousDirective,
@@ -28,6 +30,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -57,6 +60,7 @@ const validImageExtensions = ['.qcow2', '.qed', '.raw', '.vdi', '.vhdx', '.vmdk'
     TnFormFieldComponent,
     TnFormSectionComponent,
     TnRadioComponent,
+    TnRadioGroupComponent,
     TnCheckboxComponent,
     TnSelectComponent,
     TnInputComponent,
@@ -108,6 +112,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
   ]);
 
   protected readonly InputType = InputType;
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   private annotatedZvolOptions: AnnotatedZvolOption[] = [];
 

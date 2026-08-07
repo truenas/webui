@@ -66,6 +66,8 @@
       <tn-select
         formControlName="cpu_mode"
         [options]="(cpuModes$ | async) ?? []"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -75,6 +77,8 @@
           formControlName="cpu_model"
           [options]="(cpuModels$ | async) ?? []"
           [allowEmpty]="true"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
     }

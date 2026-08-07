@@ -1,4 +1,6 @@
+import { HarnessPredicate } from '@angular/cdk/testing';
 import {
+  FormFieldHarnessFilters,
   TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import {
@@ -40,6 +42,27 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
   private selectPlaceholder = this.locatorForOptional('.tn-select-text.placeholder');
   /** Only `tn-radio-group` renders this, and only with an explicit `[ariaLabel]`. */
   private namedRadioGroup = this.locatorForOptional('[role="radiogroup"][aria-label]');
+
+  /**
+   * `TnFormFieldHarness.with()` names its own class in the predicate it builds, so inheriting it
+   * would hand back a plain field harness with none of the control access below. Matches on
+   * {@link getLabelText} rather than the field's own `getLabel()`, so a self-naming `tn-checkbox`
+   * or `tn-radio-group` is reachable under the same name `indexControlsByLabel` files it under.
+   *
+   * **Keep the options below in sync with `FormFieldHarnessFilters`.** Re-listing them by hand is
+   * what re-declaring the predicate costs: should the library grow a third filter, a caller
+   * passing it here still type-checks but the option is never added, so the predicate matches
+   * every field instead of narrowing. Re-check this list when bumping `@truenas/ui-components`.
+   */
+  static override with(options: FormFieldHarnessFilters = {}): HarnessPredicate<TnFormControlHarness> {
+    return new HarnessPredicate(TnFormControlHarness, options)
+      .addOption('label', options.label, (harness, label) => {
+        return HarnessPredicate.stringMatches(harness.getLabelText(), label);
+      })
+      .addOption('testId', options.testId, async (harness, testId) => {
+        return (await harness.getTestId()) === testId;
+      });
+  }
 
   /**
    * Empty only when the field carries no label and holds nothing that names itself — neither a
@@ -131,6 +154,23 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
       `tn-form-field "${await this.getLabelText()}" holds no control TnFormControlHarness can set `
       + '(supported: tn-input, tn-select, tn-checkbox, tn-radio) — drive it through its own tn-* harness.',
     );
+  }
+
+  /**
+   * The options a `tn-select` in this field offers, read with the panel opened and closed again.
+   * Deliberately outside the {@link IxFormControlHarness} contract, which knows only about the
+   * value a control *has* — it lives here so a spec asserting which options a select offers can
+   * still address it by label, instead of hanging a CSS anchor on the select for the test's sake.
+   */
+  async getSelectOptions(): Promise<string[]> {
+    const select = await this.select();
+    if (!select) {
+      throw new Error(`tn-form-field "${await this.getLabelText()}" holds no tn-select to read options from.`);
+    }
+    await select.open();
+    const options = await select.getOptions();
+    await select.close();
+    return options;
   }
 
   /**
