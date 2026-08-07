@@ -1,80 +1,119 @@
 <ix-page-header>
   <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
 
-  <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-device" color="primary" (click)="onAdd()">
-    {{ 'Add' | translate }}
-  </button>
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    [testId]="'add-device'"
+    [label]="'Add' | translate"
+    (onClick)="onAdd()"
+  ></tn-button>
 </ix-page-header>
 
-<ix-table
-  class="table"
-  [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+@if (showExportBlockedNotice()) {
+  <tn-banner
+    class="export-blocked-notice"
+    type="info"
+    [message]="'Export is not allowed when Virtual Machine is running.' | translate"
+  ></tn-banner>
+}
+
+@let emptyConf = emptyService.defaultEmptyConfig(emptyType());
+<tn-table
+  [testId]="'table-table'"
+  [dataSource]="rows()"
+  [displayedColumns]="displayedColumns"
+  [trackBy]="trackByDeviceId"
+  [loading]="isLoading()"
+  [emptyMessage]="emptyConf.title | translate"
+  [emptyIcon]="emptyConf.icon || emptyService.iconForType(emptyType())"
+  (sortChange)="onSortChange($event)"
 >
-  <thead
-    ix-table-head
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-  ></thead>
-  <tbody
-    ix-table-body
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-    [isLoading]="!!(dataProvider.isLoading$ | async)"
-  >
-    <ng-template
-      let-device
-      ix-table-cell
-      [columnIndex]="3"
-      [dataProvider]="dataProvider"
-    >
-      <button
-        mat-icon-button
-        ixTest="device-actions"
+  <ng-container [tnColumnDef]="'id'" [sortable]="true">
+    <ng-template tnHeaderCellDef>{{ 'Device ID' | translate }}</ng-template>
+    <ng-template let-device tnCellDef>
+      <span
+        tnTestIdType="text"
+        [tnTestId]="[('Device ID' | translate), uniqueRowTag(device), 'row-text']"
+      >{{ device.id }}</span>
+    </ng-template>
+  </ng-container>
+
+  <ng-container [tnColumnDef]="'dtype'" [sortable]="true">
+    <ng-template tnHeaderCellDef>{{ 'Device' | translate }}</ng-template>
+    <ng-template let-device tnCellDef>
+      <!-- tn-table ellipsises overflowing cell content; keep the reveal affordance ix-cell-text had. -->
+      <span
+        tnTestIdType="text"
+        [tnTooltip]="getDeviceTypeLabel(device)"
+        [tnTestId]="[('Device' | translate), uniqueRowTag(device), 'row-text']"
+      >{{ getDeviceTypeLabel(device) }}</span>
+    </ng-template>
+  </ng-container>
+
+  <ng-container [tnColumnDef]="'order'" [sortable]="true">
+    <ng-template tnHeaderCellDef>{{ 'Order' | translate }}</ng-template>
+    <ng-template let-device tnCellDef>
+      <span
+        tnTestIdType="text"
+        [tnTestId]="[('Order' | translate), uniqueRowTag(device), 'row-text']"
+      >{{ device.order }}</span>
+    </ng-template>
+  </ng-container>
+
+  <ng-container [tnColumnDef]="'actions'" [width]="'70px'">
+    <ng-template tnHeaderCellDef></ng-template>
+    <ng-template let-device tnCellDef>
+      <tn-icon-button
+        name="dots-vertical"
+        library="mdi"
         class="actions"
-        [tnTooltip]="'Actions' | translate"
-        [attr.aria-label]="'Actions' | translate"
-        [matMenuTriggerFor]="actionsMenu"
-      >
-        <tn-icon name="dots-vertical" library="mdi"></tn-icon>
-      </button>
-      <mat-menu #actionsMenu="matMenu">
-        <a
-          mat-menu-item
-          [ixTest]="[device.id, 'edit']"
-          (click)="onEdit(device)"
+        [testId]="'device-actions'"
+        [tooltip]="'Actions' | translate"
+        [ariaLabel]="'Actions' | translate"
+        [tnMenuTriggerFor]="actionsMenu"
+      ></tn-icon-button>
+      <tn-menu #actionsMenu>
+        <tn-menu-item
+          [testId]="[device.id, 'edit']"
+          (itemClick)="onEdit(device)"
         >
           {{ 'Edit' | translate }}
-        </a>
-        <a
+        </tn-menu-item>
+        <tn-menu-item
           *ixRequiresRoles="requiredRoles"
-          mat-menu-item
-          [ixTest]="[device.id, 'delete']"
-          (click)="onDelete(device)"
+          [testId]="[device.id, 'delete']"
+          (itemClick)="onDelete(device)"
         >
           {{ 'Delete' | translate }}
-        </a>
-        <a
-          mat-menu-item
-          [ixTest]="[device.id, 'details']"
-          (click)="onDetails(device)"
+        </tn-menu-item>
+        <tn-menu-item
+          [testId]="[device.id, 'details']"
+          (itemClick)="onDetails(device)"
         >
           {{ 'Details' | translate }}
-        </a>
+        </tn-menu-item>
         @if (isDiskDevice(device)) {
-          <a
-            mat-menu-item
-            [ixTest]="[device.id, 'export']"
-            [attr.aria-label]="'Export disk to image file' | translate"
+          <!--
+            A disabled item cannot explain itself here: tn-menu-panel projects each item into a
+            NATIVE <button> and forwards [disabled] to it, and browsers dispatch no pointer
+            events to a disabled button's descendants — so neither this item's own tooltip nor
+            one on a projected icon could ever be shown in the one state it explains. The reason
+            is surfaced once by the banner above the table instead, which keeps this item's label
+            (and therefore its accessible name) the same in both states. An aria-label is omitted
+            for a separate reason: the projected content lands on a role=generic element, where
+            ARIA 1.2 prohibits it, and the visible label names the item adequately on its own.
+          -->
+          <tn-menu-item
+            [testId]="[device.id, 'export']"
             [disabled]="isVmRunning()"
-            [tnTooltip]="isVmRunning() ? ('Export is not allowed when Virtual Machine is running.' | translate) : ''"
-            (click)="handleExportDisk(device)"
+            (itemClick)="handleExportDisk(device)"
           >
             {{ 'Export to Image' | translate }}
-          </a>
+          </tn-menu-item>
         }
-      </mat-menu>
+      </tn-menu>
     </ng-template>
-  </tbody>
-</ix-table>
+  </ng-container>
+</tn-table>
 <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>

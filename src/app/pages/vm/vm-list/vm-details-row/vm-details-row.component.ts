@@ -2,18 +2,16 @@ import {
   Component, ChangeDetectionStrategy, DestroyRef, input, computed, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmState } from 'app/enums/vm.enum';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
@@ -28,28 +26,34 @@ import { VmService } from 'app/services/vm.service';
   standalone: true,
   imports: [
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    TnIconComponent,
+    TnButtonComponent,
     TnTooltipDirective,
     TranslateModule,
   ],
 })
 export class VirtualMachineDetailsRowComponent {
   private loader = inject(LoaderService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
   private tnDialog = inject(TnDialog);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
   private vmService = inject(VmService);
   private destroyRef = inject(DestroyRef);
-  private translate = inject(TranslateService);
 
   readonly vm = input.required<VirtualMachine>();
 
   protected readonly requiredReadRoles = [Role.VmRead];
   protected readonly requiredRoles = [Role.VmWrite];
 
+  /**
+   * TEMP (NAS-141021): `tn-button` has no tooltip input (still the case in 0.4.9 — only
+   * `tn-icon-button` and `tn-icon` have one), so `[tnTooltip]` sits on the host element rather
+   * than the native button it renders — the hover tooltip still works, but its
+   * `aria-describedby` lands on a non-focusable wrapper. The warning is not lost: the
+   * confirmation dialog repeats it where the user has to act. Bind a real input once the
+   * library grows one.
+   */
   protected readonly resetTooltip = this.translate.instant(
     helptextVmList.resetButton.tooltip,
     { warning: this.translate.instant(helptextVmList.hardResetWarning) },
@@ -118,7 +122,10 @@ export class VirtualMachineDetailsRowComponent {
   }
 
   protected doEdit(): void {
-    this.slideIn.open(VmEditFormComponent, { data: this.vm() });
+    this.formPanel.open(VmEditFormComponent, {
+      title: this.translate.instant('Edit VM'),
+      inputs: { vmToEdit: this.vm() },
+    });
   }
 
   protected doDelete(): void {

@@ -30,10 +30,9 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import {
-  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -163,7 +162,7 @@ export class WebShareListComponent implements OnInit {
   protected readonly trackByWebShareId = (_index: number, row: WebShareTableRow): number => row.id;
 
   protected uniqueRowTag(row: WebShareTableRow): string {
-    return normalizeTestIdString(convertStringToId(row.name));
+    return toUniqueRowTag(row.name);
   }
 
   protected ariaLabel(row: WebShareTableRow): string {

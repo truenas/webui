@@ -1,11 +1,26 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, inject, signal,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTablePagerComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnBannerComponent,
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnDialog,
+  TnHeaderCellDefDirective,
+  TnIconButtonComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+  type TnSortEvent,
+} from '@truenas/ui-components';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -16,21 +31,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import {
-  actionsColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import {
+  dataProviderLoading, dataProviderRows, mapTnSortToTableSort, memoizedRowTag,
+} from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import {
@@ -49,28 +56,26 @@ import { ExportDiskDialogComponent } from 'app/pages/vm/devices/device-list/expo
     PageHeaderComponent,
     BasicSearchComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableCellDirective,
-    MatIconButton,
-    MatMenuTrigger,
-    TnIconComponent,
-    MatMenu,
-    MatMenuItem,
+    TnBannerComponent,
+    TnButtonComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnTestIdDirective,
+    TnIconButtonComponent,
+    TnMenuTriggerDirective,
+    TnMenuComponent,
+    TnMenuItemComponent,
     TnTooltipDirective,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class DeviceListComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private slideIn = inject(SlideIn);
+  private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
   private tnDialog = inject(TnDialog);
@@ -81,42 +86,53 @@ export class DeviceListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.VmDeviceWrite];
 
-  dataProvider: AsyncDataProvider<VmDevice>;
-  searchQuery = signal('');
-  devices: VmDevice[] = [];
-  vmName = '';
-  isVmRunning = signal(false);
+  protected readonly searchQuery = signal('');
+  private devices: VmDevice[] = [];
+  private vmName = '';
+  protected readonly isVmRunning = signal(false);
 
-  columns = createTable<VmDevice>([
-    textColumn({
-      title: this.translate.instant('Device ID'),
-      propertyName: 'id',
-    }),
-    textColumn({
-      title: this.translate.instant('Device'),
-      propertyName: 'dtype',
-      getValue: (device) => this.getDeviceTypeLabel(device),
-    }),
-    textColumn({
-      title: this.translate.instant('Order'),
-      propertyName: 'order',
-    }),
-    actionsColumn({}),
-  ], {
-    uniqueRowTag: (row) => `vm-device-${row.attributes.dtype}-${row.order}`,
-    ariaLabels: (row) => [row.attributes.dtype, this.translate.instant('Device')],
+  protected readonly displayedColumns = ['id', 'dtype', 'order', 'actions'];
+
+  private readonly devices$ = this.api.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(
+    tap((devices) => this.devices = devices),
+    takeUntilDestroyed(this.destroyRef),
+  );
+
+  readonly dataProvider = new AsyncDataProvider<VmDevice>(this.devices$);
+  protected readonly rows = dataProviderRows(this.dataProvider);
+  protected readonly isLoading = dataProviderLoading(this.dataProvider);
+  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
+
+  /**
+   * The Export to Image item is disabled while the VM runs, and a disabled item cannot carry
+   * its own tooltip (see the template). The reason is stated once above the table instead, and
+   * only when it applies to something on screen — a running VM with at least one disk device.
+   */
+  protected readonly showExportBlockedNotice = computed(() => {
+    return this.isVmRunning() && this.rows().some((device) => this.isDiskDevice(device));
   });
 
-  get vmId(): number {
+  /**
+   * `dtype` is a display-only column (the label comes from `getDeviceTypeLabel`, and the
+   * raw value lives under `attributes`), so it needs an explicit accessor to sort by what
+   * the user actually sees.
+   */
+  private readonly sortAccessors: Record<string, (row: VmDevice) => string | number> = {
+    dtype: (row) => this.getDeviceTypeLabel(row),
+  };
+
+  protected readonly trackByDeviceId = (_index: number, row: VmDevice): number => row.id;
+
+  /** Row tag the template's `[tnTestId]`s are keyed on; memoized — every cell asks per pass. */
+  protected readonly uniqueRowTag = memoizedRowTag<VmDevice>(
+    (row) => `vm-device-${row.attributes.dtype}-${row.order}`,
+  );
+
+  private get vmId(): number {
     return Number(this.route.snapshot.params['pk']);
   }
 
   ngOnInit(): void {
-    const devices$ = this.api.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(
-      tap((devices) => this.devices = devices),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<VmDevice>(devices$);
     this.setDefaultSort();
     this.loadDevices();
     this.loadVmName();
@@ -126,7 +142,7 @@ export class DeviceListComponent implements OnInit {
     });
   }
 
-  loadVmName(): void {
+  private loadVmName(): void {
     this.api.call('vm.query', [[['id', '=', this.vmId]]]).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((vms: VirtualMachine[]) => {
@@ -137,7 +153,7 @@ export class DeviceListComponent implements OnInit {
     });
   }
 
-  subscribeToVmUpdates(): void {
+  private subscribeToVmUpdates(): void {
     this.api.subscribe('vm.query').pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((event) => {
@@ -149,30 +165,36 @@ export class DeviceListComponent implements OnInit {
     });
   }
 
-  loadDevices(): void {
+  private loadDevices(): void {
     this.dataProvider.load();
   }
 
-  onAdd(): void {
-    this.slideIn.open(DeviceFormComponent, {
-      data: {
-        virtualMachineId: this.vmId,
-        vmName: this.vmName,
+  protected onAdd(): void {
+    this.formPanel.open(DeviceFormComponent, {
+      title: this.translate.instant('Add Device for {vmName}', { vmName: this.vmName }),
+      inputs: {
+        deviceFormData: {
+          virtualMachineId: this.vmId,
+          vmName: this.vmName,
+        },
       },
     }).onSuccess(() => this.loadDevices(), this.destroyRef);
   }
 
-  onEdit(device: VmDevice): void {
-    this.slideIn.open(DeviceFormComponent, {
-      data: {
-        device,
-        virtualMachineId: this.vmId,
-        vmName: this.vmName,
+  protected onEdit(device: VmDevice): void {
+    this.formPanel.open(DeviceFormComponent, {
+      title: this.translate.instant('Edit Device for {vmName}', { vmName: this.vmName }),
+      inputs: {
+        deviceFormData: {
+          device,
+          virtualMachineId: this.vmId,
+          vmName: this.vmName,
+        },
       },
     }).onSuccess(() => this.loadDevices(), this.destroyRef);
   }
 
-  onDelete(device: VmDevice): void {
+  protected onDelete(device: VmDevice): void {
     this.tnDialog
       .open(
         DeviceDeleteModalComponent,
@@ -189,19 +211,19 @@ export class DeviceListComponent implements OnInit {
       );
   }
 
-  onDetails(device: VmDevice): void {
+  protected onDetails(device: VmDevice): void {
     this.tnDialog.open(DeviceDetailsComponent, {
       data: device,
     });
   }
 
-  handleExportDisk(device: VmDevice): void {
+  protected handleExportDisk(device: VmDevice): void {
     if (!this.isVmRunning()) {
       this.onExportDisk(device);
     }
   }
 
-  onExportDisk(device: VmDevice): void {
+  private onExportDisk(device: VmDevice): void {
     const dialogRef = this.tnDialog.open(ExportDiskDialogComponent, {
       width: '600px',
       data: {
@@ -250,11 +272,11 @@ export class DeviceListComponent implements OnInit {
       });
   }
 
-  isDiskDevice(device: VmDevice): device is VmDevice & { attributes: { dtype: VmDeviceType.Disk } } {
+  protected isDiskDevice(device: VmDevice): device is VmDevice & { attributes: { dtype: VmDeviceType.Disk } } {
     return device?.attributes?.dtype === VmDeviceType.Disk;
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({
       list: this.devices,
@@ -267,16 +289,22 @@ export class DeviceListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     // TODO: Simplify to not have to specify column index or property?
     this.dataProvider.setSorting({
-      active: 2,
+      active: this.displayedColumns.indexOf('order'),
       direction: SortDirection.Asc,
       propertyName: 'order',
     });
   }
 
-  private getDeviceTypeLabel(device: VmDevice): string {
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort(event, this.displayedColumns, { sortAccessors: this.sortAccessors }),
+    );
+  }
+
+  protected getDeviceTypeLabel(device: VmDevice): string {
     if (device.attributes.dtype === VmDeviceType.Display) {
       // For display devices, include the protocol type (SPICE/VNC)
       const displayType = device.attributes.type;

@@ -2,7 +2,6 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
@@ -42,7 +41,6 @@ interface ImageFormat {
     FormActionsComponent,
     TnButtonComponent,
     TranslateModule,
-    MatProgressBarModule,
   ],
 })
 export class ExportDiskDialogComponent {
