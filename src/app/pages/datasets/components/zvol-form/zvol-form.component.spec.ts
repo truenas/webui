@@ -81,12 +81,6 @@ describe('ZvolFormComponent', () => {
       value: null,
       source: ZfsPropertySource.Default,
     },
-    encryption_algorithm: {
-      parsed: 'off',
-      rawvalue: 'off',
-      value: null,
-      source: ZfsPropertySource.Default,
-    },
     pbkdf2iters: {
       parsed: '0',
       rawvalue: '0',
@@ -132,14 +126,6 @@ describe('ZvolFormComponent', () => {
             ...dataset,
             type: DatasetType.Volume,
           }];
-        }),
-        mockCall('pool.dataset.encryption_algorithm_choices', {
-          'AES-128-CCM': 'AES-128-CCM',
-          'AES-192-CCM': 'AES-192-CCM',
-          'AES-256-CCM': 'AES-256-CCM',
-          'AES-128-GCM': 'AES-128-GCM',
-          'AES-192-GCM': 'AES-192-GCM',
-          'AES-256-GCM': 'AES-256-GCM',
         }),
         mockCall('pool.dataset.compression_choices', {
           OFF: 'Off',
@@ -207,10 +193,8 @@ describe('ZvolFormComponent', () => {
         Snapdev: 'Visible',
       });
 
-      const encryptionDetails = (await loader.getAllHarnesses(DetailsTableHarness))[1];
-      await encryptionDetails.setValues({
-        Algorithm: 'AES-128-CCM',
-        pbkdf2iters: 1400000,
+      await form.fillForm({
+        pbkdf2iters: '1400000',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -231,7 +215,6 @@ describe('ZvolFormComponent', () => {
         inherit_encryption: false,
         encryption: true,
         encryption_options: {
-          algorithm: 'AES-128-CCM',
           passphrase: '12345678',
           pbkdf2iters: 1400000,
         },
@@ -345,12 +328,6 @@ describe('ZvolFormComponent', () => {
     const encryptedParent = {
       ...dataset,
       encrypted: true,
-      encryption_algorithm: {
-        value: 'AES-256-GCM',
-        parsed: 'AES-256-GCM',
-        rawvalue: 'aes-256-gcm',
-        source: ZfsPropertySource.Default,
-      },
       key_format: {
         value: EncryptionKeyFormat.Hex,
         parsed: 'hex',
@@ -370,14 +347,6 @@ describe('ZvolFormComponent', () => {
           mockCall('pool.dataset.update'),
           mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
           mockCall('pool.dataset.query', [encryptedParent]),
-          mockCall('pool.dataset.encryption_algorithm_choices', {
-            'AES-128-CCM': 'AES-128-CCM',
-            'AES-192-CCM': 'AES-192-CCM',
-            'AES-256-CCM': 'AES-256-CCM',
-            'AES-128-GCM': 'AES-128-GCM',
-            'AES-192-GCM': 'AES-192-GCM',
-            'AES-256-GCM': 'AES-256-GCM',
-          }),
           mockCall('pool.dataset.compression_choices', {
             OFF: 'Off',
             LZ4: 'lz4 (recommended)',
@@ -541,9 +510,6 @@ describe('ZvolFormComponent', () => {
             call: jest.fn((method) => {
               if (method === 'pool.dataset.query') {
                 return of([dataset]);
-              }
-              if (method === 'pool.dataset.encryption_algorithm_choices') {
-                return of({});
               }
               if (method === 'pool.dataset.recommended_zvol_blocksize') {
                 return of('16K');

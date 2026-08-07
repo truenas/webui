@@ -58,6 +58,12 @@
           {{ hasPassphrase() ? ('Passphrase' | translate) : ('Key' | translate) }}
         </div>
       </div>
+      @if (algorithm()) {
+        <div class="details-item">
+          <div class="label">{{ 'Algorithm' | translate }}:</div>
+          <div class="value">{{ algorithm() }}</div>
+        </div>
+      }
     }
   </mat-card-content>
   @if (dataset().encrypted && isEncryptionRoot() && !dataset().locked) {

@@ -247,48 +247,15 @@
             ></ix-input>
           }
 
-          <ix-details-table class="encryption-details">
-            @if (form.controls.pbkdf2iters.enabled) {
-              <ix-details-item
-                [label]="helptext.encryption.pbkdf2itersLabel | translate"
-                [tooltip]="helptext.encryption.pbkdf2itersTooltip | translate"
-              >
-                <ix-editable>
-                  <div view>{{ form.value.pbkdf2iters }}</div>
-                  <div edit>
-                    <ix-input
-                      formControlName="pbkdf2iters"
-                      type="number"
-                      [attr.aria-label]="helptext.encryption.pbkdf2itersLabel | translate"
-                      [required]="true"
-                    ></ix-input>
-                  </div>
-                </ix-editable>
-              </ix-details-item>
-            }
-
-            @if (form.controls.algorithm.enabled) {
-              <ix-details-item
-                [label]="helptext.encryption.algorithmLabel | translate"
-                [tooltip]="helptext.encryption.algorithmTooltip | translate"
-              >
-                <ix-editable>
-                  <div view>
-                    @let algorithmOptions = algorithmOptions$ | async;
-                    {{ algorithmOptions ? getOptionLabel(algorithmOptions, form.value.algorithm): form.value.algorithm }}
-                  </div>
-                  <div edit>
-                    <ix-select
-                      formControlName="algorithm"
-                      [attr.aria-label]="helptext.encryption.algorithmLabel | translate"
-                      [options]="algorithmOptions$"
-                      [required]="true"
-                    ></ix-select>
-                  </div>
-                </ix-editable>
-              </ix-details-item>
-            }
-          </ix-details-table>
+          @if (form.controls.pbkdf2iters.enabled) {
+            <ix-input
+              formControlName="pbkdf2iters"
+              type="number"
+              [label]="helptext.encryption.pbkdf2itersLabel | translate"
+              [tooltip]="helptext.encryption.pbkdf2itersTooltip | translate"
+              [required]="true"
+            ></ix-input>
+          }
         </ix-fieldset>
       }
 

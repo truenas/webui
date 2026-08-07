@@ -68,7 +68,6 @@ export interface PoolManagerState {
   enclosures: Enclosure[];
   name: string;
   nameErrors: ValidationErrors | null;
-  encryption: string | null;
   encryptionType: EncryptionType;
   sedPassword: string | null;
   hasSedCapableDisks: boolean;
@@ -104,7 +103,6 @@ export const initialState: PoolManagerState = {
   enclosures: [],
   name: '',
   nameErrors: null,
-  encryption: null,
   encryptionType: EncryptionType.None,
   sedPassword: null,
   hasSedCapableDisks: false,
@@ -145,7 +143,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly name$ = this.select((state) => state.name);
   readonly nameErrors$ = this.select((state) => state.nameErrors);
-  readonly encryption$ = this.select((state) => state.encryption);
   readonly encryptionType$ = this.select((state) => state.encryptionType);
   readonly sedPassword$ = this.select((state) => state.sedPassword);
   readonly hasSedCapableDisks$ = this.select((state) => state.hasSedCapableDisks);
@@ -293,7 +290,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     };
   });
 
-  readonly setGeneralOptions = this.updater((state, options: Pick<PoolManagerState, 'nameErrors' | 'name' | 'encryption'>) => {
+  readonly setGeneralOptions = this.updater((state, options: Pick<PoolManagerState, 'nameErrors' | 'name'>) => {
     return {
       ...state,
       ...options,
@@ -302,7 +299,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   setEncryptionOptions(options: {
     encryptionType: EncryptionType;
-    encryption: string | null;
     sedPassword: string | null;
   }): void {
     this.patchState(options);

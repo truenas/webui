@@ -66,7 +66,6 @@ describe('PoolManagerWizardComponent', () => {
   const hasMultipleEnclosuresInAllowedDisks$ = new BehaviorSubject(false);
   const state = {
     name: 'pewl',
-    encryption: null,
     encryptionType: EncryptionType.None,
     diskSettings: {
       allowNonUniqueSerialDisks: true,
@@ -252,7 +251,6 @@ describe('PoolManagerWizardComponent', () => {
     it('shows a DownloadKeyDialog after pool has been created if encryption was used', async () => {
       state$.next({
         ...state,
-        encryption: 'AES-256-GCM',
         encryptionType: EncryptionType.Software,
       });
 
@@ -263,6 +261,23 @@ describe('PoolManagerWizardComponent', () => {
         disableClose: true,
         data: createdPool,
       });
+    });
+
+    it('sends encryption options without an algorithm when software encryption is used', async () => {
+      state$.next({
+        ...state,
+        encryptionType: EncryptionType.Software,
+      });
+
+      await wizard.selectStep({ label: 'Review' });
+      spectator.query(ReviewWizardStepComponent)!.createPool.emit();
+
+      expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.create', [
+        expect.objectContaining({
+          encryption: true,
+          encryption_options: { generate_key: true },
+        }),
+      ]);
     });
   });
 });
