@@ -141,6 +141,14 @@ Two failures that look like bugs and are not:
 - **`Max Concurrent Calls`** — dev-build only, gated on `!environment.production`.
   The shipped UI cannot produce it. An artifact of the `branch` profile.
 
+## Where things are going
+
+`docs/03-plan-and-status.md` is the living account of what is covered, what is
+not, and what is next. Check it before starting substantial work — and update it
+after. `docs/01-requirements.md` and `docs/02-technology.md` are decision
+records: the `R`/`T`/`D` numbers cited in code comments point there, and they
+explain *why* a piece of code is shaped as it is.
+
 ## Temporary scaffolding
 
 `support/api/untyped.ts` exists only because `@truenas/api-client`'s typed

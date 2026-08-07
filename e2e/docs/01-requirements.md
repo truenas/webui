@@ -57,7 +57,7 @@ rather than an obstacle. See R5.
 | Build under test | Nightly builds |
 | Coverage model | User-story journeys, critical paths first |
 | Execution trigger | Nightly / scheduled |
-| Repo layout | Separate repo (`webui-e2e`) |
+| Repo layout | In-tree, under `e2e/` (reversed from an initial separate-repo decision) |
 
 ---
 
@@ -144,9 +144,17 @@ test in the suite silently carries the setup wizard as a dependency.
 certificate; a locally-served build is plain HTTP. The browser context must
 tolerate the former, without that leniency masking genuine certificate problems.
 
-**R2.10 — No source-tree dependency.** The suite never assumes a local webui
-checkout is present. In shipped-UI mode there is none. Anything derived from
-webui source (see R6.3) must be a build-time input, not a runtime dependency.
+**R2.10 — Source-tree coupling is deliberate but confined. (Revised.)**
+Originally the inverse: the suite must never assume a local webui checkout. That
+followed from the separate-repo layout and no longer applies in-tree, where
+reading webui's own configuration is the point — `TN_HOST` defaults to whatever
+`yarn ui remote` wrote into `src/environments/environment.ts`.
+
+What survives is the *discipline*: the coupling lives in exactly one module
+(`support/webui-environment.ts`) so it stays visible, and environment variables
+always win, so nothing requires a working tree that has ever run that command.
+Verified by running the whole suite with `.env` and `environment.ts` both
+removed.
 
 ### R2.11 Target profiles
 
@@ -303,22 +311,23 @@ most tedious to retrofit.
 
 ---
 
-## R6. Cross-repo coupling
+## R6. Cross-repo coupling — resolved
 
-Keeping the suite in a separate repository has a cost, recorded here rather than
-papered over.
+**Resolved by moving the suite in-tree.** This section recorded the cost of the
+separate-repo layout; that layout is gone. Retained because R6.2 still stands on
+its own, and because the reasoning explains why in-tree was worth the move.
 
-**R6.1 — Drift is caught late.** A webui PR that renames a test ID will not be
-detected until the next nightly run. This is an accepted consequence of the
-repo-layout decision.
+**R6.1 — Drift is caught late. (No longer applies.)** A webui PR renaming a test
+ID now breaks its own E2E test in the same PR, rather than surfacing in a
+nightly run days later. This was the main cost of the separate repo and the main
+reason for moving.
 
 **R6.2 — Failures must be triageable without a local repro.** A report must make
 "application bug" versus "test ID drift" obvious from the artifacts alone.
 
-**R6.3 — Independent drift detection (later phase).** Extract a test-ID
-inventory from webui at build time and diff it between runs, so drift is
-detectable without waiting for a test to fail. Subject to R2.10 — a build-time
-input, not a runtime source-tree dependency.
+**R6.3 — Independent drift detection. (Largely moot.)** Extracting a test-ID
+inventory to diff between runs was a workaround for R6.1's latency. With the
+suite in-tree the PR itself is the signal, so this is no longer worth building.
 
 ---
 
@@ -398,10 +407,11 @@ carries two unsolved problems:
   gate that flaps for unrelated reasons is ignored within a month. The fix is to
   pin PR CI to a known-good middleware build and bump it deliberately, which is
   ongoing maintenance somebody must own.
-- Per R6.1, a webui PR must check out webui-e2e at *some* version. Pin to `main`
-  and an e2e-side change can break unrelated webui PRs.
-- The `branch` profile it depends on needs a proxying static server that does not
-  exist yet, plus a Node ≥24.13.1 toolchain to build webui at all (R2.11).
+- ~~A webui PR must check out webui-e2e at *some* version.~~ Resolved by the
+  in-tree move: the suite is versioned with the code it tests.
+- Infrastructure, not suite work: CI runners must reach the appliance network,
+  and concurrent runs each need their own VM — the suite assumes it owns the
+  appliance.
 
 v1 builds the seam (R2.11) so gating is possible later, but does not wire it up.
 
