@@ -5,74 +5,40 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { invertUmask } from 'app/helpers/mode.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceFtp } from 'app/helptext/services/components/service-ftp';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  advancedModeFooterAction, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { ignoreTranslation, translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import {
+  serviceConfigSavedMessage,
+} from 'app/pages/services/components/service-config-forms.constants';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
-@Component({
-  selector: 'ix-service-ftp',
-  templateUrl: './service-ftp.component.html',
-  styleUrls: ['./service-ftp.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ModalHeaderComponent,
-    ReactiveFormsModule,
-    TnFormSectionComponent,
-    TnFormFieldComponent,
-    TnInputComponent,
-    TnCheckboxComponent,
-    IxExplorerComponent,
-    IxPermissionsComponent,
-    WithManageCertificatesLinkComponent,
-    TnSelectComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
-    TranslateModule,
-    AsyncPipe,
-    ExplorerCreateDatasetComponent,
-  ],
-})
-export class ServiceFtpComponent extends SidePanelForm implements OnInit {
-  private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
-  private formErrorHandler = inject(FormErrorHandlerService);
-  private errorHandler = inject(ErrorHandlerService);
-  private systemGeneralService = inject(SystemGeneralService);
-  private filesystemService = inject(FilesystemService);
-  private translate = inject(TranslateService);
-  private snackbar = inject(SnackbarService);
-  private destroyRef = inject(DestroyRef);
-
-  readonly requiredRoles = [Role.SharingFtpWrite];
-  protected readonly InputType = InputType;
-
-  protected isFormLoading = signal(false);
-  isAdvancedMode = false;
-
-  form = this.formBuilder.group({
+// Built here rather than inline in the component, and left with an inferred return type — see
+// the `V` type parameter on IxFormHostForm for why.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createFtpForm(formBuilder: FormBuilder) {
+  return formBuilder.group({
     port: new FormControl(null as number | null, [portRangeValidator(), Validators.required]),
     clients: new FormControl(null as number | null, [rangeValidator(1, 10000), Validators.required]),
     ipconnections: new FormControl(null as number | null, [rangeValidator(0, 1000), Validators.required]),
@@ -113,6 +79,50 @@ export class ServiceFtpComponent extends SidePanelForm implements OnInit {
     banner: [''],
     options: [''],
   });
+}
+
+/**
+ * The form's own value shape, which is NOT `FtpConfigUpdate`: `filemask`/`dirmask` hold
+ * pre-{@link invertUmask} values and the bandwidth controls are in bytes where the API takes KB
+ * (all reshaped in {@link ServiceFtpComponent.handleSubmit}).
+ */
+type FtpFormValue = ReturnType<ReturnType<typeof createFtpForm>['getRawValue']>;
+
+@Component({
+  selector: 'ix-service-ftp',
+  templateUrl: './service-ftp.component.html',
+  styleUrls: ['./service-ftp.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    IxFormComponent,
+    ReactiveFormsModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    IxExplorerComponent,
+    IxPermissionsComponent,
+    WithManageCertificatesLinkComponent,
+    TnSelectComponent,
+    TranslateModule,
+    AsyncPipe,
+    ExplorerCreateDatasetComponent,
+  ],
+})
+export class ServiceFtpComponent extends IxFormHostForm<boolean, FtpFormValue> implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private systemGeneralService = inject(SystemGeneralService);
+  private filesystemService = inject(FilesystemService);
+  private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
+
+  readonly requiredRoles = [Role.SharingFtpWrite];
+  protected readonly InputType = InputType;
+
+  protected readonly isAdvancedMode = signal(false);
+
+  protected readonly form = createFtpForm(this.formBuilder);
 
   readonly helptext = helptextServiceFtp;
 
@@ -125,7 +135,12 @@ export class ServiceFtpComponent extends SidePanelForm implements OnInit {
   readonly isAnonymousLoginAllowed$ = this.form.select((values) => values.onlyanonymous);
   readonly isTlsEnabled$ = this.form.select((values) => values.tls);
 
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
+
+  get footerActions(): SidePanelFooterAction[] {
+    return this.advancedToggle();
+  }
 
   ngOnInit(): void {
     this.loadConfig();
@@ -136,59 +151,35 @@ export class ServiceFtpComponent extends SidePanelForm implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<FtpFormValue>): SubmitResult => {
     const values = {
-      ...this.form.value,
-      filemask: invertUmask(this.form.value.filemask),
-      dirmask: invertUmask(this.form.value.dirmask),
-      localuserbw: this.convertByteToKbyte(Number(this.form.value.localuserbw)),
-      localuserdlbw: this.convertByteToKbyte(Number(this.form.value.localuserdlbw)),
-      anonuserbw: this.convertByteToKbyte(Number(this.form.value.anonuserbw)),
-      anonuserdlbw: this.convertByteToKbyte(Number(this.form.value.anonuserdlbw)),
+      ...allValues,
+      filemask: invertUmask(allValues.filemask),
+      dirmask: invertUmask(allValues.dirmask),
+      localuserbw: this.convertByteToKbyte(Number(allValues.localuserbw)),
+      localuserdlbw: this.convertByteToKbyte(Number(allValues.localuserdlbw)),
+      anonuserbw: this.convertByteToKbyte(Number(allValues.anonuserbw)),
+      anonuserdlbw: this.convertByteToKbyte(Number(allValues.anonuserdlbw)),
     };
 
-    this.isFormLoading.set(true);
-    this.api.call('ftp.update', [values])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isFormLoading.set(false);
-          this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.isFormLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
-
-  onToggleAdvancedOptions(): void {
-    this.isAdvancedMode = !this.isAdvancedMode;
-  }
+    return {
+      request$: this.api.call('ftp.update', [values]),
+      successMessage: this.translate.instant(serviceConfigSavedMessage),
+    };
+  };
 
   private loadConfig(): void {
-    this.isFormLoading.set(true);
-    this.api.call('ftp.config')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (config) => {
-          this.form.patchValue({
-            ...config,
-            filemask: invertUmask(config.filemask),
-            dirmask: invertUmask(config.dirmask),
-            localuserbw: this.convertKbyteToByte(config.localuserbw),
-            localuserdlbw: this.convertKbyteToByte(config.localuserdlbw),
-            anonuserbw: this.convertKbyteToByte(config.anonuserbw),
-            anonuserdlbw: this.convertKbyteToByte(config.anonuserdlbw),
-          });
-          this.isFormLoading.set(false);
-        },
-        error: (error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-          this.isFormLoading.set(false);
-        },
+    this.loadFormConfig(this.api.call('ftp.config'), (config) => {
+      this.form.patchValue({
+        ...config,
+        filemask: invertUmask(config.filemask),
+        dirmask: invertUmask(config.dirmask),
+        localuserbw: this.convertKbyteToByte(config.localuserbw),
+        localuserdlbw: this.convertKbyteToByte(config.localuserdlbw),
+        anonuserbw: this.convertKbyteToByte(config.anonuserbw),
+        anonuserdlbw: this.convertKbyteToByte(config.anonuserdlbw),
       });
+    });
   }
 
   private convertByteToKbyte(bytes: number): number {

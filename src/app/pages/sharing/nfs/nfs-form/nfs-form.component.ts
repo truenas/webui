@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -37,7 +36,9 @@ import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.const
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
-import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import {
+  advancedModeFooterAction, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
@@ -123,17 +124,11 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
 
   readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
 
-  /**
-   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
-   * change detection, so the label flips with {@link isAdvancedMode}.
-   */
+  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
+
   get footerActions(): SidePanelFooterAction[] {
-    // Labels are extraction markers — the panel container pipes them through `translate`.
-    return [{
-      label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
-      testId: 'toggle-advanced-options',
-      onClick: () => this.toggleAdvancedMode(),
-    }];
+    return this.advancedToggle();
   }
 
   readonly helptext = helptextSharingNfs;
@@ -246,10 +241,6 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
 
   protected removeHostControl(index: number): void {
     this.form.controls.hosts.removeAt(index);
-  }
-
-  protected toggleAdvancedMode(): void {
-    this.isAdvancedMode.update((value) => !value);
   }
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {

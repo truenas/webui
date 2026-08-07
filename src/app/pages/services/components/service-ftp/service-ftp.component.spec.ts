@@ -1,13 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FtpConfig } from 'app/interfaces/ftp-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -18,9 +19,10 @@ import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -69,12 +71,6 @@ describe('ServiceFtpComponent', () => {
     tls_policy: '!data',
   } as FtpConfig;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
@@ -90,6 +86,12 @@ describe('ServiceFtpComponent', () => {
   const hasCheckbox = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   )).length > 0;
+  // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`.
+  const toggleAdvancedOptions = (): void => {
+    const [toggleAdvanced] = spectator.component.footerActions;
+    toggleAdvanced.onClick();
+    spectator.detectChanges();
+  };
 
   const createComponent = createRoutingFactory({
     component: ServiceFtpComponent,
@@ -120,7 +122,7 @@ describe('ServiceFtpComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
       mockAuth(),
     ],
   });
@@ -128,6 +130,27 @@ describe('ServiceFtpComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('blocks Save when the initial config load fails', () => {
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    const api = spectator.inject(ApiService);
+    const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
+      .mockReturnValue(of(true));
+    failApiCall(api, 'ftp.config');
+
+    // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
+    // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
+    // so the assertion would hinge on double-init being harmless.
+    const failed = TestBed.createComponent(ServiceFtpComponent);
+    failed.detectChanges();
+
+    expect(showErrorModal).toHaveBeenCalled();
+    // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
+    // extraDisabled is bound to; that binding blocking Save is covered in the ix-form spec.
+    expect(failed.componentInstance.hasLoadFailed()).toBe(true);
+    expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 
   it('loads and shows current settings for FTP service', async () => {
@@ -141,9 +164,20 @@ describe('ServiceFtpComponent', () => {
     expect(await (await getInput('timeout')).getValue()).toBe('600');
   });
 
-  it('shows advanced options when Advanced Options button is pressed', async () => {
-    const advancedOptionsButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-    await advancedOptionsButton.click();
+  it('exposes a single footer action that flips between Advanced and Basic Options', () => {
+    expect(spectator.component.footerActions).toHaveLength(1);
+
+    const [toggleAdvanced] = spectator.component.footerActions;
+    expect(toggleAdvanced.label).toBe('Advanced Options');
+    expect(toggleAdvanced.testId).toBe('toggle-advanced-options');
+
+    toggleAdvancedOptions();
+
+    expect(spectator.component.footerActions[0].label).toBe('Basic Options');
+  });
+
+  it('shows advanced options when advanced mode is toggled', async () => {
+    toggleAdvancedOptions();
 
     expect(await (await getSelect('ssltls_certificate')).getDisplayText()).toBe('Secure certificate');
 
@@ -182,14 +216,12 @@ describe('ServiceFtpComponent', () => {
   });
 
   it('updates config for FTP service when form is submitted', async () => {
-    const advancedOptionsButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-    await advancedOptionsButton.click();
+    toggleAdvancedOptions();
 
     await (await getCheckbox('tls_opt_ip_address_required')).check();
     await (await getInput('anonuserdlbw')).setValue('5');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ftp.update', [{
       ...existingFtpConfig,
@@ -199,8 +231,7 @@ describe('ServiceFtpComponent', () => {
   });
 
   it('does not show TLS fields when TLS is off', async () => {
-    const advancedOptionsButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-    await advancedOptionsButton.click();
+    toggleAdvancedOptions();
 
     await (await getCheckbox('tls')).uncheck();
 

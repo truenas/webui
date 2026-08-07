@@ -9,6 +9,7 @@ import {
   isDevMode,
   OnInit,
   output,
+  Signal,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -67,6 +68,8 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
    * need disabled values. Shallow per-key deep-equality; nested groups report as
    * one whole-object entry. Build from `allValues` instead for paired/derived
    * controls, inherit sentinels, or payload reshaping.
+   *
+   * Computed on first access (and cached), so leaving it unread costs nothing.
    */
   changedValues: Partial<T>;
 }
@@ -124,6 +127,24 @@ interface SubmitResultBase<R, TResult> {
 export type SubmitResult<R = boolean, TResult = unknown> = boolean extends R
   ? SubmitResultBase<R, TResult>
   : SubmitResultBase<R, TResult> & { closeWith: (result: TResult) => R };
+
+/**
+ * Config-load state a wrapping `IxFormHostForm` hands to the `<ix-form>` it renders, covering the
+ * same ground as the {@link IxFormComponent.externalLoading} / {@link IxFormComponent.extraDisabled}
+ * / {@link IxFormComponent.initialFormSnapshot} inputs. Pushed through
+ * {@link IxFormComponent.connectLoadState} rather than bound in the subclass's template, so the
+ * three-part contract can't be half-written — see the directive for the full rationale.
+ */
+export interface IxFormLoadState {
+  /** True while the host's initial config load is in flight (as `externalLoading`). */
+  loading: boolean;
+
+  /** True once that load has failed, which must block Save over defaults the user never saw. */
+  failed: boolean;
+
+  /** Baseline captured after a successful load, which `changedValues` diffs against. */
+  snapshot: object | null;
+}
 
 /**
  * Unified form wrapper: modal header + card + save/actions chrome, change
@@ -218,9 +239,6 @@ export class IxFormComponent<
    */
   readonly submitHandler = input.required<(event: FormSubmitEvent<T>) => SubmitResult<R, TResult>>();
 
-  /** Hook before submitHandler: return a modified event, or `false` to cancel. */
-  readonly preSubmit = input<((event: FormSubmitEvent<T>) => FormSubmitEvent<T> | false) | null>(null);
-
   /** Fires when destroyed without a successful submit (cancel/escape/swap). */
   readonly onCancel = input<(() => void) | null>(null);
 
@@ -248,11 +266,30 @@ export class IxFormComponent<
    */
   readonly dirtyPredicate = input<(() => Observable<boolean>) | null>(null);
 
+  // Wired once by a wrapping `IxFormHostForm`; absent (null) under every other host.
+  private readonly loadStateSource = signal<Signal<IxFormLoadState> | null>(null);
+
+  private readonly loadState = computed<IxFormLoadState | null>(() => this.loadStateSource()?.() ?? null);
+
+  /**
+   * Hands this form the config-load state of the `IxFormHostForm` that renders it. Called by the
+   * directive through the view query it already owns — NOT an input, because the whole point is
+   * that no subclass template has to remember to bind it.
+   */
+  connectLoadState(state: Signal<IxFormLoadState>): void {
+    this.loadStateSource.set(state);
+  }
+
   /** Submit-only loading. Consumer-stable (read via template ref). */
   readonly isSubmitting = signal(false);
 
-  /** Submit OR externalLoading. Consumer-stable. */
-  readonly isLoading = computed(() => this.isSubmitting() || this.externalLoading());
+  /** Submit OR externalLoading (or a wrapping host's config load). Consumer-stable. */
+  readonly isLoading = computed(
+    () => this.isSubmitting() || this.externalLoading() || (this.loadState()?.loading ?? false),
+  );
+
+  /** {@link extraDisabled}, plus a wrapping host's failed config load. */
+  private readonly isExtraDisabled = computed(() => this.extraDisabled() || (this.loadState()?.failed ?? false));
 
   /**
    * Emitted on a successful submit when hosted OUTSIDE a SlideIn (i.e. inside a
@@ -284,7 +321,7 @@ export class IxFormComponent<
    * PENDING, so the SlideIn Save stayed enabled there — match it.
    */
   readonly canSubmit = computed(
-    () => this.formStatus() !== 'INVALID' && !this.isLoading() && !this.extraDisabled(),
+    () => this.formStatus() !== 'INVALID' && !this.isLoading() && !this.isExtraDisabled(),
   );
 
   private readonly internalSnapshot = signal<Partial<T> | null>(null);
@@ -305,7 +342,7 @@ export class IxFormComponent<
   private destroyRef = inject(DestroyRef);
 
   private readonly snapshot = computed<Partial<T> | null>(() => {
-    return this.initialFormSnapshot() ?? this.internalSnapshot();
+    return this.initialFormSnapshot() ?? (this.loadState()?.snapshot as Partial<T> | null) ?? this.internalSnapshot();
   });
 
   readonly isEdit = computed(() => {
@@ -332,7 +369,7 @@ export class IxFormComponent<
     return form.invalid
       || this.isLoading()
       || (this.requireDirty() && form.pristine)
-      || this.extraDisabled();
+      || this.isExtraDisabled();
   }
 
   /** Public entry point for a host (e.g. `<tn-side-panel>` footer) to submit. */
@@ -388,20 +425,22 @@ export class IxFormComponent<
     }
 
     const allValues = this.formGroup().getRawValue() as T;
-    let event: FormSubmitEvent<T> = {
+
+    // `changedValues` is diffed on first read and cached, so a handler that builds its payload from
+    // `allValues` pays neither the diff nor the nested-group advisory — which only matter to
+    // handlers that actually consume the diff.
+    let changed: Partial<T> | undefined;
+    const readChangedValues = (): Partial<T> => {
+      changed ??= this.getChangedValues(allValues);
+      return changed;
+    };
+    const event: FormSubmitEvent<T> = {
       isEdit: this.isEdit(),
       allValues,
-      changedValues: this.getChangedValues(allValues),
+      get changedValues(): Partial<T> {
+        return readChangedValues();
+      },
     };
-
-    const preSubmit = this.preSubmit();
-    if (preSubmit) {
-      const result = preSubmit(event);
-      if (result === false) {
-        return;
-      }
-      event = result;
-    }
 
     // Read through the base shape: `SubmitResult`'s conditional only tightens `closeWith` for
     // callers, and stays unresolved while `R` is still a type parameter here.
@@ -532,7 +571,9 @@ export class IxFormComponent<
    * entry: change one inner control and the entire subtree lands in the payload.
    * That silently defeats a "send only what changed" submit, so warn the author
    * to build the payload from `allValues` (or diff the subtree themselves) for
-   * those keys. Fires once per form instance.
+   * those keys. Fires once per form instance, and only from a submit that actually
+   * reads `changedValues` — a form that already builds from `allValues` is doing
+   * the right thing and stays quiet.
    */
   private warnNestedChangedValues(controls: FormGroup['controls']): void {
     if (this.warnedNestedChangedValues) {

@@ -20,6 +20,34 @@
     signal, so it appears exactly when the progress bar does; forms without `isBusy` never show it.
   -->
   <div class="panel-content">
+    <!--
+      The hosted form reports a failed initial load through `hasLoadFailed`. Its own error modal is
+      one-shot, so without this the panel is left showing a greyed-out Save with nothing explaining
+      why. Retry is offered only when the form exposes `retryLoad`.
+
+      The copy stays deliberately vague about WHICH fields are affected: `hasLoadFailed` is a
+      generic host hook and only the form knows how much of itself loaded. `tn-banner` renders
+      role="alert" for type="error", so it announces itself on appearance; wiring the disabled Save
+      to it via aria-describedby isn't possible today (tn-button exposes no such input).
+    -->
+    @if (form()?.hasLoadFailed?.()) {
+      <tn-banner
+        class="load-failure-banner"
+        type="error"
+        [heading]="'Settings could not be loaded' | translate"
+        [message]="'Some settings could not be loaded, so saving is disabled.' | translate"
+      >
+        @if (form()?.retryLoad) {
+          <tn-button
+            tnBannerAction
+            [testId]="'retry-load'"
+            [label]="'Retry' | translate"
+            (onClick)="form()?.retryLoad?.()"
+          ></tn-button>
+        }
+      </tn-banner>
+    }
+
     <ng-template
       [cdkPortalOutlet]="portal()"
       (attached)="onPortalAttached($event)"
@@ -45,6 +73,7 @@
           [color]="action.color ?? 'default'"
           [testId]="action.testId"
           [label]="action.label | translate"
+          [ariaLabel]="action.ariaLabel ? (action.ariaLabel | translate) : undefined"
           [disabled]="action.disabled?.() ?? false"
           (onClick)="action.onClick()"
         ></tn-button>

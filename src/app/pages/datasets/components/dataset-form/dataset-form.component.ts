@@ -4,7 +4,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -23,7 +22,9 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import {
+  advancedModeFooterAction, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   EncryptionSectionComponent,
@@ -113,26 +114,28 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   });
 
   /**
-   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer. Create only: on edit,
-   * quotas and encryption are create-only and Other Options is advanced-only, so switching back to
-   * basic would leave nothing on screen but the disabled Name field.
+   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). `testId`
+   * pins the `data-test` value this form's in-body toggle already ships with.
    */
-  private readonly footerActionList = computed<SidePanelFooterAction[]>(() => {
-    if (!this.isNew()) {
-      return [];
-    }
-
-    // Labels are extraction markers — the panel container pipes them through `translate`.
-    return [{
-      label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
-      testId: 'toggle-advanced',
-      onClick: () => this.toggleAdvancedMode(),
-    }];
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
+    testId: 'toggle-advanced',
+    onToggle: (isAdvanced) => {
+      if (!isAdvanced) {
+        // Leaving advanced unmounts the quotas section, so its last verdict goes with it. A stale
+        // `false` left parked here would be flipped by the remounted section's on-mount emission
+        // during the same CD pass that already read it — NG0100 in dev mode.
+        this.isQuotaValid.set(true);
+      }
+    },
   });
 
-  /** A getter because `HostedSidePanelForm` types `footerActions` as a plain array. */
+  /**
+   * A getter because `HostedSidePanelForm` types `footerActions` as a plain array. Create only: on
+   * edit, quotas and encryption are create-only and Other Options is advanced-only, so switching
+   * back to basic would leave nothing on screen but the disabled Name field.
+   */
   get footerActions(): SidePanelFooterAction[] {
-    return this.footerActionList();
+    return this.isNew() ? this.advancedToggle() : [];
   }
 
   protected readonly parentDataset = signal<Dataset | undefined>(undefined);
@@ -276,19 +279,6 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
         this.errorHandler.showErrorModal(error);
       },
     });
-  }
-
-  protected toggleAdvancedMode(): void {
-    const isAdvanced = !this.isAdvancedMode();
-
-    if (!isAdvanced) {
-      // Leaving advanced unmounts the quotas section, so its last verdict goes with it. A stale
-      // `false` left parked here would be flipped by the remounted section's on-mount emission
-      // during the same CD pass that already read it — NG0100 in dev mode.
-      this.isQuotaValid.set(true);
-    }
-
-    this.isAdvancedMode.set(isAdvanced);
   }
 
   protected onSwitchToAdvanced(): void {

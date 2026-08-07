@@ -1,28 +1,25 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { of } from 'rxjs';
+import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SnmpConfig } from 'app/interfaces/snmp-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServiceSnmpComponent } from './service-snmp.component';
 
 describe('ServiceSnmpComponent', () => {
   let spectator: Spectator<ServiceSnmpComponent>;
   let api: ApiService;
   let loader: HarnessLoader;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -61,7 +58,7 @@ describe('ServiceSnmpComponent', () => {
           zilstat: true,
         } as SnmpConfig),
       ]),
-      mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
       mockAuth(),
     ],
   });
@@ -70,6 +67,26 @@ describe('ServiceSnmpComponent', () => {
     spectator = createComponent();
     api = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('blocks Save when the initial config load fails', () => {
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
+      .mockReturnValue(of(true));
+    failApiCall(api, 'snmp.config');
+
+    // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
+    // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
+    // so the assertion would hinge on double-init being harmless.
+    const failed = TestBed.createComponent(ServiceSnmpComponent);
+    failed.detectChanges();
+
+    expect(showErrorModal).toHaveBeenCalled();
+    // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
+    // extraDisabled is bound to; that binding blocking Save is covered in the ix-form spec.
+    expect(failed.componentInstance.hasLoadFailed()).toBe(true);
+    expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 
   it('loads and shows current SNMP settings', async () => {
@@ -104,8 +121,7 @@ describe('ServiceSnmpComponent', () => {
     await (await getInput('options')).setValue('leave_pidfile=false');
     await (await getCheckbox('zilstat')).uncheck();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('snmp.update', [{
       location: 'New location',
@@ -127,8 +143,7 @@ describe('ServiceSnmpComponent', () => {
   it('submits an empty authentication type when the selection is cleared', async () => {
     await (await getSelect('v3_authtype')).selectOption('--');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('snmp.update', [
       expect.objectContaining({ v3_authtype: '' }),
@@ -142,8 +157,7 @@ describe('ServiceSnmpComponent', () => {
     expect(await hasInput('v3_password')).toBe(false);
     expect(await hasInput('v3_privpassphrase')).toBe(false);
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('snmp.update', [
       expect.objectContaining({

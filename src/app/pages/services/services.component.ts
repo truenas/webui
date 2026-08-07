@@ -28,7 +28,7 @@ import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceActionsCellComponent } from 'app/pages/services/components/service-actions-cell/service-actions-cell.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
@@ -97,7 +97,7 @@ export class ServicesComponent implements OnInit {
 
   // Maps each service to its config form. Two-column forms (`wide`) get the wider panel,
   // matching the legacy SlideIn `wide` width.
-  private readonly configForms = new Map<ServiceName, { component: Type<SidePanelForm>; wide?: boolean }>([
+  private readonly configForms = new Map<ServiceName, { component: Type<SidePanelHostForm>; wide?: boolean }>([
     [ServiceName.Ftp, { component: ServiceFtpComponent, wide: true }],
     [ServiceName.Nfs, { component: ServiceNfsComponent, wide: true }],
     [ServiceName.Cifs, { component: ServiceSmbComponent }],
