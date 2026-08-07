@@ -5,7 +5,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnButtonToggleComponent, TnButtonToggleGroupComponent,
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnFormFieldComponent, TnFormFieldErrorMessages, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
@@ -112,6 +112,14 @@ export class BaseNamespaceFormComponent implements OnInit {
   protected readonly typeToggleLabelId = nextTypeToggleLabelId();
 
   protected typeOptions = translateOptions(this.translate, typeOptions);
+
+  /**
+   * The size floor `syncNewFileControls` puts on `filesize` is a byte count, so the app-wide
+   * resolver would render it as "Minimum value is 1" next to an input that speaks in MiB.
+   */
+  protected readonly filesizeErrorMessages: TnFormFieldErrorMessages = {
+    min: this.translate.instant(T('File size must be greater than 0.')),
+  };
 
   ngOnInit(): void {
     const form = this.group();

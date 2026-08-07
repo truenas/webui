@@ -1,6 +1,18 @@
-import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import {
+  AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators,
+} from '@angular/forms';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
+
+/** Smallest file the New File branch may ask for, in bytes — the input models a size, not a count. */
+export const minimumFilesize = 1;
+
+/**
+ * Built once: `Validators.min` returns a fresh closure per call, and `removeValidators` matches by
+ * reference — a per-call instance would never be removed, and would stack up another copy on every
+ * return to the New File branch.
+ */
+const minimumFilesizeValidator = Validators.min(minimumFilesize);
 
 /**
  * Device type as the *form* models it — one option finer than the API's {@link NvmeOfNamespaceType},
@@ -41,13 +53,16 @@ export function createNamespaceForm(formBuilder: NonNullableFormBuilder): Namesp
 }
 
 /**
- * Puts `filename` / `filesize` in step with the selected device type: required and editable on the
+ * Puts `filename` / `filesize` in step with the selected device type: validated and editable on the
  * New File branch (the only branch that renders them), inert everywhere else.
  *
- * Owning the validator here — rather than declaring it once in {@link createNamespaceForm} — is
+ * Owning the validators here — rather than declaring them once in {@link createNamespaceForm} — is
  * what makes the group self-consistent: no state has a control carrying `required` that no visible
  * input can satisfy, while the branch that does render them still gets the `*` that `tn-form-field`
  * infers from the validator.
+ *
+ * `filesize` carries a floor on top of `required`, because `required` only rejects null/empty — it
+ * lets a typed `0` through, and a zero-byte file is not a namespace the API can serve.
  *
  * Leaving the branch also CLEARS them, mirroring the `device_path` reset the caller does on every
  * device-type change: {@link toNamespaceChanges} reads `getRawValue()`, so without the reset a
@@ -58,12 +73,17 @@ export function syncNewFileControls(form: NamespaceFormGroup, type: FormNamespac
   const { filename, filesize } = form.controls;
   const isNewFile = type === FormNamespaceType.NewFile;
 
-  for (const control of [filename, filesize]) {
+  const branchValidators: [AbstractControl, ValidatorFn[]][] = [
+    [filename, [Validators.required]],
+    [filesize, [Validators.required, minimumFilesizeValidator]],
+  ];
+
+  for (const [control, validators] of branchValidators) {
     if (isNewFile) {
-      control.addValidators(Validators.required);
+      control.addValidators(validators);
       control.enable();
     } else {
-      control.removeValidators(Validators.required);
+      control.removeValidators(validators);
       control.reset();
       control.disable();
     }

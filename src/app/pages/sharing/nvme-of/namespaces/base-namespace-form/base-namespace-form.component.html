@@ -58,7 +58,10 @@
         <tn-input formControlName="filename"></tn-input>
       </tn-form-field>
 
-      <tn-form-field [label]="'File Size' | translate">
+      <tn-form-field
+        [label]="'File Size' | translate"
+        [errorMessages]="filesizeErrorMessages"
+      >
         <tn-input
           formControlName="filesize"
           sizeDefaultUnit="MiB"

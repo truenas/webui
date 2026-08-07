@@ -39,6 +39,16 @@ describe('syncNewFileControls', () => {
     expect(form.status).toBe('VALID');
   });
 
+  // `Validators.required` only rejects null/empty, so a typed 0 would otherwise reach the API as a
+  // zero-byte file.
+  it('rejects a zero file size', () => {
+    const form = setUp(FormNamespaceType.NewFile);
+    form.patchValue({ filename: 'new-file.img', filesize: 0 });
+
+    expect(form.controls.filesize.errors).toEqual({ min: { min: 1, actual: 0 } });
+    expect(form.status).toBe('INVALID');
+  });
+
   it.each([FormNamespaceType.Zvol, FormNamespaceType.ExistingFile])(
     'takes filename and file size out of validity on %s',
     (type) => {
@@ -48,6 +58,11 @@ describe('syncNewFileControls', () => {
       expect(form.status).toBe('VALID');
       expect(form.controls.filename.disabled).toBe(true);
       expect(form.controls.filesize.disabled).toBe(true);
+
+      // Every validator goes, not just `required` — a leftover would also mean the New File branch
+      // stacks a second copy of it on the way back.
+      expect(form.controls.filename.validator).toBeNull();
+      expect(form.controls.filesize.validator).toBeNull();
     },
   );
 
