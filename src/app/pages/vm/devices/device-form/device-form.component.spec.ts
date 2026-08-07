@@ -255,11 +255,8 @@ describe('DeviceFormComponent', () => {
     it('still answers hasUnsavedChanges() with no device type selected', () => {
       // `typeSpecificForm` is keyed off the type and resolves to undefined once it is cleared.
       // The host calls this from its close guard, so a throw here would leave the panel stuck open.
-      // The getter's `assertUnreachable` logs on the way through — that noise is the expected
-      // path here, not the defect under test.
-      jest.spyOn(console, 'error').mockImplementation(() => {});
-      // Left pristine so the answer depends on reaching the undefined `typeSpecificForm` rather
-      // than short-circuiting on a dirty control before it.
+      // Left pristine so the answer depends on the cleared-type branch rather than
+      // short-circuiting on a dirty control before it.
       spectator.component.typeControl.setValue(null);
 
       expect(() => spectator.component.hasUnsavedChanges()).not.toThrow();

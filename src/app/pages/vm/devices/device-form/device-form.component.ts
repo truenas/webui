@@ -156,22 +156,31 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
     return this.isLoading();
   }
 
-  /** Entry point for the `<tn-side-panel>` footer Save. */
+  /**
+   * Entry point for the `<tn-side-panel>` footer Save. Gated here rather than relying on the
+   * host disabling the button, so the invariant lives in the one component that owns the forms —
+   * and so a second click during the PCI pre-flight window can't fire a duplicate create.
+   */
   submit(): void {
+    if (!this.canSubmit()) {
+      return;
+    }
     this.confirmAndSend();
   }
 
   hasUnsavedChanges(): boolean {
     // The three standalone controls live outside `typeSpecificForm` but are rendered in the
     // same panel, so edits confined to them must still trip the host's close guard.
-    // `typeSpecificForm` is read last and optionally for the same reason `canSubmit()`
-    // short-circuits on `typeControl`: it resolves to `undefined` for a value outside
-    // `VmDeviceType`, and a throw here comes from the host's close guard, leaving the panel
-    // unclosable.
+    //
+    // `typeSpecificForm` is guarded by the type check rather than read with `?.`: the getter is
+    // keyed off `typeControl` and its default branch calls `assertUnreachable`, which logs on
+    // every pass. This guard is the host's close guard, so it can run repeatedly for one dismissal
+    // (backdrop, Escape, X) — checking the value up front keeps a cleared type off that branch
+    // entirely instead of logging each time.
     return this.typeControl.dirty
       || this.orderControl.dirty
       || this.newOrExistingControl.dirty
-      || !!this.typeSpecificForm?.dirty;
+      || (this.typeControl.value !== null && this.typeSpecificForm.dirty);
   }
 
   get isNew(): boolean {
@@ -626,17 +635,14 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   }
 
   /**
-   * Implicit form submission (Enter in a field); the panel footer Save goes through `submit()`.
-   * Gated on the same predicate as that footer Save so an invalid form can't be submitted, and so
-   * a second Enter can't fire a duplicate create while a submit is in flight — the container's
-   * busy overlay blocks the mouse, not the keyboard.
+   * Implicit form submission (Enter in a field); delegates to the same gated entry point as the
+   * panel footer Save so there is one gate rather than two that can drift. The gate matters more
+   * here than on the footer: the container's busy overlay blocks the mouse, not the keyboard, so
+   * a second Enter would otherwise fire a duplicate create while a submit is in flight.
    */
   protected onSubmit(event: SubmitEvent): void {
     event.preventDefault();
-    if (!this.canSubmit()) {
-      return;
-    }
-    this.confirmAndSend();
+    this.submit();
   }
 
   /**

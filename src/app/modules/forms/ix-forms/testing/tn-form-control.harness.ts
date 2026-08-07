@@ -48,6 +48,11 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
    * would hand back a plain field harness with none of the control access below. Matches on
    * {@link getLabelText} rather than the field's own `getLabel()`, so a self-naming `tn-checkbox`
    * or `tn-radio-group` is reachable under the same name `indexControlsByLabel` files it under.
+   *
+   * **Keep the options below in sync with `FormFieldHarnessFilters`.** Re-listing them by hand is
+   * what re-declaring the predicate costs: should the library grow a third filter, a caller
+   * passing it here still type-checks but the option is never added, so the predicate matches
+   * every field instead of narrowing. Re-check this list when bumping `@truenas/ui-components`.
    */
   static override with(options: FormFieldHarnessFilters = {}): HarnessPredicate<TnFormControlHarness> {
     return new HarnessPredicate(TnFormControlHarness, options)

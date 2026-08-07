@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, signal, viewChild, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, output, signal, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -66,7 +66,6 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   ],
 })
 export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
-  private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
@@ -160,7 +159,6 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
 
   onSubmit(): void {
     this.isLoading.set(true);
-    this.cdr.markForCheck();
 
     // Track the zvol path if we create one for import
     let importedZvolPath: string | null = null;
@@ -184,7 +182,6 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
           this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Virtual machine created'));
           this.closed.emit(true);
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
           this.isLoading.set(false);
@@ -201,7 +198,6 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
             // For other errors, show the error modal
             this.errorHandler.showErrorModal(error);
           }
-          this.cdr.markForCheck();
         },
       });
   }

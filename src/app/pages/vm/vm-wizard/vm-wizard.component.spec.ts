@@ -145,8 +145,6 @@ describe('VmWizardComponent', () => {
     closedSpy = jest.fn();
     spectator.component.closed.subscribe(closedSpy);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    closedSpy = jest.fn();
-    spectator.component.closed.subscribe(closedSpy);
     await updateStepHarnesses();
   });
 

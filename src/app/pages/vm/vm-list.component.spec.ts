@@ -182,10 +182,11 @@ describe('VmListComponent', () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
-      VmWizardComponent,
-      { title: 'Create Virtual Machine', wide: true, footerless: true },
-    );
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(VmWizardComponent, {
+      title: 'Create Virtual Machine',
+      wide: true,
+      footerless: true,
+    });
   });
 
   describe('row expansion', () => {
