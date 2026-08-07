@@ -1,11 +1,13 @@
 import { AsyncPipe } from '@angular/common';
 import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonToggleComponent, TnButtonToggleGroupComponent, TnTablePagerComponent,
+} from '@truenas/ui-components';
 import {
   BehaviorSubject, combineLatest, Observable, of,
 } from 'rxjs';
@@ -47,8 +49,9 @@ import { jobsListElements } from 'app/pages/jobs/jobs-list.elements';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    MatButtonToggleGroup,
-    MatButtonToggle,
+    TnButtonToggleGroupComponent,
+    TnButtonToggleComponent,
+    FormsModule,
     BasicSearchComponent,
     IxTableComponent,
     UiSearchDirective,

@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router, ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnButtonToggleHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -107,6 +108,21 @@ describe('JobsListComponent', () => {
     ];
 
     expect(cells).toEqual(expectedRows);
+  });
+
+  it('filters jobs down to failed ones when the Failed tab is selected', async () => {
+    store$.overrideSelector(selectJobs, fakeJobDataSource);
+    store$.refreshState();
+
+    const failedTab = await loader.getHarness(TnButtonToggleHarness.with({ label: 'Failed' }));
+    await failedTab.check();
+    spectator.detectChanges();
+
+    const table = await loader.getHarness(IxTableHarness);
+    expect(await table.getCellTexts()).toEqual([
+      ['Name', 'State', 'Started', 'Finished'],
+      ['cloudsync.sync', 'Failed', '2022-05-28 10:00:01', '2022-05-28 10:00:01'],
+    ]);
   });
 
   it('should have empty message when loaded and datasource is empty', async () => {
