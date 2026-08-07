@@ -22,11 +22,11 @@ import { FilesystemService } from 'app/services/filesystem.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    TnFormSectionComponent,
     ReactiveFormsModule,
     IxExplorerComponent,
     RequiresRolesDirective,
     TnButtonComponent,
-    TnFormSectionComponent,
     FormActionsComponent,
     TnStepperPreviousDirective,
     TnStepperNextDirective,

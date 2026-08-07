@@ -12,7 +12,7 @@
         <div class="label">{{ 'Encryption' | translate }}</div>
         <div class="value">
           @if (state.encryptionType === EncryptionType.Software) {
-            {{ 'Software (ZFS)' | translate }} - {{ state.encryption }}
+            {{ 'Software (ZFS)' | translate }}
           } @else if (state.encryptionType === EncryptionType.Sed) {
             {{ 'Hardware (SED)' | translate }}
           }

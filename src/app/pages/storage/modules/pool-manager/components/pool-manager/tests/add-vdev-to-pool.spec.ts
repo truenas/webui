@@ -129,7 +129,6 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
         }),
         mockCall('enclosure2.query', [] as Enclosure[]),
         mockCall('pool.query', []),
-        mockCall('pool.dataset.encryption_algorithm_choices', {}),
         mockJob('pool.update', fakeSuccessfulJob()),
       ]),
       mockProvider(PoolWizardNameValidationService, {

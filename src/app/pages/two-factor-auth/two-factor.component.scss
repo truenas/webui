@@ -2,7 +2,8 @@
   width: 100%;
 }
 
-.warning {
+.status-banner {
+  display: block;
   margin-bottom: 16px;
 }
 
@@ -12,9 +13,12 @@
   max-width: 960px;
 }
 
+.qr-section {
+  margin-top: 16px;
+}
+
 .secret-actions {
   display: block;
-  padding-top: 0;
 
   p {
     margin: 0;
@@ -30,14 +34,13 @@
   }
 }
 
-button {
-  margin-top: 16px;
-}
-
+// The inner `<button>` now lives inside tn-button's own view, so the previous
+// bare `button` selector no longer reaches it — space the group instead.
 .button-group {
   align-items: center;
   display: flex;
   gap: 12px;
+  margin-top: 16px;
 }
 
 .skeleton-loader {

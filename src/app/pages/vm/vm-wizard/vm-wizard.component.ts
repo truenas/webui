@@ -77,7 +77,10 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
   private errorParser = inject(ErrorParserService);
   private destroyRef = inject(DestroyRef);
 
-  /** Emitted to the `<tn-side-panel>` host once the VM and its devices are created. */
+  /**
+   * Emitted to the hosting `<tn-side-panel>`. The wizard is opened footerless — its stepper
+   * owns the Back/Save buttons — so the panel has no Save of its own and closes on this.
+   */
   readonly closed = output<boolean>();
 
   protected readonly osStep = viewChild.required(OsStepComponent);

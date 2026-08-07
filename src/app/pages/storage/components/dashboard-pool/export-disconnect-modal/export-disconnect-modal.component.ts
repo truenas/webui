@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnDialog, TnDialogShellComponent, TnExpansionPanelComponent,
-  TnFormFieldComponent, TnIconComponent, TnInputComponent, TnProgressBarComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnInputComponent, TnProgressBarComponent,
 } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
@@ -26,7 +26,6 @@ import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -52,7 +51,7 @@ export enum DisconnectOption {
     TnDialogShellComponent,
     TnProgressBarComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
     TnCheckboxComponent,
     TnFormFieldComponent,
     TnInputComponent,

@@ -283,47 +283,19 @@
         </tn-form-field>
       }
 
-      <ix-details-table class="encryption-details">
-        @if (form.controls.pbkdf2iters.enabled) {
-          <ix-details-item
-            [label]="helptext.encryption.pbkdf2itersLabel | translate"
-            [tooltip]="helptext.encryption.pbkdf2itersTooltip | translate"
-          >
-            <ix-editable>
-              <div view>{{ form.value.pbkdf2iters }}</div>
-              <div edit>
-                <tn-input
-                  formControlName="pbkdf2iters"
-                  [inputType]="InputType.Number"
-                  [ariaLabel]="helptext.encryption.pbkdf2itersLabel | translate"
-                  [required]="true"
-                ></tn-input>
-              </div>
-            </ix-editable>
-          </ix-details-item>
-        }
-
-        @if (form.controls.algorithm.enabled) {
-          <ix-details-item
-            [label]="helptext.encryption.algorithmLabel | translate"
-            [tooltip]="helptext.encryption.algorithmTooltip | translate"
-          >
-            <ix-editable>
-              <div view>
-                @let algorithmOptions = algorithmOptions$ | async;
-                {{ algorithmOptions ? getOptionLabel(algorithmOptions, form.value.algorithm): form.value.algorithm }}
-              </div>
-              <div edit>
-                <tn-select
-                  formControlName="algorithm"
-                  [options]="(algorithmOptions$ | async) ?? []"
-                  [ariaLabel]="helptext.encryption.algorithmLabel | translate"
-                ></tn-select>
-              </div>
-            </ix-editable>
-          </ix-details-item>
-        }
-      </ix-details-table>
+      @if (form.controls.pbkdf2iters.enabled) {
+        <tn-form-field
+          [label]="helptext.encryption.pbkdf2itersLabel | translate"
+          [tooltip]="helptext.encryption.pbkdf2itersTooltip | translate"
+          [required]="true"
+        >
+          <tn-input
+            formControlName="pbkdf2iters"
+            [inputType]="InputType.Number"
+            [required]="true"
+          ></tn-input>
+        </tn-form-field>
+      }
     </tn-form-section>
   }
 </ix-form>

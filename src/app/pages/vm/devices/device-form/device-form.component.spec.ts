@@ -2,8 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnRadioHarness } from '@truenas/ui-components';
-import { NEVER, Subject, of, throwError } from 'rxjs';
+import { TnButtonHarness, TnFormFieldHarness, TnRadioHarness } from '@truenas/ui-components';
+import { NEVER, Observable, Subject, of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -14,6 +14,7 @@ import {
 import { transformApiCallErrorMessage } from 'app/helpers/api.helper';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
+import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import {
   VmDevice,
@@ -89,6 +90,15 @@ describe('DeviceFormComponent', () => {
    */
   async function getValues(): Promise<Record<string, IxFormBasicValueType>> {
     return getControlValues(await indexFormControls(loader));
+  }
+
+  /**
+   * Asserts a field is genuinely absent from the DOM. `getValues()` degrades a lookup miss to
+   * "key absent", so a bare `expect(values).not.toHaveProperty(label)` would also pass if the
+   * label-based indexing stopped reaching the control — this cannot.
+   */
+  async function expectNoField(label: string): Promise<void> {
+    expect(await loader.getAllHarnesses(TnFormFieldHarness.with({ label }))).toHaveLength(0);
   }
 
   const createComponent = createComponentFactory({
@@ -602,6 +612,7 @@ describe('DeviceFormComponent', () => {
         expect(values).toHaveProperty('Zvol Location');
         expect(values).toHaveProperty('Size');
         expect(values).not.toHaveProperty('Zvol');
+        await expectNoField('Zvol');
       });
 
       it('shows Zvol select when Use existing is selected', async () => {
@@ -613,7 +624,9 @@ describe('DeviceFormComponent', () => {
         const values = await getValues();
         expect(values).toHaveProperty('Zvol');
         expect(values).not.toHaveProperty('Zvol Location');
+        await expectNoField('Zvol Location');
         expect(values).not.toHaveProperty('Size');
+        await expectNoField('Size');
       });
 
       it('submits with create_zvol when Create new is selected', async () => {
@@ -1082,7 +1095,10 @@ describe('DeviceFormComponent', () => {
 
       it('stays busy while the reset mechanism warning is open, so Save cannot fire twice', async () => {
         const confirmation$ = new Subject<boolean>();
-        jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(confirmation$);
+        // `confirm` is overloaded; `spyOn` resolves to the secondary-checkbox signature, so the
+        // boolean subject this test drives has to be cast past it.
+        jest.spyOn(spectator.inject(DialogService), 'confirm')
+          .mockReturnValue(confirmation$ as unknown as Observable<DialogWithSecondaryCheckboxResult>);
 
         await fillForm({
           'PCI Passthrough Device': 'pci_0000_00_1c_5',
@@ -1185,6 +1201,7 @@ describe('DeviceFormComponent', () => {
         // Web Port field should no longer be in the form values
         values = await getValues();
         expect(values).not.toHaveProperty('Web Port');
+        await expectNoField('Web Port');
 
         // Re-enable Web Interface
         await fillForm({ 'Web Interface': true });
@@ -1239,7 +1256,9 @@ describe('DeviceFormComponent', () => {
 
         // Verify Web Interface is disabled for VNC
         expect(values).not.toHaveProperty('Web Interface');
+        await expectNoField('Web Interface');
         expect(values).not.toHaveProperty('Web Port');
+        await expectNoField('Web Port');
       });
 
       it('updates an existing VNC display device', async () => {
@@ -1442,6 +1461,7 @@ describe('DeviceFormComponent', () => {
 
         const values = await getValues();
         expect(values).not.toHaveProperty('Web Interface');
+        await expectNoField('Web Interface');
       });
 
       it('enables web interface when switching from VNC to SPICE', async () => {

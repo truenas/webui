@@ -1,19 +1,21 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, signal, viewChild,
+  ChangeDetectionStrategy, Component, computed, inject, input,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AbstractControl } from '@angular/forms';
+import { NonNullableFormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { finalize } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
-import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
+import {
+  createNamespaceForm, NamespaceFormValue, toNamespaceChanges,
+} from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.utils';
 
 export interface NamespaceFormParams {
   namespace?: NvmeOfNamespace;
@@ -25,83 +27,42 @@ export interface NamespaceFormParams {
   templateUrl: './namespace-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    IxFormComponent,
     BaseNamespaceFormComponent,
   ],
 })
-export class NamespaceFormComponent extends SidePanelForm<NamespaceChanges> {
+export class NamespaceFormComponent extends IxFormHostForm {
   private api = inject(ApiService);
-  private snackbar = inject(SnackbarService);
+  private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
-  private baseForm = viewChild(BaseNamespaceFormComponent);
 
   /** Gates the host-rendered footer Save. */
   readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  /** Form data supplied by the `tn-side-panel` host. */
-  readonly namespaceData = input<NamespaceFormParams>();
+  /** Form data supplied by the `tn-side-panel` host, which sets inputs before `ngOnInit`. */
+  readonly namespaceData = input.required<NamespaceFormParams>();
 
-  protected existingNamespace = computed<NvmeOfNamespace>(() => this.namespaceData()?.namespace);
-  protected error = signal<unknown>(null);
-  private readonly isLoading = signal(false);
+  protected existingNamespace = computed(() => this.namespaceData().namespace);
+  protected isEdit = computed(() => Boolean(this.existingNamespace()));
 
-  readonly canSubmit = computed(() => (this.baseForm()?.canSubmit() ?? false) && !this.isLoading());
+  // Owned here (not by the projected base form) so `<ix-form>` can take it as a required input.
+  protected readonly form = createNamespaceForm(this.formBuilder);
 
-  private get data(): NamespaceFormParams | undefined {
-    return this.namespaceData();
-  }
-
-  protected get subsystemId(): number {
-    return this.data?.subsystemId;
-  }
-
-  /** The form lives in the projected base form; only read through the guarded overrides below. */
-  protected get form(): Pick<AbstractControl, 'dirty' | 'status' | 'statusChanges'> {
-    return this.baseForm()?.form;
-  }
-
-  override isBusy(): boolean {
-    return this.isLoading();
-  }
-
-  /** Host hook (tn-side-panel closeGuard) to confirm before discarding unsaved edits. */
-  override hasUnsavedChanges(): boolean {
-    return this.baseForm()?.isFormDirty || false;
-  }
-
-  /** Invoked by the host-facing `submit()`; delegates to the base form, which emits `submitted`. */
-  protected onSubmit(): void {
-    this.baseForm()?.submit();
-  }
-
-  protected onNamespaceSubmitted(newNamespace: NamespaceChanges): void {
+  protected handleSubmit = (event: FormSubmitEvent<NamespaceFormValue>): SubmitResult => {
     const payload = {
-      ...newNamespace,
-      subsys_id: this.subsystemId,
+      ...toNamespaceChanges(event.allValues),
+      subsys_id: this.namespaceData().subsystemId,
     };
 
-    const request$ = this.existingNamespace()
+    const request$ = this.isEdit()
       ? this.api.call('nvmet.namespace.update', [this.existingNamespace().id, payload])
       : this.api.call('nvmet.namespace.create', [payload]);
 
-    this.isLoading.set(true);
-    request$.pipe(
-      finalize(() => this.isLoading.set(false)),
-      takeUntilDestroyed(this.destroyRef),
-    )
-      .subscribe({
-        next: () => {
-          const message = this.existingNamespace()
-            ? this.translate.instant('Namespace updated.')
-            : this.translate.instant('Namespace created.');
-
-          this.snackbar.success(message);
-
-          this.closeWith(newNamespace);
-        },
-        error: (error: unknown) => {
-          this.error.set(error);
-        },
-      });
-  }
+    return {
+      request$,
+      successMessage: this.isEdit()
+        ? this.translate.instant('Namespace updated.')
+        : this.translate.instant('Namespace created.'),
+    };
+  };
 }
