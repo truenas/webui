@@ -730,12 +730,14 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
             this.snackbar.success(this.translate.instant('Device updated'));
           }
           this.isLoading.set(false);
-          this.cdr.markForCheck();
           this.closed.emit(true);
         },
         error: (error: unknown) => {
           this.handleFormError(error);
           this.isLoading.set(false);
+          // Unlike the success path — where `isLoading` is a signal and `closed` tears the panel
+          // down anyway — `handleValidationErrors` writes errors onto the form controls, which
+          // are not signals, so OnPush needs telling.
           this.cdr.markForCheck();
         },
       });

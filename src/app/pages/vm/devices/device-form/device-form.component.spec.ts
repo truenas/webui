@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnFormFieldHarness, TnRadioHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnRadioHarness } from '@truenas/ui-components';
 import { NEVER, Observable, Subject, of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -33,7 +33,7 @@ import {
 } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
+import { DeviceFormComponent, DeviceFormData } from 'app/pages/vm/devices/device-form/device-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -93,12 +93,18 @@ describe('DeviceFormComponent', () => {
   }
 
   /**
-   * Asserts a field is genuinely absent from the DOM. `getValues()` degrades a lookup miss to
-   * "key absent", so a bare `expect(values).not.toHaveProperty(label)` would also pass if the
-   * label-based indexing stopped reaching the control — this cannot.
+   * Asserts a field is genuinely absent from the DOM, across both control kinds this form mixes.
+   * Goes through the same index `fillForm` fills by — not `TnFormFieldHarness.with({ label })`,
+   * which only ever matches a `tn-form-field`'s own label and so would pass vacuously for an
+   * `ix-*` field (`Size`) or for a self-naming `tn-checkbox` in a label-less field
+   * (`Web Interface`), whether or not either is on screen.
+   *
+   * Stronger than a bare `expect(await getValues()).not.toHaveProperty(label)`: `getValues()` also
+   * drops any control whose value the harness cannot read, so a present-but-unreadable field would
+   * vanish from the values map and pass. The index keeps it.
    */
   async function expectNoField(label: string): Promise<void> {
-    expect(await loader.getAllHarnesses(TnFormFieldHarness.with({ label }))).toHaveLength(0);
+    expect(Object.keys(await indexFormControls(loader))).not.toContain(label);
   }
 
   const createComponent = createComponentFactory({
@@ -178,20 +184,25 @@ describe('DeviceFormComponent', () => {
     ],
   });
 
+  /**
+   * Opens the form the way `FormSidePanelService` does — hand it its `deviceFormData` and listen
+   * on `closed` — which is the only way it is ever opened, so every describe below starts here.
+   * `factory` is for the two blocks that need different API mocks than the shared ones above.
+   */
+  function setup(deviceFormData: DeviceFormData, factory = createComponent): void {
+    spectator = factory({ props: { deviceFormData } });
+    closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    api = spectator.inject(ApiService);
+  }
+
   // The form is opened only through `FormSidePanelService`, so this whole surface is driven by
   // the host rather than by anything in the template: nothing here would fail to compile if an
   // input were renamed or `canSubmit`/`closed` were dropped — the panel would just open an
   // empty form, or render a Save that never enables.
   describe('side-panel host contract', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
-      });
-      closedSpy = jest.fn();
-      spectator.component.closed.subscribe(closedSpy);
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(ApiService);
-    });
+    beforeEach(() => setup({ virtualMachineId: 45, vmName: 'test-vm' }));
 
     it('renders no Save of its own — the panel footer owns it', async () => {
       expect(await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Save' }))).toHaveLength(0);
@@ -286,15 +297,7 @@ describe('DeviceFormComponent', () => {
     } as VmDevice;
 
     describe('add new', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, vmName: 'test-vm' }));
 
       // The side-panel host reads `isBusy()` OPTIONALLY (`form()?.isBusy?.()`) to render its
       // progress bar and dim overlay, so dropping the method would silently lose the save
@@ -334,15 +337,7 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edit', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, device: existingCdRom, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, device: existingCdRom, vmName: 'test-vm' }));
 
       it('shows values for an existing CD-ROM device', async () => {
         const values = await getValues();
@@ -387,15 +382,7 @@ describe('DeviceFormComponent', () => {
     } as VmDevice;
 
     describe('adds new', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, vmName: 'test-vm' }));
 
       it('adds a new NIC device', async () => {
         await fillForm(
@@ -453,15 +440,7 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, device: existingNic } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, device: existingNic }));
 
       it('shows values for an existing NIC device', async () => {
         const values = await getValues();
@@ -491,15 +470,7 @@ describe('DeviceFormComponent', () => {
     } as VmDiskDevice;
 
     describe('adds disk', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, vmName: 'test-vm' }));
 
       it('adds a new disk', async () => {
         await fillForm(
@@ -529,15 +500,7 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits disk', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, device: existingDisk, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, device: existingDisk, vmName: 'test-vm' }));
 
       it('shows values for an existing Disk', async () => {
         const values = await getValues();
@@ -577,15 +540,7 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('adds disk with create new zvol', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, vmName: 'test-vm' }));
 
       it('shows radio toggle when adding new disk device', async () => {
         await fillForm({ Type: 'Disk' });
@@ -676,15 +631,7 @@ describe('DeviceFormComponent', () => {
     } as VmRawFileDevice;
 
     describe('adds raw file', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, vmName: 'test-vm' }));
 
       it('adds a new Raw File device', async () => {
         await fillForm(
@@ -715,15 +662,7 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits raw file', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, device: existingRawFile, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, device: existingRawFile, vmName: 'test-vm' }));
 
       it('shows values for an existing Raw File device', async () => {
         const values = await getValues();
@@ -785,15 +724,7 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('adds raw file with existing file', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, vmName: 'test-vm' }));
 
       it('includes exists: true when selecting existing file from path input', async () => {
         await fillForm(
@@ -829,15 +760,7 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('adds raw file with size (new file creation)', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, vmName: 'test-vm' }));
 
       it('does not include exists field when creating new file with size specified', async () => {
         await fillForm(
@@ -901,15 +824,7 @@ describe('DeviceFormComponent', () => {
         return fallback(method);
       };
 
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, vmName: 'test-vm' }));
 
       it('properly transforms and displays an error', async () => {
         const spy = spectator.inject(MockApiService);
@@ -1015,15 +930,7 @@ describe('DeviceFormComponent', () => {
     } as VmPciPassthroughDevice;
 
     describe('adds PCI Passthrough Device', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, vmName: 'test-vm' }));
 
       it('adds a new PCI Passthrough device', async () => {
         await fillForm(
@@ -1049,15 +956,7 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits PCI Passthrough Device', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, device: existingPassthrough, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, device: existingPassthrough, vmName: 'test-vm' }));
 
       it('shows values for an existing PCI Passthrough device', async () => {
         const values = await getValues();
@@ -1163,15 +1062,7 @@ describe('DeviceFormComponent', () => {
     } as VmDisplayDevice;
 
     describe('edits SPICE display', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, device: existingSpiceDisplay, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, device: existingSpiceDisplay, vmName: 'test-vm' }));
 
       it('shows values for an existing Display device', async () => {
         const values = await getValues();
@@ -1211,15 +1102,7 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits display to 46', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 46 } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 46 }));
 
       it('hides Display type option when VM already has 2 or more displays (proxy for having 1 display of each type)', async () => {
         spectator.inject(MockApiService).mockCall('vm.get_display_devices', [
@@ -1233,15 +1116,7 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits VNC display', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, device: existingVncDisplay, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, device: existingVncDisplay, vmName: 'test-vm' }));
 
       it('shows values for an existing VNC display device', async () => {
         const values = await getValues();
@@ -1330,13 +1205,7 @@ describe('DeviceFormComponent', () => {
         ],
       });
 
-      beforeEach(() => {
-        spectator = createComponentForAdding({ props: { deviceFormData: { virtualMachineId: 45 } } });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45 }, createComponentForAdding));
 
       it('adds a new SPICE display device', async () => {
         await fillForm({
@@ -1434,12 +1303,7 @@ describe('DeviceFormComponent', () => {
         ],
       });
 
-      beforeEach(() => {
-        spectator = createComponentForSwitching({ props: { deviceFormData: { virtualMachineId: 45 } } });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45 }, createComponentForSwitching));
 
       it('disables web interface when switching from SPICE to VNC', async () => {
         await fillForm({
@@ -1493,15 +1357,7 @@ describe('DeviceFormComponent', () => {
     } as VmUsbPassthroughDevice;
 
     describe('adds USB Passthrough Device', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, vmName: 'test-vm' }));
 
       it('adds a new USB Passthrough device', async () => {
         await fillForm(
@@ -1526,15 +1382,7 @@ describe('DeviceFormComponent', () => {
     });
 
     describe('edits USB Passthrough Device', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          props: { deviceFormData: { virtualMachineId: 45, device: existingUsb, vmName: 'test-vm' } },
-        });
-        closedSpy = jest.fn();
-        spectator.component.closed.subscribe(closedSpy);
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(ApiService);
-      });
+      beforeEach(() => setup({ virtualMachineId: 45, device: existingUsb, vmName: 'test-vm' }));
 
       it('shows values for an existing USB Passthrough device', async () => {
         const values = await getValues();
