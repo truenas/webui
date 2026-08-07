@@ -13,7 +13,6 @@
  * that trade is not worth making — S3 through S8 — preconditions come from the
  * API instead.
  */
-import { expect, test } from '@playwright/test';
 import type { TrueNasApiClient } from '@truenas/api-client';
 import {
   ensurePoolAbsent, ensureSmbServiceStopped, ensureSmbShareAbsent, findGroupAclGrants,
@@ -23,11 +22,8 @@ import { ensureUserAbsent } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
 import { createRaidz2Pool, createSmbDataset, createSmbShare } from '../../flows/storage';
 import { createTrueNasAdminUser } from '../../flows/users';
-import { connectAndLogin } from '../../support/api/client';
 import { callUntyped } from '../../support/api/untyped';
-import { loadTargetConfig } from '../../support/config';
-
-const config = loadTargetConfig();
+import { expect, test } from '../../support/fixtures';
 
 const admin = {
   username: 'bob',
@@ -48,16 +44,6 @@ const datasetPath = `/mnt/${pool.name}/${dataset}`;
 
 const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 
-let api: TrueNasApiClient;
-
-test.beforeAll(async () => {
-  api = await connectAndLogin(config);
-});
-
-test.afterAll(() => {
-  api?.close();
-});
-
 /**
  * Restores the fresh-instance premise the story depends on.
  *
@@ -65,27 +51,27 @@ test.afterAll(() => {
  * and the share before the pool, so nothing is ever left pointing at a path
  * that has ceased to exist.
  */
-async function cleanUp(): Promise<void> {
+async function cleanUp(api: TrueNasApiClient): Promise<void> {
   await ensureSmbServiceStopped(api);
   await ensureSmbShareAbsent(api, share);
   await ensurePoolAbsent(api, pool.name);
   await ensureUserAbsent(api, admin.username);
 }
 
-test.beforeEach(async () => {
-  await cleanUp();
+test.beforeEach(async ({ api }) => {
+  await cleanUp(api);
   await requireUnusedDisks(api, pool.width);
 });
 
-test.afterEach(async () => {
+test.afterEach(async ({ api }) => {
   if (keepTestData) {
     console.warn(`TN_KEEP_TEST_DATA=1 — leaving pool "${pool.name}", share "${share}" and user "${admin.username}".`);
     return;
   }
-  await cleanUp();
+  await cleanUp(api);
 });
 
-test('an admin sets up a fresh instance: user, pool, dataset, SMB share', async ({ page }) => {
+test('an admin sets up a fresh instance: user, pool, dataset, SMB share', async ({ page, api, config }) => {
   await test.step('sign in as the factory administrator', async () => {
     await signIn(page, config.username, config.password);
   });
