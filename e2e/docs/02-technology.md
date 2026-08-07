@@ -89,6 +89,31 @@ endpoints** keyed by the `TrueNasEndpoint` enum, inherited from TrueNAS Connect.
 The full generated per-version directories exist and are exported, but are not
 wired into `call()`.
 
+**Resolved upstream — pending release.** A forthcoming version of the client
+exposes the entire API surface fully typed, including jobs and events, and adds
+a v27 client. Verified as *not* shipped in 1.0.7: `ApiCallMethod` there still
+derives from the curated `TrueNasEndpoint`-keyed directory, and
+`CLIENT_BY_VERSION_KEY` still maps only `25.10` and `26`. The options below are
+therefore recorded for context, not as a decision to make — the workaround
+stands until the release lands.
+
+When it does, three things follow:
+
+- `e2e/support/api/untyped.ts` and its five call sites are deleted. `tsc` then
+  checks every payload against the real signatures, which is the value the
+  escape hatch has been deferring.
+- `pool.export` and `service.control` are **jobs**, not calls. Typed job support
+  lets them be awaited directly, removing the hand-rolled polling loops in
+  `ensurePoolAbsent` and `ensureSmbServiceStopped`.
+- Typed events give R7.1 a server-side job timeline to attach to a failed run —
+  which answers "did the job fail, or did the UI not react?" without reading raw
+  frames. Use events for synchronisation and diagnostics only: asserting on
+  middleware state instead of the UI would erode R3.1.
+
+`disk.get_unused` is worth confirming separately — it works against a live
+appliance but appears nowhere in the generated manifest, so it may be absent
+from the `--dump-api` dump rather than merely uncurated.
+
 For Phase 0 this is fine: `auth.generate_token` is present. **Phase 2 hits the
 wall immediately** — `pool.create`, `pool.export`, `user.create`, `user.delete`,
 `sharing.smb.*` and `system.debug` are all absent, and those are exactly the
