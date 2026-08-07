@@ -97,16 +97,15 @@ describe('TwoFactorComponent', () => {
   });
 
   it('shows warning when global setting is disabled', async () => {
-    jest.spyOn(spectator.inject(AuthService), 'getGlobalTwoFactorConfig').mockImplementation(() => of({
-      enabled: true,
-    } as GlobalTwoFactorConfig));
+    spectator.component.globalTwoFactorEnabled.set(false);
+    spectator.detectChanges();
 
     const banner = await loader.getHarness(TnBannerHarness);
     expect(await banner.getText()).toContain(helptext2fa.globallyDisabled);
   });
 
   it('shows warning when global setting is enabled but user disabled', async () => {
-    spectator.component.ngOnInit();
+    spectator.component.globalTwoFactorEnabled.set(true);
     spectator.component.userTwoFactorAuthConfigured.set(false);
     spectator.detectChanges();
 
@@ -115,7 +114,9 @@ describe('TwoFactorComponent', () => {
   });
 
   it('shows warning when global setting is enabled and user enabled', async () => {
-    spectator.component.ngOnInit();
+    spectator.component.globalTwoFactorEnabled.set(true);
+    spectator.component.userTwoFactorAuthConfigured.set(true);
+    spectator.component.currentSessionIs2fa.set(true);
     spectator.detectChanges();
 
     const banner = await loader.getHarness(TnBannerHarness);
