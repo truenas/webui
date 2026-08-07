@@ -12,11 +12,10 @@ import { NvmeOfPort, PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'ap
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/modules/ix-table/utils';
+import { dataProviderLoading, dataProviderRows, toUniqueRowTag } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortFormComponent } from 'app/pages/sharing/nvme-of/ports/port-form/port-form.component';
@@ -64,7 +63,7 @@ export class ManagePortsDialog implements OnInit {
   protected readonly trackByPortId = (_: number, row: NvmeOfPortAndUsage): number => row.id;
 
   protected uniqueRowTag(row: NvmeOfPortAndUsage): string {
-    return normalizeTestIdString(convertStringToId(`port-${row.addr_trtype}-${row.addr_traddr}-${row.addr_trsvcid}`));
+    return toUniqueRowTag(`port-${row.addr_trtype}-${row.addr_traddr}-${row.addr_trsvcid}`);
   }
 
   protected readonly actions: IconActionConfig<NvmeOfPortAndUsage>[] = [

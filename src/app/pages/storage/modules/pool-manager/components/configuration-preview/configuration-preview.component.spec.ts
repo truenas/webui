@@ -38,7 +38,6 @@ describe('ConfigurationPreviewComponent', () => {
     providers: [
       mockProvider(PoolManagerStore, {
         name$: of('tank'),
-        encryption$: of('AES-256'),
         encryptionType$: of(EncryptionType.Software),
         totalUsableCapacity$: of(10 * GiB),
         topology$: of({
@@ -119,9 +118,9 @@ describe('ConfigurationPreviewComponent', () => {
     });
   });
 
-  it('shows software encryption with algorithm', async () => {
+  it('shows software encryption', async () => {
     expect(await configurationPreview.getItems()).toMatchObject({
-      'Encryption:': 'Software (ZFS) - AES-256',
+      'Encryption:': 'Software (ZFS)',
     });
   });
 
@@ -146,7 +145,6 @@ describe('ConfigurationPreviewComponent with no encryption', () => {
     providers: [
       mockProvider(PoolManagerStore, {
         name$: of('tank'),
-        encryption$: of(null),
         encryptionType$: of(EncryptionType.None),
         totalUsableCapacity$: of(10 * GiB),
         topology$: of({} as PoolManagerTopology),
@@ -169,43 +167,6 @@ describe('ConfigurationPreviewComponent with no encryption', () => {
   });
 });
 
-describe('ConfigurationPreviewComponent with different software encryption algorithm', () => {
-  let spectator: Spectator<ConfigurationPreviewComponent>;
-  let configurationPreview: ConfigurationPreviewHarness;
-  const createComponent = createComponentFactory({
-    component: ConfigurationPreviewComponent,
-    imports: [
-      FileSizePipe,
-      MapValuePipe,
-      CastPipe,
-      TopologyCategoryDescriptionPipe,
-    ],
-    providers: [
-      mockProvider(PoolManagerStore, {
-        name$: of('tank'),
-        encryption$: of('AES-256-GCM'),
-        encryptionType$: of(EncryptionType.Software),
-        totalUsableCapacity$: of(10 * GiB),
-        topology$: of({} as PoolManagerTopology),
-      }),
-    ],
-  });
-
-  beforeEach(async () => {
-    spectator = createComponent();
-    configurationPreview = await TestbedHarnessEnvironment.harnessForFixture(
-      spectator.fixture,
-      ConfigurationPreviewHarness,
-    );
-  });
-
-  it('shows "Software (ZFS) - [algorithm]" when encryption type is Software', async () => {
-    expect(await configurationPreview.getItems()).toMatchObject({
-      'Encryption:': 'Software (ZFS) - AES-256-GCM',
-    });
-  });
-});
-
 describe('ConfigurationPreviewComponent with SED encryption', () => {
   let spectator: Spectator<ConfigurationPreviewComponent>;
   let configurationPreview: ConfigurationPreviewHarness;
@@ -220,7 +181,6 @@ describe('ConfigurationPreviewComponent with SED encryption', () => {
     providers: [
       mockProvider(PoolManagerStore, {
         name$: of('tank'),
-        encryption$: of(null),
         encryptionType$: of(EncryptionType.Sed),
         totalUsableCapacity$: of(10 * GiB),
         topology$: of({} as PoolManagerTopology),

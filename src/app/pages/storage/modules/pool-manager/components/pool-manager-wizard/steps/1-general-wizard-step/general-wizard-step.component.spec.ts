@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness, TnStepperComponent,
+  TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnStepperComponent,
 } from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -38,10 +38,6 @@ describe('GeneralWizardStepComponent', () => {
       mockApi([
         mockCall('pool.query', []),
         mockCall('pool.validate_name', true),
-        mockCall('pool.dataset.encryption_algorithm_choices', {
-          'AES-192-GCM': 'AES-192-GCM',
-          'AES-128-GCM': 'AES-128-GCM',
-        }),
         mockCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockProvider(PoolWizardNameValidationService, {
@@ -78,10 +74,6 @@ describe('GeneralWizardStepComponent', () => {
     return loader.getHarness(TnInputHarness.with({ selector: '[formControlName="name"]' }));
   }
 
-  function getEncryptionStandardSelect(): Promise<TnSelectHarness> {
-    return loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="encryptionStandard"]' }));
-  }
-
   function selectEncryptionType(label: string): Promise<void> {
     return loader.getHarness(TnRadioHarness.with({ label })).then((radio) => radio.check());
   }
@@ -92,7 +84,6 @@ describe('GeneralWizardStepComponent', () => {
 
     expect(spectator.inject(PoolManagerStore).setGeneralOptions).toHaveBeenCalledWith({
       name: 'newpool',
-      encryption: null,
       nameErrors: null,
     });
   });
@@ -109,14 +100,6 @@ describe('GeneralWizardStepComponent', () => {
     expect(await radios[1].getLabelText()).toBe('Software Encryption (ZFS)');
   });
 
-  it('shows Encryption Standard dropdown when Software Encryption is selected', async () => {
-    await selectEncryptionType('Software Encryption (ZFS)');
-    spectator.detectChanges();
-
-    const encryptionStandards = await getEncryptionStandardSelect();
-    expect(await encryptionStandards.getOptions()).toEqual(['AES-192-GCM', 'AES-128-GCM']);
-  });
-
   it('shows warning when Software Encryption is selected', async () => {
     await selectEncryptionType('Software Encryption (ZFS)');
 
@@ -128,19 +111,15 @@ describe('GeneralWizardStepComponent', () => {
     );
   });
 
-  it('updates store when Software Encryption fields are updated', async () => {
+  it('updates store when Software Encryption is selected', async () => {
     await selectEncryptionType('Software Encryption (ZFS)');
     spectator.detectChanges();
 
     const nameInput = await getNameInput();
     await nameInput.setValue('test');
 
-    const encryptionStandards = await getEncryptionStandardSelect();
-    await encryptionStandards.selectOption('AES-128-GCM');
-
     expect(spectator.inject(PoolManagerStore).setEncryptionOptions).toHaveBeenCalledWith({
       encryptionType: EncryptionType.Software,
-      encryption: 'AES-128-GCM',
       sedPassword: null,
     });
   });
@@ -184,7 +163,6 @@ describe('GeneralWizardStepComponent', () => {
 
     expect(spectator.inject(PoolManagerStore).setEncryptionOptions).toHaveBeenCalledWith({
       encryptionType: EncryptionType.Sed,
-      encryption: null,
       sedPassword: 'password123',
     });
   });
@@ -211,7 +189,6 @@ describe('GeneralWizardStepComponent', () => {
     spectator.component.ngOnChanges();
 
     expect(spectator.component.form.controls.encryptionType.disabled).toBe(true);
-    expect(spectator.component.form.controls.encryptionStandard.disabled).toBe(true);
     expect(spectator.component.form.controls.sedPassword.disabled).toBe(true);
     expect(spectator.component.form.controls.sedPasswordConfirm.disabled).toBe(true);
   });
@@ -247,9 +224,6 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
       mockApi([
         mockCall('pool.query', []),
         mockCall('pool.validate_name', true),
-        mockCall('pool.dataset.encryption_algorithm_choices', {
-          'AES-192-GCM': 'AES-192-GCM',
-        }),
         mockCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockProvider(PoolWizardNameValidationService, {
@@ -306,9 +280,6 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
       mockApi([
         mockCall('pool.query', []),
         mockCall('pool.validate_name', true),
-        mockCall('pool.dataset.encryption_algorithm_choices', {
-          'AES-192-GCM': 'AES-192-GCM',
-        }),
         mockCall('system.advanced.sed_global_password_is_set', true),
       ]),
       mockProvider(PoolWizardNameValidationService, {

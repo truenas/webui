@@ -14,8 +14,13 @@ import type { TnSortEvent, TnTableComponent } from '@truenas/ui-components';
 /**
  * TEMP (NAS-141021): restores ix-table's single-expanded-row behavior on a `tn-table`, which
  * allows several rows open at once and exposes no single-expand input or row-expand output to
- * hook into — so we prune the library-owned `expandedRows` signal from an effect instead. Drop
- * this and bind the input once `@truenas/ui-components` grows a `[singleExpand]`.
+ * hook into — so we prune the library-owned `expandedRows` signal from an effect instead.
+ *
+ * OBSOLETE as of `@truenas/ui-components` 0.4.9, which added `[singleExpand]` — and binding it
+ * is strictly better, since it collapses the older row before either paints rather than
+ * correcting the state a frame later. `pages/vm` binds the input; the remaining callers
+ * (datasets/snapshots, storage/disks, credentials/groups) still call this and should each drop
+ * it on their own NAS-141021 child ticket, after which this helper goes with them.
  *
  * Tracking is by diff against the previous set (not a cached row reference) so a data reload,
  * which swaps in fresh row objects, can't leave a stale reference behind. After such a reload
@@ -60,6 +65,12 @@ export function restrictToSingleExpandedRow<T>(table: Signal<TnTableComponent<T>
  * searching down to zero results and back leaves a fresh header with no arrow over rows that are
  * still sorted. Reflect the last `(sortChange)` into each new instance until the library grows a
  * two-way sort input to bind instead.
+ *
+ * OBSOLETE as of `@truenas/ui-components` 0.4.9, which made `sortColumn` / `sortDirection`
+ * two-way bindable (`sortColumnChange` / `sortDirectionChange`), so a rebuilt table re-reads
+ * them from the consumer. Each caller (storage/disks, system/bootenv, containers,
+ * credentials/groups) should swap to `[(sortColumn)]` / `[(sortDirection)]` on its own
+ * NAS-141021 child ticket, after which this helper goes with them.
  *
  * Must be called from an injection context (e.g. a component constructor).
  */

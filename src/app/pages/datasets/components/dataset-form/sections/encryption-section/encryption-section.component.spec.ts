@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import {
@@ -17,9 +16,6 @@ describe('EncryptionSectionComponent', () => {
     encrypted: true,
     key_format: {
       value: EncryptionKeyFormat.Hex,
-    },
-    encryption_algorithm: {
-      value: 'AES-128-GCM',
     },
   } as Dataset;
   const passphraseEncryptedDataset = {
@@ -43,14 +39,6 @@ describe('EncryptionSectionComponent', () => {
     component: EncryptionSectionComponent,
     imports: [
       ReactiveFormsModule,
-    ],
-    providers: [
-      mockApi([
-        mockCall('pool.dataset.encryption_algorithm_choices', {
-          'AES-256-GCM': 'AES-256-GCM',
-          'AES-128-GCM': 'AES-128-GCM',
-        }),
-      ]),
     ],
   });
 
@@ -87,15 +75,6 @@ describe('EncryptionSectionComponent', () => {
   });
 
   describe('not inheriting encryption', () => {
-    it('defaults to parent\'s algorithm', async () => {
-      spectator.setInput('parent', keyEncryptedDataset);
-
-      await (await getCheckbox('inherit_encryption')).uncheck();
-
-      const algorithm = await getSelect('algorithm');
-      expect(await algorithm.getDisplayText()).toBe('AES-128-GCM');
-    });
-
     it('shows Encryption Type select when parent is key encrypted', async () => {
       spectator.setInput('parent', keyEncryptedDataset);
 
@@ -133,7 +112,6 @@ describe('EncryptionSectionComponent', () => {
       expect(await (await getCheckbox('encryption')).isChecked()).toBe(true);
       expect(await (await getCheckbox('generate_key')).isChecked()).toBe(true);
       expect(await (await getSelect('encryption_type')).getDisplayText()).toBe('Key');
-      expect(await (await getSelect('algorithm')).getDisplayText()).toBe('AES-256-GCM');
     });
 
     it('shows Key field when Generate Key checkbox is unticked', async () => {
@@ -154,7 +132,55 @@ describe('EncryptionSectionComponent', () => {
       expect(await (await getInput('passphrase')).getValue()).toBe('');
       expect(await (await getInput('confirm_passphrase')).getValue()).toBe('');
       expect(await (await getInput('pbkdf2iters')).getValue()).toBe('1300000');
-      expect(await (await getSelect('algorithm')).getDisplayText()).toBe('AES-256-GCM');
+    });
+  });
+
+  describe('getPayload', () => {
+    it('returns an empty payload when encryption is inherited', () => {
+      expect(spectator.component.getPayload()).toEqual({});
+    });
+
+    it('only disables encryption when Encryption checkbox is unticked', async () => {
+      await (await getCheckbox('inherit_encryption')).uncheck();
+      await (await getCheckbox('encryption')).uncheck();
+
+      expect(spectator.component.getPayload()).toEqual({ encryption: false });
+    });
+
+    it('sends encryption options without an algorithm when key is generated', async () => {
+      await (await getCheckbox('inherit_encryption')).uncheck();
+
+      expect(spectator.component.getPayload()).toEqual({
+        encryption: true,
+        encryption_options: { generate_key: true },
+        inherit_encryption: false,
+      });
+    });
+
+    it('sends the key entered by the user when Generate Key is unticked', async () => {
+      const key = 'k'.repeat(64);
+      await (await getCheckbox('inherit_encryption')).uncheck();
+      await (await getCheckbox('generate_key')).uncheck();
+      await (await getInput('key')).setValue(key);
+
+      expect(spectator.component.getPayload()).toEqual({
+        encryption: true,
+        encryption_options: { key },
+        inherit_encryption: false,
+      });
+    });
+
+    it('sends passphrase options when Passphrase encryption is used', async () => {
+      await (await getCheckbox('inherit_encryption')).uncheck();
+      await (await getSelect('encryption_type')).selectOption('Passphrase');
+      await (await getInput('passphrase')).setValue('12345678');
+      await (await getInput('confirm_passphrase')).setValue('12345678');
+
+      expect(spectator.component.getPayload()).toEqual({
+        encryption: true,
+        encryption_options: { passphrase: '12345678', pbkdf2iters: 1300000 },
+        inherit_encryption: false,
+      });
     });
   });
 });

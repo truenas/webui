@@ -124,7 +124,6 @@ describe('PoolManagerComponent – start over functionality', () => {
         }),
         mockCall('enclosure2.query', [] as Enclosure[]),
         mockCall('pool.query', []),
-        mockCall('pool.dataset.encryption_algorithm_choices', {}),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
