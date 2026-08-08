@@ -53,9 +53,11 @@ if they are wrong, revisit.
 
 - A middleware-test VM **installs and boots in ~3m30s**. That suite does no
   snapshotting or rollback.
-- Provisioning already exists: **`ixnode`**, a Jenkins-invoked script that brings
-  up a VM in the condition a run needs. Its capabilities are not yet mapped
-  (**Q2**).
+- Provisioning already exists: **`ixnode`**, a Jenkins-invoked script that
+  installs TrueNAS from an ISO. **The team that owns it is resistant to
+  changes**, which is a design input, not just an inconvenience — see **E5**.
+- The hypervisor is **libvirt/KVM**, which supports domain-level snapshots with
+  optional memory state. This is what makes **E1** possible.
 - **One VM per run is affordable.** More than one per run is unquantified
   (**Q5**), and **E3** depends on the answer.
 - AD, LDAP, S3 and KMIP **exist in the lab**; whether they can be shared across
@@ -73,8 +75,9 @@ because the arithmetic is unforgiving:
 > wall-clock spent in the installer**.
 
 Nine — and that is the shard's *whole* budget, before any Local or Contained
-test has run. It is the reason this document is not simply "reinstall between
-tests".
+test has run. It is the reason **E1** restores by snapshot rollback rather than
+by reinstalling, and the single number most likely to decide whether this suite
+scales.
 
 (The 90-second test is a placeholder. The only measured figures available are
 ~20s per journey and ~32s for the whole suite today; Global tests will be
@@ -83,166 +86,135 @@ because the 210s dominates either way.)
 
 ---
 
-## E1. Restore is a price list, not a single primitive
+## E1. Restore is a VM snapshot rollback
 
-There are four ways to return an appliance to a known state. Pick the cheapest
-one that is *sufficient* for what the test dirtied.
+Roll the appliance back to a libvirt snapshot. Reinstall only to *build* a
+baseline, not to return to one.
 
-| Primitive | Cost | Restores to | Tier |
+| Primitive | Cost | Restores | Used for |
 |---|---|---|---|
-| API cleanup — delete what you created | seconds | Whatever the test started from | Local, Contained |
-| Export data pools, then `config.upload` a per-baseline golden config | a reboot (**Q0b**) | The baseline, admin account intact | Most of Global |
-| Full `ixnode` reinstall | ~210s (**Q0a**) | Factory, plus whatever provisioning adds | Session start, periodic fidelity |
-| `boot.environment.clone` / `.activate` | a reboot (**Q0b**) | Boot-pool state only — *orthogonal*, see below | Forward-looking |
+| API cleanup — delete what you created | seconds | Objects the test created | Local, Contained |
+| `virsh snapshot-revert` to a baseline | RAM-dependent, see below (**Q0b**) | Everything: config DB, system dataset, pools, on-disk state | Global, Infrastructural |
+| Full ISO install via `ixnode` | ~210s (**Q0a**) | Everything, plus installer coverage | Building a baseline; periodic fidelity run |
 
-**Why this shape.** The instinctive framing is "reinstall vs hypervisor
-snapshots", and that was this document's first draft. It is a false dichotomy,
-and the arithmetic in §0.3 kills both horns of it. **TrueNAS ships its own
-restore primitives, and the suite already holds a client that can call them.**
+**Why snapshots, having first rejected them.** This document's earlier drafts
+argued that a 3m30s install was cheap enough to make snapshot tooling not worth
+owning, and looked for an in-band restore instead. Both conclusions were wrong,
+and the second one failed for a reason worth recording.
 
-**Why `config.upload` and not `config.reset`.** `config.reset` looks like the
-obvious choice and is the wrong one. It does
-`shutil.copy('/data/factory-v1.db', FREENAS_DATABASE)`
-(`middlewared/plugins/config.py`), and `factory-v1.db` is baked when the
-middleware `.deb` is built (`debian/rules`), not captured post-install. So reset
-does not return the box to *your* known-good state — it returns it to the
-factory state, **discarding the admin account the installer created**. That
-breaks **R2.8** (admin credentials set, no first-boot wizard) and the suite
-cannot log in afterwards. The UI corroborates the intent: `config-reset.component.ts`
-sends the browser to `/signin` and waits for the system to come back.
+**No in-band restore works, because TrueNAS state is not in one place.** It is
+spread across the configuration database, the system dataset, and the pools —
+and the system dataset *relocates between pools* when its current one goes away.
+Every partial mechanism covers one store and leaves the others:
 
-`config.save` / `config.upload` are the same cost bracket and the right shape:
+- **`config.reset`** restores the configuration database — to the
+  package-build-time `factory-v1.db` (`middlewared/plugins/config.py`;
+  `debian/rules` bakes it at build time). It therefore discards the admin
+  account the installer created, breaking **R2.8** and locking the suite out.
+  It also touches no data whatsoever.
+- **`config.save` / `config.upload`** avoids the factory-state problem — it
+  restores to a state you captured — but still covers only configuration, still
+  needs a reboot, and needs `secretseed: true` or every encrypted field in the
+  restored database becomes undecryptable on restore.
+- **ZFS rollback** is per-dataset. It cannot resurrect a destroyed dataset, so
+  any test touching dataset lifecycle defeats it, and it does not address the
+  configuration database at all.
 
-- **Restores to an e2e-ready state**, not the factory one. R2.8 survives.
-- **It materialises E5's baselines.** Build `single-pool` once, `config.save`
-  it, and `config.upload` returns any appliance to it. A baseline stops being
-  only an `ixnode` recipe and becomes an artifact — cheap to *restore*, not just
-  cheap to *request*.
+A VM snapshot has none of these problems precisely because it is *not*
+state-aware: it captures the disks and optionally the memory, so where TrueNAS
+keeps a given piece of state stops mattering.
 
-Three mechanics to plan for.
+**Why the original rejection was wrong.** It compared a one-off saving against
+the fidelity of exercising the installer. But installer coverage is bought by
+the **first** provision of a run — paying 210s again on restore #40 buys
+nothing — while the install cost repeats every time. Once restores are frequent,
+the comparison inverts. The periodic fidelity run in row 3 preserves the
+coverage that mattered.
 
-**Save baselines with `secretseed: true`.** This is the one that will cost an
-afternoon if missed. `save()` with no options routes to `save_db_only` — the
-database alone, no `pwenc_secret`. On restore, `handle_db_upload_path()` finds
-no secret and *generates a fresh one*, leaving *every encrypted field in the
-restored database undecryptable*: service passwords, cloud-sync credentials, the
-AD bind password, KMIP. It fails **silently** — the upload succeeds, the box
-boots, and the damage only appears when something tries to decrypt. Since the
-DB-only save is the default, a naive smoke test passes.
+### Mechanics on libvirt/KVM
 
-`upload` is a job with an **input pipe**, so it needs the `/_upload` HTTP
-endpoint rather than JSON-RPC alone (**R2.11** already lists `/_upload` in the
-proxy set).
+**Atomicity across disks is free, and losing it would be silent.**
+`virsh snapshot-create-as` operates on the **domain**, so all disks — **R2.2**
+provisions 8 — are captured in one operation with the guest briefly paused.
+Snapshotting volumes individually instead would let a restore assemble a set of
+disks that never coexisted, which is an unimportable or subtly corrupt pool. The
+rule is *snapshot the VM, never the volumes*.
 
-`upload_impl` runs `migrate` on the uploaded database, so a config saved against
-an older nightly restores onto a newer one — useful against **R2.4**'s moving
-target, at the cost of a schema migration on every restore.
+**Memory state is worth having, and its cost scales with RAM.**
+`--memspec file=…,snapshot=external` captures RAM alongside the disks, and
+revert brings back a running machine rather than one that must boot. But revert
+writes and re-reads the whole memory image, so a 16GB guest on NVMe is on the
+order of 10–20s and the same guest on slow storage is far worse. Two
+consequences:
 
-**What `config.upload` still does not undo.** Worth stating, because these are
-the ones that will bite:
+- **Guest RAM becomes a test-infrastructure parameter.** Size it deliberately;
+  every gigabyte is paid on every restore.
+- Keep memory images on the fastest storage available.
 
-- The **system dataset** survives. It carries Samba `passdb` and `group_mapping`
-  (middleware has `test_smb_passdb_reinit.py` for exactly this class of
-  problem), reporting data, and config backups. If it sits on the boot pool it
-  survives a data-pool destroy too.
-- Anything outside the database and `CONFIG_FILES` — on-disk state a test wrote
-  directly, or damage inflicted over SSH (**E8**).
+**Disk-only is the fallback, not a failure.** An external disk snapshot plus a
+boot still removes the ISO install — roughly 2x better than reinstall against
+~10x for memory state — with no RAM image to move.
 
-Note the boundary is `CONFIG_FILES`, not the database alone: `upload` genuinely
-manages `pwenc_secret`, the three `authorized_keys` files and `snmp_engine_id`,
-unlinking them when they are absent from the tarball. `config.reset` touches
-none of them, so a key added over SSH would have survived a reset. Another point
-to the chosen primitive.
+**Backing store shapes the approach.** qcow2 files on a directory pool are the
+simple path; internal snapshots require qcow2, external snapshots are less
+fussy and are the safer default. If the disks are zvols, libvirt internal
+snapshots are out: pair a recursive `zfs snapshot` of the parent dataset holding
+all 8 zvols (recursive ZFS snapshots are atomic) with `virsh save` for memory.
+Workable, more moving parts (**Q6**).
 
-**Ordering matters, and getting it backwards is unrecoverable.** Encryption keys
-and passphrases live in the config database, and **E4**'s Global tier includes
-encryption. **Export or destroy pools first, then restore the config** — do it
-the other way and the keys are gone before the pool that needs them. The
-disk-wipe half is already solved: `ensurePoolAbsent` uses `pool.export` with
-`{ cascade: true, restart_services: true, destroy: true }`
-(`fixtures/storage.ts:212-215`).
+### What a snapshot still does not fix
 
-**Boot environments are orthogonal, not a cheaper reinstall.** `/data` is
-persistent and separate from the root filesystem — which is why configuration
-survives upgrades — so a BE rollback leaves the config database untouched. The
-row stays because it is the right tool for upgrade-path coverage, but that is a
-declared v1 non-goal (**R10**), so treat it as forward-looking.
+**Restore invalidates the suite's session, and nothing re-mints it.** The
+`setup` project writes `e2e/.auth/storage-state.json` once per run and the
+`authenticated` project consumes it (`playwright.config.ts`); it holds a live
+middleware token. A reverted guest has stale in-guest TCP state, so the
+WebSocket is dead whether the restore booted the machine or resumed it. This is
+unchanged from every other restore mechanism considered, and it means the
+harness needs per-appliance re-authentication after restore — which pulls
+**E10**'s "the harness must be able to expect disconnection" out of the HA
+future and onto the critical path now.
 
-**Restoring the Infrastructural tier is not covered by any row above.** An
-AD-joined appliance has a machine account on a domain controller that no local
-operation removes (**E9**). Either leave the domain explicitly in teardown, or
-accept a reinstall — and note the domain-side object still needs cleaning.
+**Clock jump on resume.** A resumed guest's clock is stale by however long it
+sat. **Kerberos tolerates roughly five minutes of skew**, so AD-joined baselines
+can fail in a way that reads as a UI bug; TLS validity windows and scheduled
+tasks are affected too. Force an NTP resync as part of the restore rather than
+discovering this later.
 
-**Every reboot-based row invalidates the suite's session, and nothing currently
-re-mints it.** The `setup` project writes `e2e/.auth/storage-state.json` once per
-run and the `authenticated` project consumes it (`playwright.config.ts`); it
-holds a live middleware token, and middleware sessions do not survive a reboot.
-So the first Global-tier restore silently invalidates authentication for every
-later test in that shard.
+**State outside the appliance is untouched** — a domain machine account, an S3
+bucket, a KMIP key (**E9**). No local snapshot reaches it.
 
-This is a harness gap, not a test-authoring detail, and it has a consequence
-worth naming: **it pulls E10's "the harness must be able to expect
-disconnection" out of the HA future and onto the critical path now.** Any
-reboot-based restore needs the harness to tolerate the appliance going away and
-re-authenticate against it afterwards, per appliance rather than once per run.
+**Rejected: accepting reinstall as the restore primitive.** It is the honest
+fallback if the substrate disappoints, but at the measured ~20s test it demands
+12 appliances per shard (**E2**) where a memory-state revert demands 2. That is
+a lab-capacity difference, not a tuning difference.
 
-**On fidelity, stated precisely.** Reinstalling exercises the installer and
-first-boot path. That is real coverage — and it is fully bought by the **first**
-provision of a run. Reinstalls 2..N re-cover a covered path. So fidelity argues
-for *reinstall at least once*, not for reinstall between every test, and it is
-not an argument against a cheaper per-test primitive.
+## E2. Size the appliance pool from the restore cost
 
-**Relationship to R2.3.** `01-requirements.md` states that a known-good state is
-"satisfied by construction: each run gets a fresh VM. No snapshot-revert or
-reset machinery is required." That reasoning holds **per run** and this document
-does not dispute it. What §0.1 establishes is that per-run freshness does not
-give per-*test* isolation once the Global tier exists. This table is the
-smallest escalation that closes the gap, and it deliberately still requires no
-snapshot-revert machinery.
+How many appliances a shard needs is a function of how long a restore takes
+relative to a test. Get the restore cheap enough and the question disappears.
 
-**Rejected: hypervisor snapshot/rollback.** An estimated 15–30s restore
-(unmeasured — an estimate, not a finding) against substrate-specific tooling
-owned indefinitely. `config.upload` occupies the same cost bracket, is already
-built, is already tested, and is already reachable from the API client the suite
-holds.
+**Why this decision exists at all.** In earlier drafts, with reinstall as the
+restore primitive, this section was about pipelining — warming the next
+appliance while the current one ran tests, to hide a 210-second install. **E1**
+largely dissolves that problem rather than managing it: a memory-state revert is
+comparable to a test in duration, so there is little left to hide.
 
-**What would change this.** Not the ZFS feature flags this section originally
-guessed at. The real risk is the *opposite* of under-restoring: that the
-reboot-based row proves more expensive in wall-clock than it looks on paper
-(**Q0b**), or that the system dataset turns out to carry a taint class that
-matters. Either would narrow the gap to a full reinstall enough to make the
-cheap row not worth its complexity.
-
----
-
-## E2. Keep provisioning off the critical path
-
-Restore the *next* appliance while the current one is still running tests, so a
-test never waits on a restore.
-
-**Why.** This is the lever that dissolves §0.3's arithmetic, and it is cheaper
-than any cleverness about restore primitives. Restoring is throughput-bound, not
-latency-bound: nothing about a 210-second install requires a test to sit and
-watch it.
-
-**The formula, because the obvious guess is wrong.** A pipeline's steady-state
-throughput is `max(stage_times)`, not the stage you care about. "One in use, one
-warming" only reaches test-speed when restore ≤ test; otherwise the warm
-appliance is still warming when the test finishes. The requirement is:
+**The formula.** If restores are overlapped with tests, a shard's steady-state
+throughput is `max(restore, test)`, so reaching test-speed requires:
 
 > **appliances per shard = 1 + ⌈restore ÷ test⌉**
 
-Planning figures below. Test duration is a **placeholder** — the only evidence
-in the repo is ~20s per journey and ~32s for the whole suite
-(`03-plan-and-status.md`), and Global-tier tests will be slower, but 90s is a
-guess pending **Q1**. It matters, because it sets the appliance count.
+Figures below use the **measured** ~20s journey duration
+(`03-plan-and-status.md`) rather than a guess. Global tests will be slower — by
+how much is **Q1** — and slower tests need *fewer* appliances, so these are
+pessimistic, which is the right direction for a budget ask.
 
-| Approach | Seconds per Global test | Appliances per shard | Tests per shard in 45 min |
-|---|---|---|---|
-| Reinstall (210s), serial | 300 | 1 | ~9 |
-| Config restore (~90s — also a guess, **Q0b**), serial | ~180 | 1 | ~15 |
-| Reinstall, pipelined | ~90 | **4** | ~30 |
-| Config restore, pipelined | ~90 | **2** (no slack) | ~30 |
+| Restore primitive | Restore cost | Appliances per shard at a 20s test |
+|---|---|---|
+| Memory-state revert, small guest | ~10s (**Q0b**) | **2** |
+| Memory-state revert, large guest | ~30s (**Q0b**) | **3** |
+| Disk-only snapshot + boot | ~90s | **6** |
+| Full ISO reinstall | ~210s (**Q0a**) | **12** |
 
 Derivation, so the numbers can be checked rather than trusted: an appliance's
 full cycle is `test + restore`, so N appliances deliver one test every
@@ -251,18 +223,18 @@ full cycle is `test + restore`, so N appliances deliver one test every
 
 **The counter-intuitive part, stated so nobody rediscovers it in month three:
 faster tests need *more* appliances, not fewer.** The ratio is
-restore-over-test, so if Global tests land at 45s rather than 90s, the reinstall
-row needs six appliances per shard, not four. At the *measured* journey duration
-of ~20s it would need twelve.
+restore-over-test, so speeding tests up raises the appliance count unless
+restore speeds up with them.
 
-**The config-restore row is the only one whose count does not move**, because
-its restore and test durations are the same order. That stability is a real
-argument for the primitive, independent of the wall-clock saving.
+**This is the argument for memory-state snapshots in one line:** the difference
+between the top and bottom rows is a lab capacity question — two VMs per shard
+or twelve — not a tuning preference. It is also why guest RAM sizing (**E1**)
+is an infrastructure decision rather than a detail.
 
-**Cost, corrected.** Not "two VMs per shard" — see the table. Plus a queue in
-front of `ixnode`, which may itself serialise (**Q2**). Note the two pipelined
-rows have different resource shapes: reinstall queues *provisions*, while config
-restore holds additional **live** appliances and resets the idle one in place.
+**Overlapping restores with tests only matters for the slow rows.** At ~10s
+against a ~20s test, a shard can simply restore in place between tests and stay
+close to test-speed with a single appliance; the pool exists for resilience and
+for the Infrastructural tier, not to hide latency.
 
 **This is a ceiling for the Global tier alone.** R8.1's 2,700s covers the whole
 v1 suite; Local, Contained and Infrastructural tests draw on the same per-shard
@@ -310,7 +282,7 @@ Every test declares a tier. The tier determines which restore primitive
 |---|---|---|
 | **Local** | Forms, validation, navigation, rendering of state the test itself created | API cleanup; many tests share one appliance |
 | **Contained** | Creates and deletes a user, share, dataset, snapshot | API cleanup, fresh appliance at suite boundary |
-| **Global** | Pool topology, service enable/disable, network, encryption, anything reached over SSH | Export pools, then `config.upload` the baseline; reinstall only where that is insufficient |
+| **Global** | Pool topology, service enable/disable, network, encryption, anything reached over SSH | `virsh snapshot-revert` to the test's baseline |
 | **Infrastructural** | AD/LDAP join, KMIP, cloud credentials, HA failover | Dedicated environment with that capability |
 
 **Why tiers.** Uniform per-test appliances would be correct and unaffordable.
@@ -342,32 +314,50 @@ it earns one.
 
 ---
 
-## E5. Baselines are named, and they live in `ixnode`
+## E5. Baselines are snapshots, and `ixnode` has to take them
 
 A baseline is a named appliance condition — `fresh-install`, `single-pool`,
-`pool-and-ad-joined`, `pool-and-kmip`. A test names the baseline it needs; the
-suite never builds one.
+`pool-and-ad-joined` — captured as a **VM snapshot**. A test names the baseline
+it needs; restoring is a revert (**E1**).
 
-**Why named baselines.** Otherwise every Global test constructs its own world,
-which is slow, duplicated, and quietly violates **R3.1** the first time someone
-builds a precondition through the UI because it was easier to write.
+**Why snapshots rather than recipes.** A recipe has to be re-run; a snapshot is
+returned to. This is what makes the Global tier affordable, and it is the thing
+`config.upload` was reaching for and failing at — a snapshot captures the
+configuration database, the system dataset and the pools together, so the
+distributed-state problem in **E1** never arises.
 
-**Why in `ixnode`.** It already turns "a box in condition X" into a running
-appliance, and is owned by people who work in that stack daily. Duplicating it
-here would produce a second, worse provisioner maintained by people who do not.
-The division is clean: **`ixnode` shapes appliances; the suite consumes them.**
+**Where this has to live, given `ixnode` owns the VMs.** `ixnode` manages the
+domains through libvirt itself, so there is no clean way to bolt snapshotting on
+from outside: a second thing driving `virsh` against domains `ixnode` believes
+it owns is two owners for one resource, and it will break the first time
+`ixnode` reclaims or rebuilds one.
+
+So the ask has to go to that team. Given they are resistant to change, **the
+ask should be made as small as it honestly is** — two additive verbs over
+machinery they already drive:
+
+- **snapshot this domain** (with memory, if the substrate allows)
+- **revert this domain to that snapshot**
+
+That is deliberately *not* "teach `ixnode` about baselines". Baseline **content**
+stays ours: `ixnode` installs a clean box, our own script drives it to the
+baseline state over the API we already have, and then asks `ixnode` to snapshot
+it. `ixnode` never needs to know what `pool-and-ad-joined` means, and adding a
+baseline never needs a ticket in their queue. The interface is two verbs about
+domains, which is the smallest surface that can work.
+
+**Fallback if refused:** negotiate direct libvirt access to domains `ixnode`
+created, with `ixnode` stepping back from lifecycle management for those
+domains. Technically straightforward and it still needs their agreement — so it
+is a different conversation, not a way to avoid one. Record which it is, because
+the answer sets the schedule.
 
 **Baselines must specify a disk profile,** and there is an existing mismatch to
 settle when they do: **R2.2** specifies 8 virtual disks, while
 `fresh-install.e2e.ts:38` builds a 9-wide RAIDZ2 and calls
-`requireUnusedDisks(api, 9)`. Today that is a fail-fast at startup on an
-8-disk box. It is also a concrete argument for this decision — disk inventory is
-part of a baseline, not an assumption.
-
-**Open:** what `ixnode` can already express (**Q2**). The middleware nightly
-must need some of this, so plausibly more than we assume.
-
----
+`requireUnusedDisks(api, 9)`. Today that is a fail-fast at startup on an 8-disk
+box, and it is a concrete argument for pinning disk inventory to a baseline
+rather than assuming it.
 
 ## E6. The environment contract
 
@@ -537,13 +527,14 @@ artifact does not exist yet and has to be built.
 
 | | Question | Blocks |
 |---|---|---|
-| **Q0a** | End-to-end `ixnode` turnaround for an e2e-ready box — invocation, VM create, install, boot, **R2.8** boot-state contract, first successful connect | **E1**, **E2**; the 210s figure is a *middleware-test* number and is certainly a floor |
-| **Q0b** | **Reboot-to-usable.** `system.reboot` carries a built-in 10s delay and the reset/upload job returns *before* the reboot happens, so the real cost is 10s + shutdown + boot + middleware ready + reconnect + re-auth | **E1**, **E2**. The most load-bearing unmeasured number in this document |
+| **Q0a** | End-to-end `ixnode` turnaround for an e2e-ready box — invocation, VM create, ISO install, boot, **R2.8** boot-state contract, first successful connect | **E1**, **E5**; the 210s figure is a *middleware-test* number and is certainly a floor. Now paid per *baseline build*, not per restore |
+| **Q0b** | **Revert-to-usable**, for the guest RAM and backing store actually in use: `virsh snapshot-revert` + NTP resync + middleware ready + WebSocket reconnect + re-auth | **E1**, **E2**. The most load-bearing unmeasured number in this document — it sets the appliance count |
 | **Q1** | How long does the Local tier take against one appliance, and how long is a representative Global test? | Whether tiering is needed *yet*; sets the appliance count in **E2** |
-| **Q2** | What baselines can `ixnode` express, and does it serialise? | **E5**, **E2** |
+| **Q2** | Will the `ixnode` team add **snapshot** and **revert** verbs — and if not, will they cede libvirt lifecycle for our domains? | **E5**; this is the schedule risk, not a technical one |
 | **Q3** | Can lab AD/LDAP/KMIP be shared, and with what per-run identity? | **E9**, first AD test |
 | **Q4** | Which providers need *real* endpoints for certification reasons? | **E7** |
-| **Q5** | **Total concurrent appliance budget** for one run — not the shard count, which **E2**'s formula derives from it and the answers to Q0a/Q0b/Q1 | **E3** |
+| **Q5** | **Total concurrent appliance budget** for one run — not the shard count, which **E2**'s formula derives from it and the answers to Q0b/Q1 | **E3** |
+| **Q6** | Backing store for the VM disks — qcow2 files, or zvols? And guest RAM size | **E1**: qcow2 allows a single `virsh` snapshot; zvols need recursive `zfs snapshot` plus `virsh save`. RAM sets the revert cost |
 
 ---
 
@@ -552,27 +543,29 @@ artifact does not exist yet and has to be built.
 Front-loaded with measurement, because most of this document assumes a scaling
 problem that has not been demonstrated.
 
-1. **Measure Q0a, Q0b and Q1.** Three numbers decide whether the rest of this
-   document is worth building. In particular, if the Local tier runs 80 tests in
-   20 minutes on one appliance without tainting, tiering is premature and the
-   right move is to write tests. Do not build the architecture above on the
-   strength of this document alone.
-2. **Environment descriptor, capability manifest, hand-run default** (**E6**).
+1. **Open the `ixnode` conversation (Q2) — it is the long pole.** Everything in
+   **E1** depends on someone being able to snapshot and revert a domain. Ask for
+   the two verbs, not for baseline support. If the answer is no, the fallback in
+   **E5** is a different negotiation and the schedule changes, so find out early
+   rather than after designing around it.
+2. **Measure Q0b, then Q1.** A revert-to-usable time is what sets the appliance
+   count, and it is cheap to measure by hand on one box. If the Local tier also
+   runs 80 tests in 20 minutes on one appliance without tainting, tiering is
+   premature and the right move is simply to write tests — do not build the
+   architecture above on the strength of this document alone.
+3. **Environment descriptor, capability manifest, hand-run default** (**E6**).
    Small, unblocking, and it stops the next environment type being a rewrite.
    Make the descriptor topology-shaped while in there (**E10**).
-3. **Try the config-restore cycle end to end** (**E1**): export pools,
-   `config.upload` a saved baseline, reboot, re-authenticate, confirm the box is
-   reachable with the suite's credentials and that the previous test's traces
-   are gone. Half a day, and it answers Q0b at the same time. Check *both*
-   directions — that it restores enough, and that it does not overshoot past the
-   state the suite needs. Include an encrypted field in the baseline, so a
-   `secretseed`-less save fails the experiment rather than production.
-4. **Map `ixnode`** (**Q2**) with its owners; agree baseline names and disk
-   profiles.
-5. **Settle shared-service identity** (**Q3**) before the first AD test.
-6. **Pipeline restores** (**E2**) when the Global tier is large enough to feel
-   it — not before, and size the appliance count with the formula rather than
-   the guess.
+4. **Prove the revert cycle by hand** (**E1**): build a box to a baseline,
+   snapshot it with memory, run something destructive — create a pool, join a
+   domain — then revert and confirm the appliance is genuinely back, the suite
+   can re-authenticate, and the clock resynced. Half a day, and it answers Q0b.
+5. **Re-authentication after restore** (**E1**, **E10**). Nothing else works
+   until the harness survives an appliance disappearing.
+6. **Settle shared-service identity** (**Q3**) before the first AD test — no
+   local snapshot restores a domain machine account.
+7. **Agree baseline names and disk profiles** (**E5**), including the 8-vs-9
+   disk mismatch.
 
 ---
 
@@ -581,13 +574,17 @@ problem that has not been demonstrated.
 - **The Local tier taints anyway.** Then the tier model is wrong and per-test
   restore is the honest answer for everything, with a much larger appliance
   budget as the price.
-- **Config restore does not clear a taint class that matters** — the system
-  dataset is the likeliest culprit — or **Q0b comes back close to Q0a**. Either
-  collapses the gap between reboot and reinstall, and hypervisor snapshots
-  become worth pricing after all.
-- **`ixnode` cannot express the baselines we need** and extending it is not
-  wanted. Baseline construction then has to live somewhere, and that should be a
-  deliberate decision rather than defaulting into the suite.
+- **Q2 comes back no**, on both the verbs and the fallback. Then reinstall is
+  the only restore available, the Global tier has to be held to single digits
+  per shard, and that constraint should drive test design explicitly rather than
+  being absorbed quietly.
+- **Q0b comes back close to Q0a.** If a revert is nearly as slow as an install,
+  the snapshot machinery is not earning its complexity — check guest RAM and the
+  backing store (**Q6**) before concluding it, since both dominate that number.
+- **Snapshots turn out not to be honest restores.** The premise of **E1** is
+  that a VM snapshot is state-agnostic. If reverted appliances misbehave in ways
+  a freshly installed one does not, that premise is wrong and the whole approach
+  needs revisiting.
 - **Skipped-for-capability counts stay high** run after run. Skipping is a
   pressure valve for a busy lab, not a permanent state hiding coverage we
   believe we have.
