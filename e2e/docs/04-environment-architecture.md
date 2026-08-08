@@ -63,6 +63,8 @@ if they are wrong, revisit.
 - AD, LDAP, S3 and KMIP **exist in the lab**; whether they can be shared across
   concurrent runs is unconfirmed (**Q3**).
 - **HA failover is in scope** — later, but definitely.
+- **CI should run in GitHub Actions**, not Jenkins, using **self-hosted
+  runners** for the VM work. See **E12**.
 
 ### 0.3 The budget this all has to fit inside
 
@@ -346,11 +348,25 @@ it. `ixnode` never needs to know what `pool-and-ad-joined` means, and adding a
 baseline never needs a ticket in their queue. The interface is two verbs about
 domains, which is the smallest surface that can work.
 
-**Fallback if refused:** negotiate direct libvirt access to domains `ixnode`
-created, with `ixnode` stepping back from lifecycle management for those
-domains. Technically straightforward and it still needs their agreement — so it
-is a different conversation, not a way to avoid one. Record which it is, because
-the answer sets the schedule.
+**Three ways this can land**, in preference order:
+
+1. **`ixnode` adds the two verbs.** Smallest ask, and it keeps the thing
+   `ixnode` genuinely provides.
+2. **`ixnode` cedes libvirt lifecycle for our domains** and we snapshot and
+   revert them ourselves. Technically straightforward, still needs the same
+   team's agreement — a different conversation, not a way to avoid one.
+3. **We own a separate pool of domains outright**, with no `ixnode` dependency.
+   Viable because **E12** puts a runner on the libvirt host anyway.
+
+Option 3 is a real fallback rather than a threat, but it is not free, and it is
+worth being precise about why. What `ixnode` provides is not `virt-install` — it
+is the **unattended TrueNAS install**: EULA, first-boot wizard, admin
+credentials, the whole **R2.8** boot-state contract. Reimplementing that is the
+actual cost of option 3.
+
+Its saving grace is that the cost is one-time and bounded: baselines are built
+rarely, only when the nightly image moves. If option 1 stalls, option 3 is a
+schedule we control rather than one we wait on.
 
 **Baselines must specify a disk profile,** and there is an existing mismatch to
 settle when they do: **R2.2** specifies 8 virtual disks, while
@@ -523,6 +539,52 @@ artifact does not exist yet and has to be built.
 
 ---
 
+## E12. CI: GitHub Actions on self-hosted runners
+
+**Sharding is native.** Playwright accepts `--shard=i/n`, and a matrix job maps
+onto it directly: each leg claims one appliance, so **E2**'s appliance count
+*is* the matrix size. No bespoke orchestration.
+
+**The concurrency guard stops being something we build.** §0.1's problem — two
+runs against one appliance destroying each other — is a `concurrency:` group,
+expressed declaratively. It is also how **Q5**'s appliance budget gets enforced:
+cap the matrix, cap the pool.
+
+**Artifacts.** `upload-artifact` covers traces, video and JUnit XML (**R7.1**)
+without a plugin. **R7.2**'s middleware log collection still has to run before
+the VM is reclaimed, which is a teardown step regardless of CI system.
+
+**Put the runner on the libvirt host.** Then snapshot and revert are local
+`virsh` calls: no remote hypervisor API, no credential plumbing, no network hop
+on the hot path. Anywhere else and every restore needs an authenticated remote
+channel to the hypervisor. This also makes **E5**'s option 3 viable.
+
+### The public-repository constraint
+
+**`truenas/webui` is public, and self-hosted runners on public repositories are
+a known attack path.** If any workflow with access to these runners can be
+triggered by a pull request from a **fork**, then an arbitrary person on the
+internet can execute code on a machine that sits on the lab network and holds
+`virsh` access to every appliance. GitHub's own guidance is not to pair
+self-hosted runners with public repositories, precisely because of this.
+
+It is workable, but only with the gates set deliberately:
+
+- **Never** trigger e2e on `pull_request` from forks, and never use
+  `pull_request_target` with a checkout of PR code.
+- Restrict triggers to `push` on protected branches, `schedule`, and
+  `workflow_dispatch`.
+- For PR gating later (**D1**): same-repo branches only, plus a GitHub
+  **environment with required reviewers**, so a human approves before untrusted
+  code runs.
+- Put the runner in its own network segment with no route to anything but the
+  lab, and treat it as compromised-by-default.
+
+Decide this before the first nightly rather than after. "Add PR gating" is
+exactly the later change that opens the hole quietly.
+
+---
+
 ## Open questions
 
 | | Question | Blocks |
@@ -535,6 +597,7 @@ artifact does not exist yet and has to be built.
 | **Q4** | Which providers need *real* endpoints for certification reasons? | **E7** |
 | **Q5** | **Total concurrent appliance budget** for one run — not the shard count, which **E2**'s formula derives from it and the answers to Q0b/Q1 | **E3** |
 | **Q6** | Backing store for the VM disks — qcow2 files, or zvols? And guest RAM size | **E1**: qcow2 allows a single `virsh` snapshot; zvols need recursive `zfs snapshot` plus `virsh save`. RAM sets the revert cost |
+| **Q7** | Can a self-hosted runner live on the libvirt host, in a segment with no route beyond the lab? | **E12** |
 
 ---
 
@@ -564,6 +627,9 @@ problem that has not been demonstrated.
    until the harness survives an appliance disappearing.
 6. **Settle shared-service identity** (**Q3**) before the first AD test — no
    local snapshot restores a domain machine account.
+   Decide runner placement and the fork-trigger policy at the same time
+   (**E12**, **Q7**) — the security gates are cheaper to set before the first
+   workflow exists than to retrofit.
 7. **Agree baseline names and disk profiles** (**E5**), including the 8-vs-9
    disk mismatch.
 
