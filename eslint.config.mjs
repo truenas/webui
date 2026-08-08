@@ -38,6 +38,34 @@ const projectOverrides = {
   },
 };
 
+/**
+ * The Playwright suite is plain Node TypeScript, not Angular, so the base
+ * config's Angular expectations do not apply to it.
+ *
+ * `angular-file-naming` in particular requires names like `*.component.ts` or
+ * `*.service.ts`; the e2e suite is organised by role (`flows/`, `locators/`,
+ * `fixtures/`) instead. The rules disabled here are about Angular's file and
+ * class conventions only — correctness rules still apply.
+ */
+const e2eOverrides = {
+  files: ['e2e/**/*.ts', 'playwright.config.ts'],
+  rules: {
+    'angular-file-naming/component-filename-suffix': 'off',
+    'angular-file-naming/directive-filename-suffix': 'off',
+    'angular-file-naming/service-filename-suffix': 'off',
+    'angular-file-naming/module-filename-suffix': 'off',
+    'angular-file-naming/pipe-filename-suffix': 'off',
+    // Playwright's API is promise-heavy and its own `expect` is thenable;
+    // the base config's Jest-oriented rules misread both.
+    'jest/expect-expect': 'off',
+    'jest/no-standalone-expect': 'off',
+    'jest/no-conditional-expect': 'off',
+    // `playwright.config.ts` must default-export its configuration; Playwright
+    // reads no other shape.
+    'import/no-default-export': 'off',
+  },
+};
+
 export default [
   {
     // Generated test coverage reports; not ignored by the base config.
@@ -45,4 +73,5 @@ export default [
   },
   ...baseConfig,
   projectOverrides,
+  e2eOverrides,
 ];
