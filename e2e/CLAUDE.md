@@ -159,6 +159,11 @@ after. `docs/01-requirements.md` and `docs/02-technology.md` are decision
 records: the `R`/`T`/`D` numbers cited in code comments point there, and they
 explain *why* a piece of code is shaped as it is.
 
+`docs/04-environment-architecture.md` covers the appliance side — where the box
+under test comes from, how state tainting is contained, and how external
+services and HA fit in. Its `E` numbers are cited the same way. Draft: read it
+before designing anything that provisions or reshapes an appliance.
+
 ## Temporary scaffolding
 
 `support/api/untyped.ts` exists only because `@truenas/api-client`'s typed

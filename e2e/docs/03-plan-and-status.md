@@ -44,6 +44,13 @@ selector discipline and failure legibility are all built and proven.
   version recording in reports (R7.1, R7.2, R2.4).
 - **Helper coverage**: `findGroupAclGrants`, `waitUntil` and config validation
   have no unit tests. Each was verified by hand, once.
+- **Nothing guards the `data-test` contract.** Every locator depends on
+  attributes that webui's own convention forbids unit tests from using, so they
+  have no coverage in the repository that emits them. NAS-142069 was one such
+  attribute deleted by a component migration, caught by a person rather than by
+  CI. Until this is closed, each new test enlarges the surface that can break
+  silently on an unrelated refactor. Cheapest fix: a Jest guard asserting the
+  ids the suite's locators reference actually render.
 - **Scoped TLS leniency**: `playwright.config.ts` sets
   `NODE_TLS_REJECT_UNAUTHORIZED=0`, which disables certificate verification for
   every outbound connection the runner makes, for the life of the process —
