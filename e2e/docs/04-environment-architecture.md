@@ -93,7 +93,7 @@ one that is *sufficient* for what the test dirtied.
 | API cleanup — delete what you created | seconds | Whatever the test started from | Local, Contained |
 | Export data pools, then `config.upload` a per-baseline golden config | a reboot (**Q0b**) | The baseline, admin account intact | Most of Global |
 | Full `ixnode` reinstall | ~210s (**Q0a**) | Factory, plus whatever provisioning adds | Session start, periodic fidelity |
-| `boot.environment.clone` / `.activate` | a reboot | Boot-pool state only — *orthogonal*, see below | Forward-looking |
+| `boot.environment.clone` / `.activate` | a reboot (**Q0b**) | Boot-pool state only — *orthogonal*, see below | Forward-looking |
 
 **Why this shape.** The instinctive framing is "reinstall vs hypervisor
 snapshots", and that was this document's first draft. It is a false dichotomy,
@@ -119,12 +119,24 @@ sends the browser to `/signin` and waits for the system to come back.
   only an `ixnode` recipe and becomes an artifact — cheap to *restore*, not just
   cheap to *request*.
 
-Two mechanics to plan for: `upload` is a job with an **input pipe**, so it needs
-the `/_upload` HTTP endpoint rather than JSON-RPC alone (**R2.11** already lists
-`/_upload` in the proxy set); and `upload_impl` runs `migrate` on the uploaded
-database, so a config saved against an older nightly restores onto a newer one —
-useful against **R2.4**'s moving target, at the cost of a schema migration on
-every restore.
+Three mechanics to plan for.
+
+**Save baselines with `secretseed: true`.** This is the one that will cost an
+afternoon if missed. `save()` with no options routes to `save_db_only` — the
+database alone, no `pwenc_secret`. On restore, `handle_db_upload_path()` finds
+no secret and *generates a fresh one*, leaving *every encrypted field in the
+restored database undecryptable*: service passwords, cloud-sync credentials, the
+AD bind password, KMIP. It fails **silently** — the upload succeeds, the box
+boots, and the damage only appears when something tries to decrypt. Since the
+DB-only save is the default, a naive smoke test passes.
+
+`upload` is a job with an **input pipe**, so it needs the `/_upload` HTTP
+endpoint rather than JSON-RPC alone (**R2.11** already lists `/_upload` in the
+proxy set).
+
+`upload_impl` runs `migrate` on the uploaded database, so a config saved against
+an older nightly restores onto a newer one — useful against **R2.4**'s moving
+target, at the cost of a schema migration on every restore.
 
 **What `config.upload` still does not undo.** Worth stating, because these are
 the ones that will bite:
@@ -135,6 +147,12 @@ the ones that will bite:
   survives a data-pool destroy too.
 - Anything outside the database and `CONFIG_FILES` — on-disk state a test wrote
   directly, or damage inflicted over SSH (**E8**).
+
+Note the boundary is `CONFIG_FILES`, not the database alone: `upload` genuinely
+manages `pwenc_secret`, the three `authorized_keys` files and `snmp_engine_id`,
+unlinking them when they are absent from the tarball. `config.reset` touches
+none of them, so a key added over SSH would have survived a reset. Another point
+to the chosen primitive.
 
 **Ordering matters, and getting it backwards is unrecoverable.** Encryption keys
 and passphrases live in the config database, and **E4**'s Global tier includes
@@ -222,14 +240,24 @@ guess pending **Q1**. It matters, because it sets the appliance count.
 | Approach | Seconds per Global test | Appliances per shard | Tests per shard in 45 min |
 |---|---|---|---|
 | Reinstall (210s), serial | 300 | 1 | ~9 |
-| Config restore (~90s, **Q0b**), serial | ~180 | 1 | ~15 |
-| Reinstall, pipelined | ~90 | **3** | ~30 |
+| Config restore (~90s — also a guess, **Q0b**), serial | ~180 | 1 | ~15 |
+| Reinstall, pipelined | ~90 | **4** | ~30 |
 | Config restore, pipelined | ~90 | **2** (no slack) | ~30 |
+
+Derivation, so the numbers can be checked rather than trusted: an appliance's
+full cycle is `test + restore`, so N appliances deliver one test every
+`(test + restore) / N`; requiring that to be ≤ `test` gives
+`N ≥ 1 + restore ÷ test`.
 
 **The counter-intuitive part, stated so nobody rediscovers it in month three:
 faster tests need *more* appliances, not fewer.** The ratio is
 restore-over-test, so if Global tests land at 45s rather than 90s, the reinstall
-row needs five appliances per shard, not three.
+row needs six appliances per shard, not four. At the *measured* journey duration
+of ~20s it would need twelve.
+
+**The config-restore row is the only one whose count does not move**, because
+its restore and test durations are the same order. That stability is a real
+argument for the primitive, independent of the wall-clock saving.
 
 **Cost, corrected.** Not "two VMs per shard" — see the table. Plus a queue in
 front of `ixnode`, which may itself serialise (**Q2**). Note the two pipelined
@@ -259,8 +287,11 @@ interfere by construction (**R3.4**). That reasoning does not change; the unit
 of parallelism just has to be the appliance. This is **D2**
 (`01-requirements.md:426`), promoted from deferred to load-bearing.
 
-**Blocked on Q5.** §0.2 records one VM per run as affordable. Everything in
-**E2**'s table assumes several, plus a warm spare each. Until the shard budget
+**Blocked on Q5.** §0.2 records one VM per run as affordable. **E2** needs
+`1 + ⌈restore ÷ test⌉` per shard — between 2 and 12 depending on the primitive
+and on numbers nobody has measured. Shard count is therefore a *derived*
+quantity, not the thing to ask for: the budget question is total concurrent
+appliances. Until that is answered
 is known, this is a shape, not a plan.
 
 **Consequence, and it is a hard rule.** Shard assignment is by test file, and no
@@ -512,7 +543,7 @@ artifact does not exist yet and has to be built.
 | **Q2** | What baselines can `ixnode` express, and does it serialise? | **E5**, **E2** |
 | **Q3** | Can lab AD/LDAP/KMIP be shared, and with what per-run identity? | **E9**, first AD test |
 | **Q4** | Which providers need *real* endpoints for certification reasons? | **E7** |
-| **Q5** | Shard budget — how many concurrent appliances may a run hold? | **E3** |
+| **Q5** | **Total concurrent appliance budget** for one run — not the shard count, which **E2**'s formula derives from it and the answers to Q0a/Q0b/Q1 | **E3** |
 
 ---
 
@@ -534,7 +565,8 @@ problem that has not been demonstrated.
    reachable with the suite's credentials and that the previous test's traces
    are gone. Half a day, and it answers Q0b at the same time. Check *both*
    directions — that it restores enough, and that it does not overshoot past the
-   state the suite needs.
+   state the suite needs. Include an encrypted field in the baseline, so a
+   `secretseed`-less save fails the experiment rather than production.
 4. **Map `ixnode`** (**Q2**) with its owners; agree baseline names and disk
    profiles.
 5. **Settle shared-service identity** (**Q3**) before the first AD test.
