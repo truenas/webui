@@ -19,7 +19,7 @@
 
     <tn-form-field
       [label]="'Max Concurrent Jobs' | translate"
-      [hint]="helptext.maxConcurrentJobs | translate"
+      [hint]="helptext.maxConcurrentJobs | translate: concurrentJobsRange"
     >
       <tn-input
         formControlName="max_concurrent_jobs"
@@ -29,10 +29,20 @@
 
     <tn-form-field
       [label]="'Max Used Percentage' | translate"
-      [hint]="helptext.maxUsedPercentage | translate"
+      [hint]="helptext.maxUsedPercentage | translate: maxUsedRange"
     >
       <tn-input
         formControlName="max_used_percentage"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Performance Tier Reserve' | translate"
+      [hint]="helptext.performanceTierReserve | translate: reserveRange"
+    >
+      <tn-input
+        formControlName="special_class_metadata_reserve_pct"
         [inputType]="InputType.Number"
       ></tn-input>
     </tn-form-field>

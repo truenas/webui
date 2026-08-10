@@ -22,6 +22,7 @@ describe('TierConfigFormComponent', () => {
     enabled: true,
     max_concurrent_jobs: 3,
     max_used_percentage: 80,
+    special_class_metadata_reserve_pct: 25,
   } as ZfsTierConfig;
 
   // pools-dashboard opens this form through FormSidePanelService, which is its only host: no
@@ -59,6 +60,7 @@ describe('TierConfigFormComponent', () => {
     expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
     expect(await (await getInput('max_concurrent_jobs')).getValue()).toBe('3');
     expect(await (await getInput('max_used_percentage')).getValue()).toBe('80');
+    expect(await (await getInput('special_class_metadata_reserve_pct')).getValue()).toBe('25');
   });
 
   it('renders no in-form Save', async () => {
@@ -72,6 +74,7 @@ describe('TierConfigFormComponent', () => {
     await (await getCheckbox('enabled')).uncheck();
     await (await getInput('max_concurrent_jobs')).setValue('5');
     await (await getInput('max_used_percentage')).setValue('90');
+    await (await getInput('special_class_metadata_reserve_pct')).setValue('20');
 
     spectator.component.submit();
 
@@ -79,12 +82,18 @@ describe('TierConfigFormComponent', () => {
       enabled: false,
       max_concurrent_jobs: 5,
       max_used_percentage: 90,
+      special_class_metadata_reserve_pct: 20,
     }]);
     expect(closed).toHaveBeenCalledWith(true);
   });
 
   it('shows warning when enabling tiering for the first time', async () => {
-    const disabledConfig = { enabled: false, max_concurrent_jobs: 1, max_used_percentage: 80 } as ZfsTierConfig;
+    const disabledConfig = {
+      enabled: false,
+      max_concurrent_jobs: 1,
+      max_used_percentage: 80,
+      special_class_metadata_reserve_pct: 25,
+    } as ZfsTierConfig;
     jest.spyOn(api, 'call').mockReturnValueOnce(of(disabledConfig));
 
     spectator = createComponent();
@@ -103,17 +112,36 @@ describe('TierConfigFormComponent', () => {
     expect(await loader.getHarnessOrNull(TnBannerHarness)).toBeNull();
   });
 
-  it('shows validation errors and blocks submission when values are out of range', async () => {
-    await (await getInput('max_used_percentage')).setValue('150');
-    await (await getInput('max_concurrent_jobs')).setValue('0');
+  it('shows validation errors and blocks submission when values exceed their maximums', async () => {
+    await (await getInput('max_used_percentage')).setValue('96');
+    await (await getInput('max_concurrent_jobs')).setValue('11');
+    await (await getInput('special_class_metadata_reserve_pct')).setValue('31');
 
     const percentField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Used Percentage' }));
     const jobsField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Concurrent Jobs' }));
+    const reserveField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Performance Tier Reserve' }));
 
-    expect(await percentField.getErrorMessage()).toBe('Maximum value is 100');
-    expect(await jobsField.getErrorMessage()).toBe('Minimum value is 1');
+    expect(await percentField.getErrorMessage()).toBe('Maximum value is 95');
+    expect(await jobsField.getErrorMessage()).toBe('Maximum value is 10');
+    expect(await reserveField.getErrorMessage()).toBe('Maximum value is 30');
 
     // The panel footer's Save reads canSubmit(); there is no in-form button to assert against.
+    expect(spectator.component.canSubmit()).toBe(false);
+  });
+
+  it('shows validation errors and blocks submission when values fall below their minimums', async () => {
+    await (await getInput('max_used_percentage')).setValue('69');
+    await (await getInput('max_concurrent_jobs')).setValue('0');
+    await (await getInput('special_class_metadata_reserve_pct')).setValue('9');
+
+    const percentField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Used Percentage' }));
+    const jobsField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Max Concurrent Jobs' }));
+    const reserveField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Performance Tier Reserve' }));
+
+    expect(await percentField.getErrorMessage()).toBe('Minimum value is 70');
+    expect(await jobsField.getErrorMessage()).toBe('Minimum value is 1');
+    expect(await reserveField.getErrorMessage()).toBe('Minimum value is 10');
+
     expect(spectator.component.canSubmit()).toBe(false);
   });
 });
