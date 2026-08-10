@@ -1,7 +1,11 @@
-ix-empty {
+tn-empty {
   height: inherit;
+}
 
-  &.loading {
-    min-height: 80%;
-  }
+.loading {
+  align-items: center;
+  display: flex;
+  height: inherit;
+  justify-content: center;
+  min-height: 80%;
 }

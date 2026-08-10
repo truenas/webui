@@ -389,6 +389,9 @@ the epic's follow-up list.
 | `tn-empty`'s `[title]`/`[description]` are text-only, so an `EmptyConfig.message` written as HTML has to be flattened at runtime | `FlattenEmptyMessagePipe` | library |
 | `tn-empty` caps `[description]` at a readable measure but not `[title]`, so a paragraph-length message stretches the full page width | `tn-empty` rule in `src/assets/styles/components/_tn-empty.scss` | library |
 | Replication "Enabled" is read-only Yes/No in the detail row when the picker hides the column (it was an interactive toggle before); a dead toggle would be worse, so the toggle stays in the visible column only | `replication-list.component.ts` | webui |
+| `tn-card`'s content slot grows (`flex: 1; min-height: 0`) but has no `overflow` and no positioning context, so a full-height card body can neither scroll nor anchor an absolutely-positioned child | `::ng-deep .tn-card__content` in `enclosure-page.component.scss` | library |
+| `tn-table` writes no test id on the header row or on data rows, so ix-table's `row-header` and `row-<rowTag>` ids have no equivalent | every migrated `tn-table`; noted while migrating `jbof-list` / `elements-page` | library |
+| `dataProviderEmptyState` exposes only `message`/`icon`, so the empty config's second line is dropped — `tn-table` now has `[emptyDescription]`, so this is unblocked | `tnTableListHost` in `src/app/modules/ix-table/utils.ts`; worked around locally in `jbof-list.component.html` | webui |
 
 ### Adopted from the library
 

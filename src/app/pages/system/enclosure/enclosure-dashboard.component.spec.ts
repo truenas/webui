@@ -5,12 +5,11 @@ import {
   mockProvider,
   SpectatorRouting,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnEmptyHarness, TnSpinnerComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import {
   EnclosureDashboardComponent,
@@ -24,7 +23,6 @@ describe('EnclosureDashboardComponent', () => {
     component: EnclosureDashboardComponent,
     shallow: true,
     declarations: [
-      MockComponent(EmptyComponent),
       MockComponent(PageHeaderComponent),
     ],
     componentProviders: [
@@ -55,25 +53,27 @@ describe('EnclosureDashboardComponent', () => {
     enclosureStore.isLoading.mockReturnValue(true);
     enclosureStore.selectedEnclosure.mockReturnValue(undefined);
 
-    spectator.detectChanges();
+    // OnPush: the store mock is a plain jest.fn, so the component has to be marked dirty.
+    spectator.detectComponentChanges();
 
-    const emptyComponent = spectator.query(EmptyComponent);
-    expect(emptyComponent).toExist();
+    // `tn-empty` has no loading variant, so loading renders a spinner instead.
+    expect(spectator.query(TnSpinnerComponent)).toExist();
 
     // Verify store methods are being called correctly
     expect(enclosureStore.isLoading).toHaveBeenCalled();
     expect(enclosureStore.selectedEnclosure).toHaveBeenCalled();
   });
 
-  it('shows unavailable message when no enclosure is available after loading', () => {
+  it('shows unavailable message when no enclosure is available after loading', async () => {
     const enclosureStore = spectator.inject(EnclosureStore, true);
     enclosureStore.isLoading.mockReturnValue(false);
     enclosureStore.selectedEnclosure.mockReturnValue(undefined);
 
-    spectator.detectChanges();
+    // OnPush: the store mock is a plain jest.fn, so the component has to be marked dirty.
+    spectator.detectComponentChanges();
 
-    const emptyComponent = spectator.query(EmptyComponent);
-    expect(emptyComponent).toExist();
+    const empty = await loader.getHarness(TnEmptyHarness);
+    expect(await empty.getTitle()).toBe('Enclosure Unavailable');
 
     // Verify store methods are being called correctly
     expect(enclosureStore.isLoading).toHaveBeenCalled();
@@ -100,5 +100,47 @@ describe('EnclosureDashboardComponent', () => {
     // `tn-button`'s anchor arm hard-codes `tnTestIdType="button"`, so the legacy `link-*` id
     // is pinned on the host. Guards against a silent rename to `button-manage-expansion`.
     expect(spectator.query('tn-button')).toHaveAttribute('data-test', 'link-manage-expansion');
+  });
+});
+
+describe('EnclosureDashboardComponent (unlicensed)', () => {
+  let spectator: SpectatorRouting<EnclosureDashboardComponent>;
+  let loader: HarnessLoader;
+
+  // `isJbofLicensed` is resolved once at construction, so the unlicensed case needs its own
+  // factory rather than a re-mock inside a test.
+  const createComponent = createRoutingFactory({
+    component: EnclosureDashboardComponent,
+    shallow: true,
+    declarations: [
+      MockComponent(PageHeaderComponent),
+    ],
+    componentProviders: [
+      mockProvider(EnclosureStore, {
+        selectedEnclosure: jest.fn(),
+        isLoading: jest.fn(),
+        initiate: jest.fn(),
+        listenForDiskUpdates: jest.fn(() => of()),
+        selectEnclosure: jest.fn(),
+      }),
+    ],
+    providers: [
+      mockApi([
+        mockCall('jbof.licensed', 0),
+      ]),
+      mockProvider(TnDialog),
+      mockAuth(),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('does not show the JBOF link', async () => {
+    const links = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'NVMe-oF Expansion Shelves' }));
+
+    expect(links).toHaveLength(0);
   });
 });
