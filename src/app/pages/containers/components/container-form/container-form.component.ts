@@ -12,7 +12,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
@@ -60,7 +59,9 @@ import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
+import {
+  advancedModeFooterAction, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -142,17 +143,11 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
    */
   protected readonly isAdvancedMode = signal(false);
 
-  /**
-   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
-   * change detection, so the label flips with {@link isAdvancedMode}.
-   */
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
+
+  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer, before Save. */
   get footerActions(): SidePanelFooterAction[] {
-    // Labels are extraction markers — the panel container pipes them through `translate`.
-    return [{
-      label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
-      testId: 'toggle-advanced-options',
-      onClick: () => this.isAdvancedMode.update((isAdvanced) => !isAdvanced),
-    }];
+    return this.advancedToggle();
   }
 
   protected readonly isEditMode = signal<boolean>(false);
