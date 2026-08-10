@@ -14,6 +14,13 @@ on:
 permissions:
   contents: read
 
+# Literal group, not `${{ github.workflow }}` — this workflow and main.yml are
+# both named "WebUI", so keying on the name would let them cancel each other on
+# a PR that touches both translations and source.
+concurrency:
+  group: webui-validate-translations-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   install:
     name: Checkout and Install
@@ -22,7 +29,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: ./.github/actions/prepare
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        with:
+          cache-jest: 'true'
 
   lint-translations:
     name: Validate translation strings
@@ -32,6 +41,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: ./.github/actions/prepare
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        with:
+          cache-jest: 'true'
       - name: Validate
         run: yarn run validate-translations

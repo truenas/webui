@@ -16,6 +16,20 @@ on:
 permissions:
   contents: read
 
+# Superseded commits on an open PR were running the full suite to completion,
+# including `yarn test:pr --maxWorkers=50` on the self-hosted runner.
+#
+# The group is a literal, NOT `${{ github.workflow }}`: validate-translations.yml
+# is also named "WebUI", so keying on the workflow name would put both in one
+# group and let a translation-only push cancel this pipeline, and vice versa.
+#
+# Cancelling is limited to pull_request. On a push to master the run is the only
+# record of that commit — report-coverage uploads to Codecov from it — so a
+# rapid second merge must not cancel the first one's coverage.
+concurrency:
+  group: webui-main-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   install:
     name: Checkout and Install
@@ -24,7 +38,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: ./.github/actions/prepare
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        with:
+          cache-jest: 'true'
 
   build:
     name: Build
@@ -34,7 +50,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: ./.github/actions/prepare
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        with:
+          cache-jest: 'true'
       - name: Build
         run: yarn build:prod
       - name: Check strict null checks
@@ -48,15 +66,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: ./.github/actions/prepare
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        with:
+          cache-jest: 'true'
       - name: Generate default environment file
         run: yarn run check-env
       - name: Run linter
         run: yarn lint
 
+  # Decides which runner the tests below go to. Shared with the Claude review
+  # gate and with truenas-connect/ui, which needs the same answer for the same
+  # reason. Reports as "check-ux-team / Check member access" — the job id stays
+  # `check-ux-team` so the downstream `needs:` references are unchanged.
   check-ux-team:
     if: github.event_name == 'pull_request'
-    uses: ./.github/workflows/check-ux-team.yml
+    permissions:
+      contents: read
+    uses: iXsystems/ux-github-workflows/.github/workflows/check-member.yml@master
 
   test-ux-team:
     name: Run tests (UX Team - Self-hosted)
@@ -69,7 +95,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: ./.github/actions/prepare
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        with:
+          cache-jest: 'true'
       - name: Run tests
         run: yarn test:pr --maxWorkers=50
       - name: Upload coverage
@@ -97,7 +125,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: ./.github/actions/prepare
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        with:
+          cache-jest: 'true'
       - name: Run tests
         run: yarn test:pr --maxWorkers=2
       - name: Upload coverage
