@@ -73,8 +73,10 @@ export class ElementsPageComponent {
     displayedColumns: ['descriptor', 'status', 'value'],
   });
 
-  protected readonly trackByDescriptor = (_index: number, row: EnclosureElement): string => row.descriptor;
-
+  // No `[trackBy]` here: descriptors come straight off the hardware and aren't guaranteed distinct
+  // within a view (blank or repeated ones on cooling and PSU elements are a thing in the wild), and
+  // duplicate track keys throw NG0955. tn-table falls back to tracking by index, which is what
+  // `viewElements()` keys the elements by anyway.
   protected readonly uniqueRowTag = this.list.rowTag((row) => row.descriptor);
 
   constructor() {

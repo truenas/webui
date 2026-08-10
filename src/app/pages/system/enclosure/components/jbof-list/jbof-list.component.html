@@ -40,7 +40,7 @@
       <ng-template tnHeaderCellDef>{{ 'IPs' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
-          [value]="formatIps(row)"
+          [value]="ipsText(row)"
           [title]="'IPs' | translate"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>

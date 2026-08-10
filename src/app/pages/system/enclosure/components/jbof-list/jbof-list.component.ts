@@ -96,7 +96,9 @@ export class JbofListComponent implements OnInit {
     displayedColumns: [
       'description',
       // `ips` renders a value no single property holds, so it has to name its own sort key.
-      { name: 'ips', sortBy: (row) => this.formatIps(row) },
+      // `sortBy` is annotated so `list` can be typed without inferring `ipsText`, which is
+      // derived from `list` — leaving it to inference makes the pair circular and both `any`.
+      { name: 'ips', sortBy: (row: Jbof): string => this.ipsText(row) },
       'mgmt_username',
       'actions',
     ],
@@ -110,9 +112,9 @@ export class JbofListComponent implements OnInit {
     (row) => [row.mgmt_username, this.translate.instant('JBOF')].join(' '),
   );
 
-  protected formatIps(row: Jbof): string {
-    return [row.mgmt_ip1, row.mgmt_ip2].filter(Boolean).join(', ');
-  }
+  protected readonly ipsText = this.list.perRow(
+    (row) => [row.mgmt_ip1, row.mgmt_ip2].filter(Boolean).join(', '),
+  );
 
   ngOnInit(): void {
     this.getJbofs();
@@ -160,8 +162,7 @@ export class JbofListComponent implements OnInit {
     this.updateAvailableJbof();
   }
 
-  // Public: the spec drives it directly to re-evaluate licensing after changing the mock.
-  updateAvailableJbof(): void {
+  private updateAvailableJbof(): void {
     forkJoin([
       this.api.call('jbof.query').pipe(map((jbofs) => jbofs.length)),
       this.api.call('jbof.licensed'),

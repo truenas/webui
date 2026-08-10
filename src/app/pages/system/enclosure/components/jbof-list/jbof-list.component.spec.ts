@@ -7,7 +7,6 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Jbof } from 'app/interfaces/jbof.interface';
@@ -39,6 +38,35 @@ const fakeJbofDataSource: Jbof[] = [
   },
 ];
 
+/**
+ * `canAddJbof` is resolved on init from (jbof.query length, jbof.licensed), so a licensing case
+ * needs its own factory with its own `jbof.licensed` — re-mocking mid-test would need the
+ * component to re-run that call.
+ */
+function createFactory(licensedCount: number): ReturnType<typeof createComponentFactory<JbofListComponent>> {
+  return createComponentFactory({
+    component: JbofListComponent,
+    imports: [
+      MockComponent(PageHeaderComponent),
+      BasicSearchComponent,
+    ],
+    providers: [
+      mockApi([
+        mockCall('jbof.query', fakeJbofDataSource),
+        mockCall('jbof.delete', true),
+        mockCall('jbof.licensed', licensedCount),
+      ]),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
+      }),
+      mockProvider(FormSidePanelService, {
+        openForm: jest.fn(() => SlideInResult.empty()),
+      }),
+      mockAuth(),
+    ],
+  });
+}
+
 describe('JbofListComponent', () => {
   let spectator: Spectator<JbofListComponent>;
   let loader: HarnessLoader;
@@ -54,27 +82,7 @@ describe('JbofListComponent', () => {
     return buttons[rowIndex];
   }
 
-  const createComponent = createComponentFactory({
-    component: JbofListComponent,
-    imports: [
-      MockComponent(PageHeaderComponent),
-      BasicSearchComponent,
-    ],
-    providers: [
-      mockApi([
-        mockCall('jbof.query', fakeJbofDataSource),
-        mockCall('jbof.delete', true),
-        mockCall('jbof.licensed', 1),
-      ]),
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
-      }),
-      mockProvider(FormSidePanelService, {
-        openForm: jest.fn(() => SlideInResult.empty()),
-      }),
-      mockAuth(),
-    ],
-  });
+  const createComponent = createFactory(1);
 
   beforeEach(async () => {
     spectator = createComponent();
@@ -147,28 +155,37 @@ describe('JbofListComponent', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);
   });
+});
 
-  it('enables Add button when existing are less than licensed', async () => {
-    spectator.inject(MockApiService).mockCall('jbof.licensed', 3);
-    spectator.component.updateAvailableJbof();
-
+// Two shelves exist in `fakeJbofDataSource`; each case licenses a different number of them.
+describe('JbofListComponent — Add button licensing', () => {
+  async function isAddButtonDisabled(spectator: Spectator<JbofListComponent>): Promise<boolean> {
+    const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-    expect(await addButton.isDisabled()).toBe(false);
+    return addButton.isDisabled();
+  }
+
+  describe('licensed for more than exist', () => {
+    const createComponent = createFactory(3);
+
+    it('enables Add button', async () => {
+      expect(await isAddButtonDisabled(createComponent())).toBe(false);
+    });
   });
 
-  it('disables Add button when existing are equal to licensed', async () => {
-    spectator.inject(MockApiService).mockCall('jbof.licensed', 2);
-    spectator.component.updateAvailableJbof();
+  describe('licensed for exactly as many as exist', () => {
+    const createComponent = createFactory(2);
 
-    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-    expect(await addButton.isDisabled()).toBe(true);
+    it('disables Add button', async () => {
+      expect(await isAddButtonDisabled(createComponent())).toBe(true);
+    });
   });
 
-  it('disables Add button when existing are more than licensed', async () => {
-    spectator.inject(MockApiService).mockCall('jbof.licensed', 1);
-    spectator.component.updateAvailableJbof();
+  describe('licensed for fewer than exist', () => {
+    const createComponent = createFactory(1);
 
-    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-    expect(await addButton.isDisabled()).toBe(true);
+    it('disables Add button', async () => {
+      expect(await isAddButtonDisabled(createComponent())).toBe(true);
+    });
   });
 });
