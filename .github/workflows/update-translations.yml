@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@feat/shared-claude-review
         with:
           cache-jest: 'true'
 

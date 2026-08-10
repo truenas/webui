@@ -38,7 +38,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@feat/shared-claude-review
         with:
           cache-jest: 'true'
 
@@ -50,7 +50,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@feat/shared-claude-review
         with:
           cache-jest: 'true'
       - name: Build
@@ -66,7 +66,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@feat/shared-claude-review
         with:
           cache-jest: 'true'
       - name: Generate default environment file
@@ -82,7 +82,7 @@ jobs:
     if: github.event_name == 'pull_request'
     permissions:
       contents: read
-    uses: iXsystems/ux-github-workflows/.github/workflows/check-member.yml@master
+    uses: iXsystems/ux-github-workflows/.github/workflows/check-member.yml@feat/shared-claude-review
 
   test-ux-team:
     name: Run tests (UX Team - Self-hosted)
@@ -95,7 +95,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@feat/shared-claude-review
         with:
           cache-jest: 'true'
       - name: Run tests
@@ -125,7 +125,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
-        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@feat/shared-claude-review
         with:
           cache-jest: 'true'
       - name: Run tests
