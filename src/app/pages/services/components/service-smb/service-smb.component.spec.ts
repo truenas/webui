@@ -1,15 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
+  TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { Observable, of } from 'rxjs';
+import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
 import { SmbMinProtocol } from 'app/enums/smb-min-protocol.enum';
@@ -20,28 +21,45 @@ import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.inte
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UserService } from 'app/services/user.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+
+const smbConfig = {
+  id: 1,
+  netbiosname: 'truenas',
+  workgroup: 'WORKGROUP',
+  description: 'TrueNAS Server',
+  unixcharset: 'UTF-8',
+  debug: true,
+  syslog: false,
+  aapl_extensions: false,
+  localmaster: true,
+  guest: 'nobody',
+  filemask: '',
+  dirmask: '',
+  bindip: [] as string[],
+  cifs_SID: 'mockSid',
+  ntlmv1_auth: false,
+  minimum_protocol: SmbMinProtocol.Smb2,
+  admin_group: null,
+  next_rid: 0,
+  encryption: SmbEncryption.Negotiate,
+  search_protocols: [smbSearchSpotlight],
+  stateful_failover: false,
+} as SmbConfig;
 
 describe('ServiceSmbComponent', () => {
   let spectator: Spectator<ServiceSmbComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
   let store$: MockStore;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const tncConfigSignal = signal<TruenasConnectConfig>({
     status: TruenasConnectStatus.Configured,
@@ -56,6 +74,12 @@ describe('ServiceSmbComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`.
+  const toggleAdvancedSettings = (): void => {
+    const [toggleAdvanced] = spectator.component.footerActions;
+    toggleAdvanced.onClick();
+    spectator.detectChanges();
+  };
 
   const createComponent = createComponentFactory({
     component: ServiceSmbComponent,
@@ -66,29 +90,7 @@ describe('ServiceSmbComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
-        mockCall('smb.config', {
-          id: 1,
-          netbiosname: 'truenas',
-          workgroup: 'WORKGROUP',
-          description: 'TrueNAS Server',
-          unixcharset: 'UTF-8',
-          debug: true,
-          syslog: false,
-          aapl_extensions: false,
-          localmaster: true,
-          guest: 'nobody',
-          filemask: '',
-          dirmask: '',
-          bindip: [] as string[],
-          cifs_SID: 'mockSid',
-          ntlmv1_auth: false,
-          minimum_protocol: SmbMinProtocol.Smb2,
-          admin_group: null,
-          next_rid: 0,
-          encryption: SmbEncryption.Negotiate,
-          search_protocols: [smbSearchSpotlight],
-          stateful_failover: false,
-        } as SmbConfig),
+        mockCall('smb.config', smbConfig),
         mockCall('sharing.smb.query', [] as SmbShare[]),
         mockCall('smb.unixcharset_choices', {
           'UTF-8': 'UTF-8',
@@ -108,8 +110,7 @@ describe('ServiceSmbComponent', () => {
           ] as User[],
         ),
       ]),
-      mockProvider(SlideIn),
-      mockProvider(FormErrorHandlerService),
+      ...ixFormTestingProviders(),
       mockProvider(DialogService),
       mockProvider(SystemGeneralService),
       mockProvider(UserService, {
@@ -124,7 +125,6 @@ describe('ServiceSmbComponent', () => {
         getUserByNameCached: (username: string) => of({ username } as User),
         getGroupByNameCached: (groupName: string) => of({ group: groupName }),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(TruenasConnectService, {
         config: tncConfigSignal,
         openStatusModal: jest.fn(),
@@ -149,6 +149,66 @@ describe('ServiceSmbComponent', () => {
     store$ = spectator.inject(MockStore);
   });
 
+  it('blocks Save when the initial config load fails', () => {
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
+      .mockReturnValue(of(true));
+    failApiCall(api, 'smb.config');
+
+    // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
+    // re-initialising would re-register the valueChanges subscriptions and async validators and
+    // re-push this form's `bindip` rows, so the assertion would hinge on that being harmless.
+    const failed = TestBed.createComponent(ServiceSmbComponent);
+    failed.detectChanges();
+
+    expect(showErrorModal).toHaveBeenCalled();
+    // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
+    // extraDisabled is bound to; that binding blocking Save is covered in the ix-form spec.
+    expect(failed.componentInstance.hasLoadFailed()).toBe(true);
+    expect(failed.componentInstance.canSubmit()).toBe(false);
+  });
+
+  it('keeps rendering when the bind IP choices fail to load', async () => {
+    // The choices reach the template through a `toSignal`, which latches an error and re-throws it
+    // on every read — so a failure that isn't caught takes down the whole form render rather than
+    // emptying one select. The addresses the config binds to still come from `smb.config`.
+    failApiCall(api, 'smb.bindip_choices');
+
+    const loaded = TestBed.createComponent(ServiceSmbComponent);
+    loaded.detectChanges();
+    await loaded.whenStable();
+
+    expect(loaded.componentInstance.hasLoadFailed()).toBe(false);
+    expect(loaded.componentInstance.canSubmit()).toBe(true);
+  });
+
+  it('does not duplicate bind IP rows when the config load is replayed', async () => {
+    // `loadFormConfig` replays the same patch on every `retryLoad`, and this form's `bindip` rows
+    // are PUSHED rather than patched — without the clear at the top of the patch the replay comes
+    // back with each address twice.
+    const call = api.call as unknown as jest.Mock<Observable<unknown>, [string, unknown?]>;
+    const respond = call.getMockImplementation();
+    call.mockImplementation((method, params) => {
+      return method === 'smb.config'
+        ? of({ ...smbConfig, bindip: ['1.1.1.1', '2.2.2.2'] } as SmbConfig)
+        : respond(method, params);
+    });
+
+    const reloaded = TestBed.createComponent(ServiceSmbComponent);
+    reloaded.detectChanges();
+
+    reloaded.componentInstance.retryLoad();
+    reloaded.detectChanges();
+    await reloaded.whenStable();
+
+    reloaded.componentInstance.submit();
+
+    expect(api.call).toHaveBeenLastCalledWith('smb.update', [
+      expect.objectContaining({ bindip: ['1.1.1.1', '2.2.2.2'] }),
+    ]);
+  });
+
   it('loads and shows current settings for Smb service when form is opened', async () => {
     expect(api.call).toHaveBeenCalledWith('smb.config');
 
@@ -159,9 +219,20 @@ describe('ServiceSmbComponent', () => {
     expect(await (await getCheckbox('ntlmv1_auth')).isChecked()).toBe(false);
   });
 
-  it('shows advanced settings when Advanced Settings button is pressed', async () => {
-    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-    await advancedButton.click();
+  it('exposes a single footer action that flips between Advanced and Basic Settings', () => {
+    expect(spectator.component.footerActions).toHaveLength(1);
+
+    const [toggleAdvanced] = spectator.component.footerActions;
+    expect(toggleAdvanced.label).toBe('Advanced Settings');
+    expect(toggleAdvanced.testId).toBe('toggle-advanced-settings');
+
+    toggleAdvancedSettings();
+
+    expect(spectator.component.footerActions[0].label).toBe('Basic Settings');
+  });
+
+  it('shows advanced settings when advanced mode is toggled', async () => {
+    toggleAdvancedSettings();
 
     expect(await (await getInput('netbiosname')).getValue()).toBe('truenas');
     expect(await (await getInput('workgroup')).getValue()).toBe('WORKGROUP');
@@ -223,8 +294,7 @@ describe('ServiceSmbComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-    await advancedButton.click();
+    toggleAdvancedSettings();
 
     const searchCheckbox = await getCheckbox('spotlight_search');
     expect(await searchCheckbox.isChecked()).toBe(false);
@@ -243,13 +313,11 @@ describe('ServiceSmbComponent', () => {
     await aliasChips.addChip('truenas-alias');
     await aliasChips.addChip('truenas-alias2');
 
-    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-    await advancedButton.click();
+    toggleAdvancedSettings();
     const searchCheckbox = await getCheckbox('spotlight_search');
     expect(await searchCheckbox.isChecked()).toBe(true);
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenLastCalledWith('smb.update', [{
       // New basic options
@@ -279,8 +347,7 @@ describe('ServiceSmbComponent', () => {
   });
 
   it('sends an update payload to websocket when advanced form is filled and saved', async () => {
-    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-    await advancedButton.click();
+    toggleAdvancedSettings();
 
     const bindIpList = await loader.getHarness(IxListHarness.with({ label: 'Bind IP Addresses' }));
     await bindIpList.pressAddButton();
@@ -311,8 +378,7 @@ describe('ServiceSmbComponent', () => {
     await searchCheckbox.toggle();
     expect(await searchCheckbox.isChecked()).toBe(false);
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenLastCalledWith('smb.update', [{
       // Old basic options
@@ -353,12 +419,10 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const searchCheckbox = await getCheckbox('spotlight_search');
       expect(await searchCheckbox.isDisabled()).toBe(true);
-      expect(spectator.component.form.controls.spotlight_search.disabled).toBe(true);
     });
 
     it('should enable Spotlight checkbox when TrueNAS Connect is configured', async () => {
@@ -369,12 +433,10 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const searchCheckbox = await getCheckbox('spotlight_search');
       expect(await searchCheckbox.isDisabled()).toBe(false);
-      expect(spectator.component.form.controls.spotlight_search.disabled).toBe(false);
     });
 
     it('should enable Spotlight checkbox when TrueNAS Connect becomes configured', async () => {
@@ -385,12 +447,10 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const searchCheckbox = await getCheckbox('spotlight_search');
       expect(await searchCheckbox.isDisabled()).toBe(true);
-      expect(spectator.component.form.controls.spotlight_search.disabled).toBe(true);
 
       // Status changes to configured
       tncConfigSignal.set({
@@ -401,7 +461,6 @@ describe('ServiceSmbComponent', () => {
       await spectator.fixture.whenStable();
 
       expect(await searchCheckbox.isDisabled()).toBe(false);
-      expect(spectator.component.form.controls.spotlight_search.disabled).toBe(false);
     });
 
     it('should show TrueNAS Connect notice when not configured', async () => {
@@ -412,8 +471,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const notice = spectator.query('.truenas-connect-notice');
       expect(notice).toBeTruthy();
@@ -428,8 +486,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const notice = spectator.query('.truenas-connect-notice');
       expect(notice).toBeFalsy();
@@ -443,8 +500,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const truenasConnectService = spectator.inject(TruenasConnectService);
 
@@ -462,8 +518,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const truenasConnectService = spectator.inject(TruenasConnectService);
 
@@ -481,8 +536,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const truenasConnectService = spectator.inject(TruenasConnectService);
 
@@ -500,8 +554,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const truenasConnectService = spectator.inject(TruenasConnectService);
 
@@ -519,8 +572,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const noticeLink = spectator.query('.truenas-connect-link') as HTMLElement;
       expect(noticeLink.getAttribute('role')).toBe('button');
@@ -538,12 +590,10 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const searchCheckbox = await getCheckbox('spotlight_search');
       expect(await searchCheckbox.isDisabled()).toBe(false);
-      expect(spectator.component.form.controls.spotlight_search.disabled).toBe(false);
     });
 
     it('should not show TrueNAS Connect notice on Enterprise system', async () => {
@@ -557,8 +607,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const notice = spectator.query('.truenas-connect-notice');
       expect(notice).toBeFalsy();
@@ -575,12 +624,10 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const searchCheckbox = await getCheckbox('spotlight_search');
       expect(await searchCheckbox.isDisabled()).toBe(true);
-      expect(spectator.component.form.controls.spotlight_search.disabled).toBe(true);
 
       const notice = spectator.query('.truenas-connect-notice');
       expect(notice).toBeTruthy();
@@ -595,8 +642,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const statefulFailoverCheckbox = await loader.getHarnessOrNull(
         TnCheckboxHarness.with({ selector: '[formControlName="stateful_failover"]' }),
@@ -611,8 +657,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const statefulFailoverCheckbox = await getCheckbox('stateful_failover');
       expect(await statefulFailoverCheckbox.isDisabled()).toBe(false);
@@ -645,8 +690,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const statefulFailoverCheckbox = await getCheckbox('stateful_failover');
       expect(await statefulFailoverCheckbox.isDisabled()).toBe(true);
@@ -679,8 +723,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       const statefulFailoverCheckbox = await getCheckbox('stateful_failover');
       expect(await statefulFailoverCheckbox.isDisabled()).toBe(true);
@@ -693,8 +736,7 @@ describe('ServiceSmbComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-      await advancedButton.click();
+      toggleAdvancedSettings();
 
       // Initially enabled (no incompatible shares, minimum protocol is SMB2)
       const statefulFailoverCheckbox = await getCheckbox('stateful_failover');

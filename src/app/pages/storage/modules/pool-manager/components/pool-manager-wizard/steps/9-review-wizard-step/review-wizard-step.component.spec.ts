@@ -40,7 +40,6 @@ describe('ReviewWizardStepComponent', () => {
   let loader: HarnessLoader;
   const state = {
     name: 'test-pool',
-    encryption: 'aes-256-gcm',
     encryptionType: EncryptionType.Software,
     topology: {
       [VDevType.Data]: {
@@ -142,14 +141,13 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('shows software encryption', () => {
-      expect(getSummaryItem('Encryption')).toBe('Software (ZFS) - aes-256-gcm');
+      expect(getSummaryItem('Encryption')).toBe('Software (ZFS)');
     });
 
     it('shows hardware (SED) encryption', () => {
       state$.next({
         ...state,
         encryptionType: EncryptionType.Sed,
-        encryption: null,
       });
       spectator.detectChanges();
 
@@ -160,7 +158,6 @@ describe('ReviewWizardStepComponent', () => {
       state$.next({
         ...state,
         encryptionType: EncryptionType.None,
-        encryption: null,
       });
       spectator.detectChanges();
 

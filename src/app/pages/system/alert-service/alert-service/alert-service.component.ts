@@ -29,7 +29,7 @@ import {
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import {
   SidePanelFooterAction,
-} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';

@@ -1,78 +1,8 @@
-@import 'scss-imports/variables';
-@import 'mixins/layout';
-
 :host {
   height: 100%;
 
-  .loader-bar {
-    height: 2px;
-    left: 0;
-    position: absolute;
-    top: 0;
-    z-index: 3;
-  }
-
   .backups {
-    background-color: var(--bg2);
     color: var(--fg1);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .table-header-row {
-    align-items: center;
-    background: var(--bg1);
-    border-bottom: 1px solid var(--lines);
-    color: var(--fg2);
-    display: grid;
-    grid-gap: 8px;
-    min-height: 48px;
-    min-width: fit-content;
-
-    position: sticky;
-    top: 50px;
-    width: 100%;
-    z-index: 2;
-
-    .cell {
-      align-items: center;
-      display: flex;
-      font-weight: bold;
-      height: 100%;
-      justify-content: flex-start;
-      padding: 4px 0;
-
-      @media (max-width: $breakpoint-xs) {
-        display: none !important;
-      }
-
-      &:first-child {
-        left: 0;
-        position: sticky;
-
-        @media (max-width: $breakpoint-xs) {
-          display: block !important;
-        }
-      }
-
-      &:nth-child(2) {
-        @media (max-width: $breakpoint-xs) {
-          display: flex !important;
-        }
-      }
-    }
-
-    .cell.checkbox {
-      padding-left: 6px;
-
-      mat-checkbox {
-        margin: 0;
-      }
-    }
-
-    .cell.actions {
-      justify-content: flex-end;
-      padding-right: 12px;
-    }
   }
 }
+

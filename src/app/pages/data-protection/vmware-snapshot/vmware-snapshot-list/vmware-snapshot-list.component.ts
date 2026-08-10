@@ -1,32 +1,30 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnTablePagerComponent } from '@truenas/ui-components';
-import { tap } from 'rxjs';
+import {
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnDetailRowDefDirective,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { translated } from 'app/helpers/translated.helper';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { detailActionTestId, tnTableListHost } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { vmwareSnapshotListElements } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.elements';
@@ -41,25 +39,22 @@ import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-ce
     PageHeaderComponent,
     BasicSearchComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    IxTableComponent,
+    TnButtonComponent,
     UiSearchDirective,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableCellDirective,
-    VmwareStatusCellComponent,
-    IxTableDetailsRowDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
     TnTablePagerComponent,
+    TableTextCellComponent,
+    VmwareStatusCellComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class VmwareSnapshotListComponent implements OnInit {
   protected translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
-  protected emptyService = inject(EmptyService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);
@@ -67,42 +62,46 @@ export class VmwareSnapshotListComponent implements OnInit {
   protected readonly searchableElements = vmwareSnapshotListElements;
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
-  searchQuery = signal('');
+  protected readonly searchQuery = signal('');
 
-  protected snapshots: VmwareSnapshot[] = [];
-  dataProvider: AsyncDataProvider<VmwareSnapshot>;
-  columns = createTable<VmwareSnapshot>([
-    textColumn({
-      title: this.translate.instant('Hostname'),
-      propertyName: 'hostname',
-    }),
-    textColumn({
-      title: this.translate.instant('Username'),
-      propertyName: 'username',
-    }),
-    textColumn({
-      title: this.translate.instant('Filesystem'),
-      propertyName: 'filesystem',
-    }),
-    textColumn({
-      title: this.translate.instant('Datastore'),
-      propertyName: 'datastore',
-    }),
-    textColumn({
-      title: this.translate.instant('State'),
-      propertyName: 'state',
-    }),
-  ], {
-    uniqueRowTag: (row) => 'vmware-snapshot-' + row.hostname,
-    ariaLabels: (row) => [row.hostname, this.translate.instant('VMware Snapshot')],
+  private readonly snapshots$ = this.api.call('vmware.query').pipe(
+    takeUntilDestroyed(),
+  );
+
+  readonly dataProvider = new AsyncDataProvider<VmwareSnapshot>(this.snapshots$);
+
+  // One source of truth per column title: the header, the cell (whose test id is built
+  // from it) and the column model all read the same entry, so a rename cannot silently
+  // change a data-test value. `translated` re-runs it on a language change. (This list has no
+  // column picker, so the titles are read only from the template and follow along directly.)
+  protected readonly titles = translated(() => ({
+    hostname: this.translate.instant('Hostname'),
+    username: this.translate.instant('Username'),
+    filesystem: this.translate.instant('Filesystem'),
+    datastore: this.translate.instant('Datastore'),
+    state: this.translate.instant('State'),
+  }));
+
+  protected readonly list = tnTableListHost<VmwareSnapshot>(this.dataProvider, {
+    displayedColumns: [
+      'hostname',
+      'username',
+      'filesystem',
+      'datastore',
+      // `state` is a nested object, so it needs an accessor to stay sortable.
+      { name: 'state', sortBy: (row) => row.state?.state ?? '' },
+    ],
   });
 
+  protected readonly trackBySnapshotId = (_index: number, row: VmwareSnapshot): number => row.id;
+
+  protected readonly uniqueRowTag = this.list.rowTag((row) => 'vmware-snapshot-' + row.hostname);
+
+  protected detailActionTestId(row: VmwareSnapshot, action: string): string {
+    return detailActionTestId([row.hostname, row.filesystem], action);
+  }
+
   ngOnInit(): void {
-    const snapshots$ = this.api.call('vmware.query').pipe(
-      tap((snapshots) => this.snapshots = snapshots),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider<VmwareSnapshot>(snapshots$);
     this.getSnapshotsData();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());

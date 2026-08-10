@@ -81,7 +81,6 @@ export interface CreatePool {
   encryption: boolean;
   encryption_options?: {
     generate_key: boolean;
-    algorithm: string;
     passphrase?: string;
     key?: string;
   };

@@ -8,6 +8,7 @@
     [tnTooltip]="tooltip()"
     [attr.aria-label]="accessibleName()"
     (click)="$event.stopPropagation(); onButtonClick()"
+    (keydown)="stopRowActivationKeys($event)"
   >
     {{ currentState | jobStateDisplay }}
   </button>

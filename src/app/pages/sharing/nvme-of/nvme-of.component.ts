@@ -1,12 +1,10 @@
 import { Location } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, untracked, viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent } from '@truenas/ui-components';
-import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -103,19 +101,13 @@ export class NvmeOfComponent implements OnInit {
             this.dataProvider.expandedRow = (routeSelectedRow || subsystems[0]);
           }
 
-          this.selectedSubsystemName = this.dataProvider.expandedRow?.name || null;
+          // Read untracked: `expandedRow` is signal-backed, and this effect writes it
+          // just above, so tracking it here would re-run the effect on every expansion.
+          this.selectedSubsystemName = untracked(() => this.dataProvider.expandedRow?.name) || null;
           setSubsystemNameInUrl(this.location, this.selectedSubsystemName);
         }
       }
     });
-
-    this.dataProvider.expandedRow$
-      .pipe(filter((row): row is NvmeOfSubsystemDetails => !!row))
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((row) => {
-        this.selectedSubsystemName = row.name;
-        setSubsystemNameInUrl(this.location, row.name);
-      });
   }
 
   protected onFilter(query: string): void {

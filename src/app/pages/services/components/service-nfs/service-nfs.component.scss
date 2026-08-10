@@ -28,6 +28,9 @@
 .add-spn-container {
   display: flex;
   gap: 10px;
+  // Add SPN now lives at the end of the form body instead of the footer, and tn-form-section
+  // has no outer margin — without this the button butts flush against the last checkbox.
+  margin-top: 20px;
 
   // TEMP: reaching into the projected tn-icon to size the tooltip help icon
   // until @truenas/ui-components exposes an icon-size input. Remove when available.

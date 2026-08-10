@@ -37,7 +37,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import {
   SidePanelFooterAction,
-} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';

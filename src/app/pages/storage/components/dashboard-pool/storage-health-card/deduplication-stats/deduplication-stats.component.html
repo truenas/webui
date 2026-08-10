@@ -4,11 +4,23 @@
   <div class="value">{{ deduplicationStats() }}</div>
   <div class="dedup-actions">
     @if (pool().dedup_table_size > 0) {
-      <a *ixRequiresRoles="[Role.PoolWrite]" class="action" ixTest="prune-dedup" (click)="onPruneDedupTable()">
+      <a
+        *ixRequiresRoles="[Role.PoolWrite]"
+        class="action"
+        tnTestIdType="link"
+        tnTestId="prune-dedup"
+        (click)="onPruneDedupTable()"
+      >
         {{ 'Prune' | translate }}
       </a>
     }
-    <a *ixRequiresRoles="[Role.PoolWrite]" class="action" ixTest="set-dedup-quota" (click)="onSetDedupQuota()">
+    <a
+      *ixRequiresRoles="[Role.PoolWrite]"
+      class="action"
+      tnTestIdType="link"
+      tnTestId="set-dedup-quota"
+      (click)="onSetDedupQuota()"
+    >
       {{ 'Set Quota' | translate }}
     </a>
   </div>

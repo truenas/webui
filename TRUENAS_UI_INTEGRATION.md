@@ -375,6 +375,59 @@ runs over the partial-Ivy FESM, and every `TestBed` fails with "class doesn't ha
 @Component decorator". Re-run the copy after any library rebuild — and after any
 `yarn install`, which restores the published package.
 
+## Migration follow-ups
+
+Further gaps found while migrating pages to `tn-*` (Epic NAS-141021) — the same class
+of thing as "Still outstanding" above — that are deliberately carried rather than fixed
+in the migrating PR. Library items belong in
+[webui-components](https://github.com/truenas/webui-components); webui items belong on
+the epic's follow-up list.
+
+| Gap | Where it shows up | Owner |
+| --- | --- | --- |
+| No multi-colour status pill primitive | `status-pill` mixin in `src/assets/styles/scss-imports/status-pill.scss`, used by `ix-task-state-cell` and `ix-vmware-status-cell` | library |
+| `tn-empty`'s `[title]`/`[description]` are text-only, so an `EmptyConfig.message` written as HTML has to be flattened at runtime | `FlattenEmptyMessagePipe` | library |
+| `tn-empty` caps `[description]` at a readable measure but not `[title]`, so a paragraph-length message stretches the full page width | `tn-empty` rule in `src/assets/styles/components/_tn-empty.scss` | library |
+| Replication "Enabled" is read-only Yes/No in the detail row when the picker hides the column (it was an interactive toggle before); a dead toggle would be worse, so the toggle stays in the visible column only | `replication-list.component.ts` | webui |
+
+### Adopted from the library
+
+Implemented in `@truenas/ui-components` and used here directly, so these need the
+pinned `~0.4.9` (they landed after `0.3.26`, the version this work started against).
+
+| Library addition | What it replaced here |
+| --- | --- |
+| `tn-table` wraps cells by default (no input) | The `tn-table-fixed-wrap` mixin include on all seven Data Protection lists, and its `::ng-deep` into `.tn-table__cell-content`. Equal-width columns are a separate opt-in, `[fixedLayout]`, which none of these lists needs |
+| `tn-table [expandOnRowClick]` | `ExpandOnRowClickDirective` (deleted, with its spec) and its four usages |
+| `tn-table [minColumnWidth]` (default `120px`) | Nothing — new. Only applies with `[fixedLayout]`, where it derives a width floor as `minColumnWidth × columnCount` so a narrow viewport scrolls rather than shrinking columns to nothing |
+
+Also fixed in the library and available, but not adopted here because their consumers sit in other
+feature areas: `[singleExpand]` (would delete `restrictToSingleExpandedRow`),
+`[(sortColumn)]`/`[(sortDirection)]` (would delete `reflectSortIntoTable`), `[emptyDescription]`
+(the second empty-state line `dataProviderEmptyState` drops), `TnMenuTriggerDirective`'s
+`aria-haspopup`/`aria-expanded` + public `isOpen`, and `tn-side-panel [closeButtonAriaLabel]`.
+
+Two long-standing library bugs surfaced while doing this, both the same root cause — a rule
+written as a plain `.tn-table` class selector, which emulated encapsulation compiles to
+`[_ngcontent-…]` while the host carries `[_nghost-…]`, so it never matches:
+`overflow-x: auto` (horizontal scrolling had never worked on any `tn-table`) and the first
+version of `wrapCells`. Both are now `:host`-scoped, with a test guarding the convention.
+
+### Shared pieces for a migrated list page
+
+Built while migrating the Data Protection lists; reach for these rather than
+re-deriving them per page.
+
+| Piece | What it replaces |
+| --- | --- |
+| `tnTableListHost(provider, config)` (`ix-table/utils.ts`) | The `rows`/`isLoading`/`empty`/`displayedColumns`/`hiddenColumns`/`onSortChange`/`columnsChange` block every list otherwise copies, plus `perRow`/`rowTag` memoization keyed to the loaded rows |
+| `ExpandOnRowClickDirective` (`ixExpandOnRowClick`) | A `viewChild(TnTableComponent)` and a `(rowClick)` handler calling `toggleRowExpansion` |
+| `<ix-table-text-cell>` (`tn-table-cells/text-cell`) | The `<span tnTestIdType="text" [tnTestId]="[…]">` markup for text, yes/no and schedule cells |
+| `translated(derive)` (`helpers/translated.helper.ts`) | A `computed` calling `TranslateService.instant()`, which would otherwise freeze on the first locale |
+| Global `.sr-only` class (`assets/styles/components/_sr-only.scss`, from the `sr-only` mixin) | A hand-rolled visually-hidden block, or the mixin re-declared per component |
+| `translated(() => ({ … }))` column titles | A title literal repeated in the column model, the `tnHeaderCellDef` and the cell's `[title]` (which feeds its test id) |
+| `{ name, sortBy }` entries in `displayedColumns` | Losing sorting on a column whose `[tnColumnDef]` name matches no row property |
+
 ## Additional Resources
 
 - [npm package](https://www.npmjs.com/package/@truenas/ui-components)

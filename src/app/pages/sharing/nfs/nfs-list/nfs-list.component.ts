@@ -30,11 +30,10 @@ import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import {
-  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/ix-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -184,7 +183,7 @@ export class NfsListComponent implements OnInit {
   protected readonly trackByNfsId = (_index: number, row: NfsShare): number => row.id;
 
   protected uniqueRowTag(row: NfsShare): string {
-    return normalizeTestIdString(convertStringToId('nfs-share-' + row.path + '-' + row.comment));
+    return toUniqueRowTag('nfs-share-' + row.path + '-' + row.comment);
   }
 
   protected ariaLabel(row: NfsShare): string {

@@ -26,7 +26,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import {
   SidePanelFooterMenu,
-} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';

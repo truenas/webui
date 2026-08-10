@@ -19,6 +19,7 @@ import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/s
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
 import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
+import { stopRowActivationKeys } from 'app/modules/tn-table-cells/stop-row-activation-keys';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailedJobError } from 'app/services/errors/error.classes';
 
@@ -61,6 +62,8 @@ export class TaskStateCellComponent {
   readonly job = input<Job | null>(null);
   readonly testId = input.required<string[]>();
   readonly ariaLabel = input.required<string>();
+
+  protected readonly stopRowActivationKeys = stopRowActivationKeys;
 
   /**
    * Accessible name for the pill. The visible label text would otherwise be

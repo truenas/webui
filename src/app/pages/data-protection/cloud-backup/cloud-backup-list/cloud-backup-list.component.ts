@@ -1,44 +1,51 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, effect, input, output, signal, inject, computed } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, computed, effect, input, output, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnCellDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+} from '@truenas/ui-components';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
-import { cloudBackupTaskEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
+import { cloudBackupTaskEmptyConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
+import { translated } from 'app/helpers/translated.helper';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import {
-  toggleColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { tnTableListHost } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import {
+  TableRelativeDateCellComponent,
+} from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
+import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.elements';
+import {
+  TaskStateCellComponent,
+} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -48,15 +55,21 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableBodyComponent,
-    TnTablePagerComponent,
-    IxTableHeadComponent,
-    TranslateModule,
-    AsyncPipe,
     BasicSearchComponent,
-    EmptyComponent,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnTablePagerComponent,
+    TableActionsCellComponent,
+    TableRelativeDateCellComponent,
+    TableTextCellComponent,
+    TableToggleCellComponent,
+    TaskStateCellComponent,
+    YesNoPipe,
+    FlattenEmptyMessagePipe,
+    TranslateModule,
   ],
 })
 export class CloudBackupListComponent {
@@ -68,7 +81,6 @@ export class CloudBackupListComponent {
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
-  protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
   readonly dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
@@ -79,65 +91,102 @@ export class CloudBackupListComponent {
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = cloudBackupListElements;
 
-  protected readonly emptyConfig = computed<EmptyConfig>(() => {
-    if (this.searchQuery()?.length) {
-      return noSearchResultsConfig;
+  // One source of truth per column title: the header, the cell (whose test id is built
+  // from it) and the column model all read the same entry, so a rename cannot silently
+  // change a data-test value. `translated` re-runs it on a language change. (This list has no
+  // column picker, so the titles are read only from the template and follow along directly.)
+  protected readonly titles = translated(() => ({
+    name: this.translate.instant('Name'),
+    enabled: this.translate.instant('Enabled'),
+    snapshot: this.translate.instant('Snapshot'),
+    state: this.translate.instant('State'),
+    lastRun: this.translate.instant('Last Run'),
+  }));
+
+  protected readonly list = tnTableListHost<CloudBackup>(this.dataProvider, {
+    displayedColumns: [
+      'description',
+      'enabled',
+      'snapshot',
+      // Derived from the row's job rather than a property of its own, so they need an
+      // explicit accessor to stay sortable.
+      { name: 'state', sortBy: (row) => row.job?.state },
+      { name: 'last-run', sortBy: (row) => row.job?.time_finished?.$date },
+      'actions',
+    ],
+  });
+
+  // Bound from the shared catalog config rather than inlined in the template, so the
+  // translated string has a single source of truth and follows a language change. Only the
+  // "nothing configured yet" state is rendered here (it replaces the table entirely); every
+  // other state — errors, no search results — comes from the table's own
+  // `[emptyMessage]`/`[emptyIcon]`, as on the other migrated lists.
+  protected readonly emptyConfig = cloudBackupTaskEmptyConfig;
+
+  // Icon split out of the same config rather than hand-copied into the template, so the
+  // catalog stays the single source of truth for the icon as well as the message.
+  protected readonly emptyIcon = emptyConfigIcon(cloudBackupTaskEmptyConfig);
+
+  protected readonly EmptyType = EmptyType;
+
+  protected readonly actions: IconActionConfig<CloudBackup>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.openForm(row),
+    },
+    {
+      iconName: tnIconMarker('play-circle', 'mdi'),
+      tooltip: this.translate.instant('Run job'),
+      hidden: (row) => of(row.job?.state === JobState.Running),
+      onClick: (row) => this.runNow(row),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      onClick: (row) => this.doDelete(row),
+      requiredRoles: this.requiredRoles,
+    },
+  ];
+
+  protected readonly trackByBackupId = (_index: number, row: CloudBackup): number => row.id;
+
+  protected readonly uniqueRowTag = this.list.rowTag((row) => 'cloud-backup-' + row.description);
+
+  protected readonly ariaLabel = this.list.perRow(
+    (row) => [row.description, this.translate.instant('Cloud Backup')].join(' '),
+  );
+
+  /**
+   * `tn-table` matches the active row by object identity, but `expandedRow` can hold a
+   * copy (a finished job replaces it with a spread of the row to re-trigger the detail
+   * pane), so resolve back to the reference actually rendered in the table.
+   *
+   * A `computed` rather than a method: `[activeRow]` is bound on a `[clickable]` table, so
+   * a method would re-run this lookup over every row on every change-detection pass.
+   * `BaseDataProvider.expandedRow` is signal-backed, so both it and the parent's writes to
+   * it invalidate this.
+   */
+  protected readonly activeRow = computed<CloudBackup | null>(() => {
+    const expanded = this.dataProvider().expandedRow;
+    if (!expanded) {
+      return null;
+    }
+    return this.list.rows().find((backup) => backup.id === expanded.id) ?? null;
+  });
+
+  protected onRowClick(row: CloudBackup): void {
+    const provider = this.dataProvider();
+    const isSameRow = provider.expandedRow?.id === row.id;
+    provider.expandedRow = isSameRow ? null : row;
+
+    if (provider.expandedRow) {
+      this.toggleShowMobileDetails.emit(true);
     }
 
-    return cloudBackupTaskEmptyConfig;
-  });
-
-  columns = createTable<CloudBackup>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'description',
-    }),
-    toggleColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-      onRowToggle: (row) => this.onChangeEnabledState(row),
-      requiredRoles: this.requiredRoles,
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Snapshot'),
-      propertyName: 'snapshot',
-    }),
-    stateButtonColumn({
-      title: this.translate.instant('State'),
-      getValue: (row) => row?.job?.state,
-      getJob: (row) => row?.job,
-      cssClass: 'state-button',
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Last Run'),
-      getValue: (row) => row.job?.time_finished?.$date,
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.openForm(row),
-        },
-        {
-          iconName: tnIconMarker('play-circle', 'mdi'),
-          tooltip: this.translate.instant('Run job'),
-          hidden: (row) => of(row.job?.state === JobState.Running),
-          onClick: (row) => this.runNow(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          requiredRoles: this.requiredRoles,
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'cloud-backup-' + row.description,
-    ariaLabels: (row) => [row.description, this.translate.instant('Cloud Backup')],
-  });
+    this.cdr.markForCheck();
+  }
 
   constructor() {
     effect(() => {
@@ -148,7 +197,7 @@ export class CloudBackupListComponent {
     });
   }
 
-  runNow(row: CloudBackup): void {
+  private runNow(row: CloudBackup): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: this.translate.instant('Run «{name}» Cloud Backup Task now?', { name: row.description }),
@@ -192,7 +241,7 @@ export class CloudBackupListComponent {
   // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
   private readonly cloudBackupForm = CloudBackupFormComponent as unknown as Type<SidePanelForm>;
 
-  openForm(row?: CloudBackup): void {
+  protected openForm(row?: CloudBackup): void {
     this.formPanel.open(this.cloudBackupForm, {
       title: row
         ? this.translate.instant('Edit TrueCloud Backup Task')
@@ -202,7 +251,7 @@ export class CloudBackupListComponent {
     }).onSuccess(() => this.dataProvider().load(), this.destroyRef);
   }
 
-  doDelete(row: CloudBackup): void {
+  private doDelete(row: CloudBackup): void {
     this.dialogService.confirmDelete({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Backup Task <b>"{name}"</b>?', {
@@ -215,19 +264,14 @@ export class CloudBackupListComponent {
     ).subscribe(() => this.dataProvider().load());
   }
 
-  expanded(row: CloudBackup): void {
-    if (!row) return;
-
-    this.toggleShowMobileDetails.emit(true);
-  }
-
-  private onChangeEnabledState(cloudBackup: CloudBackup): void {
+  protected onChangeEnabledState(cloudBackup: CloudBackup, toggle: TableToggleCellComponent): void {
     this.api
       .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled }])
       .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.dataProvider().load(),
         error: (error: unknown) => {
+          toggle.revert();
           this.dataProvider().load();
           this.errorHandler.showErrorModal(error);
         },

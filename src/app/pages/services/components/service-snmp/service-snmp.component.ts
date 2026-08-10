@@ -1,59 +1,29 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextServiceSnmp } from 'app/helptext/services/components/service-snmp';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import {
+  serviceConfigSavedMessage,
+} from 'app/pages/services/components/service-config-forms.constants';
 
-@Component({
-  selector: 'ix-service-snmp',
-  templateUrl: './service-snmp.component.html',
-  styleUrls: ['./service-snmp.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    ModalHeaderComponent,
-    ReactiveFormsModule,
-    TnFormSectionComponent,
-    TnFormFieldComponent,
-    TnInputComponent,
-    TnCheckboxComponent,
-    TnSelectComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
-    TranslateModule,
-  ],
-})
-export class ServiceSnmpComponent extends SidePanelForm implements OnInit {
-  private fb = inject(FormBuilder);
-  private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandler = inject(FormErrorHandlerService);
-  private validation = inject(IxValidatorsService);
-  private snackbar = inject(SnackbarService);
-  private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
-
-  readonly requiredRoles = [Role.SystemGeneralWrite];
-  protected readonly InputType = InputType;
-
-  protected isFormLoading = signal(false);
-
-  form = this.fb.group({
+// Built here rather than inline in the component, and left with an inferred return type — see
+// the `V` type parameter on IxFormHostForm for why.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createSnmpForm(fb: FormBuilder, validation: IxValidatorsService) {
+  return fb.group({
     location: [''],
     contact: ['', emailValidator()],
     community: ['', Validators.pattern(/^[\w_\-.\s]*$/)],
@@ -63,8 +33,10 @@ export class ServiceSnmpComponent extends SidePanelForm implements OnInit {
     v3_authtype: [''],
     v3_password: ['', [
       Validators.minLength(8),
-      this.validation.validateOnCondition(
-        () => this.isV3SupportEnabled,
+      validation.validateOnCondition(
+        // Read off the sibling control rather than the component, so the group can be built
+        // outside it.
+        (control) => Boolean(control.parent?.get('v3')?.value),
         Validators.required,
       ),
     ]],
@@ -74,6 +46,40 @@ export class ServiceSnmpComponent extends SidePanelForm implements OnInit {
     options: [''],
     zilstat: [false],
   });
+}
+
+/**
+ * The form's own value shape, which is NOT `SnmpConfigUpdate`: the v3 controls are blanked (and
+ * `v3_privproto` nulled) for the API in {@link ServiceSnmpComponent.handleSubmit}.
+ */
+type SnmpFormValue = ReturnType<ReturnType<typeof createSnmpForm>['getRawValue']>;
+
+@Component({
+  selector: 'ix-service-snmp',
+  templateUrl: './service-snmp.component.html',
+  styleUrls: ['./service-snmp.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    IxFormComponent,
+    ReactiveFormsModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
+    TranslateModule,
+  ],
+})
+export class ServiceSnmpComponent extends IxFormHostForm<boolean, SnmpFormValue> implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private validation = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+
+  readonly requiredRoles = [Role.SystemGeneralWrite];
+  protected readonly InputType = InputType;
+
+  protected readonly form = createSnmpForm(this.fb, this.validation);
 
   readonly tooltips = {
     location: helptextServiceSnmp.locationTooltip,
@@ -91,19 +97,18 @@ export class ServiceSnmpComponent extends SidePanelForm implements OnInit {
   readonly authtypeOptions = helptextServiceSnmp.v3.authTypeOptions;
   readonly privprotoOptions = helptextServiceSnmp.v3.privprotoOptions;
 
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
-
-  get isV3SupportEnabled(): boolean {
-    return this.form?.value?.v3 || false;
-  }
+  /** Drives the `@if` around the v3 credential fields; the validator reads the control directly. */
+  protected readonly isV3SupportEnabled = toSignal(this.form.controls.v3.valueChanges, {
+    initialValue: this.form.controls.v3.value,
+  });
 
   ngOnInit(): void {
-    this.loadCurrentSettings();
+    this.loadFormConfig(this.api.call('snmp.config'), (config) => this.form.patchValue(config));
   }
 
-  onSubmit(): void {
-    this.isFormLoading.set(true);
-    const values = this.form.value;
+  // `allValues` is copied because it is blanked below.
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<SnmpFormValue>): SubmitResult => {
+    const values = { ...allValues };
     // Clearing the tn-select empty option writes null; the API expects ''.
     values.v3_authtype = values.v3_authtype ?? '';
     if (!values.v3) {
@@ -114,30 +119,9 @@ export class ServiceSnmpComponent extends SidePanelForm implements OnInit {
       values.v3_privpassphrase = '';
     }
 
-    this.api.call('snmp.update', [values]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.isFormLoading.set(false);
-        this.snackbar.success(this.translate.instant('Service configuration saved'));
-        this.close(true);
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
-
-  private loadCurrentSettings(): void {
-    this.isFormLoading.set(true);
-    this.api.call('snmp.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (config) => {
-        this.isFormLoading.set(false);
-        this.form.patchValue(config);
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-        this.isFormLoading.set(false);
-      },
-    });
-  }
+    return {
+      request$: this.api.call('snmp.update', [values]),
+      successMessage: this.translate.instant(serviceConfigSavedMessage),
+    };
+  };
 }

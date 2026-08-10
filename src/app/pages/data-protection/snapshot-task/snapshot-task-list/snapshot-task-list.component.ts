@@ -1,50 +1,62 @@
-import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
 import {
-  Observable, filter, switchMap, take, tap,
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnDetailRowDefDirective,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+} from '@truenas/ui-components';
+import {
+  Observable, filter, switchMap, tap,
 } from 'rxjs';
 import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
+import { translated } from 'app/helpers/translated.helper';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   scheduleColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { createTable } from 'app/modules/ix-table/utils';
+import {
+  IxTableDetailsRowComponent,
+} from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableRelativeDateCellComponent,
+} from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  TaskStateCellComponent,
+} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { snapshotTaskListElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -61,28 +73,30 @@ import { TaskService } from 'app/services/task.service';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     RouterLink,
-    IxTableColumnsSelectorComponent,
+    TableColumnPickerComponent,
     RequiresRolesDirective,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableDetailsRowDirective,
-    IxTableDetailsRowComponent,
-    TnIconComponent,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
     TnTablePagerComponent,
+    IxTableDetailsRowComponent,
+    TableRelativeDateCellComponent,
+    TableTextCellComponent,
+    TaskStateCellComponent,
+    ScheduleDescriptionPipe,
+    YesNoPipe,
+    FlattenEmptyMessagePipe,
     TranslateModule,
-    AsyncPipe,
-    EmptyComponent,
   ],
 })
 export class SnapshotTaskListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
-  protected emptyService = inject(EmptyService);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private taskService = inject(TaskService);
@@ -91,98 +105,159 @@ export class SnapshotTaskListComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formPanel = inject(FormSidePanelService);
   private route = inject(ActivatedRoute);
-  private cdr = inject(ChangeDetectorRef);
   private loader = inject(LoaderService);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = snapshotTaskListElements;
 
-  snapshotTasks: PeriodicSnapshotTaskUi[] = [];
-  searchQuery = signal('');
-  dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
-  protected readonly emptyConfig = snapshotTaskEmptyConfig;
+  private snapshotTasks: PeriodicSnapshotTaskUi[] = [];
+  protected readonly searchQuery = signal('');
+
+  private readonly tasks$ = this.api.call('pool.snapshottask.query').pipe(
+    tap((tasks) => {
+      this.snapshotTasks = tasks as PeriodicSnapshotTaskUi[];
+    }),
+    takeUntilDestroyed(),
+  ) as Observable<PeriodicSnapshotTaskUi[]>;
+
+  readonly dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(this.tasks$);
   protected readonly EmptyType = EmptyType;
 
-  protected columns = createTable<PeriodicSnapshotTaskUi>([
-    textColumn({
-      title: this.translate.instant('Pool/Dataset'),
-      propertyName: 'dataset',
+  // Bound from the shared catalog config rather than inlined in the template, so the
+  // translated string has a single source of truth and follows a language change.
+  protected readonly emptyConfig = snapshotTaskEmptyConfig;
+  protected readonly emptyIcon = emptyConfigIcon(snapshotTaskEmptyConfig);
+
+  // One source of truth per column title: the header, the cell (whose test id is built
+  // from it) and the column model all read the same entry, so a rename cannot silently
+  // change a data-test value. `translated` re-runs it on a language change — and because
+  // the column model is passed as a factory, the picker and detail row re-read it too.
+  protected readonly titles = translated(() => ({
+    poolDataset: this.translate.instant('Pool/Dataset'),
+    recursive: this.translate.instant('Recursive'),
+    namingSchema: this.translate.instant('Naming Schema'),
+    when: this.translate.instant('When'),
+    frequency: this.translate.instant('Frequency'),
+    nextRun: this.translate.instant('Next Run'),
+    lastRun: this.translate.instant('Last Run'),
+    keepSnapshotFor: this.translate.instant('Keep snapshot for'),
+    legacy: this.translate.instant('Legacy'),
+    vmwareSync: this.translate.instant('VMware Sync'),
+    enabled: this.translate.instant('Enabled'),
+    state: this.translate.instant('State'),
+  }));
+
+  protected readonly list = tnTableListHost<PeriodicSnapshotTaskUi>(this.dataProvider, {
+    columns: () => createTable<PeriodicSnapshotTaskUi>([
+      textColumn({
+        title: this.titles().poolDataset,
+        propertyName: 'dataset',
+      }),
+      textColumn({
+        title: this.titles().recursive,
+        getValue: (row) => (row.recursive ? this.translate.instant('Yes') : this.translate.instant('No')),
+        propertyName: 'recursive',
+      }),
+      textColumn({
+        title: this.titles().namingSchema,
+        propertyName: 'naming_schema',
+      }),
+      textColumn({
+        title: this.titles().when,
+        propertyName: 'when',
+        getValue: (row) => this.activeHours(row),
+      }),
+      scheduleColumn({
+        title: this.titles().frequency,
+        columnName: 'frequency',
+        getValue: (row) => row.schedule,
+      }),
+      relativeDateColumn({
+        hidden: true,
+        title: this.titles().nextRun,
+        columnName: 'next-run',
+        getValue: (task) => this.getNextRun(task),
+      }),
+      relativeDateColumn({
+        title: this.titles().lastRun,
+        columnName: 'last-run',
+        hidden: true,
+        getValue: (row) => row.state?.datetime?.$date,
+      }),
+      textColumn({
+        title: this.titles().keepSnapshotFor,
+        getValue: (row) => this.getLifetime(row),
+        propertyName: 'lifetime_unit',
+        hidden: true,
+      }),
+      textColumn({
+        title: this.titles().legacy,
+        hidden: true,
+        getValue: (row) => (row.legacy ? this.translate.instant('Yes') : this.translate.instant('No')),
+        propertyName: 'legacy',
+      }),
+      textColumn({
+        title: this.titles().vmwareSync,
+        hidden: true,
+        getValue: (row) => (row.vmware_sync ? this.translate.instant('Yes') : this.translate.instant('No')),
+        propertyName: 'vmware_sync',
+      }),
+      textColumn({
+        title: this.titles().enabled,
+        propertyName: 'enabled',
+        getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
+      }),
+      stateButtonColumn({
+        title: this.titles().state,
+        columnName: 'state',
+        getValue: (row) => row.state.state,
+      }),
+    ], {
+      // Still needed: <ix-table-details-row> renders the hidden columns through the
+      // ix cell components, which read `uniqueRowTag`/`ariaLabels` off the column.
+      uniqueRowTag: (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,
+      ariaLabels: (row) => [row.dataset, this.translate.instant('Snapshot Task')],
     }),
-    textColumn({
-      title: this.translate.instant('Recursive'),
-      getValue: (row) => (row.recursive ? this.translate.instant('Yes') : this.translate.instant('No')),
-      propertyName: 'recursive',
-    }),
-    textColumn({
-      title: this.translate.instant('Naming Schema'),
-      propertyName: 'naming_schema',
-    }),
-    textColumn({
-      title: this.translate.instant('When'),
-      propertyName: 'when',
-      getValue: (row) => {
-        const cronSchedule = scheduleToCrontab(row.schedule);
-        const activeHours = extractActiveHoursFromCron(cronSchedule);
-        return this.translate.instant('From {task_begin} to {task_end}', {
-          task_begin: activeHours.start,
-          task_end: activeHours.end,
-        });
-      },
-    }),
-    scheduleColumn({
-      title: this.translate.instant('Frequency'),
-      getValue: (row) => row.schedule,
-    }),
-    relativeDateColumn({
-      hidden: true,
-      title: this.translate.instant('Next Run'),
-      getValue: (task) => {
-        if (task.enabled) {
-          return this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule));
-        }
-        return this.translate.instant('Disabled');
-      },
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Last Run'),
-      hidden: true,
-      getValue: (row) => row.state?.datetime?.$date,
-    }),
-    textColumn({
-      title: this.translate.instant('Keep snapshot for'),
-      getValue: (row) => `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase(),
-      propertyName: 'lifetime_unit',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Legacy'),
-      hidden: true,
-      getValue: (row) => (row.legacy ? this.translate.instant('Yes') : this.translate.instant('No')),
-      propertyName: 'legacy',
-    }),
-    textColumn({
-      title: this.translate.instant('VMware Sync'),
-      hidden: true,
-      getValue: (row) => (row.vmware_sync ? this.translate.instant('Yes') : this.translate.instant('No')),
-      propertyName: 'vmware_sync',
-    }),
-    textColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-      getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
-    }),
-    stateButtonColumn({
-      title: this.translate.instant('State'),
-      getValue: (row) => row.state.state,
-      cssClass: 'state-button',
-    }),
-  ], {
-    uniqueRowTag: (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,
-    ariaLabels: (row) => [row.dataset, this.translate.instant('Snapshot Task')],
   });
 
-  get hiddenColumns(): Column<PeriodicSnapshotTaskUi, ColumnComponent<PeriodicSnapshotTaskUi>>[] {
-    return this.columns.filter((column) => column?.hidden);
+  protected readonly trackByTaskId = (_index: number, row: PeriodicSnapshotTaskUi): number => row.id;
+
+  protected readonly uniqueRowTag = this.list.rowTag(
+    (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,
+  );
+
+  protected readonly ariaLabel = this.list.perRow(
+    (row) => [row.dataset, this.translate.instant('Snapshot Task')].join(' '),
+  );
+
+  protected detailActionTestId(row: PeriodicSnapshotTaskUi, action: string): string {
+    return detailActionTestId([row.dataset, row.naming_schema], action);
+  }
+
+  // Memoized for the table, where it is asked for once per row per change-detection pass;
+  // the detail row renders one row at a time and calls `activeHours` directly, which also
+  // keeps the column model from depending on `list` while `list` is still being built.
+  protected readonly getActiveHours = this.list.perRow((row: PeriodicSnapshotTaskUi) => this.activeHours(row));
+
+  private activeHours(row: PeriodicSnapshotTaskUi): string {
+    const activeHours = extractActiveHoursFromCron(scheduleToCrontab(row.schedule));
+    return this.translate.instant('From {task_begin} to {task_end}', {
+      task_begin: activeHours.start,
+      task_end: activeHours.end,
+    });
+  }
+
+  // Not memoized per row like the derivations above: the next occurrence is relative
+  // to now, so it has to be recomputed as the table renders.
+  protected getNextRun(row: PeriodicSnapshotTaskUi): Date | string {
+    if (row.enabled) {
+      return this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule));
+    }
+    return this.translate.instant('Disabled');
+  }
+
+  protected getLifetime(row: PeriodicSnapshotTaskUi): string {
+    return `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase();
   }
 
   constructor() {
@@ -190,18 +265,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const tasks$ = this.api.call('pool.snapshottask.query').pipe(
-      tap((tasks) => {
-        this.snapshotTasks = tasks as PeriodicSnapshotTaskUi[];
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    );
-
-    this.dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(tasks$ as Observable<PeriodicSnapshotTaskUi[]>);
-
     this.getSnapshotTasks();
-
-    tasks$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe(() => this.onListFiltered(this.searchQuery()));
 
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
@@ -215,12 +279,6 @@ export class SnapshotTaskListComponent implements OnInit {
 
   protected getSnapshotTasks(): void {
     this.dataProvider.load();
-  }
-
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
   }
 
   protected onListFiltered(query: string): void {

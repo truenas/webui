@@ -1,54 +1,107 @@
 <ix-page-header>
   <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
-  <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-vmware-snapshot" [color]="'primary'" (click)="doAdd()">
-    {{ 'Add' | translate }}
-  </button>
+
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    [testId]="'add-vmware-snapshot'"
+    [label]="'Add' | translate"
+    (onClick)="doAdd()"
+  ></tn-button>
 </ix-page-header>
 
 <div class="table-container">
-  <ix-table
+  <!--
+    No page-level `tn-empty` branch here, unlike the other data-protection lists. Those gate on
+    `EmptyType.NoPageData` because each has a first-use config in `app/constants/empty-configs`
+    carrying a `large` icon and a body `message` that `tn-table`'s title-only `[emptyMessage]` has
+    nowhere to render. VMware snapshots has no such config — it falls through to the generic
+    `noItemsConfig`, whose title is all there is, and `[emptyMessage]` already shows it inside the
+    table. Add the branch here if this page ever gains its own first-use copy.
+  -->
+  <tn-table
+    class="table"
+    [expandOnRowClick]="true"
+    [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.vmwareSnapshots"
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    [dataSource]="list.rows()"
+    [displayedColumns]="list.displayedColumns()"
+    [trackBy]="trackBySnapshotId"
+    [loading]="list.isLoading()"
+    [loadingMessage]="list.loadingMessage()"
+    [expandable]="true"
+    [clickable]="true"
+    [emptyMessage]="list.empty.message()"
+    [emptyIcon]="list.empty.icon()"
+    (sortChange)="list.onSortChange($event)"
   >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
-    >
+    <ng-container [tnColumnDef]="'hostname'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().hostname }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.hostname"
+          [title]="titles().hostname"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
 
-      <ng-template
-        let-snapshot
-        ix-table-cell
-        [columnIndex]="4"
-        [dataProvider]="dataProvider"
-      >
-        <ix-vmware-status-cell
-          [state]="snapshot.state"
-        ></ix-vmware-status-cell>
+    <ng-container [tnColumnDef]="'username'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().username }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.username"
+          [title]="titles().username"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
-      <ng-template let-snapshot ix-table-details-row [dataProvider]="dataProvider">
-        <div class="table-details-row-actions">
-          <button
-            mat-button
-            [ixTest]="[snapshot.hostname, snapshot.filesystem, 'edit']"
-            (click)="doEdit(snapshot)"
-          >{{ 'Edit' | translate }}</button>
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            [ixTest]="[snapshot.hostname, snapshot.filesystem, 'delete']"
-            (click)="doDelete(snapshot)"
-          >{{ 'Delete' | translate }}</button>
-        </div>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'filesystem'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().filesystem }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.filesystem"
+          [title]="titles().filesystem"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
       </ng-template>
-    </tbody>
-  </ix-table>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'datastore'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().datastore }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.datastore"
+          [title]="titles().datastore"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'state'" [sortable]="true" [width]="'140px'">
+      <ng-template tnHeaderCellDef>{{ titles().state }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-vmware-status-cell [state]="row.state"></ix-vmware-status-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-template let-snapshot tnDetailRowDef>
+      <div class="table-details-row-actions">
+        <tn-button
+          [testId]="detailActionTestId(snapshot, 'edit')"
+          [label]="'Edit' | translate"
+          (onClick)="doEdit(snapshot)"
+        ></tn-button>
+        <tn-button
+          *ixRequiresRoles="requiredRoles"
+          [testId]="detailActionTestId(snapshot, 'delete')"
+          [label]="'Delete' | translate"
+          (onClick)="doDelete(snapshot)"
+        ></tn-button>
+      </div>
+    </ng-template>
+  </tn-table>
+
   <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
 </div>

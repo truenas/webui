@@ -1,4 +1,4 @@
-@if (hasVirtualizationSupport$ | async) {
+@if (hasVirtualizationSupport()) {
   <ix-page-header>
     <div *ixWithLoadingState="availableMemory$ as availableMemory" class="vm-summary">
       <strong>{{ 'Available Memory' | translate }}:</strong>
@@ -16,54 +16,207 @@
       (queryChange)="onListFiltered($event)"
     ></ix-basic-search>
 
-    <ix-table-columns-selector
+    <ix-table-column-picker
+      [columns]="columns()"
       [columnPreferencesKey]="'vmList'"
-      [columns]="columns"
-      (columnsChange)="columnsChange($event)"
-    ></ix-table-columns-selector>
+      (columnsChange)="onColumnsChange($event)"
+    ></ix-table-column-picker>
 
-    <button
+    <tn-button
       *ixRequiresRoles="requiredRoles"
-      mat-button
       color="primary"
-      ixTest="add-vm"
+      [testId]="'add-vm'"
+      [label]="'Add' | translate"
       [ixUiSearch]="searchableElements.elements.add"
-      (click)="doAdd()"
-    >
-      {{ 'Add' | translate }}
-    </button>
+      (onClick)="doAdd()"
+    ></tn-button>
   </ix-page-header>
 
-  <ix-table
-    class="table"
+  @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
+  <!--
+    TEMP: [expandable] makes tn-table render the expand/collapse button itself, with a
+    hard-coded English aria-label ('Expand row' / 'Collapse row') and no input to override it
+    (still the case in 0.4.9) — so that control is untranslated in every non-English locale,
+    where the ix-table it replaced tooltipped 'Expand Row' / 'Collapse Row' through the
+    translate pipe. Remove once the library grows an expandRowLabel/collapseRowLabel input or a
+    TN_TABLE_LABELS provider (mirroring TN_TABLE_PAGER_LABELS) — see NAS-141021 library
+    follow-ups.
+  -->
+  <tn-table
+    [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.vm"
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    [dataSource]="rows()"
+    [displayedColumns]="displayedColumns()"
+    [trackBy]="trackByVmId"
+    [expandable]="true"
+    [clickable]="true"
+    [expandOnRowClick]="true"
+    [singleExpand]="true"
+    [loading]="isLoading()"
+    [emptyMessage]="emptyConf.title | translate"
+    [emptyIcon]="emptyConf.icon || emptyService.iconForType(emptyType())"
+    (sortChange)="onSortChange($event)"
   >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
-    >
-      <ng-template let-vm ix-table-details-row [dataProvider]="dataProvider">
-        <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="vm">
-          <ix-vm-details-row [vm]="vm"></ix-vm-details-row>
-        </ix-table-details-row>
+    <ng-container [tnColumnDef]="'name'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <!--
+          tn-table ellipsises overflowing cell content, so the free-form columns keep the
+          tooltip ix-cell-text used to render — without it a truncated value has no affordance
+          to reveal the rest.
+        -->
+        <span
+          tnTestIdType="text"
+          [tnTooltip]="row.name"
+          [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.name }}</span>
       </ng-template>
-    </tbody>
-  </ix-table>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'status'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Running' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-toggle-cell
+          #runningToggle
+          [title]="'Running' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [ariaLabel]="ariaLabel(row, 'Running' | translate)"
+          [checked]="isRunning(row)"
+          [requiredRoles]="requiredRoles"
+          (toggled)="handleVmStatusToggle(row, $event, runningToggle)"
+        ></ix-table-toggle-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'autostart'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Start on Boot' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-toggle-cell
+          #autostartToggle
+          [title]="'Start on Boot' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [ariaLabel]="ariaLabel(row, 'Start on Boot' | translate)"
+          [checked]="isAutostartEnabled(row)"
+          [requiredRoles]="requiredRoles"
+          (toggled)="handleAutostartToggle(row, autostartToggle)"
+        ></ix-table-toggle-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'vcpus'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Virtual CPUs' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Virtual CPUs' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.vcpus }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'cores'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Cores' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Cores' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.cores }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'threads'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Threads' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Threads' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.threads }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'memory'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Memory Size' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        @let memory = memoryLabel(row);
+        <span
+          tnTestIdType="text"
+          [tnTooltip]="memory"
+          [tnTestId]="[('Memory Size' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ memory }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'bootloader'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Boot Loader Type' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTooltip]="row.bootloader"
+          [tnTestId]="[('Boot Loader Type' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.bootloader }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'time'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'System Clock' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        @let systemClock = systemClockLabel(row);
+        <span
+          tnTestIdType="text"
+          [tnTooltip]="systemClock"
+          [tnTestId]="[('System Clock' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ systemClock }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'display_port'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Display Port' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        @let displayPort = displayPortLabel(row);
+        <span
+          tnTestIdType="text"
+          [tnTooltip]="displayPort"
+          [tnTestId]="[('Display Port' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ displayPort }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'description'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <span
+          tnTestIdType="text"
+          [tnTooltip]="row.description"
+          [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ row.description }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'shutdown_timeout'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Shutdown Timeout' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        @let shutdownTimeout = shutdownTimeoutLabel(row);
+        <span
+          tnTestIdType="text"
+          [tnTooltip]="shutdownTimeout"
+          [tnTestId]="[('Shutdown Timeout' | translate), uniqueRowTag(row), 'row-text']"
+        >{{ shutdownTimeout }}</span>
+      </ng-template>
+    </ng-container>
+
+    <ng-template let-vm tnDetailRowDef>
+      <ix-table-details-row [hiddenColumns]="hiddenColumns()" [row]="vm">
+        <ix-vm-details-row [vm]="vm"></ix-vm-details-row>
+      </ix-table-details-row>
+    </ng-template>
+  </tn-table>
   <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
 } @else {
-  <mat-card>
-    <mat-card-content>
-      <ix-empty [conf]="vmNotSupportedConfig"></ix-empty>
-    </mat-card-content>
-  </mat-card>
+  <tn-card>
+    <tn-empty
+      icon="laptop"
+      iconLibrary="mdi"
+      iconSize="56px"
+      [title]="'Virtualization is not supported' | translate"
+    ></tn-empty>
+  </tn-card>
 }
-

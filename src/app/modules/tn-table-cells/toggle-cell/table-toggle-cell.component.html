@@ -1,3 +1,9 @@
+<!--
+  Pointer AND keyboard events are stopped at the toggle: on a `[clickable]` tn-table the row
+  handler calls preventDefault() for both Enter and Space without checking event.target, which
+  would otherwise cancel the checkbox's own Space activation and expand the row instead of
+  flipping the switch.
+-->
 <tn-slide-toggle
   *ixRequiresRoles="requiredRoles()"
   color="primary"
@@ -7,4 +13,5 @@
   [ariaLabel]="(checked() ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + ariaLabel()"
   (change)="toggled.emit($event)"
   (click)="$event.stopPropagation()"
+  (keydown)="stopRowActivationKeys($event)"
 ></tn-slide-toggle>
