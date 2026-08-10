@@ -4,11 +4,14 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonComponent, TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
+import { BehaviorSubject } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { dummyUser, mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -54,10 +57,23 @@ const nonExpandableGroup = {
   roles: [] as Role[],
 } as Group;
 
+// Not local, so the only action its details row can render is Delete — which needs AccountWrite.
+const remoteDeletableGroup = {
+  id: 4,
+  group: 'remote-deletable',
+  gid: 1003,
+  builtin: false,
+  local: false,
+  roles: [] as Role[],
+} as Group;
+
 describe('GroupListComponent', () => {
   let spectator: Spectator<GroupListComponent>;
   let loader: HarnessLoader;
   let store$: MockStore<GroupsState>;
+
+  // The real `hasRole` resolves asynchronously, so roles can flip after the list has painted.
+  const hasAccountWrite$ = new BehaviorSubject(true);
 
   const createComponent = createComponentFactory({
     component: GroupListComponent,
@@ -71,6 +87,15 @@ describe('GroupListComponent', () => {
     ],
     providers: [
       mockAuth(),
+      {
+        provide: AuthService,
+        useFactory: () => {
+          const authService = new MockAuthService();
+          authService.setUser(dummyUser);
+          authService.hasRole = jest.fn(() => hasAccountWrite$);
+          return authService;
+        },
+      },
       mockApi([
         mockCall('privilege.query', []),
         mockCall('group.query', []),
@@ -106,6 +131,7 @@ describe('GroupListComponent', () => {
   });
 
   beforeEach(() => {
+    hasAccountWrite$.next(true);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     store$ = spectator.inject(MockStore);
@@ -171,6 +197,24 @@ describe('GroupListComponent', () => {
 
     expect(await table.isRowExpanded(0)).toBe(false);
     expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(0);
+  });
+
+  it('expands a group that only AccountWrite makes actionable once the role resolves', async () => {
+    hasAccountWrite$.next(false);
+    store$.overrideSelector(selectGroups, [remoteDeletableGroup]);
+    store$.refreshState();
+
+    const table = await loader.getHarness(TnTableHarness);
+
+    await table.clickRow(0);
+    expect(await table.isRowExpanded(0)).toBe(false);
+
+    hasAccountWrite$.next(true);
+    spectator.detectChanges();
+
+    await table.clickRow(0);
+    expect(await table.isRowExpanded(0)).toBe(true);
+    expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
   });
 
   it('reflects the default ascending GID sort in the column header on first paint', async () => {
