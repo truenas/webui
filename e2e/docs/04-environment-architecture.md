@@ -439,16 +439,17 @@ it talks to middleware, and middleware talks to something speaking the protocol.
 What containerisation buys is determinism, no third-party rate limits, no spend,
 no production credentials in CI, and a suite that works offline.
 
-**Where the difference does show.** Samba AD DC is not Windows AD: DNS
-integration and functional levels differ, and cloud providers vary at the edges.
-That is exactly why the real-endpoint nightly exists — but those tests partly
-measure *someone else's uptime*, so they belong in a run allowed to be red
-without blocking anything. Mixing them into the main suite reliably teaches
-people to ignore it.
+**No real-endpoint runs are needed** (**Q4**, answered 2026-08-10): there is no
+certification or contractual commitment to a named provider that a stand-in
+would fail to evidence. So there is no vendor credential in CI, no third-party
+uptime in our results, and no spend.
 
-**Note.** Backblaze B2 exposes an S3-compatible API, so most cloud-sync coverage
-does not need B2 specifically (**Q4** covers where a real vendor is contractually
-required).
+**Where the difference does show, for the record.** Samba AD DC is not Windows
+AD — DNS integration and functional levels differ — and cloud providers vary at
+the edges. If a commitment to a named vendor ever appears, the answer is a
+small, separate, explicitly tolerant nightly against real endpoints, kept out of
+the main suite because it partly measures someone else's uptime. Not needed
+today.
 
 ---
 
@@ -599,6 +600,71 @@ exactly the later change that opens the hole quietly.
 
 ---
 
+## E13. Host sizing, and the two hardware asks
+
+Working assumption, 2026-08-10: a 64-thread AMD Epyc, 128GB RAM, 512GB SSD.
+**Hardware is not yet assigned**, so this section exists to influence the spec
+while that is still possible.
+
+### What the assumed box supports
+
+| Resource | Capacity | Concurrent appliances |
+|---|---|---|
+| RAM | 128GB, less ~8GB host/libvirt, ~5GB per guest incl. qemu overhead | ~24 |
+| CPU | 64 threads, 2 vCPU per guest | ~32 before oversubscription — not the constraint |
+| Disk | 512GB, less ~80GB of baselines | **~12–20, depending on churn** |
+
+**Disk binds first.** Fixed cost is roughly 15GB per baseline base image plus a
+4GB memory image, so four baselines is ~80GB before a test runs. The remaining
+~430GB is per-VM overlay churn, which is what actually varies: at ~10GB per VM
+that is ~40 concurrent, at ~20GB it is ~21.
+
+**One hazard specific to this suite.** `fillDataset` (**E8**) deliberately fills
+a dataset, and on 8 thin-provisioned disks that grows the overlay by however
+much it writes. Several of those concurrently is how a 512GB device fills
+mid-run. **Cap the fill size inside the helper** rather than letting each test
+choose — the same argument as **E8**'s named-helper rule, applied to resource
+consumption.
+
+### Ask 1: NVMe, not SATA
+
+This matters more than anything else on the list, because **revert speed is the
+design**.
+
+A 4GB memory image reads back in roughly 1.5s on NVMe against ~8s on SATA SSD —
+already a difference of two rows in **E2**'s table. The decisive factor is
+contention: reverts do not happen one at a time, and a sharded run reverts many
+appliances at once against one device.
+
+| | 12 concurrent reverts, ~48GB moved |
+|---|---|
+| NVMe | a few seconds each |
+| SATA SSD | **~90 seconds aggregate** |
+
+The SATA case puts revert above the cost of a boot, which collapses the entire
+argument for memory snapshots and pushes the design back to disk-only or
+reinstall. Same budget, materially worse outcome.
+
+### Ask 2: more than 512GB
+
+Disk is the only real ceiling on that box, and it is the cheapest component to
+change. 2TB of NVMe is a rounding error beside a 64-thread Epyc with 128GB, and
+it removes concurrency as a constraint outright — no overlay pruning between
+runs, no cap on how many baselines are kept, no fill-test hazard.
+
+If 512GB is fixed it remains workable: keep to three or four baselines, prune
+overlays between runs, cap `fillDataset`. That is operational care spent for no
+particular reason.
+
+### Sizing recommendation
+
+**Start at 8 shards** — 8 to 16 VMs depending on whether shards hold a warm
+spare (**E2**). Comfortably inside every limit on the assumed box, and already
+more parallelism than the Global tier needs at its present size. Grow when
+measurement justifies it, not before.
+
+---
+
 ## Open questions
 
 | | Question | Blocks |
@@ -608,8 +674,8 @@ exactly the later change that opens the hole quietly.
 | **Q1** | How long does the Local tier take against one appliance, and how long is a representative Global test? | Whether tiering is needed *yet*; sets the appliance count in **E2** |
 | ~~**Q2**~~ | **Answered 2026-08-10: yes**, `ixnode` will add snapshot and revert. **E5** option 1 applies; options 2 and 3 are no longer needed | — |
 | ~~**Q3**~~ | **Answered 2026-08-10: shared.** So per-run identity is now required work, not a contingency — see **E9** | — |
-| **Q4** | Is TrueNAS **contractually or reputationally committed** to any named cloud provider — a certification, partnership or support claim — such that testing against a MinIO stand-in would not constitute evidence? | **E7**. If no, MinIO covers everything and this closes |
-| **Q5** | **libvirt host capacity: RAM, free disk, and storage type.** Not a budget negotiation — a hardware fact that sets the maximum shard count | **E3**, **E2**. At 4GB/guest, ~5GB effective: a 64GB host runs ~12 concurrent appliances, 128GB ~25. Disk is often the tighter limit — each baseline stores a 4GB memory image plus deltas — and simultaneous reverts share storage throughput |
+| ~~**Q4**~~ | **Answered 2026-08-10: no commitment, local stand-ins are fine.** MinIO, Samba AD DC, OpenLDAP and PyKMIP cover everything; no real-endpoint nightly needed | — |
+| **Q5** | **libvirt host capacity.** Working assumption 2026-08-10: 64-thread Epyc, 128GB RAM, 512GB SSD — *not yet assigned hardware*, so still influenceable. See **E13** | **E3**, **E2** |
 | ~~**Q6**~~ | **Answered 2026-08-10: qcow2, 4GB guests (8GB worst case).** Folded into **E1** and **E2** | — |
 | ~~**Q7**~~ | **Answered 2026-08-10: yes.** Snapshot and revert are local `virsh` calls | — |
 
