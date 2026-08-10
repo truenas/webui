@@ -1,0 +1,177 @@
+# TrueNAS WebUI end-to-end suite.
+#
+# DRAFT — see e2e/docs/04-environment-architecture.md (E12) for the design, and
+# e2e/ci/appliance.sh for the `ixnode` verbs this depends on, which are proposed
+# but not yet agreed. This workflow will not do anything useful until they exist.
+#
+# ─── Why there is no `pull_request` trigger ──────────────────────────────────
+#
+# `truenas/webui` is a PUBLIC repository and these jobs run on SELF-HOSTED
+# runners that sit on the lab network with hypervisor access. A workflow
+# reachable from a fork pull request would let anyone on the internet execute
+# code on that machine. GitHub's own guidance is not to pair self-hosted runners
+# with public repositories for exactly this reason.
+#
+# So: no `pull_request`, and no `pull_request_target` with a checkout of PR
+# code — ever. If PR gating is wanted later (D1), the shape is same-repo
+# branches only, plus the `e2e-lab` environment below configured with required
+# reviewers so a human approves before untrusted code runs.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: E2E
+
+on:
+  schedule:
+    # Nightly, after the image build has settled.
+    - cron: '0 3 * * *'
+  push:
+    branches: [master]
+    paths:
+      - 'e2e/**'
+      - 'playwright.config.ts'
+      - '.github/workflows/e2e.yml'
+  workflow_dispatch:
+    inputs:
+      baseline:
+        description: Baseline to claim appliances at
+        type: string
+        default: fresh-install
+      shards:
+        description: Number of shards (one appliance each)
+        type: string
+        default: '4'
+      grep:
+        description: Optional Playwright --grep filter
+        type: string
+        default: ''
+
+# Least privilege: this workflow reads code and uploads artifacts. It has no
+# reason to write to the repository.
+permissions:
+  contents: read
+
+# The lab is a single shared resource. Two runs against it would destroy each
+# other's pools — §0.1. Queue rather than cancel: a run that is halfway through
+# holds appliances, and cancelling it mid-test leaks them.
+concurrency:
+  group: e2e-lab
+  cancel-in-progress: false
+
+jobs:
+  # Shard count is an input, so the matrix has to be built at runtime.
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+      total: ${{ steps.plan.outputs.total }}
+    steps:
+      - id: plan
+        env:
+          TOTAL: ${{ inputs.shards || '4' }}
+        run: |
+          set -euo pipefail
+          # E13 recommends starting at 8; 4 is the default here because the
+          # Global tier is small today. Raise it when measurement justifies.
+          echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
+          echo "shards=$(seq -s, 1 "$TOTAL" | sed 's/[^,]*/"&"/g;s/^/[/;s/$/]/')" >> "$GITHUB_OUTPUT"
+
+  e2e:
+    needs: plan
+    # Labels identify runners on the libvirt host, in the lab segment (Q7).
+    runs-on: [self-hosted, linux, truenas-lab]
+    # Gate for secrets, and the hook for required reviewers if PR gating is
+    # added later.
+    environment: e2e-lab
+    strategy:
+      # One shard failing must not cancel its siblings — they hold appliances,
+      # and a cancelled job leaks them.
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          yarn install --immutable
+
+      - name: Install Playwright browsers
+        run: yarn playwright install --with-deps chromium
+
+      - name: Claim an appliance
+        id: claim
+        env:
+          BASELINE: ${{ inputs.baseline || 'fresh-install' }}
+        run: |
+          set -euo pipefail
+          ./e2e/ci/appliance.sh claim "$BASELINE" > "$RUNNER_TEMP/appliance.env"
+          # The appliance password comes from ixnode, not from GitHub secrets, so
+          # nothing masks it automatically. Register it before it can reach a log.
+          echo "::add-mask::$(sed -n 's/^TN_PASSWORD=//p' "$RUNNER_TEMP/appliance.env")"
+          cat "$RUNNER_TEMP/appliance.env" >> "$GITHUB_ENV"
+          rm -f "$RUNNER_TEMP/appliance.env"
+
+      - name: Run shard ${{ matrix.shard }}
+        env:
+          CI: 'true'
+          # Blob reports merge across shards; the human-readable HTML report is
+          # produced once, by the `report` job.
+          PW_ARGS: >-
+            --shard=${{ matrix.shard }}/${{ needs.plan.outputs.total }}
+            --reporter=blob
+        run: yarn playwright test $PW_ARGS ${{ inputs.grep && format('--grep "{0}"', inputs.grep) || '' }}
+
+      # R7.2 — must happen while the appliance still exists.
+      - name: Collect middleware logs
+        if: always()
+        run: ./e2e/ci/appliance.sh collect-logs "$TN_HOST" "test-results/appliance-logs"
+
+      - name: Upload shard artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-shard-${{ matrix.shard }}
+          path: |
+            blob-report/
+            test-results/
+          retention-days: 14
+
+      # Unconditional: an appliance left claimed is one the next run cannot use.
+      - name: Release the appliance
+        if: always()
+        run: ./e2e/ci/appliance.sh release "${TN_DOMAIN:-}"
+
+  report:
+    needs: e2e
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: |
+          corepack enable
+          yarn install --immutable
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: e2e-shard-*
+          path: all-shards
+          merge-multiple: true
+
+      - name: Merge shard reports
+        run: yarn playwright merge-reports --reporter=html,junit ./all-shards/blob-report
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report
+          path: |
+            playwright-report/
+            results.xml
+          retention-days: 30

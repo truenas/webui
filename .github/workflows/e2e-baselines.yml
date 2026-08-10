@@ -1,0 +1,81 @@
+# Build the appliance baselines the e2e suite reverts to.
+#
+# DRAFT — see e2e/docs/04-environment-architecture.md (E5) and e2e/ci/appliance.sh.
+#
+# This is deliberately a separate workflow rather than a step in the test run.
+# Building a baseline costs a full ISO install (~210s, Q0a); reverting to one
+# costs seconds. Keeping construction on its own schedule is what holds that
+# install off the critical path permanently — the e2e run never installs
+# anything, it only reverts.
+#
+# Run this when the nightly image moves, not per test run.
+#
+# The same public-repository constraint applies as in e2e.yml: self-hosted
+# runners on the lab network, so no fork-reachable triggers, ever.
+
+name: E2E baselines
+
+on:
+  schedule:
+    # Weekly. Also run it by hand after an image change worth testing against.
+    - cron: '0 1 * * 0'
+  workflow_dispatch:
+    inputs:
+      baseline:
+        description: Which baseline to rebuild (all, or one name)
+        type: choice
+        default: all
+        options: [all, fresh-install, single-pool, pool-and-ad-joined]
+
+permissions:
+  contents: read
+
+# Rebuilding a baseline while a suite run is reverting to it would be a bad
+# afternoon. Same group as e2e.yml so the two can never overlap.
+concurrency:
+  group: e2e-lab
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux, truenas-lab]
+    environment: e2e-lab
+    strategy:
+      fail-fast: false
+      matrix:
+        baseline: ${{ inputs.baseline == 'all' && fromJSON('["fresh-install","single-pool"]') || fromJSON(format('["{0}"]', inputs.baseline)) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          yarn install --immutable
+
+      # A clean ISO install. This is the only place in CI that pays for one.
+      - name: Provision a clean appliance
+        run: ./e2e/ci/appliance.sh claim fresh-install >> "$GITHUB_ENV"
+
+      # Baseline *content* is ours, not ixnode's — that is what keeps the ask to
+      # that team down to four verbs with no baseline vocabulary (E5). The
+      # script drives the appliance to the target state over the API the suite
+      # already uses.
+      #
+      # TODO: e2e/ci/build-baseline.ts does not exist yet. It is the next piece
+      # of work after the ixnode verbs are agreed, and it is ours to write.
+      - name: Drive the appliance to '${{ matrix.baseline }}'
+        if: matrix.baseline != 'fresh-install'
+        run: yarn tsx e2e/ci/build-baseline.ts --baseline "${{ matrix.baseline }}"
+
+      # Memory state is what makes a revert seconds rather than a boot (E1).
+      # At the confirmed 4GB guest (Q6) the image is small.
+      - name: Snapshot it
+        run: ./e2e/ci/appliance.sh snapshot "$TN_DOMAIN" "${{ matrix.baseline }}" memory
+
+      - name: Release
+        if: always()
+        run: ./e2e/ci/appliance.sh release "${TN_DOMAIN:-}"
