@@ -48,7 +48,7 @@
   <tn-empty
     [icon]="emptyIcon()"
     [title]="emptyConfig().title | translate"
-    [description]="emptyConfig().message ? (emptyConfig().message | translate) : undefined"
+    [description]="emptyDescription()"
     [actionText]="emptyActionText()"
     (onAction)="onEmptyAction()"
   ></tn-empty>

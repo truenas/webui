@@ -831,6 +831,20 @@ describe('dataProviderEmptyState', () => {
     });
   });
 
+  // The description delegates to EmptyService, which owns its own language dependency — this
+  // guards that delegating didn't drop the re-translation the inline derivation used to do.
+  it('re-translates the description when the language changes', () => {
+    TestBed.runInInjectionContext(() => {
+      const empty = dataProviderEmptyState(makeProvider(EmptyType.NoSearchResults, 0));
+      expect(empty.description()).toBe('No matching results found');
+
+      translated = () => 'Aucun résultat correspondant.';
+      langChange$.next({ lang: 'fr' } as LangChangeEvent);
+
+      expect(empty.description()).toBe('Aucun résultat correspondant.');
+    });
+  });
+
   it('reports a loading state before the provider emits', () => {
     TestBed.runInInjectionContext(() => {
       const empty = dataProviderEmptyState({

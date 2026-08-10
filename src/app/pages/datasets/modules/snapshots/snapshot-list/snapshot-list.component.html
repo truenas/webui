@@ -53,7 +53,7 @@
     [ixUiSearch]="searchableElements.elements.list"
     [icon]="emptyService.iconForType(emptyType())"
     [title]="emptyConfig.title | translate"
-    [description]="emptyConfig.message ? (emptyConfig.message | translate) : undefined"
+    [description]="emptyService.descriptionForType(emptyType())"
   ></tn-empty>
 } @else {
   <tn-table

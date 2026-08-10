@@ -138,11 +138,6 @@ export class ServicesComponent implements OnInit {
     return this.translate.instant(this.emptyService.defaultEmptyConfig(this.emptyConfig).title);
   }
 
-  protected emptyDescription(): string {
-    const message = this.emptyService.defaultEmptyConfig(this.emptyConfig).message;
-    return message ? this.translate.instant(message) : '';
-  }
-
   protected onSortChange(event: TnSortEvent): void {
     this.dataProvider.setSorting(mapTnSortToTableSort<ServiceRow>(event, this.displayedColumns));
   }

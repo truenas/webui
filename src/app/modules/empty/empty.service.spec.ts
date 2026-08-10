@@ -1,4 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { TranslateService } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -9,6 +10,26 @@ describe('EmptyService', () => {
 
   beforeEach(() => {
     spectator = createService();
+  });
+
+  describe('descriptionForType', () => {
+    it('returns the config message for a state that carries one', () => {
+      expect(spectator.service.descriptionForType(EmptyType.NoSearchResults)).toBe('No matching results found');
+    });
+
+    it('returns an empty string for the states whose config is title-only', () => {
+      expect(spectator.service.descriptionForType(EmptyType.NoPageData)).toBe('');
+      expect(spectator.service.descriptionForType(EmptyType.Errors)).toBe('');
+      // The default branch too, for a type the enum doesn't cover.
+      expect(spectator.service.descriptionForType()).toBe('');
+    });
+
+    it('flattens markup, since the catalog messages were written for ix-empty', () => {
+      jest.spyOn(spectator.inject(TranslateService), 'instant')
+        .mockReturnValue('First line.<br>\nSecond line.');
+
+      expect(spectator.service.descriptionForType(EmptyType.NoSearchResults)).toBe('First line. Second line.');
+    });
   });
 
   describe('iconForType', () => {

@@ -17,7 +17,8 @@
   ></tn-button>
 </ix-page-header>
 
-@let emptyConfig = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
+@let emptyType = dataProvider.emptyType$ | async;
+@let emptyConfig = emptyService.defaultEmptyConfig(emptyType);
 
 <tn-table
   class="table"
@@ -26,7 +27,7 @@
   [displayedColumns]="displayedColumns()"
   [loading]="!!(dataProvider.isLoading$ | async)"
   [emptyMessage]="(emptyConfig.title || '') | translate"
-  [emptyDescription]="emptyConfig.message ? (emptyConfig.message | translate) : ''"
+  [emptyDescription]="emptyService.descriptionForType(emptyType)"
   [emptyIcon]="emptyConfig.icon || ''"
   (sortChange)="onSortChange($event)"
 >

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, Type, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -20,11 +20,11 @@ import {
   TnTestIdDirective,
 } from '@truenas/ui-components';
 import { BehaviorSubject, combineLatest, Observable, of, switchMap } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { translated } from 'app/helpers/translated.helper';
 import { ReportingExporter } from 'app/interfaces/reporting-exporters.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -117,20 +117,15 @@ export class ReportingExporterListComponent implements OnInit {
 
   protected readonly isLoading = toSignal(this.isLoading$, { initialValue: true });
 
-  private readonly emptyMessage$ = this.emptyType$.pipe(
-    map((type) => this.translate.instant(this.emptyService.defaultEmptyConfig(type).title)),
+  private readonly emptyType = toSignal(this.emptyType$, { initialValue: EmptyType.Loading });
+
+  // `translated`, not a plain computed: `instant()` resolves against the language loaded when it
+  // runs, so without the language dependency the title would freeze on the first locale.
+  protected readonly emptyMessage = translated(
+    () => this.translate.instant(this.emptyService.defaultEmptyConfig(this.emptyType()).title),
   );
 
-  protected readonly emptyMessage = toSignal(this.emptyMessage$, { initialValue: '' });
-
-  private readonly emptyDescription$ = this.emptyType$.pipe(
-    map((type) => {
-      const message = this.emptyService.defaultEmptyConfig(type).message;
-      return message ? this.translate.instant(message) : '';
-    }),
-  );
-
-  protected readonly emptyDescription = toSignal(this.emptyDescription$, { initialValue: '' });
+  protected readonly emptyDescription = computed(() => this.emptyService.descriptionForType(this.emptyType()));
 
   ngOnInit(): void {
     this.getExporters();

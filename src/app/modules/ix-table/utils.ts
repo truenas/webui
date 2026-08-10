@@ -15,7 +15,6 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
 import { SortValue, TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
-import { flattenEmptyMessage } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 
 export function convertStringToId(inputString: string): string {
@@ -346,10 +345,7 @@ export interface TableEmptyState {
   type: Signal<EmptyType>;
   /** Translated title for `[emptyMessage]`. */
   message: Signal<string>;
-  /**
-   * Translated body copy for `[emptyDescription]`, empty when the config has no `message`.
-   * Flattened, since the catalog's messages were written as HTML for `<ix-empty>`.
-   */
+  /** Translated body copy for `[emptyDescription]`. See `EmptyService.descriptionForType`. */
   description: Signal<string>;
   /** Icon marker for `[emptyIcon]`. */
   icon: Signal<string>;
@@ -388,11 +384,8 @@ export function dataProviderEmptyState<T>(
       const title = emptyService.defaultEmptyConfig(type()).title;
       return title ? translate.instant(title) : '';
     }),
-    description: computed(() => {
-      lang();
-      const message = emptyService.defaultEmptyConfig(type()).message;
-      return message ? flattenEmptyMessage(translate.instant(message)) : '';
-    }),
+    // Reads its own language dependency, so no `lang()` here.
+    description: computed(() => emptyService.descriptionForType(type())),
     icon: computed(() => emptyService.iconForType(type())),
     count: toSignal(fromProvider(provider, (instance) => instance.currentPageCount$), { initialValue: 0 }),
   };

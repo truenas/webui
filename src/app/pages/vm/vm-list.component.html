@@ -54,7 +54,7 @@
     [singleExpand]="true"
     [loading]="isLoading()"
     [emptyMessage]="emptyConf.title | translate"
-    [emptyDescription]="emptyConf.message ? (emptyConf.message | translate) : ''"
+    [emptyDescription]="emptyService.descriptionForType(emptyType())"
     [emptyIcon]="emptyConf.icon || emptyService.iconForType(emptyType())"
     (sortChange)="onSortChange($event)"
   >

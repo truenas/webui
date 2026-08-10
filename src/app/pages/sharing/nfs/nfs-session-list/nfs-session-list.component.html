@@ -47,7 +47,7 @@
     [trackBy]="trackByNfs3"
     [loading]="nfs3Loading()"
     [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
-    [emptyDescription]="emptyConf?.message ? (emptyConf.message | translate) : ''"
+    [emptyDescription]="emptyService.descriptionForType(nfs3EmptyType())"
     [emptyIcon]="emptyConf?.icon ?? ''"
     (sortChange)="onNfs3SortChange($event)"
   >
@@ -83,7 +83,7 @@
     [trackBy]="trackByNfs4"
     [loading]="nfs4Loading()"
     [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
-    [emptyDescription]="emptyConf?.message ? (emptyConf.message | translate) : ''"
+    [emptyDescription]="emptyService.descriptionForType(nfs4EmptyType())"
     [emptyIcon]="emptyConf?.icon ?? ''"
     (sortChange)="onNfs4SortChange($event)"
   >

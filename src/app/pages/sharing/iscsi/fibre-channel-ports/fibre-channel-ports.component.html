@@ -21,7 +21,7 @@
     [trackBy]="trackByPortName"
     [loading]="isLoading()"
     [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
-    [emptyDescription]="emptyConf?.message ? (emptyConf.message | translate) : ''"
+    [emptyDescription]="emptyService.descriptionForType(emptyType())"
     [emptyIcon]="emptyConf?.icon ?? ''"
   >
     <ng-container [tnColumnDef]="'name'">
