@@ -38,10 +38,17 @@
     }
 
     <div class="record-picker">
+      <!--
+        `role` is bound rather than set as a static attribute: tn-list and tn-list-item
+        declare role="list" / role="listitem" as host attributes, and those win over a
+        static attribute written here.
+      -->
       <tn-list
         #availableDropList="cdkDropList"
         cdkDropList
         id="available-list"
+        aria-multiselectable="true"
+        [attr.role]="'listbox'"
         [cdkDropListData]="availableItems()"
         [cdkDropListConnectedTo]="[selectedDropList]"
         [cdkDropListSortingDisabled]="sort()"
@@ -53,9 +60,10 @@
           <tn-list-item
             #availableItem
             cdkDrag
-            tabindex="0"
             [wrap]="true"
-            [ngClass]="{ selected: isItemSelected(availableList(), item) }"
+            [attr.role]="'option'"
+            [attr.aria-selected]="isItemSelected(availableList(), item)"
+            [attr.tabindex]="idx === availableTabStop() ? 0 : -1"
             (click)="onItemClick('available', idx, $event)"
             (keydown)="onItemKeydown('available', idx, $event)"
           >
@@ -66,7 +74,7 @@
             <label>{{ getDisplayValue(item) }}</label>
           </tn-list-item>
         } @empty {
-          <p class="no-matches">{{ 'No matches found.' | translate }}</p>
+          <p class="no-matches" role="presentation">{{ 'No matches found.' | translate }}</p>
         }
       </tn-list>
     </div>
@@ -165,6 +173,8 @@
         #selectedDropList="cdkDropList"
         cdkDropList
         id="selected-list"
+        aria-multiselectable="true"
+        [attr.role]="'listbox'"
         [cdkDropListData]="selectedItems()"
         [cdkDropListConnectedTo]="[availableDropList]"
         [cdkDropListSortingDisabled]="sort()"
@@ -176,9 +186,10 @@
           <tn-list-item
             #selectedItem
             cdkDrag
-            tabindex="0"
             [wrap]="true"
-            [ngClass]="{ selected: isItemSelected(selectedList(), item) }"
+            [attr.role]="'option'"
+            [attr.aria-selected]="isItemSelected(selectedList(), item)"
+            [attr.tabindex]="idx === selectedTabStop() ? 0 : -1"
             (click)="onItemClick('selected', idx, $event)"
             (keydown)="onItemKeydown('selected', idx, $event)"
           >
@@ -189,7 +200,7 @@
             <label>{{ getDisplayValue(item) }}</label>
           </tn-list-item>
         } @empty {
-          <p class="no-matches">{{ 'No matches found.' | translate }}</p>
+          <p class="no-matches" role="presentation">{{ 'No matches found.' | translate }}</p>
         }
       </tn-list>
     </div>

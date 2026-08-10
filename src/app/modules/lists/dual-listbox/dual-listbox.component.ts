@@ -1,5 +1,5 @@
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { NgClass, NgStyle } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -47,7 +47,6 @@ const typeAheadResetTimeout = 800;
   styleUrls: ['./dual-listbox.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgClass,
     NgStyle,
     DragDropModule,
     FormsModule,
@@ -82,45 +81,61 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
 
   protected isMacOs = this.detectBrowser.isMacOs();
 
-  // Public for testing
-  ariaMessage = signal('');
+  protected ariaMessage = signal('');
 
-  availableList = signal<ListState<T>>({
+  protected availableList = signal<ListState<T>>({
     items: [],
     selectedKeys: new Set(),
     lastSelectedKey: null,
   });
 
-  selectedList = signal<ListState<T>>({
+  protected selectedList = signal<ListState<T>>({
     items: [],
     selectedKeys: new Set(),
     lastSelectedKey: null,
   });
 
-  // Public for testing
-  availableSearch = signal('');
-  selectedSearch = signal('');
-  availableSortDirection = signal(SortDirection.Asc);
-  selectedSortDirection = signal(SortDirection.Asc);
+  protected availableSearch = signal('');
+  protected selectedSearch = signal('');
+  private availableSortDirection = signal(SortDirection.Asc);
+  private selectedSortDirection = signal(SortDirection.Asc);
+
+  /**
+   * Which item is the list's single tab stop (roving tabindex), as an index into the
+   * visible items. Keeping one tab stop per list means Tab reaches the move buttons
+   * after one stop instead of walking through every item.
+   */
+  private availableActiveIndex = signal(0);
+  private selectedActiveIndex = signal(0);
 
   /** What each list actually renders: the raw items, filtered by search and ordered by the sort toggle. */
-  availableItems = computed(() => this.presentItems(
+  protected availableItems = computed(() => this.presentItems(
     this.availableList().items,
     this.availableSearch(),
     this.availableSortDirection(),
   ));
 
-  selectedItems = computed(() => this.presentItems(
+  protected selectedItems = computed(() => this.presentItems(
     this.selectedList().items,
     this.selectedSearch(),
     this.selectedSortDirection(),
   ));
 
-  // Computed values (public for testing)
-  hasAvailableSelection = computed(() => this.availableList().selectedKeys.size > 0);
-  hasSelectedSelection = computed(() => this.selectedList().selectedKeys.size > 0);
-  canMoveAllRight = computed(() => this.availableItems().length > 0);
-  canMoveAllLeft = computed(() => this.selectedItems().length > 0);
+  protected hasAvailableSelection = computed(() => this.availableList().selectedKeys.size > 0);
+  protected hasSelectedSelection = computed(() => this.selectedList().selectedKeys.size > 0);
+  protected canMoveAllRight = computed(() => this.availableItems().length > 0);
+  protected canMoveAllLeft = computed(() => this.selectedItems().length > 0);
+
+  /** Clamped, so the tab stop stays on a rendered item after a search, sort or move. */
+  protected availableTabStop = computed(() => this.clampIndex(
+    this.availableActiveIndex(),
+    this.availableItems().length,
+  ));
+
+  protected selectedTabStop = computed(() => this.clampIndex(
+    this.selectedActiveIndex(),
+    this.selectedItems().length,
+  ));
 
   protected availableCountLabel = computed(() => this.countLabel(
     this.availableItems().length,
@@ -276,6 +291,18 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     return listType === 'available' ? this.availableItems() : this.selectedItems();
   }
 
+  private activeIndexSignal(listType: ListType): WritableSignal<number> {
+    return listType === 'available' ? this.availableActiveIndex : this.selectedActiveIndex;
+  }
+
+  private clampIndex(index: number, length: number): number {
+    if (length === 0) {
+      return 0;
+    }
+
+    return Math.min(Math.max(index, 0), length - 1);
+  }
+
   private announceChange(message: string): void {
     // Clear any existing timeout
     if (this.ariaTimeoutId !== null) {
@@ -304,6 +331,8 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     if (!item) {
       return;
     }
+
+    this.activeIndexSignal(listType).set(index);
 
     const listState = this.listState(listType);
     const isCtrlOrCmd = event.ctrlKey || event.metaKey;
@@ -406,6 +435,8 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   }
 
   private focusItem(listType: ListType, index: number): void {
+    this.activeIndexSignal(listType).set(index);
+
     const elements = listType === 'available' ? this.availableItemElements() : this.selectedItemElements();
     elements[index]?.nativeElement.focus();
   }
@@ -434,31 +465,40 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     this.focusItem(listType, matchIndex);
   }
 
-  // Public for testing
-  moveSelectedRight(): void {
+  protected moveSelectedRight(): void {
     const items = this.getSelectedItems('available');
     this.transferItems('available', 'selected', items);
-    this.announceChange(`Moved ${items.length} item${items.length === 1 ? '' : 's'} to ${this.targetName()}`);
+    this.announceMove(items.length, this.targetName());
   }
 
-  // Public for testing
-  moveSelectedLeft(): void {
+  protected moveSelectedLeft(): void {
     const items = this.getSelectedItems('selected');
     this.transferItems('selected', 'available', items);
-    this.announceChange(`Moved ${items.length} item${items.length === 1 ? '' : 's'} to ${this.sourceName()}`);
+    this.announceMove(items.length, this.sourceName());
   }
 
   /** Moves every item the list currently shows, so a search field narrows what "all" means. */
   protected moveAllRight(): void {
     const items = this.availableItems();
     this.transferItems('available', 'selected', items);
-    this.announceChange(`Moved all ${items.length} item${items.length === 1 ? '' : 's'} to ${this.targetName()}`);
+    this.announceMove(items.length, this.targetName(), true);
   }
 
   protected moveAllLeft(): void {
     const items = this.selectedItems();
     this.transferItems('selected', 'available', items);
-    this.announceChange(`Moved all ${items.length} item${items.length === 1 ? '' : 's'} to ${this.sourceName()}`);
+    this.announceMove(items.length, this.sourceName(), true);
+  }
+
+  private announceMove(count: number, listName: string, all = false): void {
+    if (count === 1) {
+      this.announceChange(this.translate.instant('Moved 1 item to {list}', { list: listName }));
+      return;
+    }
+
+    this.announceChange(all
+      ? this.translate.instant('Moved all {count} items to {list}', { count, list: listName })
+      : this.translate.instant('Moved {count} items to {list}', { count, list: listName }));
   }
 
   private getSelectedItems(listType: ListType): T[] {
@@ -501,8 +541,7 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     return index === -1 ? items.length : index;
   }
 
-  // Public for testing
-  onDrop(event: CdkDragDrop<T[]>): void {
+  protected onDrop(event: CdkDragDrop<T[]>): void {
     this.isUpdatingFromDrag = true;
 
     const fromType: ListType = event.previousContainer.id === 'available-list' ? 'available' : 'selected';
@@ -537,7 +576,7 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
       this.updateDestination();
     }
 
-    this.announceChange('Item reordered');
+    this.announceChange(this.translate.instant('Item reordered'));
   }
 
   private transferByDrag(
@@ -571,7 +610,7 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     });
 
     this.updateDestination();
-    this.announceChange(`Item moved to ${toType === 'selected' ? this.targetName() : this.sourceName()}`);
+    this.announceMove(1, toType === 'selected' ? this.targetName() : this.sourceName());
   }
 
   private updateDestination(): void {

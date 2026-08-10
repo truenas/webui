@@ -69,7 +69,9 @@
         background-color: var(--bg1);
       }
 
-      &.selected {
+      // Selection state lives on aria-selected, so the highlight and what a screen
+      // reader announces can never drift apart.
+      &[aria-selected='true'] {
         background-color: var(--primary);
       }
 
