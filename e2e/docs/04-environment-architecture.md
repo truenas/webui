@@ -57,11 +57,17 @@ if they are wrong, revisit.
   installs TrueNAS from an ISO. **The team that owns it is resistant to
   changes**, which is a design input, not just an inconvenience — see **E5**.
 - The hypervisor is **libvirt/KVM**, which supports domain-level snapshots with
-  optional memory state. This is what makes **E1** possible.
+  optional memory state. This is what makes **E1** possible. Disks are
+  **qcow2 files**; guests need **4GB of RAM**, 8GB worst case.
+- The `ixnode` team **will add snapshot and revert verbs** (**Q2**, answered
+  2026-08-10). **E1** is therefore buildable as written, not contingent.
 - **One VM per run is affordable.** More than one per run is unquantified
   (**Q5**), and **E3** depends on the answer.
-- AD, LDAP, S3 and KMIP **exist in the lab**; whether they can be shared across
-  concurrent runs is unconfirmed (**Q3**).
+- AD, LDAP, S3 and KMIP **exist in the lab and can be shared** (**Q3**,
+  answered 2026-08-10) — which makes **E9**'s per-run identity work *required*
+  rather than conditional.
+- A self-hosted runner **can sit on the libvirt host** in a restricted segment
+  (**Q7**), so snapshot and revert are local `virsh` calls.
 - **HA failover is in scope** — later, but definitely.
 - **CI should run in GitHub Actions**, not Jenkins, using **self-hosted
   runners** for the VM work. See **E12**.
@@ -144,25 +150,28 @@ rule is *snapshot the VM, never the volumes*.
 
 **Memory state is worth having, and its cost scales with RAM.**
 `--memspec file=…,snapshot=external` captures RAM alongside the disks, and
-revert brings back a running machine rather than one that must boot. But revert
-writes and re-reads the whole memory image, so a 16GB guest on NVMe is on the
-order of 10–20s and the same guest on slow storage is far worse. Two
-consequences:
+revert brings back a running machine rather than one that must boot. Revert
+re-reads the whole memory image, so the guest's RAM size sets the floor.
 
-- **Guest RAM becomes a test-infrastructure parameter.** Size it deliberately;
-  every gigabyte is paid on every restore.
-- Keep memory images on the fastest storage available.
+At the confirmed **4GB** (**Q6**) that image is small: expect single-digit
+seconds on NVMe, perhaps 15–20s on SATA SSD. The 8GB worst case roughly doubles
+it and is still well inside a boot. Two consequences survive knowing the number:
+
+- **Guest RAM is a test-infrastructure parameter.** Every gigabyte is paid on
+  every restore, so 4GB is worth defending against future creep.
+- Keep memory images on the fastest storage available — and note that
+  **N simultaneous reverts share that throughput**, so per-revert cost degrades
+  as the shard count rises (**Q5**).
 
 **Disk-only is the fallback, not a failure.** An external disk snapshot plus a
 boot still removes the ISO install — roughly 2x better than reinstall against
 ~10x for memory state — with no RAM image to move.
 
-**Backing store shapes the approach.** qcow2 files on a directory pool are the
-simple path; internal snapshots require qcow2, external snapshots are less
-fussy and are the safer default. If the disks are zvols, libvirt internal
-snapshots are out: pair a recursive `zfs snapshot` of the parent dataset holding
-all 8 zvols (recursive ZFS snapshots are atomic) with `virsh save` for memory.
-Workable, more moving parts (**Q6**).
+**Backing store is qcow2** (**Q6**), which is the simple path: a single
+domain-level `virsh` snapshot covers all 8 disks, and both internal and external
+snapshots are available. External remains the safer default — easier to delete
+and less prone to growing the base image. The zvol alternative, which would have
+needed a recursive `zfs snapshot` paired with `virsh save`, does not arise.
 
 ### What a snapshot still does not fix
 
@@ -213,10 +222,15 @@ pessimistic, which is the right direction for a budget ask.
 
 | Restore primitive | Restore cost | Appliances per shard at a 20s test |
 |---|---|---|
-| Memory-state revert, small guest | ~10s (**Q0b**) | **2** |
-| Memory-state revert, large guest | ~30s (**Q0b**) | **3** |
+| Memory-state revert, 4GB guest on NVMe | <10s (**Q0b**) | **2** |
+| Memory-state revert, 4GB guest on SATA SSD | ~20s (**Q0b**) | **2** |
+| Memory-state revert, 8GB guest | ~30s (**Q0b**) | **3** |
 | Disk-only snapshot + boot | ~90s | **6** |
 | Full ISO reinstall | ~210s (**Q0a**) | **12** |
+
+With the confirmed 4GB guest (**Q6**) the expected row is the first or second,
+so **two appliances per shard** is the planning figure — not the optimistic
+case it looked like when the guest size was unknown.
 
 Derivation, so the numbers can be checked rather than trusted: an appliance's
 full cycle is `test + restore`, so N appliances deliver one test every
@@ -592,12 +606,12 @@ exactly the later change that opens the hole quietly.
 | **Q0a** | End-to-end `ixnode` turnaround for an e2e-ready box — invocation, VM create, ISO install, boot, **R2.8** boot-state contract, first successful connect | **E1**, **E5**; the 210s figure is a *middleware-test* number and is certainly a floor. Now paid per *baseline build*, not per restore |
 | **Q0b** | **Revert-to-usable**, for the guest RAM and backing store actually in use: `virsh snapshot-revert` + NTP resync + middleware ready + WebSocket reconnect + re-auth | **E1**, **E2**. The most load-bearing unmeasured number in this document — it sets the appliance count |
 | **Q1** | How long does the Local tier take against one appliance, and how long is a representative Global test? | Whether tiering is needed *yet*; sets the appliance count in **E2** |
-| **Q2** | Will the `ixnode` team add **snapshot** and **revert** verbs — and if not, will they cede libvirt lifecycle for our domains? | **E5**; this is the schedule risk, not a technical one |
-| **Q3** | Can lab AD/LDAP/KMIP be shared, and with what per-run identity? | **E9**, first AD test |
-| **Q4** | Which providers need *real* endpoints for certification reasons? | **E7** |
-| **Q5** | **Total concurrent appliance budget** for one run — not the shard count, which **E2**'s formula derives from it and the answers to Q0b/Q1 | **E3** |
-| **Q6** | Backing store for the VM disks — qcow2 files, or zvols? And guest RAM size | **E1**: qcow2 allows a single `virsh` snapshot; zvols need recursive `zfs snapshot` plus `virsh save`. RAM sets the revert cost |
-| **Q7** | Can a self-hosted runner live on the libvirt host, in a segment with no route beyond the lab? | **E12** |
+| ~~**Q2**~~ | **Answered 2026-08-10: yes**, `ixnode` will add snapshot and revert. **E5** option 1 applies; options 2 and 3 are no longer needed | — |
+| ~~**Q3**~~ | **Answered 2026-08-10: shared.** So per-run identity is now required work, not a contingency — see **E9** | — |
+| **Q4** | Is TrueNAS **contractually or reputationally committed** to any named cloud provider — a certification, partnership or support claim — such that testing against a MinIO stand-in would not constitute evidence? | **E7**. If no, MinIO covers everything and this closes |
+| **Q5** | **libvirt host capacity: RAM, free disk, and storage type.** Not a budget negotiation — a hardware fact that sets the maximum shard count | **E3**, **E2**. At 4GB/guest, ~5GB effective: a 64GB host runs ~12 concurrent appliances, 128GB ~25. Disk is often the tighter limit — each baseline stores a 4GB memory image plus deltas — and simultaneous reverts share storage throughput |
+| ~~**Q6**~~ | **Answered 2026-08-10: qcow2, 4GB guests (8GB worst case).** Folded into **E1** and **E2** | — |
+| ~~**Q7**~~ | **Answered 2026-08-10: yes.** Snapshot and revert are local `virsh` calls | — |
 
 ---
 
@@ -606,11 +620,9 @@ exactly the later change that opens the hole quietly.
 Front-loaded with measurement, because most of this document assumes a scaling
 problem that has not been demonstrated.
 
-1. **Open the `ixnode` conversation (Q2) — it is the long pole.** Everything in
-   **E1** depends on someone being able to snapshot and revert a domain. Ask for
-   the two verbs, not for baseline support. If the answer is no, the fallback in
-   **E5** is a different negotiation and the schedule changes, so find out early
-   rather than after designing around it.
+1. ~~Open the `ixnode` conversation.~~ **Done — Q2 answered yes.** The two
+   verbs are agreed, so **E1** is unblocked and **E5** option 1 applies. What
+   remains is agreeing their exact shape with that team.
 2. **Measure Q0b, then Q1.** A revert-to-usable time is what sets the appliance
    count, and it is cheap to measure by hand on one box. If the Local tier also
    runs 80 tests in 20 minutes on one appliance without tainting, tiering is
