@@ -23,6 +23,7 @@ import {
   TnListItemComponent, tnIconMarker,
 } from '@truenas/ui-components';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
 
 type ListType = 'available' | 'selected';
@@ -137,20 +138,27 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     this.selectedItems().length,
   ));
 
-  protected availableCountLabel = computed(() => this.countLabel(
+  protected availableCountLabel = translatedSignal((translate) => this.countLabel(
+    translate,
     this.availableItems().length,
     this.availableList().items.length,
   ));
 
-  protected selectedCountLabel = computed(() => this.countLabel(
+  protected selectedCountLabel = translatedSignal((translate) => this.countLabel(
+    translate,
     this.selectedItems().length,
     this.selectedList().items.length,
   ));
 
   protected availableSortIcon = computed(() => this.sortIcon(this.availableSortDirection()));
   protected selectedSortIcon = computed(() => this.sortIcon(this.selectedSortDirection()));
-  protected availableSortLabel = computed(() => this.sortLabel(this.availableSortDirection()));
-  protected selectedSortLabel = computed(() => this.sortLabel(this.selectedSortDirection()));
+  protected availableSortLabel = translatedSignal(
+    (translate) => this.sortLabel(translate, this.availableSortDirection()),
+  );
+
+  protected selectedSortLabel = translatedSignal(
+    (translate) => this.sortLabel(translate, this.selectedSortDirection()),
+  );
 
   private availableItemElements = viewChildren('availableItem', { read: ElementRef<HTMLElement> });
   private selectedItemElements = viewChildren('selectedItem', { read: ElementRef<HTMLElement> });
@@ -158,6 +166,7 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   private isUpdatingFromDrag = false;
   private ariaTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private typeAheadBuffer = '';
+  private typeAheadListType: ListType | null = null;
   private typeAheadTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
@@ -252,12 +261,12 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     return direction === SortDirection.Desc ? sorted.reverse() : sorted;
   }
 
-  private countLabel(shown: number, total: number): string {
+  private countLabel(translate: TranslateService, shown: number, total: number): string {
     if (shown === total) {
       return String(total);
     }
 
-    return this.translate.instant('{shown} of {total}', { shown, total });
+    return translate.instant('{shown} of {total}', { shown, total });
   }
 
   private sortIcon(direction: SortDirection): string {
@@ -266,10 +275,10 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
       : tnIconMarker('sort-alphabetical-descending', 'mdi');
   }
 
-  private sortLabel(direction: SortDirection): string {
+  private sortLabel(translate: TranslateService, direction: SortDirection): string {
     return direction === SortDirection.Asc
-      ? this.translate.instant('Sorted A to Z. Click to sort Z to A.')
-      : this.translate.instant('Sorted Z to A. Click to sort A to Z.');
+      ? translate.instant('Sorted A to Z. Click to sort Z to A.')
+      : translate.instant('Sorted Z to A. Click to sort A to Z.');
   }
 
   protected toggleSort(listType: ListType): void {
@@ -446,9 +455,17 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
       clearTimeout(this.typeAheadTimeoutId);
     }
 
+    // The buffer is shared, so typing into the other list starts a new search rather than
+    // continuing the one from the list the user left.
+    if (this.typeAheadListType !== listType) {
+      this.typeAheadBuffer = '';
+      this.typeAheadListType = listType;
+    }
+
     this.typeAheadBuffer += character.toLowerCase();
     this.typeAheadTimeoutId = setTimeout(() => {
       this.typeAheadBuffer = '';
+      this.typeAheadListType = null;
       this.typeAheadTimeoutId = null;
     }, typeAheadResetTimeout);
 
@@ -461,7 +478,8 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
       return;
     }
 
-    this.onItemClick(listType, matchIndex, { ctrlKey: false, shiftKey: false } as MouseEvent);
+    // Type-ahead moves focus only: in a multi-selectable listbox it must not discard a
+    // selection the user built up with Ctrl-click.
     this.focusItem(listType, matchIndex);
   }
 

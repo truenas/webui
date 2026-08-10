@@ -328,7 +328,7 @@ describe('DualListBoxComponent', () => {
       expect(selectedNamesIn('available')).toEqual(['Item 2']);
     });
 
-    it('should jump to the first item matching what is typed', () => {
+    it('should move focus to the first item matching what is typed', () => {
       spectator.setInput('source', [
         { id: 1, name: 'Apple' },
         { id: 2, name: 'Banana' },
@@ -337,10 +337,19 @@ describe('DualListBoxComponent', () => {
       spectator.detectChanges();
 
       pressKey('available', 0, 'b');
-      expect(selectedNamesIn('available')).toEqual(['Banana']);
+      expect(itemsIn('available')[1]).toBe(document.activeElement);
 
       pressKey('available', 1, 'l');
-      expect(selectedNamesIn('available')).toEqual(['Blueberry']);
+      expect(itemsIn('available')[2]).toBe(document.activeElement);
+    });
+
+    it('should keep the existing selection when typing to jump to an item', () => {
+      clickItem('available', 0);
+      clickItem('available', 1, { ctrlKey: true });
+
+      pressKey('available', 1, 'i');
+
+      expect(selectedNamesIn('available')).toEqual(['Item 1', 'Item 2']);
     });
 
     it('should keep a single tab stop that follows the active item', () => {
