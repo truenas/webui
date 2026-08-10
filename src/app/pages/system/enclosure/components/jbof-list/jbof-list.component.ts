@@ -20,7 +20,6 @@ import { Role } from 'app/enums/role.enum';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import {
@@ -64,9 +63,6 @@ export class JbofListComponent implements OnInit {
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
-  // `tnTableListHost` exposes only the empty title and icon, so the config's second line
-  // (e.g. "No matching results found") is resolved here to keep parity with ix-table.
-  protected emptyService = inject(EmptyService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
 

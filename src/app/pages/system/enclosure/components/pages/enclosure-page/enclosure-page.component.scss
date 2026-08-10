@@ -31,10 +31,14 @@ ix-fake-progress-bar {
 
   // TEMP (NAS-141021): the library already grows `.tn-card__content` (`flex: 1; min-height: 0`)
   // but gives it no scroll container and no positioning context, so a full-height card body
-  // can neither scroll nor anchor the absolutely-positioned `ix-fake-progress-bar`. Scoped to
-  // this card so it can't leak into a `tn-card` rendered by a descendant component. Drop once
+  // can neither scroll nor anchor the absolutely-positioned `ix-fake-progress-bar`. Drop once
   // the library exposes a scrollable fill-height content slot.
-  .view-container > tn-card ::ng-deep .tn-card__content {
+  //
+  // `::ng-deep` pierces encapsulation, so the selector is written as an unbroken child chain
+  // down to this card's own content slot (`tn-card` host > its root `.tn-card` > the slot).
+  // A descendant component rendering its own `tn-card` sits deeper than that chain and so
+  // can't inherit `overflow: auto` / `position: relative` from here.
+  .view-container > tn-card > ::ng-deep .tn-card > .tn-card__content {
     display: flex;
     flex-direction: column;
     overflow: auto;
