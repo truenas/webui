@@ -101,6 +101,13 @@
         word-break: break-word;
       }
     }
+
+    .no-matches {
+      color: var(--alt-fg2);
+      font-size: 13px;
+      margin: 0;
+      padding: 12px 16px;
+    }
   }
 }
 
@@ -120,13 +127,39 @@
     margin: 0;
     width: 100%;
 
-    p {
+    .listbox-header {
+      align-items: center;
       background-color: var(--lines);
       border-bottom: 1px solid var(--lines);
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      min-height: 44px;
+      padding: 4px 8px 4px 16px;
+    }
+
+    .listbox-title {
+      align-items: baseline;
       color: var(--fg2);
       display: flex;
+      gap: 8px;
       margin: 0;
-      padding: 12px 16px;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .listbox-count {
+      color: var(--alt-fg2);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    // Flush with the header and the list below it, so all three share one left edge.
+    .listbox-search {
+      display: block;
+      padding: 8px 0;
     }
   }
 }

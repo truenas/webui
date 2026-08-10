@@ -5,7 +5,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCardAction, TnCardComponent, TnCardHeaderDirective, TnProgressBarComponent, tnIconMarker,
+  TnCardAction, TnCardComponent, TnCardHeaderDirective, TnCheckboxComponent, TnProgressBarComponent, tnIconMarker,
 } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -28,6 +28,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     DualListBoxComponent,
     TnCardComponent,
     TnCardHeaderDirective,
+    TnCheckboxComponent,
     TnProgressBarComponent,
     ReadOnlyComponent,
     TranslateModule,
@@ -50,6 +51,18 @@ export class GroupMembersComponent implements OnInit {
 
   protected readonly isLoading = signal(false);
   protected readonly group = signal<Group | null>(null);
+  protected readonly hideBuiltinUsers = signal(false);
+
+  /**
+   * Built-in accounts (root, daemon, bin, ...) make up most of the list on a stock system
+   * and bury the real users, so they can be filtered out of the picker.
+   */
+  protected readonly availableUsers = computed(() => {
+    const users = this.users();
+    return this.hideBuiltinUsers() ? users.filter((user) => !user.builtin) : users;
+  });
+
+  protected readonly builtinUserCount = computed(() => this.users().filter((user) => user.builtin).length);
 
   protected readonly hasAccountWrite = toSignal(
     this.authService.hasRole(this.requiredRoles),

@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness, TnIconButtonHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
@@ -104,6 +104,60 @@ describe('GroupMembersComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('group.update', [1, { users: [41, 42] }]);
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups']);
+  });
+});
+
+describe('GroupMembersComponent - built-in users', () => {
+  let spectator: SpectatorRouting<GroupMembersComponent>;
+  let loader: HarnessLoader;
+
+  const createComponent = createRoutingFactory({
+    component: GroupMembersComponent,
+    imports: [ReactiveFormsModule, DualListBoxComponent],
+    providers: [
+      mockApi([
+        mockCall('group.query', fakeGroupDataSource),
+        mockCall('user.query', [
+          { id: 41, username: 'dummy-user', builtin: false },
+          { id: 42, username: 'zoe', builtin: false },
+          { id: 1, username: 'root', builtin: true },
+        ] as User[]),
+        mockCall('group.update'),
+      ]),
+      mockProvider(DialogService),
+      mockProvider(SnackbarService),
+      mockAuth(),
+      mockWindow({
+        navigator: {
+          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        },
+      }),
+    ],
+    params: { pk: '1' },
+  });
+
+  const availableUsernames = (): string[] => spectator
+    .queryAll('tn-list[aria-label="All Users"] tn-list-item label')
+    .map((element) => element.textContent.trim());
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    spectator.detectChanges();
+  });
+
+  it('sorts available users alphabetically', () => {
+    expect(availableUsernames()).toEqual(['root', 'zoe']);
+  });
+
+  it('hides built-in users when the filter is checked', async () => {
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    expect(await checkbox.getLabelText()).toBe('Hide built-in users (1)');
+
+    await checkbox.check();
+    spectator.detectChanges();
+
+    expect(availableUsernames()).toEqual(['zoe']);
   });
 });
 
