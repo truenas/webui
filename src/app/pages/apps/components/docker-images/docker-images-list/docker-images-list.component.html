@@ -27,7 +27,6 @@
 }
 
 @let emptyType = dataProvider.emptyType$ | async;
-@let emptyConfig = emptyService.defaultEmptyConfig(emptyType);
 
 <tn-table
   class="table"
@@ -35,9 +34,8 @@
   [displayedColumns]="displayedColumns"
   [selectable]="true"
   [loading]="!!(dataProvider.isLoading$ | async)"
-  [emptyMessage]="(emptyConfig.title || '') | translate"
+  [emptyMessage]="emptyService.titleForType(emptyType)"
   [emptyDescription]="emptyService.descriptionForType(emptyType)"
-  [emptyIcon]="emptyConfig.icon || ''"
   (selectionChange)="onSelectionChange($event)"
   (sortChange)="onSortChange($event)"
 >

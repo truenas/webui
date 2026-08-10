@@ -48,11 +48,10 @@
 }
 
 @if (!currentPageCount() && !isLoading()) {
-  @let emptyConfig = emptyService.defaultEmptyConfig(emptyType());
   <tn-empty
     [ixUiSearch]="searchableElements.elements.list"
     [icon]="emptyService.iconForType(emptyType())"
-    [title]="emptyConfig.title | translate"
+    [title]="emptyService.titleForType(emptyType())"
     [description]="emptyService.descriptionForType(emptyType())"
   ></tn-empty>
 } @else {

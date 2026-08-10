@@ -1,5 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { TranslateService } from '@ngx-translate/core';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -10,6 +10,15 @@ describe('EmptyService', () => {
 
   beforeEach(() => {
     spectator = createService();
+  });
+
+  describe('titleForType', () => {
+    it('returns the translated config title', () => {
+      expect(spectator.service.titleForType(EmptyType.Errors)).toBe('Cannot retrieve response');
+      expect(spectator.service.titleForType(EmptyType.NoSearchResults)).toBe('No Search Results.');
+      // The default branch too, for a type the enum doesn't cover.
+      expect(spectator.service.titleForType()).toBe('No records have been added yet');
+    });
   });
 
   describe('descriptionForType', () => {
@@ -29,6 +38,30 @@ describe('EmptyService', () => {
         .mockReturnValue('First line.<br>\nSecond line.');
 
       expect(spectator.service.descriptionForType(EmptyType.NoSearchResults)).toBe('First line. Second line.');
+    });
+  });
+
+  describe('memoization', () => {
+    it('translates a type once, however many times a template asks for its copy', () => {
+      const instant = jest.spyOn(spectator.inject(TranslateService), 'instant');
+
+      for (let pass = 0; pass < 5; pass++) {
+        spectator.service.titleForType(EmptyType.NoSearchResults);
+        spectator.service.descriptionForType(EmptyType.NoSearchResults);
+      }
+
+      // Once for the title, once for the message — the other nine calls are cache hits.
+      expect(instant).toHaveBeenCalledTimes(2);
+    });
+
+    it('re-translates after a language change', () => {
+      expect(spectator.service.titleForType(EmptyType.Errors)).toBe('Cannot retrieve response');
+
+      const translate = spectator.inject(TranslateService);
+      jest.spyOn(translate, 'instant').mockReturnValue('Antwort kann nicht abgerufen werden');
+      translate.onLangChange.emit({ lang: 'de', translations: {} } as LangChangeEvent);
+
+      expect(spectator.service.titleForType(EmptyType.Errors)).toBe('Antwort kann nicht abgerufen werden');
     });
   });
 

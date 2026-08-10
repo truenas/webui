@@ -32,9 +32,8 @@
 
 <div class="table-container">
   @if (!isLoading && !(dataProvider.currentPageCount$ | async)) {
-    @let emptyConfig = emptyService.defaultEmptyConfig(emptyType);
     <tn-empty
-      [title]="emptyConfig.title | translate"
+      [title]="emptyService.titleForType(emptyType)"
       [description]="emptyService.descriptionForType(emptyType)"
     ></tn-empty>
   } @else {

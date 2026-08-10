@@ -18,7 +18,6 @@
 </ix-page-header>
 
 @let emptyType = dataProvider.emptyType$ | async;
-@let emptyConfig = emptyService.defaultEmptyConfig(emptyType);
 
 <tn-table
   class="table"
@@ -26,9 +25,8 @@
   [dataSource]="(dataProvider.currentPage$ | async) ?? []"
   [displayedColumns]="displayedColumns()"
   [loading]="!!(dataProvider.isLoading$ | async)"
-  [emptyMessage]="(emptyConfig.title || '') | translate"
+  [emptyMessage]="emptyService.titleForType(emptyType)"
   [emptyDescription]="emptyService.descriptionForType(emptyType)"
-  [emptyIcon]="emptyConfig.icon || ''"
   (sortChange)="onSortChange($event)"
 >
   <ng-container [tnColumnDef]="'name'" [sortable]="true">

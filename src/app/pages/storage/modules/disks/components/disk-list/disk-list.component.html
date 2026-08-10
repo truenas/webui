@@ -47,7 +47,7 @@
 @if (!currentPageCount() && !isLoading()) {
   <tn-empty
     [icon]="emptyIcon()"
-    [title]="emptyConfig().title | translate"
+    [title]="emptyMessage()"
     [description]="emptyDescription()"
     [actionText]="emptyActionText()"
     (onAction)="onEmptyAction()"

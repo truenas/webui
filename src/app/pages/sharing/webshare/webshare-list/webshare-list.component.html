@@ -69,7 +69,6 @@
       [description]="'Users can access these shares if they have the WebShare Enabled option set on their account.' | translate"
     ></tn-empty>
   } @else {
-    @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
     <tn-table
       class="table"
       [testId]="'table-table'"
@@ -78,9 +77,8 @@
       [displayedColumns]="displayedColumns()"
       [trackBy]="trackByWebShareId"
       [loading]="isLoading()"
-      [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+      [emptyMessage]="emptyService.titleForType(emptyType())"
       [emptyDescription]="emptyService.descriptionForType(emptyType())"
-      [emptyIcon]="emptyConf?.icon ?? ''"
       (sortChange)="onSortChange($event)"
     >
       <ng-container [tnColumnDef]="'name'" [sortable]="true">

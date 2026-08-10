@@ -177,7 +177,7 @@ export class DiskListComponent {
   protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$, { initialValue: 0 });
   protected readonly emptyType = toSignal(this.dataProvider.emptyType$, { initialValue: EmptyType.Loading });
 
-  protected readonly emptyConfig = computed(() => this.emptyService.defaultEmptyConfig(this.emptyType()));
+  protected readonly emptyMessage = computed(() => this.emptyService.titleForType(this.emptyType()));
   protected readonly emptyDescription = computed(() => this.emptyService.descriptionForType(this.emptyType()));
   protected readonly emptyIcon = computed(() => this.emptyService.iconForType(this.emptyType()));
 

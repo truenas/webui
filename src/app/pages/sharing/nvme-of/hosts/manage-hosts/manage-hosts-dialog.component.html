@@ -1,5 +1,4 @@
 <tn-dialog-shell testId="dialog" [title]="'Hosts' | translate">
-  @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
   <tn-table
     class="table"
     [testId]="'table-table'"
@@ -7,9 +6,8 @@
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByHostId"
     [loading]="isLoading()"
-    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyMessage]="emptyService.titleForType(emptyType())"
     [emptyDescription]="emptyService.descriptionForType(emptyType())"
-    [emptyIcon]="emptyConf?.icon ?? ''"
   >
     <ng-container [tnColumnDef]="'hostnqn'">
       <ng-template tnHeaderCellDef>{{ 'NQN' | translate }}</ng-template>

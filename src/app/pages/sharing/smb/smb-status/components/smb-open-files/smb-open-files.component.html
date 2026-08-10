@@ -1,7 +1,6 @@
 <tn-card [padContent]="false">
   <h3 tnCardHeader class="tn-card__title">{{ 'Open Files' | translate }}</h3>
 
-  @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
   <tn-table
     class="table"
     [testId]="'table-table'"
@@ -9,9 +8,8 @@
     [displayedColumns]="displayedColumns()"
     [trackBy]="trackByOpenFile"
     [loading]="isLoading()"
-    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyMessage]="emptyService.titleForType(emptyType())"
     [emptyDescription]="emptyService.descriptionForType(emptyType())"
-    [emptyIcon]="emptyConf?.icon ?? ''"
   >
     <ng-container [tnColumnDef]="'server_id'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Server' | translate }}</ng-template>

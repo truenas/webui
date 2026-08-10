@@ -16,7 +16,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { formatRoleNames, Role } from 'app/enums/role.enum';
-import { translated } from 'app/helpers/translated.helper';
 import { Group } from 'app/interfaces/group.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -129,11 +128,7 @@ export class GroupListComponent implements OnInit {
 
   private readonly emptyType = toSignal(this.emptyType$, { initialValue: EmptyType.Loading });
 
-  // `translated`, not a plain computed: `instant()` resolves against the language loaded when it
-  // runs, so without the language dependency the title would freeze on the first locale.
-  protected readonly emptyMessage = translated(
-    () => this.translate.instant(this.emptyService.defaultEmptyConfig(this.emptyType()).title),
-  );
+  protected readonly emptyMessage = computed(() => this.emptyService.titleForType(this.emptyType()));
 
   protected readonly emptyDescription = computed(() => this.emptyService.descriptionForType(this.emptyType()));
 

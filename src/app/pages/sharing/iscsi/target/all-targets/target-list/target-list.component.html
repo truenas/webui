@@ -18,7 +18,6 @@
     </div>
   </ng-template>
 
-  @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
   <tn-table
     class="table"
     [testId]="'table-table'"
@@ -26,9 +25,8 @@
     [displayedColumns]="displayedColumns()"
     [trackBy]="trackByTargetId"
     [loading]="isLoading()"
-    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+    [emptyMessage]="emptyService.titleForType(emptyType())"
     [emptyDescription]="emptyService.descriptionForType(emptyType())"
-    [emptyIcon]="emptyConf?.icon ?? ''"
     [clickable]="true"
     [activeRow]="dataProvider().expandedRow"
     (rowClick)="onRowClick($event)"

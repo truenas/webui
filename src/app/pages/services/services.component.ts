@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   TnCardComponent, TnCellDefDirective, TnHeaderCellDefDirective,
   TnSlideToggleComponent, TnTableColumnDirective, TnTableComponent, TnTestIdDirective,
@@ -74,7 +74,6 @@ export class ServicesComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private servicesService = inject(ServicesService);
   private api = inject(ApiService);
-  private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<ServicesState>>(Store);
   private errorHandler = inject(ErrorHandlerService);
@@ -132,10 +131,6 @@ export class ServicesComponent implements OnInit {
 
   protected rolesToManage(row: ServiceRow): Role[] {
     return this.servicesService.getRolesRequiredToManage(row.service);
-  }
-
-  protected emptyMessage(): string {
-    return this.translate.instant(this.emptyService.defaultEmptyConfig(this.emptyConfig).title);
   }
 
   protected onSortChange(event: TnSortEvent): void {

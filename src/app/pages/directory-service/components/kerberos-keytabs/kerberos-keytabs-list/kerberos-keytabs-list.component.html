@@ -74,14 +74,13 @@
 
 <ng-template #tableTpl>
   @let emptyType = dataProvider.emptyType$ | async;
-  @let emptyConf = emptyService.defaultEmptyConfig(emptyType);
   <tn-table
     class="table"
     [dataSource]="(dataProvider.currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByKeytabId"
     [loading]="!!(dataProvider.isLoading$ | async)"
-    [emptyMessage]="emptyConf.title | translate"
+    [emptyMessage]="emptyService.titleForType(emptyType)"
     [emptyDescription]="emptyService.descriptionForType(emptyType)"
     (sortChange)="onSortChange($event)"
   >
