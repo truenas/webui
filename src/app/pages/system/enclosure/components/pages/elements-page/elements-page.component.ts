@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatCardHeader, MatCardContent } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { TnCardComponent, TnCardHeaderDirective } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { enclosureElementTypeLabels, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
@@ -23,9 +23,9 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   templateUrl: './elements-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCardHeader,
+    TnCardComponent,
+    TnCardHeaderDirective,
     EnclosureHeaderComponent,
-    MatCardContent,
     EmptyComponent,
     IxTableComponent,
     IxTableHeadComponent,

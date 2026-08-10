@@ -1,9 +1,11 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
   createRoutingFactory,
   mockProvider,
   SpectatorRouting,
 } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -17,6 +19,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
 
 describe('EnclosureDashboardComponent', () => {
   let spectator: SpectatorRouting<EnclosureDashboardComponent>;
+  let loader: HarnessLoader;
   const createComponent = createRoutingFactory({
     component: EnclosureDashboardComponent,
     shallow: true,
@@ -44,6 +47,7 @@ describe('EnclosureDashboardComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows loading indicator when enclosures are loading', () => {
@@ -84,5 +88,17 @@ describe('EnclosureDashboardComponent', () => {
     spectator.setRouteParam('enclosure', '123');
 
     expect(spectator.inject(EnclosureStore, true).selectEnclosure).toHaveBeenCalledWith('123');
+  });
+
+  it('links to the JBOF list when the system is licensed for expansion shelves', async () => {
+    const link = await loader.getHarness(TnButtonHarness.with({ label: 'NVMe-oF Expansion Shelves' }));
+
+    // Anchor-mode render, so middle-click / copy-link still work. The exact href isn't
+    // asserted — the routing stub resolves every createUrlTree() to '/'.
+    expect(await link.getHref()).not.toBeNull();
+
+    // `tn-button`'s anchor arm hard-codes `tnTestIdType="button"`, so the legacy `link-*` id
+    // is pinned on the host. Guards against a silent rename to `button-manage-expansion`.
+    expect(spectator.query('tn-button')).toHaveAttribute('data-test', 'link-manage-expansion');
   });
 });

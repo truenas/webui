@@ -1,21 +1,18 @@
 @if (views().length > 1) {
-  <button
-    mat-button
-    ixTest="elements-menu"
-    [matMenuTriggerFor]="elementsMenu"
-  >
-    {{ 'Elements' | translate }}
-    <tn-icon name="menu-down" library="mdi" class="menu-caret"></tn-icon>
-  </button>
-  <mat-menu #elementsMenu="matMenu">
+  <tn-button
+    icon="mdi-menu-down"
+    iconPosition="right"
+    [testId]="'elements-menu'"
+    [label]="'Elements' | translate"
+    [tnMenuTriggerFor]="elementsMenu"
+  ></tn-button>
+  <tn-menu #elementsMenu>
     @for (view of views(); track view.label) {
-      <button
-        mat-menu-item
-        [ixTest]="view.label"
-        (click)="changeView(view)"
-      >
-        {{ view.label }}
-      </button>
+      <tn-menu-item
+        [testId]="view.testId"
+        [label]="view.label | translate"
+        (itemClick)="changeView(view)"
+      ></tn-menu-item>
     }
-  </mat-menu>
+  </tn-menu>
 }

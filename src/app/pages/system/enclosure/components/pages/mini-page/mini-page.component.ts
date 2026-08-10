@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
-import { MatCard, MatCardHeader, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnCardComponent } from '@truenas/ui-components';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
@@ -20,9 +20,7 @@ import { MiniPoolsComponent } from './mini-pools/mini-pools.component';
   styleUrls: ['./mini-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardContent,
+    TnCardComponent,
     FakeProgressBarComponent,
     MiniPoolsComponent,
     MiniEnclosureComponent,

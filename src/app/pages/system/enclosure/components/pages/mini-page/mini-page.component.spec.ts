@@ -80,7 +80,9 @@ describe('MiniPageComponent', () => {
   });
 
   it('shows a header with enclosure label', () => {
-    const header = spectator.query('mat-card-header');
+    // The library ships no TnCardHarness yet, so the card title can only be asserted
+    // by reaching for its element. See the playbook's upstream-defects table.
+    const header = spectator.query('.tn-card__title');
     expect(header).toHaveText('MINI-X');
   });
 

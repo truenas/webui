@@ -1,9 +1,5 @@
 @import 'scss-imports/cssvars';
 
-mat-card-content {
-  position: relative;
-}
-
 ix-fake-progress-bar {
   height: 2px;
   position: absolute;
@@ -27,16 +23,22 @@ ix-fake-progress-bar {
     }
   }
 
-  .mat-mdc-card {
+  // The library sizes the inner `.tn-card` to `height: 100%`, which only resolves once the
+  // host element itself has a height.
+  tn-card {
     height: 100%;
-    margin: 0;
   }
 
-  .mat-mdc-card-content {
+  // TEMP (NAS-141021): the library already grows `.tn-card__content` (`flex: 1; min-height: 0`)
+  // but gives it no scroll container and no positioning context, so a full-height card body
+  // can neither scroll nor anchor the absolutely-positioned `ix-fake-progress-bar`. Scoped to
+  // this card so it can't leak into a `tn-card` rendered by a descendant component. Drop once
+  // the library exposes a scrollable fill-height content slot.
+  .view-container > tn-card ::ng-deep .tn-card__content {
     display: flex;
     flex-direction: column;
-    height: 100%;
     overflow: auto;
+    position: relative;
   }
 
   .container {

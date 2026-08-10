@@ -1,8 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -112,7 +111,7 @@ describe('JbofListComponent', () => {
     spectator.inject(MockApiService).mockCall('jbof.licensed', 3);
     spectator.component.updateAvailableJbof();
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await addButton.isDisabled()).toBe(false);
   });
 
@@ -120,7 +119,7 @@ describe('JbofListComponent', () => {
     spectator.inject(MockApiService).mockCall('jbof.licensed', 2);
     spectator.component.updateAvailableJbof();
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await addButton.isDisabled()).toBe(true);
   });
 
@@ -128,7 +127,7 @@ describe('JbofListComponent', () => {
     spectator.inject(MockApiService).mockCall('jbof.licensed', 1);
     spectator.component.updateAvailableJbof();
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await addButton.isDisabled()).toBe(true);
   });
 });

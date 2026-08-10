@@ -1,12 +1,12 @@
 <ix-page-header>
   @if (isJbofLicensed$ | async) {
-    <a
-      mat-button
-      ixTest="manage-expansion"
+    <!-- Host-pinned to keep the legacy `link-manage-expansion` id — see the playbook's upstream-defects table. -->
+    <tn-button
+      tnTestIdType="link"
+      [tnTestId]="'manage-expansion'"
       [routerLink]="['/', 'system', 'viewenclosure', 'jbof']"
-    >
-      {{ 'NVMe-oF Expansion Shelves' | translate }}
-    </a>
+      [label]="'NVMe-oF Expansion Shelves' | translate"
+    ></tn-button>
   }
   @if (selectedEnclosure(); as enclosure) {
     <ix-view-elements-menu

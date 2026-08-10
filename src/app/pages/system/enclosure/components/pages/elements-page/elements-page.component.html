@@ -1,7 +1,6 @@
-<mat-card-header>
-  <ix-enclosure-header [title]="title()"></ix-enclosure-header>
-</mat-card-header>
-<mat-card-content>
+<tn-card>
+  <ix-enclosure-header tnCardHeader [title]="title()"></ix-enclosure-header>
+
   @if (!viewElements()) {
     <ix-empty [conf]="noView"></ix-empty>
   } @else {
@@ -18,4 +17,4 @@
       ></tbody>
     </ix-table>
   }
-</mat-card-content>
+</tn-card>

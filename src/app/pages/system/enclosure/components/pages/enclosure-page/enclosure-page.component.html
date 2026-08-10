@@ -1,41 +1,37 @@
 <div class="view-container">
-  <mat-card>
-    <mat-card-header>
-      <ix-enclosure-header [title]="title()"></ix-enclosure-header>
-    </mat-card-header>
-    <mat-card-content>
-      @if (isLoading(); as loading) {
-        <ix-fake-progress-bar
-          [loading]="loading"
-        ></ix-fake-progress-bar>
-      }
-      <div class="container">
-        @switch (selectedView()) {
-          @case (EnclosureView.Pools) {
-            <ix-pools-view></ix-pools-view>
-          }
-          @case (EnclosureView.DiskStatus) {
-            <ix-status-view></ix-status-view>
-          }
-          @case (EnclosureView.Expanders) {
-            <ix-sas-expander-status-view
-              [enclosure]="enclosure()"
-            ></ix-sas-expander-status-view>
-          }
-        }
-      </div>
+  <tn-card>
+    <ix-enclosure-header tnCardHeader [title]="title()"></ix-enclosure-header>
 
-      @if (selectedSlot()) {
-        <ix-disk-details-overview [selectedSlot]="selectedSlot()"></ix-disk-details-overview>
-      } @else {
-        <ix-disks-overview></ix-disks-overview>
+    @if (isLoading(); as loading) {
+      <ix-fake-progress-bar
+        [loading]="loading"
+      ></ix-fake-progress-bar>
+    }
+    <div class="container">
+      @switch (selectedView()) {
+        @case (EnclosureView.Pools) {
+          <ix-pools-view></ix-pools-view>
+        }
+        @case (EnclosureView.DiskStatus) {
+          <ix-status-view></ix-status-view>
+        }
+        @case (EnclosureView.Expanders) {
+          <ix-sas-expander-status-view
+            [enclosure]="enclosure()"
+          ></ix-sas-expander-status-view>
+        }
       }
-    </mat-card-content>
-  </mat-card>
+    </div>
+
+    @if (selectedSlot()) {
+      <ix-disk-details-overview [selectedSlot]="selectedSlot()"></ix-disk-details-overview>
+    } @else {
+      <ix-disks-overview></ix-disks-overview>
+    }
+  </tn-card>
 </div>
 @if (enclosures().length > 1) {
   <div class="selector-container">
     <ix-enclosure-selector></ix-enclosure-selector>
   </div>
 }
-

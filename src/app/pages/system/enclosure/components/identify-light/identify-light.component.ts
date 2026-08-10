@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -18,8 +16,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })

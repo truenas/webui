@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
-import { MatIconAnchor } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { enclosureDiskStatusLabels } from 'app/enums/enclosure-slot-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { IdentifyLightComponent } from 'app/pages/system/enclosure/components/identify-light/identify-light.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
@@ -16,9 +14,8 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   styleUrl: './mini-drive-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatIconAnchor,
-    TestDirective,
-    TnIconComponent,
+    TnIconButtonComponent,
+    TnTestIdDirective,
     IdentifyLightComponent,
     TranslateModule,
     MapValuePipe,

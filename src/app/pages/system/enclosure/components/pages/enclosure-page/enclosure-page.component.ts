@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
-import { MatCard, MatCardHeader, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { TnCardComponent, TnCardHeaderDirective } from '@truenas/ui-components';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { EnclosureHeaderComponent } from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
@@ -20,10 +20,9 @@ import { StatusViewComponent } from './status-view/status-view.component';
   styleUrls: ['./enclosure-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
+    TnCardComponent,
+    TnCardHeaderDirective,
     EnclosureHeaderComponent,
-    MatCardContent,
     FakeProgressBarComponent,
     PoolsViewComponent,
     StatusViewComponent,

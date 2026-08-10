@@ -1,17 +1,15 @@
 <ix-page-header>
   <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    ixTest="add-jbof"
     color="primary"
+    [testId]="'add-jbof'"
+    [label]="'Add' | translate"
     [disabled]="!canAddJbof()"
     [tnTooltip]="'No available licensed Expansion Shelves ' | translate"
     [tnTooltipDisabled]="canAddJbof()"
-    (click)="openForm()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    (onClick)="openForm()"
+  ></tn-button>
 </ix-page-header>
 
 <div class="table-container" [ixUiSearch]="searchableElements.elements.jbof">

@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { MatMiniFabButton } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent } from '@truenas/ui-components';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { IdentifyLightComponent } from 'app/pages/system/enclosure/components/identify-light/identify-light.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { DiskDetailsComponent } from './disks-overview-details/disk-details.component';
@@ -16,9 +14,7 @@ import { DiskDetailsComponent } from './disks-overview-details/disk-details.comp
   styleUrls: ['./disk-details-overview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatMiniFabButton,
-    TestDirective,
-    TnIconComponent,
+    TnIconButtonComponent,
     DiskIconComponent,
     IdentifyLightComponent,
     DiskDetailsComponent,
