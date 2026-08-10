@@ -10,6 +10,10 @@ on:
       - '**'
     paths:
       - 'src/assets/i18n/**'
+      # TEST-ONLY: normally this workflow never fires on a .github-only PR, so its
+      # two `prepare` call sites would go unexercised. Remove with the rest of
+      # this branch — it must not reach master.
+      - '.github/workflows/**'
 
 permissions:
   contents: read
