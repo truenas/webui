@@ -401,11 +401,13 @@ pinned `~0.4.9` (they landed after `0.3.26`, the version this work started again
 | `tn-table [expandOnRowClick]` | `ExpandOnRowClickDirective` (deleted, with its spec) and its four usages |
 | `tn-table [minColumnWidth]` (default `120px`) | Nothing — new. Only applies with `[fixedLayout]`, where it derives a width floor as `minColumnWidth × columnCount` so a narrow viewport scrolls rather than shrinking columns to nothing |
 
-Also fixed in the library and available, but not adopted here because their consumers sit in other
-feature areas: `[singleExpand]` (would delete `restrictToSingleExpandedRow`),
-`[(sortColumn)]`/`[(sortDirection)]` (would delete `reflectSortIntoTable`), `[emptyDescription]`
-(the second empty-state line `dataProviderEmptyState` drops), `TnMenuTriggerDirective`'s
-`aria-haspopup`/`aria-expanded` + public `isOpen`, and `tn-side-panel [closeButtonAriaLabel]`.
+Also fixed in the library and adopted since, under NAS-142058, because their consumers sat in
+other feature areas: `[singleExpand]` and `[(sortColumn)]`/`[(sortDirection)]` (which between them
+deleted `restrictToSingleExpandedRow`, `reflectSortIntoTable` and the `app/modules/tn-table/utils`
+module they lived in) and `[emptyDescription]`, which restores the second empty-state line —
+`dataProviderEmptyState` now exposes it as `description`, so every `tnTableListHost` list binds it.
+Still unadopted: `TnMenuTriggerDirective`'s `aria-haspopup`/`aria-expanded` + public `isOpen`, and
+`tn-side-panel [closeButtonAriaLabel]`.
 
 Two long-standing library bugs surfaced while doing this, both the same root cause — a rule
 written as a plain `.tn-table` class selector, which emulated encapsulation compiles to

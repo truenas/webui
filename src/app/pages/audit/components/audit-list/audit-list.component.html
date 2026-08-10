@@ -13,6 +13,7 @@
   [loading]="(dataProvider().isLoading$ | async) ?? false"
   [loadingMessage]="loadingTitle | translate"
   [emptyMessage]="emptyAttrs.title | translate"
+  [emptyDescription]="emptyAttrs.description ? (emptyAttrs.description | translate) : ''"
   [emptyIcon]="emptyAttrs.icon"
   (sortChange)="onSortChange($event)"
   (rowClick)="onRowClick($event)"

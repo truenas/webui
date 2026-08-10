@@ -15,6 +15,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
 import { SortValue, TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
+import { flattenEmptyMessage } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 
 export function convertStringToId(inputString: string): string {
@@ -345,6 +346,11 @@ export interface TableEmptyState {
   type: Signal<EmptyType>;
   /** Translated title for `[emptyMessage]`. */
   message: Signal<string>;
+  /**
+   * Translated body copy for `[emptyDescription]`, empty when the config has no `message`.
+   * Flattened, since the catalog's messages were written as HTML for `<ix-empty>`.
+   */
+  description: Signal<string>;
   /** Icon marker for `[emptyIcon]`. */
   icon: Signal<string>;
   /** Row count of the current page, for gating a page-level empty state. */
@@ -355,9 +361,9 @@ export interface TableEmptyState {
  * A tn-table's empty-state bindings, derived from its data provider. Must be
  * called from an injection context.
  *
- * Only `EmptyConfig.title` survives — `tn-table` has no input for the config's
- * `message`, so the second line ix-table rendered on the no-search-results state
- * is dropped. Tracked under "Migration follow-ups" in TRUENAS_UI_INTEGRATION.md.
+ * Both halves of the config survive: `title` goes to `[emptyMessage]` and `message` to
+ * `[emptyDescription]`, which `@truenas/ui-components` 0.4.9 added — before it, the second
+ * line ix-table rendered on the no-search-results state had nowhere to go.
  */
 export function dataProviderEmptyState<T>(
   provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
@@ -381,6 +387,11 @@ export function dataProviderEmptyState<T>(
       // but `title` is optional on EmptyConfig.
       const title = emptyService.defaultEmptyConfig(type()).title;
       return title ? translate.instant(title) : '';
+    }),
+    description: computed(() => {
+      lang();
+      const message = emptyService.defaultEmptyConfig(type()).message;
+      return message ? flattenEmptyMessage(translate.instant(message)) : '';
     }),
     icon: computed(() => emptyService.iconForType(type())),
     count: toSignal(fromProvider(provider, (instance) => instance.currentPageCount$), { initialValue: 0 }),

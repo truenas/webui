@@ -786,6 +786,7 @@ describe('dataProviderEmptyState', () => {
       expect(empty.type()).toBe(EmptyType.NoSearchResults);
       expect(empty.count()).toBe(0);
       expect(empty.message()).toBe('No Search Results.');
+      expect(empty.description()).toBe('No matching results found');
       expect(empty.icon()).toBe('mdi-magnify-scan');
     });
   });
@@ -797,6 +798,24 @@ describe('dataProviderEmptyState', () => {
       expect(empty.count()).toBe(3);
       expect(empty.message()).toBe('No records have been added yet');
       expect(empty.icon()).toBe('mdi-format-list-text');
+    });
+  });
+
+  it('reports an empty description for a config that carries no message', () => {
+    TestBed.runInInjectionContext(() => {
+      const empty = dataProviderEmptyState(makeProvider(EmptyType.NoPageData, 3));
+
+      expect(empty.description()).toBe('');
+    });
+  });
+
+  it('flattens markup out of the description, which was written for ix-empty', () => {
+    translated = () => 'First line.<br>\nSecond line.';
+
+    TestBed.runInInjectionContext(() => {
+      const empty = dataProviderEmptyState(makeProvider(EmptyType.NoSearchResults, 0));
+
+      expect(empty.description()).toBe('First line. Second line.');
     });
   });
 

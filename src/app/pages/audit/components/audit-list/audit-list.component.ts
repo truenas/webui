@@ -35,6 +35,8 @@ export const auditDisplayedColumns: string[] = Object.freeze([
 interface EmptyAttrs {
   title: string;
   icon: string;
+  /** Body copy for `[emptyDescription]`; only the search state has a second line to show. */
+  description?: string;
 }
 
 const loadingTitle = T('Loading…');
@@ -42,7 +44,11 @@ const loadingTitle = T('Loading…');
 const emptyTypeAttrs = new Map<EmptyType, EmptyAttrs>([
   [EmptyType.Loading, { title: loadingTitle, icon: 'mdi-loading' }],
   [EmptyType.Errors, { title: T('Cannot retrieve response'), icon: 'mdi-alert-octagon' }],
-  [EmptyType.NoSearchResults, { title: T('No Search Results.'), icon: 'mdi-magnify-scan' }],
+  [EmptyType.NoSearchResults, {
+    title: T('No Search Results.'),
+    icon: 'mdi-magnify-scan',
+    description: T('No matching results found'),
+  }],
   [EmptyType.FirstUse, { title: T('No records have been added yet'), icon: 'mdi-format-list-text' }],
   [EmptyType.NoPageData, { title: T('No records have been added yet'), icon: 'mdi-format-list-text' }],
 ]);
