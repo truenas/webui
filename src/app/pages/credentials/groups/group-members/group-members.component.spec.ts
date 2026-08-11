@@ -236,6 +236,75 @@ describe('GroupMembersComponent - built-in users already in the group', () => {
   });
 });
 
+describe('GroupMembersComponent - built-in users added during the session', () => {
+  let spectator: SpectatorRouting<GroupMembersComponent>;
+  let loader: HarnessLoader;
+
+  const groupWithBuiltinMember = [{ ...fakeGroupDataSource[0], users: [41, 1] }] as Group[];
+
+  const createComponent = createRoutingFactory({
+    component: GroupMembersComponent,
+    imports: [ReactiveFormsModule, DualListBoxComponent],
+    providers: [
+      mockApi([
+        mockCall('group.query', groupWithBuiltinMember),
+        mockCall('user.query', [
+          { id: 41, username: 'dummy-user', builtin: false },
+          { id: 1, username: 'root', builtin: true },
+          { id: 2, username: 'daemon', builtin: true },
+          // Stays out of the group, so the checkbox has something left to hide.
+          { id: 3, username: 'bin', builtin: true },
+        ] as User[]),
+        mockCall('group.update'),
+      ]),
+      mockProvider(DialogService),
+      mockProvider(SnackbarService),
+      mockAuth(),
+      mockWindow({
+        navigator: {
+          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        },
+      }),
+    ],
+    params: { pk: '1' },
+  });
+
+  const usernamesIn = (list: string): string[] => spectator
+    .queryAll(`tn-list[aria-label="${list}"] tn-list-item label`)
+    .map((element) => element.textContent.trim());
+
+  const move = async (list: string, index: number, icon: string): Promise<void> => {
+    spectator.click(spectator.queryAll(`tn-list[aria-label="${list}"] tn-list-item`)[index]);
+
+    await (await loader.getHarness(TnIconButtonHarness.with({ name: icon }))).click();
+    spectator.detectChanges();
+  };
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    spectator.detectChanges();
+  });
+
+  // The picker rebuilds its available list out of the source it was given, so a built-in that
+  // joined the group before the filter went on has to stay in the source to come back out.
+  it('shows a built-in added before the filter was applied when it is moved out again', async () => {
+    await move('All Users', 1, 'chevron-right');
+    expect(usernamesIn('Group Members')).toEqual(['daemon', 'dummy-user', 'root']);
+
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    await checkbox.check();
+    spectator.detectChanges();
+
+    expect(usernamesIn('All Users')).toEqual([]);
+
+    await move('Group Members', 0, 'chevron-left');
+
+    expect(usernamesIn('All Users')).toEqual(['daemon']);
+    expect(usernamesIn('Group Members')).toEqual(['dummy-user', 'root']);
+  });
+});
+
 describe('GroupMembersComponent - directory service group', () => {
   const nonLocalGroup = [{ ...fakeGroupDataSource[0], local: false }] as Group[];
   const createNonLocalComponent = createRoutingFactory({

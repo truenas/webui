@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, computed,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, computed, untracked,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -55,12 +55,14 @@ export class GroupMembersComponent implements OnInit {
 
   /**
    * Built-in accounts (root, daemon, bin, ...) make up most of the list on a stock system
-   * and bury the real users, so they can be filtered out of the picker. Built-ins that were
-   * members when the page loaded are kept: filtering them out of the source would make one
-   * vanish from both lists the moment it is moved off the members side.
+   * and bury the real users, so they can be filtered out of the picker. Built-ins on the
+   * members side are kept: filtering one out of the source would make it vanish from both
+   * lists the moment it is moved off that side, since the picker rebuilds its available list
+   * out of the source it was given.
    *
-   * Anchored on the group as it loaded rather than on the live selection, because a source
-   * that changed mid-interaction would reset the picker's lists under the user.
+   * The members are read untracked, so ticking the checkbox snapshots who is in the group
+   * right then. Tracking them would rebuild the source on every move and reset the picker's
+   * lists under the user.
    */
   protected readonly availableUsers = computed(() => {
     const users = this.users();
@@ -69,8 +71,12 @@ export class GroupMembersComponent implements OnInit {
       return users;
     }
 
-    const originalMemberIds = new Set(this.group()?.users ?? []);
-    return users.filter((user) => !user.builtin || originalMemberIds.has(user.id));
+    const keptIds = new Set([
+      ...this.group()?.users ?? [],
+      ...untracked(this.selectedMembers).map((user) => user.id),
+    ]);
+
+    return users.filter((user) => !user.builtin || keptIds.has(user.id));
   });
 
   /**

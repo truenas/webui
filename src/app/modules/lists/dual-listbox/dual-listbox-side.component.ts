@@ -150,13 +150,16 @@ export class DualListBoxSideComponent<T> {
     const visible = this.side().visibleItems();
 
     switch (event.key) {
+      // Not clamped to the ends of the list: like a native listbox, an arrow key at a boundary
+      // does nothing at all. Clamping would re-select the item focus is already on, collapsing
+      // a multi-item selection down to it.
       case 'ArrowDown':
         event.preventDefault();
-        this.focusAndSelect(Math.min(index + 1, visible.length - 1), event);
+        this.focusAndSelect(index + 1, event);
         return;
       case 'ArrowUp':
         event.preventDefault();
-        this.focusAndSelect(Math.max(index - 1, 0), event);
+        this.focusAndSelect(index - 1, event);
         return;
       case 'Home':
         event.preventDefault();

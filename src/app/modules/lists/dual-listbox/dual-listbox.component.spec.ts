@@ -378,6 +378,19 @@ describe('DualListBoxComponent', () => {
       expect(selectedNamesIn('available')).toEqual(['Item 2']);
     });
 
+    // A native listbox does nothing at a boundary. Clamping to the end would re-select the
+    // focused item, throwing away the rest of a multi-item selection.
+    it('should leave the selection alone when an arrow key hits the end of the list', () => {
+      clickItem('available', 0, { ctrlKey: true });
+      clickItem('available', 2, { ctrlKey: true });
+
+      pressKey('available', 0, 'ArrowUp');
+      expect(selectedNamesIn('available')).toEqual(['Item 1', 'Item 3']);
+
+      pressKey('available', 2, 'ArrowDown');
+      expect(selectedNamesIn('available')).toEqual(['Item 1', 'Item 3']);
+    });
+
     it('should extend the selection with Shift and the arrow keys', () => {
       clickItem('available', 0);
 
