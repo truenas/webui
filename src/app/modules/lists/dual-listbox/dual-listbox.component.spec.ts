@@ -213,6 +213,21 @@ describe('DualListBoxComponent', () => {
     expect(document.activeElement).toBe(itemsIn('available')[0]);
   });
 
+  it('should fall back to the receiving search field when neither list shows anything', async () => {
+    const [availableSearch, selectedSearch] = await getSearchFields();
+    await availableSearch.setValue('Item 3');
+    await selectedSearch.setValue('nothing matches this');
+    spectator.detectChanges();
+
+    // The only item the left list still shows moves to a right list that filters it out.
+    await (await getButton('chevron-double-right')).click();
+    spectator.detectChanges();
+
+    expect(itemsIn('available')).toHaveLength(0);
+    expect(itemsIn('selected')).toHaveLength(0);
+    expect(document.activeElement).toBe(spectator.queryAll('.listbox-search input')[1]);
+  });
+
   it('should display custom icon when listItemIcon is provided', () => {
     spectator.setInput('listItemIcon', 'mdi-account');
     spectator.detectChanges();
@@ -483,6 +498,18 @@ describe('DualListBoxComponent', () => {
       drop('available', 'selected', 1, 0);
 
       expect(spectator.component.destination()).toEqual([testData[1]]);
+    });
+
+    // With sorting on, the template disables CDK's sorting, so a same-list drop always reports
+    // the index it started at — announcing a reorder that neither happened nor could be seen.
+    it('should not announce a reorder when an item is dropped where it started', () => {
+      spectator.setInput('sort', true);
+      spectator.detectChanges();
+
+      drop('available', 'available', 1, 1);
+
+      expect(namesIn('available')).toEqual(['Item 1', 'Item 2', 'Item 3']);
+      expect(spectator.query('[role="status"][aria-live="polite"]')).toHaveText('');
     });
   });
 

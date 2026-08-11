@@ -9,6 +9,7 @@ import {
   inject,
   input,
   output,
+  viewChild,
   viewChildren,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -86,6 +87,7 @@ export class DualListBoxSideComponent<T> {
   ));
 
   private itemElements = viewChildren('listItem', { read: ElementRef<HTMLElement> });
+  private searchField = viewChild(TnInputComponent);
 
   private typeAheadBuffer = '';
   private typeAheadTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -121,6 +123,22 @@ export class DualListBoxSideComponent<T> {
     }
 
     this.focusItem(this.side().tabStop());
+    return true;
+  }
+
+  /**
+   * Moves focus to the list's search field — the last place to put focus when the list itself
+   * shows nothing, since clearing the search is what brings the items back. Returns false when
+   * the list has no search field.
+   */
+  focusSearch(): boolean {
+    const searchField = this.searchField();
+
+    if (!searchField) {
+      return false;
+    }
+
+    searchField.inputEl().nativeElement.focus();
     return true;
   }
 

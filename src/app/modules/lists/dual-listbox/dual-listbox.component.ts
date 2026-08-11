@@ -166,10 +166,18 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
    */
   private restoreFocus(from: DualListBoxSide<T>, to: DualListBoxSide<T>, movedKey: unknown): void {
     afterNextRender(() => {
-      if (!this.componentFor(to).focusKey(movedKey)) {
-        // The receiving list is filtered and does not show the item: stay on the list it left.
-        this.componentFor(from).focusTabStop();
+      if (this.componentFor(to).focusKey(movedKey)) {
+        return;
       }
+
+      // The receiving list is filtered and does not show the item: stay on the list it left.
+      if (this.componentFor(from).focusTabStop()) {
+        return;
+      }
+
+      // Neither list has anything left on screen — both searches filtered everything out.
+      // Land on the search field that is hiding the item, rather than on <body>.
+      this.componentFor(to).focusSearch();
     }, { injector: this.injector });
   }
 
@@ -244,6 +252,13 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   }
 
   private reorderWithinList(side: DualListBoxSide<T>, previousIndex: number, currentIndex: number): void {
+    // A drop can land where it started — and while sorting is on the template turns CDK's own
+    // sorting off, so every same-list drop reports the index it began at. Nothing moved, so
+    // nothing should be written back or announced.
+    if (previousIndex === currentIndex) {
+      return;
+    }
+
     const newItems = [...side.items()];
 
     moveItemInArray(

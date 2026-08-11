@@ -214,6 +214,26 @@ describe('GroupMembersComponent - built-in users already in the group', () => {
     expect(spectator.queryAll('tn-list[aria-label="Group Members"] tn-list-item label')
       .map((element) => element.textContent.trim())).toEqual(['dummy-user', 'root']);
   });
+
+  // Without this the member would leave the group list and be filtered out of the available
+  // one, disappearing from both sides with no trace of where it went.
+  it('shows a built-in member in the available list when it is moved out of the group', async () => {
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    await checkbox.check();
+    spectator.detectChanges();
+
+    const members = spectator.queryAll('tn-list[aria-label="Group Members"] tn-list-item');
+    spectator.click(members[1]);
+
+    const removeButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'chevron-left' }));
+    await removeButton.click();
+    spectator.detectChanges();
+
+    expect(spectator.queryAll('tn-list[aria-label="All Users"] tn-list-item label')
+      .map((element) => element.textContent.trim())).toEqual(['root']);
+    expect(spectator.queryAll('tn-list[aria-label="Group Members"] tn-list-item label')
+      .map((element) => element.textContent.trim())).toEqual(['dummy-user']);
+  });
 });
 
 describe('GroupMembersComponent - directory service group', () => {
