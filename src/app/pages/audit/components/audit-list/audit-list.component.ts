@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  Component, ChangeDetectionStrategy, input, output,
+  Component, ChangeDetectionStrategy, inject, input, output,
 } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
@@ -18,6 +18,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { auditElements } from 'app/pages/audit/audit.elements';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
@@ -32,11 +33,14 @@ export const auditDisplayedColumns: string[] = Object.freeze([
   'service', 'username', 'message_timestamp', 'event', 'event_data',
 ]) as string[];
 
+/**
+ * The page-specific half of an empty state. Only the title and icon are page-specific — the body
+ * copy comes from {@link EmptyService.descriptionForType}, which owns the one place each state's
+ * description is written.
+ */
 interface EmptyAttrs {
   title: string;
   icon: string;
-  /** Body copy for `[emptyDescription]`; only the search state has a second line to show. */
-  description?: string;
 }
 
 const loadingTitle = T('Loading…');
@@ -44,11 +48,7 @@ const loadingTitle = T('Loading…');
 const emptyTypeAttrs = new Map<EmptyType, EmptyAttrs>([
   [EmptyType.Loading, { title: loadingTitle, icon: 'mdi-loading' }],
   [EmptyType.Errors, { title: T('Cannot retrieve response'), icon: 'mdi-alert-octagon' }],
-  [EmptyType.NoSearchResults, {
-    title: T('No Search Results.'),
-    icon: 'mdi-magnify-scan',
-    description: T('No matching results found'),
-  }],
+  [EmptyType.NoSearchResults, { title: T('No Search Results.'), icon: 'mdi-magnify-scan' }],
   [EmptyType.FirstUse, { title: T('No records have been added yet'), icon: 'mdi-format-list-text' }],
   [EmptyType.NoPageData, { title: T('No records have been added yet'), icon: 'mdi-format-list-text' }],
 ]);
@@ -82,6 +82,8 @@ const defaultEmptyAttrs: EmptyAttrs = {
   ],
 })
 export class AuditListComponent {
+  protected readonly emptyService = inject(EmptyService);
+
   readonly dataProvider = input.required<AuditApiDataProvider>();
 
   protected readonly searchableElements = auditElements;
