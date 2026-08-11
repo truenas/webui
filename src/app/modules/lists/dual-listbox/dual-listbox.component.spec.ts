@@ -291,6 +291,17 @@ describe('DualListBoxComponent', () => {
       expect(await (await getButton('chevron-right')).isDisabled()).toBe(false);
     });
 
+    // The listbox is often hosted in a <form> with a submit button, where a text input makes
+    // Enter submit it implicitly — filtering a list must not save the form.
+    it('should swallow Enter, so searching cannot submit an enclosing form', () => {
+      const searchInputs = spectator.queryAll<HTMLElement>('.listbox-search input');
+      const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+
+      searchInputs[0].dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBe(true);
+    });
+
     it('should not render search fields when searchable is false', async () => {
       spectator.setInput('searchable', false);
       spectator.detectChanges();

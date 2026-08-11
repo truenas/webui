@@ -18,6 +18,11 @@
 </div>
 
 @if (searchable()) {
+  <!--
+    Enter is swallowed: the listbox is often placed inside a <form> with a submit button,
+    where a text input makes Enter submit it implicitly. Filtering a list must never save
+    the form the user is still filling in.
+  -->
   <tn-input
     class="listbox-search"
     prefixIcon="magnify"
@@ -32,6 +37,7 @@
     [ngModel]="side().search()"
     (ngModelChange)="side().search.set($event)"
     (onSuffixAction)="side().search.set('')"
+    (keydown.enter)="$event.preventDefault()"
   ></tn-input>
 }
 
