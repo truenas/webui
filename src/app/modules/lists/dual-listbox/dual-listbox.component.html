@@ -28,12 +28,12 @@
         [testId]="'search-available'"
         [placeholder]="'Search' | translate"
         [ariaLabel]="'Search {list}' | translate: { list: sourceName() }"
-        [suffixIcon]="availableSearch() ? 'close-circle' : undefined"
+        [suffixIcon]="availableList.search() ? 'close-circle' : undefined"
         [suffixIconAriaLabel]="'Clear search' | translate"
         [suffixActionTestId]="'clear-search-available'"
-        [ngModel]="availableSearch()"
-        (ngModelChange)="availableSearch.set($event)"
-        (onSuffixAction)="availableSearch.set('')"
+        [ngModel]="availableList.search()"
+        (ngModelChange)="availableList.search.set($event)"
+        (onSuffixAction)="availableList.search.set('')"
       ></tn-input>
     }
 
@@ -49,21 +49,21 @@
         id="available-list"
         aria-multiselectable="true"
         [attr.role]="'listbox'"
-        [cdkDropListData]="availableItems()"
+        [cdkDropListData]="availableList.visibleItems()"
         [cdkDropListConnectedTo]="[selectedDropList]"
         [cdkDropListSortingDisabled]="sort()"
         [attr.aria-label]="sourceName()"
         [ngStyle]="{ 'max-height': height(), 'min-height': height() }"
         (cdkDropListDropped)="onDrop($event)"
       >
-        @for (item of availableItems(); track trackByKey($index, item); let idx = $index) {
+        @for (item of availableList.visibleItems(); track trackByKey($index, item); let idx = $index) {
           <tn-list-item
             #availableItem
             cdkDrag
             [wrap]="true"
             [attr.role]="'option'"
-            [attr.aria-selected]="isItemSelected(availableList(), item)"
-            [attr.tabindex]="idx === availableTabStop() ? 0 : -1"
+            [attr.aria-selected]="isItemSelected('available', item)"
+            [attr.tabindex]="idx === availableList.tabStop() ? 0 : -1"
             (click)="onItemClick('available', idx, $event)"
             (keydown)="onItemKeydown('available', idx, $event)"
           >
@@ -159,12 +159,12 @@
         [testId]="'search-selected'"
         [placeholder]="'Search' | translate"
         [ariaLabel]="'Search {list}' | translate: { list: targetName() }"
-        [suffixIcon]="selectedSearch() ? 'close-circle' : undefined"
+        [suffixIcon]="selectedList.search() ? 'close-circle' : undefined"
         [suffixIconAriaLabel]="'Clear search' | translate"
         [suffixActionTestId]="'clear-search-selected'"
-        [ngModel]="selectedSearch()"
-        (ngModelChange)="selectedSearch.set($event)"
-        (onSuffixAction)="selectedSearch.set('')"
+        [ngModel]="selectedList.search()"
+        (ngModelChange)="selectedList.search.set($event)"
+        (onSuffixAction)="selectedList.search.set('')"
       ></tn-input>
     }
 
@@ -175,21 +175,21 @@
         id="selected-list"
         aria-multiselectable="true"
         [attr.role]="'listbox'"
-        [cdkDropListData]="selectedItems()"
+        [cdkDropListData]="selectedList.visibleItems()"
         [cdkDropListConnectedTo]="[availableDropList]"
         [cdkDropListSortingDisabled]="sort()"
         [attr.aria-label]="targetName()"
         [ngStyle]="{ 'max-height': height(), 'min-height': height() }"
         (cdkDropListDropped)="onDrop($event)"
       >
-        @for (item of selectedItems(); track trackByKey($index, item); let idx = $index) {
+        @for (item of selectedList.visibleItems(); track trackByKey($index, item); let idx = $index) {
           <tn-list-item
             #selectedItem
             cdkDrag
             [wrap]="true"
             [attr.role]="'option'"
-            [attr.aria-selected]="isItemSelected(selectedList(), item)"
-            [attr.tabindex]="idx === selectedTabStop() ? 0 : -1"
+            [attr.aria-selected]="isItemSelected('selected', item)"
+            [attr.tabindex]="idx === selectedList.tabStop() ? 0 : -1"
             (click)="onItemClick('selected', idx, $event)"
             (keydown)="onItemKeydown('selected', idx, $event)"
           >

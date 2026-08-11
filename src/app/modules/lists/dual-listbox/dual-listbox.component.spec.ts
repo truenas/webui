@@ -407,6 +407,20 @@ describe('DualListBoxComponent', () => {
       expect(namesIn('selected')).toEqual([]);
     });
 
+    it('should keep following the source input after a drag', () => {
+      drop('selected', {
+        previousContainer: { id: 'available-list' },
+        container: { id: 'selected-list' },
+        previousIndex: 0,
+        currentIndex: 0,
+      } as DropEvent);
+
+      spectator.setInput('source', [testData[0], testData[1]]);
+      spectator.detectChanges();
+
+      expect(namesIn('available')).toEqual(['Item 2']);
+    });
+
     it('should update destination after drag and drop', () => {
       drop('selected', {
         previousContainer: { id: 'available-list' },

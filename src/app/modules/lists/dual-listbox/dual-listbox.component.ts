@@ -12,6 +12,7 @@ import {
   Injector,
   input,
   model,
+  Signal,
   signal,
   viewChildren,
   WritableSignal,
@@ -28,15 +29,34 @@ import { DetectBrowserService } from 'app/services/detect-browser.service';
 
 type ListType = 'available' | 'selected';
 
+/**
+ * One side of the dual listbox. What the list holds (`items`) and what the user highlighted
+ * (`selectedKeys`) are deliberately separate signals: the selection changes on every click,
+ * arrow key and space press, and must not invalidate `visibleItems`, whose filter and sort
+ * are O(n log n) over lists that can hold thousands of items.
+ */
 interface ListState<T> {
-  items: T[];
+  /** The list's items, before the search field and the sort toggle are applied. */
+  items: WritableSignal<T[]>;
   /**
    * Keys of the selected items. Keys rather than indices, so a selection survives
    * the list being filtered by the search field or re-ordered by the sort toggle.
    */
-  selectedKeys: Set<unknown>;
+  selectedKeys: WritableSignal<Set<unknown>>;
   /** Anchor for Shift-click range selection. */
-  lastSelectedKey: unknown;
+  anchorKey: WritableSignal<unknown>;
+  /**
+   * Which item is the list's single tab stop (roving tabindex), as an index into the
+   * visible items. Keeping one tab stop per list means Tab reaches the move buttons
+   * after one stop instead of walking through every item.
+   */
+  activeIndex: WritableSignal<number>;
+  search: WritableSignal<string>;
+  sortDirection: WritableSignal<SortDirection>;
+  /** What the list actually renders: its items, filtered by search and ordered by the sort toggle. */
+  visibleItems: Signal<T[]>;
+  /** `activeIndex`, clamped so the tab stop stays on a rendered item after a search, sort or move. */
+  tabStop: Signal<number>;
 }
 
 /** How long a type-ahead buffer stays alive between keystrokes. */
@@ -84,80 +104,34 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
 
   protected ariaMessage = signal('');
 
-  protected availableList = signal<ListState<T>>({
-    items: [],
-    selectedKeys: new Set(),
-    lastSelectedKey: null,
-  });
+  protected availableList = this.createListState();
+  protected selectedList = this.createListState();
 
-  protected selectedList = signal<ListState<T>>({
-    items: [],
-    selectedKeys: new Set(),
-    lastSelectedKey: null,
-  });
-
-  protected availableSearch = signal('');
-  protected selectedSearch = signal('');
-  private availableSortDirection = signal(SortDirection.Asc);
-  private selectedSortDirection = signal(SortDirection.Asc);
-
-  /**
-   * Which item is the list's single tab stop (roving tabindex), as an index into the
-   * visible items. Keeping one tab stop per list means Tab reaches the move buttons
-   * after one stop instead of walking through every item.
-   */
-  private availableActiveIndex = signal(0);
-  private selectedActiveIndex = signal(0);
-
-  /** What each list actually renders: the raw items, filtered by search and ordered by the sort toggle. */
-  protected availableItems = computed(() => this.presentItems(
-    this.availableList().items,
-    this.availableSearch(),
-    this.availableSortDirection(),
-  ));
-
-  protected selectedItems = computed(() => this.presentItems(
-    this.selectedList().items,
-    this.selectedSearch(),
-    this.selectedSortDirection(),
-  ));
-
-  protected hasAvailableSelection = computed(() => this.availableList().selectedKeys.size > 0);
-  protected hasSelectedSelection = computed(() => this.selectedList().selectedKeys.size > 0);
-  protected canMoveAllRight = computed(() => this.availableItems().length > 0);
-  protected canMoveAllLeft = computed(() => this.selectedItems().length > 0);
-
-  /** Clamped, so the tab stop stays on a rendered item after a search, sort or move. */
-  protected availableTabStop = computed(() => this.clampIndex(
-    this.availableActiveIndex(),
-    this.availableItems().length,
-  ));
-
-  protected selectedTabStop = computed(() => this.clampIndex(
-    this.selectedActiveIndex(),
-    this.selectedItems().length,
-  ));
+  protected hasAvailableSelection = computed(() => this.availableList.selectedKeys().size > 0);
+  protected hasSelectedSelection = computed(() => this.selectedList.selectedKeys().size > 0);
+  protected canMoveAllRight = computed(() => this.availableList.visibleItems().length > 0);
+  protected canMoveAllLeft = computed(() => this.selectedList.visibleItems().length > 0);
 
   protected availableCountLabel = translatedSignal((translate) => this.countLabel(
     translate,
-    this.availableItems().length,
-    this.availableList().items.length,
+    this.availableList.visibleItems().length,
+    this.availableList.items().length,
   ));
 
   protected selectedCountLabel = translatedSignal((translate) => this.countLabel(
     translate,
-    this.selectedItems().length,
-    this.selectedList().items.length,
+    this.selectedList.visibleItems().length,
+    this.selectedList.items().length,
   ));
 
-  protected availableSortIcon = computed(() => this.sortIcon(this.availableSortDirection()));
-  protected selectedSortIcon = computed(() => this.sortIcon(this.selectedSortDirection()));
+  protected availableSortIcon = computed(() => this.sortIcon(this.availableList.sortDirection()));
+  protected selectedSortIcon = computed(() => this.sortIcon(this.selectedList.sortDirection()));
   protected availableSortLabel = translatedSignal(
-    (translate) => this.sortLabel(translate, this.availableSortDirection()),
+    (translate) => this.sortLabel(translate, this.availableList.sortDirection()),
   );
 
   protected selectedSortLabel = translatedSignal(
-    (translate) => this.sortLabel(translate, this.selectedSortDirection()),
+    (translate) => this.sortLabel(translate, this.selectedList.sortDirection()),
   );
 
   private availableItemElements = viewChildren('availableItem', { read: ElementRef<HTMLElement> });
@@ -172,15 +146,18 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   constructor() {
     // Sync source and destination with internal state
     effect(() => {
-      // Don't sync during drag operations to avoid race conditions
-      if (this.isUpdatingFromDrag) {
-        return;
-      }
-
+      // Read every input up front. Returning before reading them would leave the effect
+      // with no producers on that run, and Angular would never schedule it again — the
+      // lists would stop following `source` for the rest of the component's life.
       const sourceItems = this.source();
       const destItems = this.destination();
       const keyProp = this.key();
       const displayProp = this.display();
+
+      // Don't sync during drag operations to avoid race conditions
+      if (this.isUpdatingFromDrag) {
+        return;
+      }
 
       // Validate that key and display properties exist in items
       this.validateInputs(sourceItems, keyProp, displayProp);
@@ -191,17 +168,8 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
       // Available items are those not in destination
       const available = sourceItems.filter((item) => !destIds.has(this.getItemKey(item, keyProp)));
 
-      this.availableList.set({
-        items: available,
-        selectedKeys: new Set(),
-        lastSelectedKey: null,
-      });
-
-      this.selectedList.set({
-        items: destItems,
-        selectedKeys: new Set(),
-        lastSelectedKey: null,
-      });
+      this.resetList(this.availableList, available);
+      this.resetList(this.selectedList, destItems);
     });
 
     // Clean up pending timeouts on destroy
@@ -213,6 +181,25 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
         clearTimeout(this.typeAheadTimeoutId);
       }
     });
+  }
+
+  private createListState(): ListState<T> {
+    const items = signal<T[]>([]);
+    const search = signal('');
+    const sortDirection = signal(SortDirection.Asc);
+    const activeIndex = signal(0);
+    const visibleItems = computed(() => this.presentItems(items(), search(), sortDirection()));
+
+    return {
+      items,
+      selectedKeys: signal<Set<unknown>>(new Set()),
+      anchorKey: signal<unknown>(null),
+      activeIndex,
+      search,
+      sortDirection,
+      visibleItems,
+      tabStop: computed(() => this.clampIndex(activeIndex(), visibleItems().length)),
+    };
   }
 
   private validateInputs(items: T[], keyProp: string, displayProp: string): void {
@@ -282,26 +269,20 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   }
 
   protected toggleSort(listType: ListType): void {
-    const directionSignal = listType === 'available' ? this.availableSortDirection : this.selectedSortDirection;
-    directionSignal.update((direction) => (
+    this.list(listType).sortDirection.update((direction) => (
       direction === SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc
     ));
   }
 
-  private listState(listType: ListType): ListState<T> {
-    return listType === 'available' ? this.availableList() : this.selectedList();
-  }
-
-  private listSignal(listType: ListType): WritableSignal<ListState<T>> {
+  private list(listType: ListType): ListState<T> {
     return listType === 'available' ? this.availableList : this.selectedList;
   }
 
-  private visibleItems(listType: ListType): T[] {
-    return listType === 'available' ? this.availableItems() : this.selectedItems();
-  }
-
-  private activeIndexSignal(listType: ListType): WritableSignal<number> {
-    return listType === 'available' ? this.availableActiveIndex : this.selectedActiveIndex;
+  /** Replaces a list's items and drops the selection that belonged to the old ones. */
+  private resetList(list: ListState<T>, items: T[]): void {
+    list.items.set(items);
+    list.selectedKeys.set(new Set());
+    list.anchorKey.set(null);
   }
 
   private clampIndex(index: number, length: number): number {
@@ -325,8 +306,8 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     }, 1000);
   }
 
-  protected isItemSelected(listState: ListState<T>, item: T): boolean {
-    return listState.selectedKeys.has(this.getItemKey(item, this.key()));
+  protected isItemSelected(listType: ListType, item: T): boolean {
+    return this.list(listType).selectedKeys().has(this.getItemKey(item, this.key()));
   }
 
   /**
@@ -334,24 +315,25 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
    * which is what the user sees and what Shift-click ranges are measured against.
    */
   protected onItemClick(listType: ListType, index: number, event: MouseEvent): void {
-    const visible = this.visibleItems(listType);
+    const list = this.list(listType);
+    const visible = list.visibleItems();
     const item = visible[index];
 
     if (!item) {
       return;
     }
 
-    this.activeIndexSignal(listType).set(index);
+    list.activeIndex.set(index);
 
-    const listState = this.listState(listType);
     const isCtrlOrCmd = event.ctrlKey || event.metaKey;
     const isShift = event.shiftKey;
     const itemKey = this.getItemKey(item, this.key());
-    const newSelectedKeys = new Set(listState.selectedKeys);
+    const newSelectedKeys = new Set(list.selectedKeys());
 
     if (isShift) {
+      const anchorKey = list.anchorKey();
       const anchorIndex = visible.findIndex(
-        (visibleItem) => this.getItemKey(visibleItem, this.key()) === listState.lastSelectedKey,
+        (visibleItem) => this.getItemKey(visibleItem, this.key()) === anchorKey,
       );
 
       if (anchorIndex !== -1) {
@@ -367,7 +349,7 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
         }
 
         // Keep the original anchor so consecutive Shift-clicks grow from the same point.
-        this.listSignal(listType).set({ ...listState, selectedKeys: newSelectedKeys });
+        list.selectedKeys.set(newSelectedKeys);
         return;
       }
 
@@ -386,15 +368,12 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
       newSelectedKeys.add(itemKey);
     }
 
-    this.listSignal(listType).set({
-      ...listState,
-      selectedKeys: newSelectedKeys,
-      lastSelectedKey: itemKey,
-    });
+    list.selectedKeys.set(newSelectedKeys);
+    list.anchorKey.set(itemKey);
   }
 
   protected onItemKeydown(listType: ListType, index: number, event: KeyboardEvent): void {
-    const visible = this.visibleItems(listType);
+    const visible = this.list(listType).visibleItems();
 
     switch (event.key) {
       case 'ArrowDown':
@@ -431,7 +410,7 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   }
 
   private focusAndSelect(listType: ListType, index: number, event: KeyboardEvent): void {
-    if (index < 0 || index >= this.visibleItems(listType).length) {
+    if (index < 0 || index >= this.list(listType).visibleItems().length) {
       return;
     }
 
@@ -444,7 +423,7 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   }
 
   private focusItem(listType: ListType, index: number): void {
-    this.activeIndexSignal(listType).set(index);
+    this.list(listType).activeIndex.set(index);
 
     const elements = listType === 'available' ? this.availableItemElements() : this.selectedItemElements();
     elements[index]?.nativeElement.focus();
@@ -469,7 +448,7 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
       this.typeAheadTimeoutId = null;
     }, typeAheadResetTimeout);
 
-    const visible = this.visibleItems(listType);
+    const visible = this.list(listType).visibleItems();
     const matchIndex = visible.findIndex(
       (item) => this.getDisplayValue(item).toLowerCase().startsWith(this.typeAheadBuffer),
     );
@@ -497,13 +476,13 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
 
   /** Moves every item the list currently shows, so a search field narrows what "all" means. */
   protected moveAllRight(): void {
-    const items = this.availableItems();
+    const items = this.availableList.visibleItems();
     this.transferItems('available', 'selected', items);
     this.announceMove(items.length, this.targetName(), true);
   }
 
   protected moveAllLeft(): void {
-    const items = this.selectedItems();
+    const items = this.selectedList.visibleItems();
     this.transferItems('selected', 'available', items);
     this.announceMove(items.length, this.sourceName(), true);
   }
@@ -520,8 +499,9 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   }
 
   private getSelectedItems(listType: ListType): T[] {
-    const listState = this.listState(listType);
-    return listState.items.filter((item) => listState.selectedKeys.has(this.getItemKey(item, this.key())));
+    const list = this.list(listType);
+    const selectedKeys = list.selectedKeys();
+    return list.items().filter((item) => selectedKeys.has(this.getItemKey(item, this.key())));
   }
 
   private transferItems(fromType: ListType, toType: ListType, itemsToMove: T[]): void {
@@ -529,21 +509,12 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
       return;
     }
 
-    const fromList = this.listState(fromType);
-    const toList = this.listState(toType);
+    const fromList = this.list(fromType);
+    const toList = this.list(toType);
     const movedKeys = new Set(itemsToMove.map((item) => this.getItemKey(item, this.key())));
 
-    this.listSignal(fromType).set({
-      items: fromList.items.filter((item) => !movedKeys.has(this.getItemKey(item, this.key()))),
-      selectedKeys: new Set(),
-      lastSelectedKey: null,
-    });
-
-    this.listSignal(toType).set({
-      items: [...toList.items, ...itemsToMove],
-      selectedKeys: new Set(),
-      lastSelectedKey: null,
-    });
+    this.resetList(fromList, fromList.items().filter((item) => !movedKeys.has(this.getItemKey(item, this.key()))));
+    this.resetList(toList, [...toList.items(), ...itemsToMove]);
 
     this.updateDestination();
   }
@@ -578,17 +549,18 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   }
 
   private reorderWithinList(listType: ListType, previousIndex: number, currentIndex: number): void {
-    const listState = this.listState(listType);
-    const visible = this.visibleItems(listType);
-    const newItems = [...listState.items];
+    const list = this.list(listType);
+    const items = list.items();
+    const visible = list.visibleItems();
+    const newItems = [...items];
 
     moveItemInArray(
       newItems,
-      this.absoluteIndex(listState.items, visible, previousIndex),
-      this.absoluteIndex(listState.items, visible, currentIndex),
+      this.absoluteIndex(items, visible, previousIndex),
+      this.absoluteIndex(items, visible, currentIndex),
     );
 
-    this.listSignal(listType).set({ ...listState, items: newItems });
+    list.items.set(newItems);
 
     if (listType === 'selected') {
       this.updateDestination();
@@ -603,35 +575,29 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     previousIndex: number,
     currentIndex: number,
   ): void {
-    const fromList = this.listState(fromType);
-    const toList = this.listState(toType);
-    const item = this.visibleItems(fromType)[previousIndex];
+    const fromList = this.list(fromType);
+    const toList = this.list(toType);
+    const item = fromList.visibleItems()[previousIndex];
 
     if (!item) {
       return;
     }
 
     const itemKey = this.getItemKey(item, this.key());
-    const newToItems = [...toList.items];
-    newToItems.splice(this.absoluteIndex(toList.items, this.visibleItems(toType), currentIndex), 0, item);
+    const newToItems = [...toList.items()];
+    newToItems.splice(this.absoluteIndex(toList.items(), toList.visibleItems(), currentIndex), 0, item);
 
-    this.listSignal(fromType).set({
-      items: fromList.items.filter((fromItem) => this.getItemKey(fromItem, this.key()) !== itemKey),
-      selectedKeys: new Set(),
-      lastSelectedKey: null,
-    });
-
-    this.listSignal(toType).set({
-      items: newToItems,
-      selectedKeys: new Set(),
-      lastSelectedKey: null,
-    });
+    this.resetList(
+      fromList,
+      fromList.items().filter((fromItem) => this.getItemKey(fromItem, this.key()) !== itemKey),
+    );
+    this.resetList(toList, newToItems);
 
     this.updateDestination();
     this.announceMove(1, toType === 'selected' ? this.targetName() : this.sourceName());
   }
 
   private updateDestination(): void {
-    this.destination.set(this.selectedList().items);
+    this.destination.set(this.selectedList.items());
   }
 }
