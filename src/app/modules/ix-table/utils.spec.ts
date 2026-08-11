@@ -502,7 +502,7 @@ describe('tnTableListHost', () => {
         const list = tnTableListHost<Row>(provider, { displayedColumns: ['name'] });
 
         // The catalog's `loadingConfig` title, so the six migrated lists can't drift onto a
-        // second spelling of it (webui carries both 'Loading...' and 'Loading…').
+        // second spelling of it (webui used to carry both 'Loading...' and 'Loading…').
         expect(list.loadingMessage()).toBe('Loading...');
       });
     });

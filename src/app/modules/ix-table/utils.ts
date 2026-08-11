@@ -395,8 +395,8 @@ export interface TnTableListHost<T extends object> {
    * dependency, so it can only ship the untranslated default and expects the app to pass a
    * translated one. Resolved here, out of the same `EmptyService` catalog that supplies
    * {@link empty}'s message, rather than written out as `'Loading...' | translate` in each
-   * template: webui already carries two spellings of that string (`Loading...` and `Loading…`)
-   * which translate differently, and every fresh copy is a chance to add a third.
+   * template: webui carried two spellings of that string (`Loading...` and `Loading…`) which
+   * translated to separate entries, and every fresh copy is a chance to add a third.
    */
   readonly loadingMessage: Signal<string>;
   /** For `[emptyMessage]`/`[emptyIcon]` and the page-level empty state. */

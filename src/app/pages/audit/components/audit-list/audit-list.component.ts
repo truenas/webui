@@ -1,8 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  Component, ChangeDetectionStrategy, inject, input, output,
+  Component, ChangeDetectionStrategy, computed, inject, input, output,
 } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnCellDefDirective,
@@ -34,29 +33,21 @@ export const auditDisplayedColumns: string[] = Object.freeze([
 ]) as string[];
 
 /**
- * The page-specific half of an empty state. Only the title and icon are page-specific — the body
- * copy comes from {@link EmptyService.descriptionForType}, which owns the one place each state's
- * description is written.
+ * The only page-specific half of an empty state: its icon. Audit's glyphs deliberately differ from
+ * {@link EmptyService.iconForType} — a spinner while loading, the list icon rather than a rocket
+ * for a first use no one can act on (audit records are written by the system, not added by a user).
+ * Both the title and the body copy come from {@link EmptyService}, which owns the one place each
+ * state's copy is written.
  */
-interface EmptyAttrs {
-  title: string;
-  icon: string;
-}
-
-const loadingTitle = T('Loading…');
-
-const emptyTypeAttrs = new Map<EmptyType, EmptyAttrs>([
-  [EmptyType.Loading, { title: loadingTitle, icon: 'mdi-loading' }],
-  [EmptyType.Errors, { title: T('Cannot retrieve response'), icon: 'mdi-alert-octagon' }],
-  [EmptyType.NoSearchResults, { title: T('No Search Results.'), icon: 'mdi-magnify-scan' }],
-  [EmptyType.FirstUse, { title: T('No records have been added yet'), icon: 'mdi-format-list-text' }],
-  [EmptyType.NoPageData, { title: T('No records have been added yet'), icon: 'mdi-format-list-text' }],
+const emptyTypeIcons = new Map<EmptyType, string>([
+  [EmptyType.Loading, 'mdi-loading'],
+  [EmptyType.Errors, 'mdi-alert-octagon'],
+  [EmptyType.NoSearchResults, 'mdi-magnify-scan'],
+  [EmptyType.FirstUse, 'mdi-format-list-text'],
+  [EmptyType.NoPageData, 'mdi-format-list-text'],
 ]);
 
-const defaultEmptyAttrs: EmptyAttrs = {
-  title: T('No records have been added yet'),
-  icon: 'mdi-format-list-text',
-};
+const defaultEmptyIcon = 'mdi-format-list-text';
 
 @Component({
   selector: 'ix-audit-list',
@@ -91,10 +82,16 @@ export class AuditListComponent {
   readonly rowSelected = output<AuditEntry>();
 
   protected readonly displayedColumns = auditDisplayedColumns;
-  protected readonly loadingTitle = loadingTitle;
 
-  protected emptyAttrsFor(type: EmptyType | null | undefined): EmptyAttrs {
-    return (type && emptyTypeAttrs.get(type)) ?? defaultEmptyAttrs;
+  /**
+   * `tn-table` defaults `[loadingMessage]` to a bare English literal — the library takes no i18n
+   * dependency — so the app passes a translated one, out of the same catalog the empty titles come
+   * from rather than as a fresh `'Loading...' | translate` literal here.
+   */
+  protected readonly loadingMessage = computed(() => this.emptyService.titleForType(EmptyType.Loading));
+
+  protected emptyIconFor(type: EmptyType | null | undefined): string {
+    return (type && emptyTypeIcons.get(type)) ?? defaultEmptyIcon;
   }
 
   protected readonly trackByAuditId = (_index: number, row: AuditEntry): string => row.audit_id;
