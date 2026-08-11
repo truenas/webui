@@ -138,6 +138,8 @@ export class GroupListComponent implements OnInit {
 
   protected readonly emptyDescription = computed(() => this.emptyService.descriptionForType(this.emptyType()));
 
+  protected readonly emptyIcon = computed(() => this.emptyService.iconForType(this.emptyType()));
+
   protected getRolesValue(row: Group): string {
     return formatRoleNames(row.roles, (key) => this.translate.instant(key)) || this.translate.instant('N/A');
   }

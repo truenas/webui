@@ -30,6 +30,7 @@
     [loading]="isLoading()"
     [emptyMessage]="emptyService.titleForType(emptyType())"
     [emptyDescription]="emptyService.descriptionForType(emptyType())"
+    [emptyIcon]="emptyService.iconForType(emptyType())"
     (sortChange)="onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'service_path'" [sortable]="true">

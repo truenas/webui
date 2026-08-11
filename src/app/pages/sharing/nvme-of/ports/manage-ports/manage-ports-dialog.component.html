@@ -8,6 +8,7 @@
     [loading]="isLoading()"
     [emptyMessage]="emptyService.titleForType(emptyType())"
     [emptyDescription]="emptyService.descriptionForType(emptyType())"
+    [emptyIcon]="emptyService.iconForType(emptyType())"
   >
     <ng-container [tnColumnDef]="'addr_trtype'">
       <ng-template tnHeaderCellDef>{{ 'Type' | translate }}</ng-template>

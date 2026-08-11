@@ -47,6 +47,7 @@
     [loading]="nfs3Loading()"
     [emptyMessage]="emptyService.titleForType(nfs3EmptyType())"
     [emptyDescription]="emptyService.descriptionForType(nfs3EmptyType())"
+    [emptyIcon]="emptyService.iconForType(nfs3EmptyType())"
     (sortChange)="onNfs3SortChange($event)"
   >
     <ng-container [tnColumnDef]="'ip'" [sortable]="true">
@@ -81,6 +82,7 @@
     [loading]="nfs4Loading()"
     [emptyMessage]="emptyService.titleForType(nfs4EmptyType())"
     [emptyDescription]="emptyService.descriptionForType(nfs4EmptyType())"
+    [emptyIcon]="emptyService.iconForType(nfs4EmptyType())"
     (sortChange)="onNfs4SortChange($event)"
   >
     <ng-container [tnColumnDef]="'name'" [sortable]="true">

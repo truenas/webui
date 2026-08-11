@@ -21,6 +21,7 @@
     [loading]="isLoading()"
     [emptyMessage]="emptyService.titleForType(emptyType())"
     [emptyDescription]="emptyService.descriptionForType(emptyType())"
+    [emptyIcon]="emptyService.iconForType(emptyType())"
   >
     <ng-container [tnColumnDef]="'name'">
       <ng-template tnHeaderCellDef>{{ 'Port' | translate }}</ng-template>

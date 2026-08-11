@@ -36,6 +36,7 @@
   [loading]="!!(dataProvider.isLoading$ | async)"
   [emptyMessage]="emptyService.titleForType(emptyType)"
   [emptyDescription]="emptyService.descriptionForType(emptyType)"
+  [emptyIcon]="emptyService.iconForType(emptyType)"
   (selectionChange)="onSelectionChange($event)"
   (sortChange)="onSortChange($event)"
 >

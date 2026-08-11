@@ -14,6 +14,7 @@
     [loading]="loading"
     [emptyMessage]="emptyService.titleForType(emptyConfig)"
     [emptyDescription]="emptyService.descriptionForType(emptyConfig)"
+    [emptyIcon]="emptyService.iconForType(emptyConfig)"
     (sortChange)="onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'name'" [sortable]="true">

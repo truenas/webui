@@ -10,6 +10,7 @@
     [loading]="isLoading()"
     [emptyMessage]="emptyService.titleForType(emptyType())"
     [emptyDescription]="emptyService.descriptionForType(emptyType())"
+    [emptyIcon]="emptyService.iconForType(emptyType())"
   >
     <ng-container [tnColumnDef]="'server_id'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Server' | translate }}</ng-template>

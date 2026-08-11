@@ -27,6 +27,7 @@
     [loading]="isLoading()"
     [emptyMessage]="emptyService.titleForType(emptyType())"
     [emptyDescription]="emptyService.descriptionForType(emptyType())"
+    [emptyIcon]="emptyService.iconForType(emptyType())"
     [clickable]="true"
     [activeRow]="dataProvider().expandedRow"
     (rowClick)="onRowClick($event)"

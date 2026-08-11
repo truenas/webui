@@ -122,6 +122,8 @@ export class ReportingExporterListComponent implements OnInit {
 
   protected readonly emptyDescription = computed(() => this.emptyService.descriptionForType(this.emptyType()));
 
+  protected readonly emptyIcon = computed(() => this.emptyService.iconForType(this.emptyType()));
+
   ngOnInit(): void {
     this.getExporters();
   }

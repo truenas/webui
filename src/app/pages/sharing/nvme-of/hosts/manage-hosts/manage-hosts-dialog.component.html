@@ -8,6 +8,7 @@
     [loading]="isLoading()"
     [emptyMessage]="emptyService.titleForType(emptyType())"
     [emptyDescription]="emptyService.descriptionForType(emptyType())"
+    [emptyIcon]="emptyService.iconForType(emptyType())"
   >
     <ng-container [tnColumnDef]="'hostnqn'">
       <ng-template tnHeaderCellDef>{{ 'NQN' | translate }}</ng-template>
