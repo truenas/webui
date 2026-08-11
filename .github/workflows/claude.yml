@@ -13,12 +13,17 @@ name: Claude Review
 # *this* code and nothing about grading.
 #
 # Reports as `review / <job names in ux-github-workflows>` — two checks, since
-# the shared workflow runs the write-access gate as a job of its own. Branch
-# protection matches those whole strings, so the shared workflow's job names are
-# API: renaming one there silently stops the check reporting here. A required
-# check that never reports does not fail, it stays pending — so the PR becomes
-# unmergeable with nothing red on it to explain why. Same caveat, same wording,
-# as `check-ticket.yml` in this repo.
+# the shared workflow runs the write-access gate as a job of its own. The job id
+# below stays `review`, but it stops being a normal job, so adopting this
+# renames the checks now: the single `review` is gone, as is `check-ux-team /
+# Check UX Team Membership`. Any rule or merge-queue config requiring either has
+# to be updated as this merges, not eventually.
+#
+# Branch protection matches those whole strings, so the shared workflow's job
+# names are API from here on: renaming one there silently stops the check
+# reporting. Either way a required check that never reports does not fail, it
+# stays pending — the PR is unmergeable with nothing red on it to explain why.
+# Same caveat, same wording, as `check-ticket.yml` in this repo.
 #
 # The trigger stays here rather than moving upstream: a `workflow_call` has no
 # say in what triggers its caller, and both the `NAS-*` base branches and the
