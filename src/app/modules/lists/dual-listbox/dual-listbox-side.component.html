@@ -1,0 +1,76 @@
+<div class="listbox-header">
+  <p class="listbox-title">
+    {{ listName() }}
+    <span class="listbox-count">{{ countLabel() }}</span>
+  </p>
+
+  @if (sortable()) {
+    <tn-icon-button
+      size="sm"
+      tooltipPosition="left"
+      [testId]="'sort-' + listType()"
+      [name]="sortIcon()"
+      [ariaLabel]="sortLabel()"
+      [tooltip]="sortLabel()"
+      (onClick)="side().toggleSort()"
+    ></tn-icon-button>
+  }
+</div>
+
+@if (searchable()) {
+  <tn-input
+    class="listbox-search"
+    prefixIcon="magnify"
+    prefixIconLibrary="mdi"
+    suffixIconLibrary="mdi"
+    [testId]="'search-' + listType()"
+    [placeholder]="'Search' | translate"
+    [ariaLabel]="'Search {list}' | translate: { list: listName() }"
+    [suffixIcon]="side().search() ? 'close-circle' : undefined"
+    [suffixIconAriaLabel]="'Clear search' | translate"
+    [suffixActionTestId]="'clear-search-' + listType()"
+    [ngModel]="side().search()"
+    (ngModelChange)="side().search.set($event)"
+    (onSuffixAction)="side().search.set('')"
+  ></tn-input>
+}
+
+<div class="record-picker">
+  <!--
+    `role` is bound rather than set as a static attribute: tn-list and tn-list-item
+    declare role="list" / role="listitem" as host attributes, and those win over a
+    static attribute written here.
+  -->
+  <tn-list
+    cdkDropList
+    aria-multiselectable="true"
+    [id]="listId()"
+    [attr.role]="'listbox'"
+    [cdkDropListData]="side().visibleItems()"
+    [cdkDropListSortingDisabled]="sortable()"
+    [attr.aria-label]="listName()"
+    [ngStyle]="{ 'max-height': height(), 'min-height': height() }"
+    (cdkDropListDropped)="dropped.emit($event)"
+  >
+    @for (item of side().visibleItems(); track trackByKey($index, item); let idx = $index) {
+      <tn-list-item
+        #listItem
+        cdkDrag
+        [wrap]="true"
+        [attr.role]="'option'"
+        [attr.aria-selected]="side().isSelected(item)"
+        [attr.tabindex]="idx === side().tabStop() ? 0 : -1"
+        (click)="onItemClick(idx, $event)"
+        (keydown)="onItemKeydown(idx, $event)"
+      >
+        @if (listItemIcon(); as icon) {
+          <tn-icon tnListIcon aria-hidden="true" [name]="icon"></tn-icon>
+        }
+
+        <label>{{ side().displayOf(item) }}</label>
+      </tn-list-item>
+    } @empty {
+      <p class="no-matches" role="presentation">{{ 'No matches found.' | translate }}</p>
+    }
+  </tn-list>
+</div>

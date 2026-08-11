@@ -1,4 +1,4 @@
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
@@ -240,6 +240,24 @@ describe('DualListBoxComponent', () => {
       expect(spectator.queryAll('.listbox-count')[0]).toHaveText('0 of 2');
     });
 
+    it('should not move a selected item that the search hides, but keeps it selected', async () => {
+      clickItem('available', 0);
+
+      const [availableSearch] = await getSearchFields();
+      await availableSearch.setValue('Item 3');
+      spectator.detectChanges();
+
+      // Item 1 is selected but off screen, so there is nothing left to move.
+      expect(await (await getButton('chevron-right')).isDisabled()).toBe(true);
+
+      // Widening the search brings the item, and the selection it kept, back into view.
+      await availableSearch.setValue('Item');
+      spectator.detectChanges();
+
+      expect(selectedNamesIn('available')).toEqual(['Item 1']);
+      expect(await (await getButton('chevron-right')).isDisabled()).toBe(false);
+    });
+
     it('should not render search fields when searchable is false', async () => {
       spectator.setInput('searchable', false);
       spectator.detectChanges();
@@ -368,6 +386,12 @@ describe('DualListBoxComponent', () => {
       spectator.triggerEventHandler(`#${side}-list`, 'cdkDropListDropped', event);
       spectator.detectChanges();
     };
+
+    it('should connect both lists to each other, so an item can be dragged across', () => {
+      const group = spectator.query(CdkDropListGroup, { read: CdkDropListGroup });
+
+      expect(group._items.size).toBe(2);
+    });
 
     it('should handle drag and drop within the same list', () => {
       drop('available', {
