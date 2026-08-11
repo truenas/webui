@@ -161,6 +161,61 @@ describe('GroupMembersComponent - built-in users', () => {
   });
 });
 
+describe('GroupMembersComponent - built-in users already in the group', () => {
+  let spectator: SpectatorRouting<GroupMembersComponent>;
+  let loader: HarnessLoader;
+
+  // root is both built-in and already a member; daemon is the only one the checkbox can hide.
+  const groupWithBuiltinMember = [{ ...fakeGroupDataSource[0], users: [41, 1] }] as Group[];
+
+  const createComponent = createRoutingFactory({
+    component: GroupMembersComponent,
+    imports: [ReactiveFormsModule, DualListBoxComponent],
+    providers: [
+      mockApi([
+        mockCall('group.query', groupWithBuiltinMember),
+        mockCall('user.query', [
+          { id: 41, username: 'dummy-user', builtin: false },
+          { id: 1, username: 'root', builtin: true },
+          { id: 2, username: 'daemon', builtin: true },
+        ] as User[]),
+        mockCall('group.update'),
+      ]),
+      mockProvider(DialogService),
+      mockProvider(SnackbarService),
+      mockAuth(),
+      mockWindow({
+        navigator: {
+          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        },
+      }),
+    ],
+    params: { pk: '1' },
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    spectator.detectChanges();
+  });
+
+  it('counts only the built-ins the checkbox can hide, not ones already in the group', async () => {
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+
+    expect(await checkbox.getLabelText()).toBe('Hide built-in users (1)');
+  });
+
+  it('keeps a built-in member on the members side when built-ins are hidden', async () => {
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    await checkbox.check();
+    spectator.detectChanges();
+
+    expect(spectator.queryAll('tn-list[aria-label="All Users"] tn-list-item')).toHaveLength(0);
+    expect(spectator.queryAll('tn-list[aria-label="Group Members"] tn-list-item label')
+      .map((element) => element.textContent.trim())).toEqual(['dummy-user', 'root']);
+  });
+});
+
 describe('GroupMembersComponent - directory service group', () => {
   const nonLocalGroup = [{ ...fakeGroupDataSource[0], local: false }] as Group[];
   const createNonLocalComponent = createRoutingFactory({

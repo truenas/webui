@@ -62,13 +62,6 @@ export class DualListBoxSideComponent<T> {
 
   readonly dropped = output<CdkDragDrop<T[]>>();
 
-  /**
-   * Bound to cdkDropList's own `id` input rather than the DOM attribute, which the directive
-   * overwrites with a generated one. The parent reads it back off the drag event to tell the
-   * two lists apart.
-   */
-  protected listId = computed(() => `${this.listType()}-list`);
-
   protected countLabel = translatedSignal((translate) => {
     const shown = this.side().visibleItems().length;
     const total = this.side().items().length;
@@ -107,6 +100,28 @@ export class DualListBoxSideComponent<T> {
 
   protected trackByKey(index: number, item: T): unknown {
     return this.side().keyOf(item);
+  }
+
+  /** Moves focus to the item with this key. Returns false when the list is not showing it. */
+  focusKey(key: unknown): boolean {
+    const index = this.side().visibleItems().findIndex((item) => this.side().keyOf(item) === key);
+
+    if (index === -1) {
+      return false;
+    }
+
+    this.focusItem(index);
+    return true;
+  }
+
+  /** Moves focus to the list's tab stop. Returns false when the list has nothing to focus. */
+  focusTabStop(): boolean {
+    if (!this.side().visibleItems().length) {
+      return false;
+    }
+
+    this.focusItem(this.side().tabStop());
+    return true;
   }
 
   protected onItemClick(index: number, event: MouseEvent): void {

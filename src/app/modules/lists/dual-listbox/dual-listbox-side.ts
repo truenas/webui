@@ -114,34 +114,33 @@ export class DualListBoxSide<T> {
       return;
     }
 
+    // Read before moving the tab stop: without an anchor a range grows from where focus was.
+    const anchorIndex = this.anchorIndex(visible);
+
     this.activeIndex.set(index);
 
     const itemKey = this.keyOf(item);
     const newSelectedKeys = new Set(this.selectedKeys());
 
     if (modifiers.shift) {
-      const anchorIndex = visible.findIndex((visibleItem) => this.keyOf(visibleItem) === this.anchorKey());
-
-      if (anchorIndex !== -1) {
-        // Shift alone replaces the selection with the range; Ctrl+Shift adds to it.
-        if (!modifiers.ctrl) {
-          newSelectedKeys.clear();
-        }
-
-        const start = Math.min(anchorIndex, index);
-        const end = Math.max(anchorIndex, index);
-        for (let i = start; i <= end; i++) {
-          newSelectedKeys.add(this.keyOf(visible[i]));
-        }
-
-        // Keep the original anchor so consecutive Shift-clicks grow from the same point.
-        this.selectedKeys.set(newSelectedKeys);
-        return;
+      // Shift alone replaces the selection with the range; Ctrl+Shift adds to it.
+      if (!modifiers.ctrl) {
+        newSelectedKeys.clear();
       }
 
-      newSelectedKeys.clear();
-      newSelectedKeys.add(itemKey);
-    } else if (modifiers.ctrl) {
+      const start = Math.min(anchorIndex, index);
+      const end = Math.max(anchorIndex, index);
+      for (let i = start; i <= end; i++) {
+        newSelectedKeys.add(this.keyOf(visible[i]));
+      }
+
+      // Keep the anchor where it was, so consecutive Shift-clicks grow from the same point.
+      this.selectedKeys.set(newSelectedKeys);
+      this.anchorKey.set(this.keyOf(visible[anchorIndex]));
+      return;
+    }
+
+    if (modifiers.ctrl) {
       // Ctrl/Cmd-click: toggle selection
       if (newSelectedKeys.has(itemKey)) {
         newSelectedKeys.delete(itemKey);
@@ -156,6 +155,18 @@ export class DualListBoxSide<T> {
 
     this.selectedKeys.set(newSelectedKeys);
     this.anchorKey.set(itemKey);
+  }
+
+  /**
+   * Where a Shift range starts. With nothing anchored yet — the user tabbed in, or type-ahead
+   * moved focus without selecting — a native listbox extends from the focused item, so the tab
+   * stop stands in for the anchor.
+   */
+  private anchorIndex(visible: T[]): number {
+    const anchorKey = this.anchorKey();
+    const index = visible.findIndex((item) => this.keyOf(item) === anchorKey);
+
+    return index === -1 ? this.tabStop() : index;
   }
 
   private presentItems(): T[] {

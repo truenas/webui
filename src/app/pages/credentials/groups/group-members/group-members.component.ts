@@ -46,7 +46,7 @@ export class GroupMembersComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly tnIconMarker = tnIconMarker;
-  protected selectedMembers: User[] = [];
+  protected readonly selectedMembers = signal<User[]>([]);
   protected readonly users = signal<User[]>([]);
 
   protected readonly isLoading = signal(false);
@@ -62,7 +62,15 @@ export class GroupMembersComponent implements OnInit {
     return this.hideBuiltinUsers() ? users.filter((user) => !user.builtin) : users;
   });
 
-  protected readonly builtinUserCount = computed(() => this.users().filter((user) => user.builtin).length);
+  /**
+   * Only the built-ins the checkbox would actually take off screen: it filters the available
+   * list, so a built-in account that is already a member stays visible on the members side.
+   */
+  protected readonly builtinUserCount = computed(() => {
+    const memberIds = new Set(this.selectedMembers().map((user) => user.id));
+
+    return this.users().filter((user) => user.builtin && !memberIds.has(user.id)).length;
+  });
 
   protected readonly hasAccountWrite = toSignal(
     this.authService.hasRole(this.requiredRoles),
@@ -115,7 +123,7 @@ export class GroupMembersComponent implements OnInit {
 
         this.group.set(group);
         this.users.set(users);
-        this.selectedMembers = users.filter((user) => group.users.includes(user.id));
+        this.selectedMembers.set(users.filter((user) => group.users.includes(user.id)));
         this.isLoading.set(false);
       },
       error: (error: unknown) => {
@@ -133,7 +141,7 @@ export class GroupMembersComponent implements OnInit {
   protected onSubmit(): void {
     this.isLoading.set(true);
 
-    const userIds = this.selectedMembers.map((user) => user.id);
+    const userIds = this.selectedMembers().map((user) => user.id);
     this.api.call('group.update', [this.group().id, { users: userIds }]).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({

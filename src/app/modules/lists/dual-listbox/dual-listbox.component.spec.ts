@@ -1,6 +1,8 @@
-import { CdkDragDrop, CdkDropListGroup } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TnIconButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { DualListBoxComponent } from './dual-listbox.component';
@@ -24,7 +26,12 @@ describe('DualListBoxComponent', () => {
 
   const getSearchFields = (): Promise<TnInputHarness[]> => loader.getAllHarnesses(TnInputHarness);
 
-  const itemsIn = (side: ListSide): HTMLElement[] => spectator.queryAll<HTMLElement>(`#${side}-list tn-list-item`);
+  const sideElement = (side: ListSide): HTMLElement => spectator
+    .queryAll<HTMLElement>('ix-dual-listbox-side')[side === 'available' ? 0 : 1];
+
+  const itemsIn = (side: ListSide): HTMLElement[] => Array.from(
+    sideElement(side).querySelectorAll<HTMLElement>('tn-list-item'),
+  );
   const namesIn = (side: ListSide): string[] => itemsIn(side).map((item) => item.textContent.trim());
   const selectedNamesIn = (side: ListSide): string[] => itemsIn(side)
     .filter((item) => item.getAttribute('aria-selected') === 'true')
@@ -178,6 +185,32 @@ describe('DualListBoxComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.component.destination()).toEqual([{ id: 1, name: 'Item 1' }]);
+  });
+
+  // The button that made the move disables itself once the selection clears, and a disabled
+  // button drops focus to <body>, stranding a keyboard user.
+  it('should move focus to the item that just landed in the receiving list', async () => {
+    clickItem('available', 1);
+
+    await (await getButton('chevron-right')).click();
+    spectator.detectChanges();
+
+    expect(namesIn('selected')).toEqual(['Item 2']);
+    expect(document.activeElement).toBe(itemsIn('selected')[0]);
+  });
+
+  it('should keep focus on the source list when the receiving list is not showing the item', async () => {
+    const [, selectedSearch] = await getSearchFields();
+    await selectedSearch.setValue('nothing matches this');
+    spectator.detectChanges();
+
+    clickItem('available', 0);
+
+    await (await getButton('chevron-right')).click();
+    spectator.detectChanges();
+
+    expect(itemsIn('selected')).toHaveLength(0);
+    expect(document.activeElement).toBe(itemsIn('available')[0]);
   });
 
   it('should display custom icon when listItemIcon is provided', () => {
@@ -382,8 +415,18 @@ describe('DualListBoxComponent', () => {
   });
 
   describe('Drag and Drop', () => {
-    const drop = (side: ListSide, event: DropEvent): void => {
-      spectator.triggerEventHandler(`#${side}-list`, 'cdkDropListDropped', event);
+    const dropListOf = (side: ListSide): DebugElement => spectator.debugElement
+      .queryAll(By.directive(CdkDropList))[side === 'available' ? 0 : 1];
+
+    const drop = (from: ListSide, to: ListSide, previousIndex: number, currentIndex: number): void => {
+      const target = dropListOf(to);
+
+      target.triggerEventHandler('cdkDropListDropped', {
+        previousContainer: dropListOf(from).injector.get(CdkDropList),
+        container: target.injector.get(CdkDropList),
+        previousIndex,
+        currentIndex,
+      } as DropEvent);
       spectator.detectChanges();
     };
 
@@ -394,23 +437,13 @@ describe('DualListBoxComponent', () => {
     });
 
     it('should handle drag and drop within the same list', () => {
-      drop('available', {
-        previousContainer: { id: 'available-list' },
-        container: { id: 'available-list' },
-        previousIndex: 0,
-        currentIndex: 2,
-      } as DropEvent);
+      drop('available', 'available', 0, 2);
 
       expect(namesIn('available')).toEqual(['Item 2', 'Item 3', 'Item 1']);
     });
 
     it('should handle drag and drop from available to selected list', () => {
-      drop('selected', {
-        previousContainer: { id: 'available-list' },
-        container: { id: 'selected-list' },
-        previousIndex: 0,
-        currentIndex: 0,
-      } as DropEvent);
+      drop('available', 'selected', 0, 0);
 
       expect(namesIn('available')).toEqual(['Item 2', 'Item 3']);
       expect(namesIn('selected')).toEqual(['Item 1']);
@@ -420,24 +453,14 @@ describe('DualListBoxComponent', () => {
       spectator.setInput('destination', [testData[0]]);
       spectator.detectChanges();
 
-      drop('available', {
-        previousContainer: { id: 'selected-list' },
-        container: { id: 'available-list' },
-        previousIndex: 0,
-        currentIndex: 0,
-      } as DropEvent);
+      drop('selected', 'available', 0, 0);
 
       expect(namesIn('available')).toEqual(['Item 1', 'Item 2', 'Item 3']);
       expect(namesIn('selected')).toEqual([]);
     });
 
     it('should keep following the source input after a drag', () => {
-      drop('selected', {
-        previousContainer: { id: 'available-list' },
-        container: { id: 'selected-list' },
-        previousIndex: 0,
-        currentIndex: 0,
-      } as DropEvent);
+      drop('available', 'selected', 0, 0);
 
       spectator.setInput('source', [testData[0], testData[1]]);
       spectator.detectChanges();
@@ -446,12 +469,7 @@ describe('DualListBoxComponent', () => {
     });
 
     it('should update destination after drag and drop', () => {
-      drop('selected', {
-        previousContainer: { id: 'available-list' },
-        container: { id: 'selected-list' },
-        previousIndex: 1,
-        currentIndex: 0,
-      } as DropEvent);
+      drop('available', 'selected', 1, 0);
 
       expect(spectator.component.destination()).toEqual([testData[1]]);
     });

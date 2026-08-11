@@ -1,6 +1,7 @@
 <!-- cdkDropListGroup connects the two lists to each other, so neither has to name the other. -->
 <div class="dual-list" cdkDropListGroup>
   <ix-dual-listbox-side
+    #availableSide
     listType="available"
     [side]="availableList"
     [listName]="sourceName()"
@@ -8,7 +9,7 @@
     [height]="height()"
     [sortable]="sort()"
     [searchable]="searchable()"
-    (dropped)="onDrop($event)"
+    (dropped)="onDrop(availableList, $event)"
   ></ix-dual-listbox-side>
 
   <div class="button-box">
@@ -62,6 +63,7 @@
   </div>
 
   <ix-dual-listbox-side
+    #selectedSide
     listType="selected"
     [side]="selectedList"
     [listName]="targetName()"
@@ -69,7 +71,7 @@
     [height]="height()"
     [sortable]="sort()"
     [searchable]="searchable()"
-    (dropped)="onDrop($event)"
+    (dropped)="onDrop(selectedList, $event)"
   ></ix-dual-listbox-side>
 </div>
 

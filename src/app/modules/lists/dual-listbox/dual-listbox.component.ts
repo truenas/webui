@@ -11,6 +11,7 @@ import {
   input,
   model,
   signal,
+  viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
@@ -59,6 +60,9 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
 
   protected canMoveAllRight = computed(() => this.availableList.visibleItems().length > 0);
   protected canMoveAllLeft = computed(() => this.selectedList.visibleItems().length > 0);
+
+  private availableSide = viewChild.required<DualListBoxSideComponent<T>>('availableSide');
+  private selectedSide = viewChild.required<DualListBoxSideComponent<T>>('selectedSide');
 
   private ariaTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private isUpdatingFromDrag = false;
@@ -145,8 +149,32 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   }
 
   private moveItems(from: DualListBoxSide<T>, to: DualListBoxSide<T>, itemsToMove: T[], all = false): void {
+    if (!itemsToMove.length) {
+      return;
+    }
+
     this.transferItems(from, to, itemsToMove);
     this.announceMove(itemsToMove.length, this.nameOf(to), all);
+    this.restoreFocus(from, to, to.keyOf(itemsToMove[0]));
+  }
+
+  /**
+   * A move empties the selection, which disables the button that made it — and a disabled
+   * button drops focus to `<body>`, leaving a keyboard user to Tab in from the top again.
+   * Land on the first item that just arrived instead: it is where the action happened, and
+   * it gives a screen reader somewhere to go alongside the live-region announcement.
+   */
+  private restoreFocus(from: DualListBoxSide<T>, to: DualListBoxSide<T>, movedKey: unknown): void {
+    afterNextRender(() => {
+      if (!this.componentFor(to).focusKey(movedKey)) {
+        // The receiving list is filtered and does not show the item: stay on the list it left.
+        this.componentFor(from).focusTabStop();
+      }
+    }, { injector: this.injector });
+  }
+
+  private componentFor(side: DualListBoxSide<T>): DualListBoxSideComponent<T> {
+    return side === this.availableList ? this.availableSide() : this.selectedSide();
   }
 
   private announceMove(count: number, listName: string, all = false): void {
@@ -191,11 +219,13 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     return index === -1 ? items.length : index;
   }
 
-  protected onDrop(event: CdkDragDrop<T[]>): void {
+  /** `to` comes from the template — the side whose list received the drop. */
+  protected onDrop(to: DualListBoxSide<T>, event: CdkDragDrop<T[]>): void {
     this.isUpdatingFromDrag = true;
 
-    const from = this.sideOf(event.previousContainer.id);
-    const to = this.sideOf(event.container.id);
+    // Only these two lists are connected to each other, so a drop that did not start here
+    // started on the other side.
+    const from = event.previousContainer === event.container ? to : this.otherSide(to);
 
     if (from === to) {
       this.reorderWithinList(from, event.previousIndex, event.currentIndex);
@@ -209,8 +239,8 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     }, { injector: this.injector });
   }
 
-  private sideOf(dropListId: string): DualListBoxSide<T> {
-    return dropListId === 'available-list' ? this.availableList : this.selectedList;
+  private otherSide(side: DualListBoxSide<T>): DualListBoxSide<T> {
+    return side === this.availableList ? this.selectedList : this.availableList;
   }
 
   private reorderWithinList(side: DualListBoxSide<T>, previousIndex: number, currentIndex: number): void {
