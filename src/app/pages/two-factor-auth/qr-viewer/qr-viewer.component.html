@@ -1,9 +1,10 @@
 <div>
   @if (showWarning()) {
-    <ix-warning
+    <tn-banner
       class="warning"
+      type="warning"
       [message]="helpText.qrCodeMessage | translate"
-    ></ix-warning>
+    ></tn-banner>
   }
 
   <qr-code [value]="qrInfo()" [size]="200"></qr-code>

@@ -79,11 +79,6 @@ export const helptextZvol = {
  an encryption <i>Key</i> or a user-defined <i>Passphrase</i>. Creating a new key file\
  invalidates any previously downloaded key file for this dataset.\
  Delete any previous key file backups and back up the new key file.'),
-    algorithmLabel: T('Algorithm'),
-    algorithmTooltip: T('Mathematical instruction sets that determine how plaintext is converted\
- into ciphertext. See\
- <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard" target="_blank">Advanced Encryption Standard (AES)</a>\
- for more details.'),
     passphraseLabel: T('Passphrase'),
     passphraseTooltip: T('User-defined string used to decrypt the dataset. Can be used instead of an encryption key.<br>\
  WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a\

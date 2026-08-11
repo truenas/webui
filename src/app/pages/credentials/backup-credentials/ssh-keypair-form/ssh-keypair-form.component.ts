@@ -23,7 +23,7 @@ import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-v
 import { LoaderService } from 'app/modules/loader/loader.service';
 import {
   SidePanelFooterMenu,
-} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';

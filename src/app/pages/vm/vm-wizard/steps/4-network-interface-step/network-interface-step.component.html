@@ -1,45 +1,47 @@
 <form [formGroup]="form">
-  <tn-form-field
-    [label]="'Adapter Type' | translate"
-    [tooltip]="helptext.NIC_type_tooltip | translate"
-    [required]="true"
-  >
-    <tn-select
-      formControlName="nic_type"
-      [options]="(nicTypeOptions$ | async) ?? []"
-    ></tn-select>
-  </tn-form-field>
-
-  <tn-form-field
-    [label]="'Mac Address' | translate"
-    [tooltip]="helptext.NIC_mac_tooltip | translate"
-    [required]="true"
-  >
-    <tn-input
-      formControlName="nic_mac"
+  <tn-form-section>
+    <tn-form-field
+      [label]="'Adapter Type' | translate"
+      [tooltip]="helptext.NIC_type_tooltip | translate"
       [required]="true"
-    ></tn-input>
-  </tn-form-field>
-
-  <tn-form-field
-    [label]="'Attach NIC' | translate"
-    [tooltip]="helptext.nic_attach_tooltip | translate"
-    [required]="true"
-  >
-    <tn-select
-      formControlName="nic_attach"
-      [options]="(nicAttachOptions$ | async) ?? []"
-    ></tn-select>
-  </tn-form-field>
-
-  @if (isVirtio) {
-    <tn-form-field>
-      <tn-checkbox
-        formControlName="trust_guest_rx_filters"
-        [label]="'Trust Guest Filters' | translate"
-      ></tn-checkbox>
+    >
+      <tn-select
+        formControlName="nic_type"
+        [options]="(nicTypeOptions$ | async) ?? []"
+      ></tn-select>
     </tn-form-field>
-  }
+
+    <tn-form-field
+      [label]="'Mac Address' | translate"
+      [tooltip]="helptext.NIC_mac_tooltip | translate"
+      [required]="true"
+    >
+      <tn-input
+        formControlName="nic_mac"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Attach NIC' | translate"
+      [tooltip]="helptext.nic_attach_tooltip | translate"
+      [required]="true"
+    >
+      <tn-select
+        formControlName="nic_attach"
+        [options]="(nicAttachOptions$ | async) ?? []"
+      ></tn-select>
+    </tn-form-field>
+
+    @if (isVirtio) {
+      <tn-form-field>
+        <tn-checkbox
+          formControlName="trust_guest_rx_filters"
+          [label]="'Trust Guest Filters' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+    }
+  </tn-form-section>
 
   <ix-form-actions>
     <tn-button

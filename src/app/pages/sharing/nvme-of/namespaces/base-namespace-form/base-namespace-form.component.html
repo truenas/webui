@@ -1,65 +1,73 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <tn-form-section>
-    <div class="device-type-toggle">
-      <span class="device-type-toggle__label" [id]="typeToggleLabelId">{{ 'Type' | translate }}</span>
-      <tn-button-toggle-group
-        formControlName="device_type"
-        [testId]="'device-type'"
-        [ariaLabelledby]="typeToggleLabelId"
+<!--
+  The [formGroup] lives here rather than on the host: it binds the group this component was handed,
+  so the controls below can't drift from the group it branches on, and no host has to arrange a
+  ControlContainer for projected content. Not a <form> — the host owns submission.
+-->
+<tn-form-section [formGroup]="group()">
+  <div class="device-type-toggle">
+    <span class="device-type-toggle__label" [id]="typeToggleLabelId">{{ 'Type' | translate }}</span>
+    <tn-button-toggle-group
+      formControlName="device_type"
+      [testId]="'device-type'"
+      [ariaLabelledby]="typeToggleLabelId"
+    >
+      @for (option of typeOptions; track option.value) {
+        <tn-button-toggle
+          [value]="option.value"
+          [testId]="['device-type', option.label]"
+        >{{ option.label }}</tn-button-toggle>
+      }
+    </tn-button-toggle-group>
+  </div>
+
+  @switch (group().value.device_type) {
+    @case (FormNamespaceType.Zvol) {
+      <ix-explorer
+        formControlName="device_path"
+        [label]="'Path To Zvol' | translate"
+        [required]="true"
+        [rootNodes]="zvolsRootNode"
+        [nodeProvider]="zvolProvider"
       >
-        @for (option of typeOptions; track option.value) {
-          <tn-button-toggle
-            [value]="option.value"
-            [testId]="['device-type', option.label]"
-          >{{ option.label }}</tn-button-toggle>
-        }
-      </tn-button-toggle-group>
-    </div>
-
-    @switch (form.value.device_type) {
-      @case (FormNamespaceType.Zvol) {
-        <ix-explorer
-          formControlName="device_path"
-          [label]="'Path To Zvol' | translate"
-          [rootNodes]="zvolsRootNode"
-          [nodeProvider]="zvolProvider"
-        >
-          <ix-explorer-create-zvol></ix-explorer-create-zvol>
-        </ix-explorer>
-      }
-
-      @case (FormNamespaceType.ExistingFile) {
-        <ix-explorer
-          formControlName="device_path"
-          [label]="'Path To File' | translate"
-          [rootNodes]="datasetsRootNode"
-          [nodeProvider]="fileProvider"
-        ></ix-explorer>
-      }
-
-      @case (FormNamespaceType.NewFile) {
-        <ix-explorer
-          formControlName="device_path"
-          [label]="'Parent Directory' | translate"
-          [rootNodes]="datasetsRootNode"
-          [nodeProvider]="directoryProvider"
-        >
-          <ix-explorer-create-dataset></ix-explorer-create-dataset>
-        </ix-explorer>
-
-        <tn-form-field [label]="'Filename' | translate">
-          <tn-input formControlName="filename" [required]="true"></tn-input>
-        </tn-form-field>
-
-        <tn-form-field [label]="'File Size' | translate">
-          <tn-input
-            formControlName="filesize"
-            sizeDefaultUnit="MiB"
-            [required]="true"
-            [inputType]="InputType.Size"
-          ></tn-input>
-        </tn-form-field>
-      }
+        <ix-explorer-create-zvol></ix-explorer-create-zvol>
+      </ix-explorer>
     }
-  </tn-form-section>
-</form>
+
+    @case (FormNamespaceType.ExistingFile) {
+      <ix-explorer
+        formControlName="device_path"
+        [label]="'Path To File' | translate"
+        [required]="true"
+        [rootNodes]="datasetsRootNode"
+        [nodeProvider]="fileProvider"
+      ></ix-explorer>
+    }
+
+    @case (FormNamespaceType.NewFile) {
+      <ix-explorer
+        formControlName="device_path"
+        [label]="'Parent Directory' | translate"
+        [required]="true"
+        [rootNodes]="datasetsRootNode"
+        [nodeProvider]="directoryProvider"
+      >
+        <ix-explorer-create-dataset></ix-explorer-create-dataset>
+      </ix-explorer>
+
+      <tn-form-field [label]="'Filename' | translate">
+        <tn-input formControlName="filename"></tn-input>
+      </tn-form-field>
+
+      <tn-form-field
+        [label]="'File Size' | translate"
+        [errorMessages]="filesizeErrorMessages"
+      >
+        <tn-input
+          formControlName="filesize"
+          sizeDefaultUnit="MiB"
+          [inputType]="InputType.Size"
+        ></tn-input>
+      </tn-form-field>
+    }
+  }
+</tn-form-section>

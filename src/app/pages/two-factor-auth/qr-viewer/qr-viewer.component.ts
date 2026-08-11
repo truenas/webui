@@ -2,9 +2,9 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnBannerComponent } from '@truenas/ui-components';
 import { QrCodeModule } from 'ng-qrcode';
 import { helptext2fa } from 'app/helptext/system/2fa';
-import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 
 @Component({
   selector: 'ix-qr-viewer',
@@ -12,7 +12,7 @@ import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/
   styleUrls: ['./qr-viewer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    WarningComponent,
+    TnBannerComponent,
     QrCodeModule,
     TranslateModule,
   ],

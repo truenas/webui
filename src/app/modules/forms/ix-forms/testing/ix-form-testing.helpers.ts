@@ -9,7 +9,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 export interface IxFormTestingOptions {
   /**
    * Keep the real {@link ixFormMinSubmitFeedbackMs} instead of the `0` this helper provides by
-   * default. Set it in the rare spec that asserts the delay itself.
+   * default, so a successful close stays held behind the `timer()`.
+   *
+   * Off by default: a spec that asserts on `closed` right after `submit()` races the hold. Set it
+   * only when the hold itself is under test.
    */
   realSubmitFeedback?: boolean;
 }
@@ -39,6 +42,9 @@ export function ixFormTestingProviders(options: IxFormTestingOptions = {}): unkn
     mockProvider(SlideIn, {
       openSlideIns: jest.fn(() => 1),
     }),
+    // Always provided, never merely omitted: every factory in a spec file registers its providers
+    // and the last one wins, so an omission here would let an outer factory's `0` leak into a
+    // nested factory that asked to keep the hold.
     {
       provide: ixFormMinSubmitFeedbackMs,
       useValue: options.realSubmitFeedback ? defaultMinSubmitFeedbackMs : 0,

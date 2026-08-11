@@ -1,12 +1,5 @@
-<mat-card class="card">
-  <mat-card-header>
-    <h3 mat-card-title>
-      {{ 'Schedule' | translate }}
-    </h3>
-  </mat-card-header>
-  <mat-card-content>
-    <p>{{ 'Task Name' | translate }}: {{ backup().description || '-' }}</p>
-    <p>{{ 'Frequency' | translate }}: {{ backup().schedule | scheduleDescription }}</p>
-    <p>{{ 'Schedule' | translate }}: {{ schedule() || '-' }}</p>
-  </mat-card-content>
-</mat-card>
+<tn-card class="card" [title]="'Schedule' | translate">
+  <p>{{ 'Task Name' | translate }}: {{ backup().description || '-' }}</p>
+  <p>{{ 'Frequency' | translate }}: {{ backup().schedule | scheduleDescription }}</p>
+  <p>{{ 'Schedule' | translate }}: {{ schedule() || '-' }}</p>
+</tn-card>

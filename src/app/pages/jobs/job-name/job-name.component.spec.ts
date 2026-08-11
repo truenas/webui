@@ -1,10 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatProgressBarHarness } from '@angular/material/progress-bar/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnIconButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -97,10 +96,13 @@ describe('JobNameComponent', () => {
       spectator.setInput('job', runningJob);
     });
 
-    it('shows progress bar when job is running', async () => {
-      const progressBar = await loader.getHarness(MatProgressBarHarness);
+    it('shows progress bar when job is running', () => {
+      // No TnProgressBarHarness ships in the library yet; assert the component's
+      // public a11y contract (role + aria-valuenow) instead of its internals.
+      const progressBar = spectator.query('tn-progress-bar');
       expect(progressBar).toBeTruthy();
-      expect(await progressBar.getValue()).toBe(50);
+      expect(progressBar).toHaveAttribute('role', 'progressbar');
+      expect(progressBar).toHaveAttribute('aria-valuenow', '50');
     });
 
     it('shows job percentage when job is running', () => {
@@ -111,9 +113,15 @@ describe('JobNameComponent', () => {
       expect(spectator.query('tn-spinner')).toBeTruthy();
     });
 
+    it('keeps the abort button test id derived from the job description', () => {
+      spectator.setInput('job', { ...runningJob, description: 'Scrub Pool 1' });
+
+      expect(spectator.query('[data-test="button-abort-job-scrub-pool-1"]')).toBeTruthy();
+    });
+
     it('allows to abort a job when it is in running state and is abortable', async () => {
-      const abortIcon = await loader.getHarness(TnIconHarness.with({ name: 'close-circle' }));
-      await abortIcon.click();
+      const abortButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'close-circle' }));
+      await abortButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
         expect.objectContaining({

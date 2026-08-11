@@ -1,5 +1,4 @@
 // cspell:ignore zvol zvols volsize volblocksize snapdev Snapdev Vdev helptext ngneat rawvalue pbkdf
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
@@ -11,7 +10,7 @@ import {
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  finalize, forkJoin, map, Observable, switchMap, tap, throwError,
+  finalize, forkJoin, Observable, switchMap, tap, throwError,
 } from 'rxjs';
 import {
   minimumPbkdf2Iterations,
@@ -87,7 +86,6 @@ const volsizeUnchangedRelativeTolerance = 0.001;
     EditableComponent,
     DetailsTableComponent,
     DetailsItemComponent,
-    AsyncPipe,
     FileSizePipe,
   ],
 })
@@ -121,7 +119,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   protected formSnapshot = signal<Record<string, unknown> | null>(null);
 
   protected encryptedParent = false;
-  protected encryptionAlgorithm: string;
   protected passphraseParent = false;
   protected encryptionType: 'key' | 'passphrase' = 'key';
   protected inheritEncryption = true;
@@ -155,7 +152,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     passphrase: ['', [Validators.required, Validators.minLength(8)]],
     confirm_passphrase: ['', [Validators.required]],
     pbkdf2iters: [minimumPbkdf2Iterations, [Validators.required, Validators.min(minimumPbkdf2Iterations)]],
-    algorithm: ['AES-256-GCM', Validators.required],
   }, {
     validators: [
       matchOthersFgValidator(
@@ -190,17 +186,12 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     { label: this.translate.instant('Passphrase'), value: 'passphrase' },
   ];
 
-  readonly algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(
-    map((algorithms) => Object.keys(algorithms).map((algorithm) => ({ label: algorithm, value: algorithm }))),
-  );
-
   constructor() {
     super();
     this.form.controls.key.disable();
     this.form.controls.passphrase.disable();
     this.form.controls.confirm_passphrase.disable();
     this.form.controls.pbkdf2iters.disable();
-    this.form.controls.algorithm.disable();
   }
 
   ngOnInit(): void {
@@ -363,7 +354,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
         data.encryption_options.passphrase = data.passphrase;
         data.encryption_options.pbkdf2iters = Number(data.pbkdf2iters);
       }
-      data.encryption_options.algorithm = data.algorithm;
     }
     delete data.key;
     delete data.generate_key;
@@ -371,7 +361,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     delete data.confirm_passphrase;
     delete data.pbkdf2iters;
     delete data.encryption_type;
-    delete data.algorithm;
 
     return data;
   }
@@ -406,7 +395,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     delete data.passphrase;
     delete data.confirm_passphrase;
     delete data.pbkdf2iters;
-    delete data.algorithm;
 
     // Never send deduplication when the field is hidden (Enterprise without a
     // dedup license) — it isn't user-editable in that state.
@@ -606,7 +594,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
 
   private inheritEncryptionProperties(parent: Dataset): void {
     this.encryptedParent = parent.encrypted;
-    this.encryptionAlgorithm = parent.encryption_algorithm.value;
 
     this.inheritEncryptPlaceholder = helptextZvol.encryption.inheritNotEncrypted;
     if (this.encryptedParent) {
@@ -620,9 +607,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     }
 
     if (this.isNew()) {
-      if (this.encryptedParent && parent.encryption_algorithm) {
-        this.form.controls.algorithm.setValue(parent.encryption_algorithm.value);
-      }
       this.form.controls.encryption.disable();
       if (this.passphraseParent) {
         this.form.controls.encryption_type.setValue('passphrase');
@@ -751,7 +735,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
         }
         if (!inheritEncryption) {
           this.form.controls.encryption_type.enable();
-          this.form.controls.algorithm.enable();
           if (this.passphraseParent) { // keep it hidden if it passphrase
             this.form.controls.encryption_type.disable();
           }
@@ -783,10 +766,8 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
           this.setEncryptionFieldsDisabled(!encryption);
         } else if (encryption) {
           this.form.controls.encryption_type.enable();
-          this.form.controls.algorithm.enable();
         } else {
           this.form.controls.encryption_type.disable();
-          this.form.controls.algorithm.disable();
         }
         if (this.encryptionType === 'key' && !this.generateKey) {
           this.setKeyFieldsDisabled(!encryption);
@@ -822,11 +803,9 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     if (disabled) {
       this.form.controls.encryption_type.disable();
       this.form.controls.generate_key.disable();
-      this.form.controls.algorithm.disable();
     } else {
       this.form.controls.encryption_type.enable();
       this.form.controls.generate_key.enable();
-      this.form.controls.algorithm.enable();
     }
   }
 

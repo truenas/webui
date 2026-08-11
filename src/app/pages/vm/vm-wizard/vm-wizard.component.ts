@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, viewChild, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -19,8 +21,7 @@ import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-mac
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
@@ -48,7 +49,6 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
     TnStepperComponent,
     TnStepComponent,
     OsStepComponent,
@@ -65,7 +65,7 @@ import { GpuService } from 'app/services/gpu/gpu.service';
     TranslateModule,
   ],
 })
-export class VmWizardComponent implements OnInit {
+export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
@@ -75,8 +75,13 @@ export class VmWizardComponent implements OnInit {
   private vmGpuService = inject(VmGpuService);
   private snackbar = inject(SnackbarService);
   private errorParser = inject(ErrorParserService);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
+
+  /**
+   * Emitted to the hosting `<tn-side-panel>`. The wizard is opened footerless — its stepper
+   * owns the Back/Save buttons — so the panel has no Save of its own and closes on this.
+   */
+  readonly closed = output<boolean>();
 
   protected readonly osStep = viewChild.required(OsStepComponent);
   // TODO: Should be protected, but used in the test.
@@ -116,17 +121,24 @@ export class VmWizardComponent implements OnInit {
   isLoading = false;
   summary: SummarySection[];
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(Boolean(
-        this.osStep()?.form?.dirty
-        || this.cpuAndMemoryStep()?.form?.dirty
-        || this.diskStep()?.form?.dirty
-        || this.networkInterfaceStep()?.form?.dirty
-        || this.installationMediaStep()?.form?.dirty
-        || this.gpuStep()?.form?.dirty,
-      ));
-    });
+  /**
+   * Whether the wizard is currently submitting. The hosting `<tn-side-panel>` shows an
+   * indeterminate progress bar and dims the content while true — the wizard is opened
+   * footerless, so this is its only save feedback.
+   */
+  isBusy(): boolean {
+    return this.isLoading;
+  }
+
+  hasUnsavedChanges(): boolean {
+    return Boolean(
+      this.osStep()?.form?.dirty
+      || this.cpuAndMemoryStep()?.form?.dirty
+      || this.diskStep()?.form?.dirty
+      || this.networkInterfaceStep()?.form?.dirty
+      || this.installationMediaStep()?.form?.dirty
+      || this.gpuStep()?.form?.dirty,
+    );
   }
 
   ngOnInit(): void {
@@ -170,7 +182,7 @@ export class VmWizardComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close({ response: true });
+          this.closed.emit(true);
           this.snackbar.success(this.translate.instant('Virtual machine created'));
           this.cdr.markForCheck();
         },

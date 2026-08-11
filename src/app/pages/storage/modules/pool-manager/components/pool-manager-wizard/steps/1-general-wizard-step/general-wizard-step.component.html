@@ -24,23 +24,13 @@
       </tn-radio-group>
     </tn-form-field>
 
-    <!-- Software Encryption Standard dropdown -->
+    <!-- Info box when SED disks are available but Software encryption is selected -->
     @if (form.controls.encryptionType.value === EncryptionType.Software) {
-      <!-- Info box when SED disks are available but Software selected -->
       @if (hasSedCapableDisks$ | async; as hasSedDisks) {
         @if (hasSedDisks && (isEnterprise$ | async)) {
           <ix-warning color="green" [message]="helptext.sedInfoMessage | translate"></ix-warning>
         }
       }
-
-      <tn-form-field [label]="'Encryption Standard' | translate" [required]="true">
-        <tn-select
-          formControlName="encryptionStandard"
-          [options]="(encryptionAlgorithmOptions$ | async) ?? []"
-          [placeholder]="tnSelectLabels.placeholder | translate"
-          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
-        ></tn-select>
-      </tn-form-field>
     }
 
     <!-- SED Password fields -->

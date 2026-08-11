@@ -1,5 +1,5 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { HarnessLoader } from '@angular/cdk/testing';
+import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -132,13 +132,21 @@ describe('EncryptionOptionsDialogComponent', () => {
   it('hides other controls when Inherit checkbox is ticked', async () => {
     await setupTest();
 
+    expect(await form.getLabels()).toEqual(['Passphrase', 'Confirm Passphrase', 'pbkdf2iters']);
+    expect(await loader.getAllHarnesses(TnSelectHarness)).toHaveLength(1);
+
     await setCheckbox('Inherit encryption properties from parent', true);
 
-    // Inherit/Confirm are tn-checkbox (outside IxFormHarness); ticking Inherit
-    // hides the encryption-type controls, leaving only the Algorithm select.
-    const labels = await form.getLabels();
-    expect(labels).toEqual(['Algorithm']);
-    expect(await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }))).toBeTruthy();
+    // Only Inherit and Confirm survive; they are tn-checkbox, so the remaining
+    // ix-form controls and the tn-select disappear entirely.
+    expect(await form.getLabels()).toEqual([]);
+    expect(await loader.getAllHarnesses(TnSelectHarness)).toHaveLength(0);
+
+    const checkboxes = await loader.getAllHarnesses(TnCheckboxHarness);
+    expect(await parallel(() => checkboxes.map((checkbox) => checkbox.getLabelText()))).toEqual([
+      'Inherit encryption properties from parent',
+      'Confirm',
+    ]);
   });
 
   it('allows to set encryption to key', async () => {

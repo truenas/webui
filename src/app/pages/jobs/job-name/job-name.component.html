@@ -44,25 +44,24 @@
     </div>
 
     @if (isRunning()) {
-      <mat-progress-bar
+      <tn-progress-bar
         class="job-progress"
         [value]="job().progress.percent"
         [mode]="job().progress.percent ? 'determinate' : 'indeterminate'"
+        [ariaLabel]="'Progress of {job}' | translate: { job: job().description || job().method }"
         [tnTooltip]="job().progress.description"
-      ></mat-progress-bar>
+      ></tn-progress-bar>
     }
   </div>
 </div>
 
 @if (isRunning() && job().abortable) {
-  <button
-    mat-icon-button
-    type="button"
-    [ixTest]="['abort-job', job().description]"
-    [tnTooltip]="'Abort' | translate"
-    [attr.aria-label]="'Abort' | translate"
-    (click)="onAborted()"
-  >
-    <tn-icon name="close-circle" library="mdi"></tn-icon>
-  </button>
+  <tn-icon-button
+    name="close-circle"
+    library="mdi"
+    [testId]="abortTestId()"
+    [tooltip]="'Abort' | translate"
+    [ariaLabel]="'Abort' | translate"
+    (onClick)="onAborted()"
+  ></tn-icon-button>
 }

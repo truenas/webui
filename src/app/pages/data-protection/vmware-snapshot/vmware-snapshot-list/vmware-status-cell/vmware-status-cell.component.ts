@@ -1,8 +1,8 @@
-import { NgClass, TitleCasePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TitleCasePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { TnTooltipDirective } from '@truenas/ui-components';
+import { translated } from 'app/helpers/translated.helper';
 
 export enum VmwareSnapshotStatus {
   Pending = 'PENDING',
@@ -17,19 +17,39 @@ export interface VmwareState {
   datetime?: { $time: number };
 }
 
+/**
+ * Read-only status pill for the VMware snapshot list. Previously a permanently
+ * `disabled` `<button mat-stroked-button>`; the library has no multi-colour
+ * status pill (`tn-button` only does filled/outline, `tn-chip` only
+ * primary/secondary/accent), so this is a plain `<span>` styled locally — which
+ * also drops the misleading "dimmed button" announcement of the disabled button.
+ */
 @Component({
   selector: 'ix-vmware-status-cell',
   templateUrl: './vmware-status-cell.component.html',
   styleUrls: ['./vmware-status-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, TnTooltipDirective, NgClass, TranslateModule, TitleCasePipe],
+  imports: [TnTooltipDirective],
+  providers: [TitleCasePipe],
 })
 export class VmwareStatusCellComponent {
   private translate = inject(TranslateService);
+  private titleCase = inject(TitleCasePipe);
 
   readonly state = input.required<VmwareState>();
 
-  get tooltip(): string {
+  /**
+   * The pill's visible text, and the whole of its accessible name for the states that need
+   * no explanation — so status is never conveyed by colour alone.
+   *
+   * `translated` rather than a plain `computed`: these were `| translate` bindings before the
+   * migration, so they have to keep following a language change.
+   */
+  protected readonly stateText = translated<string>(
+    () => this.titleCase.transform(this.translate.instant(this.state().state)),
+  );
+
+  protected readonly tooltip = translated<string>(() => {
     const status = this.state().state;
 
     if (status === VmwareSnapshotStatus.Error) {
@@ -46,22 +66,32 @@ export class VmwareStatusCellComponent {
     }
 
     return this.translate.instant('Success');
-  }
+  });
 
-  protected getButtonClass(): string {
-    const status = this.state().state;
+  /**
+   * The tooltip text for the states whose tooltip says more than the pill does, so it can be
+   * appended for screen readers. Empty for the rest, where the tooltip only repeats the
+   * visible word.
+   */
+  protected readonly explanation = computed<string>(() => {
+    const tooltip = this.tooltip();
+    // Compared against the visible word rather than gated on the state, so a bare
+    // ERROR (whose tooltip falls back to "Error") doesn't announce "Error, Error".
+    return tooltip === this.stateText() ? '' : tooltip;
+  });
 
-    switch (status) {
+  protected readonly stateClass = computed<string>(() => {
+    switch (this.state().state) {
       case VmwareSnapshotStatus.Success:
-        return 'fn-theme-green';
+        return 'state-green';
       case VmwareSnapshotStatus.Pending:
-        return 'fn-theme-orange';
+        return 'state-orange';
       case VmwareSnapshotStatus.Error:
-        return 'fn-theme-red';
+        return 'state-red';
       case VmwareSnapshotStatus.Blocked:
-        return 'fn-theme-yellow';
+        return 'state-yellow';
       default:
-        return 'fn-theme-primary';
+        return 'state-primary';
     }
-  }
+  });
 }

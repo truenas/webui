@@ -41,10 +41,9 @@ import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import {
-  convertStringToId, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
+  dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toUniqueRowTag,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -183,7 +182,7 @@ export class IscsiCardComponent implements OnInit {
   protected readonly trackByIscsiId = (_index: number, row: IscsiTarget): number => row.id;
 
   protected uniqueRowTag(row: IscsiTarget): string {
-    return normalizeTestIdString(convertStringToId('card-iscsi-target-' + row.name));
+    return toUniqueRowTag('card-iscsi-target-' + row.name);
   }
 
   protected ariaLabel(row: IscsiTarget): string {

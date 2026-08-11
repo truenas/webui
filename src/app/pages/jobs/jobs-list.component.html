@@ -1,22 +1,23 @@
 <ix-page-header>
-  <mat-button-toggle-group
-    aria-label="Tabs"
-    [value]="selectedIndex"
-    [disabled]="isLoading$ | async"
+  <tn-button-toggle-group
+    [ngModel]="selectedIndex"
+    [ariaLabel]="'Filter jobs by state' | translate"
+    [disabled]="!!(isLoading$ | async)"
+    (ngModelChange)="onTabChange($event)"
   >
-    <mat-button-toggle
+    <tn-button-toggle
       [value]="JobTab.All"
-      (click)="onTabChange(JobTab.All)"
-    >{{ 'All' | translate }}</mat-button-toggle>
-    <mat-button-toggle
+      [testId]="'all'"
+    >{{ 'All' | translate }}</tn-button-toggle>
+    <tn-button-toggle
       [value]="JobTab.Running"
-      (click)="onTabChange(JobTab.Running)"
-    >{{ 'Active' | translate }}</mat-button-toggle>
-    <mat-button-toggle
+      [testId]="'active'"
+    >{{ 'Active' | translate }}</tn-button-toggle>
+    <tn-button-toggle
       [value]="JobTab.Failed"
-      (click)="onTabChange(JobTab.Failed)"
-    >{{ 'Failed' | translate }}</mat-button-toggle>
-  </mat-button-toggle-group>
+      [testId]="'failed'"
+    >{{ 'Failed' | translate }}</tn-button-toggle>
+  </tn-button-toggle-group>
 
   <ix-basic-search
     [query]="searchQuery()"

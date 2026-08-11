@@ -79,6 +79,10 @@ export class ZfsEncryptionCardComponent {
     return this.translate.instant('Unlocked');
   });
 
+  protected algorithm = computed(() => {
+    return this.dataset().encryption_algorithm?.value;
+  });
+
   protected canExportKey = computed(() => {
     return !this.hasPassphrase() && this.dataset().key_loaded;
   });

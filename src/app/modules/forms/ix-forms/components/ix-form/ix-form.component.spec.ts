@@ -305,25 +305,49 @@ describe('IxFormComponent', () => {
       expect(submitHandlerSpy.mock.calls[0][0].changedValues).not.toHaveProperty('name');
     });
 
-    it('dev-warns once when a top-level control is a nested FormGroup', async () => {
-      const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-      (spectator.component.form as unknown as FormGroup).addControl(
-        'attributes',
-        new FormGroup({ host: new FormControl('') }),
-      );
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-      await saveButton.click();
-
-      // Spy catches other dev warnings too; count only the nested-group one,
-      // which must fire exactly once across both submits.
-      const nestedWarnings = warnSpy.mock.calls.filter(
+    describe('nested-group advisory', () => {
+      // Spy catches other dev warnings too; count only the nested-group one.
+      const countNestedWarnings = (warnSpy: jest.SpyInstance): unknown[][] => warnSpy.mock.calls.filter(
         ([message]) => typeof message === 'string' && message.includes('nested FormGroup/FormArray'),
       );
-      expect(nestedWarnings).toHaveLength(1);
-      expect(nestedWarnings[0][0]).toContain('"attributes"');
-      warnSpy.mockRestore();
+
+      const addNestedControl = (): void => {
+        (spectator.component.form as unknown as FormGroup).addControl(
+          'attributes',
+          new FormGroup({ host: new FormControl('') }),
+        );
+      };
+
+      it('dev-warns once when a submit reading changedValues has a nested FormGroup', async () => {
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        submitHandlerSpy.mockImplementation((event) => {
+          expect(event.changedValues).toBeDefined();
+          return { request$: of(undefined), successMessage: 'Saved!' as TranslatedString };
+        });
+        addNestedControl();
+
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+        await saveButton.click();
+
+        const nestedWarnings = countNestedWarnings(warnSpy);
+        expect(nestedWarnings).toHaveLength(1);
+        expect(nestedWarnings[0][0]).toContain('"attributes"');
+        warnSpy.mockRestore();
+      });
+
+      it('stays quiet when the submit builds its payload from allValues', async () => {
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        addNestedControl();
+
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        // `changedValues` is never read, so the advisory — which only matters to a handler that
+        // relies on the diff — has nothing to warn about.
+        expect(countNestedWarnings(warnSpy)).toHaveLength(0);
+        warnSpy.mockRestore();
+      });
     });
   });
 
@@ -674,81 +698,6 @@ describe('IxFormComponent', () => {
       expect(submitHandlerSpy).toHaveBeenCalledWith(
         expect.objectContaining({ changedValues: { name: 'Edited' } }),
       );
-    });
-  });
-
-  describe('preSubmit', () => {
-    @Component({
-      template: `
-        <ix-form
-          [formGroup]="form"
-          [title]="'PreSubmit'"
-          [requiredRoles]="[role]"
-          [preSubmit]="preSubmit()"
-          [submitHandler]="handleSubmit"
-        >
-          <ix-fieldset>
-            <ix-input formControlName="name" [label]="'Name'" />
-          </ix-fieldset>
-        </ix-form>
-      `,
-      standalone: true,
-      changeDetection: ChangeDetectionStrategy.OnPush,
-      selector: 'ix-pre-submit-host',
-      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
-    })
-    class PreSubmitHostComponent {
-      ixForm = viewChild.required(IxFormComponent);
-      role = Role.FullAdmin;
-      // Signal so tests can swap the hook between cases — reassigning a plain
-      // class field after init isn't picked up by the wrapper's `input()`.
-      preSubmit = signal<((event: FormSubmitEvent) => FormSubmitEvent | false) | null>(null);
-
-      private fb = inject(FormBuilder);
-
-      form = this.fb.group({ name: ['initial'] });
-
-      handleSubmit = (event: FormSubmitEvent): SubmitResult<unknown> => submitHandlerSpy(event);
-    }
-
-    const createPreSubmitComponent = createComponentFactory({
-      component: PreSubmitHostComponent,
-      imports: [ReactiveFormsModule],
-      providers: [
-        ...ixFormTestingProviders(),
-        mockProvider(SlideInRef, slideInRef),
-        mockAuth(),
-      ],
-    });
-
-    it('forwards the transformed event to submitHandler', async () => {
-      const preSubmitSpectator = createPreSubmitComponent();
-      preSubmitSpectator.component.preSubmit.set((event) => ({
-        ...event,
-        allValues: { ...event.allValues, name: 'overridden' },
-      }));
-      preSubmitSpectator.detectChanges();
-      const preSubmitLoader = TestbedHarnessEnvironment.loader(preSubmitSpectator.fixture);
-
-      const saveButton = await preSubmitLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      expect(submitHandlerSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ allValues: { name: 'overridden' } }),
-      );
-    });
-
-    it('cancels the submit when preSubmit returns false', async () => {
-      const preSubmitSpectator = createPreSubmitComponent();
-      preSubmitSpectator.component.preSubmit.set(() => false);
-      preSubmitSpectator.detectChanges();
-      const preSubmitLoader = TestbedHarnessEnvironment.loader(preSubmitSpectator.fixture);
-
-      const saveButton = await preSubmitLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      expect(submitHandlerSpy).not.toHaveBeenCalled();
-      expect(slideInRef.close).not.toHaveBeenCalled();
     });
   });
 

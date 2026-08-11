@@ -5,7 +5,7 @@
   ></ix-basic-search>
 </ix-page-header>
 
-<tn-card [padContent]="false" [ixUiSearch]="searchableElements.elements.services">
+<tn-card [padContent]="false" [fillHeight]="false" [ixUiSearch]="searchableElements.elements.services">
   <tn-table
     class="table"
     [dataSource]="(dataProvider.currentPage$ | async) ?? []"

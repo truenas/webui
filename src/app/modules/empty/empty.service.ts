@@ -27,6 +27,13 @@ export class EmptyService {
    * Resolves the icon for an empty state from its type. Mirrors the icon mapping
    * historically rendered by ix-empty so tn-table's `[emptyIcon]` reflects the
    * state (error/search/no-data) instead of a static page-specific icon.
+   *
+   * ⚠ `tn-empty`'s `iconLibrary` defaults to `mdi` and `tn-table` gives its inner
+   * `tn-empty` no library, so a name that already carries a *different* library
+   * prefix is prefixed a second time (`app-x` → `mdi-app-x`) and falls back to a
+   * two-letter abbreviation. Every marker below is therefore `mdi-*` except the
+   * loading one, which the table never renders (its empty state is gated on
+   * `!loading()`). Pass a non-mdi icon only where you can also set `iconLibrary`.
    */
   iconForType(type?: EmptyType | null): string {
     switch (type) {

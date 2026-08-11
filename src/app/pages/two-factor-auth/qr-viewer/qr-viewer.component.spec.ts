@@ -1,18 +1,20 @@
 import 'jest-canvas-mock';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { MockComponent, MockModule } from 'ng-mocks';
+import { TnBannerHarness } from '@truenas/ui-components';
+import { MockModule } from 'ng-mocks';
 import { QrCodeComponent, QrCodeDirective, QrCodeModule } from 'ng-qrcode';
 import { helptext2fa } from 'app/helptext/system/2fa';
-import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 
 describe('QrViewerComponent', () => {
   let spectator: Spectator<QrViewerComponent>;
+  let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
     component: QrViewerComponent,
     imports: [
-      MockComponent(WarningComponent),
       QrCodeComponent,
       QrCodeDirective,
       MockModule(QrCodeModule),
@@ -25,13 +27,14 @@ describe('QrViewerComponent', () => {
         qrInfo: '12345',
       },
     });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows warning message when parent component requires it', () => {
+  it('shows warning message when parent component requires it', async () => {
     spectator.setInput('showWarning', true);
-    const warning = spectator.query(WarningComponent);
-    expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', helptext2fa.qrCodeMessage);
+
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain(helptext2fa.qrCodeMessage);
   });
 
   it('shows qr code', () => {

@@ -5,7 +5,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
   TnCheckboxComponent,
-  TnFormFieldComponent,
+  TnFormFieldComponent, TnFormSectionComponent,
   TnSelectComponent,
   TnStepperNextDirective,
   TnStepperPreviousDirective,
@@ -29,6 +29,7 @@ import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-valid
     AsyncPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,
+    TnFormSectionComponent,
     TnCheckboxComponent,
     TnSelectComponent,
     FormActionsComponent,

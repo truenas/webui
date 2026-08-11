@@ -15,8 +15,6 @@ import {
 } from 'app/enums/vm.enum';
 import { VirtualMachine, VmPortWizardResult } from 'app/interfaces/virtual-machine.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -43,12 +41,7 @@ describe('VmWizardComponent', () => {
   let spectator: Spectator<VmWizardComponent>;
   let loader: HarnessLoader;
   let nextButton: TnButtonHarness;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
+  let closedSpy: jest.Mock;
 
   const createComponent = createComponentFactory({
     component: VmWizardComponent,
@@ -66,7 +59,6 @@ describe('VmWizardComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockProvider(SlideIn),
       mockProvider(GpuService),
       mockProvider(VmGpuService),
       mockAuth(),
@@ -145,12 +137,13 @@ describe('VmWizardComponent', () => {
       mockProvider(VmGpuService, {
         updateVmGpus: jest.fn(() => of(undefined)),
       }),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
   beforeEach(async () => {
     spectator = createComponent();
+    closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     await updateStepHarnesses();
   });
@@ -370,6 +363,6 @@ describe('VmWizardComponent', () => {
       ['0000:03:00.0'],
     );
     expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0']);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(closedSpy).toHaveBeenCalledWith(true);
   });
 });
