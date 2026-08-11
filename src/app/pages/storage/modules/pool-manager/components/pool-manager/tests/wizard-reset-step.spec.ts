@@ -128,7 +128,6 @@ describe('PoolManagerComponent – wizard step reset', () => {
         }),
         mockCall('enclosure2.query', [] as Enclosure[]),
         mockCall('pool.query', []),
-        mockCall('pool.dataset.encryption_algorithm_choices', {}),
         mockCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockProvider(PoolWizardNameValidationService, {

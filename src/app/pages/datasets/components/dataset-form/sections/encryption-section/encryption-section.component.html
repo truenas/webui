@@ -58,13 +58,6 @@
             [tooltip]="helptext.encryption.pbkdf2itersTooltip | translate"
           ></ix-input>
         }
-        <ix-select
-          formControlName="algorithm"
-          [label]="'Algorithm' | translate"
-          [required]="true"
-          [options]="algorithmOptions$"
-          [tooltip]="helptext.encryption.algorithmTooltip | translate"
-        ></ix-select>
       }
     }
   </ix-fieldset>

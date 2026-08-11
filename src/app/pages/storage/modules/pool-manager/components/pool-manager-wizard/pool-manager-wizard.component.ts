@@ -270,10 +270,9 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       encryption: this.hasSoftwareEncryption,
     };
 
-    if (this.state.encryption) {
+    if (this.hasSoftwareEncryption) {
       payload.encryption_options = {
         generate_key: true,
-        algorithm: this.state.encryption,
       };
     }
 

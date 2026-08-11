@@ -14,21 +14,13 @@
       [options]="encryptionTypeOptions$"
     ></ix-radio-group>
 
-    <!-- Software Encryption Standard dropdown -->
+    <!-- Info box when SED disks are available but Software encryption is selected -->
     @if (form.controls.encryptionType.value === EncryptionType.Software) {
-      <!-- Info box when SED disks are available but Software selected -->
       @if (hasSedCapableDisks$ | async; as hasSedDisks) {
         @if (hasSedDisks && (isEnterprise$ | async)) {
           <ix-warning color="green" [message]="helptext.sedInfoMessage | translate"></ix-warning>
         }
       }
-
-      <ix-select
-        formControlName="encryptionStandard"
-        [label]="'Encryption Standard' | translate"
-        [options]="encryptionAlgorithmOptions$"
-        [required]="true"
-      ></ix-select>
     }
 
     <!-- SED Password fields -->

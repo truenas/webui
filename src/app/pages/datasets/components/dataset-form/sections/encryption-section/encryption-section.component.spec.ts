@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -23,9 +22,6 @@ describe('EncryptionSectionComponent', () => {
     key_format: {
       value: EncryptionKeyFormat.Hex,
     },
-    encryption_algorithm: {
-      value: 'AES-128-GCM',
-    },
   } as Dataset;
   const passphraseEncryptedDataset = {
     encrypted: true,
@@ -40,12 +36,6 @@ describe('EncryptionSectionComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockApi([
-        mockCall('pool.dataset.encryption_algorithm_choices', {
-          'AES-256-GCM': 'AES-256-GCM',
-          'AES-128-GCM': 'AES-128-GCM',
-        }),
-      ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         warn: jest.fn(() => of(true)),
@@ -84,18 +74,6 @@ describe('EncryptionSectionComponent', () => {
   });
 
   describe('not inheriting encryption', () => {
-    it('defaults to parent\'s algorithm', async () => {
-      spectator.setInput('parent', keyEncryptedDataset);
-
-      await form.fillForm({
-        'Inherit (encrypted)': false,
-      });
-
-      expect(await form.getValues()).toEqual(expect.objectContaining({
-        Algorithm: 'AES-128-GCM',
-      }));
-    });
-
     it('shows Encryption Type select when parent is key encrypted', async () => {
       spectator.setInput('parent', keyEncryptedDataset);
 
@@ -142,7 +120,6 @@ describe('EncryptionSectionComponent', () => {
         Encryption: true,
         'Generate Key': true,
         'Encryption Type': 'Key',
-        Algorithm: 'AES-256-GCM',
       });
     });
 
@@ -176,7 +153,63 @@ describe('EncryptionSectionComponent', () => {
         'Confirm Passphrase': '',
         Passphrase: '',
         pbkdf2iters: '1300000',
-        Algorithm: 'AES-256-GCM',
+      });
+    });
+  });
+
+  describe('getPayload', () => {
+    it('returns an empty payload when encryption is inherited', () => {
+      expect(spectator.component.getPayload()).toEqual({});
+    });
+
+    it('only disables encryption when Encryption checkbox is unticked', async () => {
+      await form.fillForm({
+        'Inherit (non-encrypted)': false,
+        Encryption: false,
+      });
+
+      expect(spectator.component.getPayload()).toEqual({ encryption: false });
+    });
+
+    it('sends encryption options without an algorithm when key is generated', async () => {
+      await form.fillForm({
+        'Inherit (non-encrypted)': false,
+      });
+
+      expect(spectator.component.getPayload()).toEqual({
+        encryption: true,
+        encryption_options: { generate_key: true },
+        inherit_encryption: false,
+      });
+    });
+
+    it('sends the key entered by the user when Generate Key is unticked', async () => {
+      const key = 'k'.repeat(64);
+      await form.fillForm({
+        'Inherit (non-encrypted)': false,
+        'Generate Key': false,
+        Key: key,
+      });
+
+      expect(spectator.component.getPayload()).toEqual({
+        encryption: true,
+        encryption_options: { key },
+        inherit_encryption: false,
+      });
+    });
+
+    it('sends passphrase options when Passphrase encryption is used', async () => {
+      await form.fillForm({
+        'Inherit (non-encrypted)': false,
+        'Encryption Type': 'Passphrase',
+        Passphrase: '12345678',
+        'Confirm Passphrase': '12345678',
+      });
+
+      expect(spectator.component.getPayload()).toEqual({
+        encryption: true,
+        encryption_options: { passphrase: '12345678', pbkdf2iters: 1300000 },
+        inherit_encryption: false,
       });
     });
   });

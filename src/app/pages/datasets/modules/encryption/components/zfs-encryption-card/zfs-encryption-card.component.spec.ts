@@ -109,6 +109,17 @@ describe('ZfsEncryptionCardComponent', () => {
     expect(await buttons[1].getText()).toBe('Lock');
   });
 
+  it('shows the encryption algorithm as a read-only row when the dataset reports one', () => {
+    setupTest({
+      dataset: {
+        ...keyEncryptedRoot,
+        encryption_algorithm: { value: 'AES-256-GCM' },
+      } as DatasetDetails,
+    });
+
+    expect(getDetails()['Algorithm:']).toBe('AES-256-GCM');
+  });
+
   it('shows correct card state for password encrypted locked root', async () => {
     setupTest({
       dataset: {

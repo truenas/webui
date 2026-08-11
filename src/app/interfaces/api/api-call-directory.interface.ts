@@ -707,7 +707,6 @@ export interface ApiCallDirectory {
   'pool.dataset.create': { params: [DatasetCreate]; response: Dataset };
   'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };
   'pool.dataset.details': { params: void; response: DatasetDetails[] };
-  'pool.dataset.encryption_algorithm_choices': { params: void; response: Choices };
   'pool.dataset.export_keys_for_replication': { params: [id: number]; response: unknown };
   'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
   'pool.dataset.inherit_parent_encryption_properties': { params: [id: string]; response: void };

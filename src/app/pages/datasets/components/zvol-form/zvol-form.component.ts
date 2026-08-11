@@ -1,5 +1,4 @@
 // cspell:ignore zvol zvols volsize volblocksize snapdev Snapdev Vdev helptext ngneat rawvalue pbkdf
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -7,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, forkJoin, map, Observable, of, tap,
+  finalize, forkJoin, Observable, of, tap,
 } from 'rxjs';
 import {
   minimumPbkdf2Iterations,
@@ -89,7 +88,6 @@ import { LicenseService } from 'app/services/license.service';
     EditableComponent,
     DetailsTableComponent,
     DetailsItemComponent,
-    AsyncPipe,
     IxButtonGroupComponent,
     FileSizePipe,
   ],
@@ -130,7 +128,6 @@ export class ZvolFormComponent implements OnInit {
   protected isLoading = signal(false);
 
   protected encryptedParent = false;
-  protected encryptionAlgorithm: string;
   protected passphraseParent = false;
   protected encryptionType: 'key' | 'passphrase' = 'key';
   protected inheritEncryption = true;
@@ -164,7 +161,6 @@ export class ZvolFormComponent implements OnInit {
     passphrase: ['', [Validators.required, Validators.minLength(8)]],
     confirm_passphrase: ['', [Validators.required]],
     pbkdf2iters: [minimumPbkdf2Iterations, [Validators.required, Validators.min(minimumPbkdf2Iterations)]],
-    algorithm: ['AES-256-GCM', Validators.required],
   }, {
     validators: [
       matchOthersFgValidator(
@@ -208,10 +204,6 @@ export class ZvolFormComponent implements OnInit {
   readonly specialSmallBlockSizeOptions$ = of(this.specialSmallBlockSizeOptions);
   readonly encryptionTypeOptions$ = of(this.encryptionTypeOptions);
 
-  readonly algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(
-    map((algorithms) => Object.keys(algorithms).map((algorithm) => ({ label: algorithm, value: algorithm }))),
-  );
-
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -221,7 +213,6 @@ export class ZvolFormComponent implements OnInit {
     this.form.controls.passphrase.disable();
     this.form.controls.confirm_passphrase.disable();
     this.form.controls.pbkdf2iters.disable();
-    this.form.controls.algorithm.disable();
   }
 
   ngOnInit(): void {
@@ -392,7 +383,6 @@ export class ZvolFormComponent implements OnInit {
 
   private inheritEncryptionProperties(parent: Dataset): void {
     this.encryptedParent = parent.encrypted;
-    this.encryptionAlgorithm = parent.encryption_algorithm.value;
 
     this.inheritEncryptPlaceholder = helptextZvol.encryption.inheritNotEncrypted;
     if (this.encryptedParent) {
@@ -406,9 +396,6 @@ export class ZvolFormComponent implements OnInit {
     }
 
     if (this.isNew) {
-      if (this.encryptedParent && parent.encryption_algorithm) {
-        this.form.controls.algorithm.setValue(parent.encryption_algorithm.value);
-      }
       this.form.controls.encryption.disable();
       if (this.passphraseParent) {
         this.form.controls.encryption_type.setValue('passphrase');
@@ -539,7 +526,6 @@ export class ZvolFormComponent implements OnInit {
         }
         if (!inheritEncryption) {
           this.form.controls.encryption_type.enable();
-          this.form.controls.algorithm.enable();
           if (this.passphraseParent) { // keep it hidden if it passphrase
             this.form.controls.encryption_type.disable();
           }
@@ -571,10 +557,8 @@ export class ZvolFormComponent implements OnInit {
           this.setEncryptionFieldsDisabled(!encryption);
         } else if (encryption) {
           this.form.controls.encryption_type.enable();
-          this.form.controls.algorithm.enable();
         } else {
           this.form.controls.encryption_type.disable();
-          this.form.controls.algorithm.disable();
         }
         if (this.encryptionType === 'key' && !this.generateKey) {
           this.setKeyFieldsDisabled(!encryption);
@@ -610,11 +594,9 @@ export class ZvolFormComponent implements OnInit {
     if (disabled) {
       this.form.controls.encryption_type.disable();
       this.form.controls.generate_key.disable();
-      this.form.controls.algorithm.disable();
     } else {
       this.form.controls.encryption_type.enable();
       this.form.controls.generate_key.enable();
-      this.form.controls.algorithm.enable();
     }
   }
 
@@ -713,7 +695,6 @@ export class ZvolFormComponent implements OnInit {
         data.encryption_options.passphrase = data.passphrase;
         data.encryption_options.pbkdf2iters = Number(data.pbkdf2iters);
       }
-      data.encryption_options.algorithm = data.algorithm;
     }
     // Keep inherit_encryption in the payload - don't delete it
     delete data.key;
@@ -722,7 +703,6 @@ export class ZvolFormComponent implements OnInit {
     delete data.confirm_passphrase;
     delete data.pbkdf2iters;
     delete data.encryption_type;
-    delete data.algorithm;
 
     this.api.call('pool.dataset.create', [data as DatasetCreate]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (dataset) => this.handleZvolCreateUpdate(dataset),
@@ -783,7 +763,6 @@ export class ZvolFormComponent implements OnInit {
             data.encryption_options.passphrase = data.passphrase;
             data.encryption_options.pbkdf2iters = Number(data.pbkdf2iters);
           }
-          data.encryption_options.algorithm = data.algorithm;
         }
 
         // Delete all encryption-related fields when editing
@@ -794,7 +773,6 @@ export class ZvolFormComponent implements OnInit {
         delete data.confirm_passphrase;
         delete data.pbkdf2iters;
         delete data.encryption_type;
-        delete data.algorithm;
 
         let canSubmit = true;
         if (data.volsize !== undefined) {

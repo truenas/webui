@@ -132,7 +132,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     });
 
     const labels = await form.getLabels();
-    expect(labels).toEqual(['Inherit encryption properties from parent', 'Algorithm', 'Confirm']);
+    expect(labels).toEqual(['Inherit encryption properties from parent', 'Confirm']);
   });
 
   it('allows to set encryption to key', async () => {

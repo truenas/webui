@@ -45,7 +45,6 @@ export class ConfigurationPreviewComponent {
   protected readonly EncryptionType = EncryptionType;
 
   protected name$ = this.store.name$;
-  protected encryption$ = this.store.encryption$;
   protected encryptionType$ = this.store.encryptionType$;
 
   protected topology$ = this.store.topology$.pipe(
