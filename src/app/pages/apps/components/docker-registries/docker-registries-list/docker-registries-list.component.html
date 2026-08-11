@@ -1,11 +1,11 @@
 <ix-page-header>
   <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
 
-  <ix-table-columns-selector
+  <ix-table-column-picker
+    [columns]="columns()"
     [columnPreferencesKey]="'dockerRegistriesList'"
-    [columns]="columns"
-    (columnsChange)="columnsChange($event)"
-  ></ix-table-columns-selector>
+    (columnsChange)="onColumnsChange($event)"
+  ></ix-table-column-picker>
 
   <tn-button
     *ixRequiresRoles="requiredRoles"

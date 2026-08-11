@@ -13,15 +13,15 @@ import { preferredColumnsUpdated } from 'app/store/preferences/preferences.actio
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 /**
- * tn-select (multiselect) based column picker — the tn-table counterpart of the
- * mat-menu `<ix-table-columns-selector>`. Same contract (`columns` in,
- * `columnsChange` out, `columnPreferencesKey` for persistence), so a list pairs
- * it with the `toDisplayedColumns` bridge exactly like the legacy selector.
+ * tn-select (multiselect) based column picker — the one control a tn-table list
+ * uses to let users choose which columns are visible. `columns` in,
+ * `columnsChange` out, `columnPreferencesKey` for persistence; a list pairs it
+ * with the `toDisplayedColumns` bridge to feed `tn-table`'s `displayedColumns`.
  *
  * Only columns with a `title` are user-toggleable (an actions column has none);
  * at least one titled column always stays visible. Visibility is persisted per
- * `columnPreferencesKey` via `preferredColumnsUpdated`, keyed by column title to
- * stay wire-compatible with the legacy selector's saved preferences.
+ * `columnPreferencesKey` via `preferredColumnsUpdated`, keyed by column title so
+ * preferences saved by earlier releases keep loading.
  *
  * The input columns are never mutated: `columnsChange` emits copies with
  * updated `hidden` flags, and the host is expected to feed them back into
@@ -46,8 +46,8 @@ export class TableColumnPickerComponent<T = unknown> implements OnInit {
   protected readonly control = new FormControl<string[]>([], { nonNullable: true });
 
   // Label is translated for display; value stays the raw title — it is the
-  // persistence key and must remain wire-compatible with the legacy selector's
-  // saved preferences.
+  // persistence key and must keep matching preferences saved by earlier
+  // releases.
   protected readonly options = computed<TnSelectOption<string>[]>(
     () => this.selectableColumns().map((column) => ({
       value: column.title,
