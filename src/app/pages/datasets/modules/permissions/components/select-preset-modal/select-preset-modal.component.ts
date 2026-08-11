@@ -13,6 +13,7 @@ import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -73,6 +74,8 @@ export class SelectPresetModalComponent implements OnInit {
   ];
 
   readonly helptext = helptextAcl.typeDialog;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.setFormRelations();

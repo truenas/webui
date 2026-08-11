@@ -6,6 +6,7 @@
           testId="registry"
           formControlName="registry"
           [options]="(registriesOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     }

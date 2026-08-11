@@ -17,6 +17,7 @@ import {
 import { Observable, of } from 'rxjs';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -112,6 +113,8 @@ export class RebootOrShutdownDialog {
   ]);
 
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get title(): string {
     return this.isShutdown

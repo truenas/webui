@@ -123,6 +123,7 @@
             class="outbound-network-value"
             [formControlName]="outboundNetworkValue.fcName"
             [options]="(outboundNetworkValue.options | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
             [multiple]="true"
           ></tn-select>
         </tn-form-field>

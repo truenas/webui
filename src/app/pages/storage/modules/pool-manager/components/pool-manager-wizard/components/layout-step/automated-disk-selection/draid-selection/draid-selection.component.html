@@ -15,6 +15,7 @@
           formControlName="dataDevicesPerGroup"
           [testId]="['data-devices-per-group', type()]"
           [options]="(dataDevicesPerGroupOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
           [placeholder]="tnSelectLabels.placeholder | translate"
           [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
@@ -25,6 +26,7 @@
           formControlName="spares"
           [testId]="['spares', type()]"
           [options]="(sparesOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
           [placeholder]="tnSelectLabels.placeholder | translate"
           [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
@@ -37,6 +39,7 @@
           formControlName="children"
           [testId]="['children', type()]"
           [options]="(widthOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
           [placeholder]="tnSelectLabels.placeholder | translate"
           [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
@@ -51,6 +54,7 @@
           formControlName="vdevsNumber"
           [testId]="['vdevs-number', type()]"
           [options]="(vdevsNumberOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
           [placeholder]="tnSelectLabels.placeholder | translate"
           [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>

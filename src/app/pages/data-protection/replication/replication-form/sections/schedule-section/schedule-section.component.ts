@@ -8,6 +8,7 @@ import {
 import { of } from 'rxjs';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -49,6 +50,8 @@ export class ScheduleSectionComponent implements OnChanges {
 
   protected readonly helptext = helptextReplication;
   protected readonly CronPresetValue = CronPresetValue;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnChanges(): void {
     const replication = this.replication();

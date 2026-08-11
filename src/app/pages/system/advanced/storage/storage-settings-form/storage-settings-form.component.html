@@ -12,6 +12,7 @@
       <tn-select
         formControlName="systemDatasetPool"
         [options]="(poolOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -42,6 +43,7 @@
           formControlName="weekday"
           [multiple]="true"
           [options]="(daysOfWeek$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 
@@ -50,6 +52,7 @@
           <tn-select
             formControlName="begin"
             [options]="(timeOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
 
@@ -57,6 +60,7 @@
           <tn-select
             formControlName="end"
             [options]="(timeOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       </div>

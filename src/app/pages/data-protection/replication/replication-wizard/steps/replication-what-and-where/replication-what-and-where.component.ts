@@ -36,6 +36,7 @@ import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -184,6 +185,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     { label: this.translate.instant('HEX'), value: EncryptionKeyFormat.Hex },
     { label: this.translate.instant('PASSPHRASE'), value: EncryptionKeyFormat.Passphrase },
   ]);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isRemoteSource(): boolean {
     return this.form.value.source_datasets_from === DatasetSource.Remote;

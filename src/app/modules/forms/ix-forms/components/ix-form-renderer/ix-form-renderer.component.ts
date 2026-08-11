@@ -19,6 +19,7 @@ import { IxFormComponent } from 'app/modules/forms/ix-forms/components/ix-form/i
 import {
   FormDefinition, FormFieldDefinition, FormFieldType, FormSectionDefinition, InputFieldDefinition,
 } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -181,6 +182,8 @@ implements OnInit, SidePanelHostForm {
    */
   protected readonly fieldVisible = signal<Record<string, boolean>>({});
   protected readonly sectionVisible = signal<Record<number, boolean>>({});
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     // Re-emit validity to a host that mirrors it into its own signal.

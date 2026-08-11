@@ -29,6 +29,7 @@ import {
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -80,6 +81,8 @@ export class TargetFormComponent extends IxFormHostForm implements OnInit {
 
   /** Edit data supplied by the `<tn-side-panel>` host. */
   readonly targetData = input<IscsiTarget | undefined>(undefined);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isNew(): boolean {
     return !this.editingTarget;

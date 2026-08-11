@@ -42,6 +42,7 @@
       <tn-select
         formControlName="hdd_type"
         [options]="(hddTypeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -54,6 +55,7 @@
         <tn-select
           formControlName="datastore"
           [options]="(datastoreOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 
@@ -75,6 +77,7 @@
         <tn-select
           formControlName="hdd_path"
           [options]="(hddPathOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 

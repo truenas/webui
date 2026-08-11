@@ -19,6 +19,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -64,6 +65,8 @@ export class CsrOptionsComponent implements SummaryProvider {
   );
 
   readonly helptext = helptextSystemCertificates;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isRsa(): boolean {
     return this.form.value.key_type === CertificateKeyType.Rsa;

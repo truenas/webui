@@ -16,6 +16,7 @@
       formControlName="preferred_pool"
       [allowEmpty]="true"
       [options]="(poolOptions$ | async) ?? []"
+      [optionTestIdKey]="optionTestIdByLabel"
     ></tn-select>
   </tn-form-field>
 
@@ -24,6 +25,7 @@
       <tn-select
         formControlName="bridge"
         [options]="(bridgeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 

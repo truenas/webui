@@ -13,6 +13,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -62,6 +63,8 @@ export class CsrSubjectComponent implements SummaryProvider {
 
   readonly countries$ = this.systemGeneralService.getCertificateCountryChoices()
     .pipe(choicesToOptions());
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   getSummary(): SummarySection {
     const values = this.form.value;

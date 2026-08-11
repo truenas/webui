@@ -23,6 +23,7 @@
             <tn-select
               formControlName="encryption_type"
               [options]="(encryptionTypeOptions$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
         }

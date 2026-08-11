@@ -8,6 +8,7 @@ import { TnButtonComponent, TnSelectComponent, TnSlideToggleComponent } from '@t
 import { BehaviorSubject, debounceTime, take } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { SelectOption } from 'app/interfaces/option.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { reportingGlobalControlsElements } from 'app/pages/reports-dashboard/components/reports-global-controls/reports-global-controls.elements';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
@@ -75,6 +76,8 @@ export class ReportsGlobalControlsComponent implements OnInit {
 
   protected readonly ReportType = ReportType;
   protected readonly searchableElements = reportingGlobalControlsElements;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.setupTabs();

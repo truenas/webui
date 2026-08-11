@@ -15,6 +15,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import {
   ModalHeaderComponent,
@@ -67,6 +68,8 @@ export class GlobalConfigFormComponent extends SidePanelForm implements OnInit {
   });
 
   readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   /**
    * Wrapper for IP/CIDR validator that properly handles null values.

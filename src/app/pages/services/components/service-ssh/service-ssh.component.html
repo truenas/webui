@@ -41,6 +41,7 @@
           formControlName="bindiface"
           [multiple]="true"
           [options]="(bindInterfaces$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 
@@ -52,21 +53,35 @@
         [label]="'SFTP Log Level' | translate"
         [tooltip]="tooltips.sftp_log_level | translate"
       >
-        <tn-select formControlName="sftp_log_level" [options]="sftpLogLevelOptions" [allowEmpty]="true"></tn-select>
+        <tn-select
+          formControlName="sftp_log_level"
+          [options]="sftpLogLevelOptions"
+          [allowEmpty]="true"
+          [optionTestIdKey]="optionTestIdByLabel"
+        ></tn-select>
       </tn-form-field>
 
       <tn-form-field
         [label]="'SFTP Log Facility' | translate"
         [tooltip]="tooltips.sftp_log_facility | translate"
       >
-        <tn-select formControlName="sftp_log_facility" [options]="sftpLogFacilityOptions"></tn-select>
+        <tn-select
+          formControlName="sftp_log_facility"
+          [options]="sftpLogFacilityOptions"
+          [optionTestIdKey]="optionTestIdByLabel"
+        ></tn-select>
       </tn-form-field>
 
       <tn-form-field
         [label]="'Weak Ciphers' | translate"
         [tooltip]="tooltips.weak_ciphers | translate"
       >
-        <tn-select formControlName="weak_ciphers" [multiple]="true" [options]="weakCiphersOptions"></tn-select>
+        <tn-select
+          formControlName="weak_ciphers"
+          [multiple]="true"
+          [options]="weakCiphersOptions"
+          [optionTestIdKey]="optionTestIdByLabel"
+        ></tn-select>
       </tn-form-field>
 
       <tn-form-field

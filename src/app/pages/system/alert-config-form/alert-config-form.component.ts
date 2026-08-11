@@ -26,6 +26,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -87,6 +88,8 @@ export class AlertConfigFormComponent implements OnInit {
       return policyList.map((policy) => ({ label: ignoreTranslation(policy), value: policy }));
     }),
   );
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.isFormLoading.set(true);

@@ -22,6 +22,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -70,6 +71,8 @@ export class VmwareSnapshotFormComponent implements OnInit {
 
   readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly InputType = InputType;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isNew(): boolean {
     return !this.editingSnapshot;

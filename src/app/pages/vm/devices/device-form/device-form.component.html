@@ -13,6 +13,7 @@
           [formControl]="typeControl"
           [testId]="'type'"
           [options]="(deviceTypes$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     }
@@ -55,6 +56,7 @@
               <tn-select
                 formControlName="datastore"
                 [options]="(datastoreOptions$ | async) ?? []"
+                [optionTestIdKey]="optionTestIdByLabel"
               ></tn-select>
             </tn-form-field>
 
@@ -80,6 +82,7 @@
               <tn-select
                 formControlName="path"
                 [options]="(zvolOptions$ | async) ?? []"
+                [optionTestIdKey]="optionTestIdByLabel"
               ></tn-select>
             </tn-form-field>
 
@@ -100,6 +103,7 @@
             <tn-select
               formControlName="type"
               [options]="(diskModes$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
 
@@ -111,6 +115,7 @@
             <tn-select
               formControlName="sectorsize"
               [options]="(sectorSizes$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
         }
@@ -123,6 +128,7 @@
             <tn-select
               formControlName="type"
               [options]="(nicTypes$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
 
@@ -152,6 +158,7 @@
             <tn-select
               formControlName="nic_attach"
               [options]="(nicOptions$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
 
@@ -182,6 +189,7 @@
             <tn-select
               formControlName="sectorsize"
               [options]="(sectorSizes$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
 
@@ -193,6 +201,7 @@
             <tn-select
               formControlName="type"
               [options]="(diskModes$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
 
@@ -220,12 +229,14 @@
             <tn-select
               formControlName="controller_type"
               [options]="(usbControllerOptions$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
           <tn-form-field [label]="'Device' | translate" [required]="true">
             <tn-select
               formControlName="device"
               [options]="(usbDeviceOptions$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
           @if (usbForm.controls.usb.enabled) {
@@ -250,6 +261,7 @@
               <tn-select
                 formControlName="type"
                 [options]="(displayTypes$ | async) ?? []"
+                [optionTestIdKey]="optionTestIdByLabel"
               ></tn-select>
             </tn-form-field>
           } @else {
@@ -268,6 +280,7 @@
               <tn-select
                 formControlName="bind"
                 [options]="(bindOptions$ | async) ?? []"
+                [optionTestIdKey]="optionTestIdByLabel"
               ></tn-select>
             </tn-form-field>
 
@@ -297,6 +310,7 @@
               <tn-select
                 formControlName="resolution"
                 [options]="(resolutions$ | async) ?? []"
+                [optionTestIdKey]="optionTestIdByLabel"
               ></tn-select>
             </tn-form-field>
 

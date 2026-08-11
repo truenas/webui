@@ -16,6 +16,7 @@
     <tn-select
       formControlName="type"
       [options]="(typeOptions$ | async) ?? []"
+      [optionTestIdKey]="optionTestIdByLabel"
     ></tn-select>
   </tn-form-field>
   @if (isDevice) {
@@ -27,6 +28,7 @@
       <tn-select
         formControlName="disk"
         [options]="(diskOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -99,6 +101,7 @@
     <tn-select
       formControlName="usefor"
       [options]="(useforOptions$ | async) ?? []"
+      [optionTestIdKey]="optionTestIdByLabel"
     ></tn-select>
   </tn-form-field>
 </ng-container>

@@ -7,6 +7,7 @@
         [ariaLabel]="'Devices' | translate"
         [placeholder]="'Devices' | translate"
         [options]="diskDevices()"
+        [optionTestIdKey]="optionTestIdByLabel"
         [multiple]="true"
       ></tn-select>
 
@@ -16,6 +17,7 @@
         [ariaLabel]="'Metrics' | translate"
         [placeholder]="'Metrics' | translate"
         [options]="diskMetrics()"
+        [optionTestIdKey]="optionTestIdByLabel"
         [multiple]="true"
       ></tn-select>
     }
@@ -32,6 +34,7 @@
       testId="category"
       [ariaLabel]="'Category' | translate"
       [options]="tabOptions()"
+      [optionTestIdKey]="optionTestIdByLabel"
       [ixUiSearch]="searchableElements.elements.selectReporting"
     ></tn-select>
     <tn-button

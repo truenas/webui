@@ -20,6 +20,7 @@
       testId="readonly"
       formControlName="readonly"
       [options]="(readonlyModes$ | async) ?? []"
+      [optionTestIdKey]="optionTestIdByLabel"
     ></tn-select>
   </tn-form-field>
   <tn-form-field [tooltip]="helptext.encryptionTooltip | translate">
@@ -49,6 +50,7 @@
         testId="encryption-key-format"
         formControlName="encryption_key_format"
         [options]="(encryptionKeyFormats$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
     @if (isHex) {
@@ -117,6 +119,7 @@
       testId="retention-policy"
       formControlName="retention_policy"
       [options]="(retentionPolicies$ | async) ?? []"
+      [optionTestIdKey]="optionTestIdByLabel"
     ></tn-select>
   </tn-form-field>
   @if (form.value.retention_policy === RetentionPolicy.Custom) {
@@ -139,6 +142,7 @@
           testId="lifetime-unit"
           formControlName="lifetime_unit"
           [options]="(lifetimeUnits$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     </div>

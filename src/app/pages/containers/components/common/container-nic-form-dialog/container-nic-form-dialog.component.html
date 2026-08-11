@@ -8,6 +8,7 @@
         testId="type"
         formControlName="type"
         [options]="(nicTypeOptions | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 

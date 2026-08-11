@@ -57,6 +57,7 @@
           testId="security"
           formControlName="security"
           [options]="(securityOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 

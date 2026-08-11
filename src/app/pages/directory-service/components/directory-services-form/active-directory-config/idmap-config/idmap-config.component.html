@@ -43,6 +43,7 @@
             testId="idmap_backend"
             formControlName="idmap_backend"
             [options]="(domainIdmapTypeOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
 
@@ -78,6 +79,7 @@
               testId="schema_mode"
               formControlName="schema_mode"
               [options]="(schemaModeOptions$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
           <tn-form-field [tooltip]="helptext.unixPrimaryGroupTooltip | translate">

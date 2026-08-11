@@ -24,6 +24,7 @@ import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/compon
 import {
   IxDynamicFormComponent,
 } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -74,6 +75,8 @@ export class AcmednsFormComponent extends SidePanelForm implements OnInit {
       }],
     }),
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get formGroup(): UntypedFormGroup {
     return this.form.controls.attributes as UntypedFormGroup;

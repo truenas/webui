@@ -22,6 +22,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
@@ -90,6 +91,8 @@ export class PortFormComponent extends IxFormHostForm<NvmeOfPort | null> impleme
     choicesToOptions(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isTcp(): boolean {
     return this.form.value.addr_trtype === NvmeOfTransportType.Tcp;

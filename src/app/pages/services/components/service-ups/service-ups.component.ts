@@ -16,6 +16,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -142,6 +143,8 @@ export class ServiceUpsComponent extends IxFormHostForm<boolean, UpsFormValue> i
   // tn-select does not translate option labels, so translate up-front.
   readonly modeOptions = translateOptions(this.translate, helptextServiceUps.modeOptions);
   readonly shutdownOptions = translateOptions(this.translate, helptextServiceUps.shutdownOptions);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.loadFormConfig(this.api.call('ups.config'), (config) => this.form.patchValue(config));

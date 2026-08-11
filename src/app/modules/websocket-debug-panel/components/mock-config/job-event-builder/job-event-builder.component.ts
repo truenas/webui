@@ -11,6 +11,7 @@ import {
   TnIconButtonComponent, TnInputComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
 import { debounceTime } from 'rxjs/operators';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { MockEvent } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { parseDelay, safeJsonParse, safeJsonStringify } from 'app/modules/websocket-debug-panel/utils/type-guards';
 
@@ -53,6 +54,8 @@ export class JobEventBuilderComponent implements OnInit, OnChanges {
   protected form = this.fb.group({
     events: this.fb.array<FormGroup>([]),
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     // Emit changes when form updates with debounce to prevent partial values

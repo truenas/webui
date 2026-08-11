@@ -30,6 +30,7 @@ import {
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
@@ -152,6 +153,8 @@ export class EmailFormComponent implements OnInit {
   });
 
   protected extraDisabled = computed(() => !this.isSmtp() && !this.hasOauthAuthorization());
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get oauthType(): OauthButtonType | undefined {
     switch (this.sendMethod()) {

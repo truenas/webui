@@ -14,6 +14,7 @@ import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import {
   FcMpioInfoBannerComponent,
@@ -83,6 +84,8 @@ export class ProtocolOptionsWizardStepComponent implements OnInit {
     choicesToOptions(),
     takeUntilDestroyed(this.destroyRef),
   );
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isNewPortal(): boolean {
     return this.form().controls.listen.enabled && this.form().value.portal === newOption;

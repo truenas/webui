@@ -15,6 +15,7 @@ import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-ser
 import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import { DomainIdmap, domainIdmapTypeOptions, PrimaryDomainIdmap } from 'app/interfaces/active-directory-config.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 
 @Component({
   selector: 'ix-idmap-config',
@@ -81,6 +82,8 @@ export class IdmapConfigComponent implements OnInit {
     { label: ActiveDirectorySchemaMode.Sfu, value: ActiveDirectorySchemaMode.Sfu },
     { label: ActiveDirectorySchemaMode.Sfu20, value: ActiveDirectorySchemaMode.Sfu20 },
   ]);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.listenToTypeChanges();

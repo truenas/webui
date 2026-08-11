@@ -15,6 +15,7 @@
           testId="extent"
           formControlName="extent"
           [options]="(extents$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     </ix-fieldset>

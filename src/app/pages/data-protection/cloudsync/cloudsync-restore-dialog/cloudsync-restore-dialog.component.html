@@ -13,6 +13,7 @@
       testId="transfer-mode"
       formControlName="transfer_mode"
       [options]="(transferModes$ | async) ?? []"
+      [optionTestIdKey]="optionTestIdByLabel"
     ></tn-select>
   </tn-form-field>
 

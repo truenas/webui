@@ -11,6 +11,7 @@
             testId="direction"
             formControlName="direction"
             [options]="(directionOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       }
@@ -24,6 +25,7 @@
             testId="transfer-mode"
             formControlName="transfer_mode"
             [options]="(transferModeOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       }
@@ -90,6 +92,7 @@
           testId="bucket"
           formControlName="bucket"
           [options]="(bucketOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     }

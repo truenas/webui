@@ -12,6 +12,7 @@
       <tn-select
         formControlName="bindip"
         [options]="ipChoices()"
+        [optionTestIdKey]="optionTestIdByLabel"
         [multiple]="true"
       ></tn-select>
     </tn-form-field>
@@ -44,6 +45,7 @@
         <tn-select
           formControlName="protocols"
           [options]="(protocolOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
           [multiple]="true"
         ></tn-select>
       </tn-form-field>

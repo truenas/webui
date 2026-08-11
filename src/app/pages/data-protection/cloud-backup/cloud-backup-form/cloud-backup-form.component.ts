@@ -38,6 +38,7 @@ import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -100,6 +101,8 @@ export class CloudBackupFormComponent implements OnInit {
 
   /** The inner `<ix-form>`, used to expose the host-facing dual-host surface. */
   private readonly ixForm = viewChild(IxFormComponent);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isNew(): boolean {
     return !this.editingTask;

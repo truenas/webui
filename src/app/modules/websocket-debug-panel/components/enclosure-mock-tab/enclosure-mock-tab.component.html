@@ -21,6 +21,7 @@
           testId="controller-model-select"
           formControlName="controllerModel"
           [options]="controllerOptions"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 
@@ -32,6 +33,7 @@
           testId="expansion-models-select"
           formControlName="expansionModels"
           [options]="expansionOptions"
+          [optionTestIdKey]="optionTestIdByLabel"
           [multiple]="true"
         ></tn-select>
       </tn-form-field>

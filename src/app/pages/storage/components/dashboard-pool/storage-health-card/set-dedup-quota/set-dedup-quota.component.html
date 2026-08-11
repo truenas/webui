@@ -5,6 +5,7 @@
       testId="quota-type"
       formControlName="quotaType"
       [options]="(quotaTypeOptions$ | async) ?? []"
+      [optionTestIdKey]="optionTestIdByLabel"
     ></tn-select>
   </tn-form-field>
 

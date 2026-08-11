@@ -12,6 +12,7 @@ import {
 import { Observable, of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { dockerHubRegistry, DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
@@ -71,6 +72,8 @@ export class DockerRegistryFormComponent extends SidePanelForm implements OnInit
 
   /** Public signal hosts can read to disable a Save action while invalid or loading. */
   readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.existingDockerRegistry = this.registry();

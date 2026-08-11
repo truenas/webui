@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnSelectComponent, type TnSelectOption } from '@truenas/ui-components';
 import { map, take } from 'rxjs';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { AppState } from 'app/store';
 import { preferredColumnsUpdated } from 'app/store/preferences/preferences.actions';
@@ -56,6 +57,8 @@ export class TableColumnPickerComponent<T = unknown> implements OnInit {
   );
 
   private lastSelected: string[] = [];
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     const key = this.columnPreferencesKey();

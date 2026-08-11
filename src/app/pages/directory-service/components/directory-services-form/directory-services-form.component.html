@@ -10,6 +10,7 @@
         testId="service_type"
         formControlName="service_type"
         [options]="(configurationTypeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 

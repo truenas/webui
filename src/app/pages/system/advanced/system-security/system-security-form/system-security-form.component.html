@@ -112,6 +112,7 @@
         formControlName="password_complexity_ruleset"
         [multiple]="true"
         [options]="(complexityRulesetLabels$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
         [attr.aria-describedby]="isStigEnabled() && form.controls.password_complexity_ruleset.hasError('stigPasswordComplexity') ? 'password-complexity-error' : null"
       ></tn-select>
     </tn-form-field>

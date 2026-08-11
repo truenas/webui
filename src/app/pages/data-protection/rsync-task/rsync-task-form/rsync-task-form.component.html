@@ -36,6 +36,7 @@
           testId="direction"
           formControlName="direction"
           [options]="(directions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 
@@ -55,6 +56,7 @@
           testId="mode"
           formControlName="mode"
           [options]="(rsyncModes$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 
@@ -93,6 +95,7 @@
             testId="sshconnectmode"
             formControlName="sshconnectmode"
             [options]="(sshConnectModes$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
 

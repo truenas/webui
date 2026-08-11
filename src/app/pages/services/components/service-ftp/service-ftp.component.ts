@@ -22,6 +22,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import {
   advancedModeFooterAction, SidePanelFooterAction,
@@ -137,6 +138,8 @@ export class ServiceFtpComponent extends IxFormHostForm<boolean, FtpFormValue> i
 
   /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
   private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get footerActions(): SidePanelFooterAction[] {
     return this.advancedToggle();

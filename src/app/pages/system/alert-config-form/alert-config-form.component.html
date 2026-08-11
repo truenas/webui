@@ -42,6 +42,7 @@
               formControlName="level"
               [testId]="[cls.title, 'level']"
               [options]="(levelOptions$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
           <tn-form-field
@@ -53,6 +54,7 @@
               formControlName="policy"
               [testId]="[cls.title, 'policy']"
               [options]="(policyOptions$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
         </div>

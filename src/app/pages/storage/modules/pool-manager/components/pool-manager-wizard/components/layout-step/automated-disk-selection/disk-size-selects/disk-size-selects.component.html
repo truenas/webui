@@ -4,6 +4,7 @@
       formControlName="sizeAndType"
       [testId]="['size-and-type', type()]"
       [options]="diskSizeAndTypeOptions()"
+      [optionTestIdKey]="optionTestIdByLabel"
       [compareWith]="compareSizeAndTypeWith"
       [placeholder]="tnSelectLabels.placeholder | translate"
       [noOptionsLabel]="tnSelectLabels.noOptions | translate"

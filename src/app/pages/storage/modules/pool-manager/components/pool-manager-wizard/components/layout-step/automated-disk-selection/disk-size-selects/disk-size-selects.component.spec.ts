@@ -62,13 +62,14 @@ describe('DiskSizeSelectsComponent', () => {
     });
 
     it('gives each option its own test id even though the values are objects', async () => {
-      // No `[optionTestIdKey]` is passed: the option value is a `{ size, type }` object, which the
-      // library's `optionTestId()` does not treat as a key, so it falls back to the label on its
-      // own. Pinned here because the alternative — every option collapsing to one shared id — is a
-      // silent Playwright strict-mode violation, not a visible failure.
+      // The option value is a `{ size, type }` object, so the library would fall back to the label
+      // unaided — but the select pins `[optionTestIdKey]` anyway, so the ids stay label-derived if
+      // the value ever becomes primitive. Pinned here because the alternative — every option
+      // collapsing to one shared id — is a silent Playwright strict-mode violation, not a visible
+      // failure.
       //
-      // `gi-b`, not `gib`: the library's kebab normalizer splits `GiB` at the lower→upper
-      // boundary. Ugly but stable, and each id stays distinct, which is what this test is for.
+      // `gi-b`, not `gib`: kebab-casing splits `GiB` at the lower→upper boundary. Ugly but stable,
+      // and each id stays distinct, which is what this test is for.
       await diskSizeSelect.open();
       const ids = Array.from(document.querySelectorAll('[data-test^="option-size-and-type-"]'))
         .map((option) => option.getAttribute('data-test'));

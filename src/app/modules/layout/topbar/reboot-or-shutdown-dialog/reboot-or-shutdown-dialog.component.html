@@ -5,6 +5,7 @@
         testId="reason"
         [formControl]="form.controls.reason"
         [options]="(reasonOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 

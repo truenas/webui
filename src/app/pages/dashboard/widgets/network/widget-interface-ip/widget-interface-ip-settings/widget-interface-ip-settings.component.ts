@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { filter, map, startWith } from 'rxjs';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -48,6 +49,9 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
   private firstOption = toSignal(this.networkInterfaceOptions$.pipe(map((opts) => opts[0]?.value)));
 
   private readonly formFieldNames = ['interface'];
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
+
   constructor() {
     effect(() => {
       const firstOption = this.firstOption();

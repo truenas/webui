@@ -7,6 +7,7 @@ import { filter, switchMap } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UpdateProfileChoices } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -94,6 +95,8 @@ export class UpdateProfileCard implements OnChanges {
         value: profile.id,
       }));
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnChanges(changes: IxSimpleChanges<UpdateProfileCard>): void {
     if ('currentProfileId' in changes) {

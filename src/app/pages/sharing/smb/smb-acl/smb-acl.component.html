@@ -34,6 +34,7 @@
                 testId="ae-who"
                 formControlName="ae_who"
                 [options]="(tags$ | async) ?? []"
+                [optionTestIdKey]="optionTestIdByLabel"
               ></tn-select>
             </tn-form-field>
 
@@ -44,6 +45,7 @@
                   [testId]="'user'"
                   [placeholder]="'User' | translate"
                   [options]="(userOptions$ | async) ?? []"
+                  [optionTestIdKey]="optionTestIdByLabel"
                   [allowCustomValue]="true"
                   [loading]="usersLoading()"
                   [loadingText]="'Loading...' | translate"
@@ -60,6 +62,7 @@
                   [testId]="'group'"
                   [placeholder]="'Group' | translate"
                   [options]="(groupOptions$ | async) ?? []"
+                  [optionTestIdKey]="optionTestIdByLabel"
                   [allowCustomValue]="true"
                   [loading]="groupsLoading()"
                   [loadingText]="'Loading...' | translate"
@@ -84,6 +87,7 @@
                 testId="ae-perm"
                 formControlName="ae_perm"
                 [options]="(permissions$ | async) ?? []"
+                [optionTestIdKey]="optionTestIdByLabel"
               ></tn-select>
             </tn-form-field>
 
@@ -96,6 +100,7 @@
                 testId="ae-type"
                 formControlName="ae_type"
                 [options]="(types$ | async) ?? []"
+                [optionTestIdKey]="optionTestIdByLabel"
               ></tn-select>
             </tn-form-field>
           </div>

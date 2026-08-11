@@ -17,6 +17,7 @@
             testId="dataset"
             formControlName="dataset"
             [options]="(datasetOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
 
@@ -58,6 +59,7 @@
               testId="lifetime-unit"
               formControlName="lifetime_unit"
               [options]="(lifetimeOptions$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
         </div>
@@ -84,6 +86,7 @@
               testId="begin"
               formControlName="begin"
               [options]="(timeOptions$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
         }
@@ -95,6 +98,7 @@
               testId="end"
               formControlName="end"
               [options]="(timeOptions$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
         }

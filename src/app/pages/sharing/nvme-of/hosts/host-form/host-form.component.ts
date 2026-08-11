@@ -24,6 +24,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -70,6 +71,8 @@ export class HostFormComponent extends IxFormHostForm<NvmeOfHost | null> impleme
 
   protected hashOptions$ = this.api.call('nvmet.host.dhchap_hash_choices').pipe(singleArrayToOptions());
   protected dhGroupOptions$ = this.api.call('nvmet.host.dhchap_dhgroup_choices').pipe(singleArrayToOptions());
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   private nqnValidator(): ValidatorFn {
     return (control: AbstractControl): Record<string, { message: string }> | null => {

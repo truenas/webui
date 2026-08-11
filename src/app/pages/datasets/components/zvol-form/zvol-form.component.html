@@ -78,6 +78,7 @@
             <tn-select
               formControlName="sync"
               [options]="syncOptions"
+              [optionTestIdKey]="optionTestIdByLabel"
               [ariaLabel]="helptext.syncLabel | translate"
             ></tn-select>
           </div>
@@ -93,6 +94,7 @@
             <tn-select
               formControlName="compression"
               [options]="compressionOptions"
+              [optionTestIdKey]="optionTestIdByLabel"
               [ariaLabel]="helptext.compressionLabel | translate"
             ></tn-select>
           </div>
@@ -109,6 +111,7 @@
               <tn-select
                 formControlName="deduplication"
                 [options]="deduplicationOptions"
+                [optionTestIdKey]="optionTestIdByLabel"
                 [ariaLabel]="helptext.deduplicationLabel | translate"
               ></tn-select>
             </div>
@@ -125,6 +128,7 @@
             <tn-select
               formControlName="readonly"
               [options]="readonlyOptions"
+              [optionTestIdKey]="optionTestIdByLabel"
               [ariaLabel]="helptext.readonlyLabel | translate"
             ></tn-select>
           </div>
@@ -141,6 +145,7 @@
               <tn-select
                 formControlName="volblocksize"
                 [options]="volblocksizeOptions"
+                [optionTestIdKey]="optionTestIdByLabel"
                 [ariaLabel]="helptext.volblocksizeLabel | translate"
               ></tn-select>
             </div>
@@ -157,6 +162,7 @@
             <tn-select
               formControlName="snapdev"
               [options]="snapdevOptions"
+              [optionTestIdKey]="optionTestIdByLabel"
               [ariaLabel]="'Snapdev' | translate"
             ></tn-select>
           </div>
@@ -178,6 +184,7 @@
             <tn-select
               formControlName="special_small_block_size"
               [options]="specialSmallBlockSizeOptions"
+              [optionTestIdKey]="optionTestIdByLabel"
               [ariaLabel]="'Use Metadata (Special) VDEVs' | translate"
             ></tn-select>
 

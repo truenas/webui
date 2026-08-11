@@ -41,6 +41,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -170,6 +171,8 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
     ${helptextCloudSync.copyModeExplanation}<br><br>
     ${helptextCloudSync.moveModeExplanation}
   `;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get credentialsDependentControls(): FormControl[] {
     return [

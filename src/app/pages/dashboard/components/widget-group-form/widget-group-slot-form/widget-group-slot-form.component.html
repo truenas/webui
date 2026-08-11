@@ -9,6 +9,7 @@
           [testId]="'category'"
           [ariaLabel]="'Card Category' | translate"
           [options]="widgetCategoriesOptions()"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
       @if (shouldShowType()) {
@@ -18,6 +19,7 @@
             [testId]="'type'"
             [ariaLabel]="'Card Type' | translate"
             [options]="widgetTypesOptions()"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       }

@@ -25,6 +25,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
@@ -108,6 +109,8 @@ export class EncryptionOptionsDialog implements OnInit, OnDestroy {
   readonly encryptionTypeOptions$ = of(helptextDatasetForm.encryption.typeOptions);
 
   protected readonly Role = Role;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get canInherit(): boolean {
     return this.data.parent?.encrypted;

@@ -8,6 +8,7 @@
       <tn-select
         formControlName="os"
         [options]="(osOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -46,6 +47,7 @@
       <tn-select
         formControlName="time"
         [options]="(timeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -57,6 +59,7 @@
       <tn-select
         formControlName="bootloader"
         [options]="(bootloaderOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -108,6 +111,7 @@
         <tn-select
           formControlName="vnc_bind"
           [options]="(bindOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 

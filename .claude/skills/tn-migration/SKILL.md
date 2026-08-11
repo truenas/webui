@@ -720,13 +720,18 @@ Three properties make this safe:
   formControlName="sshPort">` emits `input-ssh-port` with no `testId` at all — matching what
   `ix-input`'s `[ixTest]="controlDirective.name"` produced. Passing an explicit `testId` on a
   bound control is redundant, not required; it is only needed to *override* the control name.
-- **Options key off the value, not the label.** `tn-select`/`tn-autocomplete` derive an option's
-  id from its `value`, where `[ixTest]` used the `label` — so any select whose two differ
-  silently renames every option id. Pin it back with the shared callbacks in
-  `modules/forms/ix-forms/constants/tn-select-option-test-id.constant.ts`
-  (`[optionTestIdKey]="optionTestIdByLabel"`, or `optionTestIdByKebabLabel` when the legacy id
-  had collapsed case/spaces the label still carries). Only write a bespoke callback when the id
-  comes from neither.
+- **Options key off the value, not the label — always pin the key.** `tn-select`/`tn-autocomplete`
+  derive an option's id from its `value` when that value is a primitive, where `[ixTest]` used the
+  `label`, so a select whose two differ silently renames every option id — down to bare numbers
+  where the value is an enum ordinal or a record id (`option-sshconnectmode-0`). Pin every one of
+  them with the shared callback in
+  `modules/forms/ix-forms/constants/tn-select-option-test-id.constant.ts`:
+  `[optionTestIdKey]="optionTestIdByLabel"`, plus `protected readonly optionTestIdByLabel =
+  optionTestIdByLabel;` on the component. Pin it even when label and value look identical: the
+  callback normalizes with lodash `kebabCase` the way `[ixTest]` did, which the library's own
+  normalizer does not reproduce (`eth0` → `eth-0`, `user's` → `users`). Only write a bespoke
+  callback when the id comes from neither field — see `app-update-dialog.component.ts`. Every
+  `tn-select`/`tn-autocomplete` in webui pins a key as of NAS-142127; keep it that way.
 
 **Attribute name (required once, at the app root).** `{ provide: TN_TEST_ATTR, useValue:
 'data-test' }` makes the library write `data-test` instead of its default `data-testid`.

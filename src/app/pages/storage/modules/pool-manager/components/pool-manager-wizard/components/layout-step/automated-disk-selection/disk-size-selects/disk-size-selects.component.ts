@@ -16,6 +16,7 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { SizeAndType } from 'app/pages/storage/modules/pool-manager/interfaces/size-and-type.interface';
@@ -88,6 +89,8 @@ export class DiskSizeSelectsComponent implements OnChanges {
     sizeAndType: [null as SizeAndType | null, Validators.required],
     treatDiskSizeAsMinimum: [false],
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     this.setControlRelations();

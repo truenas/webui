@@ -30,6 +30,7 @@
       <tn-select
         formControlName="time"
         [options]="(timeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -41,6 +42,7 @@
       <tn-select
         formControlName="bootloader"
         [options]="(bootloaderOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -125,6 +127,7 @@
       <tn-select
         formControlName="cpu_mode"
         [options]="(cpuModeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -133,6 +136,7 @@
         <tn-select
           formControlName="cpu_model"
           [options]="(cpuModelOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
           [allowEmpty]="true"
         ></tn-select>
       </tn-form-field>
@@ -187,6 +191,7 @@
         formControlName="gpus"
         [multiple]="true"
         [options]="(gpuOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
   </tn-form-section>

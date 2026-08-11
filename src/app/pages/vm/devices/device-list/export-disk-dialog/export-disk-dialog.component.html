@@ -36,6 +36,7 @@
         testId="format"
         formControlName="format"
         [options]="(formatOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
   </form>

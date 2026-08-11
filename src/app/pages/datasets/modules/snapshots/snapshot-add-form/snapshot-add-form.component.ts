@@ -26,6 +26,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/forms/ix-forms/validators/required-empty-validation';
@@ -143,6 +144,8 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   protected readonly datasetErrorMessages = {
     [vmCheckError]: this.translate.instant(helptextSnapshots.vmCheckFailed),
   };
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     // Subscribed before the preset below sets `dataset`, so that first check isn't dropped.

@@ -36,6 +36,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
@@ -199,6 +200,8 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
   failoverGroups$ = of(range(1, 32)).pipe(singleArrayToOptions());
 
   readonly helptext = helptextInterfacesForm;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isNew(): boolean {
     return !this.existingInterface;

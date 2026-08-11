@@ -167,7 +167,7 @@ export class UnlockSedDisksComponent {
    * `…-<label>` tail. The select's own base carries the row position, so an option resolves to
    * `option-disk-name-<position>-<label>` — unique across rows.
    */
-  protected readonly diskOptionTestIdKey = optionTestIdByLabel;
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   protected addException(): void {
     if (this.availableDiskCountForException() <= 0) return;

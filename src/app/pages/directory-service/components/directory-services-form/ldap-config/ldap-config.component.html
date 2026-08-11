@@ -50,6 +50,7 @@
         testId="schema"
         formControlName="schema"
         [options]="(ldapSchemaOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 

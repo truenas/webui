@@ -19,6 +19,7 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
@@ -94,6 +95,8 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
     { label: this.translate.instant('Months'), value: LifetimeUnit.Month },
     { label: this.translate.instant('Years'), value: LifetimeUnit.Year },
   ]);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get retentionPolicyOptions$(): Observable<Option[]> {
     return this.isCustomRetentionVisible()

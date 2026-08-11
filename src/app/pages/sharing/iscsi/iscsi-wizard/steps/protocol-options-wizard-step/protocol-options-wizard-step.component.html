@@ -32,6 +32,7 @@
       <tn-select
         formControlName="portal"
         [options]="(portalOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
     @if (isNewPortal) {
@@ -56,6 +57,7 @@
               <tn-select
                 [formControlName]="i"
                 [options]="(addressOptions$ | async) ?? []"
+                [optionTestIdKey]="optionTestIdByLabel"
               ></tn-select>
             </tn-form-field>
           </ix-list-item>

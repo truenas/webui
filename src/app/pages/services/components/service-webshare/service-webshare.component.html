@@ -16,7 +16,11 @@
       [label]="'Passkey' | translate"
       [tooltip]="helptext.passkey_tooltip | translate"
     >
-      <tn-select formControlName="passkey" [options]="passkeyOptions"></tn-select>
+      <tn-select
+        formControlName="passkey"
+        [options]="passkeyOptions"
+        [optionTestIdKey]="optionTestIdByLabel"
+      ></tn-select>
     </tn-form-field>
   </tn-form-section>
 </ix-form>

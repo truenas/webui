@@ -19,12 +19,11 @@ import {
   IxFormHostForm,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import {
-  advPowerManagementOptionTestId, DiskFormResponse,
-} from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
+import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 
 /** One `disk.update` argument pair, as `core.bulk` takes them. */
 type DiskBulkUpdate = [id: string, update: DiskUpdate];
@@ -79,7 +78,7 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> impl
     helptextDisks.advancedPowerManagementOptions,
   );
 
-  protected readonly optionLabelTestId = advPowerManagementOptionTestId;
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.setFormDiskBulk(this.disksToEdit());

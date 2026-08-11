@@ -11,6 +11,7 @@ import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -59,6 +60,8 @@ export class TargetWizardStepComponent {
   ]);
 
   readonly hasFibreChannel = toSignal(this.license.hasFibreChannel$);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isNewTarget(): boolean {
     return this.form().enabled && this.form().value.target === newOption;

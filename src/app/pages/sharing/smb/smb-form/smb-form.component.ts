@@ -62,6 +62,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -179,6 +180,8 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
       }
     },
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get footerActions(): SidePanelFooterAction[] {
     return this.advancedToggle();

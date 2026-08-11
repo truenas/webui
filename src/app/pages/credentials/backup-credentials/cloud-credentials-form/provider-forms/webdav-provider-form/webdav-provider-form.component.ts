@@ -8,6 +8,7 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { SomeProviderAttributes } from 'app/interfaces/cloudsync-credential.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
   BaseProviderFormComponent,
@@ -70,6 +71,8 @@ export class WebdavProviderFormComponent extends BaseProviderFormComponent imple
       ...(typeof url === 'string' ? { url: this.formatter.stringAsUrlParsing(url) } : {}),
     };
   }
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {

@@ -130,6 +130,7 @@
                   <tn-select
                     formControlName="portal"
                     [options]="(portals$ | async) ?? []"
+                    [optionTestIdKey]="optionTestIdByLabel"
                   ></tn-select>
                 </tn-form-field>
 
@@ -141,6 +142,7 @@
                     formControlName="initiator"
                     [allowEmpty]="true"
                     [options]="(initiators$ | async) ?? []"
+                    [optionTestIdKey]="optionTestIdByLabel"
                   ></tn-select>
                 </tn-form-field>
 
@@ -151,6 +153,7 @@
                   <tn-select
                     formControlName="authmethod"
                     [options]="(authmethods$ | translateOptions | async) ?? []"
+                    [optionTestIdKey]="optionTestIdByLabel"
                   ></tn-select>
                 </tn-form-field>
 
@@ -162,6 +165,7 @@
                     formControlName="auth"
                     [allowEmpty]="true"
                     [options]="(auths$ | async) ?? []"
+                    [optionTestIdKey]="optionTestIdByLabel"
                   ></tn-select>
                 </tn-form-field>
               </ix-list-item>

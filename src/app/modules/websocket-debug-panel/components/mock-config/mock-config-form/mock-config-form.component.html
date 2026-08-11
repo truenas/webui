@@ -59,6 +59,7 @@
             testId="error-code-input"
             formControlName="errorCode"
             [options]="errorCodeOptions"
+            [optionTestIdKey]="optionTestIdByLabel"
             [allowCustomValue]="true"
           ></tn-autocomplete>
         </tn-form-field>
@@ -82,6 +83,7 @@
               testId="call-error-errname-select"
               formControlName="callErrorErrname"
               [options]="errorNameOptions"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
           <tn-form-field

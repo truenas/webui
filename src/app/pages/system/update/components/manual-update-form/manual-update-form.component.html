@@ -33,6 +33,7 @@
             formControlName="filelocation"
             [testId]="'filelocation'"
             [options]="(fileLocationOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       }

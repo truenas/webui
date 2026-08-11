@@ -31,6 +31,7 @@ import {
 } from 'rxjs';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SimpleWidget } from 'app/pages/dashboard/types/simple-widget.interface';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
@@ -147,6 +148,8 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
   private environmentInjector = inject(EnvironmentInjector);
   private destroyRef = inject(DestroyRef);
   private widgetRegistryEntries = Object.entries(widgetRegistry);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   private setupFormValueUpdates(): void {
     this.setupCategoryUpdates();

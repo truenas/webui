@@ -17,6 +17,7 @@ import { App, AppRollbackParams } from 'app/interfaces/app.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -57,6 +58,8 @@ export class AppRollbackModalComponent {
 
   readonly helptext = helptextApps.apps.rollbackDialog.version.tooltip;
   protected readonly requiredRoles = [Role.AppsWrite];
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     this.setVersionOptions();

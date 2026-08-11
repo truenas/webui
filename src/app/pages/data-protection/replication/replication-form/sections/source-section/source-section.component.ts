@@ -17,6 +17,7 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -103,6 +104,8 @@ export class SourceSectionComponent implements OnChanges {
 
   protected readonly helptext = helptextReplication;
   protected readonly CronPresetValue = CronPresetValue;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnChanges(): void {
     if (this.replication()) {

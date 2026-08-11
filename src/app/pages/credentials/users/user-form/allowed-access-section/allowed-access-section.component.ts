@@ -7,6 +7,7 @@ import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
 @Component({
@@ -54,6 +55,8 @@ export class AllowedAccessSectionComponent {
   }, {
     validators: [this.smbAccessValidator.bind(this)],
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     this.setFieldRelations();

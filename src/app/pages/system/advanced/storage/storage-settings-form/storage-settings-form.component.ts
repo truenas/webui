@@ -23,6 +23,7 @@ import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -105,6 +106,8 @@ export class StorageSettingsFormComponent extends SidePanelForm implements OnIni
   protected isSmbRunning$ = this.store$.select(selectService(ServiceName.Cifs)).pipe(
     map((service) => service?.state === ServiceStatus.Running),
   );
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.setFormData();

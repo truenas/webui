@@ -16,6 +16,7 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -78,6 +79,8 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   ]);
 
   readonly createTypes$ = of(mapToOptions(this.createTypes, this.translate));
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isImport(): boolean {
     return this.form.value.create_type === CertificateCreateType.ImportCsr;

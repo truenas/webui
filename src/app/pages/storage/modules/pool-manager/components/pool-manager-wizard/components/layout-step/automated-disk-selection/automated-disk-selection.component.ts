@@ -9,7 +9,7 @@ import { CreateVdevLayout, vdevLayoutOptions, VDevType } from 'app/enums/v-dev-t
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
-import { optionTestIdByKebabLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -107,7 +107,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
    * Keeps `RAIDZ1`/`dRAID1` resolving to `option-layout-raidz-1`/`option-layout-d-raid-1`,
    * which keying off the `CreateVdevLayout` value would not.
    */
-  protected readonly layoutOptionTestIdKey = optionTestIdByKebabLabel;
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     this.updateStoreOnChanges();

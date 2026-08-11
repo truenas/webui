@@ -12,6 +12,7 @@
         formControlName="tag"
         [ariaLabel]="'Who' | translate"
         [options]="tags"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -81,6 +82,7 @@
             formControlName="basicPermission"
             [ariaLabel]="'Permissions' | translate"
             [options]="basicPermissions"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       }

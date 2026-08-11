@@ -53,6 +53,7 @@
             testId="source-lifetime-unit"
             formControlName="source_lifetime_unit"
             [options]="(lifetimeUnitOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       </div>
@@ -90,6 +91,7 @@
             testId="lifetime-unit"
             formControlName="lifetime_unit"
             [options]="(lifetimeUnitOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       }

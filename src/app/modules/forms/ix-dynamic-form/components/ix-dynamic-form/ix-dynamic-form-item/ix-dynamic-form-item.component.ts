@@ -30,6 +30,7 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 
@@ -73,6 +74,8 @@ export class IxDynamicFormItemComponent implements OnInit {
 
   readonly DynamicFormSchemaType = DynamicFormSchemaType;
   readonly CodeEditorLanguage = CodeEditorLanguage;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isAllListControlsDisabled(): boolean {
     return (this.dynamicSchema() as DynamicFormSchemaList).items.every((item) => {

@@ -1,24 +1,37 @@
 import { TnSelectOption } from '@truenas/ui-components';
-import { kebabCase } from 'lodash-es';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 
 /**
- * Ready-made `optionTestIdKey` callbacks for `tn-select` / `tn-autocomplete`.
+ * The ready-made `optionTestIdKey` callback for `tn-select` / `tn-autocomplete`.
  *
  * With no key, the library's `optionTestId()` derives an option's id from its **value** when that
  * value is a `string` or a `number`, and falls back to the **label** for anything else. The legacy
- * `[ixTest]` directive always derived it from the label, so a select whose label and value differ
- * *and* whose value is a primitive — `<name> | <guid>` vs the bare guid, an enclosure name vs its
- * id — silently renames every option id on migration unless the key is pinned back to the label.
- * Object- or array-valued options (`{ size, type }`) already land on the label unaided and need no
- * key; pin one only if the default would be wrong or if you want the derivation stated in the
- * template.
+ * `[ixTest]="[name, option.label]"` always derived it from the label, so a select whose label and
+ * value differ *and* whose value is a primitive — a keychain credential name vs its numeric id, an
+ * `RsyncSshConnectMode` caption vs its enum ordinal, `Plain (No Encryption)` vs `PLAIN` — silently
+ * renames every option id on migration unless the key is pinned back to the label. Object- or
+ * array-valued options (`{ size, type }`) already land on the label unaided, but pin the key there
+ * too: it costs nothing and states the derivation in the template instead of leaving it to a
+ * library default that only holds while the value stays non-primitive.
+ *
+ * The label is normalized with {@link normalizeTestIdString} (lodash `kebabCase`) rather than handed
+ * over raw, because the library's own normalizer is not the one `[ixTest]` used: it neither drops an
+ * apostrophe outright nor splits a letter→digit boundary. Raw, `SSH private key stored in user's
+ * home directory` resolves to `…in-user-s-home-directory` and `RAIDZ1` to `raidz1`, where Release
+ * Engineering selects on `…in-users-home-directory` and `raidz-1`. Pre-normalizing produces a value
+ * the library's normalizer then passes through unchanged, so the ids stay byte-identical to the ones
+ * the legacy directive resolved. See NAS-141021, NAS-142127.
  *
  * Kept here, alongside `tn-select-labels.constant.ts`, so the reasoning is pinned in one place
- * instead of being re-derived per component. Pass one straight through:
+ * instead of being re-derived per component. Pass it straight through:
  * `[optionTestIdKey]="optionTestIdByLabel"`.
  *
  * A select whose id has to come from somewhere other than the label — a lookup keyed by the
  * option value, say — still needs its own callback; see `app-update-dialog.component.ts`.
+ *
+ * The callback is generic in the option value on purpose: a concrete `TnSelectOption<unknown>`
+ * parameter would pin the host `tn-select<T>`'s own type argument to `unknown`, breaking the
+ * inference its other bindings depend on (`(multiSelectionChange)` handlers, `compareWith`).
  *
  * **Sharp edge:** a label-derived id is locale-dependent — the option ids shift with the active
  * language, so a test pinned to `option-pool-my-pool` in English will not resolve under another
@@ -26,13 +39,4 @@ import { kebabCase } from 'lodash-es';
  * key is parity-preserving rather than a new hazard; but where an id must be stable across
  * languages, key off a locale-independent field of the option value instead.
  */
-export const optionTestIdByLabel = (option: TnSelectOption): string => option.label;
-
-/**
- * As {@link optionTestIdByLabel}, but kebab-cased the way `[ixTest]` normalized its input.
- *
- * Use this when the legacy id had already collapsed spaces or mixed case that the label still
- * carries — e.g. `RAIDZ1` resolved to `option-layout-raidz-1`, which the library's own
- * normalizer would not reproduce from the value (it drops the hyphen before the digit).
- */
-export const optionTestIdByKebabLabel = (option: TnSelectOption): string => kebabCase(option.label);
+export const optionTestIdByLabel = <T>(option: TnSelectOption<T>): string => normalizeTestIdString(option.label);

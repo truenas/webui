@@ -43,6 +43,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { FormSubmitEvent, IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
   forbiddenValues,
@@ -185,6 +186,8 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     { label: this.translate.instant('Key'), value: 'key' },
     { label: this.translate.instant('Passphrase'), value: 'passphrase' },
   ];
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     super();

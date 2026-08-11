@@ -11,6 +11,7 @@ import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -77,6 +78,8 @@ export class ExportDiskDialogComponent {
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({
     directoriesOnly: true,
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get sourcePath(): string {
     return this.data.device.attributes.path;

@@ -133,6 +133,11 @@ describe('RsyncTaskFormComponent', () => {
     await saveButton.click();
   };
 
+  /** Options render in a CDK overlay outside the fixture, so they are read off the document. */
+  const optionTestIds = (prefix: string): string[] => Array.from(
+    document.querySelectorAll(`[data-test^="${prefix}"]`),
+  ).map((option) => option.getAttribute('data-test'));
+
   describe('adds a new rsync task', () => {
     beforeEach(() => {
       spectator = createComponent();
@@ -244,6 +249,30 @@ describe('RsyncTaskFormComponent', () => {
         },
       ]);
       expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+    });
+
+    it('derives option test ids from the option label, not its value', async () => {
+      await (await getSelect('mode')).selectOption('SSH');
+
+      // `sshconnectmode` values are enum ordinals and `ssh_credentials` values are credential ids,
+      // so the library's value-first derivation would resolve both to bare numbers. NAS-142127.
+      await (await getSelect('sshconnectmode')).open();
+
+      expect(optionTestIds('option-sshconnectmode-')).toEqual([
+        'option-sshconnectmode-ssh-private-key-stored-in-users-home-directory',
+        'option-sshconnectmode-ssh-connection-from-the-keychain',
+      ]);
+
+      await (await getSelect('sshconnectmode')).selectOption('SSH connection from the keychain');
+      await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials"]' }))).open();
+
+      // `ssh-01`, not `ssh01`: the label is normalized the way `[ixTest]` normalized it, which
+      // splits a letter→digit boundary where the library's own normalizer does not.
+      expect(optionTestIds('option-ssh-credentials-')).toEqual([
+        'option-ssh-credentials-add-new',
+        'option-ssh-credentials-ssh-01',
+        'option-ssh-credentials-ssh-02',
+      ]);
     });
 
     it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH private key stored in user\'s home directory', async () => {

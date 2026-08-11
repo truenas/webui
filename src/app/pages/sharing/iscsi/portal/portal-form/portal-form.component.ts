@@ -19,6 +19,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -51,6 +52,8 @@ export class PortalFormComponent extends IxFormHostForm implements OnInit {
   readonly portalData = input<IscsiPortal | undefined>(undefined);
 
   listen: IscsiInterface[] = [];
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isNew(): boolean {
     return !this.editingIscsiPortal;

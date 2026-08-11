@@ -26,6 +26,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import {
   SidePanelFooterAction,
@@ -142,6 +143,8 @@ export class AlertServiceComponent implements OnInit {
   readonly helptext = helptextAlertService;
 
   protected alertServiceForm: BaseAlertServiceForm;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     this.setFormEvents();

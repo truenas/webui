@@ -22,6 +22,7 @@ import {
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -122,6 +123,8 @@ export class PreferencesFormComponent extends SidePanelForm implements OnInit {
 
   /** Submission is synchronous (store dispatches only), so there is no loading state. */
   readonly canSubmit = this.trackCanSubmit(signal(false));
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     super();

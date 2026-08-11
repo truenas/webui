@@ -36,6 +36,7 @@ import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -106,6 +107,8 @@ export class ManualUpdateFormComponent implements OnInit {
 
   isHaLicensed = false;
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.checkHaLicenseAndUpdateStatus();

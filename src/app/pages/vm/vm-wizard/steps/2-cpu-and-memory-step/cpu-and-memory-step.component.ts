@@ -22,6 +22,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -99,6 +100,8 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
 
   readonly cpuModes$ = of(mapToOptions(vmCpuModeLabels, this.translate));
   readonly cpuModels$ = this.api.call('vm.cpu_model_choices').pipe(choicesToOptions());
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isCpuCustom(): boolean {
     return this.form.value.cpu_mode === VmCpuMode.Custom;

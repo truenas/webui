@@ -16,6 +16,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -72,6 +73,8 @@ export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFo
   protected readonly isTruenasConnectConfigured = computed(
     () => this.truenasConnectService.config()?.status === TruenasConnectStatus.Configured,
   );
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     super();

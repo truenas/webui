@@ -41,7 +41,11 @@
       [label]="'Minimum Protocol' | translate"
       [tooltip]="tooltips.minimum_protocol | translate"
     >
-      <tn-select formControlName="minimum_protocol" [options]="minimumProtocolOptions"></tn-select>
+      <tn-select
+        formControlName="minimum_protocol"
+        [options]="minimumProtocolOptions"
+        [optionTestIdKey]="optionTestIdByLabel"
+      ></tn-select>
     </tn-form-field>
 
     <tn-form-field [tooltip]="tooltips.ntlmv1_auth | translate">
@@ -55,14 +59,22 @@
         [label]="'UNIX Charset' | translate"
         [tooltip]="tooltips.unixcharset | translate"
       >
-        <tn-select formControlName="unixcharset" [options]="(unixCharsetOptions$ | async) ?? []"></tn-select>
+        <tn-select
+          formControlName="unixcharset"
+          [options]="(unixCharsetOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
+        ></tn-select>
       </tn-form-field>
 
       <tn-form-field
         [label]="'Transport Encryption Behavior' | translate"
         [required]="true"
       >
-        <tn-select formControlName="encryption" [options]="encryptionOptions"></tn-select>
+        <tn-select
+          formControlName="encryption"
+          [options]="encryptionOptions"
+          [optionTestIdKey]="optionTestIdByLabel"
+        ></tn-select>
       </tn-form-field>
 
       <tn-form-field [tooltip]="tooltips.debug | translate">
@@ -123,6 +135,7 @@
           [testId]="'admin-group'"
           [placeholder]="'Administrators Group' | translate"
           [options]="(groupOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
           [allowCustomValue]="true"
           [loading]="groupsLoading()"
           [loadingText]="'Loading...' | translate"
@@ -140,6 +153,7 @@
           [testId]="'guest'"
           [placeholder]="'Guest Account' | translate"
           [options]="(userOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
           [allowCustomValue]="true"
           [loading]="usersLoading()"
           [loadingText]="'Loading...' | translate"
@@ -175,7 +189,11 @@
             (delete)="removeBindIp(i)"
           >
             <tn-form-field [label]="'IP Address' | translate">
-              <tn-select formControlName="bindIp" [options]="bindIpAddressOptions()"></tn-select>
+              <tn-select
+                formControlName="bindIp"
+                [options]="bindIpAddressOptions()"
+                [optionTestIdKey]="optionTestIdByLabel"
+              ></tn-select>
             </tn-form-field>
           </ix-list-item>
         }

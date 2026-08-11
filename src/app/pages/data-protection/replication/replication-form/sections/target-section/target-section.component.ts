@@ -21,6 +21,7 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ReplicationService } from 'app/services/replication.service';
 
 @Component({
@@ -84,6 +85,8 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   protected readonly helptext = helptextReplication;
 
   private allRetentionPolicies$ = of(mapToOptions(retentionPolicyNames, this.translate));
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get hasEncryption(): boolean {
     return Boolean(this.form.value.encryption);

@@ -91,7 +91,7 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
    * The option label is the enclosure name while the value is its id, so the test id is pinned
    * to the label to keep the pre-migration `option-limit-to-enclosure-<name>`.
    */
-  protected readonly enclosureOptionTestIdKey = optionTestIdByLabel;
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   protected readonly helptext = helptextPoolCreation;
 

@@ -24,6 +24,7 @@ import {
   ldapSupportedCredentialTypes,
 } from 'app/interfaces/directoryservice-credentials.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DirectoryServiceValidationService } from 'app/pages/directory-service/components/directory-services-form/services/directory-service-validation.service';
 
@@ -89,6 +90,8 @@ export class CredentialConfigComponent implements OnInit {
   ).pipe(
     map((choices) => choices.map((choice) => ({ label: choice, value: choice } as Option))),
   );
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.initializeFormWithExistingData();

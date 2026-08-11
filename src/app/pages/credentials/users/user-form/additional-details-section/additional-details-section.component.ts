@@ -40,6 +40,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -157,6 +158,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     }
     return null;
   };
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   protected onHomeEditableOpened(): void {
     if (this.editingUser()) return;

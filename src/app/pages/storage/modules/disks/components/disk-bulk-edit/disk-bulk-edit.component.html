@@ -60,6 +60,7 @@
       <tn-select
         formControlName="hddstandby"
         [options]="hddstandbyOptions"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -67,7 +68,7 @@
       <tn-select
         formControlName="advpowermgmt"
         [options]="advpowermgmtOptions"
-        [optionTestIdKey]="optionLabelTestId"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
   </tn-form-section>

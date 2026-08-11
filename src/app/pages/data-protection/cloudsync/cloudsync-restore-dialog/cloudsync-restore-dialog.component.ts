@@ -16,6 +16,7 @@ import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/clouds
 import { CloudSyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -73,6 +74,8 @@ export class CloudSyncRestoreDialog {
       label: this.translate.instant('COPY'),
     },
   ]);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   onSubmit(): void {
     this.api.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudSyncRestoreParams)

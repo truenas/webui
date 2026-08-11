@@ -21,6 +21,7 @@ import { CloudSyncCredential, CloudSyncCredentialUpdate } from 'app/interfaces/c
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -128,6 +129,8 @@ export class CloudCredentialsFormComponent extends SidePanelForm<CloudSyncCreden
   override hasUnsavedChanges(): boolean {
     return this.commonForm.dirty || Boolean(this.providerForm?.form?.dirty);
   }
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get showProviderDescription(): boolean {
     return this.commonForm.controls.type.enabled

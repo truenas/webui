@@ -18,6 +18,7 @@
         <tn-select
           formControlName="theme"
           [options]="themeOptions"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     } @else {
@@ -25,12 +26,14 @@
         <tn-select
           formControlName="lightTheme"
           [options]="lightThemeOptions"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
       <tn-form-field [label]="'Dark Theme' | translate" [required]="true">
         <tn-select
           formControlName="darkTheme"
           [options]="darkThemeOptions"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     }
@@ -53,6 +56,7 @@
         formControlName="language"
         [testId]="'language'"
         [options]="languageOptions()"
+        [optionTestIdKey]="optionTestIdByLabel"
         [requireSelection]="true"
         [noResultsText]="'No results found' | translate"
       ></tn-autocomplete>
@@ -61,12 +65,14 @@
       <tn-select
         formControlName="date_format"
         [options]="dateFormatOptions()"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
     <tn-form-field [label]="'Time Format' | translate">
       <tn-select
         formControlName="time_format"
         [options]="timeFormatOptions()"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
   </tn-form-section>

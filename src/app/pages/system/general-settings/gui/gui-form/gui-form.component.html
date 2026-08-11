@@ -15,6 +15,7 @@
           testId="ui_certificate"
           formControlName="ui_certificate"
           [options]="(options.ui_certificate | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     </ix-with-manage-certificates-link>
@@ -28,6 +29,7 @@
         testId="ui_address"
         formControlName="ui_address"
         [options]="(options.ui_address | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
         [multiple]="true"
       ></tn-select>
     </tn-form-field>
@@ -41,6 +43,7 @@
         testId="ui_v6address"
         formControlName="ui_v6address"
         [options]="(options.ui_v6address | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
         [multiple]="true"
       ></tn-select>
     </tn-form-field>
@@ -76,6 +79,7 @@
         testId="ui_httpsprotocols"
         formControlName="ui_httpsprotocols"
         [options]="(options.ui_httpsprotocols | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
         [multiple]="true"
       ></tn-select>
     </tn-form-field>

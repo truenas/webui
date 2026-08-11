@@ -34,6 +34,7 @@
         testId="purpose"
         formControlName="purpose"
         [options]="(purposeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 

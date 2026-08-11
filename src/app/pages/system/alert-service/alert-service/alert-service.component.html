@@ -26,6 +26,7 @@
       <tn-select
         formControlName="type"
         [options]="(services$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -33,6 +34,7 @@
       <tn-select
         formControlName="level"
         [options]="(levels$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
   </tn-form-section>

@@ -77,6 +77,7 @@
         testId="periodic-snapshot-tasks"
         formControlName="periodic_snapshot_tasks"
         [options]="(periodicSnapshotTasks$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
         [multiple]="true"
       ></tn-select>
     </tn-form-field>
@@ -102,6 +103,7 @@
           testId="restrict-schedule-begin"
           formControlName="restrict_schedule_begin"
           [options]="(timeOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     }
@@ -111,6 +113,7 @@
           testId="restrict-schedule-end"
           formControlName="restrict_schedule_end"
           [options]="(timeOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     }

@@ -23,6 +23,7 @@
       <tn-select
         formControlName="sysloglevel"
         [options]="levelOptions"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -38,6 +39,7 @@
             <tn-select
               formControlName="transport"
               [options]="transportOptions"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
 
@@ -46,6 +48,7 @@
               <tn-select
                 formControlName="tls_certificate"
                 [options]="(certificateOptions$ | async) ?? []"
+                [optionTestIdKey]="optionTestIdByLabel"
               ></tn-select>
             </tn-form-field>
           }

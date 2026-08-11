@@ -5,7 +5,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { filter, map } from 'rxjs';
-import { optionTestIdByKebabLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -45,7 +45,7 @@ export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<Widg
   protected poolOptions = toSignal(this.poolOptions$, { initialValue: [] });
 
   // Legacy [ixTest] discriminated options by kebab-cased label (pool name), not value (pool id).
-  protected poolOptionTestId = optionTestIdByKebabLabel;
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   private firstOption = toSignal(this.poolOptions$.pipe(map((opts) => opts[0]?.value)));
 

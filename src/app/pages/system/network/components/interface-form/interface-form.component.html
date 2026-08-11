@@ -9,6 +9,7 @@
         <tn-select
           formControlName="type"
           [options]="(interfaceTypes$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     }
@@ -112,6 +113,7 @@
           formControlName="bridge_members"
           [multiple]="true"
           [options]="(bridgeMembers$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 
@@ -130,6 +132,7 @@
         <tn-select
           formControlName="lag_protocol"
           [options]="(lagProtocols$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 
@@ -138,6 +141,7 @@
           <tn-select
             formControlName="xmit_hash_policy"
             [options]="(xmitHashPolicies$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       }
@@ -147,6 +151,7 @@
           <tn-select
             formControlName="lacpdu_rate"
             [options]="(lacpduRates$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       }
@@ -169,6 +174,7 @@
             formControlName="lag_ports"
             [multiple]="true"
             [options]="(lagPorts$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       }
@@ -185,6 +191,7 @@
         <tn-select
           formControlName="vlan_parent_interface"
           [options]="(vlanParentInterfaces$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 
@@ -209,6 +216,7 @@
         <tn-select
           formControlName="vlan_pcp"
           [options]="(vlanPcpOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     </tn-form-section>
@@ -230,6 +238,7 @@
         <tn-select
           formControlName="failover_group"
           [options]="(failoverGroups$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     </tn-form-section>
@@ -256,6 +265,7 @@
         <tn-select
           formControlName="fec_mode"
           [options]="(fecModeOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     }

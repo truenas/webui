@@ -5,7 +5,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
-  type TnSelectOption,
 } from '@truenas/ui-components';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
@@ -18,20 +17,13 @@ import {
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 export type DiskFormResponse = (DiskUpdate & { identifier: string })[];
-
-/**
- * `tn-select` derives an option's test id from a primitive `value` before falling back to the
- * label, which would collapse `option-advpowermgmt-level-127-…` down to `option-advpowermgmt-127`.
- * The legacy `ix-select` ids were label-derived, so pin the extractor to keep them byte-stable.
- * Shared with the bulk-edit form, which renders the same option list.
- */
-export const advPowerManagementOptionTestId = (option: TnSelectOption<DiskPowerLevel>): string => option.label;
 
 interface DiskFormValues {
   name: string;
@@ -89,8 +81,6 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implemen
     helptextDisks.advancedPowerManagementOptions,
   );
 
-  protected readonly optionLabelTestId = advPowerManagementOptionTestId;
-
   /**
    * A disk normally always has a power-management value, so the field is marked required and
    * backed by a validator rather than leaving Save always enabled. Only when the disk actually
@@ -111,6 +101,8 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implemen
   // be `undefined` and quietly skip the SED wiring.
   private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise), { requireSync: true });
   protected readonly showSedSection = computed(() => this.isEnterprise() || !!this.diskToEdit()?.passwd);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     const disk = this.diskToEdit();

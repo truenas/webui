@@ -13,6 +13,7 @@ import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 
 @Component({
@@ -58,6 +59,8 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     user: helptextAcl.userTooltip,
     group: helptextAcl.groupTooltip,
   };
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isUserTag(): boolean {
     return this.form.value.tag === PosixAclTag.User;

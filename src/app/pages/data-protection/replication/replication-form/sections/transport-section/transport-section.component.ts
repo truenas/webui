@@ -16,6 +16,7 @@ import { helptextGlobal } from 'app/helptext/global-helptext';
 import { newOption } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 @Component({
@@ -62,6 +63,8 @@ export class TransportSectionComponent implements OnChanges {
   readonly sizeSuggestion = this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
 
   protected readonly helptext = helptextReplication;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnChanges(): void {
     const replication = this.replication();

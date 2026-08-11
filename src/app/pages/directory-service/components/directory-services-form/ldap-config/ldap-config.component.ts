@@ -23,6 +23,7 @@ import {
 } from 'app/interfaces/active-directory-config.interface';
 import { LdapConfig, LdapSearchBases, LdapAttributeMaps } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { hasDeepNonNullValue } from 'app/pages/directory-service/components/directory-services-form/utils';
 
 @Component({
@@ -104,6 +105,8 @@ export class LdapConfigComponent implements OnInit {
     { label: LdapSchema.Rfc2307, value: LdapSchema.Rfc2307 },
     { label: LdapSchema.Rfc2307Bis, value: LdapSchema.Rfc2307Bis },
   ] as Option[]);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.fillFormWithExistingConfig();

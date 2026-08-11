@@ -33,6 +33,7 @@
             <tn-select
               [formControlName]="i"
               [options]="(listenOptions$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
             ></tn-select>
           </tn-form-field>
         </ix-list-item>

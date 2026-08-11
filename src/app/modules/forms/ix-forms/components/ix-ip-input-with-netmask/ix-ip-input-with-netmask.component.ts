@@ -3,6 +3,7 @@ import { ControlValueAccessor, FormsModule, NgControl, ReactiveFormsModule } fro
 import { TnSelectComponent, TnSelectOption, TnTestIdDirective } from '@truenas/ui-components';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -44,6 +45,8 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   netmask = '';
 
   netmaskOptions: TnSelectOption<string>[] = this.mapNetmaskOptions(this.network.getV4Netmasks());
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     this.controlDirective.valueAccessor = this;

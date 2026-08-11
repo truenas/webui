@@ -107,7 +107,11 @@
                 [required]="true"
                 [tooltip]="helptext.ssltlsCertificateTooltip | translate"
               >
-                <tn-select formControlName="ssltls_certificate" [options]="(certificates$ | async) ?? []"></tn-select>
+                <tn-select
+                  formControlName="ssltls_certificate"
+                  [options]="(certificates$ | async) ?? []"
+                  [optionTestIdKey]="optionTestIdByLabel"
+                ></tn-select>
               </tn-form-field>
             </ix-with-manage-certificates-link>
 
@@ -115,7 +119,11 @@
               [label]="'TLS Policy' | translate"
               [tooltip]="helptext.tlsPolicyTooltip | translate"
             >
-              <tn-select formControlName="tls_policy" [options]="tlsPolicyOptions"></tn-select>
+              <tn-select
+                formControlName="tls_policy"
+                [options]="tlsPolicyOptions"
+                [optionTestIdKey]="optionTestIdByLabel"
+              ></tn-select>
             </tn-form-field>
 
             <tn-form-field [tooltip]="helptext.tlsAllowClientRenegotiationsTooltip | translate">

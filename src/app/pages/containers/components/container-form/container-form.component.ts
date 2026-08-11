@@ -53,6 +53,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
@@ -202,6 +203,8 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   private hasSetupValidators = false;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   onBeforeUnload(event: BeforeUnloadEvent): void {
     if (this.form.dirty) {

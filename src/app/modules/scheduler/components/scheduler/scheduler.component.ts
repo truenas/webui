@@ -9,6 +9,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnDialog, TnFormFieldComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import {
   SchedulerModalConfig,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal-config.interface';
@@ -70,6 +71,8 @@ export class SchedulerComponent implements ControlValueAccessor {
 
   onTouched: () => void = () => {};
   onChange: (crontab: string) => void = () => {};
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     this.controlDirective.valueAccessor = this;

@@ -50,6 +50,7 @@
             testId="pool"
             formControlName="pool"
             [options]="(poolOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       }

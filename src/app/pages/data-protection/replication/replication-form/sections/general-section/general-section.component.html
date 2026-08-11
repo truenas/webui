@@ -13,6 +13,7 @@
         testId="direction"
         formControlName="direction"
         [options]="(directions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
   }
@@ -21,6 +22,7 @@
       testId="transport"
       formControlName="transport"
       [options]="(transports$ | async) ?? []"
+      [optionTestIdKey]="optionTestIdByLabel"
     ></tn-select>
   </tn-form-field>
   @if (!isLocal) {
@@ -52,6 +54,7 @@
       testId="logging-level"
       formControlName="logging_level"
       [options]="(loggingLevels$ | async) ?? []"
+      [optionTestIdKey]="optionTestIdByLabel"
     ></tn-select>
   </tn-form-field>
   <tn-form-field [tooltip]="helptext.enabledTooltip | translate">

@@ -52,7 +52,11 @@
           [required]="true"
           [tooltip]="'Pool to use for this container' | translate"
         >
-          <tn-select formControlName="pool" [options]="(poolOptions$ | async) ?? []"></tn-select>
+          <tn-select
+            formControlName="pool"
+            [options]="(poolOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
+          ></tn-select>
         </tn-form-field>
       }
     </tn-form-section>
@@ -70,7 +74,11 @@
               [required]="true"
               [tooltip]="'Pool to use for this container' | translate"
             >
-              <tn-select formControlName="pool" [options]="(poolOptions$ | async) ?? []"></tn-select>
+              <tn-select
+                formControlName="pool"
+                [options]="(poolOptions$ | async) ?? []"
+                [optionTestIdKey]="optionTestIdByLabel"
+              ></tn-select>
             </tn-form-field>
           }
         </tn-form-section>
@@ -90,7 +98,11 @@
           [label]="'Container Time' | translate"
           [tooltip]="'Whether container time should be local time or UTC time' | translate"
         >
-          <tn-select formControlName="time" [options]="(timeOptions$ | async) ?? []"></tn-select>
+          <tn-select
+            formControlName="time"
+            [options]="(timeOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
+          ></tn-select>
         </tn-form-field>
 
         <tn-form-field
@@ -166,7 +178,11 @@
             [label]="'ID Map Type' | translate"
             [tooltip]="'Controls how user/group IDs are mapped between the container and the host' | translate"
           >
-            <tn-select formControlName="idmap_type" [options]="(idmapTypeOptions$ | async) ?? []"></tn-select>
+            <tn-select
+              formControlName="idmap_type"
+              [options]="(idmapTypeOptions$ | async) ?? []"
+              [optionTestIdKey]="optionTestIdByLabel"
+            ></tn-select>
           </tn-form-field>
 
           @if (isIsolatedIdmap()) {
@@ -195,7 +211,11 @@
           [label]="'Capabilities Policy' | translate"
           [tooltip]="'Default rules for capabilities: Default (allow most capabilities but drop dangerous ones) or Allow All (keep all capabilities)' | translate"
         >
-          <tn-select formControlName="capabilities_policy" [options]="(capabilitiesPolicyOptions$ | async) ?? []"></tn-select>
+          <tn-select
+            formControlName="capabilities_policy"
+            [options]="(capabilitiesPolicyOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
+          ></tn-select>
         </tn-form-field>
       </tn-form-section>
     }

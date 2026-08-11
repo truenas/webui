@@ -10,7 +10,7 @@
         [testId]="['layout']"
         [formControl]="layoutControl"
         [options]="(vdevLayoutOptions$ | translateOptions | async) ?? []"
-        [optionTestIdKey]="layoutOptionTestIdKey"
+        [optionTestIdKey]="optionTestIdByLabel"
         [placeholder]="tnSelectLabels.placeholder | translate"
         [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>

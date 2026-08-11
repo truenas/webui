@@ -46,7 +46,12 @@
       [tooltip]="helptext.snmpTrap.authProtocolTooltip | translate"
       [required]="true"
     >
-      <tn-select formControlName="v3_authprotocol" [testId]="'v3_authprotocol'" [options]="(authProtocols$ | async) ?? []"></tn-select>
+      <tn-select
+        formControlName="v3_authprotocol"
+        [testId]="'v3_authprotocol'"
+        [options]="(authProtocols$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
+      ></tn-select>
     </tn-form-field>
 
     <tn-form-field
@@ -54,7 +59,12 @@
       [tooltip]="helptext.snmpTrap.encryptionProtocolTooltip | translate"
       [required]="true"
     >
-      <tn-select formControlName="v3_privprotocol" [testId]="'v3_privprotocol'" [options]="(privProtocols$ | async) ?? []"></tn-select>
+      <tn-select
+        formControlName="v3_privprotocol"
+        [testId]="'v3_privprotocol'"
+        [options]="(privProtocols$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
+      ></tn-select>
     </tn-form-field>
   }
 

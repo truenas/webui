@@ -12,6 +12,7 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { redundantListToUniqueOptions } from 'app/helpers/operators/options.operators';
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import {
   ManualDiskSelectionStore,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
@@ -63,6 +64,8 @@ export class ManualSelectionDiskFiltersComponent implements OnInit, OnChanges {
       return uniqueLabels.map((size: string) => ({ label: size, value: size }));
     }),
   );
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnChanges(): void {
     this.updateSedFilter();

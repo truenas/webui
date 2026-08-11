@@ -17,6 +17,7 @@ import {
   NetworkConfiguration,
   NetworkConfigurationActivity,
 } from 'app/interfaces/network-configuration.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4Validator, ipv6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -247,6 +248,8 @@ export class NetworkConfigurationComponent extends SidePanelForm implements OnIn
     label: helptextNetworkConfiguration.hostsLabel,
     tooltip: helptextNetworkConfiguration.hostsTooltip,
   };
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.isFormLoading.set(true);

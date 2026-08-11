@@ -52,6 +52,7 @@
         testId="datastore"
         formControlName="datastore"
         [options]="(datastoreOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -61,6 +62,7 @@
         testId="filesystem"
         formControlName="filesystem"
         [options]="(filesystemOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
   </tn-form-section>

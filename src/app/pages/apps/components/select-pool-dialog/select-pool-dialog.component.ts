@@ -19,6 +19,7 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
@@ -66,6 +67,8 @@ export class SelectPoolDialog implements OnInit {
 
   pools$: Observable<Option[]>;
   private selectedPoolName: string | null = null;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get showMigrateCheckbox(): boolean {
     const selected = this.form.value.pool;

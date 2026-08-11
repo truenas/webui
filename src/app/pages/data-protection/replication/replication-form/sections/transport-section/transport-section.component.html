@@ -17,6 +17,7 @@
         testId="netcat-active-side"
         formControlName="netcat_active_side"
         [options]="(netcatActiveSides$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
     <tn-form-field
@@ -72,6 +73,7 @@
         testId="compression"
         formControlName="compression"
         [options]="(compressions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
     <tn-form-field

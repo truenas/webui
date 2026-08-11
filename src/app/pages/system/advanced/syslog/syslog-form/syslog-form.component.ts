@@ -22,6 +22,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate, SyslogServer } from 'app/interfaces/advanced-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -74,6 +75,8 @@ export class SyslogFormComponent extends SidePanelForm implements OnInit {
   });
 
   readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get syslogServersArray(): FormArray<SyslogServer> {
     return this.form.controls.syslogservers;

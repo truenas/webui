@@ -36,6 +36,7 @@ import {
   FormSubmitEvent,
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -73,6 +74,8 @@ export class ReportingExportersFormComponent implements OnInit {
 
   /** the inner `<ix-form>`, used to expose the host-facing dual-host surface. */
   private readonly ixForm = viewChild(IxFormComponent);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isNew(): boolean {
     return !this.editingExporter;

@@ -13,7 +13,11 @@
       [required]="true"
       [tooltip]="tooltips.type | translate"
     >
-      <tn-select formControlName="type" [options]="(typeOptions$ | async) ?? []"></tn-select>
+      <tn-select
+        formControlName="type"
+        [options]="(typeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
+      ></tn-select>
     </tn-form-field>
 
     @if (isCommand$ | async) {
@@ -43,7 +47,11 @@
       [required]="true"
       [tooltip]="tooltips.when | translate"
     >
-      <tn-select formControlName="when" [options]="(whenOptions$ | async) ?? []"></tn-select>
+      <tn-select
+        formControlName="when"
+        [options]="(whenOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
+      ></tn-select>
     </tn-form-field>
 
     <tn-form-field>

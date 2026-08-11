@@ -12,6 +12,7 @@ import { SomeProviderAttributes } from 'app/interfaces/cloudsync-credential.inte
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   BaseProviderFormComponent,
@@ -76,6 +77,8 @@ export class OpenstackSwiftProviderFormComponent extends BaseProviderFormCompone
   ]);
 
   readonly endpointTypes$ = of(mapToOptions(this.endpointTypes, this.translate));
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {

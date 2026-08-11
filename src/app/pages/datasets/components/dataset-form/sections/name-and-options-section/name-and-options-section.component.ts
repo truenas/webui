@@ -18,6 +18,7 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import {
   forbiddenValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -73,6 +74,8 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
   readonly helptext = helptextDatasetForm;
   readonly DatasetPreset = DatasetPreset;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get canCreateSmb(): boolean {
     return this.form.value.share_type === DatasetPreset.Smb

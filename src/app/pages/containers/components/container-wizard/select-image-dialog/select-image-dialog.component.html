@@ -13,6 +13,7 @@
           testId="os"
           formControlName="os"
           [options]="(osOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 
@@ -21,6 +22,7 @@
           testId="variant"
           formControlName="variant"
           [options]="(variantOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 
@@ -29,6 +31,7 @@
           testId="release"
           formControlName="release"
           [options]="(releaseOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     </tn-form-section>

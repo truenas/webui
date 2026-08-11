@@ -22,6 +22,7 @@ import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -152,6 +153,8 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
       }),
     );
   };
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   /**
    * Refreshes the local-groups chip-input suggestions as the user types, driving the

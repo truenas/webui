@@ -12,6 +12,7 @@ import { KeychainCredential } from 'app/interfaces/keychain-credential.interface
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
@@ -30,6 +31,8 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
 })
 export class SshCredentialsSelectComponent extends IxSelectWithNewOption<KeychainCredential> {
   private keychainCredentialsService = inject(KeychainCredentialService);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   fetchOptions(): Observable<Option[]> {
     return this.keychainCredentialsService.getSshConnections().pipe(

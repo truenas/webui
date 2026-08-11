@@ -13,6 +13,7 @@
         formControlName="isolated_gpu_pci_ids"
         [multiple]="true"
         [options]="(options$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
   </tn-form-section>

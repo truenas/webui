@@ -17,6 +17,7 @@ import {
   mockEnclosureScenarioLabels,
 } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { setEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectEnclosureMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { AppState } from 'app/store';
@@ -68,6 +69,8 @@ export class EnclosureMockTabComponent implements OnInit {
   protected readonly scenarioOptions: { label: string; value: MockEnclosureScenario }[] = Array
     .from(mockEnclosureScenarioLabels)
     .map(([value, label]) => ({ label, value }));
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   protected getScenarioLabel(scenario: MockEnclosureScenario): string {
     const scenarioOption = Array.from(mockEnclosureScenarioLabels).find(([value]) => value === scenario);

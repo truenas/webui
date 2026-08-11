@@ -12,6 +12,7 @@ import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum'
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { Option } from 'app/interfaces/option.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   BaseProviderFormComponent,
@@ -61,6 +62,8 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
   }
 
   override readonly helptext = helptext;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.loadPrivateKeys();

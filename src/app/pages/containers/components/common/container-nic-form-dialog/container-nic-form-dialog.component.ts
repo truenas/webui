@@ -16,6 +16,7 @@ import {
 } from 'rxjs';
 import { ContainerNicDeviceType, containerNicDeviceTypeLabels } from 'app/enums/container.enum';
 import { ContainerNicDevice } from 'app/interfaces/container.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 
 export interface ContainerNicFormDialogData {
@@ -81,6 +82,8 @@ export class ContainerNicFormDialog {
     ]],
     trust_guest_rx_filters: [this.getInitialTrustGuestRxFilters()],
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   private getInitialType(): ContainerNicDeviceType {
     return this.dialogData.device?.type || ContainerNicDeviceType.Virtio;

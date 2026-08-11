@@ -48,7 +48,7 @@
                 formControlName="diskName"
                 [testId]="['disk-name', $index + 1]"
                 [options]="exceptionOptions()[$index] ?? []"
-                [optionTestIdKey]="diskOptionTestIdKey"
+                [optionTestIdKey]="optionTestIdByLabel"
                 [placeholder]="tnSelectLabels.placeholder | translate"
                 [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>

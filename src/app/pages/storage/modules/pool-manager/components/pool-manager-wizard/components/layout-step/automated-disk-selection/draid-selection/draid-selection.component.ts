@@ -14,6 +14,7 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { DiskSizeSelectsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/disk-size-selects/disk-size-selects.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
@@ -77,6 +78,8 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
   private selectedDisks: DetailsDisk[] = [];
 
   readonly helptext = helptextPoolCreation;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get parityDevices(): number {
     return parityDisksPerGroup[this.layout()];

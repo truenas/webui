@@ -12,6 +12,7 @@ import {
   CloudSyncOneDriveDrive,
 } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   OauthProviderComponent,
@@ -72,6 +73,8 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
   drives$ = of<Option[]>([]);
 
   private drives: CloudSyncOneDriveDrive[] = [];
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.setupDriveSelect();

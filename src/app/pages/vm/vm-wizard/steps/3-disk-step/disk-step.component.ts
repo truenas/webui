@@ -28,6 +28,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -144,6 +145,8 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     directoriesOnly: false,
     showHiddenFiles: false,
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isCreatingNewDisk(): boolean {
     return this.form.controls.newOrExisting.value === NewOrExistingDisk.New;

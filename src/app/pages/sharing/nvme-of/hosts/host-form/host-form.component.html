@@ -45,6 +45,7 @@
                 name="dhchap_hash"
                 formControlName="dhchap_hash"
                 [options]="(hashOptions$ | async) ?? []"
+                [optionTestIdKey]="optionTestIdByLabel"
               ></tn-select>
             </div>
           </ix-editable>
@@ -112,6 +113,7 @@
                   name="dhchap_dhgroup"
                   formControlName="dhchap_dhgroup"
                   [options]="(dhGroupOptions$ | async) ?? []"
+                  [optionTestIdKey]="optionTestIdByLabel"
                   [allowEmpty]="true"
                   [emptyLabel]="helptext.noDhText | translate"
                 ></tn-select>

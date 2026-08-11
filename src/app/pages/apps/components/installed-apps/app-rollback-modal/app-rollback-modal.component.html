@@ -10,6 +10,7 @@
         testId="app-version"
         formControlName="app_version"
         [options]="(versionOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 

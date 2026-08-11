@@ -12,6 +12,7 @@
       <tn-select
         formControlName="addr_trtype"
         [options]="(types$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -31,6 +32,7 @@
       <tn-select
         formControlName="addr_traddr"
         [options]="(addresses$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
   </tn-form-section>

@@ -8,6 +8,7 @@ import {
 import { of } from 'rxjs';
 import { AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-service/alert-services/base-alert-service-form';
 
@@ -112,6 +113,8 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
       value: 'AESBLUMENTHALCFB256',
     },
   ] as Option[]);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isV3(): boolean {
     return this.form.controls.v3.value;

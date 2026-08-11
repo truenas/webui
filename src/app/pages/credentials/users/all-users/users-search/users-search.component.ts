@@ -18,6 +18,7 @@ import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { QueryFilters, QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
@@ -163,6 +164,8 @@ export class UsersSearchComponent implements OnInit {
   private lastProcessedQuery = signal<SearchQuery<User> | null>(null);
   private readonly destroyRef = inject(DestroyRef);
   private readonly advancedSearchSubject$ = new Subject<SearchQuery<User>>();
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.setSearchProperties(this.dataProvider().currentPage$.getValue());

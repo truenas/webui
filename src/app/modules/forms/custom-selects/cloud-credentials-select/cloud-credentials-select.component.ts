@@ -11,6 +11,7 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -32,6 +33,8 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption<Cloud
   readonly filterByProviders = input<CloudSyncProviderName[]>();
 
   private cloudCredentialService = inject(CloudCredentialService);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   fetchOptions(): Observable<Option[]> {
     return this.cloudCredentialService.getCloudSyncCredentials().pipe(

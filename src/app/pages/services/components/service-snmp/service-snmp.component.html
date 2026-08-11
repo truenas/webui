@@ -45,7 +45,12 @@
           [label]="'Authentication Type' | translate"
           [tooltip]="tooltips.v3_authtype | translate"
         >
-          <tn-select formControlName="v3_authtype" [options]="authtypeOptions" [allowEmpty]="true"></tn-select>
+          <tn-select
+            formControlName="v3_authtype"
+            [options]="authtypeOptions"
+            [allowEmpty]="true"
+            [optionTestIdKey]="optionTestIdByLabel"
+          ></tn-select>
         </tn-form-field>
 
         <tn-form-field
@@ -60,7 +65,11 @@
           [label]="'Privacy Protocol' | translate"
           [tooltip]="tooltips.v3_privproto | translate"
         >
-          <tn-select formControlName="v3_privproto" [options]="privprotoOptions"></tn-select>
+          <tn-select
+            formControlName="v3_privproto"
+            [options]="privprotoOptions"
+            [optionTestIdKey]="optionTestIdByLabel"
+          ></tn-select>
         </tn-form-field>
 
         <tn-form-field

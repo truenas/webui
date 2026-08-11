@@ -25,6 +25,7 @@
           testId="schedule-begin"
           formControlName="schedule_begin"
           [options]="(timeOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     }
@@ -34,6 +35,7 @@
           testId="schedule-end"
           formControlName="schedule_end"
           [options]="(timeOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     }

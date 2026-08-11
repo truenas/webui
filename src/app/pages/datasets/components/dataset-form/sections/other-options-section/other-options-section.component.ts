@@ -46,6 +46,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
@@ -171,6 +172,8 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   readonly helptext = helptextDatasetForm;
   readonly OnOff = OnOff;
   protected readonly InputType = InputType;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get hasChecksumWarning(): boolean {
     return this.form.value.checksum === DatasetChecksum.Sha256

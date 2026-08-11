@@ -28,6 +28,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
@@ -144,6 +145,8 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
   protected isStatefulFailoverEnabled = computed(() => {
     return this.isHaLicensed() && !this.hasIncompatibleShares() && !this.isSmb1Enabled();
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   /**
    * Reactively enable/disable the Spotlight checkbox based on TrueNAS Connect configuration

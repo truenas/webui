@@ -18,6 +18,7 @@
       <tn-select
         formControlName="dataset"
         [options]="(datasetOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -56,6 +57,7 @@
       <tn-select
         formControlName="naming_schema"
         [options]="(namingSchemaOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 

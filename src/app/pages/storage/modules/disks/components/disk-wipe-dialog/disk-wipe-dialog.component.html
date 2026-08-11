@@ -11,6 +11,7 @@
       testId="wipe-method"
       formControlName="wipe_method"
       [options]="(wipeMethods$ | async) ?? []"
+      [optionTestIdKey]="optionTestIdByLabel"
     ></tn-select>
   </tn-form-field>
 

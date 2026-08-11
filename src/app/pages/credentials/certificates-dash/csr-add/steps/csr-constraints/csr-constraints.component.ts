@@ -22,6 +22,7 @@ import {
 } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -95,6 +96,8 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
   extendedKeyUsageOptions$ = of<Option[]>([]);
 
   private extendedKeyUsageOptions: Option[] = [];
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.updateUsagesValidator();

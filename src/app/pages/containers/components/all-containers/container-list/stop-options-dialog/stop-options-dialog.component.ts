@@ -8,6 +8,7 @@ import {
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { ContainerStopParams } from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 
 export enum StopOptionsOperation {
   Restart,
@@ -65,6 +66,8 @@ export class StopOptionsDialog {
       },
     ];
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     const operation = inject<StopOptionsOperation>(DIALOG_DATA);

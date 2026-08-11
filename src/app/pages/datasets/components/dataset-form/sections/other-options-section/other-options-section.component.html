@@ -12,6 +12,7 @@
       <tn-select
         formControlName="sync"
         [options]="(syncOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -23,6 +24,7 @@
       <tn-select
         formControlName="compression"
         [options]="(compressionOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -34,6 +36,7 @@
       <tn-select
         formControlName="atime"
         [options]="(atimeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -46,6 +49,7 @@
         <tn-select
           formControlName="deduplication"
           [options]="(deduplicationOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     }
@@ -58,6 +62,7 @@
       <tn-select
         formControlName="casesensitivity"
         [options]="(caseSensitivityOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -68,6 +73,7 @@
       <tn-select
         formControlName="checksum"
         [options]="(checksumOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -82,6 +88,7 @@
       <tn-select
         formControlName="readonly"
         [options]="(readonlyOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -93,6 +100,7 @@
       <tn-select
         formControlName="exec"
         [options]="(execOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -104,6 +112,7 @@
       <tn-select
         formControlName="snapdir"
         [options]="(snapdirOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -115,6 +124,7 @@
       <tn-select
         formControlName="snapdev"
         [options]="(snapdevOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -126,6 +136,7 @@
       <tn-select
         formControlName="copies"
         [options]="(copiesOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -137,6 +148,7 @@
       <tn-select
         formControlName="recordsize"
         [options]="(recordsizeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -153,6 +165,7 @@
       <tn-select
         formControlName="acltype"
         [options]="(aclTypeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -164,6 +177,7 @@
       <tn-select
         formControlName="aclmode"
         [options]="(aclModeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -176,6 +190,7 @@
         <tn-select
           formControlName="special_small_block_size"
           [options]="(specialSmallBlockSizeOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
 

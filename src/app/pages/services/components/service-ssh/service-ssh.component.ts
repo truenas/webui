@@ -15,6 +15,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import {
   advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
@@ -104,6 +105,8 @@ export class ServiceSshComponent extends IxFormHostForm<boolean, SshFormValue> i
   private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
     labels: advancedModeSettingLabels,
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get footerActions(): SidePanelFooterAction[] {
     return this.advancedToggle();

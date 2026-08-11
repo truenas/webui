@@ -18,6 +18,7 @@
       <tn-select
         formControlName="gpus"
         [options]="(gpuOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
         [multiple]="true"
       ></tn-select>
     </tn-form-field>

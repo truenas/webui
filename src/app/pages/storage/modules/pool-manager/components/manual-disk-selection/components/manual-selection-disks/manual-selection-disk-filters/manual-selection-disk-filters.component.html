@@ -18,6 +18,7 @@
           formControlName="diskType"
           [allowEmpty]="true"
           [options]="(typeOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
           [placeholder]="tnSelectLabels.placeholder | translate"
           [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
@@ -27,6 +28,7 @@
           formControlName="diskSize"
           [allowEmpty]="true"
           [options]="(sizeOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
           [placeholder]="tnSelectLabels.placeholder | translate"
           [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>

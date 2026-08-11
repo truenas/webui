@@ -61,6 +61,7 @@
             testId="bucket"
             formControlName="bucket"
             [options]="(bucketOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       }
@@ -221,6 +222,7 @@
           testId="transfer-setting"
           formControlName="transfer_setting"
           [options]="(transferSettings$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
     </tn-form-section>

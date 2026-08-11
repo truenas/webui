@@ -34,6 +34,7 @@ import { IpaConfig } from 'app/interfaces/ipa-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import {
   SidePanelFooterAction,
@@ -115,6 +116,8 @@ export class DirectoryServicesFormComponent extends SidePanelForm implements OnI
     requiredRoles: this.requiredRoles,
     onClick: () => this.onClearConfig(),
   }];
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   private updateFormValidity(): void {
     this.mainFormValid.set(this.form.valid);

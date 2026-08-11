@@ -12,6 +12,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -101,6 +102,8 @@ export class ServiceSnmpComponent extends IxFormHostForm<boolean, SnmpFormValue>
   protected readonly isV3SupportEnabled = toSignal(this.form.controls.v3.valueChanges, {
     initialValue: this.form.controls.v3.value,
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.loadFormConfig(this.api.call('snmp.config'), (config) => this.form.patchValue(config));

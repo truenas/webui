@@ -28,6 +28,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -95,6 +96,8 @@ export class OsStepComponent implements SummaryProvider {
   readonly timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));
   readonly bootloaderOptions$ = this.api.call('vm.bootloader_options').pipe(choicesToOptions());
   readonly bindOptions$ = this.api.call('vm.device.bind_choices').pipe(choicesToOptions());
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   constructor() {
     // Handle VNC display controls

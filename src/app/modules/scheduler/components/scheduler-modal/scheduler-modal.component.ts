@@ -14,6 +14,7 @@ import {
 import * as cronParser from 'cron-parser';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
 import { helptextGlobal } from 'app/helptext/global-helptext';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import {
   SchedulerModalConfig,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal-config.interface';
@@ -121,6 +122,8 @@ export class SchedulerModalComponent implements OnInit {
   readonly hasOrConditionExplanation$ = this.form.select((values) => {
     return !this.areAllWeekdaysSelected && values.days !== '*';
   });
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   ngOnInit(): void {
     this.dialogRef.addPanelClass('scheduler-modal');

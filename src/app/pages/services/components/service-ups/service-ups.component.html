@@ -17,7 +17,7 @@
         [label]="labels.mode | translate"
         [tooltip]="tooltips.mode | translate"
       >
-        <tn-select formControlName="mode" [options]="modeOptions"></tn-select>
+        <tn-select formControlName="mode" [options]="modeOptions" [optionTestIdKey]="optionTestIdByLabel"></tn-select>
       </tn-form-field>
 
       @if (isMasterMode()) {
@@ -30,6 +30,7 @@
             formControlName="driver"
             placeholder=""
             [options]="(driverOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
             [requireSelection]="true"
           ></tn-autocomplete>
         </tn-form-field>
@@ -60,6 +61,7 @@
           formControlName="port"
           placeholder=""
           [options]="(portOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
           [allowCustomValue]="true"
         ></tn-autocomplete>
       </tn-form-field>
@@ -100,7 +102,11 @@
         [label]="labels.shutdown | translate"
         [tooltip]="tooltips.shutdown | translate"
       >
-        <tn-select formControlName="shutdown" [options]="shutdownOptions"></tn-select>
+        <tn-select
+          formControlName="shutdown"
+          [options]="shutdownOptions"
+          [optionTestIdKey]="optionTestIdByLabel"
+        ></tn-select>
       </tn-form-field>
 
       <tn-form-field

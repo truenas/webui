@@ -8,6 +8,7 @@
       <tn-select
         formControlName="nic_type"
         [options]="(nicTypeOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 
@@ -30,6 +31,7 @@
       <tn-select
         formControlName="nic_attach"
         [options]="(nicAttachOptions$ | async) ?? []"
+        [optionTestIdKey]="optionTestIdByLabel"
       ></tn-select>
     </tn-form-field>
 

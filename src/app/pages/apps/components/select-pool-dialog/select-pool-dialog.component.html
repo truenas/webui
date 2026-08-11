@@ -5,6 +5,7 @@
       testId="pool"
       formControlName="pool"
       [options]="(pools$ | async) ?? []"
+      [optionTestIdKey]="optionTestIdByLabel"
     ></tn-select>
   </tn-form-field>
 

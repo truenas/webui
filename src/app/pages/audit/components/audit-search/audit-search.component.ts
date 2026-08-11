@@ -30,6 +30,7 @@ import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
@@ -112,6 +113,8 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     take(1),
     shareReplay({ refCount: true, bufferSize: 1 }),
   );
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   private apiAndLocalUserSuggestions(): Observable<Option[]> {
     return combineLatest([

@@ -16,6 +16,7 @@ import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -74,6 +75,8 @@ export class DiskWipeDialog {
   ]);
 
   protected readonly Role = Role;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get title(): TranslatedString {
     return this.translate.instant('Wipe Disk {name}', { name: this.data.diskName });

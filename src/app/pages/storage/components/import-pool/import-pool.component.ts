@@ -95,7 +95,7 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
    * The option label is `<name> | <guid>` while the value is the bare guid, so the
    * test id is pinned to the label to keep the pre-migration `option-guid-<name>-<guid>`.
    */
-  protected readonly poolOptionTestIdKey = optionTestIdByLabel;
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   private readonly unlockSedDisks = viewChild(UnlockSedDisksComponent);
 

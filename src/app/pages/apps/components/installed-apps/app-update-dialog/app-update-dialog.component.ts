@@ -13,6 +13,7 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { extractAppVersion, formatVersionWithRevision, resolveAppVersion } from 'app/pages/apps/utils/version-formatting.utils';
 
 type Version = Pick<AppUpgradeSummary, 'latest_version' | 'latest_human_version' | 'latest_app_version' | 'available_versions_for_upgrade'>;
@@ -88,11 +89,14 @@ export class AppUpdateDialog {
     this.updateVersionInfo();
   }
 
-  // The option value is the version map key, but the legacy ixTest discriminator
-  // keyed each option by its human version (`option-versions-<human_version>`).
-  // Keep that test-id parity for automation.
+  // The option value is the version map key, but the legacy ixTest discriminator keyed each option
+  // by its human version (`option-versions-<human_version>`). Keep that test-id parity for
+  // automation — including the `normalizeTestIdString` pass every other option key goes through
+  // (see `optionTestIdByLabel`). Without it a version carrying a letter→digit boundary resolves
+  // differently than it used to: `v1.2.3` was `v-1-2-3` under lodash, but is `v1-2-3` under the
+  // library's own normalizer, which doesn't split there.
   protected versionOptionTestId = (option: TnSelectOption<string>): string => {
-    return this.versionOptions.get(option.value)?.latest_human_version ?? option.value;
+    return normalizeTestIdString(this.versionOptions.get(option.value)?.latest_human_version ?? option.value);
   };
 
   getVersionLabel(libraryVersion: string, humanVersion: string): string {

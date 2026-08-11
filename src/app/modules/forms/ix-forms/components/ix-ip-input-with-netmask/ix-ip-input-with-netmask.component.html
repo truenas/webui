@@ -25,6 +25,7 @@
     class="select"
     testId="netmasks"
     [options]="netmaskOptions"
+    [optionTestIdKey]="optionTestIdByLabel"
     [ngModel]="netmask"
     [ngModelOptions]="{ standalone: true }"
     (ngModelChange)="onNetmaskChange($event)"

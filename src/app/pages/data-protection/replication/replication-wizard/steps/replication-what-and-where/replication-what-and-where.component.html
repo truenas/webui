@@ -7,6 +7,7 @@
       testId="exist-replication"
       formControlName="exist_replication"
       [options]="(existReplicationOptions$ | async) ?? []"
+      [optionTestIdKey]="optionTestIdByLabel"
     ></tn-select>
   </tn-form-field>
 
@@ -21,6 +22,7 @@
           testId="source-datasets-from"
           formControlName="source_datasets_from"
           [options]="(datasetFromOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
       @if (form.controls.ssh_credentials_source.enabled) {
@@ -120,6 +122,7 @@
           testId="target-dataset-from"
           formControlName="target_dataset_from"
           [options]="(datasetFromOptions$ | async) ?? []"
+          [optionTestIdKey]="optionTestIdByLabel"
         ></tn-select>
       </tn-form-field>
       @if (form.controls.ssh_credentials_target.enabled) {
@@ -172,6 +175,7 @@
             testId="encryption-key-format"
             formControlName="encryption_key_format"
             [options]="(encryptionKeyFormatOptions$ | async) ?? []"
+            [optionTestIdKey]="optionTestIdByLabel"
           ></tn-select>
         </tn-form-field>
       }

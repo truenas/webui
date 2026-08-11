@@ -12,6 +12,7 @@ import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
@@ -73,6 +74,8 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     { label: this.translate.instant('Key'), value: DatasetEncryptionType.Default },
     { label: this.translate.instant('Passphrase'), value: DatasetEncryptionType.Passphrase },
   ]);
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get hasEncryption(): boolean {
     return this.form.controls.encryption.value;

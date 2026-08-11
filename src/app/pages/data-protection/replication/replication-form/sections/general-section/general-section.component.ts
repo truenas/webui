@@ -12,6 +12,7 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 
 @Component({
   selector: 'ix-replication-general-section',
@@ -64,6 +65,8 @@ export class GeneralSectionComponent implements OnChanges {
   ]);
 
   readonly helptext = helptextReplication;
+
+  protected readonly optionTestIdByLabel = optionTestIdByLabel;
 
   get isLocal(): boolean {
     return this.form.controls.transport.value === TransportMode.Local;
