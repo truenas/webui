@@ -19,6 +19,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable, mapTnSortToProviderSorting, toDisplayedColumns } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -91,7 +92,7 @@ export class DockerRegistriesListComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {
+  protected onColumnsChange(columns: Column<DockerRegistry, ColumnComponent<DockerRegistry>>[]): void {
     this.columns.set([...columns]);
   }
 

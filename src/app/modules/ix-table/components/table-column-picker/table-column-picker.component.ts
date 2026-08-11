@@ -73,7 +73,11 @@ export class TableColumnPickerComponent<T = unknown> implements OnInit {
       const visible = saved?.columns?.length
         ? this.selectableTitles().filter((title) => saved.columns.includes(title))
         : this.defaultVisibleTitles();
-      this.applyVisibility(visible.length ? visible : this.selectableTitles().slice(0, 1));
+      // A saved preference that matches nothing is stale, not a request to hide
+      // everything — titles are translated, so switching locale (or renaming a
+      // column) invalidates every saved title at once. Show the defaults rather
+      // than collapsing the table to a single column.
+      this.applyVisibility(visible.length ? visible : this.defaultVisibleTitles());
     });
   }
 

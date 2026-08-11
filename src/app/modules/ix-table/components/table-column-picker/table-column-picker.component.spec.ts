@@ -92,4 +92,20 @@ describe('TableColumnPickerComponent', () => {
 
     expect(emitted?.find((column) => column.propertyName === 'path')?.hidden).toBe(true);
   });
+
+  it('falls back to the default columns when no saved title matches (stale preference)', () => {
+    store$.setState({
+      preferences: { preferences: { tableDisplayedColumns: [{ title: 'testList', columns: ['Nom'] }] } },
+    });
+
+    spectator = createComponent({
+      props: { columns: makeColumns(), columnPreferencesKey: 'testList' },
+      detectChanges: false,
+    });
+    let emitted: Column<Row, ColumnComponent<Row>>[] | undefined;
+    spectator.component.columnsChange.subscribe((columns) => emitted = columns);
+    spectator.detectChanges();
+
+    expect(emitted?.filter((column) => column.title && !column.hidden)).toHaveLength(2);
+  });
 });
