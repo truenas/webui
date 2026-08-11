@@ -143,7 +143,10 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
    */
   protected readonly isAdvancedMode = signal(false);
 
-  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
+  /** `testId` pins the `data-test` value this form's in-body toggle already ships with. */
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
+    testId: 'advanced-options',
+  });
 
   /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer, before Save. */
   get footerActions(): SidePanelFooterAction[] {

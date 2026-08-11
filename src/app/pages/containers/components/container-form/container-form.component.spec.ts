@@ -125,7 +125,7 @@ describe('ContainerFormComponent', () => {
   // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`, not by the
   // form's own template, so there is no button harness to drive here.
   const clickAdvancedOptions = async (): Promise<void> => {
-    const [toggleAdvanced] = spectator.component.footerActions;
+    const toggleAdvanced = spectator.component.footerActions.find((action) => action.testId === 'advanced-options')!;
     expect(toggleAdvanced.label).toBe('Advanced Options');
     toggleAdvanced.onClick();
     spectator.detectChanges();
@@ -152,6 +152,8 @@ describe('ContainerFormComponent', () => {
     it('toggles isAdvancedMode from the footer action the side-panel host renders', () => {
       const [toggleAdvanced] = spectator.component.footerActions;
       expect(toggleAdvanced.label).toBe('Advanced Options');
+      // The value the in-body toggle shipped with, kept so QA automation keeps matching.
+      expect(toggleAdvanced.testId).toBe('advanced-options');
 
       toggleAdvanced.onClick();
       // eslint-disable-next-line @typescript-eslint/dot-notation
