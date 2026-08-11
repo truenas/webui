@@ -24,9 +24,9 @@ export class EmptyService {
   private readonly translate = inject(TranslateService);
 
   /**
-   * Read by {@link copyForType} so its `instant()` calls re-run on a language change —
-   * both in a `computed` and, since a template expression is itself a reactive context, in the
-   * templates that call {@link titleForType}/{@link descriptionForType} directly.
+   * Read by {@link copyForType} so its `instant()` calls re-run whenever the catalog they resolve
+   * against changes — both in a `computed` and, since a template expression is itself a reactive
+   * context, in the templates that call {@link titleForType}/{@link descriptionForType} directly.
    */
   private readonly langChange = langChangeSignal();
 
@@ -37,7 +37,7 @@ export class EmptyService {
    * Without this, each pass would cost a `translate.instant()` plus (for the description) two
    * regex passes and a string allocation, per table, for a value that changes almost never.
    *
-   * A fresh cache per language, so invalidation is structural — the same shape `perRow` uses in
+   * A fresh cache per catalog, so invalidation is structural — the same shape `perRow` uses in
    * `ix-table/utils`. Keyed on the empty *type*, of which there are six, so it cannot grow.
    */
   private readonly copyCache = computed(() => {

@@ -1,7 +1,6 @@
 import { computed, inject, Signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
-import { merge } from 'rxjs';
+import { langChangeSignal } from 'app/helpers/translated.helper';
 
 /**
  * A `computed` that re-runs whenever translations change.
@@ -28,12 +27,8 @@ import { merge } from 'rxjs';
  */
 export function translatedSignal<T>(compute: (translate: TranslateService) => T): Signal<T> {
   const translate = inject(TranslateService);
-  // The same three streams the `translate` pipe subscribes to: a language switch, a bundle merged
-  // after the fact (lazy load, `use()` re-fetch), and a default-language change.
-  const retranslate = toSignal(
-    merge(translate.onLangChange, translate.onTranslationChange, translate.onDefaultLangChange),
-    { initialValue: null },
-  );
+  // Tracks the same three streams the `translate` pipe subscribes to — see `langChangeSignal`.
+  const retranslate = langChangeSignal();
 
   return computed(() => {
     // Read the signal so the computed re-runs on each of them.

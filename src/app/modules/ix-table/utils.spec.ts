@@ -1,7 +1,9 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, NEVER, of, Subject, map } from 'rxjs';
+import {
+  BehaviorSubject, EMPTY, NEVER, of, Subject, map,
+} from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -471,7 +473,13 @@ describe('tnTableListHost', () => {
       providers: [
         {
           provide: TranslateService,
-          useValue: { instant: (key: string) => translated(key), onLangChange: langChange$ },
+          useValue: {
+            instant: (key: string) => translated(key),
+            onLangChange: langChange$,
+            // `langChangeSignal` merges all three streams; only the language one is driven here.
+            onTranslationChange: EMPTY,
+            onDefaultLangChange: EMPTY,
+          },
         },
       ],
     });
@@ -765,6 +773,9 @@ describe('dataProviderEmptyState', () => {
           useValue: {
             instant: (key: string) => translated(key),
             onLangChange: langChange$,
+            // `langChangeSignal` merges all three streams; only the language one is driven here.
+            onTranslationChange: EMPTY,
+            onDefaultLangChange: EMPTY,
           },
         },
       ],

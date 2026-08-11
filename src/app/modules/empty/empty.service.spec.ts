@@ -1,5 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { LangChangeEvent, TranslateService, TranslationChangeEvent } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -60,6 +60,18 @@ describe('EmptyService', () => {
       const translate = spectator.inject(TranslateService);
       jest.spyOn(translate, 'instant').mockReturnValue('Antwort kann nicht abgerufen werden');
       translate.onLangChange.emit({ lang: 'de', translations: {} } as LangChangeEvent);
+
+      expect(spectator.service.titleForType(EmptyType.Errors)).toBe('Antwort kann nicht abgerufen werden');
+    });
+
+    it('re-translates when a catalog arrives after the first lookup', () => {
+      // An `instant()` that runs before the active language's catalog is loaded returns the key;
+      // without this invalidation the cache would keep serving that key until a language switch.
+      expect(spectator.service.titleForType(EmptyType.Errors)).toBe('Cannot retrieve response');
+
+      const translate = spectator.inject(TranslateService);
+      jest.spyOn(translate, 'instant').mockReturnValue('Antwort kann nicht abgerufen werden');
+      translate.onTranslationChange.emit({ lang: 'de', translations: {} } as TranslationChangeEvent);
 
       expect(spectator.service.titleForType(EmptyType.Errors)).toBe('Antwort kann nicht abgerufen werden');
     });
