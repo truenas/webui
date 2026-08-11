@@ -28,19 +28,39 @@ export function langChangeSignal(): Signal<unknown> {
 }
 
 /**
- * A `computed` that also re-runs on a language change, for derivations that call
+ * A `computed` that also re-runs whenever translations change, for derivations that call
  * `TranslateService.instant()` instead of going through the `| translate` pipe.
  *
- * Must be called from an injection context (e.g. a component field initializer).
+ * The pipe handles this on its own (it is impure and subscribes to all three change streams), so
+ * **prefer the pipe** whenever the string goes straight into a template. Reach for this only when
+ * the value has to be composed in TypeScript — several keys folded into one string, an object of
+ * labels handed to a library token, an `instant()` used as an interpolation parameter.
+ *
+ * Lazy like any `computed`: nothing is translated until the signal is read.
+ *
+ * Must be called from an injection context (a field initializer, a constructor, or a DI factory),
+ * like the `toSignal` it wraps.
+ *
+ * @param derive Receives the `TranslateService`, so a DI factory or a helper with no `translate`
+ * field of its own does not have to inject one; a component that already has one can ignore it.
  *
  * @example
  * protected readonly stateText = translated(() => this.translate.instant(this.state()));
+ *
+ * @example
+ * ```ts
+ * protected readonly ariaLabel = translated((translate) => translate.instant('{a}. {b}', {
+ *   a: translate.instant(this.labelKey),
+ *   b: translate.instant(this.hintKey),
+ * }));
+ * ```
  */
-export function translated<T>(derive: () => T): Signal<T> {
+export function translated<T>(derive: (translate: TranslateService) => T): Signal<T> {
+  const translate = inject(TranslateService);
   const lang = langChangeSignal();
 
   return computed(() => {
     lang();
-    return derive();
+    return derive(translate);
   });
 }

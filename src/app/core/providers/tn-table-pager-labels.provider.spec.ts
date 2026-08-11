@@ -23,7 +23,7 @@ describe('provideTnTablePagerLabels', () => {
       providers: [
         {
           provide: TranslateService,
-          // All three streams, not just `onLangChange`: `translatedSignal` merges the same set the
+          // All three streams, not just `onLangChange`: `translated` merges the same set the
           // `translate` pipe subscribes to, so a mock missing any of them is not a TranslateService.
           useValue: {
             onLangChange: langChange$.asObservable(),

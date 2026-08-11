@@ -33,6 +33,27 @@ describe('translated', () => {
     });
   });
 
+  it('hands the TranslateService to the derivation, for call sites without one of their own', () => {
+    TestBed.runInInjectionContext(() => {
+      const text = translated((translate) => translate.instant('Success') as string);
+
+      expect(text()).toBe('Success');
+    });
+  });
+
+  it('is lazy — nothing is translated until the signal is read', () => {
+    TestBed.runInInjectionContext(() => {
+      const derive = jest.fn(() => 'Success');
+      translated(derive);
+
+      expect(derive).not.toHaveBeenCalled();
+    });
+  });
+
+  it('throws when called outside an injection context', () => {
+    expect(() => translated((translate) => translate.instant('Success'))).toThrow();
+  });
+
   it('memoizes like a computed while nothing it reads changes', () => {
     TestBed.runInInjectionContext(() => {
       const derive = jest.fn(() => 'Success');

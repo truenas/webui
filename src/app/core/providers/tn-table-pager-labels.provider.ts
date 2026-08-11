@@ -1,7 +1,7 @@
 import { Provider } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TN_TABLE_PAGER_LABELS, type TnTablePagerLabels } from '@truenas/ui-components';
-import { translatedSignal } from 'app/modules/translate/translated-signal';
+import { translated } from 'app/helpers/translated.helper';
 
 const labelKeys: Record<keyof TnTablePagerLabels, string> = {
   itemsPerPage: T('Items per page'),
@@ -16,7 +16,7 @@ const labelKeys: Record<keyof TnTablePagerLabels, string> = {
 export function provideTnTablePagerLabels(): Provider {
   return {
     provide: TN_TABLE_PAGER_LABELS,
-    useFactory: () => translatedSignal<TnTablePagerLabels>((translate) => ({
+    useFactory: () => translated<TnTablePagerLabels>((translate) => ({
       itemsPerPage: translate.instant(labelKeys.itemsPerPage),
       of: translate.instant(labelKeys.of),
       firstPage: translate.instant(labelKeys.firstPage),
