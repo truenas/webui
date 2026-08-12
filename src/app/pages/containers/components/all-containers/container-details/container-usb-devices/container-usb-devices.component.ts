@@ -3,6 +3,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnCardComponent, TnCardFooterActionsDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ContainerDeviceType } from 'app/enums/container.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   ContainerDevice,
 } from 'app/interfaces/container.interface';
@@ -37,6 +38,8 @@ export class ContainerUsbDevicesComponent {
   private translate = inject(TranslateService);
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
+  protected readonly helptext = containersHelptext;
+
   // Middleware refuses device operations on any container that is not stopped, which since
   // 26.0 includes SUSPENDED - not just RUNNING.
   protected readonly isContainerActive = computed(() => {

@@ -9,6 +9,7 @@ import {
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { ContainerDeviceType, containerGpuType } from 'app/enums/container.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   ContainerDevice,
 } from 'app/interfaces/container.interface';
@@ -65,6 +66,8 @@ export class ContainerGpuDevicesComponent {
   protected readonly gpuChoices = this.devicesStore.gpuChoices;
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
+  protected readonly helptext = containersHelptext;
+
   // Middleware refuses device operations on any container that is not stopped, which since
   // 26.0 includes SUSPENDED - not just RUNNING.
   protected readonly isContainerActive = computed(() => {

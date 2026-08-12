@@ -11,10 +11,10 @@ import {
   TnTestIdDirective,
   TnTooltipDirective,
 } from '@truenas/ui-components';
-import { ContainerStatus } from 'app/enums/container.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerRunning } from 'app/pages/containers/utils/container-status.utils';
 
 @Component({
   selector: 'ix-container-tools',
@@ -44,17 +44,15 @@ export class ContainerToolsComponent {
 
   // The shell needs a live init process, so RUNNING is the only state it can attach to -
   // a SUSPENDED container is as unreachable as a stopped one.
-  protected readonly isContainerRunning = computed(() => {
-    return this.container()?.status?.state === ContainerStatus.Running;
-  });
+  private readonly isRunning = computed(() => isContainerRunning(this.container()));
 
-  protected readonly canOpenShell = computed(() => this.hasWebShellAccess() && this.isContainerRunning());
+  protected readonly canOpenShell = computed(() => this.hasWebShellAccess() && this.isRunning());
 
   protected readonly shellTooltip = computed(() => {
     if (!this.hasWebShellAccess()) {
       return helptextGlobal.webShellAccessDenied;
     }
-    return this.isContainerRunning() ? '' : T('Container is not running');
+    return this.isRunning() ? '' : T('Container is not running');
   });
 
   protected openShell(containerId: number): void {

@@ -16,3 +16,11 @@ export function isContainerActive(container: Container | null | undefined): bool
 
   return state === ContainerStatus.Running || state === ContainerStatus.Suspended;
 }
+
+/**
+ * Stricter than {@link isContainerActive}: only a RUNNING container has a live init process,
+ * so this is what things that talk to the workload itself (the shell, live metrics) need.
+ */
+export function isContainerRunning(container: Container | null | undefined): boolean {
+  return container?.status?.state === ContainerStatus.Running;
+}

@@ -89,8 +89,16 @@ describe('DeleteContainerDialog', () => {
     expect(spectator.query('tn-banner')).toBeTruthy();
   });
 
+  it('does not delete on implicit form submission while the deletion is unconfirmed', () => {
+    setupTest(fakeContainer());
+
+    spectator.dispatchFakeEvent('form', 'submit');
+
+    expect(spectator.inject(DialogRef).close).not.toHaveBeenCalled();
+  });
+
   it.each([ContainerStatus.Running, ContainerStatus.Suspended])(
-    'preselects force for a %s container, because middleware refuses to delete it otherwise',
+    'forces the stop for a %s container, because middleware refuses to delete it otherwise',
     async (state) => {
       setupTest(fakeContainer({ status: { state, pid: null, domain_state: null } }));
 
@@ -98,6 +106,7 @@ describe('DeleteContainerDialog', () => {
         TnCheckboxHarness.with({ label: 'Stop container before deleting' }),
       );
       expect(await forceCheckbox.isChecked()).toBe(true);
+      expect(await forceCheckbox.isDisabled()).toBe(true);
 
       await confirm();
       await (await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }))).click();

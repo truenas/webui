@@ -14,7 +14,7 @@
           [device]="disk"
           [showEdit]="true"
           [isDisabled]="isContainerActive()"
-          [disabledTooltip]="isContainerActive() ? ('Cannot modify devices unless the container is stopped. Please stop the container first.' | translate) : null"
+          [disabledTooltip]="isContainerActive() ? (helptext.deviceRequiresStoppedTooltip | translate) : null"
         ></ix-device-actions-menu>
       </div>
     } @empty {

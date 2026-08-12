@@ -42,10 +42,6 @@ export class DeleteContainerDialog {
     confirm: [false],
   });
 
-  /**
-   * Middleware refuses to delete a container that is not stopped unless `force` is set,
-   * so pre-check the box (and explain why) instead of letting the user walk into the refusal.
-   */
   protected readonly isStopped = isContainerStopped(this.container);
 
   private readonly formValue = toSignal(this.form.valueChanges, { initialValue: this.form.getRawValue() });
@@ -55,11 +51,21 @@ export class DeleteContainerDialog {
 
   constructor() {
     if (!this.isStopped) {
+      // Middleware refuses to delete a container that is not stopped unless `force` is set, so
+      // there is no such thing as an unforced delete here: lock the box on instead of offering a
+      // choice that can only end in a refusal. `getRawValue()` still reports the disabled control.
       this.form.controls.force.setValue(true);
+      this.form.controls.force.disable();
     }
   }
 
   protected onDelete(): void {
+    // Also reached by implicit form submission (Enter on a checkbox), which bypasses the
+    // disabled Delete button - so the confirmation is re-checked here rather than in the template.
+    if (!this.canDelete()) {
+      return;
+    }
+
     const { force, recursive } = this.form.getRawValue();
 
     this.dialogRef.close({ force, recursive });

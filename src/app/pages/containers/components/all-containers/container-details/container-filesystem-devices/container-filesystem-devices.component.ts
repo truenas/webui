@@ -5,6 +5,7 @@ import { TnCardAction, TnCardComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import { Container, ContainerDevice, ContainerFilesystemDevice } from 'app/interfaces/container.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -58,6 +59,8 @@ export class ContainerFilesystemDevicesComponent {
   });
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
+  protected readonly helptext = containersHelptext;
+
   // Middleware refuses device operations on any container that is not stopped, which since
   // 26.0 includes SUSPENDED - not just RUNNING.
   protected readonly isContainerActive = computed(() => {

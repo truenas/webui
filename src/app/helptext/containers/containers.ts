@@ -91,11 +91,15 @@ export const containersHelptext = {
  and to tweak behavior accordingly.'),
   },
 
+  nameTooltip: T('Container name'),
   renameRequiresStoppedTooltip: T('Container name. A container can only be renamed while it is stopped.'),
+
+  deviceRequiresStoppedTooltip: T('Cannot modify devices unless the container is stopped. Please stop the container first.'),
 
   deleteDialog: {
     forceLabel: T('Stop container before deleting'),
     forceTooltip: T('A container that is running or suspended cannot be deleted. Check this to stop it first.'),
+    forceRequiredTooltip: T('This container is not stopped, so deleting it always stops it first.'),
     forceRequiredWarning: T('This container is not stopped. Deleting it requires stopping it first.'),
     recursiveLabel: T('Delete child datasets, snapshots and clones'),
     recursiveTooltip: T('The container dataset is destroyed together with its child datasets and snapshots, any clones of those snapshots wherever they live in the pool, and any holds on them. Required when the container dataset has children or snapshots.'),

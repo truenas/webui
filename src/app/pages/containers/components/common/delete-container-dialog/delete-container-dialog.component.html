@@ -14,7 +14,7 @@
       ></tn-banner>
     }
 
-    <tn-form-field [tooltip]="helptext.forceTooltip | translate">
+    <tn-form-field [tooltip]="(isStopped ? helptext.forceTooltip : helptext.forceRequiredTooltip) | translate">
       <tn-checkbox
         testId="force"
         formControlName="force"

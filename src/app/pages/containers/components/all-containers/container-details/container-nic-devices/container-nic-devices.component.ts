@@ -7,6 +7,7 @@ import {
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { ContainerDeviceType } from 'app/enums/container.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import { ContainerDevice, ContainerNicDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddNicMenuComponent } from 'app/pages/containers/components/all-containers/container-details/container-nic-devices/add-nic-menu/add-nic-menu.component';
@@ -48,6 +49,8 @@ export class ContainerNicDevicesComponent {
   });
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
+
+  protected readonly helptext = containersHelptext;
 
   // Middleware refuses device operations on any container that is not stopped, which since
   // 26.0 includes SUSPENDED - not just RUNNING.

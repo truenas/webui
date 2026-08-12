@@ -145,7 +145,7 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   protected readonly nameTooltip = computed(() => {
     return this.isRenameBlocked()
       ? this.translate.instant(containersHelptext.renameRequiresStoppedTooltip)
-      : this.translate.instant('Container name');
+      : this.translate.instant(containersHelptext.nameTooltip);
   });
 
   /**
