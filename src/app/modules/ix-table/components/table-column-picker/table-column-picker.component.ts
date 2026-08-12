@@ -25,6 +25,10 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
  * string, so a saved preference can stop resolving (locale switch, renamed
  * column); such a preference is treated as stale and the defaults are restored.
  *
+ * A key therefore owns exactly one set of column titles: two pickers over
+ * different columns must not share one (the store keeps a single entry per key,
+ * so each would read the other's titles as stale and reset to defaults).
+ *
  * The input columns are never mutated: `columnsChange` emits copies with
  * updated `hidden` flags, and the host is expected to feed them back into
  * `[columns]` (the usual `columns` signal + `set` pattern).
