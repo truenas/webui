@@ -7,7 +7,6 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent,
   TnCheckboxComponent,
   TnChipInputComponent,
   TnFormFieldComponent,
@@ -17,14 +16,11 @@ import {
 import {
   forkJoin, take,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { helptextIscsi } from 'app/helptext/sharing';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -45,11 +41,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnInputComponent,
     TnChipInputComponent,
     TnCheckboxComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
-    ModalHeaderComponent,
   ],
 })
 export class GlobalTargetConfigurationComponent extends SidePanelForm implements OnInit {
