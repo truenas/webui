@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { AsyncValidatorFn, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
+  TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -205,6 +205,21 @@ describe('VmEditFormComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.component.canSubmit()).toBe(false);
+  });
+
+  // The panel footer owns Save, so the form itself must render none — an ungated in-form Save
+  // would show up twice.
+  it('renders no Save of its own — the panel footer owns it', async () => {
+    expect(await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Save' }))).toHaveLength(0);
+  });
+
+  // Drives the panel's closeGuard; without it an edited form closes silently on backdrop click.
+  it('reports unsaved changes to the panel close guard once edited', async () => {
+    expect(spectator.component.hasUnsavedChanges()).toBe(false);
+
+    await (await getInput('name')).setValue('Edited');
+
+    expect(spectator.component.hasUnsavedChanges()).toBe(true);
   });
 
   // The cases below address controls by `formControlName`, which observes no label at all —
