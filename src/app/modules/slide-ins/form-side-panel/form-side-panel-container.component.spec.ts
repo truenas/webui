@@ -9,7 +9,7 @@ import {
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonHarness, TnIconButtonHarness, TnIconTesting, TnMenuHarness, TnMenuTesting,
+  TnBannerHarness, TnButtonHarness, TnIconButtonHarness, TnIconTesting, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
@@ -23,9 +23,12 @@ import {
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import {
   FormSidePanelContainerComponent,
+} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import {
+  advancedModeFooterAction,
   SidePanelFooterAction,
   SidePanelFooterMenu,
-} from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -155,6 +158,7 @@ describe('FormSidePanelContainerComponent footer menu', () => {
 
 const backClick = jest.fn();
 const nextClick = jest.fn();
+const retryLoadSpy = jest.fn();
 
 @Component({
   selector: 'ix-actions-test-form',
@@ -169,20 +173,41 @@ class ActionsTestFormComponent extends SidePanelForm {
   // predicate so we can assert the container re-evaluates `disabled` reactively.
   readonly nextReady = signal(false);
 
-  readonly footerActions: SidePanelFooterAction[] = [
-    {
-      label: 'Back',
-      testId: 'back',
-      onClick: () => backClick(),
-    },
-    {
-      label: 'Next',
-      testId: 'next',
-      color: 'primary',
-      disabled: () => !this.nextReady(),
-      onClick: () => nextClick(),
-    },
-  ];
+  readonly isAdvancedMode = signal(false);
+  // Signal-backed action, the shape `advancedModeFooterAction` produces — asserts the container
+  // re-reads `footerActions` so a label change reaches the rendered button.
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
+
+  // The load-failure surface `IxFormHostForm` exposes; here driven directly so the container's
+  // banner can be asserted without an inner `<ix-form>`.
+  readonly loadFailed = signal(false);
+
+  hasLoadFailed(): boolean {
+    return this.loadFailed();
+  }
+
+  retryLoad(): void {
+    retryLoadSpy();
+    this.loadFailed.set(false);
+  }
+
+  get footerActions(): SidePanelFooterAction[] {
+    return [
+      {
+        label: 'Back',
+        testId: 'back',
+        onClick: () => backClick(),
+      },
+      {
+        label: 'Next',
+        testId: 'next',
+        color: 'primary',
+        disabled: () => !this.nextReady(),
+        onClick: () => nextClick(),
+      },
+      ...this.advancedToggle(),
+    ];
+  }
 
   protected onSubmit(): void {
     this.close(true);
@@ -199,6 +224,7 @@ describe('FormSidePanelContainerComponent footer actions', () => {
   beforeEach(() => {
     backClick.mockClear();
     nextClick.mockClear();
+    retryLoadSpy.mockClear();
 
     TestBed.configureTestingModule({
       imports: [FormSidePanelContainerComponent, ActionsTestFormComponent, TranslateModule.forRoot()],
@@ -226,6 +252,66 @@ describe('FormSidePanelContainerComponent footer actions', () => {
 
     expect(await backButton.isDisabled()).toBe(false);
     expect(await nextButton.isDisabled()).toBe(true);
+  });
+
+  it('re-renders an action label when the signal behind it flips', async () => {
+    const loader = TnMenuTesting.rootLoader(fixture);
+    const toggle = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
+
+    await toggle.click();
+    fixture.detectChanges();
+
+    expect(await toggle.getLabel()).toBe('Basic Options');
+    expect(getForm().isAdvancedMode()).toBe(true);
+  });
+
+  // TnButtonHarness exposes no aria-label getter, and the attribute sits on the <button>
+  // tn-button renders rather than on its host element — so read it off the DOM.
+  const footerActionAriaLabel = (label: string): string | null => {
+    const host = Array.from(document.querySelectorAll('tn-button'))
+      .find((element) => element.textContent?.trim() === label);
+    return host?.querySelector('button')?.getAttribute('aria-label') ?? null;
+  };
+
+  it('renders the action ariaLabel so a footer toggle announces what it will do', async () => {
+    const loader = TnMenuTesting.rootLoader(fixture);
+    const toggle = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
+
+    expect(footerActionAriaLabel('Advanced Options')).toBe('Show Advanced Options');
+
+    await toggle.click();
+    fixture.detectChanges();
+
+    expect(footerActionAriaLabel('Basic Options')).toBe('Show Basic Options');
+  });
+
+  it('leaves aria-label off actions that do not declare one', () => {
+    expect(footerActionAriaLabel('Next')).toBeNull();
+  });
+
+  describe('failed initial load', () => {
+    it('shows no banner while the form loaded fine', async () => {
+      const loader = TnMenuTesting.rootLoader(fixture);
+
+      expect(await loader.getAllHarnesses(TnBannerHarness)).toHaveLength(0);
+    });
+
+    it('explains the failure and offers a retry once the form reports one', async () => {
+      getForm().loadFailed.set(true);
+      fixture.detectChanges();
+
+      const loader = TnMenuTesting.rootLoader(fixture);
+      const banner = await loader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain('Settings could not be loaded');
+
+      const retryButton = await loader.getHarness(TnButtonHarness.with({ label: 'Retry' }));
+      await retryButton.click();
+      fixture.detectChanges();
+
+      expect(retryLoadSpy).toHaveBeenCalled();
+      // A successful retry clears the flag, so the banner goes away.
+      expect(await loader.getAllHarnesses(TnBannerHarness)).toHaveLength(0);
+    });
   });
 
   it('re-evaluates the reactive disabled predicate and invokes onClick', async () => {

@@ -2,7 +2,7 @@ import {
   ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import {
   CallResponseOrFactory, JobResponseOrFactory,
@@ -177,4 +177,38 @@ export function mockJob<M extends ApiJobMethod>(
     method,
     type: MockApiResponseType.Job,
   };
+}
+
+/**
+ * Makes one method error while every other call keeps the response {@link mockApi} registered for
+ * it. Use when a test needs a single request to fail — e.g. a config load — without taking down
+ * the option streams the same component subscribes to.
+ *
+ * @example
+ * ```ts
+ * failApiCall(spectator.inject(ApiService), 'ftp.config');
+ * ```
+ *
+ * Reaches through to the mock rather than `jest.spyOn`: `api.call` is already a jest mock, so
+ * `spyOn` hands back that same instance and a fall-through that called `api.call` again would
+ * recurse. Capture the registered implementation and delegate to it instead.
+ */
+export function failApiCall(
+  api: ApiService,
+  method: ApiCallMethod,
+  error: unknown = new Error(`Mocked failure of ${method}`),
+): void {
+  const call = api.call as unknown as jest.Mock<Observable<unknown>, [string, unknown?]>;
+  const respond = call.getMockImplementation();
+  if (!respond) {
+    // Without this the missing implementation surfaces later as "respond is not a function",
+    // thrown from inside whichever component happened to call through.
+    throw new Error(
+      'failApiCall needs an ApiService whose `call` has a mock implementation to delegate the '
+      + 'other methods to — provide mockApi() rather than a bare mockProvider(ApiService).',
+    );
+  }
+  call.mockImplementation((calledMethod, params) => {
+    return calledMethod === method ? throwError(() => error) : respond(calledMethod, params);
+  });
 }

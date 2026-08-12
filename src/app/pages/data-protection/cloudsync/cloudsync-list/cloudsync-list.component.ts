@@ -1,12 +1,20 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Type, inject, OnInit, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnDialog, TnIconComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnDetailRowDefDirective,
+  TnDialog,
+  TnEmptyComponent,
+  TnHeaderCellDefDirective,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+} from '@truenas/ui-components';
 import {
   EMPTY, catchError, filter, map, switchMap, tap,
 } from 'rxjs';
@@ -16,16 +24,16 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
+import { translated } from 'app/helpers/translated.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   scheduleColumn,
@@ -33,29 +41,31 @@ import {
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { createTable } from 'app/modules/ix-table/utils';
+import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  TableRelativeDateCellComponent,
+} from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { cloudSyncListElements } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.elements';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { CloudSyncDataTransformer } from 'app/pages/data-protection/cloudsync/utils/cloudsync-data-transformer';
+import {
+  TaskStateCellComponent,
+} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
@@ -68,22 +78,25 @@ import { AppState } from 'app/store';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    IxTableColumnsSelectorComponent,
+    TableColumnPickerComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableDetailsRowDirective,
-    IxTableDetailsRowComponent,
-    TnIconComponent,
+    TnEmptyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
     TnTablePagerComponent,
+    IxTableDetailsRowComponent,
+    TableRelativeDateCellComponent,
+    TableTextCellComponent,
+    TaskStateCellComponent,
+    ScheduleDescriptionPipe,
+    YesNoPipe,
+    FlattenEmptyMessagePipe,
     TranslateModule,
-    AsyncPipe,
-    EmptyComponent,
   ],
 })
 export class CloudSyncListComponent implements OnInit {
@@ -91,7 +104,6 @@ export class CloudSyncListComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private taskService = inject(TaskService);
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
@@ -99,104 +111,154 @@ export class CloudSyncListComponent implements OnInit {
   private tnDialog = inject(TnDialog);
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
-  protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = cloudSyncListElements;
-  protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
   protected readonly EmptyType = EmptyType;
 
-  cloudSyncTasks: CloudSyncTaskUi[] = [];
-  searchQuery = signal('');
-  dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
-  readonly jobState = JobState;
+  private cloudSyncTasks: CloudSyncTaskUi[] = [];
+  protected readonly searchQuery = signal('');
+  protected readonly jobState = JobState;
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
-  columns = createTable<CloudSyncTaskUi>([
-    textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'description',
+  private readonly cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
+    map((cloudSyncTasks) => CloudSyncDataTransformer.transformTasks(
+      cloudSyncTasks,
+      this.taskService,
+      this.translate,
+    )),
+    tap((cloudSyncTasks) => this.setupJobSubscriptions(cloudSyncTasks)),
+    tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
+  );
+
+  readonly dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(this.cloudSyncTasks$);
+
+  // Bound from the shared catalog config rather than inlined in the template, so the
+  // translated string has a single source of truth and follows a language change.
+  protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
+  protected readonly emptyIcon = emptyConfigIcon(cloudSyncTaskEmptyConfig);
+
+  // One source of truth per column title: the header, the cell (whose test id is built
+  // from it) and the column model all read the same entry, so a rename cannot silently
+  // change a data-test value. `translated` re-runs it on a language change — and because
+  // the column model is passed as a factory, the picker and detail row re-read it too.
+  protected readonly titles = translated(() => ({
+    description: this.translate.instant('Description'),
+    credential: this.translate.instant('Credential'),
+    direction: this.translate.instant('Direction'),
+    transferMode: this.translate.instant('Transfer Mode'),
+    path: this.translate.instant('Path'),
+    schedule: this.translate.instant('Schedule'),
+    frequency: this.translate.instant('Frequency'),
+    nextRun: this.translate.instant('Next Run'),
+    lastRun: this.translate.instant('Last Run'),
+    state: this.translate.instant('State'),
+    enabled: this.translate.instant('Enabled'),
+  }));
+
+  protected readonly list = tnTableListHost<CloudSyncTaskUi>(this.dataProvider, {
+    columns: () => createTable<CloudSyncTaskUi>([
+      textColumn({
+        title: this.titles().description,
+        propertyName: 'description',
+      }),
+      textColumn({
+        title: this.titles().credential,
+        columnName: 'credential',
+        hidden: true,
+        getValue: (task) => task.credentials.name,
+      }),
+      textColumn({
+        title: this.titles().direction,
+        propertyName: 'direction',
+        hidden: true,
+      }),
+      textColumn({
+        title: this.titles().transferMode,
+        propertyName: 'transfer_mode',
+        hidden: true,
+      }),
+      textColumn({
+        title: this.titles().path,
+        propertyName: 'path',
+        hidden: true,
+      }),
+      textColumn({
+        title: this.titles().schedule,
+        propertyName: 'schedule',
+        hidden: true,
+        getValue: (task) => this.getSchedule(task),
+      }),
+      // The three columns below render one thing and order by another: a schedule object, a
+      // relative phrase ("in 3 days") and a formatted date all sort meaninglessly, so each names
+      // the sort key `CloudSyncDataTransformer` derives for it. Spelled out, because a column's
+      // `getValue` is otherwise what it sorts by.
+      scheduleColumn({
+        title: this.titles().frequency,
+        getValue: (task) => task.schedule,
+        propertyName: 'frequency_sort_key',
+        sortBy: (task) => task.frequency_sort_key,
+      }),
+      textColumn({
+        title: this.titles().nextRun,
+        hidden: true,
+        getValue: (task: CloudSyncTaskUi) => this.getNextRun(task),
+        propertyName: 'next_run_sort_key',
+        sortBy: (task) => task.next_run_sort_key,
+      }),
+      relativeDateColumn({
+        title: this.titles().lastRun,
+        hidden: true,
+        getValue: (task) => task.job?.time_finished?.$date,
+        propertyName: 'last_run_sort_key',
+        sortBy: (task) => task.last_run_sort_key,
+      }),
+      stateButtonColumn({
+        title: this.titles().state,
+        columnName: 'state',
+        getValue: (row) => row.state.state,
+        getJob: (row) => row.job,
+        cssClass: 'state-button',
+      }),
+      yesNoColumn({
+        title: this.titles().enabled,
+        propertyName: 'enabled',
+      }),
+    ], {
+      // Still needed: <ix-table-details-row> renders the hidden columns through the
+      // ix cell components, which read `uniqueRowTag`/`ariaLabels` off the column.
+      uniqueRowTag: (row) => 'cloudsync-task-' + row.description,
+      ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
     }),
-    textColumn({
-      title: this.translate.instant('Credential'),
-      hidden: true,
-      getValue: (task) => task.credentials.name,
-    }),
-    textColumn({
-      title: this.translate.instant('Direction'),
-      propertyName: 'direction',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Transfer Mode'),
-      propertyName: 'transfer_mode',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Path'),
-      propertyName: 'path',
-      hidden: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Schedule'),
-      propertyName: 'schedule',
-      hidden: true,
-      getValue: (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
-    }),
-    scheduleColumn({
-      title: this.translate.instant('Frequency'),
-      getValue: (task) => task.schedule,
-      propertyName: 'frequency_sort_key',
-    }),
-    textColumn({
-      title: this.translate.instant('Next Run'),
-      hidden: true,
-      getValue: (task: CloudSyncTaskUi) => {
-        // For disabled tasks, show "Disabled" text
-        if (!task.enabled) {
-          return this.translate.instant('Disabled');
-        }
-        // For enabled tasks, show the pre-computed relative time string
-        return task.next_run;
-      },
-      propertyName: 'next_run_sort_key',
-    }),
-    relativeDateColumn({
-      title: this.translate.instant('Last Run'),
-      hidden: true,
-      getValue: (task) => task.job?.time_finished?.$date,
-      propertyName: 'last_run_sort_key',
-    }),
-    stateButtonColumn({
-      title: this.translate.instant('State'),
-      getValue: (row) => row.state.state,
-      getJob: (row) => row.job,
-      cssClass: 'state-button',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Enabled'),
-      propertyName: 'enabled',
-    }),
-  ], {
-    uniqueRowTag: (row) => 'cloudsync-task-' + row.description,
-    ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
   });
 
-  protected get hiddenColumns(): Column<CloudSyncTaskUi, ColumnComponent<CloudSyncTaskUi>>[] {
-    return this.columns.filter((column) => column?.hidden);
+  protected readonly trackByTaskId = (_index: number, row: CloudSyncTaskUi): number => row.id;
+
+  protected readonly uniqueRowTag = this.list.rowTag((row) => 'cloudsync-task-' + row.description);
+
+  protected readonly ariaLabel = this.list.perRow(
+    (row) => [row.description, this.translate.instant('Cloud Sync Task')].join(' '),
+  );
+
+  protected detailActionTestId(row: CloudSyncTaskUi, action: string): string {
+    return detailActionTestId([row.id], action);
+  }
+
+  // Memoized: parsing a schedule into a crontab is the case `perRow` exists for, and
+  // the template asks for it once per row per change-detection pass. Annotated rather
+  // than inferred: the column model above calls it from a `getValue`, so inferring its
+  // type from `this.list` would be circular.
+  protected readonly getSchedule: (task: CloudSyncTaskUi) => string = this.list.perRow(
+    (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
+  );
+
+  protected getNextRun(task: CloudSyncTaskUi): string {
+    // For disabled tasks, show "Disabled" text; for enabled tasks, the
+    // pre-computed relative time string.
+    return task.enabled ? task.next_run : this.translate.instant('Disabled');
   }
 
   ngOnInit(): void {
-    const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
-      map((cloudSyncTasks) => CloudSyncDataTransformer.transformTasks(
-        cloudSyncTasks,
-        this.taskService,
-        this.translate,
-      )),
-      tap((cloudSyncTasks) => this.setupJobSubscriptions(cloudSyncTasks)),
-      tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
-    );
-    this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
@@ -298,7 +360,7 @@ export class CloudSyncListComponent implements OnInit {
   // CloudSyncFormComponent structurally provides the host surface (closed/canSubmit/submit/
   // hasUnsavedChanges/requiredRoles) the panel reads; cast past the nominal base type.
   private readonly cloudSyncForm = CloudSyncFormComponent as unknown as Type<SidePanelForm>;
-  // Wizard is hosted `footerless` — its mat-stepper owns its own Next/Save buttons.
+  // Wizard is hosted `footerless` — its tn-stepper owns its own Next/Save buttons.
   private readonly cloudSyncWizard = CloudSyncWizardComponent as unknown as Type<SidePanelForm>;
 
   protected openForm(row?: CloudSyncTaskUi): void {
@@ -330,12 +392,6 @@ export class CloudSyncListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['description'] });
-  }
-
-  protected columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
   }
 
   private setupJobSubscriptions(cloudSyncTasks: CloudSyncTaskUi[]): void {

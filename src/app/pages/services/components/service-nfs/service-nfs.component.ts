@@ -1,6 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, OnInit, computed, signal, inject, DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -9,7 +11,7 @@ import {
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  combineLatest, finalize, forkJoin, Observable, of, tap,
+  catchError, forkJoin, Observable, of, tap,
 } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -23,65 +25,31 @@ import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  serviceConfigSavedMessage,
+} from 'app/pages/services/components/service-config-forms.constants';
 import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@Component({
-  selector: 'ix-service-nfs',
-  templateUrl: './service-nfs.component.html',
-  styleUrls: ['./service-nfs.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    AsyncPipe,
-    ModalHeaderComponent,
-    ReactiveFormsModule,
-    TnFormSectionComponent,
-    TnFormFieldComponent,
-    TnSelectComponent,
-    TnCheckboxComponent,
-    TnInputComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
-    TooltipComponent,
-    TranslateModule,
-  ],
-})
-export class ServiceNfsComponent extends SidePanelForm implements OnInit {
-  private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandler = inject(FormErrorHandlerService);
-  private fb = inject(NonNullableFormBuilder);
-  private store$ = inject<Store<AppState>>(Store);
-  private translate = inject(TranslateService);
-  private dialogService = inject(DialogService);
-  private snackbar = inject(SnackbarService);
-  private tnDialog = inject(TnDialog);
-  private validatorsService = inject(IxValidatorsService);
-  private destroyRef = inject(DestroyRef);
-
-  protected readonly InputType = InputType;
-  readonly isFormLoading = signal(false);
-  protected readonly isAddSpnDisabled = signal(true);
-  protected readonly hasNfsStatus = signal(false);
-  protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
-
-  protected readonly form = this.fb.group({
+// Built here rather than inline in the component, and left with an inferred return type — see
+// the `V` type parameter on IxFormHostForm for why.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createNfsForm(fb: NonNullableFormBuilder, validatorsService: IxValidatorsService) {
+  return fb.group({
     allow_nonroot: [false],
     bindip: [[] as string[]],
     servers_auto: [true],
-    servers: [null as number | null, [rangeValidator(1, 256), this.validatorsService.validateOnCondition(
+    servers: [null as number | null, [rangeValidator(1, 256), validatorsService.validateOnCondition(
       (control) => !control.parent?.get('servers_auto')?.value,
       Validators.required,
     )]],
@@ -93,6 +61,66 @@ export class ServiceNfsComponent extends SidePanelForm implements OnInit {
     rpclockd_port: [null as number | null, portRangeValidator()],
     userd_manage_gids: [false],
     rdma: [false],
+  });
+}
+
+/**
+ * The form's own value shape, which is NOT `NfsConfig`: `servers_auto` is a UI-only control
+ * (mapped from `managed_nfsd` and dropped in {@link ServiceNfsComponent.handleSubmit}).
+ */
+type NfsFormValue = ReturnType<ReturnType<typeof createNfsForm>['getRawValue']>;
+
+@Component({
+  selector: 'ix-service-nfs',
+  templateUrl: './service-nfs.component.html',
+  styleUrls: ['./service-nfs.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    AsyncPipe,
+    ReactiveFormsModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
+    TnInputComponent,
+    IxFormComponent,
+    RequiresRolesDirective,
+    TnButtonComponent,
+    TooltipComponent,
+    TranslateModule,
+  ],
+})
+export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> implements OnInit {
+  private api = inject(ApiService);
+  private fb = inject(NonNullableFormBuilder);
+  private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private tnDialog = inject(TnDialog);
+  private validatorsService = inject(IxValidatorsService);
+  private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
+
+  protected readonly InputType = InputType;
+  protected readonly isAddSpnDisabled = signal(true);
+  protected readonly hasNfsStatus = signal(false);
+  protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
+
+  protected readonly form = createNfsForm(this.fb, this.validatorsService);
+
+  private readonly isKerberosRequired = toSignal(this.form.controls.v4_krb.valueChanges, {
+    initialValue: this.form.controls.v4_krb.value,
+  });
+
+  /**
+   * Add SPN only applies to a Kerberos-secured NFSv4 server that doesn't already have an SPN, and
+   * only once Active Directory is healthy. Declarative rather than a getter reading
+   * `form.getRawValue()`, so it recomputes when its inputs change instead of on every CD pass.
+   */
+  protected readonly isAddSpnVisible = computed(() => {
+    return !this.hasNfsStatus()
+      && this.isKerberosRequired()
+      && this.activeDirectoryState() === DirectoryServiceStatus.Healthy;
   });
 
   readonly tooltips = {
@@ -109,82 +137,87 @@ export class ServiceNfsComponent extends SidePanelForm implements OnInit {
     userd_manage_gids: helptextServiceNfs.userdManageGids,
   };
 
-  readonly ipChoices$ = combineLatest([
-    this.api.call('nfs.bindip_choices').pipe(choicesToOptions()),
-    this.api.call('nfs.config'),
-  ]).pipe(
-    map(([options, config]) => {
-      return [
-        ...new Set<string>([
-          ...config.bindip,
-          ...options.map((option) => String(option.value)),
-        ]),
-      ].map((value) => ({ label: value, value }));
-    }),
+  /**
+   * The addresses the saved config binds to, captured by the gated `nfs.config` load. Folded into
+   * the choice list below because `nfs.bindip_choices` only offers addresses the system currently
+   * has: one the config still binds to but that has since gone away would otherwise be missing from
+   * the options and silently dropped from the select.
+   */
+  private readonly configuredBindIps = signal<string[]>([]);
+
+  private readonly availableBindIps = toSignal(
+    this.api.call('nfs.bindip_choices').pipe(
+      choicesToOptions(),
+      map((options) => options.map((option) => String(option.value))),
+      // Fails soft, like the other enrichments: `toSignal` latches an error and re-throws it on
+      // every read, and this one is read from `ipChoices()` during template evaluation — so an
+      // uncaught failure would take down the whole form render instead of emptying one select.
+      // The configured addresses still reach the options through `configuredBindIps`.
+      catchError(() => of([] as string[])),
+    ),
+    { initialValue: [] as string[] },
   );
+
+  protected readonly ipChoices = computed(() => {
+    return [...new Set([...this.configuredBindIps(), ...this.availableBindIps()])]
+      .map((value) => ({ label: value, value }));
+  });
 
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
   readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
 
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
-  /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
-
   ngOnInit(): void {
-    this.isFormLoading.set(true);
-    forkJoin([
-      this.loadConfig(),
-      this.checkForRdmaSupport(),
-      this.loadActiveDirectoryState(),
-    ])
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        finalize(() => this.isFormLoading.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        this.setFieldDependencies();
-      });
+    // Wired up front, once — not from the load patch, which `loadFormConfig` replays on retry and
+    // would therefore re-subscribe. `applyConfig` writes `protocols` silently so this still only
+    // ever sees a user-driven change.
+    this.setFieldDependencies();
+
+    // Only `nfs.config` gates the form: it is what populates the controls, so its failure is what
+    // leaves them on defaults the user must not save. The other two calls merely enrich the UI
+    // (RDMA availability, Add SPN visibility) and fail soft below — folding them into the same
+    // load would let a `directoryservices.status` hiccup disable Save over a form that actually
+    // holds the real configuration.
+    this.loadFormConfig(this.api.call('nfs.config'), (config) => this.applyConfig(config));
+
+    forkJoin([this.checkForRdmaSupport(), this.loadActiveDirectoryState()]).pipe(
+      // Both enrichments already default to the conservative option (RDMA disabled, Add SPN
+      // hidden), so a failure just leaves them there.
+      this.errorHandler.withErrorHandler(),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe();
   }
 
-  onSubmit(): void {
-    const params = this.form.getRawValue();
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<NfsFormValue>): SubmitResult => {
+    const { servers_auto: serversAuto, ...params } = allValues;
 
-    if (params.servers_auto) {
-      params.servers = null;
-    }
+    return {
+      request$: this.api.call('nfs.update', [{
+        ...params,
+        servers: serversAuto ? null : params.servers,
+      }]),
+      successMessage: this.translate.instant(serviceConfigSavedMessage),
+    };
+  };
 
-    delete params.servers_auto;
+  /**
+   * Idempotent, as {@link loadFormConfig} requires: every write is a plain (re-runnable) patch.
+   */
+  private applyConfig(config: NfsConfig): void {
+    this.isAddSpnDisabled.set(!config.v4_krb);
+    this.hasNfsStatus.set(config.keytab_has_nfs_spn);
+    this.configuredBindIps.set(config.bindip);
 
-    this.isFormLoading.set(true);
-    this.api.call('nfs.update', [params])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isFormLoading.set(false);
-          this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.isFormLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
-
-  private loadConfig(): Observable<NfsConfig> {
-    return this.api.call('nfs.config')
-      .pipe(
-        tap((config) => {
-          this.isAddSpnDisabled.set(!config.v4_krb);
-          this.hasNfsStatus.set(config.keytab_has_nfs_spn);
-          this.form.patchValue({
-            ...config,
-            servers_auto: config.managed_nfsd,
-          });
-        }),
-      );
+    // Silently, so loading a config is not mistaken for the user changing the protocols: the
+    // dependency below blanks `v4_domain` whenever NFSv4 is off, and a stored value must survive
+    // its own load rather than be cleared out from under a config the user never touched.
+    const { protocols, ...rest } = config;
+    this.form.controls.protocols.setValue(protocols, { emitEvent: false });
+    this.form.patchValue({
+      ...rest,
+      servers_auto: config.managed_nfsd,
+    });
   }
 
   private checkForRdmaSupport(): Observable<void> {
@@ -236,13 +269,7 @@ export class ServiceNfsComponent extends SidePanelForm implements OnInit {
     });
   }
 
-  get isAddSpnVisible(): boolean {
-    return !this.hasNfsStatus()
-      && this.form.getRawValue().v4_krb
-      && this.activeDirectoryState() === DirectoryServiceStatus.Healthy;
-  }
-
-  addSpn(): void {
+  protected addSpn(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Add Kerberos SPN Entry'),
       message: this.translate.instant('Would you like to add a Service Principal Name (SPN) now?'),

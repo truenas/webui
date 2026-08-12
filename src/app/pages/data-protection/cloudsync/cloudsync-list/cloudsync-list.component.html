@@ -4,114 +4,229 @@
     (queryChange)="onListFiltered($event)"
   ></ix-basic-search>
 
-  <ix-table-columns-selector
+  <ix-table-column-picker
+    [columns]="list.columns()"
     [columnPreferencesKey]="'cloudSyncList'"
-    [columns]="columns"
-    (columnsChange)="columnsChange($event)"
-  ></ix-table-columns-selector>
+    (columnsChange)="list.columnsChange($event)"
+  ></ix-table-column-picker>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
     color="primary"
-    ixTest="add-task"
+    [testId]="'add-task'"
+    [label]="'Add' | translate"
     [ixUiSearch]="searchableElements.elements.add"
-    (click)="openForm()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    (onClick)="openForm()"
+  ></tn-button>
 </ix-page-header>
 
-@if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
-  <ix-empty [conf]="emptyConfig"></ix-empty>
+@if (list.empty.type() === EmptyType.NoPageData && !list.empty.count()) {
+  <tn-empty
+    [icon]="emptyIcon.name"
+    [iconLibrary]="emptyIcon.library"
+    [iconSize]="emptyIcon.size"
+    [title]="emptyConfig.message | translate | flattenEmptyMessage"
+  ></tn-empty>
 } @else {
-  <ix-table
+  <tn-table
     class="table"
+    [expandOnRowClick]="true"
+    [testId]="'table-table'"
     [ixUiSearch]="searchableElements.elements.tasks"
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    [dataSource]="list.rows()"
+    [displayedColumns]="list.displayedColumns()"
+    [trackBy]="trackByTaskId"
+    [loading]="list.isLoading()"
+    [loadingMessage]="list.loadingMessage()"
+    [expandable]="true"
+    [clickable]="true"
+    [emptyMessage]="list.empty.message()"
+    [emptyIcon]="list.empty.icon()"
+    (sortChange)="list.onSortChange($event)"
   >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
-    >
-      <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
-        <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="task">
-          <div class="table-details-row-actions">
-            @if (!task.job || task.job.state !== jobState.Running) {
-              <button
-                *ixRequiresRoles="requiredRoles"
-                mat-button
-                [ixTest]="[task.id, 'run_now']"
-                (click)="runNow(task)"
-              >
-                <tn-icon name="play" library="mdi"></tn-icon>
-                <span>{{ 'Run Now' | translate }}</span>
-              </button>
-            }
-
-            @if (task.job && task.job.state === jobState.Running) {
-              <button
-                *ixRequiresRoles="requiredRoles"
-                mat-button
-                [ixTest]="[task.id, 'stop']"
-                (click)="stopCloudSyncTask(task)"
-              >
-                <tn-icon name="stop-circle" library="mdi"></tn-icon>
-                <span>{{ 'Stop' | translate }}</span>
-              </button>
-            }
-
-            <button
-              *ixRequiresRoles="requiredRoles"
-              mat-button
-              [ixTest]="[task.id, 'dry_run']"
-              (click)="dryRun(task)"
-            >
-              <tn-icon name="sync" library="mdi"></tn-icon>
-              <span>{{ 'Dry Run' | translate }}</span>
-            </button>
-
-            <button
-              *ixRequiresRoles="requiredRoles"
-              mat-button
-              [ixTest]="[task.id, 'restore']"
-              (click)="restore(task)"
-            >
-              <tn-icon name="restore" library="mdi"></tn-icon>
-              <span>{{ 'Restore' | translate }}</span>
-            </button>
-
-            <button
-              mat-button
-              [ixTest]="[task.id, 'edit']"
-              (click)="openForm(task)"
-            >
-              <tn-icon name="pencil" library="mdi"></tn-icon>
-              <span>{{ 'Edit' | translate }}</span>
-            </button>
-
-            <button
-              *ixRequiresRoles="requiredRoles"
-              mat-button
-              [ixTest]="[task.id, 'delete']"
-              (click)="doDelete(task)"
-            >
-              <tn-icon name="delete" library="mdi"></tn-icon>
-              <span>{{ 'Delete' | translate }}</span>
-            </button>
-          </div>
-        </ix-table-details-row>
+    <ng-container [tnColumnDef]="'description'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().description }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.description"
+          [title]="titles().description"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [tooltip]="row.description || ''"
+        ></ix-table-text-cell>
       </ng-template>
-    </tbody>
-  </ix-table>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'credential'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().credential }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.credentials.name"
+          [title]="titles().credential"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'direction'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().direction }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.direction"
+          [title]="titles().direction"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'transfer_mode'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().transferMode }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.transfer_mode"
+          [title]="titles().transferMode"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'path'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().path }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.path"
+          [title]="titles().path"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'schedule'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().schedule }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="getSchedule(row)"
+          [title]="titles().schedule"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'frequency_sort_key'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().frequency }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          testIdSuffix="row-schedule"
+          [value]="row.schedule | scheduleDescription"
+          [title]="titles().frequency"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [tooltip]="row.schedule | scheduleDescription"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'next_run_sort_key'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().nextRun }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="getNextRun(row)"
+          [title]="titles().nextRun"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'last_run_sort_key'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ titles().lastRun }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-relative-date-cell
+          [value]="row.job?.time_finished?.$date"
+          [title]="titles().lastRun"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-relative-date-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'state'" [sortable]="true" [width]="'120px'">
+      <ng-template tnHeaderCellDef>{{ titles().state }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-task-state-cell
+          [state]="row.state.state"
+          [job]="row.job"
+          [testId]="[titles().state, uniqueRowTag(row), 'row-state']"
+          [ariaLabel]="ariaLabel(row)"
+        ></ix-task-state-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'enabled'" [sortable]="true" [width]="'70px'">
+      <ng-template tnHeaderCellDef>{{ titles().enabled }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          testIdSuffix="row-yesno"
+          [value]="row.enabled | yesNo | translate"
+          [title]="titles().enabled"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-template let-task tnDetailRowDef>
+      <ix-table-details-row [hiddenColumns]="list.hiddenColumns()" [row]="task">
+        <div class="table-details-row-actions">
+          @if (!task.job || task.job.state !== jobState.Running) {
+            <tn-button
+              *ixRequiresRoles="requiredRoles"
+              icon="mdi-play"
+              [testId]="detailActionTestId(task, 'run_now')"
+              [label]="'Run Now' | translate"
+              (onClick)="runNow(task)"
+            ></tn-button>
+          }
+
+          @if (task.job && task.job.state === jobState.Running) {
+            <tn-button
+              *ixRequiresRoles="requiredRoles"
+              icon="mdi-stop-circle"
+              [testId]="detailActionTestId(task, 'stop')"
+              [label]="'Stop' | translate"
+              (onClick)="stopCloudSyncTask(task)"
+            ></tn-button>
+          }
+
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            icon="mdi-sync"
+            [testId]="detailActionTestId(task, 'dry_run')"
+            [label]="'Dry Run' | translate"
+            (onClick)="dryRun(task)"
+          ></tn-button>
+
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            icon="mdi-restore"
+            [testId]="detailActionTestId(task, 'restore')"
+            [label]="'Restore' | translate"
+            (onClick)="restore(task)"
+          ></tn-button>
+
+          <tn-button
+            icon="mdi-pencil"
+            [testId]="detailActionTestId(task, 'edit')"
+            [label]="'Edit' | translate"
+            (onClick)="openForm(task)"
+          ></tn-button>
+
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            icon="mdi-delete"
+            [testId]="detailActionTestId(task, 'delete')"
+            [label]="'Delete' | translate"
+            (onClick)="doDelete(task)"
+          ></tn-button>
+        </div>
+      </ix-table-details-row>
+    </ng-template>
+  </tn-table>
 
   <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
 }

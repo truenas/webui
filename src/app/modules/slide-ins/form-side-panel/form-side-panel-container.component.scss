@@ -22,6 +22,15 @@
   margin: -36px -24px 32px;
 }
 
+// Load-failure notice, above the portaled form. Sits over the busy overlay's stacking context so
+// it stays legible if a save is somehow in flight, and keeps the form body off the banner.
+.load-failure-banner {
+  position: relative;
+  z-index: 2;
+  display: block;
+  margin-bottom: 16px;
+}
+
 // Positioning context for the busy overlay. `min-height: 100%` so the overlay covers the full
 // content viewport even when the form is shorter than the panel (otherwise it'd only span the
 // short form's height, leaving the empty area below un-dimmed).

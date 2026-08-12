@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, DestroyRef, Pipe, PipeTransform, inject } from '@angular/core';
+import { ChangeDetectorRef, DestroyRef, Pipe, PipeTransform, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
@@ -22,6 +22,15 @@ export class FormatDateTimePipe implements PipeTransform {
   dateFormat = 'yyyy-MM-dd';
   timeFormat = 'HH:mm:ss';
 
+  /**
+   * Bumped whenever the date/time preference changes. The pipe is impure, so templates using it
+   * as a pipe re-run on the next pass anyway; this is for callers that invoke {@link transform}
+   * from a `computed`, which has to take the dependency itself. Exposed here so what invalidates
+   * a format stays knowledge of this pipe alone — a caller depending on it can't go stale if the
+   * preference ever starts changing through another path.
+   */
+  readonly formatChanged = signal(0);
+
   constructor() {
     this.checkFormatsFromLocalStorage();
     this.actions$
@@ -35,6 +44,7 @@ export class FormatDateTimePipe implements PipeTransform {
   }
 
   private checkFormatsFromLocalStorage(): void {
+    this.formatChanged.update((generation) => generation + 1);
     ['dateFormat', 'timeFormat'].forEach((value) => {
       const storedFormat = this.window.localStorage.getItem(value);
       if (storedFormat) {

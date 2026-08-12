@@ -1,10 +1,26 @@
 <ix-page-header [loading]="pools() === null"></ix-page-header>
 
 @if (pools() === 0) {
-  <ix-empty
-    [conf]="emptyConfig"
-    [requiredRoles]="requiredRoles"
-  ></ix-empty>
+  <div class="empty-state">
+    <tn-empty
+      [icon]="emptyIcon.name"
+      [iconLibrary]="emptyIcon.library"
+      [iconSize]="emptyIcon.size"
+      [title]="emptyConfig.title | translate"
+      [description]="emptyConfig.message | translate | flattenEmptyMessage"
+    ></tn-empty>
+
+    <!-- Hosted outside tn-empty: its [actionText] button exposes no testId input,
+      which would drop the legacy `button-create-pool` id. -->
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      variant="outline"
+      [testId]="'create-pool'"
+      [label]="'Create Pool' | translate"
+      (onClick)="createPool()"
+    ></tn-button>
+  </div>
 } @else {
   <div class="cards" [ixUiSearch]="searchableElements.elements.dashboard">
     <ix-cloud-backup-card></ix-cloud-backup-card>

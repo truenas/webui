@@ -1,9 +1,18 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnSpinnerComponent, TnTablePagerComponent } from '@truenas/ui-components';
+import {
+  tnIconMarker,
+  TnCardComponent,
+  TnCellDefDirective,
+  TnHeaderCellDefDirective,
+  TnSpinnerComponent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+} from '@truenas/ui-components';
 import {
   catchError,
   EMPTY,
@@ -12,22 +21,21 @@ import {
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
+import { translated } from 'app/helpers/translated.helper';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { tnTableListHost } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import {
+  TableRelativeDateCellComponent,
+} from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -38,21 +46,20 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./cloud-backup-snapshots.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnCardComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TableRelativeDateCellComponent,
+    TableTextCellComponent,
+    TableActionsCellComponent,
     TnSpinnerComponent,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class CloudBackupSnapshotsComponent implements OnChanges {
-  protected emptyService = inject(EmptyService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -66,37 +73,46 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
 
   protected readonly requiredRoles = [Role.CloudBackupWrite];
 
-  dataProvider: AsyncDataProvider<CloudBackupSnapshot>;
+  // Rebuilt whenever the `backup` input changes, so the provider is held in a signal
+  // and the row/loading/empty signals track whichever provider is current.
+  protected readonly dataProvider = signal(new AsyncDataProvider<CloudBackupSnapshot>(EMPTY));
 
-  columns = createTable<CloudBackupSnapshot>([
-    relativeDateColumn({
-      title: this.translate.instant('Snapshot Time'),
-      getValue: (row) => row.time.$date,
-    }),
-    textColumn({
-      title: this.translate.instant('Hostname'),
-      propertyName: 'hostname',
-    }),
-    actionsWithMenuColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('restore', 'mdi'),
-          tooltip: this.translate.instant('Restore'),
-          onClick: (row) => this.restore(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          requiredRoles: [Role.CloudBackupWrite],
-          onClick: (row) => this.doDelete(row),
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'cloud-backup-snapshot-' + row.hostname,
-    ariaLabels: (row) => [row.hostname, this.translate.instant('Cloud Backup Snapshot')],
+  // One source of truth per column title: the header, the cell (whose test id is built
+  // from it) and the column model all read the same entry, so a rename cannot silently
+  // change a data-test value. `translated` re-runs it on a language change. (This list has no
+  // column picker, so the titles are read only from the template and follow along directly.)
+  protected readonly titles = translated(() => ({
+    snapshotTime: this.translate.instant('Snapshot Time'),
+    hostname: this.translate.instant('Hostname'),
+  }));
+
+  protected readonly list = tnTableListHost<CloudBackupSnapshot>(this.dataProvider, {
+    // `time` is a `{ $date }` wrapper, not a sortable scalar, so it needs an accessor.
+    displayedColumns: [{ name: 'time', sortBy: (row) => row.time.$date }, 'hostname', 'actions'],
   });
+
+  protected readonly actions: IconActionConfig<CloudBackupSnapshot>[] = [
+    {
+      iconName: tnIconMarker('restore', 'mdi'),
+      tooltip: this.translate.instant('Restore'),
+      onClick: (row) => this.restore(row),
+      requiredRoles: this.requiredRoles,
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      requiredRoles: [Role.CloudBackupWrite],
+      onClick: (row) => this.doDelete(row),
+    },
+  ];
+
+  protected readonly trackBySnapshotId = (_index: number, row: CloudBackupSnapshot): string => row.id;
+
+  protected readonly uniqueRowTag = this.list.rowTag((row) => 'cloud-backup-snapshot-' + row.hostname);
+
+  protected readonly ariaLabel = this.list.perRow(
+    (row) => [row.hostname, this.translate.instant('Cloud Backup Snapshot')].join(' '),
+  );
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (!changes.backup.currentValue?.id) {
@@ -107,12 +123,13 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       map((snapshots) => [...snapshots].sort((a, b) => b.time.$date - a.time.$date)),
       takeUntilDestroyed(this.destroyRef),
     );
-    this.dataProvider = new AsyncDataProvider<CloudBackupSnapshot>(cloudBackupSnapshots$);
+    this.dataProvider().unsubscribe();
+    this.dataProvider.set(new AsyncDataProvider<CloudBackupSnapshot>(cloudBackupSnapshots$));
     this.getCloudBackupSnapshots();
   }
 
   private getCloudBackupSnapshots(): void {
-    this.dataProvider.load();
+    this.dataProvider().load();
   }
 
   private restore(row: CloudBackupSnapshot): void {
@@ -127,7 +144,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     }).onSuccess(() => this.getCloudBackupSnapshots(), this.destroyRef);
   }
 
-  doDelete(row: CloudBackupSnapshot): void {
+  private doDelete(row: CloudBackupSnapshot): void {
     this.dialog
       .confirm({
         title: this.translate.instant('Delete Snapshot'),

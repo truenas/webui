@@ -4,6 +4,12 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
 
 export abstract class ColumnComponent<T> {
   propertyName?: keyof T;
+  /**
+   * Untranslated tn-table column name for a computed column that has no
+   * `propertyName`. Must match the literal the template passes to
+   * `[tnColumnDef]` — see `toDisplayedColumns`.
+   */
+  columnName?: string;
   title?: string;
   headerTooltip?: string;
   cssClass?: string;

@@ -1,4 +1,11 @@
-<div class="actions">
+<!-- Swallow clicks so an action (or opening the menu) never also triggers the
+  row click of a `[clickable]` tn-table — e.g. deselecting a master-detail row.
+  Enter/Space too, for the same reason; see `stopRowActivationKeys`. -->
+<div
+  class="actions"
+  (click)="$event.stopPropagation()"
+  (keydown)="stopRowActivationKeys($event)"
+>
   @if (mode() === 'inline' || visibleActions().length === 1) {
     @for (action of visibleActions(); track action) {
       @let isDisabled = action.disabled ? (action.disabled(row()) | async) : false;
@@ -14,6 +21,11 @@
       ></tn-icon-button>
     }
   } @else if (visibleActions().length > 1) {
+    <!-- TODO: library gap, not a webui one — matMenuTriggerFor set aria-haspopup/aria-expanded;
+      TnMenuTriggerDirective sets neither, and its open state is private with no exportAs, so this
+      can't be restored app-side without reaching into library internals. Tracked under
+      "Migration follow-ups" in TRUENAS_UI_INTEGRATION.md; fix belongs in
+      https://github.com/truenas/webui-components (replace this with the issue link once filed). -->
     <tn-icon-button
       name="dots-vertical"
       library="mdi"

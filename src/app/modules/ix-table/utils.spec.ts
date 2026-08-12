@@ -1,12 +1,16 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject, NEVER, of, Subject, map } from 'rxjs';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
+import type { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
 import {
-  dataProviderLoading, dataProviderRows, filterTableRows, mapTnSortToProviderSorting,
-  mapTnSortToTableSort, memoizedRowTag, toDisplayedColumns, toUniqueRowTag,
+  createTable, dataProviderEmptyState, dataProviderLoading, dataProviderRows, detailActionTestId, filterTableRows,
+  mapTnSortToProviderSorting, mapTnSortToTableSort, memoizedRowTag, tnTableListHost, toDisplayedColumns,
+  toUniqueRowTag,
 } from './utils';
 
 describe('dataProviderRows / dataProviderLoading', () => {
@@ -342,6 +346,66 @@ describe('filterTableRows', () => {
   });
 });
 
+describe('createTable', () => {
+  interface Row { name: string }
+
+  // The guard reports rather than throws — a mis-declared column model shouldn't white-screen the
+  // page in dev, and nothing a user does can trip it.
+  let reported: jest.SpyInstance;
+
+  beforeEach(() => {
+    reported = jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => reported.mockRestore());
+
+  it('accepts a columnName-keyed column that carries getValue', () => {
+    createTable<Row>([
+      { title: 'Last Run', columnName: 'last-run', getValue: () => 1 } as Column<Row, ColumnComponent<Row>>,
+    ]);
+
+    expect(reported).not.toHaveBeenCalled();
+  });
+
+  it('reports a columnName-keyed column with no getValue', () => {
+    createTable<Row>([
+      { title: 'Last Run', columnName: 'last-run' } as Column<Row, ColumnComponent<Row>>,
+    ]);
+
+    expect(reported).toHaveBeenCalledWith(expect.stringContaining('"Last Run" ("last-run")'));
+  });
+
+  it('reports more than one column resolving to the "actions" column name', () => {
+    createTable<Row>([
+      { title: 'Actions' } as Column<Row, ColumnComponent<Row>>,
+      { title: 'More' } as Column<Row, ColumnComponent<Row>>,
+    ]);
+
+    expect(reported).toHaveBeenCalledWith(expect.stringContaining('actions'));
+  });
+
+  it('reports a single unnamed column colliding with an explicit actions column', () => {
+    // The case the count-based check used to miss: one unnamed column resolves to 'actions',
+    // which is exactly the name `appendedColumns: ['actions']` adds.
+    createTable<Row>([
+      { propertyName: 'name', title: 'Name' } as Column<Row, ColumnComponent<Row>>,
+      { title: 'Actions' } as Column<Row, ColumnComponent<Row>>,
+      { columnName: 'actions', title: 'More', getValue: () => 1 } as Column<Row, ColumnComponent<Row>>,
+    ]);
+
+    expect(reported).toHaveBeenCalledWith(expect.stringContaining('actions'));
+  });
+
+  it('does not validate the legacy ix-table column model built with a config', () => {
+    createTable<Row>(
+      [{ title: 'Actions' } as Column<Row, ColumnComponent<Row>>, {} as Column<Row, ColumnComponent<Row>>],
+      { uniqueRowTag: (row) => row.name, ariaLabels: (row) => [row.name] },
+    );
+
+    expect(reported).not.toHaveBeenCalled();
+  });
+});
+
 describe('toDisplayedColumns', () => {
   interface Row { name: string; path: string }
 
@@ -359,8 +423,405 @@ describe('toDisplayedColumns', () => {
     expect(toDisplayedColumns(columns([{}, { hidden: true }]))).toEqual(['name', 'actions']);
   });
 
-  it('falls back to "actions" for a column without a propertyName', () => {
-    expect(toDisplayedColumns([{ title: 'X' } as Column<Row, ColumnComponent<Row>>])).toEqual(['actions']);
+  it('uses the explicit columnName for a computed column without a propertyName', () => {
+    expect(toDisplayedColumns([
+      { title: 'Last Run', columnName: 'last-run' } as Column<Row, ColumnComponent<Row>>,
+    ])).toEqual(['last-run']);
+  });
+
+  it('does not derive a column name from the translated title', () => {
+    expect(toDisplayedColumns([
+      { title: 'Dernière exécution', columnName: 'last-run' } as Column<Row, ColumnComponent<Row>>,
+    ])).toEqual(['last-run']);
+  });
+
+  it('falls back to "actions" for a column with neither a propertyName nor a columnName', () => {
+    expect(toDisplayedColumns([{ title: 'Actions' } as Column<Row, ColumnComponent<Row>>])).toEqual(['actions']);
+    expect(toDisplayedColumns([{} as Column<Row, ColumnComponent<Row>>])).toEqual(['actions']);
+  });
+});
+
+describe('tnTableListHost', () => {
+  interface Row { name: string }
+
+  let langChange$: Subject<LangChangeEvent>;
+  let currentPage$: BehaviorSubject<Row[]>;
+  let setSorting: jest.Mock;
+  let provider: BaseDataProvider<Row>;
+  // Identity by default, so most assertions read as the untranslated key; swapped out by the
+  // tests that check a binding follows a language change.
+  let translated: (key: string) => string;
+
+  const tank = { name: 'tank' };
+
+  beforeEach(() => {
+    langChange$ = new Subject<LangChangeEvent>();
+    translated = (key: string) => key;
+    currentPage$ = new BehaviorSubject<Row[]>([tank]);
+    setSorting = jest.fn();
+    provider = {
+      currentPage$,
+      isLoading$: of(false),
+      emptyType$: of(EmptyType.NoPageData),
+      currentPageCount$: currentPage$.pipe(map((rows) => rows.length)),
+      setSorting,
+    } as unknown as BaseDataProvider<Row>;
+
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: TranslateService,
+          useValue: { instant: (key: string) => translated(key), onLangChange: langChange$ },
+        },
+      ],
+    });
+  });
+
+  describe('provider bindings', () => {
+    it('exposes the provider rows, loading and empty state', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { displayedColumns: ['name'] });
+
+        expect(list.rows()).toEqual([tank]);
+        expect(list.isLoading()).toBe(false);
+        expect(list.empty.type()).toBe(EmptyType.NoPageData);
+        expect(list.empty.count()).toBe(1);
+      });
+    });
+
+    it('resolves the loading message from the empty-state catalog, not a per-template literal', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { displayedColumns: ['name'] });
+
+        // The catalog's `loadingConfig` title, so the six migrated lists can't drift onto a
+        // second spelling of it (webui carries both 'Loading...' and 'Loading…').
+        expect(list.loadingMessage()).toBe('Loading...');
+      });
+    });
+
+    it('re-translates the loading message when the language changes', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { displayedColumns: ['name'] });
+        expect(list.loadingMessage()).toBe('Loading...');
+
+        translated = () => 'Chargement…';
+        langChange$.next({ lang: 'fr' } as LangChangeEvent);
+
+        expect(list.loadingMessage()).toBe('Chargement…');
+      });
+    });
+
+    it('maps a sort event against the displayed columns and applies it to the provider', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { displayedColumns: ['path', 'name'] });
+        list.onSortChange({ column: 'name', direction: 'desc' });
+
+        expect(setSorting).toHaveBeenCalledWith({
+          propertyName: 'name',
+          sortBy: undefined,
+          direction: SortDirection.Desc,
+          active: 1,
+        });
+      });
+    });
+
+    it('passes a fixed column\'s explicit sortBy through, for a name matching no row property', () => {
+      TestBed.runInInjectionContext(() => {
+        const sortBy = (row: Row): string => row.name;
+        const list = tnTableListHost<Row>(provider, { displayedColumns: ['name', { name: 'state', sortBy }] });
+        list.onSortChange({ column: 'state', direction: 'asc' });
+
+        // `mapTnSortToTableSort` wraps every accessor in its non-orderable-value guard, so assert
+        // what the provider will sort by rather than the identity of the function handed over.
+        const applied = setSorting.mock.calls[0][0] as TableSort<Row>;
+        expect(applied.active).toBe(1);
+        expect(applied.sortBy?.({ name: 'sda' } as Row)).toBe('sda');
+      });
+    });
+  });
+
+  describe('column picker', () => {
+    const columns = (): Column<Row, ColumnComponent<Row>>[] => ([
+      { propertyName: 'name', title: 'Name' },
+      { propertyName: 'path', title: 'Path', hidden: true },
+    ] as Column<Row, ColumnComponent<Row>>[]);
+
+    it('derives the displayed columns from the visible ones, then the appended ones', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { columns: () => columns(), appendedColumns: ['actions'] });
+
+        expect(list.displayedColumns()).toEqual(['name', 'actions']);
+        expect(list.hiddenColumns()).toEqual([expect.objectContaining({ propertyName: 'path' })]);
+      });
+    });
+
+    it('re-derives the displayed columns when the picker changes visibility', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { columns: () => columns() });
+        const next = list.columns().map((column) => ({ ...column, hidden: false }));
+
+        list.columnsChange(next);
+
+        expect(list.displayedColumns()).toEqual(['name', 'path']);
+        expect(list.hiddenColumns()).toEqual([]);
+      });
+    });
+
+    it('rebuilds the column model on a language change, keeping what the picker hid', () => {
+      TestBed.runInInjectionContext(() => {
+        // Column titles are resolved eagerly, so a model built once would freeze the picker's and
+        // detail row's labels in the initial locale while the headers followed along.
+        const locale = signal('en');
+        const list = tnTableListHost<Row>(provider, {
+          columns: () => [
+            { propertyName: 'name', title: `Name (${locale()})` },
+            { propertyName: 'path', title: 'Path' },
+          ] as Column<Row, ColumnComponent<Row>>[],
+        });
+
+        list.columnsChange(list.columns().map((column) => (
+          column.propertyName === 'path' ? { ...column, hidden: true } : column
+        )));
+        expect(list.displayedColumns()).toEqual(['name']);
+
+        locale.set('fr');
+
+        expect(list.columns()[0].title).toBe('Name (fr)');
+        // The rebuild must not resurrect a column the user hid.
+        expect(list.displayedColumns()).toEqual(['name']);
+        expect(list.hiddenColumns()).toEqual([expect.objectContaining({ propertyName: 'path' })]);
+      });
+    });
+
+    it('sorts a derived column by its getValue, which is all it has to order on', () => {
+      TestBed.runInInjectionContext(() => {
+        const getValue = (row: Row): string => row.name;
+        const list = tnTableListHost<Row>(provider, {
+          columns: () => [
+            { propertyName: 'name', title: 'Name' },
+            { columnName: 'state', title: 'State', getValue },
+          ] as Column<Row, ColumnComponent<Row>>[],
+        });
+        list.onSortChange({ column: 'state', direction: 'asc' });
+
+        // Wrapped by the accessor guard, so compare behaviour rather than function identity.
+        const applied = setSorting.mock.calls[0][0] as TableSort<Row>;
+        expect(applied.sortBy?.({ name: 'sda' } as Row)).toBe(getValue({ name: 'sda' } as Row));
+      });
+    });
+
+    // The precedence `ix-table-head` applied before the migration: a column declaring both renders
+    // something its raw property doesn't say, so ordering by the property sorts by a value that is
+    // nowhere on screen.
+    it('sorts a column carrying both a propertyName and a getValue by what it renders', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, {
+          columns: () => [
+            { propertyName: 'name', title: 'Name', getValue: (row: Row) => `${row.name} (pool)` },
+          ] as Column<Row, ColumnComponent<Row>>[],
+        });
+        list.onSortChange({ column: 'name', direction: 'asc' });
+
+        const applied = setSorting.mock.calls[0][0] as TableSort<Row>;
+        expect(applied.sortBy?.({ name: 'sda' } as Row)).toBe('sda (pool)');
+      });
+    });
+
+    // How a column opts back into its property — e.g. a hidden sort key behind a human-readable
+    // cell, as Cloud Sync's `*_sort_key` columns do.
+    it('prefers an explicit sortBy over the rendered value', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, {
+          columns: () => [{
+            propertyName: 'name',
+            title: 'Name',
+            getValue: (row: Row) => `${row.name} (pool)`,
+            sortBy: (row: Row) => row.name,
+          }] as Column<Row, ColumnComponent<Row>>[],
+        });
+        list.onSortChange({ column: 'name', direction: 'asc' });
+
+        const applied = setSorting.mock.calls[0][0] as TableSort<Row>;
+        expect(applied.sortBy?.({ name: 'sda' } as Row)).toBe('sda');
+      });
+    });
+
+    it('leaves a real-property column to sort by its property', () => {
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { columns: () => columns() });
+        list.onSortChange({ column: 'name', direction: 'asc' });
+
+        expect(setSorting).toHaveBeenCalledWith(expect.objectContaining({
+          propertyName: 'name',
+          sortBy: undefined,
+        }));
+      });
+    });
+  });
+
+  describe('perRow', () => {
+    it('derives once per row and reuses the result on later calls', () => {
+      TestBed.runInInjectionContext(() => {
+        const derive = jest.fn((row: Row) => row.name.toUpperCase());
+        const label = tnTableListHost<Row>(provider, { displayedColumns: ['name'] }).perRow(derive);
+
+        expect(label(tank)).toBe('TANK');
+        expect(label(tank)).toBe('TANK');
+        expect(derive).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it('keeps a separate result per row', () => {
+      TestBed.runInInjectionContext(() => {
+        const label = tnTableListHost<Row>(provider, { displayedColumns: ['name'] })
+          .perRow((row) => row.name.toUpperCase());
+
+        expect(label(tank)).toBe('TANK');
+        expect(label({ name: 'dozer' })).toBe('DOZER');
+      });
+    });
+
+    it('re-derives after the provider emits a new set of rows', () => {
+      TestBed.runInInjectionContext(() => {
+        const derive = jest.fn((row: Row) => row.name.toUpperCase());
+        const label = tnTableListHost<Row>(provider, { displayedColumns: ['name'] }).perRow(derive);
+        expect(label(tank)).toBe('TANK');
+
+        currentPage$.next([tank]);
+
+        expect(label(tank)).toBe('TANK');
+        expect(derive).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    it('re-derives when the language changes, so a translated label does not freeze', () => {
+      TestBed.runInInjectionContext(() => {
+        const derive = jest.fn((row: Row) => row.name.toUpperCase());
+        const label = tnTableListHost<Row>(provider, { displayedColumns: ['name'] }).perRow(derive);
+        expect(label(tank)).toBe('TANK');
+
+        langChange$.next({ lang: 'fr' } as LangChangeEvent);
+
+        expect(label(tank)).toBe('TANK');
+        expect(derive).toHaveBeenCalledTimes(2);
+      });
+    });
+  });
+
+  describe('rowTag', () => {
+    const makeTag = (): (row: Row) => string => tnTableListHost<Row>(provider, { displayedColumns: ['name'] })
+      .rowTag((row) => 'replication-task-' + row.name);
+
+    it('kebab-cases the base so the tag resolves the same as the legacy [ixTest] directive', () => {
+      TestBed.runInInjectionContext(() => {
+        expect(makeTag()({ name: 'My Task' })).toBe('replication-task-my-task');
+      });
+    });
+
+    it('splits letter-digit boundaries, which the library kebab does not', () => {
+      TestBed.runInInjectionContext(() => {
+        expect(makeTag()({ name: 'task1' })).toBe('replication-task-task-1');
+      });
+    });
+
+    it('strips the punctuation convertStringToId removes', () => {
+      TestBed.runInInjectionContext(() => {
+        expect(makeTag()({ name: 'pool/dataset' })).toBe('replication-task-pool-dataset');
+      });
+    });
+  });
+});
+
+describe('detailActionTestId', () => {
+  it('kebab-cases the row parts and the action into one id', () => {
+    expect(detailActionTestId(['esxi-host', '/mnt/tank'], 'delete')).toBe('esxi-host-mnt-tank-delete');
+  });
+
+  it('splits letter-digit boundaries, which the library kebab does not', () => {
+    expect(detailActionTestId(['esxi1'], 'edit')).toBe('esxi-1-edit');
+  });
+
+  it('accepts numeric row parts', () => {
+    expect(detailActionTestId([12], 'run_now')).toBe('12-run-now');
+  });
+
+  it('drops undefined parts rather than rendering them', () => {
+    expect(detailActionTestId(['task', undefined], 'edit')).toBe('task-edit');
+  });
+});
+
+describe('dataProviderEmptyState', () => {
+  let langChange$: Subject<LangChangeEvent>;
+  let translated: (key: string) => string;
+
+  beforeEach(() => {
+    langChange$ = new Subject<LangChangeEvent>();
+    translated = (key: string) => key;
+
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: TranslateService,
+          useValue: {
+            instant: (key: string) => translated(key),
+            onLangChange: langChange$,
+          },
+        },
+      ],
+    });
+  });
+
+  const makeProvider = (
+    emptyType: EmptyType,
+    count: number,
+  ): BaseDataProvider<string> => ({
+    emptyType$: of(emptyType),
+    currentPageCount$: of(count),
+  } as unknown as BaseDataProvider<string>);
+
+  it('exposes the type, row count, translated title and icon for the current empty state', () => {
+    TestBed.runInInjectionContext(() => {
+      const empty = dataProviderEmptyState(makeProvider(EmptyType.NoSearchResults, 0));
+
+      expect(empty.type()).toBe(EmptyType.NoSearchResults);
+      expect(empty.count()).toBe(0);
+      expect(empty.message()).toBe('No Search Results.');
+      expect(empty.icon()).toBe('mdi-magnify-scan');
+    });
+  });
+
+  it('falls back to the no-items config for a state with no dedicated one', () => {
+    TestBed.runInInjectionContext(() => {
+      const empty = dataProviderEmptyState(makeProvider(EmptyType.NoPageData, 3));
+
+      expect(empty.count()).toBe(3);
+      expect(empty.message()).toBe('No records have been added yet');
+      expect(empty.icon()).toBe('mdi-format-list-text');
+    });
+  });
+
+  it('re-translates the message when the language changes', () => {
+    TestBed.runInInjectionContext(() => {
+      const empty = dataProviderEmptyState(makeProvider(EmptyType.NoSearchResults, 0));
+      expect(empty.message()).toBe('No Search Results.');
+
+      translated = () => 'Aucun résultat.';
+      langChange$.next({ lang: 'fr' } as LangChangeEvent);
+
+      expect(empty.message()).toBe('Aucun résultat.');
+    });
+  });
+
+  it('reports a loading state before the provider emits', () => {
+    TestBed.runInInjectionContext(() => {
+      const empty = dataProviderEmptyState({
+        emptyType$: NEVER,
+        currentPageCount$: NEVER,
+      } as unknown as BaseDataProvider<string>);
+
+      expect(empty.type()).toBe(EmptyType.Loading);
+      expect(empty.count()).toBe(0);
+    });
   });
 });
 

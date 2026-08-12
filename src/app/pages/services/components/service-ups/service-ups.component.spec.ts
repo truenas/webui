@@ -1,30 +1,26 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnAutocompleteHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { of } from 'rxjs';
+import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { UpsMode, UpsShutdownMode } from 'app/enums/ups-mode.enum';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ServiceUpsComponent', () => {
   let spectator: Spectator<ServiceUpsComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -77,9 +73,8 @@ describe('ServiceUpsComponent', () => {
         mockCall('ups.port_choices', ['/dev/uhid', 'auto']),
         mockCall('ups.update'),
       ]),
-      mockProvider(FormErrorHandlerService),
+      ...ixFormTestingProviders(),
       mockProvider(DialogService),
-      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -88,6 +83,26 @@ describe('ServiceUpsComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
+  });
+
+  it('blocks Save when the initial config load fails', () => {
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
+      .mockReturnValue(of(true));
+    failApiCall(api, 'ups.config');
+
+    // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
+    // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
+    // so the assertion would hinge on double-init being harmless.
+    const failed = TestBed.createComponent(ServiceUpsComponent);
+    failed.detectChanges();
+
+    expect(showErrorModal).toHaveBeenCalled();
+    // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
+    // extraDisabled is bound to; that binding blocking Save is covered in the ix-form spec.
+    expect(failed.componentInstance.hasLoadFailed()).toBe(true);
+    expect(failed.componentInstance.canSubmit()).toBe(false);
   });
 
   it('shows current settings for UPS service when form is opened', async () => {
@@ -137,8 +152,7 @@ describe('ServiceUpsComponent', () => {
     await (await getSelect('shutdown')).selectOption('UPS goes on battery');
     await (await getCheckbox('powerdown')).uncheck();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('ups.update', [{
       driver: 'bcmxcp$R1500 G2',
@@ -160,6 +174,29 @@ describe('ServiceUpsComponent', () => {
     } as UpsConfigUpdate]);
   });
 
+  // Slave mode is the mirror image of the payload above, and the branch of `handleSubmit` the
+  // master-mode test never reaches: the mode watcher enables the remote fields and disables
+  // `driver`, and the handler drops whichever key belongs to the other mode.
+  it('sends the remote host and port, and no driver, when saved in slave mode', async () => {
+    await (await getSelect('mode')).selectOption('Slave');
+
+    await (await getInput('remotehost')).setValue('10.0.0.5');
+    await (await getInput('remoteport')).setValue('3493');
+
+    spectator.component.submit();
+
+    expect(api.call).toHaveBeenCalledWith('ups.update', [
+      expect.objectContaining({
+        mode: UpsMode.Slave,
+        remotehost: '10.0.0.5',
+        remoteport: 3493,
+      }) as UpsConfigUpdate,
+    ]);
+    expect(api.call).toHaveBeenCalledWith('ups.update', [
+      expect.not.objectContaining({ driver: expect.anything() }) as UpsConfigUpdate,
+    ]);
+  });
+
   it('allow custom values to be saved as form value for the port autocomplete', async () => {
     const port = await loader.getHarness(TnAutocompleteHarness.with({ selector: '[formControlName="port"]' }));
 
@@ -168,8 +205,7 @@ describe('ServiceUpsComponent', () => {
 
     const portValue = await port.getInputValue();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(portValue).toBe('/my-custom-port');
     expect(api.call).toHaveBeenCalledWith('ups.update', [
