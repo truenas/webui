@@ -35,8 +35,12 @@ import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.uti
  *
  * **Sharp edge:** a label-derived id is locale-dependent — the option ids shift with the active
  * language, so a test pinned to `option-pool-my-pool` in English will not resolve under another
- * locale. Legacy `[ixTest]="[name, option.label]"` had exactly the same property, so pinning the
- * key is parity-preserving rather than a new hazard; but where an id must be stable across
- * languages, key off a locale-independent field of the option value instead.
+ * locale. Legacy `[ixTest]="[name, option.label]"` was locale-dependent only where the call site
+ * had already translated its options: `ix-select` fed the directive the raw `option.label` while
+ * rendering `option.label | translate`, so options handed over as untranslated `T()` markers kept
+ * an id pinned to the English source string. `tn-select` renders labels verbatim, so the migration
+ * translates them at the call site — and these ids therefore move with the UI language everywhere.
+ * Where an id must be stable across languages, key off a locale-independent field of the option
+ * value instead.
  */
 export const optionTestIdByLabel = <T>(option: TnSelectOption<T>): string => normalizeTestIdString(option.label);

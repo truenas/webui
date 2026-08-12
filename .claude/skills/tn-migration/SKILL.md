@@ -731,7 +731,9 @@ Three properties make this safe:
   callback normalizes with lodash `kebabCase` the way `[ixTest]` did, which the library's own
   normalizer does not reproduce (`eth0` → `eth-0`, `user's` → `users`). Only write a bespoke
   callback when the id comes from neither field — see `app-update-dialog.component.ts`. Every
-  `tn-select`/`tn-autocomplete` in webui pins a key as of NAS-142127; keep it that way.
+  `tn-select`/`tn-autocomplete` in webui pins a key as of NAS-142127, and
+  `tn-select-option-test-id.constant.spec.ts` scans every template to keep it that way — a select
+  added without a key fails that spec by name.
 
 **Attribute name (required once, at the app root).** `{ provide: TN_TEST_ATTR, useValue:
 'data-test' }` makes the library write `data-test` instead of its default `data-testid`.
