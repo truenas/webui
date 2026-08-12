@@ -4,7 +4,7 @@ import { TnSelectOption } from '@truenas/ui-components';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 
 /** Opening tag of a `tn-select` / `tn-autocomplete`, skipping over quoted attribute values. */
-const selectOpeningTagRegex = /<tn-(?:select|autocomplete)(?=[\s>])(?:"[^"]*"|'[^']*'|[^>])*>/g;
+const selectOpeningTagRegex = /<tn-(?:select|autocomplete)(?=[\s>])(?:"[^"]*"|'[^']*'|[^>"'])*>/g;
 
 function findRepoRoot(): string {
   let current = __dirname;
