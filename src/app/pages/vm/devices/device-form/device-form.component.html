@@ -368,8 +368,8 @@
             @if (getCurrentDisplayType() === VmDisplayType.Vnc) {
               <tn-banner
                 type="info"
-                [heading]="'Note' | translate"
-                [message]="'VNC requires a separate client application and cannot be accessed through the web browser. Password is limited to 8 characters.' | translate"
+                [heading]="'Requires separate client software' | translate"
+                [message]="'VNC requires a separate client application and cannot be accessed through the web browser.' | translate"
               ></tn-banner>
             }
           } @else {
