@@ -1,6 +1,9 @@
 :host {
   display: block;
-  min-width: 400px;
+  // Fixed rather than intrinsic: the long recursive warning is wider than the rest of the form,
+  // so a content-sized dialog would grow (and re-center) the moment the checkbox reveals it.
+  max-width: 100%;
+  width: 520px;
 }
 
 .delete-message {

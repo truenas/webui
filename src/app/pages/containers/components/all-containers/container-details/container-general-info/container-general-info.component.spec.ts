@@ -108,7 +108,10 @@ describe('ContainerGeneralInfoComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeleteContainerDialog, { data: container });
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(
+      DeleteContainerDialog,
+      expect.objectContaining({ data: container }),
+    );
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'container.delete',

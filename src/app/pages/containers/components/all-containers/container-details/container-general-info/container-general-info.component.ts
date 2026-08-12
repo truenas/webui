@@ -1,3 +1,4 @@
+import { Overlay } from '@angular/cdk/overlay';
 import {
   ChangeDetectionStrategy, Component, input, inject, DestroyRef,
 } from '@angular/core';
@@ -45,6 +46,7 @@ export class ContainerGeneralInfoComponent {
   private destroyRef = inject(DestroyRef);
   private dialogService = inject(DialogService);
   private tnDialog = inject(TnDialog);
+  private overlay = inject(Overlay);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private router = inject(Router);
@@ -82,7 +84,12 @@ export class ContainerGeneralInfoComponent {
    * periodic snapshot task is enough) cannot be deleted at all.
    */
   protected deleteContainer(): void {
-    this.tnDialog.open(DeleteContainerDialog, { data: this.container() })
+    this.tnDialog.open(DeleteContainerDialog, {
+      data: this.container(),
+      // The dialog grows when `recursive` reveals its warning. Anchoring it near the top makes it
+      // expand downwards instead of re-centering, which moves the whole dialog under the cursor.
+      positionStrategy: this.overlay.position().global().centerHorizontally().top('10vh'),
+    })
       .closed
       .pipe(
         filter(Boolean),
