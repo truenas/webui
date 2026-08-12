@@ -31,8 +31,8 @@
         <ix-device-actions-menu
           [device]="device"
           [showEdit]="false"
-          [isDisabled]="isContainerRunning()"
-          [disabledTooltip]="isContainerRunning() ? ('Cannot modify devices while container is running. Please stop the container first.' | translate) : null"
+          [isDisabled]="isContainerActive()"
+          [disabledTooltip]="isContainerActive() ? ('Cannot modify devices unless the container is stopped. Please stop the container first.' | translate) : null"
         ></ix-device-actions-menu>
       </div>
     } @empty {

@@ -13,6 +13,7 @@ import {
   TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { macAddressRegex } from 'app/constants/mac-address.constant';
 import { VmNicType, vmNicTypeLabels } from 'app/enums/vm.enum';
 import { nicChoicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -53,7 +54,7 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
 
   form = this.formBuilder.nonNullable.group({
     nic_type: [VmNicType.Virtio, Validators.required],
-    nic_mac: [helptextVmWizard.NIC_mac_value, Validators.pattern(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
+    nic_mac: [helptextVmWizard.NIC_mac_value, Validators.pattern(macAddressRegex)],
     nic_attach: ['', Validators.required],
     trust_guest_rx_filters: [false],
   });

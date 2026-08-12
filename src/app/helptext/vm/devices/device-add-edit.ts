@@ -22,7 +22,8 @@ export const helptextDevice = {
   mac_tooltip: T('By default, the VM receives an auto-generated random\
  MAC address. Enter a custom address into the field to\
  override the default. Click <b>Generate MAC Address</b>\
- to add a new randomized address into this field.'),
+ to add a new randomized address into this field.\
+ The address must be colon-separated, for example 00:a0:98:1b:2c:3d.'),
 
   nic_attach_tooltip: T('Select a physical interface to associate with the VM.'),
 

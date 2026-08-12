@@ -486,6 +486,34 @@ describe('DeviceFormComponent', () => {
         expect(api.call).toHaveBeenLastCalledWith('vm.random_mac');
       });
 
+      // Middleware validates custom MACs as colon-separated only; the dash, unseparated and
+      // Cisco dotted forms saved fine before and then failed at VM start.
+      it.each([
+        ['dash-separated', '10-66-6a-1f-f1-b1'],
+        ['unseparated', '10666a1ff1b1'],
+        ['Cisco dotted', '1066.6a1f.f1b1'],
+      ])('refuses to save a %s MAC address', async (_, mac) => {
+        await fillForm({
+          Type: 'NIC',
+          'Adapter Type': 'VirtIO',
+          'NIC To Attach': 'enp0s4',
+          'MAC Address': mac,
+        });
+
+        expect(spectator.component.canSubmit()).toBe(false);
+      });
+
+      it('accepts a colon-separated MAC address', async () => {
+        await fillForm({
+          Type: 'NIC',
+          'Adapter Type': 'VirtIO',
+          'NIC To Attach': 'enp0s4',
+          'MAC Address': '10:66:6a:1f:f1:b1',
+        });
+
+        expect(spectator.component.canSubmit()).toBe(true);
+      });
+
       it('generates a new MAC when Generate button is pressed', async () => {
         await fillForm({
           Type: 'NIC',

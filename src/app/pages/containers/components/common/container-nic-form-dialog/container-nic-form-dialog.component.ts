@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -14,6 +15,7 @@ import {
 import {
   map, Observable, of, startWith,
 } from 'rxjs';
+import { macAddressRegex } from 'app/constants/mac-address.constant';
 import { ContainerNicDeviceType, containerNicDeviceTypeLabels } from 'app/enums/container.enum';
 import { ContainerNicDevice } from 'app/interfaces/container.interface';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -73,10 +75,12 @@ export class ContainerNicFormDialog {
   protected readonly form = this.fb.group({
     type: [this.getInitialType(), Validators.required],
     use_default: [this.getInitialUseDefault()],
+    // Middleware only accepts colon-separated MACs (libvirt never parsed the dash-separated,
+    // unseparated or Cisco dotted forms, so those saved fine and then failed at container start).
     mac: [this.getInitialMac(), [
       this.ixValidator.withMessage(
-        Validators.pattern('^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$|^([0-9A-Fa-f]{4}\\.){2}([0-9A-Fa-f]{4})$'),
-        this.translate.instant('Not a valid MAC address'),
+        Validators.pattern(macAddressRegex),
+        this.translate.instant('MAC address must be colon-separated, for example 00:a0:98:1b:2c:3d'),
       ),
     ]],
     trust_guest_rx_filters: [this.getInitialTrustGuestRxFilters()],
@@ -116,6 +120,14 @@ export class ContainerNicFormDialog {
     }),
     startWith(true),
   );
+
+  protected readonly macTooltip = computed(() => {
+    const format = T('The address must be colon-separated, for example 00:a0:98:1b:2c:3d.');
+
+    return this.isEditMode()
+      ? `${this.translate.instant(T('Leave empty to use default MAC address.'))} ${this.translate.instant(format)}`
+      : this.translate.instant(format);
+  });
 
   protected readonly useDefault = toSignal(this.form.controls.use_default.value$);
   protected readonly selectedType = toSignal(this.form.controls.type.value$);

@@ -8,7 +8,7 @@ import {
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
-import { ContainerDeviceType, containerGpuType, ContainerStatus } from 'app/enums/container.enum';
+import { ContainerDeviceType, containerGpuType } from 'app/enums/container.enum';
 import {
   ContainerDevice,
 } from 'app/interfaces/container.interface';
@@ -24,6 +24,7 @@ import {
 import { getDeviceDescription } from 'app/pages/containers/components/common/utils/get-device-description.utils';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerActive } from 'app/pages/containers/utils/container-status.utils';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -64,9 +65,10 @@ export class ContainerGpuDevicesComponent {
   protected readonly gpuChoices = this.devicesStore.gpuChoices;
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
-  protected readonly isContainerRunning = computed(() => {
-    const container = this.containersStore.selectedContainer();
-    return container?.status.state === ContainerStatus.Running;
+  // Middleware refuses device operations on any container that is not stopped, which since
+  // 26.0 includes SUSPENDED - not just RUNNING.
+  protected readonly isContainerActive = computed(() => {
+    return isContainerActive(this.containersStore.selectedContainer());
   });
 
   protected readonly shownDevices = computed(() => {

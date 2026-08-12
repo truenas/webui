@@ -68,6 +68,7 @@ import {
 } from 'app/pages/containers/components/container-wizard/select-image-dialog/select-image-dialog.component';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerActive } from 'app/pages/containers/utils/container-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -137,6 +138,15 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
 
   protected readonly isEditMode = signal<boolean>(false);
   protected editingContainer: Container | null = null;
+
+  /** Middleware refuses to rename a container that is not stopped (RUNNING or SUSPENDED). */
+  protected readonly isRenameBlocked = signal<boolean>(false);
+
+  protected readonly nameTooltip = computed(() => {
+    return this.isRenameBlocked()
+      ? this.translate.instant(containersHelptext.renameRequiresStoppedTooltip)
+      : this.translate.instant('Container name');
+  });
 
   /**
    * Container to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
@@ -319,6 +329,18 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   }
 
   private populateFormForEdit(container: Container): void {
+    // Middleware refuses to rename a container that is not stopped - since 26.0 that
+    // covers SUSPENDED as well as RUNNING - so don't offer a rename it would reject.
+    // `getRawValue()` still reports the disabled control, so the payload diff is unaffected.
+    const isRenameBlocked = isContainerActive(container);
+    this.isRenameBlocked.set(isRenameBlocked);
+
+    if (isRenameBlocked) {
+      this.form.controls.name.disable();
+    } else {
+      this.form.controls.name.enable();
+    }
+
     this.form.patchValue({
       name: container.name,
       description: container.description || '',

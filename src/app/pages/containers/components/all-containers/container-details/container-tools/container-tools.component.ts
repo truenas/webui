@@ -42,17 +42,19 @@ export class ContainerToolsComponent {
   // system shell, so a user without that privilege can't open it regardless of state.
   protected readonly hasWebShellAccess = toSignal(this.authService.hasWebShellAccess$, { initialValue: false });
 
-  protected readonly isContainerStopped = computed(() => {
-    return this.container()?.status?.state !== ContainerStatus.Running;
+  // The shell needs a live init process, so RUNNING is the only state it can attach to -
+  // a SUSPENDED container is as unreachable as a stopped one.
+  protected readonly isContainerRunning = computed(() => {
+    return this.container()?.status?.state === ContainerStatus.Running;
   });
 
-  protected readonly canOpenShell = computed(() => this.hasWebShellAccess() && !this.isContainerStopped());
+  protected readonly canOpenShell = computed(() => this.hasWebShellAccess() && this.isContainerRunning());
 
   protected readonly shellTooltip = computed(() => {
     if (!this.hasWebShellAccess()) {
       return helptextGlobal.webShellAccessDenied;
     }
-    return this.isContainerStopped() ? T('Container is not running') : '';
+    return this.isContainerRunning() ? '' : T('Container is not running');
   });
 
   protected openShell(containerId: number): void {

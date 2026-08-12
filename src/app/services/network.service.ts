@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {
   filter, map,
 } from 'rxjs/operators';
+import { macAddressRegex } from 'app/constants/mac-address.constant';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
@@ -16,7 +17,7 @@ export class NetworkService {
   private api = inject(ApiService);
   private store = inject(Store<AppState>);
 
-  macRegex = /\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i;
+  macRegex = macAddressRegex;
 
   ipv4Regex = /^((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})$/;
   ipv4CidrRegex = /^((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\/(3[0-2]|[1-2][0-9]|[0-9]))$/;

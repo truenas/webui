@@ -44,6 +44,7 @@ import {
   StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
 import { ContainerSortField, ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerStopped } from 'app/pages/containers/utils/container-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
@@ -194,7 +195,7 @@ export class ContainerListComponent {
   }
 
   protected isStopped(container: Container): boolean {
-    return container?.status?.state === ContainerStatus.Stopped;
+    return isContainerStopped(container);
   }
 
   protected getMetrics(container: Container): ContainerStats | undefined {

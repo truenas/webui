@@ -11,7 +11,7 @@
       <tn-form-field
         [label]="'Name' | translate"
         [required]="true"
-        [tooltip]="'Container name' | translate"
+        [tooltip]="nameTooltip()"
       >
         <tn-input formControlName="name"></tn-input>
       </tn-form-field>
