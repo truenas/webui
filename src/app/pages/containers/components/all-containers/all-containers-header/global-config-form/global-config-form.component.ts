@@ -48,7 +48,6 @@ export class GlobalConfigFormComponent extends SidePanelForm implements OnInit {
    */
   readonly requiredRoles = [Role.LxcConfigWrite];
   protected isFormLoading = signal(false);
-  protected currentConfig = signal<ContainerGlobalConfig | null>(null);
   protected readonly autoBridge = '[AUTO]';
 
   protected readonly form = this.formBuilder.nonNullable.group({
@@ -147,7 +146,6 @@ export class GlobalConfigFormComponent extends SidePanelForm implements OnInit {
       finalize(() => this.isFormLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {
-      this.currentConfig.set(config);
       this.form.patchValue({
         // Transform empty string from API to [AUTO] for the form
         bridge: config.bridge || this.autoBridge,

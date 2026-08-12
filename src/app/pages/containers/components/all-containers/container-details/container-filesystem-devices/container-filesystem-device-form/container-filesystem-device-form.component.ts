@@ -12,7 +12,6 @@ import {
 import { Observable } from 'rxjs';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
-import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   Container,
   ContainerFilesystemDevice,
@@ -119,6 +118,4 @@ export class ContainerFilesystemDeviceFormComponent extends SidePanelForm implem
           attributes: payload,
         }]);
   }
-
-  protected readonly containersHelptext = containersHelptext;
 }
