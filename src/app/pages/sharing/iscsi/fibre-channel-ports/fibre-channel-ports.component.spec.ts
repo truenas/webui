@@ -12,6 +12,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 import {
   VirtualPortsNumberDialog,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/virtual-ports-number-dialog/virtual-ports-number-dialog.component';
@@ -144,6 +145,64 @@ describe('FibreChannelPortsComponent', () => {
 
     expect(spectator.inject(TnDialog).open)
       .toHaveBeenCalledWith(VirtualPortsNumberDialog, { data: hosts[0] });
+  });
+
+  it('searches ports by name, target and WWPN', async () => {
+    const search = await loader.getHarness(BasicSearchHarness);
+
+    await search.setValue('target1');
+    spectator.detectChanges();
+    expect(await table.getAllRowTexts()).toEqual([
+      ['fc0', 'target1', 'naa.220034800d75aec4', 'naa.220034800d75aec5', 'A: Online B: Offline', ''],
+    ]);
+
+    await search.setValue('naa.220034800d75aec8');
+    spectator.detectChanges();
+    expect(await table.getAllRowTexts()).toEqual([
+      ['– fc0/1 (virtual)', 'target2', 'naa.220034800d75aec8', 'naa.220034800d75aec9', 'A: – B: –', ''],
+    ]);
+
+    await search.setValue('fc1');
+    spectator.detectChanges();
+    expect(await table.getAllRowTexts()).toEqual([
+      ['fc1', 'target2', 'naa.220034800d75aec6', 'naa.220034800d75aec7', 'A: Online B: Online', ''],
+      ['– fc1/1 (virtual)', '-', '-', '-', 'A: – B: –', ''],
+    ]);
+
+    // `setValue('')` sends no keys, so the input harness can't clear it — use the suffix action.
+    await search.clearInput();
+    spectator.detectChanges();
+    expect(await table.getRowCount()).toBe(5);
+  });
+
+  it('sorts by a derived column', async () => {
+    expect(await table.isSortable('target')).toBe(true);
+
+    await table.clickSortHeader('target');
+    spectator.detectChanges();
+
+    // Rows with no target sort first, then target1, then the two target2 ports.
+    expect((await table.getAllRowTexts()).map((row) => row[1])).toEqual([
+      '-', '-', 'target1', 'target2', 'target2',
+    ]);
+
+    await table.clickSortHeader('target');
+    spectator.detectChanges();
+
+    expect((await table.getAllRowTexts()).map((row) => row[1])).toEqual([
+      'target2', 'target2', 'target1', '-', '-',
+    ]);
+  });
+
+  it('sorts port names so a host is followed by its own virtual ports', async () => {
+    expect(await table.isSortable('name')).toBe(true);
+
+    await table.clickSortHeader('name');
+    spectator.detectChanges();
+
+    expect((await table.getAllRowTexts()).map((row) => row[0])).toEqual([
+      'fc0', '– fc0/1 (virtual)', '– fc0/2 (virtual)', 'fc1', '– fc1/1 (virtual)',
+    ]);
   });
 
   it('should show/hide WWPN (B) column based on HA status', async () => {

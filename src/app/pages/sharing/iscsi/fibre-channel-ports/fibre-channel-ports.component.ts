@@ -7,6 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   tnIconMarker, TnCardComponent, TnCardHeaderActionsDirective, TnCellDefDirective, TnDialog,
   TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent, TnTestIdDirective,
+  type TnSortEvent,
 } from '@truenas/ui-components';
 import { finalize, forkJoin, of } from 'rxjs';
 import {
@@ -14,12 +15,13 @@ import {
   filter, tap,
 } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { dataProviderRows, toUniqueRowTag } from 'app/modules/ix-table/utils';
+import { dataProviderRows, mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/ix-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -114,6 +116,44 @@ export class FibreChannelPortsComponent implements OnInit {
     return `A: ${row.aPortState || '–'} B: ${row.bPortState || '–'}`;
   }
 
+  protected targetLabel(row: FibreChannelPortRow): string {
+    return row.target?.iscsi_target_name || '-';
+  }
+
+  protected wwpnLabel(row: FibreChannelPortRow, key: 'wwpn' | 'wwpn_b'): string {
+    return row[key] || '-';
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<FibreChannelPortRow>(
+      event,
+      this.displayedColumns(),
+      { sortAccessors: { [event.column]: (row) => this.sortValue(row, event.column) } },
+    ));
+  }
+
+  /**
+   * Every cell is derived from more than the property behind its column — a nested target name, a
+   * composed state label — so each is sorted by what it renders. Sorting by the raw row property
+   * would order Target by an object and leave State unsorted entirely.
+   */
+  private sortValue(row: FibreChannelPortRow, column: string): string {
+    switch (column) {
+      case 'name':
+        return portNameSortKey(row.name);
+      case 'target':
+        return this.targetLabel(row);
+      case 'wwpn':
+        return this.wwpnLabel(row, 'wwpn');
+      case 'wwpn_b':
+        return this.wwpnLabel(row, 'wwpn_b');
+      case 'state':
+        return this.stateLabel(row);
+      default:
+        return '';
+    }
+  }
+
   ngOnInit(): void {
     this.loadTable();
   }
@@ -130,16 +170,39 @@ export class FibreChannelPortsComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
-    this.dataProvider.setFilter({
-      query,
-      // TODO: This should be fixed in dataprovider
-      list: this.rows(),
-      columnKeys: ['name', 'wwpn', 'wwpn_b'],
-    });
+    this.applyFilter();
+  }
+
+  /**
+   * Re-applies the current search to the loaded rows. Called on reload too, so editing a port
+   * doesn't silently drop the filter the user is looking through.
+   */
+  private applyFilter(): void {
+    const query = this.searchQuery();
+
+    if (query) {
+      this.dataProvider.setFilter({
+        query,
+        // TODO: This should be fixed in dataprovider
+        list: this.rows(),
+        columnKeys: ['name', 'target', 'wwpn', 'wwpn_b'],
+        // The Target cell renders a name off a nested object, which the filter can't reach on its own.
+        preprocessMap: {
+          target: (target) => target?.iscsi_target_name || '',
+        },
+      });
+    } else {
+      this.dataProvider.setRows(this.rows());
+    }
+
+    // ArrayDataProvider never resolves its own empty type, so without this the table shows the
+    // loading placeholder in place of "No Search Results" whenever a search matches nothing.
+    this.dataProvider.setEmptyType(this.rows().length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
   }
 
   private loadTable(): void {
     this.isLoading.set(true);
+    this.dataProvider.setEmptyType(EmptyType.Loading);
     forkJoin([
       this.api.call('fc.fc_host.query'),
       this.api.call('fcport.query'),
@@ -152,22 +215,16 @@ export class FibreChannelPortsComponent implements OnInit {
       )
       .subscribe(([hosts, ports, statuses]: [FibreChannelHost[], FibreChannelPort[], FibreChannelStatus[]]) => {
         this.rows.set(buildPortsTableRow(hosts, ports, statuses));
-        this.dataProvider.setRows(this.rows());
+        this.applyFilter();
       });
   }
+}
 
-  protected resolveWwpn(row: FibreChannelPortRow, key: 'wwpn' | 'wwpn_b'): string {
-    if (row?.[key]) {
-      return row[key];
-    }
-
-    const aliasPrefix = row?.host?.alias?.split?.('/')?.[0];
-    const isPhysical = row?.name === aliasPrefix;
-
-    if (isPhysical && row?.host?.[key]) {
-      return row.host[key];
-    }
-
-    return '-';
-  }
+/**
+ * Orders port names the way they read: `fc2` before `fc10`, and a host's virtual ports right after
+ * the host itself. Plain string comparison gets both wrong, so every digit run is zero-padded to a
+ * fixed width first.
+ */
+function portNameSortKey(name: string): string {
+  return name.replace(/\d+/g, (digits) => digits.padStart(6, '0'));
 }
