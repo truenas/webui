@@ -108,4 +108,42 @@ describe('TableColumnPickerComponent', () => {
 
     expect(emitted?.filter((column) => column.title && !column.hidden)).toHaveLength(2);
   });
+
+  it('falls back to the default columns when only some saved titles match (locale switch)', () => {
+    // 'Name' is identical in both locales, 'Path' translated to 'Chemin' — applying
+    // the overlap would leave the table showing only the untranslated column.
+    store$.setState({
+      preferences: { preferences: { tableDisplayedColumns: [{ title: 'testList', columns: ['Name', 'Chemin'] }] } },
+    });
+
+    spectator = createComponent({
+      props: { columns: makeColumns(), columnPreferencesKey: 'testList' },
+      detectChanges: false,
+    });
+    let emitted: Column<Row, ColumnComponent<Row>>[] | undefined;
+    spectator.component.columnsChange.subscribe((columns) => emitted = columns);
+    spectator.detectChanges();
+
+    expect(emitted?.filter((column) => column.title && !column.hidden)).toHaveLength(2);
+  });
+
+  it('keeps one column visible when every titled column is declared hidden', () => {
+    spectator = createComponent({
+      props: {
+        columns: [
+          { propertyName: 'name', title: 'Name', hidden: true },
+          { propertyName: 'path', title: 'Path', hidden: true },
+        ] as Column<Row, ColumnComponent<Row>>[],
+        columnPreferencesKey: 'testList',
+      },
+      detectChanges: false,
+    });
+    let emitted: Column<Row, ColumnComponent<Row>>[] | undefined;
+    spectator.component.columnsChange.subscribe((columns) => emitted = columns);
+    spectator.detectChanges();
+
+    const visible = emitted?.filter((column) => column.title && !column.hidden);
+    expect(visible).toHaveLength(1);
+    expect(visible?.[0]?.propertyName).toBe('name');
+  });
 });

@@ -21,7 +21,9 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
  * Only columns with a `title` are user-toggleable (an actions column has none);
  * at least one titled column always stays visible. Visibility is persisted per
  * `columnPreferencesKey` via `preferredColumnsUpdated`, keyed by column title so
- * preferences saved by earlier releases keep loading.
+ * preferences saved by earlier releases keep loading. A title is a translated
+ * string, so a saved preference can stop resolving (locale switch, renamed
+ * column); such a preference is treated as stale and the defaults are restored.
  *
  * The input columns are never mutated: `columnsChange` emits copies with
  * updated `hidden` flags, and the host is expected to feed them back into
@@ -70,14 +72,19 @@ export class TableColumnPickerComponent<T = unknown> implements OnInit {
       take(1),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((saved) => {
-      const visible = saved?.columns?.length
-        ? this.selectableTitles().filter((title) => saved.columns.includes(title))
+      const savedTitles = saved?.columns ?? [];
+      const selectable = this.selectableTitles();
+      // Titles are translated, so a locale switch (or a renamed column) leaves
+      // saved titles that no longer resolve — usually only some of them, since
+      // titles like "URI" are identical across locales. Applying such a
+      // preference partially would silently hide every column whose title did
+      // change, so any unresolved title makes the whole preference stale and
+      // the defaults win.
+      const isStale = savedTitles.some((title) => !selectable.includes(title));
+      const visible = savedTitles.length && !isStale
+        ? selectable.filter((title) => savedTitles.includes(title))
         : this.defaultVisibleTitles();
-      // A saved preference that matches nothing is stale, not a request to hide
-      // everything — titles are translated, so switching locale (or renaming a
-      // column) invalidates every saved title at once. Show the defaults rather
-      // than collapsing the table to a single column.
-      this.applyVisibility(visible.length ? visible : this.defaultVisibleTitles());
+      this.applyVisibility(visible);
     });
   }
 
@@ -119,6 +126,10 @@ export class TableColumnPickerComponent<T = unknown> implements OnInit {
   }
 
   private defaultVisibleTitles(): string[] {
-    return this.selectableColumns().filter((column) => !column.hidden).map((column) => column.title);
+    const visible = this.selectableColumns().filter((column) => !column.hidden).map((column) => column.title);
+    // A table that declares every titled column hidden would otherwise start
+    // fully collapsed, and the empty-selection revert would have nothing to
+    // restore. Keep one column visible.
+    return visible.length ? visible : this.selectableTitles().slice(0, 1);
   }
 }
