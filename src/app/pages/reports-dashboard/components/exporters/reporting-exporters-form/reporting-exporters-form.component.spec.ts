@@ -111,9 +111,21 @@ describe('ReportingExportersFormComponent', () => {
       });
     });
 
-    it('blocks submission and reports the failure so Save cannot save untouched defaults', () => {
+    it('reports the failure to the host so the panel offers a retry', () => {
       expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
       expect(spectator.component.hasLoadFailed()).toBe(true);
+    });
+
+    it('keeps Save disabled even once the form is otherwise valid', () => {
+      // Filled in directly: with no schemas there are no type options to pick through the harness.
+      // The point is that validity alone is not enough — the latched load failure is what blocks
+      // Save, so the user can never submit a form whose `attributes` controls were never built.
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      const form = spectator.component['form'];
+      form.patchValue({ name: 'exporter1', type: ReportingExporterKey.Graphite });
+      spectator.detectChanges();
+
+      expect(form.valid).toBe(true);
       expect(spectator.component.canSubmit()).toBe(false);
     });
   });

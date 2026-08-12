@@ -93,7 +93,7 @@ export class ReportingExportersFormComponent extends IxFormHostForm implements O
    * to bind to, and it stays false when the load fails so the section is never rendered empty.
    */
   protected readonly schemasLoaded = signal(false);
-  dynamicSection: DynamicFormSchema[] = [];
+  protected dynamicSection: DynamicFormSchema[] = [];
   protected editingExporter: ReportingExporter | undefined;
 
   protected readonly exporterTypeOptions = signal<Option[]>([]);
@@ -102,18 +102,24 @@ export class ReportingExportersFormComponent extends IxFormHostForm implements O
 
   ngOnInit(): void {
     this.editingExporter = this.exporter();
-    // Wired before the load so a retry never registers a second subscription.
+    // Subscribed before the load, for two reasons: `loadFormConfig`'s patch callback is replayed by
+    // `retryLoad`, so wiring it in there would register a second subscription; and when the schemas
+    // arrive synchronously, the edit-mode `patchValue({ type })` below has to reach
+    // `onExporterTypeChanged` — otherwise the chosen exporter's attribute controls stay disabled.
     this.handleTypeChange();
     this.loadSchemas();
   }
 
   protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
-    const values = { ...event.allValues } as {
+    const submitted = event.allValues as {
       name: string;
       enabled: boolean;
       type: string;
       attributes: Record<string, unknown>;
     };
+    // `attributes` is copied too, not just the outer object: the lines below write and delete keys
+    // in it, and a shallow spread would mutate whatever object `allValues` handed over.
+    const values = { ...submitted, attributes: { ...submitted.attributes } };
 
     values.attributes['exporter_type'] = values.type;
     delete (values as Record<string, unknown>)['type'];
@@ -206,7 +212,7 @@ export class ReportingExportersFormComponent extends IxFormHostForm implements O
     this.onExporterTypeChanged(null);
   }
 
-  protected parseSchemaForDynamicSchema(schema: ReportingExporterSchema): DynamicFormSchemaNode[] {
+  private parseSchemaForDynamicSchema(schema: ReportingExporterSchema): DynamicFormSchemaNode[] {
     return schema.schema
       .filter((field) => !field.const)
       .map((field) => getDynamicFormSchemaNode(field));
