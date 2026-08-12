@@ -1,4 +1,6 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<!-- Implicit (Enter-key) submission routes through the host-facing submit() — not onSubmit() —
+     so the panel footer's Save still latches to "Saving…". -->
+<form class="ix-form-container" [formGroup]="form" (submit)="submit()">
   <tn-form-section>
     <tn-form-field
       [label]="'Base Name' | translate"
@@ -29,7 +31,7 @@
       <tn-input formControlName="listen_port" [inputType]="InputType.Number"></tn-input>
     </tn-form-field>
 
-    @if (isHaSystem) {
+    @if (isHaSystem()) {
       <tn-form-field [tooltip]="tooltips.alua | translate">
         <tn-checkbox
           formControlName="alua"

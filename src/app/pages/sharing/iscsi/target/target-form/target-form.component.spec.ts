@@ -309,6 +309,37 @@ describe('TargetFormComponent', () => {
     });
   });
 
+  // `validatePhysicalPortUniqueness` is one jest.fn shared by every test in this file (it is built
+  // once in the factory's providers), so this block restores the permissive default in afterEach.
+  describe('FC port uniqueness gate', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        props: {
+          targetData: existingTarget,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      jest.spyOn(console, 'warn').mockImplementation();
+    });
+
+    afterEach(() => {
+      (spectator.inject(FibreChannelService).validatePhysicalPortUniqueness as jest.Mock)
+        .mockImplementation(() => ({ valid: true, duplicates: [] as string[] }));
+    });
+
+    it('blocks the host Save while two FC ports share a physical port', async () => {
+      (spectator.inject(FibreChannelService).validatePhysicalPortUniqueness as jest.Mock)
+        .mockImplementation(() => ({ valid: false, duplicates: ['fc0'] }));
+
+      await form.fillForm({
+        Mode: 'Fibre Channel',
+      });
+
+      expect(spectator.component.canSubmit()).toBe(false);
+    });
+  });
+
   describe('validation error handling', () => {
     beforeEach(async () => {
       spectator = createComponent();

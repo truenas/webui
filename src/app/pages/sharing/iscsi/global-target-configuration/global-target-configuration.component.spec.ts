@@ -111,7 +111,16 @@ describe('TargetGlobalConfigurationComponent', () => {
     expect(await (await getTnCheckbox('iser')).isChecked()).toBe(false);
   });
 
-  it('saves form values when Save is pressed', async () => {
+  it('gates the panel Save on form validity and load state', async () => {
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    // Uppercase trips the basename pattern validator, so the form goes INVALID.
+    await (await getTnInput('basename')).setValue('IQN.2005-10.ORG.FREENAS.CTL');
+
+    expect(spectator.component.canSubmit()).toBe(false);
+  });
+
+  it('saves form values when the host submits the form', async () => {
     await (await getTnInput('basename')).setValue('iqn.new.org.freenas.ctl');
 
     const isnsServers = await getTnChipInput('isns_servers');
@@ -137,20 +146,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     expect(closeSpy).toHaveBeenCalledWith(true);
   });
 
-  it('checks if iSCSI service is enabled and does nothing if it is', () => {
-    mockStore$.overrideSelector(selectServices, [{
-      id: 13,
-      service: ServiceName.Iscsi,
-      enable: true,
-    } as Service]);
-    mockStore$.refreshState();
-
-    spectator.component.submit();
-
-    expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
-  });
-
-  it('if iSCSI service is not running, asks user if service needs to be enabled', () => {
+  it('dispatches the service-enabled check after saving, so a stopped iSCSI service is offered', () => {
     mockStore$.overrideSelector(selectServices, [{
       id: 13,
       service: ServiceName.Iscsi,

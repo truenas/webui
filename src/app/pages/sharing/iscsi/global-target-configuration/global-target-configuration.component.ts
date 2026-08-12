@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule, FormGroup,
@@ -47,7 +47,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export class GlobalTargetConfigurationComponent extends SidePanelForm implements OnInit {
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
-  private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -57,8 +56,8 @@ export class GlobalTargetConfigurationComponent extends SidePanelForm implements
   private destroyRef = inject(DestroyRef);
 
   protected readonly InputType = InputType;
-  readonly isLoading = signal(false);
-  isHaSystem = false;
+  private readonly isLoading = signal(false);
+  protected readonly isHaSystem = signal(false);
   private originalBasename: string | null = null;
 
   protected readonly form = this.fb.nonNullable.group({
@@ -77,7 +76,7 @@ export class GlobalTargetConfigurationComponent extends SidePanelForm implements
     iser: FormControl<boolean>;
   }>;
 
-  readonly tooltips = {
+  protected readonly tooltips = {
     basename: helptextIscsi.config.basenameTooltip,
     isns_servers: helptextIscsi.config.isnsServersTooltip,
     pool_avail_threshold: helptextIscsi.config.alertThreshold,
@@ -135,7 +134,7 @@ export class GlobalTargetConfigurationComponent extends SidePanelForm implements
 
   private listenForHaStatus(): void {
     this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHa) => {
-      this.isHaSystem = isHa;
+      this.isHaSystem.set(isHa);
 
       if (!isHa) {
         this.form.removeControl('alua');
@@ -144,8 +143,6 @@ export class GlobalTargetConfigurationComponent extends SidePanelForm implements
       if (isHa && !this.form.controls.alua) {
         this.form.addControl('alua', new FormControl(false, { nonNullable: true }));
       }
-
-      this.cdr.markForCheck();
     });
   }
 
