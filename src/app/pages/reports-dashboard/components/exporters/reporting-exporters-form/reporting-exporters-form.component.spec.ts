@@ -1,10 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
+import { throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SchemaType } from 'app/enums/schema.enum';
@@ -13,6 +14,7 @@ import { Schema } from 'app/interfaces/schema.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ReportingExportersFormComponent', () => {
   let spectator: Spectator<ReportingExportersFormComponent>;
@@ -94,6 +96,25 @@ describe('ReportingExportersFormComponent', () => {
         },
       }]);
       expect(closeSpy).toHaveBeenCalledWith(true);
+    });
+  });
+
+  describe('Schemas fail to load', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(ApiService, {
+            call: jest.fn(() => throwError(() => new Error('Schemas unavailable'))),
+          }),
+          mockProvider(ErrorHandlerService),
+        ],
+      });
+    });
+
+    it('blocks submission and reports the failure so Save cannot save untouched defaults', () => {
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+      expect(spectator.component.hasLoadFailed()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
   });
 
