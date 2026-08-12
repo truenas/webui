@@ -10,10 +10,7 @@ import {
   type TnSortEvent,
 } from '@truenas/ui-components';
 import { finalize, forkJoin, of } from 'rxjs';
-import {
-  catchError,
-  filter, tap,
-} from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
@@ -209,8 +206,12 @@ export class FibreChannelPortsComponent implements OnInit {
       this.api.call('fcport.status'),
     ])
       .pipe(
+        // `withErrorHandler()` is an operator, not a `catchError` selector — handed to `catchError`
+        // it was called with the error itself and threw `error.pipe is not a function`, so a failed
+        // query left the page on its loading placeholder with no error dialog.
+        tap({ error: () => this.dataProvider.setEmptyType(EmptyType.Errors) }),
+        this.errorHandler.withErrorHandler(),
         finalize(() => this.isLoading.set(false)),
-        catchError(this.errorHandler.withErrorHandler()),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([hosts, ports, statuses]: [FibreChannelHost[], FibreChannelPort[], FibreChannelStatus[]]) => {
