@@ -96,6 +96,9 @@ export const containersHelptext = {
 
   deviceRequiresStoppedTooltip: T('Cannot modify devices unless the container is stopped. Please stop the container first.'),
 
+  macTooltip: T('The address must be colon-separated, for example 00:a0:98:1b:2c:3d.'),
+  macEditTooltip: T('Leave empty to use the default MAC address. The address must be colon-separated, for example 00:a0:98:1b:2c:3d.'),
+
   deleteDialog: {
     forceLabel: T('Stop container before deleting'),
     forceTooltip: T('A container that is running or suspended cannot be deleted. Check this to stop it first.'),

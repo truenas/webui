@@ -6,6 +6,7 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { NEVER, of, throwError } from 'rxjs';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -175,6 +176,9 @@ describe('DeviceFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      // Mirrors main.ts: tn-form-field resolves validator messages through this app-wide
+      // resolver, so without it the spec would assert the library's English fallback.
+      provideTnFormFieldErrors(),
       mockApi([
         mockCall('vm.device.create'),
         mockCall('vm.device.update'),
@@ -501,6 +505,9 @@ describe('DeviceFormComponent', () => {
         });
 
         expect(spectator.component.canSubmit()).toBe(false);
+        const macField = await loader.getHarness(TnFormFieldHarness.with({ label: 'MAC Address' }));
+        expect(await macField.getErrorMessage())
+          .toBe('MAC address must be colon-separated, for example 00:a0:98:1b:2c:3d');
       });
 
       it('accepts a colon-separated MAC address', async () => {

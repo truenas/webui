@@ -21,9 +21,10 @@ describe('container status utils', () => {
   });
 
   describe('isContainerActive', () => {
-    it('treats SUSPENDED as active, matching middleware', () => {
+    it('treats everything other than STOPPED as active, matching middleware', () => {
       expect(isContainerActive(containerIn(ContainerStatus.Suspended))).toBe(true);
       expect(isContainerActive(containerIn(ContainerStatus.Running))).toBe(true);
+      expect(isContainerActive(containerIn(ContainerStatus.Unknown))).toBe(true);
       expect(isContainerActive(containerIn(ContainerStatus.Stopped))).toBe(false);
     });
 

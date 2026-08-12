@@ -54,6 +54,9 @@ export class ContainerFilesystemDevicesComponent {
     return {
       label: this.translate.instant('Add'),
       testId: 'add-disk',
+      // Gated like the per-device Edit/Delete menu: middleware refuses the create just the
+      // same, and failing at submit after the form is filled in is worse than not offering it.
+      disabled: this.isContainerActive(),
       handler: () => this.addDisk(),
     };
   });

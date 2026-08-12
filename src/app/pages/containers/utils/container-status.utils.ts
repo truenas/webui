@@ -11,10 +11,14 @@ export function isContainerStopped(container: Container | null | undefined): boo
   return container?.status?.state === ContainerStatus.Stopped;
 }
 
+/**
+ * Derived from the negation rather than enumerating RUNNING/SUSPENDED, so that the two
+ * helpers partition every reported state. UNKNOWN counts as active: middleware could not
+ * confirm the container is down, so an operation that requires "stopped" is refused there
+ * too, and blocking it with an explanation beats a raw refusal at submit time.
+ */
 export function isContainerActive(container: Container | null | undefined): boolean {
-  const state = container?.status?.state;
-
-  return state === ContainerStatus.Running || state === ContainerStatus.Suspended;
+  return Boolean(container?.status?.state) && !isContainerStopped(container);
 }
 
 /**

@@ -5,7 +5,6 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -15,8 +14,9 @@ import {
 import {
   map, Observable, of, startWith,
 } from 'rxjs';
-import { macAddressRegex } from 'app/constants/mac-address.constant';
+import { macAddressInvalidMessage, macAddressRegex } from 'app/constants/mac-address.constant';
 import { ContainerNicDeviceType, containerNicDeviceTypeLabels } from 'app/enums/container.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import { ContainerNicDevice } from 'app/interfaces/container.interface';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 
@@ -80,7 +80,7 @@ export class ContainerNicFormDialog {
     mac: [this.getInitialMac(), [
       this.ixValidator.withMessage(
         Validators.pattern(macAddressRegex),
-        this.translate.instant('MAC address must be colon-separated, for example 00:a0:98:1b:2c:3d'),
+        this.translate.instant(macAddressInvalidMessage),
       ),
     ]],
     trust_guest_rx_filters: [this.getInitialTrustGuestRxFilters()],
@@ -122,11 +122,9 @@ export class ContainerNicFormDialog {
   );
 
   protected readonly macTooltip = computed(() => {
-    const format = T('The address must be colon-separated, for example 00:a0:98:1b:2c:3d.');
-
     return this.isEditMode()
-      ? `${this.translate.instant(T('Leave empty to use default MAC address.'))} ${this.translate.instant(format)}`
-      : this.translate.instant(format);
+      ? this.translate.instant(containersHelptext.macEditTooltip)
+      : this.translate.instant(containersHelptext.macTooltip);
   });
 
   protected readonly useDefault = toSignal(this.form.controls.use_default.value$);
