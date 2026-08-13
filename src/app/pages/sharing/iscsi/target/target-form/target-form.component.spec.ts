@@ -58,6 +58,13 @@ describe('TargetFormComponent', () => {
     auth_networks: ['192.168.10.0/24', '192.168.0.0/24'],
   } as IscsiTarget;
 
+  // The factory default for FibreChannelService.validatePhysicalPortUniqueness. Shared so the one
+  // test that overrides it can restore this exact value instead of a second copy that could drift.
+  const permissiveFcPortValidation = (): { valid: boolean; duplicates: string[] } => ({
+    valid: true,
+    duplicates: [],
+  });
+
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
@@ -114,7 +121,7 @@ describe('TargetFormComponent', () => {
       mockProvider(FibreChannelService, {
         loadTargetPorts: jest.fn(() => of([])),
         linkFiberChannelPortsToTarget: jest.fn(() => of(null)),
-        validatePhysicalPortUniqueness: jest.fn(() => ({ valid: true, duplicates: [] as string[] })),
+        validatePhysicalPortUniqueness: jest.fn(permissiveFcPortValidation),
       }),
       mockApi([
         mockCall('tn_connect.config'),
@@ -325,7 +332,7 @@ describe('TargetFormComponent', () => {
 
     afterEach(() => {
       (spectator.inject(FibreChannelService).validatePhysicalPortUniqueness as jest.Mock)
-        .mockImplementation(() => ({ valid: true, duplicates: [] as string[] }));
+        .mockImplementation(permissiveFcPortValidation);
     });
 
     it('blocks the host Save while two FC ports share a physical port', async () => {

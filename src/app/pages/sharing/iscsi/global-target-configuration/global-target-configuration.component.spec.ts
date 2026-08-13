@@ -12,7 +12,6 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
-import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -146,14 +145,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     expect(closeSpy).toHaveBeenCalledWith(true);
   });
 
-  it('dispatches the service-enabled check after saving, so a stopped iSCSI service is offered', () => {
-    mockStore$.overrideSelector(selectServices, [{
-      id: 13,
-      service: ServiceName.Iscsi,
-      enable: false,
-    } as Service]);
-    mockStore$.refreshState();
-
+  it('dispatches the service-enabled check after saving', () => {
     spectator.component.submit();
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
