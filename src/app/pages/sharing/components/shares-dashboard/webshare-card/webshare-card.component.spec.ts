@@ -26,7 +26,6 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -91,9 +90,6 @@ describe('WebShareCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
@@ -311,7 +307,6 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockApi([
@@ -415,7 +410,6 @@ describe('WebShareCardComponent - No WebShare users configured', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockApi([
@@ -500,7 +494,6 @@ describe('WebShareCardComponent - TrueNAS Connect not configured but service run
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockApi([

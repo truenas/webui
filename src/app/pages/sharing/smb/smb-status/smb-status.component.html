@@ -1,44 +1,39 @@
-<nav mat-tab-nav-bar [tabPanel]="tabPanel">
-  @for (link of navLinks; track link.label) {
-    <a
-      #rla="routerLinkActive"
-      mat-tab-link
-      routerLinkActive
-      [ixTest]="link.label"
-      [routerLink]="link.path"
-      [active]="rla.isActive"
-    >
-      {{ link.label | translate }}
-    </a>
+<!-- tn-tabs is content/index-based, so routing is wired manually: the `:activeTab` route param
+  drives [selectedIndex] and a user tab switch navigates (see onTabChange). Tabs render as
+  buttons — legacy `link-*` test ids become `tab-*` (e2e callout), and anchor semantics
+  (middle-click/open-in-new-tab) are lost — accepted trade-off of the tn-tabs mapping.
+  The div supplies the tabpanel role mat-tab-nav-panel used to provide; a projected
+  tn-tab-panel can't host this switch (panels are index-matched to selectedIndex). -->
+<tn-tabs [selectedIndex]="activeTabIndex()" (tabChange)="onTabChange($event)">
+  @for (link of navLinks; track link.slug) {
+    <tn-tab [label]="link.label" [testId]="link.slug" />
   }
-</nav>
+</tn-tabs>
 
-<router-outlet mat-tab-nav-panel>
-  <mat-tab-nav-panel #tabPanel>
-    @switch (activeTab()) {
-      @case ('sessions') {
-        <ix-smb-session-list
-          [ixUiSearch]="searchableElements.elements.sessions"
-        ></ix-smb-session-list>
-      }
-
-      @case ('locks') {
-        <ix-smb-lock-list
-          [ixUiSearch]="searchableElements.elements.locks"
-        ></ix-smb-lock-list>
-      }
-
-      @case ('shares') {
-        <ix-smb-share-list
-          [ixUiSearch]="searchableElements.elements.shares"
-        ></ix-smb-share-list>
-      }
-
-      @case ('notifications') {
-        <ix-smb-notification-list
-          [ixUiSearch]="searchableElements.elements.notifications"
-        ></ix-smb-notification-list>
-      }
+<div role="tabpanel" [attr.aria-label]="navLinks[activeTabIndex()]?.label">
+  @switch (activeTab()) {
+    @case ('sessions') {
+      <ix-smb-session-list
+        [ixUiSearch]="searchableElements.elements.sessions"
+      ></ix-smb-session-list>
     }
-  </mat-tab-nav-panel>
-</router-outlet>
+
+    @case ('locks') {
+      <ix-smb-lock-list
+        [ixUiSearch]="searchableElements.elements.locks"
+      ></ix-smb-lock-list>
+    }
+
+    @case ('shares') {
+      <ix-smb-share-list
+        [ixUiSearch]="searchableElements.elements.shares"
+      ></ix-smb-share-list>
+    }
+
+    @case ('notifications') {
+      <ix-smb-notification-list
+        [ixUiSearch]="searchableElements.elements.notifications"
+      ></ix-smb-notification-list>
+    }
+  }
+</div>

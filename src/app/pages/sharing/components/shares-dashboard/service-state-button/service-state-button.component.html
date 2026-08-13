@@ -1,13 +1,19 @@
-<button
-  mat-stroked-button
+<!-- A read-only status readout, not a control: it carries no action, so it is a `role="status"`
+  region rather than the button Material rendered (no tn-* outlined pill carries the green /
+  grey / orange service colours). `tnTestIdType="button"` pins the legacy
+  `button-service-status-*` id that `[ixTest]` on the old `<button>` resolved to. -->
+<span
+  class="service-status"
+  role="status"
+  tnTestIdType="button"
+  [ngClass]="statusClass()"
   [attr.aria-roledescription]="'Service status' | translate"
-  [ixTest]="['service-status', service()?.service]"
+  [tnTestId]="['service-status', service()?.service]"
   [tnTooltip]="'The {name} service is {status}' | translate: {
     name: service()?.service | mapValue: serviceNames,
     status: service()?.state | lowercase
   }"
   [tnTooltipDisabled]="!service()"
-  [ngClass]="statusClass()"
 >
   {{ service()?.state | titlecase }}
-</button>
+</span>

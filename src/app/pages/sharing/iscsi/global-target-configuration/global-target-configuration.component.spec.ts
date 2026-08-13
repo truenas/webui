@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnDialog, TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness,
+  TnDialog, TnCheckboxHarness, TnChipInputHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -14,8 +14,7 @@ import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { AppState } from 'app/store';
@@ -30,12 +29,6 @@ describe('TargetGlobalConfigurationComponent', () => {
   let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -68,8 +61,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SnackbarService),
-      mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
       provideMockStore({
         selectors: [
           {
@@ -92,6 +84,12 @@ describe('TargetGlobalConfigurationComponent', () => {
       }),
     ],
   });
+
+  /** Re-creates the component in the same TestBed, so a changed selector/mock is picked up. */
+  function recreateComponent(): void {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  }
 
   beforeEach(() => {
     spectator = createComponent();
@@ -119,7 +117,10 @@ describe('TargetGlobalConfigurationComponent', () => {
     expect(await (await getTnCheckbox('iser')).isChecked()).toBe(false);
   });
 
-  it('saves form values when Save is pressed', async () => {
+  it('saves form values and closes when the host submits the form', async () => {
+    const closed = jest.fn();
+    spectator.component.closed.subscribe(closed);
+
     await (await getTnInput('basename')).setValue('iqn.new.org.freenas.ctl');
 
     const isnsServers = await getTnChipInput('isns_servers');
@@ -132,8 +133,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     await (await getTnInput('listen_port')).setValue('3270');
     await (await getTnCheckbox('alua')).uncheck();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('iscsi.global.update', [{
       basename: 'iqn.new.org.freenas.ctl',
@@ -142,10 +142,10 @@ describe('TargetGlobalConfigurationComponent', () => {
       listen_port: 3270,
       alua: false,
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(closed).toHaveBeenCalledWith(true);
   });
 
-  it('checks if iSCSI service is enabled and does nothing if it is', async () => {
+  it('checks if iSCSI service is enabled and does nothing if it is', () => {
     mockStore$.overrideSelector(selectServices, [{
       id: 13,
       service: ServiceName.Iscsi,
@@ -153,13 +153,12 @@ describe('TargetGlobalConfigurationComponent', () => {
     } as Service]);
     mockStore$.refreshState();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
   });
 
-  it('if iSCSI service is not running, asks user if service needs to be enabled', async () => {
+  it('if iSCSI service is not running, asks user if service needs to be enabled', () => {
     mockStore$.overrideSelector(selectServices, [{
       id: 13,
       service: ServiceName.Iscsi,
@@ -167,8 +166,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     } as Service]);
     mockStore$.refreshState();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
   });
@@ -176,8 +174,11 @@ describe('TargetGlobalConfigurationComponent', () => {
   it('disables iSER field unless it is an enterprise system with RDMA capable NIC', async () => {
     expect(await (await getTnCheckbox('iser')).isDisabled()).toBe(true);
 
+    // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
+    // re-initialising an already-initialised form re-registers its valueChanges subscriptions.
     mockStore$.overrideSelector(selectIsEnterprise, true);
-    spectator.component.ngOnInit();
+    mockStore$.refreshState();
+    recreateComponent();
 
     expect(await (await getTnCheckbox('iser')).isDisabled()).toBe(false);
   });
@@ -230,8 +231,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       return of(null);
     });
 
-    spectator.component.ngOnInit();
-    spectator.detectChanges();
+    recreateComponent();
 
     // Don't touch basename, only modify listen_port
     await (await getTnInput('listen_port')).setValue('3270');
@@ -239,8 +239,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     // Form should be valid because we didn't modify the basename
     expect(spectator.component.form.valid).toBe(true);
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     // Should successfully call the API
     expect(api.call).toHaveBeenCalledWith('iscsi.global.update', [
