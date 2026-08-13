@@ -125,31 +125,31 @@ export class FibreChannelPortsComponent implements OnInit {
     this.dataProvider.setSorting(mapTnSortToTableSort<FibreChannelPortRow>(
       event,
       this.displayedColumns(),
-      { sortAccessors: { [event.column]: (row) => this.sortValue(row, event.column) } },
+      { sortAccessors: this.sortAccessors },
     ));
   }
 
+  private readonly sortByWwpnB = (row: FibreChannelPortRow): string => this.wwpnLabel(row, 'wwpn_b');
+
   /**
-   * Every cell is derived from more than the property behind its column — a nested target name, a
-   * composed state label — so each is sorted by what it renders. Sorting by the raw row property
-   * would order Target by an object and leave State unsorted entirely.
+   * Most cells render more than the property behind their column — a nested target name, a composed
+   * state label — so those columns sort by what they render. Sorting by the raw row property would
+   * order Target by an object and leave State unsorted entirely.
+   *
+   * `name` is the exception: it sorts by {@link portNameSortKey}, not by the rendered label, which
+   * carries a leading dash on virtual ports and would clump them all together away from their host.
+   *
+   * A column left out of this record sorts by its raw row property.
    */
-  private sortValue(row: FibreChannelPortRow, column: string): string {
-    switch (column) {
-      case 'name':
-        return portNameSortKey(row.name);
-      case 'target':
-        return this.targetLabel(row);
-      case 'wwpn':
-        return this.wwpnLabel(row, 'wwpn');
-      case 'wwpn_b':
-        return this.wwpnLabel(row, 'wwpn_b');
-      case 'state':
-        return this.stateLabel(row);
-      default:
-        return '';
-    }
-  }
+  private readonly sortAccessors: Record<string, (row: FibreChannelPortRow) => string> = {
+    name: (row) => portNameSortKey(row.name),
+    target: (row) => this.targetLabel(row),
+    wwpn: (row) => this.wwpnLabel(row, 'wwpn'),
+    // Named field rather than an inline arrow: the linter reads a snake_case key with a function
+    // literal as a badly named method.
+    wwpn_b: this.sortByWwpnB,
+    state: (row) => this.stateLabel(row),
+  };
 
   ngOnInit(): void {
     this.loadTable();
