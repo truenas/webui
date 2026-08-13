@@ -8,6 +8,8 @@
       <tn-select
         formControlName="nic_type"
         [options]="(nicTypeOptions$ | async) ?? []"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -30,6 +32,8 @@
       <tn-select
         formControlName="nic_attach"
         [options]="(nicAttachOptions$ | async) ?? []"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
