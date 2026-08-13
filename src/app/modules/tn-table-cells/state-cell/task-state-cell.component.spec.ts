@@ -9,7 +9,7 @@ import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/s
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   TaskStateCellComponent,
-} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
+} from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailedJobError } from 'app/services/errors/error.classes';
 

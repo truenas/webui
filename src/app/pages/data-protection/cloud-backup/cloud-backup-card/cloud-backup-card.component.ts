@@ -43,13 +43,13 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import {
+  TaskStateCellComponent,
+} from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
+import {
   TableToggleCellComponent,
 } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
-import {
-  TaskStateCellComponent,
-} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
 import { JobTaskCardBase } from 'app/pages/data-protection/utils/job-task-card-base.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';

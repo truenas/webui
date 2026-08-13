@@ -1,12 +1,24 @@
 import { AsyncPipe } from '@angular/common';
-import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, effect, inject, signal,
+  untracked, viewChild,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonToggleComponent, TnButtonToggleGroupComponent, TnTablePagerComponent,
+  TnButtonToggleComponent,
+  TnButtonToggleGroupComponent,
+  TnCellDefDirective,
+  TnDetailRowDefDirective,
+  TnHeaderCellDefDirective,
+  TnSortEvent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
   BehaviorSubject, combineLatest, Observable, of,
@@ -14,21 +26,14 @@ import {
 import { take, map, switchMap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table/utils';
+import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/ix-table/utils';
 import {
   JobSlice,
   selectAllNonTransientJobs,
@@ -37,6 +42,7 @@ import {
   selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { TaskStateCellComponent } from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
 import { JobTab } from 'app/pages/jobs/job-tab.enum';
@@ -53,14 +59,16 @@ import { jobsListElements } from 'app/pages/jobs/jobs-list.elements';
     TnButtonToggleComponent,
     FormsModule,
     BasicSearchComponent,
-    IxTableComponent,
     UiSearchDirective,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
-    IxTableCellDirective,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnDetailRowDefDirective,
+    TnTestIdDirective,
+    IxDateComponent,
+    TaskStateCellComponent,
     JobNameComponent,
-    IxTableDetailsRowDirective,
     JobLogsRowComponent,
     TnTablePagerComponent,
     TranslateModule,
@@ -88,30 +96,84 @@ export class JobsListComponent implements OnInit {
   protected selectedJobs$ = this.selector$.pipe(switchMap((selector) => this.store$.select(selector)));
   protected readonly JobTab = JobTab;
 
-  columns = createTable<Job>([
-    textColumn({
-      title: this.translate.instant('Name'),
-    }),
-    stateButtonColumn({
-      title: this.translate.instant('State'),
-      propertyName: 'state',
-      cssClass: 'state-button',
-      getJob: (row) => row,
-    }),
-    dateColumn({
-      title: this.translate.instant('Started'),
-      propertyName: 'time_started',
-      sortBy: (job) => +job.time_started,
-    }),
-    dateColumn({
-      title: this.translate.instant('Finished'),
-      propertyName: 'time_finished',
-      sortBy: (job) => Number(job.time_finished),
-    }),
-  ], {
-    uniqueRowTag: (row) => `job-${row.id}`,
-    ariaLabels: (row) => [String(row.description), this.translate.instant('Job')],
-  });
+  protected readonly table = viewChild<TnTableComponent<Job>>(TnTableComponent);
+  protected readonly rows = toSignal(this.dataProvider.currentPage$, { initialValue: [] as Job[] });
+
+  protected readonly displayedColumns = ['name', 'state', 'time_started', 'time_finished'];
+
+  protected readonly trackByJobId = (_: number, row: Job): number => row.id;
+
+  /**
+   * Which job's detail row is open, by id. `tn-table` keys its own `expandedRows` set on the row
+   * *object*, and the store hands us a fresh object for a job every time it updates — so the id
+   * is what survives a reload, and the effects below keep the two representations in step.
+   */
+  private readonly expandedJobId = signal<number | null>(null);
+
+  /**
+   * Expansion state the table and `expandedJobId` last agreed on, so the effect below can tell a
+   * user click on the chevron (the table moved first) from our own reconciliation (we moved
+   * first). Deliberately a plain field: reading it must not make the effect depend on it.
+   */
+  private lastSyncedExpandedId: number | null = null;
+
+  constructor() {
+    effect(() => {
+      const table = this.table();
+      const rows = this.rows();
+      const wantedId = this.expandedJobId();
+      if (!table) {
+        return;
+      }
+      const tableId = [...table.expandedRows()].map((row) => (row as Job).id).at(0) ?? null;
+
+      untracked(() => {
+        if (tableId === wantedId) {
+          this.lastSyncedExpandedId = tableId;
+          return;
+        }
+
+        if (tableId !== this.lastSyncedExpandedId) {
+          // The table moved on its own — the user toggled a chevron. Adopt it and, on expand, put
+          // the job in the URL, as ix-table's `(expanded)` output used to.
+          this.lastSyncedExpandedId = tableId;
+          this.expandedJobId.set(tableId);
+          if (tableId !== null) {
+            this.navigateToJob(tableId);
+          }
+          return;
+        }
+
+        // Our id moved — `?jobId=` asked for a row that had not rendered yet.
+        this.openExpandedRow(table, rows, wantedId);
+      });
+    });
+  }
+
+  /**
+   * TEMP (NAS-141021): `tn-table` empties its expanded set whenever the `dataSource` *reference*
+   * changes, and the jobs store hands us a new array on every job update — so a detail row would
+   * close itself while the job it belongs to is still running, which is exactly when its logs are
+   * worth watching. `selectionChange` is emitted from that same reset and is the only hook the
+   * library offers, so re-open the row from the id we keep. Drop once `tn-table` keys expansion
+   * through `trackBy` (or exposes a row-expanded output) instead of row identity.
+   */
+  protected onTableReset(): void {
+    const table = this.table();
+    if (table) {
+      this.openExpandedRow(table, this.rows(), this.expandedJobId());
+    }
+  }
+
+  /** Points the table's identity-keyed expanded set at the row currently rendering that job. */
+  private openExpandedRow(table: TnTableComponent<Job>, rows: Job[], jobId: number | null): void {
+    const expandedRow = jobId === null ? undefined : rows.find((job) => job.id === jobId);
+    if (!expandedRow) {
+      return;
+    }
+    this.lastSyncedExpandedId = jobId;
+    table.expandedRows.set(new Set<unknown>([expandedRow]));
+  }
 
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
@@ -171,10 +233,37 @@ export class JobsListComponent implements OnInit {
       });
   }
 
-  protected onRowExpanded(job: Job): void {
+  protected uniqueRowTag(job: Job): string {
+    return toUniqueRowTag(`job-${job.id}`);
+  }
+
+  protected ariaLabel(job: Job): string {
+    return [String(job.description), this.translate.instant('Job')].join(' ');
+  }
+
+  /** `ix-date` wants a timestamp; a job's time fields arrive as `{ $date }`, a number or nothing. */
+  protected toDate(value: ApiTimestamp | number | null | undefined): number | null {
+    if (!value) {
+      return null;
+    }
+    return typeof value === 'number' ? value : value.$date;
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<Job>(event, this.displayedColumns, {
+      sortAccessors: {
+        /* eslint-disable @typescript-eslint/naming-convention -- API field names */
+        time_started: (job: Job) => +job.time_started,
+        time_finished: (job: Job) => Number(job.time_finished),
+        /* eslint-enable @typescript-eslint/naming-convention */
+      },
+    }));
+  }
+
+  private navigateToJob(jobId: number): void {
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { jobId: job.id },
+      queryParams: { jobId },
       queryParamsHandling: 'merge',
     });
   }
@@ -201,11 +290,8 @@ export class JobsListComponent implements OnInit {
   }
 
   private autoExpandRow(jobId: number): void {
-    const jobToExpand = this.jobs.find((job) => job.id === jobId);
-    if (jobToExpand) {
-      // set the expanded row and force a re-render
-      this.dataProvider.expandedRow = jobToExpand;
-      this.dataProvider.currentPage$.next(this.dataProvider.currentPage$.value);
+    if (this.jobs.some((job) => job.id === jobId)) {
+      this.expandedJobId.set(jobId);
     }
   }
 

@@ -5,17 +5,26 @@
   @if (!viewElements()) {
     <ix-empty [conf]="noView"></ix-empty>
   } @else {
-    <ix-table>
-      <thead
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider()"
-      ></thead>
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider()"
-      ></tbody>
-    </ix-table>
+    <tn-table
+      [dataSource]="(dataProvider().currentPage$ | async) ?? []"
+      [displayedColumns]="displayedColumns"
+      [trackBy]="trackByDescriptor"
+      (sortChange)="onSortChange($event)"
+    >
+      <ng-container [tnColumnDef]="'descriptor'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Descriptor' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>{{ row.descriptor }}</ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'status'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Status' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>{{ row.status }}</ng-template>
+      </ng-container>
+
+      <ng-container [tnColumnDef]="'value'" [sortable]="true">
+        <ng-template tnHeaderCellDef>{{ 'Value' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>{{ row.value }}</ng-template>
+      </ng-container>
+    </tn-table>
   }
 </mat-card-content>

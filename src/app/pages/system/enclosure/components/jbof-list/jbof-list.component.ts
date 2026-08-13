@@ -1,9 +1,19 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { tnIconMarker, TnTablePagerComponent, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnCellDefDirective,
+  TnHeaderCellDefDirective,
+  TnSortEvent,
+  TnTableColumnDirective,
+  TnTableComponent,
+  TnTablePagerComponent,
+  TnTestIdDirective,
+  TnTooltipDirective,
+  tnIconMarker,
+} from '@truenas/ui-components';
 import {
   filter, forkJoin, map, switchMap, tap,
 } from 'rxjs';
@@ -16,17 +26,12 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { createTable } from 'app/modules/ix-table/utils';
+import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getJbofFormConfig } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof.form-config';
 import { jbofListElements } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.elements';
@@ -40,14 +45,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     PageHeaderComponent,
     BasicSearchComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TnTooltipDirective,
     UiSearchDirective,
-    IxTableComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TnTestIdDirective,
+    TableActionsCellComponent,
     TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,
@@ -59,7 +65,7 @@ export class JbofListComponent implements OnInit {
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
-  private emptyService = inject(EmptyService);
+  protected emptyService = inject(EmptyService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
 
@@ -71,41 +77,39 @@ export class JbofListComponent implements OnInit {
   protected canAddJbof = signal(false);
 
   dataProvider: AsyncDataProvider<Jbof>;
-  columns = createTable<Jbof>([
-    textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'description',
-    }),
-    textColumn({
-      title: this.translate.instant('IPs'),
-      getValue: (row) => [row.mgmt_ip1, row.mgmt_ip2].filter(Boolean).join(', '),
-    }),
-    textColumn({
-      title: this.translate.instant('Username'),
-      propertyName: 'mgmt_username',
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: tnIconMarker('pencil', 'mdi'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.openForm(row),
-        },
-        {
-          iconName: tnIconMarker('delete', 'mdi'),
-          tooltip: this.translate.instant('Delete'),
-          requiredRoles: this.requiredRoles,
-          onClick: (row) => this.doDelete(row),
-        },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row) => 'jbof-' + row.mgmt_username,
-    ariaLabels: (row) => [row.mgmt_username, this.translate.instant('JBOF')],
-  });
 
-  protected get emptyConfigService(): EmptyService {
-    return this.emptyService;
+  protected readonly displayedColumns = ['description', 'ips', 'mgmt_username', 'actions'];
+
+  protected readonly actions: IconActionConfig<Jbof>[] = [
+    {
+      iconName: tnIconMarker('pencil', 'mdi'),
+      tooltip: this.translate.instant('Edit'),
+      onClick: (row) => this.openForm(row),
+    },
+    {
+      iconName: tnIconMarker('delete', 'mdi'),
+      tooltip: this.translate.instant('Delete'),
+      requiredRoles: this.requiredRoles,
+      onClick: (row) => this.doDelete(row),
+    },
+  ];
+
+  protected readonly trackByJbofId = (_: number, row: Jbof): number => row.id;
+
+  protected uniqueRowTag(row: Jbof): string {
+    return toUniqueRowTag('jbof-' + row.mgmt_username);
+  }
+
+  protected ariaLabel(row: Jbof): string {
+    return [row.mgmt_username, this.translate.instant('JBOF')].join(' ');
+  }
+
+  protected formatIps(row: Jbof): string {
+    return [row.mgmt_ip1, row.mgmt_ip2].filter(Boolean).join(', ');
+  }
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider.setSorting(mapTnSortToTableSort<Jbof>(event, this.displayedColumns));
   }
 
   ngOnInit(): void {

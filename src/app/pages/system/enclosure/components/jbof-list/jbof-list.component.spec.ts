@@ -1,8 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -11,7 +10,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -40,7 +38,7 @@ const fakeJbofDataSource: Jbof[] = [
 describe('JbofListComponent', () => {
   let spectator: Spectator<JbofListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: JbofListComponent,
@@ -67,22 +65,19 @@ describe('JbofListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Description', 'IPs', 'Username', ''],
-      ['description 1', '11.11.11.11, 12.12.12.12', 'admin', ''],
-      ['description 2', '13.13.13.13', 'user', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    expect(await table.getHeaderTexts()).toEqual(['Description', 'IPs', 'Username', '']);
+    expect(await table.getRowTexts(0)).toEqual(['description 1', '11.11.11.11, 12.12.12.12', 'admin', '']);
+    expect(await table.getRowTexts(1)).toEqual(['description 2', '13.13.13.13', 'user', '']);
   });
 
   it('opens form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-pencil' }), 'description 1');
+    const editButton = await loader.getHarness(
+      TnIconButtonHarness.with({ ancestor: '[data-row-index="0"]', name: 'mdi-pencil' }),
+    );
     await editButton.click();
 
     expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(expect.anything(), {
@@ -92,7 +87,9 @@ describe('JbofListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInRow(TnIconHarness.with({ name: 'mdi-delete' }), 'description 2');
+    const deleteButton = await loader.getHarness(
+      TnIconButtonHarness.with({ ancestor: '[data-row-index="1"]', name: 'mdi-delete' }),
+    );
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -112,7 +109,7 @@ describe('JbofListComponent', () => {
     spectator.inject(MockApiService).mockCall('jbof.licensed', 3);
     spectator.component.updateAvailableJbof();
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await addButton.isDisabled()).toBe(false);
   });
 
@@ -120,7 +117,7 @@ describe('JbofListComponent', () => {
     spectator.inject(MockApiService).mockCall('jbof.licensed', 2);
     spectator.component.updateAvailableJbof();
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await addButton.isDisabled()).toBe(true);
   });
 
@@ -128,7 +125,7 @@ describe('JbofListComponent', () => {
     spectator.inject(MockApiService).mockCall('jbof.licensed', 1);
     spectator.component.updateAvailableJbof();
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await addButton.isDisabled()).toBe(true);
   });
 });

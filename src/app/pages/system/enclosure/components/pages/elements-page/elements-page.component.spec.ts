@@ -5,11 +5,11 @@ import {
   mockProvider,
   SpectatorRouting,
 } from '@ngneat/spectator/jest';
+import { TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   EnclosureHeaderComponent,
 } from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
@@ -62,13 +62,11 @@ describe('ElementsComponent', () => {
   });
 
   it('renders enclosure elements for the view route parameter', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual([
-      ['Descriptor', 'Status', 'Value'],
-      ['5V Sensor', 'OK', '5.06V'],
-      ['12V Sensor', 'OK', '12.01V'],
-    ]);
+    const table = await loader.getHarness(TnTableHarness);
+    expect(await table.getHeaderTexts()).toEqual(['Descriptor', 'Status', 'Value']);
+    expect(await table.getRowCount()).toBe(2);
+    expect(await table.getRowTexts(0)).toEqual(['5V Sensor', 'OK', '5.06V']);
+    expect(await table.getRowTexts(1)).toEqual(['12V Sensor', 'OK', '12.01V']);
   });
 
   it('renders an error when view from route param is not available for current enclosure', () => {

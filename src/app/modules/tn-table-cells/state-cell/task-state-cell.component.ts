@@ -24,7 +24,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailedJobError } from 'app/services/errors/error.classes';
 
 /**
- * tn-table replacement for the ix-table `stateButtonColumn` cell renderer. The
+ * tn-table replacement for the ix-table `stateButtonColumn` cell renderer.
+ * Shared across data-protection task lists/cards and the jobs list. The
  * library has no multi-colour status pill (`tn-button` only does filled/outline,
  * `tn-chip` only primary/secondary/accent), so the pill markup is a plain
  * `<button>` styled locally rather than a `tn-*` element. The running-job log

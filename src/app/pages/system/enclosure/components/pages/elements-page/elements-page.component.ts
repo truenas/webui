@@ -1,8 +1,16 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardHeader, MatCardContent } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  TnCellDefDirective,
+  TnHeaderCellDefDirective,
+  TnSortEvent,
+  TnTableColumnDirective,
+  TnTableComponent,
+} from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { enclosureElementTypeLabels, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
@@ -10,11 +18,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EnclosureElement } from 'app/interfaces/enclosure.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { createTable } from 'app/modules/ix-table/utils';
+import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { EnclosureHeaderComponent } from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
@@ -27,9 +31,12 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
     EnclosureHeaderComponent,
     MatCardContent,
     EmptyComponent,
-    IxTableComponent,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
+    TnTableComponent,
+    TnTableColumnDirective,
+    TnHeaderCellDefDirective,
+    TnCellDefDirective,
+    TranslateModule,
+    AsyncPipe,
   ],
 })
 export class ElementsPageComponent {
@@ -63,26 +70,13 @@ export class ElementsPageComponent {
     return this.store.selectedEnclosure()?.elements?.[this.currentView()];
   });
 
-  protected readonly columns = createTable<EnclosureElement>(
-    [
-      textColumn({
-        title: this.translate.instant('Descriptor'),
-        propertyName: 'descriptor',
-      }),
-      textColumn({
-        title: this.translate.instant('Status'),
-        propertyName: 'status',
-      }),
-      textColumn({
-        title: this.translate.instant('Value'),
-        propertyName: 'value',
-      }),
-    ],
-    {
-      uniqueRowTag: (element: EnclosureElement) => element.descriptor,
-      ariaLabels: (row: EnclosureElement) => [row.descriptor, this.translate.instant('Element')],
-    },
-  );
+  protected readonly displayedColumns = ['descriptor', 'status', 'value'];
+
+  protected readonly trackByDescriptor = (_: number, row: EnclosureElement): string => row.descriptor;
+
+  protected onSortChange(event: TnSortEvent): void {
+    this.dataProvider().setSorting(mapTnSortToTableSort<EnclosureElement>(event, this.displayedColumns));
+  }
 
   protected readonly dataProvider = computed(() => {
     const dataProvider = new ArrayDataProvider<EnclosureElement>();

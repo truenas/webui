@@ -25,35 +25,71 @@
   ></ix-basic-search>
 </ix-page-header>
 
-<ix-table
+@let emptyConf = emptyService.defaultEmptyConfig(emptyType$ | async);
+<tn-table
   [ixUiSearch]="searchableElements.elements.jobs"
-  [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-  [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
+  [dataSource]="rows()"
+  [displayedColumns]="displayedColumns"
+  [trackBy]="trackByJobId"
+  [loading]="!!(isLoading$ | async)"
+  [expandable]="true"
+  [singleExpand]="true"
+  [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
+  [emptyIcon]="emptyConf?.icon ?? ''"
+  (sortChange)="onSortChange($event)"
+  (selectionChange)="onTableReset()"
 >
-  <thead
-    ix-table-head
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-  ></thead>
-  <tbody
-    ix-table-body
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-    [isLoading]="!!(isLoading$ | async)"
-    (expanded)="onRowExpanded($event)"
-  >
-    <ng-template
-      let-job
-      ix-table-cell
-      [columnIndex]="0"
-      [dataProvider]="dataProvider"
-    >
+  <ng-container [tnColumnDef]="'name'">
+    <ng-template tnHeaderCellDef>{{ 'Name' | translate }}</ng-template>
+    <ng-template let-job tnCellDef>
       <ix-job-name [job]="job"></ix-job-name>
     </ng-template>
+  </ng-container>
 
-    <ng-template let-job ix-table-details-row [dataProvider]="dataProvider">
-      <ix-job-logs-row [job]="job"></ix-job-logs-row>
+  <ng-container [tnColumnDef]="'state'" [sortable]="true">
+    <ng-template tnHeaderCellDef>{{ 'State' | translate }}</ng-template>
+    <ng-template let-job tnCellDef>
+      <ix-task-state-cell
+        [state]="job.state"
+        [job]="job"
+        [testId]="[('State' | translate), uniqueRowTag(job), 'row-state']"
+        [ariaLabel]="ariaLabel(job)"
+      ></ix-task-state-cell>
     </ng-template>
-  </tbody>
-</ix-table>
+  </ng-container>
+
+  <ng-container [tnColumnDef]="'time_started'" [sortable]="true">
+    <ng-template tnHeaderCellDef>{{ 'Started' | translate }}</ng-template>
+    <ng-template let-job tnCellDef>
+      @if (toDate(job.time_started); as date) {
+        <ix-date
+          tnTestIdType="text"
+          [tnTestId]="[('Started' | translate), uniqueRowTag(job), 'row-date']"
+          [date]="date"
+        ></ix-date>
+      } @else {
+        {{ 'N/A' | translate }}
+      }
+    </ng-template>
+  </ng-container>
+
+  <ng-container [tnColumnDef]="'time_finished'" [sortable]="true">
+    <ng-template tnHeaderCellDef>{{ 'Finished' | translate }}</ng-template>
+    <ng-template let-job tnCellDef>
+      @if (toDate(job.time_finished); as date) {
+        <ix-date
+          tnTestIdType="text"
+          [tnTestId]="[('Finished' | translate), uniqueRowTag(job), 'row-date']"
+          [date]="date"
+        ></ix-date>
+      } @else {
+        {{ 'N/A' | translate }}
+      }
+    </ng-template>
+  </ng-container>
+
+  <ng-template let-job tnDetailRowDef>
+    <ix-job-logs-row [job]="job"></ix-job-logs-row>
+  </ng-template>
+</tn-table>
 <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
