@@ -17,15 +17,12 @@ import { Role } from 'app/enums/role.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
-} from 'app/modules/ix-table/utils';
+} from 'app/modules/tn-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -35,6 +32,7 @@ import {
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
 import { extentListElements } from 'app/pages/sharing/iscsi/extent/extent-list/extent-list.elements';
 import { IscsiService } from 'app/services/iscsi.service';
+import { actionsColumn, column } from 'app/modules/tn-table/column-configs';
 
 @Component({
   selector: 'ix-iscsi-extent-list',
@@ -99,39 +97,39 @@ export class ExtentListComponent implements OnInit {
     },
   ];
 
-  // ix-table column model retained purely to drive <ix-table-column-picker>
+  // Column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs); tn-table renders cells from the template and
   // derives its `displayedColumns` from these via `toDisplayedColumns`.
   protected readonly columns = signal(createTable<IscsiExtent>([
-    textColumn({
+    column({
       title: this.translate.instant('Extent Name'),
       propertyName: 'name',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Device/File'),
       propertyName: 'path',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Description'),
       propertyName: 'comment',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Serial'),
       propertyName: 'serial',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Product ID'),
       propertyName: 'product_id',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('NAA'),
       propertyName: 'naa',
     }),
-    yesNoColumn({
+    column({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
-    actionsWithMenuColumn({ actions: [] }),
+    actionsColumn(),
   ]));
 
   protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));

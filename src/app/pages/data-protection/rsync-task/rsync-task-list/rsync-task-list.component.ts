@@ -28,21 +28,10 @@ import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import {
-  scheduleColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
-import {
-  stateButtonColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import {
-  yesNoColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { createTable, tnTableListHost } from 'app/modules/ix-table/utils';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { createTable, tnTableListHost } from 'app/modules/tn-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -63,6 +52,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { rsyncTaskListElements } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.elements';
 import { TaskService } from 'app/services/task.service';
+import { column } from 'app/modules/tn-table/column-configs';
 
 @Component({
   selector: 'ix-rsync-task-list',
@@ -163,76 +153,75 @@ export class RsyncTaskListComponent implements OnInit {
 
   protected readonly list = tnTableListHost<RsyncTask>(this.dataProvider, {
     columns: () => createTable<RsyncTask>([
-      textColumn({
+      column({
         title: this.titles().path,
         propertyName: 'path',
       }),
-      textColumn({
+      column({
         title: this.titles().remoteHost,
         propertyName: 'remotehost',
       }),
-      textColumn({
+      column({
         title: this.titles().remoteSshPort,
         propertyName: 'remoteport',
         hidden: true,
       }),
-      textColumn({
+      column({
         title: this.titles().remoteModuleName,
         propertyName: 'remotemodule',
       }),
-      textColumn({
+      column({
         title: this.titles().remotePath,
         propertyName: 'remotepath',
         hidden: true,
       }),
-      textColumn({
+      column({
         title: this.titles().direction,
         propertyName: 'direction',
       }),
-      scheduleColumn({
+      column({
         title: this.titles().schedule,
         propertyName: 'schedule',
         hidden: true,
       }),
       // No `propertyName`: it would collide with the Schedule column above on the
       // tn-table column name. Renders — and sorts — as the derived `frequency` column.
-      textColumn({
+      column({
         title: this.titles().frequency,
         columnName: 'frequency',
         getValue: (row) => this.getFrequency(row),
       }),
-      relativeDateColumn({
+      column({
         title: this.titles().nextRun,
         columnName: 'next-run',
         getValue: (row) => this.getNextRun(row),
       }),
-      relativeDateColumn({
+      column({
         title: this.titles().lastRun,
         columnName: 'last-run',
         getValue: (row) => row.job?.time_finished?.$date,
         hidden: true,
       }),
-      textColumn({
+      column({
         title: this.titles().shortDescription,
         propertyName: 'desc',
       }),
-      textColumn({
+      column({
         title: this.titles().user,
         propertyName: 'user',
       }),
-      yesNoColumn({
+      column({
         title: this.titles().delayUpdates,
         propertyName: 'delayupdates',
         hidden: true,
       }),
-      stateButtonColumn({
+      column({
         title: this.titles().status,
         columnName: 'status',
         getValue: (row) => this.getTaskState(row),
-        getJob: (row) => row.job,
         cssClass: 'state-button',
       }),
-      yesNoColumn({
+      column({
         title: this.titles().enabled,
         propertyName: 'enabled',
       }),

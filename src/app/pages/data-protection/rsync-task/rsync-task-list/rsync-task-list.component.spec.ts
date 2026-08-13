@@ -18,8 +18,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import {
   TableColumnPickerComponent,
-} from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';

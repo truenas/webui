@@ -12,13 +12,13 @@ import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { SharingTierInfo, ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
-import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
+import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
-import { tierColumnCssClass } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
+import { tierColumnCssClass } from 'app/pages/sharing/components/storage-tier-cell/tier-column.constants';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 
@@ -88,8 +88,7 @@ export class SharingTierService {
   }
 
   /**
-   * Subscribes to the tier config and unhides the `StorageTierCellComponent`
-   * column when tiering is enabled.
+   * Subscribes to the tier config and unhides the tier column when tiering is enabled.
    *
    * Contract for `getColumns`/`setColumns`:
    *   The caller owns the `columns` array (typically `this.columns` returned from
@@ -109,8 +108,8 @@ export class SharingTierService {
   enableTierColumn<T>(opts: {
     destroyRef: DestroyRef;
     cdr: ChangeDetectorRef;
-    getColumns: () => Column<T, ColumnComponent<T>>[];
-    setColumns: (columns: Column<T, ColumnComponent<T>>[]) => void;
+    getColumns: () => TableColumn<T>[];
+    setColumns: (columns: TableColumn<T>[]) => void;
   }): void {
     this.getTierConfig().pipe(takeUntilDestroyed(opts.destroyRef)).subscribe((config) => {
       this.tierEnabledSignal.set(config.enabled);
@@ -147,8 +146,8 @@ export class SharingTierService {
   attachTierToShareList<T>(opts: {
     destroyRef: DestroyRef;
     cdr: ChangeDetectorRef;
-    getColumns: () => Column<T, ColumnComponent<T>>[];
-    setColumns: (columns: Column<T, ColumnComponent<T>>[]) => void;
+    getColumns: () => TableColumn<T>[];
+    setColumns: (columns: TableColumn<T>[]) => void;
     reload: () => void;
   }): void {
     this.enableTierColumn(opts);

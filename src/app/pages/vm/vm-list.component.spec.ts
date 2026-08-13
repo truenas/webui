@@ -20,7 +20,7 @@ import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import {
   TableColumnPickerComponent,
-} from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';

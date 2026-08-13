@@ -9,7 +9,7 @@ import { MockComponent, ngMocks } from 'ng-mocks';
 import { of } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { auditEntries, mockAuditApiDataProvider } from 'app/pages/audit/testing/mock-audit-api-data-provider';

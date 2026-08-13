@@ -10,7 +10,7 @@ import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-data-provider';
 import { UsersSearchComponent } from 'app/pages/credentials/users/all-users/users-search/users-search.component';
 import { UserAccessCellComponent } from './user-access-cell/user-access-cell.component';

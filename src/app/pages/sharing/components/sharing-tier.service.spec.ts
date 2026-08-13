@@ -7,15 +7,13 @@ import { TnDialog } from '@truenas/ui-components';
 import { Subject, of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
+import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
-import {
-  StorageTierCellComponent, tierColumnCssClass,
-} from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
+import { tierColumnCssClass } from 'app/pages/sharing/components/storage-tier-cell/tier-column.constants';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('SharingTierService', () => {
@@ -146,11 +144,11 @@ describe('SharingTierService', () => {
     let cdr: ChangeDetectorRef;
     let jobUpdates$: Subject<{ fields: unknown }>;
 
-    function makeColumns(): Column<TierRow, ColumnComponent<TierRow>>[] {
+    function makeColumns(): TableColumn<TierRow>[] {
       return [
         { title: 'Name', cssClass: 'name-cell' },
-        { type: StorageTierCellComponent, cssClass: tierColumnCssClass, hidden: true },
-      ] as Column<TierRow, ColumnComponent<TierRow>>[];
+        { cssClass: tierColumnCssClass, hidden: true },
+      ] as TableColumn<TierRow>[];
     }
 
     beforeEach(() => {

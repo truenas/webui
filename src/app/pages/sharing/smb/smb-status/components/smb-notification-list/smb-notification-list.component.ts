@@ -13,14 +13,14 @@ import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbNotificationInfo } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
-} from 'app/modules/ix-table/utils';
+} from 'app/modules/tn-table/utils';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { column } from 'app/modules/tn-table/column-configs';
 
 @Component({
   selector: 'ix-smb-notification-list',
@@ -68,14 +68,11 @@ export class SmbNotificationListComponent implements OnInit {
   notifications: SmbNotificationInfo[] = [];
 
   protected readonly columns = signal(createTable<SmbNotificationInfo>([
-    textColumn({ title: this.translate.instant('Path'), propertyName: 'path' }),
-    textColumn({ title: this.translate.instant('Filter'), propertyName: 'filter' }),
-    textColumn({ title: this.translate.instant('Subdir Filter'), propertyName: 'subdir_filter' }),
-    textColumn({ title: this.translate.instant('Creation Time'), propertyName: 'creation_time' }),
-  ], {
-    uniqueRowTag: (row) => 'smb-notification-' + row.creation_time + '-' + row.server_id.unique_id,
-    ariaLabels: (row) => [row.creation_time, this.translate.instant('SMB Notification')],
-  }));
+    column({ title: this.translate.instant('Path'), propertyName: 'path' }),
+    column({ title: this.translate.instant('Filter'), propertyName: 'filter' }),
+    column({ title: this.translate.instant('Subdir Filter'), propertyName: 'subdir_filter' }),
+    column({ title: this.translate.instant('Creation Time'), propertyName: 'creation_time' }),
+  ]));
 
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
 

@@ -16,14 +16,12 @@ import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
-} from 'app/modules/ix-table/utils';
+} from 'app/modules/tn-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -34,6 +32,7 @@ import {
   authorizedAccessListElements,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.elements';
 import { IscsiService } from 'app/services/iscsi.service';
+import { actionsColumn, column } from 'app/modules/tn-table/column-configs';
 
 @Component({
   selector: 'ix-iscsi-authorized-access-list',
@@ -112,23 +111,23 @@ export class AuthorizedAccessListComponent implements OnInit {
     },
   ];
 
-  // ix-table column model retained purely to drive <ix-table-column-picker>
+  // Column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs); tn-table renders cells from the template and
   // derives its `displayedColumns` from these via `toDisplayedColumns`.
   protected readonly columns = signal(createTable<IscsiAuthAccess>([
-    textColumn({
+    column({
       title: this.translate.instant('Group ID'),
       propertyName: 'tag',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('User'),
       propertyName: 'user',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Peer User'),
       propertyName: 'peeruser',
     }),
-    actionsWithMenuColumn({ actions: [] }),
+    actionsColumn(),
   ]));
 
   protected readonly displayedColumns = computed<string[]>(() => toDisplayedColumns(this.columns()));

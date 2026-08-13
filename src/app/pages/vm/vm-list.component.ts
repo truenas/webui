@@ -35,18 +35,17 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import {
   IxTableDetailsRowComponent,
-} from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
+} from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import {
   TableColumnPickerComponent,
-} from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
+} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, memoizedRowTag, toDisplayedColumns,
-} from 'app/modules/ix-table/utils';
+} from 'app/modules/tn-table/utils';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -59,6 +58,7 @@ import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { VmService } from 'app/services/vm.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { column } from 'app/modules/tn-table/column-configs';
 
 /**
  * tn-table column name for the derived Display Port column. It has no backing
@@ -136,7 +136,7 @@ export class VmListComponent implements OnInit {
   protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
 
   /**
-   * ix-table column model retained purely to drive `<ix-table-column-picker>` (visibility
+   * Column model retained purely to drive `<ix-table-column-picker>` (visibility
    * + saved `vmList` prefs) and the hidden-column readout in the expanded detail row.
    * tn-table renders the visible cells from the template and derives its
    * `displayedColumns` from these via `toDisplayedColumns`, so every column carries the
@@ -153,53 +153,53 @@ export class VmListComponent implements OnInit {
    * drift from the one its visible counterpart renders.
    */
   protected readonly columns = signal(createTable<VirtualMachine>([
-    textColumn({
+    column({
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Running'),
       propertyName: 'status',
       getValue: (row) => this.yesNo(this.isRunning(row)),
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Start on Boot'),
       propertyName: 'autostart',
       getValue: (row) => this.yesNo(this.isAutostartEnabled(row)),
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Virtual CPUs'),
       propertyName: 'vcpus',
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Cores'),
       propertyName: 'cores',
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Threads'),
       propertyName: 'threads',
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Memory Size'),
       propertyName: 'memory',
       hidden: true,
       getValue: (row) => this.memoryLabel(row),
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Boot Loader Type'),
       propertyName: 'bootloader',
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('System Clock'),
       propertyName: 'time',
       hidden: true,
       getValue: (row) => this.systemClockLabel(row),
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Display Port'),
       // The cast is nominal: `propertyName` only names the `tnColumnDef`, and `sortAccessors`
       // supplies the actual sort accessor, so the value is never read off the row.
@@ -207,27 +207,22 @@ export class VmListComponent implements OnInit {
       hidden: true,
       getValue: (row) => this.displayPortLabel(row),
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Description'),
       propertyName: 'description',
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Shutdown Timeout'),
       propertyName: 'shutdown_timeout',
       hidden: true,
       getValue: (row) => this.shutdownTimeoutLabel(row),
     }),
-  ], {
-    // Both delegate to the helpers the template cells use, so the row tag a hidden column
-    // renders in the detail row can't drift from the one its visible counterpart renders.
-    uniqueRowTag: (row) => this.uniqueRowTag(row),
-    ariaLabels: (row) => [this.vmAriaLabel(row)],
-  }));
+  ]));
 
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
 
-  protected readonly hiddenColumns = computed<Column<VirtualMachine, ColumnComponent<VirtualMachine>>[]>(
+  protected readonly hiddenColumns = computed<TableColumn<VirtualMachine>[]>(
     () => this.columns().filter((column) => column?.hidden),
   );
 
@@ -410,7 +405,7 @@ export class VmListComponent implements OnInit {
     return `${columnTitle} ${this.vmAriaLabel(row)}`;
   }
 
-  protected onColumnsChange(columns: Column<VirtualMachine, ColumnComponent<VirtualMachine>>[]): void {
+  protected onColumnsChange(columns: TableColumn<VirtualMachine>[]): void {
     this.columns.set([...columns]);
   }
 

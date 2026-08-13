@@ -25,11 +25,11 @@ import { SearchInputComponent } from 'app/modules/forms/search-input/components/
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { SearchQuery, AdvancedSearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { searchProperties, textProperty, booleanProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
-import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
-import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
-import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import { ApiDataProvider } from 'app/modules/tn-table/classes/api-data-provider/api-data-provider';
+import { PaginationServerSide } from 'app/modules/tn-table/classes/api-data-provider/pagination-server-side.class';
+import { SortingServerSide } from 'app/modules/tn-table/classes/api-data-provider/sorting-server-side.class';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
+import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';

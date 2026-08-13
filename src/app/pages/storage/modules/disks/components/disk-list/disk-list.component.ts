@@ -22,14 +22,13 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Disk, DetailsDisk, ExtraDiskQueryOptions } from 'app/interfaces/disk.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { IxTableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
-} from 'app/modules/ix-table/utils';
+} from 'app/modules/tn-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
@@ -43,6 +42,7 @@ import { UnlockSedDialog } from 'app/pages/storage/modules/disks/components/disk
 import { DiskWipeDialog } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 import { sedStatusLabel } from 'app/pages/storage/modules/disks/utils/sed-status-label.utils';
 import { LicenseService } from 'app/services/license.service';
+import { column } from 'app/modules/tn-table/column-configs';
 
 /**
  * A disk row with every display-only value resolved once, when the rows are built, so
@@ -238,51 +238,51 @@ export class DiskListComponent {
   // preferences) and to drive the hidden-column readout inside the expanded detail row;
   // tn-table renders its own cells from the templates below.
   protected readonly columns = signal(createTable<DiskRow>([
-    textColumn({
+    column({
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Serial'),
       propertyName: 'serial',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Disk Size'),
       propertyName: 'size',
       getValue: (disk) => disk.sizeText,
       // Sort by the raw byte count, not by the formatted "5 GiB" text.
       sortBy: (disk) => disk.size,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Pool'),
       propertyName: 'pool',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Disk Type'),
       propertyName: 'type',
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Description'),
       propertyName: 'description',
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Model'),
       propertyName: 'model',
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Transfer Mode'),
       propertyName: 'transfermode',
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Rotation Rate (RPM)'),
       propertyName: 'rotationrate',
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('HDD Standby'),
       propertyName: 'hddstandby',
       getValue: (row) => row.hddStandbyText,
@@ -293,7 +293,7 @@ export class DiskListComponent {
       sortBy: (row) => toStandbyOrder(row.hddstandby),
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Adv. Power Management'),
       propertyName: 'advpowermgmt',
       getValue: (row) => row.advPowerManagementText,
@@ -303,7 +303,7 @@ export class DiskListComponent {
       sortBy: (row) => toPowerLevelOrder(row.advpowermgmt),
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Self-Encrypting Drive (SED)'),
       propertyName: 'sed_status',
       // The row's resolved status text, so the hidden-column readout in the details row shows
@@ -314,16 +314,11 @@ export class DiskListComponent {
       sortBy: (row) => row.sedStatusText,
       hidden: !this.hasSed(),
     }),
-  ], {
-    // Still needed by the ix-table cell components the details row renders for the
-    // hidden columns — they resolve their own data-test ids and aria labels from these.
-    uniqueRowTag: (row) => `disk-${row.name}`,
-    ariaLabels: (row) => [row.name, this.translate.instant('Disk')],
-  }));
+  ]));
 
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
 
-  protected readonly hiddenColumns = computed<Column<DiskRow, ColumnComponent<DiskRow>>[]>(
+  protected readonly hiddenColumns = computed<TableColumn<DiskRow>[]>(
     () => this.columns().filter((column) => column?.hidden),
   );
 
@@ -384,7 +379,7 @@ export class DiskListComponent {
     this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns(), { columns: this.columns() }));
   }
 
-  protected onColumnsChange(columns: Column<DiskRow, ColumnComponent<DiskRow>>[]): void {
+  protected onColumnsChange(columns: TableColumn<DiskRow>[]): void {
     this.columns.set([...columns]);
   }
 

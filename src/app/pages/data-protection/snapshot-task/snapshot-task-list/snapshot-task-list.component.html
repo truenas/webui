@@ -187,7 +187,11 @@
       </ng-container>
 
       <ng-template let-task tnDetailRowDef>
-        <ix-table-details-row [hiddenColumns]="list.hiddenColumns()" [row]="task">
+        <ix-table-details-row
+          [hiddenColumns]="list.hiddenColumns()"
+          [row]="task"
+          [uniqueRowTag]="uniqueRowTag(task)"
+        >
           <div class="table-details-row-actions">
             <tn-button
               icon="mdi-pencil"

@@ -21,17 +21,13 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
-} from 'app/modules/ix-table/utils';
+} from 'app/modules/tn-table/utils';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -46,6 +42,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { actionsColumn, column } from 'app/modules/tn-table/column-configs';
 
 @Component({
   selector: 'ix-nfs-list',
@@ -137,32 +134,32 @@ export class NfsListComponent implements OnInit {
     },
   ];
 
-  // ix-table column model retained purely to drive <ix-table-column-picker>
+  // Column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs); tn-table renders cells from the template and
   // derives its `displayedColumns` from these via `toDisplayedColumns`. The
   // `tier` column is reactive (see `displayedColumns`), not picker-managed.
   protected readonly columns = signal(createTable<NfsShare>([
-    textColumn({
+    column({
       title: this.translate.instant('Path'),
       propertyName: 'path',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Description'),
       propertyName: 'comment',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Networks'),
       propertyName: 'networks',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Hosts'),
       propertyName: 'hosts',
     }),
-    toggleColumn({
+    column({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
-    yesNoColumn({
+    column({
       title: this.translate.instant('Expose Snapshots'),
       propertyName: 'expose_snapshots',
       hidden: !this.isEnterprise(),

@@ -5,7 +5,7 @@ import { MockComponents, MockInstance } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Container } from 'app/interfaces/container.interface';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { AllContainersHeaderComponent } from 'app/pages/containers/components/all-containers/all-containers-header/all-containers-header.component';
 import { AllContainersComponent } from 'app/pages/containers/components/all-containers/all-containers.component';

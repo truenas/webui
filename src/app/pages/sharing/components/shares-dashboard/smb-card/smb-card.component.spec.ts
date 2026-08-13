@@ -20,7 +20,7 @@ import { SmbSharePurpose, SmbShare, SmbSharesec } from 'app/interfaces/smb-share
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxTablePagerShowMoreComponent,
-} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+} from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';

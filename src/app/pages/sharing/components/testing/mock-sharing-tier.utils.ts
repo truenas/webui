@@ -3,7 +3,7 @@ import { mockProvider } from '@ngneat/spectator/jest';
 import { tnIconMarker } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { SharingTierInfo, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
-import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 
 interface TierRow {

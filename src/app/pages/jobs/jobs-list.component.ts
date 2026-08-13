@@ -31,9 +31,9 @@ import { Job } from 'app/interfaces/job.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/ix-table/utils';
+import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
+import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import {
   JobSlice,
   selectAllNonTransientJobs,

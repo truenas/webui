@@ -15,15 +15,15 @@ import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
-} from 'app/modules/ix-table/utils';
+} from 'app/modules/tn-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
+import { column } from 'app/modules/tn-table/column-configs';
 
 let nextLabelId = 0;
 
@@ -65,58 +65,58 @@ export class NfsSessionListComponent implements OnInit {
   protected readonly NfsType = NfsType;
 
   protected readonly nfs3Columns = signal(createTable<Nfs3Session>([
-    textColumn({
+    column({
       title: this.translate.instant('IP'),
       propertyName: 'ip',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Export'),
       propertyName: 'export',
     }),
   ]));
 
   protected readonly nfs4Columns = signal(createTable<Nfs4Session['info']>([
-    textColumn({
+    column({
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Client ID'),
       propertyName: 'clientid',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Address'),
       propertyName: 'address',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Status'),
       propertyName: 'status',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Seconds From Last Renew'),
       propertyName: 'seconds from last renew',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Minor Version'),
       propertyName: 'minor version',
       hidden: true,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Implementation Domain'),
       hidden: true,
       propertyName: 'Implementation domain',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Implementation Name'),
       hidden: true,
       propertyName: 'Implementation name',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Callback State'),
       hidden: true,
       propertyName: 'callback state',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Callback Address'),
       propertyName: 'callback address',
       hidden: true,

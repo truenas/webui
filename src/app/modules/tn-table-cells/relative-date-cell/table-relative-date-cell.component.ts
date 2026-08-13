@@ -12,6 +12,20 @@ import { RelativeDateTickerService } from 'app/modules/dates/services/relative-d
 import { LocaleService } from 'app/modules/language/locale.service';
 
 /**
+ * The "time ago" label this cell shows, as a plain function.
+ *
+ * Also used by `ix-table-details-row`, which prints a hidden relative-date column as text and
+ * cannot reach the cell — the two must read the same or the same value would say different things
+ * depending on whether its column is showing.
+ */
+export function formatRelativeDateValue(value: unknown, translate: TranslateService): string {
+  if (!value) {
+    return translate.instant('N/A');
+  }
+  return isValid(value) ? formatDistanceToNowShortened(value as number) : (value as string);
+}
+
+/**
  * tn-table replacement for the ix-table `relativeDateColumn` cell renderer.
  * Renders a shortened "time ago" label with the machine/browser timestamps in
  * the tooltip, mirroring `ix-cell-relative-date` (including its `N/A` and
@@ -63,17 +77,9 @@ export class TableRelativeDateCellComponent {
 
   protected readonly date = translated<string>(() => {
     const value = this.value();
-    if (!value) {
-      return this.translate.instant('N/A');
-    }
-
-    if (isValid(value)) {
-      // Depends on *now*, not just on `value` — take the clock dependency explicitly.
-      this.tick();
-      return formatDistanceToNowShortened(value as number);
-    }
-
-    return value as string;
+    // Depends on *now*, not just on `value` — take the clock dependency explicitly.
+    this.tick();
+    return formatRelativeDateValue(value, this.translate);
   });
 
   protected readonly isInvalidDate = computed(

@@ -16,16 +16,16 @@ import { dockerHubRegistry, DockerRegistry } from 'app/interfaces/docker-registr
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { createTable, mapTnSortToProviderSorting, toDisplayedColumns } from 'app/modules/ix-table/utils';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
+import { createTable, mapTnSortToProviderSorting, toDisplayedColumns } from 'app/modules/tn-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dockerRegistriesListElements } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.elements';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
+import { column } from 'app/modules/tn-table/column-configs';
 
 @Component({
   selector: 'ix-docker-registries-list',
@@ -67,13 +67,10 @@ export class DockerRegistriesListComponent implements OnInit {
   // renders its own column templates; we derive its displayedColumns from the
   // picker's visibility state below.
   protected readonly columns = signal(createTable<DockerRegistry>([
-    textColumn({ title: this.translate.instant('Name'), propertyName: 'name' }),
-    textColumn({ title: this.translate.instant('Username'), propertyName: 'username' }),
-    textColumn({ title: this.translate.instant('URI'), propertyName: 'uri' }),
-  ], {
-    uniqueRowTag: (row) => `docker-registry-${row.uri}-${row.name}`,
-    ariaLabels: (row) => [row.name, this.translate.instant('Docker Registry')],
-  }));
+    column({ title: this.translate.instant('Name'), propertyName: 'name' }),
+    column({ title: this.translate.instant('Username'), propertyName: 'username' }),
+    column({ title: this.translate.instant('URI'), propertyName: 'uri' }),
+  ]));
 
   // The actions column lives only in the template, so it is appended here rather
   // than declared in `columns` (and stays out of the picker as a result).
@@ -92,7 +89,7 @@ export class DockerRegistriesListComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  protected onColumnsChange(columns: Column<DockerRegistry, ColumnComponent<DockerRegistry>>[]): void {
+  protected onColumnsChange(columns: TableColumn<DockerRegistry>[]): void {
     this.columns.set([...columns]);
   }
 

@@ -33,17 +33,10 @@ import { Job } from 'app/interfaces/job.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import {
-  scheduleColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
-import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/ix-table/utils';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { IxTableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/tn-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -69,6 +62,8 @@ import { CloudSyncDataTransformer } from 'app/pages/data-protection/cloudsync/ut
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
+import { formatRelativeDateValue } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import { column } from 'app/modules/tn-table/column-configs';
 
 @Component({
   selector: 'ix-cloudsync-list',
@@ -158,32 +153,32 @@ export class CloudSyncListComponent implements OnInit {
 
   protected readonly list = tnTableListHost<CloudSyncTaskUi>(this.dataProvider, {
     columns: () => createTable<CloudSyncTaskUi>([
-      textColumn({
+      column({
         title: this.titles().description,
         propertyName: 'description',
       }),
-      textColumn({
+      column({
         title: this.titles().credential,
         columnName: 'credential',
         hidden: true,
         getValue: (task) => task.credentials.name,
       }),
-      textColumn({
+      column({
         title: this.titles().direction,
         propertyName: 'direction',
         hidden: true,
       }),
-      textColumn({
+      column({
         title: this.titles().transferMode,
         propertyName: 'transfer_mode',
         hidden: true,
       }),
-      textColumn({
+      column({
         title: this.titles().path,
         propertyName: 'path',
         hidden: true,
       }),
-      textColumn({
+      column({
         title: this.titles().schedule,
         propertyName: 'schedule',
         hidden: true,
@@ -193,43 +188,39 @@ export class CloudSyncListComponent implements OnInit {
       // relative phrase ("in 3 days") and a formatted date all sort meaninglessly, so each names
       // the sort key `CloudSyncDataTransformer` derives for it. Spelled out, because a column's
       // `getValue` is otherwise what it sorts by.
-      scheduleColumn({
+      column({
         title: this.titles().frequency,
         getValue: (task) => task.schedule,
         propertyName: 'frequency_sort_key',
         sortBy: (task) => task.frequency_sort_key,
       }),
-      textColumn({
+      column({
         title: this.titles().nextRun,
         hidden: true,
         getValue: (task: CloudSyncTaskUi) => this.getNextRun(task),
         propertyName: 'next_run_sort_key',
         sortBy: (task) => task.next_run_sort_key,
       }),
-      relativeDateColumn({
+      column({
         title: this.titles().lastRun,
         hidden: true,
         getValue: (task) => task.job?.time_finished?.$date,
+        // The table shows this through <ix-table-relative-date-cell>; a details row prints it.
+        formatValue: (task) => formatRelativeDateValue(task.job?.time_finished?.$date, this.translate),
         propertyName: 'last_run_sort_key',
         sortBy: (task) => task.last_run_sort_key,
       }),
-      stateButtonColumn({
+      column({
         title: this.titles().state,
         columnName: 'state',
         getValue: (row) => row.state.state,
-        getJob: (row) => row.job,
         cssClass: 'state-button',
       }),
-      yesNoColumn({
+      column({
         title: this.titles().enabled,
         propertyName: 'enabled',
       }),
-    ], {
-      // Still needed: <ix-table-details-row> renders the hidden columns through the
-      // ix cell components, which read `uniqueRowTag`/`ariaLabels` off the column.
-      uniqueRowTag: (row) => 'cloudsync-task-' + row.description,
-      ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
-    }),
+    ]),
   });
 
   protected readonly trackByTaskId = (_index: number, row: CloudSyncTaskUi): number => row.id;

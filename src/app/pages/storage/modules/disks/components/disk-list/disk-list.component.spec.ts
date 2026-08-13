@@ -17,10 +17,10 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 import {
   IxTableDetailsRowComponent,
-} from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
+} from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import {
   TableColumnPickerComponent,
-} from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
