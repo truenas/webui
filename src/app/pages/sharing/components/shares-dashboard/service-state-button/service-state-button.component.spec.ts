@@ -29,7 +29,6 @@ describe('ServiceStateButtonComponent', () => {
 
   it('shows service status based on service state', () => {
     spectator.setInput('service', { id: 1, service: ServiceName.Nfs, state: ServiceStatus.Running } as Service);
-    spectator.setInput('count', 5);
 
     expect(getStatus()).toHaveText('Running');
     expect(getStatus()).toHaveClass('fn-theme-green');

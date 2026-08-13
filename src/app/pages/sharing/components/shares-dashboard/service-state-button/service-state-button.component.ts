@@ -26,9 +26,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 })
 export class ServiceStateButtonComponent {
   readonly service = input<Service>();
-  readonly count = input<number>();
 
-  protected readonly serviceStatus = ServiceStatus;
   protected readonly serviceNames = serviceNames;
 
   readonly statusClass = computed(() => {

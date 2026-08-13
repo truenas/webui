@@ -55,6 +55,12 @@ export class GlobalTargetConfigurationComponent extends IxFormHostForm implement
   protected readonly isHaSystem = signal(false);
   private originalBasename: string | null = null;
 
+  /**
+   * Last known ALUA value, surviving the control being removed on a non-HA system. The control
+   * itself only exists while HA is licensed — it must stay out of the update payload otherwise.
+   */
+  private aluaValue = false;
+
   protected readonly form = this.fb.nonNullable.group({
     basename: ['', Validators.required],
     isns_servers: [[] as string[]],
@@ -90,6 +96,7 @@ export class GlobalTargetConfigurationComponent extends IxFormHostForm implement
 
     this.loadFormConfig(this.api.call('iscsi.global.config'), (config) => {
       this.originalBasename = config.basename;
+      this.aluaValue = config.alua;
       this.form.patchValue(config);
     });
   }
@@ -113,11 +120,15 @@ export class GlobalTargetConfigurationComponent extends IxFormHostForm implement
       this.isHaSystem.set(isHa);
 
       if (!isHa) {
+        // Remembered rather than dropped: the selector can emit after the config load (or after
+        // the user has toggled ALUA), and a later re-add would otherwise silently reset it.
+        this.aluaValue = this.form.controls.alua?.value ?? this.aluaValue;
         this.form.removeControl('alua');
+        return;
       }
 
-      if (isHa && !this.form.controls.alua) {
-        this.form.addControl('alua', new FormControl(false, { nonNullable: true }));
+      if (!this.form.controls.alua) {
+        this.form.addControl('alua', new FormControl(this.aluaValue, { nonNullable: true }));
       }
     });
   }

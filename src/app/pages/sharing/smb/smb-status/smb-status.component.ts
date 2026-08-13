@@ -27,12 +27,12 @@ import { SmbShareListComponent } from './components/smb-share-list/smb-share-lis
   ],
 })
 export class SmbStatusComponent {
-  protected translate = inject(TranslateService);
+  private translate = inject(TranslateService);
   private router = inject(Router);
 
   readonly activeTab = input('sessions');
 
-  navLinks = [{
+  protected readonly navLinks = [{
     label: this.translate.instant('Sessions'),
     path: '/sharing/smb/status/sessions',
     slug: 'sessions',

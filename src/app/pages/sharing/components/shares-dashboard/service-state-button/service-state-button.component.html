@@ -1,6 +1,8 @@
 <!-- A read-only status readout, not a control: it carries no action, so it is a `role="status"`
   region rather than the button Material rendered (no tn-* outlined pill carries the green /
-  grey / orange service colours). `tnTestIdType="button"` pins the legacy
+  grey / orange service colours). The live region is deliberate — the state only changes in
+  response to the user starting/stopping the service from this same card, so announcing it is
+  the confirmation a sighted user gets from the colour. `tnTestIdType="button"` pins the legacy
   `button-service-status-*` id that `[ixTest]` on the old `<button>` resolved to. -->
 <span
   class="service-status"

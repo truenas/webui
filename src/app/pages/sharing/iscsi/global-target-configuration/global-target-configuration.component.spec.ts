@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -39,6 +39,9 @@ describe('TargetGlobalConfigurationComponent', () => {
   const getTnCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  const hasTnCheckbox = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  )).length > 0;
 
   const createComponent = createComponentFactory({
     component: GlobalTargetConfigurationComponent,
@@ -84,6 +87,15 @@ describe('TargetGlobalConfigurationComponent', () => {
       }),
     ],
   });
+
+  /**
+   * The basename control, whose validator messages have no rendered surface to assert against.
+   * The cast is deliberate: `form` is protected because only the component and its `<ix-form>`
+   * drive it.
+   */
+  const getBasenameControl = (): AbstractControl => (
+    spectator.component as unknown as { form: FormGroup }
+  ).form.controls.basename;
 
   /** Re-creates the component in the same TestBed, so a changed selector/mock is picked up. */
   function recreateComponent(): void {
@@ -183,35 +195,70 @@ describe('TargetGlobalConfigurationComponent', () => {
     expect(await (await getTnCheckbox('iser')).isDisabled()).toBe(false);
   });
 
+  it('keeps the loaded ALUA value across a change in HA license status', async () => {
+    jest.spyOn(api, 'call').mockImplementation((method: string) => {
+      if (method === 'iscsi.global.config') {
+        return of({
+          basename: 'iqn.2005-10.org.freenas.ctl',
+          isns_servers: [],
+          pool_avail_threshold: 20,
+          listen_port: 3260,
+          alua: true,
+        } as IscsiGlobalConfig);
+      }
+      if (method === 'rdma.capable_protocols') {
+        return of([]);
+      }
+      return of(null);
+    });
+
+    recreateComponent();
+    expect(await (await getTnCheckbox('alua')).isChecked()).toBe(true);
+
+    // The control is dropped entirely on a non-HA system, so ALUA never reaches the payload.
+    mockStore$.overrideSelector(selectIsHaLicensed, false);
+    mockStore$.refreshState();
+    spectator.detectChanges();
+    expect(await hasTnCheckbox('alua')).toBe(false);
+
+    // Re-added from the loaded config rather than reset to the control's default.
+    mockStore$.overrideSelector(selectIsHaLicensed, true);
+    mockStore$.refreshState();
+    spectator.detectChanges();
+    expect(await (await getTnCheckbox('alua')).isChecked()).toBe(true);
+  });
+
   it('validates Base Name field only when it is being modified', async () => {
     const basename = await getTnInput('basename');
 
-    // Original value is 'iqn.2005-10.org.freenas.ctl' from mock
-    // Form should be valid initially even if we don't touch the basename
-    expect(spectator.component.form.controls.basename.valid).toBe(true);
+    // Original value is 'iqn.2005-10.org.freenas.ctl' from the mock, so the form is submittable
+    // without the basename being touched at all.
+    expect(spectator.component.canSubmit()).toBe(true);
 
-    // Test with uppercase letters - validation should trigger
+    // Uppercase letters - validation should trigger
     await basename.setValue('IQN.2005-10.ORG.FREENAS.CTL');
-    expect(spectator.component.form.controls.basename.invalid).toBe(true);
-    expect(spectator.component.form.controls.basename.errors).toMatchObject({
+    expect(spectator.component.canSubmit()).toBe(false);
+    // The message is only reachable off the control: it never reaches the DOM until the field is
+    // blurred, and this asserts the translated copy the user eventually sees.
+    expect(getBasenameControl().errors).toMatchObject({
       pattern: { message: 'Only lowercase alphanumeric characters and . : - are allowed.' },
     });
 
-    // Test with special characters like @ and !
+    // Special characters like @ and !
     await basename.setValue('iqn.2005-10.org.freenas.ctl@%!!');
-    expect(spectator.component.form.controls.basename.invalid).toBe(true);
+    expect(spectator.component.canSubmit()).toBe(false);
 
-    // Test with spaces
+    // Spaces
     await basename.setValue('iqn 2005-10 org freenas ctl');
-    expect(spectator.component.form.controls.basename.invalid).toBe(true);
+    expect(spectator.component.canSubmit()).toBe(false);
 
-    // Test with valid value (lowercase, dots, dashes, colons)
+    // Valid value (lowercase, dots, dashes, colons)
     await basename.setValue('iqn.2005-10.org.freenas.ctl:target');
-    expect(spectator.component.form.controls.basename.valid).toBe(true);
+    expect(spectator.component.canSubmit()).toBe(true);
 
-    // Change back to original value - should be valid again
+    // Back to the original value - valid again
     await basename.setValue('iqn.2005-10.org.freenas.ctl');
-    expect(spectator.component.form.controls.basename.valid).toBe(true);
+    expect(spectator.component.canSubmit()).toBe(true);
   });
 
   it('allows saving form when only modifying non-basename fields, even with non-conforming basename', async () => {
@@ -236,8 +283,8 @@ describe('TargetGlobalConfigurationComponent', () => {
     // Don't touch basename, only modify listen_port
     await (await getTnInput('listen_port')).setValue('3270');
 
-    // Form should be valid because we didn't modify the basename
-    expect(spectator.component.form.valid).toBe(true);
+    // Save is available because we didn't modify the basename.
+    expect(spectator.component.canSubmit()).toBe(true);
 
     spectator.component.submit();
 
