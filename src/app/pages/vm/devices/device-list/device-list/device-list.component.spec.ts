@@ -2,7 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment, UnitTestElement } from '@angular/cdk/testing/testbed';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnBannerComponent, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+  TnBannerComponent, TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting,
+  TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -150,6 +151,21 @@ describe('DeviceListComponent', () => {
       'button-1-delete',
       'button-1-details',
     ]);
+  });
+
+  it('opens the add form with the VM name in the panel title', async () => {
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await addButton.click();
+
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(DeviceFormComponent, {
+      title: 'Add Device for Test VM',
+      inputs: {
+        deviceFormData: {
+          virtualMachineId: 76,
+          vmName: 'Test VM',
+        },
+      },
+    });
   });
 
   it('opens the edit form when Edit menu item is selected', async () => {
