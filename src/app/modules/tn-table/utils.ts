@@ -69,10 +69,10 @@ export function toUniqueRowTag(value: string): string {
  * against the row object assumes rows are replaced rather than mutated in place, which is worth
  * checking per data provider rather than in bulk.
  *
- * A list built on {@link tnTableListHost} has no reason to reach for this: its `rowTag` already
- * memoizes per row, and it keys the cache on (rows, language) rather than on the row object, so
- * it also survives a row mutated in place. It normalizes differently, though — lodash `kebabCase`
- * rather than {@link toUniqueRowTag} — so the two are not interchangeable mid-table.
+ * A list built on {@link tnTableListHost} has no reason to reach for this: its `rowTag` normalizes
+ * through {@link toUniqueRowTag} just the same, and memoizes per row keyed on (rows, language)
+ * rather than on the row object, so it also survives a row mutated in place. The two produce the
+ * same tag, so a table may mix them.
  *
  * @param build the raw, un-kebab-ed tag for a row, e.g. ``(vm) => `virtual-machine-${vm.name}` ``.
  */
@@ -538,7 +538,9 @@ export function tnTableListHost<T extends object>(
     loadingMessage,
     empty,
     perRow,
-    rowTag: (tagBase: (row: T) => string) => perRow((row: T) => kebabCase(convertStringToId(tagBase(row)))),
+    // Delegates rather than open-coding the normalization, so a change to how row tags are
+    // spelled reaches these lists along with every table that calls `toUniqueRowTag` directly.
+    rowTag: (tagBase: (row: T) => string) => perRow((row: T) => toUniqueRowTag(tagBase(row))),
   };
 
   const withSorting = (

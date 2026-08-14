@@ -731,6 +731,17 @@ describe('tnTableListHost', () => {
         expect(makeTag()({ name: 'pool/dataset' })).toBe('replication-task-pool-dataset');
       });
     });
+
+    // A list host and a table calling `toUniqueRowTag` directly can sit side by side, so the two
+    // spellings have to agree — this fails if either one starts normalizing on its own.
+    it('spells the tag exactly as toUniqueRowTag does', () => {
+      TestBed.runInInjectionContext(() => {
+        const tag = makeTag();
+        for (const name of ['My Task', 'task1', 'pool/dataset', 'eth0 & sda!']) {
+          expect(tag({ name })).toBe(toUniqueRowTag('replication-task-' + name));
+        }
+      });
+    });
   });
 });
 
