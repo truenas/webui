@@ -13,15 +13,21 @@ import { preferredColumnsUpdated } from 'app/store/preferences/preferences.actio
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 /**
- * tn-select (multiselect) based column picker — the tn-table counterpart of the
- * mat-menu `<ix-table-columns-selector>`. Same contract (`columns` in,
- * `columnsChange` out, `columnPreferencesKey` for persistence), so a list pairs
- * it with the `toDisplayedColumns` bridge exactly like the legacy selector.
+ * tn-select (multiselect) based column picker — the one control a tn-table list
+ * uses to let users choose which columns are visible. `columns` in,
+ * `columnsChange` out, `columnPreferencesKey` for persistence; a list pairs it
+ * with the `toDisplayedColumns` bridge to feed `tn-table`'s `displayedColumns`.
  *
  * Only columns with a `title` are user-toggleable (an actions column has none);
  * at least one titled column always stays visible. Visibility is persisted per
- * `columnPreferencesKey` via `preferredColumnsUpdated`, keyed by column title to
- * stay wire-compatible with the legacy selector's saved preferences.
+ * `columnPreferencesKey` via `preferredColumnsUpdated`, keyed by column title so
+ * preferences saved by earlier releases keep loading. A title is a translated
+ * string, so a saved preference can stop resolving (locale switch, renamed
+ * column); such a preference is treated as stale and the defaults are restored.
+ *
+ * A key therefore owns exactly one set of column titles: two pickers over
+ * different columns must not share one (the store keeps a single entry per key,
+ * so each would read the other's titles as stale and reset to defaults).
  *
  * The input columns are never mutated: `columnsChange` emits copies with
  * updated `hidden` flags, and the host is expected to feed them back into
@@ -46,8 +52,8 @@ export class TableColumnPickerComponent<T = unknown> implements OnInit {
   protected readonly control = new FormControl<string[]>([], { nonNullable: true });
 
   // Label is translated for display; value stays the raw title — it is the
-  // persistence key and must remain wire-compatible with the legacy selector's
-  // saved preferences.
+  // persistence key and must keep matching preferences saved by earlier
+  // releases.
   protected readonly options = computed<TnSelectOption<string>[]>(
     () => this.selectableColumns().map((column) => ({
       value: column.title,
@@ -70,10 +76,19 @@ export class TableColumnPickerComponent<T = unknown> implements OnInit {
       take(1),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((saved) => {
-      const visible = saved?.columns?.length
-        ? this.selectableTitles().filter((title) => saved.columns.includes(title))
+      const savedTitles = saved?.columns ?? [];
+      const selectable = this.selectableTitles();
+      // Titles are translated, so a locale switch (or a renamed column) leaves
+      // saved titles that no longer resolve — usually only some of them, since
+      // titles like "URI" are identical across locales. Applying such a
+      // preference partially would silently hide every column whose title did
+      // change, so any unresolved title makes the whole preference stale and
+      // the defaults win.
+      const isStale = savedTitles.some((title) => !selectable.includes(title));
+      const visible = savedTitles.length && !isStale
+        ? selectable.filter((title) => savedTitles.includes(title))
         : this.defaultVisibleTitles();
-      this.applyVisibility(visible.length ? visible : this.selectableTitles().slice(0, 1));
+      this.applyVisibility(visible);
     });
   }
 
@@ -115,6 +130,10 @@ export class TableColumnPickerComponent<T = unknown> implements OnInit {
   }
 
   private defaultVisibleTitles(): string[] {
-    return this.selectableColumns().filter((column) => !column.hidden).map((column) => column.title);
+    const visible = this.selectableColumns().filter((column) => !column.hidden).map((column) => column.title);
+    // A table that declares every titled column hidden would otherwise start
+    // fully collapsed, and the empty-selection revert would have nothing to
+    // restore. Keep one column visible.
+    return visible.length ? visible : this.selectableTitles().slice(0, 1);
   }
 }
