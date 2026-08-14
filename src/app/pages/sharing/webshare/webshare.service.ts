@@ -97,7 +97,9 @@ export class WebShareService {
   /**
    * Whether WebShare can be opened. Requires an accessible hostname
    * (either the current `.truenas.direct` domain or a resolved hostname), that
-   * TrueNAS Connect is currently configured, AND that the WebShare service is running.
+   * TrueNAS Connect is currently configured, AND that the WebShare service is not
+   * known to be stopped — an unloaded services slice does not block, so the button
+   * is usable while the state is still unknown rather than flashing a false reason.
    * This reacts to TrueNAS Connect being disabled or the service being stopped so the
    * UI immediately blocks WebShare access without a page refresh.
    */
