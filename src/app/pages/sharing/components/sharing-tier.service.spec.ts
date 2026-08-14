@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { DestroyRef } from '@angular/core';
 import {
   createServiceFactory, mockProvider, SpectatorService,
 } from '@ngneat/spectator/jest';
@@ -7,13 +7,11 @@ import { TnDialog } from '@truenas/ui-components';
 import { Subject, of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
-import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
-import { tierColumnCssClass } from 'app/pages/sharing/components/storage-tier-cell/tier-column.constants';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('SharingTierService', () => {
@@ -138,72 +136,14 @@ describe('SharingTierService', () => {
     });
   });
 
-  describe('column / job wiring', () => {
-    interface TierRow { tier?: unknown; locked?: boolean }
+  describe('job wiring', () => {
     const destroyRef = { onDestroy: jest.fn() } as unknown as DestroyRef;
-    let cdr: ChangeDetectorRef;
     let jobUpdates$: Subject<{ fields: unknown }>;
 
-    function makeColumns(): TableColumn<TierRow>[] {
-      return [
-        { title: 'Name', cssClass: 'name-cell' },
-        { cssClass: tierColumnCssClass, hidden: true },
-      ] as TableColumn<TierRow>[];
-    }
-
     beforeEach(() => {
-      cdr = { markForCheck: jest.fn() } as unknown as ChangeDetectorRef;
       jobUpdates$ = new Subject();
       const api = spectator.inject(ApiService);
       jest.spyOn(api, 'subscribe').mockReturnValue(jobUpdates$);
-    });
-
-    function mockTierConfig(enabled: boolean): void {
-      const api = spectator.inject(ApiService);
-      jest.spyOn(api, 'call').mockImplementation((method) => {
-        if (method === 'zfs.tier.config') {
-          return of({ enabled }) as ReturnType<ApiService['call']>;
-        }
-        return of(null) as ReturnType<ApiService['call']>;
-      });
-    }
-
-    describe('enableTierColumn', () => {
-      it('unhides the tier column when getTierConfig emits enabled=true', () => {
-        mockTierConfig(true);
-        let columns = makeColumns();
-        spectator.service.enableTierColumn<TierRow>({
-          destroyRef,
-          cdr,
-          getColumns: () => columns,
-          setColumns: (cols) => { columns = cols; },
-        });
-
-        const tierColumn = columns.find((col) => col.cssClass === tierColumnCssClass);
-        expect(tierColumn?.hidden).toBe(false);
-        expect(cdr.markForCheck).toHaveBeenCalled();
-        expect(spectator.service.tierEnabled()).toBe(true);
-      });
-
-      it('does not touch the columns array when tiering is disabled', () => {
-        mockTierConfig(false);
-        const original = makeColumns();
-        let columns = original;
-        const setColumns = jest.fn((cols: typeof columns) => {
-          columns = cols;
-        });
-        spectator.service.enableTierColumn<TierRow>({
-          destroyRef,
-          cdr,
-          getColumns: () => columns,
-          setColumns,
-        });
-
-        expect(setColumns).not.toHaveBeenCalled();
-        expect(columns).toBe(original);
-        const tierColumn = columns.find((col) => col.cssClass === tierColumnCssClass);
-        expect(tierColumn?.hidden).toBe(true);
-      });
     });
 
     describe('wireTierJobRefresh', () => {
@@ -218,32 +158,6 @@ describe('SharingTierService', () => {
         jobUpdates$.next({ fields: {} });
         jest.advanceTimersByTime(600);
 
-        expect(reload).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('attachTierToShareList', () => {
-      beforeEach(() => jest.useFakeTimers());
-      afterEach(() => jest.useRealTimers());
-
-      it('bundles enableTierColumn + wireTierJobRefresh', () => {
-        mockTierConfig(true);
-        const reload = jest.fn();
-        let columns = makeColumns();
-
-        spectator.service.attachTierToShareList<TierRow>({
-          destroyRef,
-          cdr,
-          getColumns: () => columns,
-          setColumns: (cols) => { columns = cols; },
-          reload,
-        });
-
-        const tierColumn = columns.find((col) => col.cssClass === tierColumnCssClass);
-        expect(tierColumn?.hidden).toBe(false);
-
-        jobUpdates$.next({ fields: {} });
-        jest.advanceTimersByTime(600);
         expect(reload).toHaveBeenCalledTimes(1);
       });
     });

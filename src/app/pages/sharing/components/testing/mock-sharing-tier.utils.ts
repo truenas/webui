@@ -34,11 +34,7 @@ export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof m
     tierJobRefreshes$: () => jobUpdates$,
     openChangeTierDialog: jest.fn(() => of(true)),
     openChangeTierDialogForDataset: jest.fn(() => of(true)),
-    enableTierColumn: () => {},
     wireTierJobRefresh: (wireOpts: { reload: () => void }) => {
-      jobUpdates$.subscribe(() => wireOpts.reload());
-    },
-    attachTierToShareList: (wireOpts: { reload: () => void }) => {
       jobUpdates$.subscribe(() => wireOpts.reload());
     },
     createChangeTierAction: buildAction,
