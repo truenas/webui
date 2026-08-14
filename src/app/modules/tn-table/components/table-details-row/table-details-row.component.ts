@@ -77,7 +77,7 @@ export class IxTableDetailsRowComponent<T> {
     }
     this.reported.add(title);
     console.error(
-      `[ix-table-details-row] column "${column.title}" prints as "${text}". Give it a \`formatValue\` `
+      `[ix-table-details-row] column "${title}" prints as "${text}". Give it a \`formatValue\` `
       + 'saying how a detail row should print it — the table\'s own cell does that formatting in '
       + 'the template, where a detail row cannot reach it.',
     );
