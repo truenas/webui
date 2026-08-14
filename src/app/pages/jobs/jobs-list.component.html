@@ -63,12 +63,15 @@
     <ng-template let-job tnCellDef>
       @if (toDate(job.time_started); as date) {
         <ix-date
-          tnTestIdType="text"
+          tnTestIdType="date"
           [tnTestId]="[('Started' | translate), uniqueRowTag(job), 'row-date']"
           [date]="date"
         ></ix-date>
       } @else {
-        {{ 'N/A' | translate }}
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Started' | translate), uniqueRowTag(job), 'row-date']"
+        >{{ 'N/A' | translate }}</span>
       }
     </ng-template>
   </ng-container>
@@ -78,12 +81,15 @@
     <ng-template let-job tnCellDef>
       @if (toDate(job.time_finished); as date) {
         <ix-date
-          tnTestIdType="text"
+          tnTestIdType="date"
           [tnTestId]="[('Finished' | translate), uniqueRowTag(job), 'row-date']"
           [date]="date"
         ></ix-date>
       } @else {
-        {{ 'N/A' | translate }}
+        <span
+          tnTestIdType="text"
+          [tnTestId]="[('Finished' | translate), uniqueRowTag(job), 'row-date']"
+        >{{ 'N/A' | translate }}</span>
       }
     </ng-template>
   </ng-container>

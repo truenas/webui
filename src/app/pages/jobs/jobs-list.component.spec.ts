@@ -135,6 +135,20 @@ describe('JobsListComponent', () => {
     );
   });
 
+  // The date cells carry the data-test values the pre-migration `dateColumn` resolved: `date-…`
+  // from `<ix-date>` while the job has a timestamp, `text-…` from the N/A span while it does not
+  // — a running job has no `time_finished`, so both branches are on screen at once.
+  it('keeps the pre-migration date cell test ids on both the date and N/A branches', () => {
+    store$.overrideSelector(selectJobs, [
+      { ...fakeJobDataSource[0], time_finished: undefined },
+    ] as Job[]);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    expect(spectator.query('[data-test="date-started-job-446-row-date"]')).toExist();
+    expect(spectator.query('[data-test="text-finished-job-446-row-date"]')).toExist();
+  });
+
   it('should have empty message when loaded and datasource is empty', async () => {
     store$.overrideSelector(selectJobs, []);
     store$.refreshState();
