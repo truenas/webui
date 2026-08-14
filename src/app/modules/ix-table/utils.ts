@@ -388,16 +388,7 @@ export interface TnTableListHost<T extends object> {
   readonly rows: Signal<T[]>;
   /** For `[loading]`. */
   readonly isLoading: Signal<boolean>;
-  /**
-   * Translated loading text, for `[loadingMessage]`.
-   *
-   * `tn-table` defaults that input to a bare English literal — the library takes no i18n
-   * dependency, so it can only ship the untranslated default and expects the app to pass a
-   * translated one. Resolved here, out of the same `EmptyService` catalog that supplies
-   * {@link empty}'s message, rather than written out as `'Loading...' | translate` in each
-   * template: webui carried two spellings of that string (`Loading...` and `Loading…`) which
-   * translated to separate entries, and every fresh copy is a chance to add a third.
-   */
+  /** Translated loading text, for `[loadingMessage]`. See `EmptyService.loadingMessage`. */
   readonly loadingMessage: Signal<string>;
   /** For `[emptyMessage]`/`[emptyIcon]` and the page-level empty state. */
   readonly empty: TableEmptyState;
@@ -497,7 +488,7 @@ export function tnTableListHost<T extends object>(
   const lang = langChangeSignal();
   const emptyService = inject(EmptyService);
 
-  const loadingMessage = computed(() => emptyService.titleForType(EmptyType.Loading));
+  const loadingMessage = computed(() => emptyService.loadingMessage());
 
   function perRow<R>(derive: (row: T) => R): (row: T) => R {
     // A fresh cache per (rows, language), so invalidation is structural.

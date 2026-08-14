@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  Component, OnInit, ChangeDetectionStrategy, DestroyRef, computed, inject,
+  Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
@@ -15,7 +15,6 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
@@ -84,9 +83,6 @@ export class UserApiKeysComponent implements OnInit {
 
   protected readonly displayedColumns = ['name', 'username', 'local', 'revoked', 'created_at', 'expires_at', 'actions'];
   protected readonly trackById = (_index: number, row: ApiKey): number => row.id;
-
-  /** Out of the same catalog as the empty titles, so 'Loading...' stays a single translation key. */
-  protected readonly loadingMessage = computed(() => this.emptyService.titleForType(EmptyType.Loading));
 
   private readonly canWriteApiKeys = toSignal(this.authService.hasRole([Role.ApiKeyWrite]));
   private readonly currentUsername = toSignal(

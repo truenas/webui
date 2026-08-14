@@ -50,7 +50,6 @@ import {
   UpdateContainer,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -58,7 +57,6 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import {
   advancedModeFooterAction, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
@@ -80,10 +78,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    FormActionsComponent,
     IxListComponent,
     IxListItemComponent,
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnBannerComponent,
     TnButtonComponent,
@@ -157,19 +153,11 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   protected editingContainer: Container | null = null;
 
   /**
-   * Container to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
-   * carry data). Absent for Add, and unused in the legacy SlideIn host (which supplies
-   * the record via `slideInRef.getData()`).
+   * Container to edit, handed in by the `<tn-side-panel>` host (which has no `SlideInRef` to
+   * carry data). Absent for Add. Both openers pass the panel title themselves, so this form
+   * derives none of its own chrome.
    */
   readonly editContainer = input<Container | undefined>(undefined);
-  protected readonly title = computed(() => {
-    if (this.isEditMode()) {
-      return this.translate.instant('Edit Container: {name}', {
-        name: this.editingContainer?.name || '',
-      });
-    }
-    return this.translate.instant('Add Container');
-  });
 
   protected readonly hasPreferredPool = computed(() => {
     const config = this.containerConfigStore.config();
@@ -228,9 +216,7 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.editingContainer = this.slideInRef
-      ? (this.slideInRef.getData() as Container | undefined) ?? null
-      : this.editContainer() ?? null;
+    this.editingContainer = this.editContainer() ?? null;
 
     this.containerConfigStore.initialize();
 

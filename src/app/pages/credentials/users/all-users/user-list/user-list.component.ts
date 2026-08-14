@@ -1,11 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, computed, output, input, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, output, input, signal, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnCellDefDirective, TnHeaderCellDefDirective, TnTableColumnDirective,
   TnTableComponent, TnTablePagerComponent, type TnSortEvent,
 } from '@truenas/ui-components';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { getUserType } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -44,9 +43,6 @@ export class UserListComponent {
 
   protected readonly displayedColumns = ['username', 'full_name', 'builtin', 'roles'];
   protected readonly trackByUid = (_index: number, row: User): number => row.uid;
-
-  /** Out of the same catalog as the empty titles, so 'Loading...' stays a single translation key. */
-  protected readonly loadingMessage = computed(() => this.emptyService.titleForType(EmptyType.Loading));
 
   protected userType(row: User): string {
     return this.translate.instant(getUserType(row));

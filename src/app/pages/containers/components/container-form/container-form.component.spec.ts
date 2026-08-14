@@ -13,7 +13,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerCapabilitiesPolicy, ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
@@ -84,11 +83,6 @@ describe('ContainerFormComponent', () => {
         mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
         mockCall('container.query', []),
       ]),
-      mockProvider(SlideInRef, {
-        getData: jest.fn(() => undefined as Container | undefined),
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      }),
       mockProvider(ContainersStore, {
         reload: jest.fn(),
       }),
@@ -136,12 +130,6 @@ describe('ContainerFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('shows form title "Add Container"', () => {
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      const title = spectator.component['title']();
-      expect(title).toBe('Add Container');
     });
 
     it('sets isAdvancedMode to false by default', () => {
@@ -200,11 +188,6 @@ describe('ContainerFormComponent', () => {
           mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
         ]),
-        mockProvider(SlideInRef, {
-          getData: jest.fn(() => existingContainer as Container | undefined),
-          close: jest.fn(),
-          requireConfirmationWhen: jest.fn(),
-        }),
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
         }),
@@ -222,14 +205,8 @@ describe('ContainerFormComponent', () => {
     });
 
     beforeEach(() => {
-      spectator = createEditComponent();
+      spectator = createEditComponent({ props: { editContainer: existingContainer } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('shows form title with container name', () => {
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      const title = spectator.component['title']();
-      expect(title).toContain('test-container');
     });
 
     it('sets isEditMode to true', () => {
@@ -249,9 +226,9 @@ describe('ContainerFormComponent', () => {
       ).rejects.toThrow();
     });
 
-    it('shows Save button instead of Create button', async () => {
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(saveButton).toBeTruthy();
+    it('loads the container being edited into the form', async () => {
+      const nameInput = await getInput('name');
+      expect(await nameInput.getValue()).toBe('test-container');
     });
   });
 
@@ -285,8 +262,9 @@ describe('ContainerFormComponent', () => {
       const dialogService = spectator.inject(DialogService);
       const router = spectator.inject(Router);
       const snackbar = spectator.inject(SnackbarService);
-      const slideInRef = spectator.inject(SlideInRef);
       const containersStore = spectator.inject(ContainersStore);
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
 
       const nameInput = await getInput('name');
       await nameInput.setValue('new-container');
@@ -304,17 +282,17 @@ describe('ContainerFormComponent', () => {
       });
       spectator.detectChanges();
 
-      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create' }));
-      expect(await submitButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
 
-      await submitButton.click();
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(dialogService.jobDialog).toHaveBeenCalled();
       const jobDialogCall = (dialogService.jobDialog as jest.Mock).mock.calls[0];
       expect(jobDialogCall[1]).toEqual({ title: 'Creating Container' });
 
       expect(snackbar.success).toHaveBeenCalledWith('Container created');
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
+      expect(closed).toHaveBeenCalledWith(true);
       expect(containersStore.reload).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['/containers', 'view', 1]);
     });
@@ -342,11 +320,6 @@ describe('ContainerFormComponent', () => {
           mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
         ]),
-        mockProvider(SlideInRef, {
-          getData: jest.fn(() => existingContainer as Container | undefined),
-          close: jest.fn(),
-          requireConfirmationWhen: jest.fn(),
-        }),
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
           containerUpdated: jest.fn(),
@@ -366,21 +339,22 @@ describe('ContainerFormComponent', () => {
     });
 
     beforeEach(() => {
-      spectator = createEditComponent();
+      spectator = createEditComponent({ props: { editContainer: existingContainer } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('submits update call with only changed fields when form is submitted', async () => {
       const api = spectator.inject(ApiService);
       const snackbar = spectator.inject(SnackbarService);
-      const slideInRef = spectator.inject(SlideInRef);
       const containersStore = spectator.inject(ContainersStore);
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
 
       const nameInput = await getInput('name');
       await nameInput.setValue('updated-container');
 
-      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await submitButton.click();
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('container.update', [
         1,
@@ -390,7 +364,7 @@ describe('ContainerFormComponent', () => {
       ]);
 
       expect(snackbar.success).toHaveBeenCalledWith('Container updated');
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
+      expect(closed).toHaveBeenCalledWith(true);
       expect(containersStore.containerUpdated).toHaveBeenCalledWith(
         expect.objectContaining({ name: 'updated-container' }),
       );
@@ -440,7 +414,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('sends empty string for pool when no pool is selected (uses preferred pool)', async () => {
-      const dialogService = spectator.inject(DialogService);
+      const api = spectator.inject(ApiService);
 
       const nameInput = await getInput('name');
       await nameInput.setValue('new-container');
@@ -451,20 +425,15 @@ describe('ContainerFormComponent', () => {
       });
       spectator.detectChanges();
 
-      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create' }));
-      await submitButton.click();
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
 
-      expect(dialogService.jobDialog).toHaveBeenCalled();
-      const jobDialogCall = (dialogService.jobDialog as jest.Mock).mock.calls[0];
-      const jobObservable = jobDialogCall[0];
-
-      jobObservable.subscribe((job: { params: unknown[] }) => {
-        const payload = job.params[0];
-        expect(payload).toMatchObject({
+      expect(api.job).toHaveBeenCalledWith('container.create', [
+        expect.objectContaining({
           pool: '',
           name: 'new-container',
-        });
-      });
+        }),
+      ]);
     });
   });
 
@@ -490,11 +459,6 @@ describe('ContainerFormComponent', () => {
           mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
         ]),
-        mockProvider(SlideInRef, {
-          getData: jest.fn(() => undefined as Container | undefined),
-          close: jest.fn(),
-          requireConfirmationWhen: jest.fn(),
-        }),
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
         }),
@@ -608,11 +572,6 @@ describe('ContainerFormComponent', () => {
           mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic' }),
           mockCall('container.query', []),
         ]),
-        mockProvider(SlideInRef, {
-          getData: jest.fn(() => existingContainer as Container | undefined),
-          close: jest.fn(),
-          requireConfirmationWhen: jest.fn(),
-        }),
         mockProvider(ContainersStore, { initialize: jest.fn() }),
         mockProvider(TnDialog),
         mockProvider(DialogService),
@@ -621,7 +580,7 @@ describe('ContainerFormComponent', () => {
     });
 
     beforeEach(() => {
-      spectator = createEditComponent();
+      spectator = createEditComponent({ props: { editContainer: existingContainer } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -668,8 +627,8 @@ describe('ContainerFormComponent', () => {
       });
       spectator.detectChanges();
 
-      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create' }));
-      await submitButton.click();
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
     }
 
     it('sends default idmap when Default is selected', async () => {

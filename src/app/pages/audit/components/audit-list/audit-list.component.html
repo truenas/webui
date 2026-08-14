@@ -11,7 +11,7 @@
   [fixedLayout]="true"
   [activeRow]="dataProvider().expandedRow"
   [loading]="(dataProvider().isLoading$ | async) ?? false"
-  [loadingMessage]="loadingMessage()"
+  [loadingMessage]="emptyService.loadingMessage()"
   [emptyMessage]="emptyService.titleForType(emptyType)"
   [emptyDescription]="emptyService.descriptionForType(emptyType)"
   [emptyIcon]="emptyIconFor(emptyType)"

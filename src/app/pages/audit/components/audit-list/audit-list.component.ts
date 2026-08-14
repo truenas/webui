@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  Component, ChangeDetectionStrategy, computed, inject, input, output,
+  Component, ChangeDetectionStrategy, inject, input, output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -82,13 +82,6 @@ export class AuditListComponent {
   readonly rowSelected = output<AuditEntry>();
 
   protected readonly displayedColumns = auditDisplayedColumns;
-
-  /**
-   * `tn-table` defaults `[loadingMessage]` to a bare English literal — the library takes no i18n
-   * dependency — so the app passes a translated one, out of the same catalog the empty titles come
-   * from rather than as a fresh `'Loading...' | translate` literal here.
-   */
-  protected readonly loadingMessage = computed(() => this.emptyService.titleForType(EmptyType.Loading));
 
   protected emptyIconFor(type: EmptyType | null | undefined): string {
     return (type && emptyTypeIcons.get(type)) ?? defaultEmptyIcon;

@@ -87,6 +87,19 @@ export class EmptyService {
     return this.copyForType(type).description;
   }
 
+  /**
+   * Translated loading text for `tn-table [loadingMessage]`.
+   *
+   * The library takes no i18n dependency, so it can only default that input to a bare English
+   * literal and expects the app to pass a translated one. Resolved here, out of the same catalog
+   * {@link titleForType} reads, rather than written out as `'Loading...' | translate` per template:
+   * webui carried two spellings of that string (`Loading...` and `Loading…`) which translated to
+   * separate entries, and every fresh copy is a chance to add a third.
+   */
+  loadingMessage(): string {
+    return this.titleForType(EmptyType.Loading);
+  }
+
   /** Resolves — and memoizes, see {@link copyCache} — both halves of a state's copy at once. */
   private copyForType(type?: EmptyType | null): EmptyStateCopy {
     const cache = this.copyCache();
