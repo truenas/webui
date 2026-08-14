@@ -161,21 +161,17 @@ export class ContainerListComponent {
     });
   }
 
-  // The column of the last sort event. Since tn-table 0.5.0 the cleared step reports
-  // { column: '', direction: '' } without naming the column that was cleared, so the
-  // component has to remember it to keep the cycle on the clicked column.
-  private lastSortedColumn: ContainerSortField | null = null;
-
   protected onSortChange(event: TnSortEvent): void {
-    // tn-table cycles asc → desc → cleared, but the containers list is always sorted. Treat the
-    // cleared step as ascending on the column that was just cleared so the cycle stays on the
-    // clicked column (asc → desc → asc) instead of visibly jumping back to Name. Unknown columns
-    // (and a cleared sort with no history) fall back to Name.
+    // tn-table cycles asc → desc → cleared, and since 0.5.0 the cleared step reports
+    // { column: '', direction: '' } without naming the column that was cleared. The containers
+    // list is always sorted, so treat that step as ascending on the store's current sort column —
+    // the cycle stays on the clicked column (asc → desc → asc) instead of visibly jumping back to
+    // Name. The route-provided store outlives this component, so it is the source of truth even
+    // right after the list is recreated.
     const active = this.isSortField(event.column)
       ? event.column
-      : this.lastSortedColumn ?? ContainerSortField.Name;
+      : this.containersStore.sort().active;
     const direction = event.direction === 'desc' ? SortDirection.Desc : SortDirection.Asc;
-    this.lastSortedColumn = active;
     this.containersStore.setSort({ active, direction });
   }
 
