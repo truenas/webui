@@ -21,6 +21,13 @@ describe('EmptyService', () => {
     });
   });
 
+  describe('loadingMessage', () => {
+    it('returns the loading title from the same catalog, so tn-table gets one translated spelling', () => {
+      expect(spectator.service.loadingMessage()).toBe(spectator.service.titleForType(EmptyType.Loading));
+      expect(spectator.service.loadingMessage()).toBe('Loading...');
+    });
+  });
+
   describe('descriptionForType', () => {
     it('returns the config message for a state that carries one', () => {
       expect(spectator.service.descriptionForType(EmptyType.NoSearchResults)).toBe('No matching results found');
