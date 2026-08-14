@@ -92,8 +92,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FlattenEmptyMessagePipe,
     TranslateModule,
   ],
-  // Provided as well as imported: the column model calls it directly so a details row labels a
-  // hidden State column the way the pill does, rather than printing the raw API code.
+  // Provided, not imported: no template pipes through it. The column model injects and calls it
+  // so a details row labels a hidden State column the way the pill does, rather than printing the
+  // raw API code.
   providers: [JobStateDisplayPipe],
 })
 export class ReplicationListComponent implements OnInit {

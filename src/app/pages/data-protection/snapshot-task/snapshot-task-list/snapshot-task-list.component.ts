@@ -64,9 +64,9 @@ import { TaskService } from 'app/services/task.service';
   selector: 'ix-snapshot-task-list',
   styleUrls: ['./snapshot-task-list.component.scss'],
   templateUrl: './snapshot-task-list.component.html',
-  // The two pipes are provided as well as imported: the template pipes through them, and the
-  // column model calls them directly so a details row prints what the cell shows rather than a
-  // raw schedule object or an untranslated state code.
+  // Both pipes are provided so the column model can inject and call them directly: a details row
+  // prints what the cell shows rather than a raw schedule object or an untranslated state code.
+  // `ScheduleDescriptionPipe` is imported too, because the template also pipes through it.
   providers: [TaskService, StorageService, ScheduleDescriptionPipe, JobStateDisplayPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
