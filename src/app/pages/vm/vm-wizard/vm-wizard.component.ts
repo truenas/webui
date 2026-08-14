@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, viewChild, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, output, signal, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -66,7 +66,6 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   ],
 })
 export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
-  private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
@@ -118,18 +117,13 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
     return this.gpuStep().form.value;
   }
 
-  isLoading = false;
+  protected readonly isLoading = signal(false);
   summary: SummarySection[];
 
   /**
-   * Whether the wizard is currently submitting. The hosting `<tn-side-panel>` shows an
-   * indeterminate progress bar and dims the content while true — the wizard is opened
-   * footerless, so this is its only save feedback.
+   * Host hook (`<tn-side-panel>` closeGuard): any dirty step means there are edits to confirm
+   * discarding. Replaces the SlideIn host's `requireConfirmationWhen`.
    */
-  isBusy(): boolean {
-    return this.isLoading;
-  }
-
   hasUnsavedChanges(): boolean {
     return Boolean(
       this.osStep()?.form?.dirty
@@ -139,6 +133,11 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
       || this.installationMediaStep()?.form?.dirty
       || this.gpuStep()?.form?.dirty,
     );
+  }
+
+  /** The footerless `<tn-side-panel>` host shows its progress bar while this is true. */
+  isBusy(): boolean {
+    return this.isLoading();
   }
 
   ngOnInit(): void {
@@ -159,8 +158,7 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     // Track the zvol path if we create one for import
     let importedZvolPath: string | null = null;
@@ -181,13 +179,12 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
     )
       .subscribe({
         next: () => {
-          this.isLoading = false;
-          this.closed.emit(true);
+          this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Virtual machine created'));
-          this.cdr.markForCheck();
+          this.closed.emit(true);
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
 
           // Check if this is an image conversion error
           if (this.diskForm.import_image && error instanceof Error && error.message.includes('Image conversion failed')) {
@@ -201,7 +198,6 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
             // For other errors, show the error modal
             this.errorHandler.showErrorModal(error);
           }
-          this.cdr.markForCheck();
         },
       });
   }
