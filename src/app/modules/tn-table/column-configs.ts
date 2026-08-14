@@ -13,10 +13,11 @@ export function column<T>(config: TableColumn<T>): TableColumn<T> {
 }
 
 /**
- * An actions column: no title, so the column picker leaves it alone. Sortability is the
- * template's to decide — a column is sortable only where its `[tnColumnDef]` says `[sortable]`,
- * and an actions column never does.
+ * An actions column: the `title: undefined` is the point — a column the picker can offer has a
+ * title, so stripping it is what keeps this one out of the picker, rather than every call site
+ * remembering not to pass one. Sortability is the template's to decide — a column is sortable
+ * only where its `[tnColumnDef]` says `[sortable]`, and an actions column never does.
  */
 export function actionsColumn<T>(config: TableColumn<T> = {}): TableColumn<T> {
-  return { ...config };
+  return { ...config, title: undefined };
 }
