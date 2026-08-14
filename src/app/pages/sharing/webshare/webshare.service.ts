@@ -66,9 +66,16 @@ export class WebShareService {
    */
   private webshareServiceEntry = toSignal(this.store$.select(selectService(ServiceName.WebShare)));
 
-  private isServiceRunning = computed(
-    () => this.webshareServiceEntry()?.state === ServiceStatus.Running,
-  );
+  /**
+   * True only when the service entry is loaded AND not running. While the services
+   * slice has not loaded yet (or `service.query` failed and left it empty), the state
+   * is unknown — treating that as "stopped" would flash a false "service is not
+   * running" reason on every page load.
+   */
+  private isServiceKnownStopped = computed(() => {
+    const service = this.webshareServiceEntry();
+    return !!service && service.state !== ServiceStatus.Running;
+  });
 
   /**
    * Hostname resolved from TrueNAS Connect IP mappings.
@@ -109,7 +116,7 @@ export class WebShareService {
       return this.translate.instant('WebShare is unavailable because TrueNAS Connect is disabled.');
     }
 
-    if (!this.isServiceRunning()) {
+    if (this.isServiceKnownStopped()) {
       return this.translate.instant('WebShare is unavailable because the WebShare service is not running.');
     }
 
