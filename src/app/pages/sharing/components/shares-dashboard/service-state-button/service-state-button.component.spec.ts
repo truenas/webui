@@ -39,11 +39,13 @@ describe('ServiceStateButtonComponent', () => {
     expect(getStatus()).toHaveClass('fn-theme-grey');
   });
 
-  it('exposes the status as a labelled status region', () => {
+  it('exposes the status as a labelled, non-live region', () => {
     spectator.setInput('service', { id: 1, service: ServiceName.Nfs, state: ServiceStatus.Running } as Service);
 
-    expect(getStatus()).toHaveAttribute('role', 'status');
+    expect(getStatus()).toHaveAttribute('role', 'img');
     expect(getStatus()).toHaveAttribute('aria-roledescription', 'Service status');
+    // The tooltip is pointer-only, so the same copy has to reach the accessibility tree.
+    expect(getStatus()).toHaveAttribute('aria-label', 'The NFS service is running');
     // Preserved verbatim from the `<button [ixTest]>` this readout replaced.
     expect(getStatus()).toHaveAttribute('data-test', 'button-service-status-nfs');
   });

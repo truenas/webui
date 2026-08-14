@@ -1,20 +1,25 @@
-<!-- A read-only status readout, not a control: it carries no action, so it is a `role="status"`
-  region rather than the button Material rendered (no tn-* outlined pill carries the green /
-  grey / orange service colours). The live region is deliberate — the state only changes in
-  response to the user starting/stopping the service from this same card, so announcing it is
-  the confirmation a sighted user gets from the colour. `tnTestIdType="button"` pins the legacy
+<!-- A read-only status readout, not a control: it carries no action, so it is a labelled
+  `role="img"` region rather than the button Material rendered (no tn-* outlined pill carries the
+  green / grey / orange service colours). The role is deliberately not live: `service` resolves
+  asynchronously on page load and `service.query` events push state changed elsewhere into the
+  store, so a `role="status"` region would announce unprompted rather than only confirm an action
+  taken from this card. The label carries the same copy as the tooltip, which is pointer-only now
+  that the readout is not focusable. `tnTestIdType="button"` pins the legacy
   `button-service-status-*` id that `[ixTest]` on the old `<button>` resolved to. -->
+@let statusLabel = 'The {name} service is {status}' | translate: {
+  name: service()?.service | mapValue: serviceNames,
+  status: service()?.state | lowercase
+};
+
 <span
   class="service-status"
-  role="status"
+  role="img"
   tnTestIdType="button"
   [ngClass]="statusClass()"
   [attr.aria-roledescription]="'Service status' | translate"
+  [attr.aria-label]="service() ? statusLabel : null"
   [tnTestId]="['service-status', service()?.service]"
-  [tnTooltip]="'The {name} service is {status}' | translate: {
-    name: service()?.service | mapValue: serviceNames,
-    status: service()?.state | lowercase
-  }"
+  [tnTooltip]="statusLabel"
   [tnTooltipDisabled]="!service()"
 >
   {{ service()?.state | titlecase }}

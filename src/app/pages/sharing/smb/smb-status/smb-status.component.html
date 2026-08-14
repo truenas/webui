@@ -1,6 +1,7 @@
 <!-- tn-tabs is content/index-based, so routing is wired manually: the `:activeTab` route param
   drives [selectedIndex] and a user tab switch navigates (see onTabChange). Tabs render as
-  buttons — legacy `link-*` test ids become `tab-*` (e2e callout), and anchor semantics
+  buttons — legacy `link-*` test ids become `tab-*` (truenas/webui-integration selects on
+  data-test and needs the matching rename), and anchor semantics
   (middle-click/open-in-new-tab) are lost — accepted trade-off of the tn-tabs mapping.
   The div supplies the tabpanel role mat-tab-nav-panel used to provide; a projected
   tn-tab-panel can't host this switch (panels are index-matched to selectedIndex). -->

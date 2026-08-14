@@ -1,13 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { AbstractControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnDialog, TnCheckboxHarness, TnChipInputHarness, TnInputHarness,
+  TnDialog, TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
@@ -65,6 +66,9 @@ describe('TargetGlobalConfigurationComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       ...ixFormTestingProviders(),
+      // Wired app-wide in main.ts: without it `tn-form-field` falls back to the library's
+      // English defaults instead of the validator's own message.
+      provideTnFormFieldErrors(),
       provideMockStore({
         selectors: [
           {
@@ -87,15 +91,6 @@ describe('TargetGlobalConfigurationComponent', () => {
       }),
     ],
   });
-
-  /**
-   * The basename control, whose validator messages have no rendered surface to assert against.
-   * The cast is deliberate: `form` is protected because only the component and its `<ix-form>`
-   * drive it.
-   */
-  const getBasenameControl = (): AbstractControl => (
-    spectator.component as unknown as { form: FormGroup }
-  ).form.controls.basename;
 
   /** Re-creates the component in the same TestBed, so a changed selector/mock is picked up. */
   function recreateComponent(): void {
@@ -238,11 +233,11 @@ describe('TargetGlobalConfigurationComponent', () => {
     // Uppercase letters - validation should trigger
     await basename.setValue('IQN.2005-10.ORG.FREENAS.CTL');
     expect(spectator.component.canSubmit()).toBe(false);
-    // The message is only reachable off the control: it never reaches the DOM until the field is
-    // blurred, and this asserts the translated copy the user eventually sees.
-    expect(getBasenameControl().errors).toMatchObject({
-      pattern: { message: 'Only lowercase alphanumeric characters and . : - are allowed.' },
-    });
+    // The field renders its message once blurred, so assert the copy the user actually sees.
+    await basename.blur();
+    const basenameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Base Name' }));
+    expect(await basenameField.getErrorMessage())
+      .toBe('Only lowercase alphanumeric characters and . : - are allowed.');
 
     // Special characters like @ and !
     await basename.setValue('iqn.2005-10.org.freenas.ctl@%!!');
