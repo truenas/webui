@@ -25,14 +25,14 @@ import { SearchInputComponent } from 'app/modules/forms/search-input/components/
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { SearchQuery, AdvancedSearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { searchProperties, textProperty, booleanProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiDataProvider } from 'app/modules/tn-table/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/tn-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/tn-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
-import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';

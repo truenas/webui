@@ -24,16 +24,16 @@ import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.inte
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import {
-  IxTableDetailsRowComponent,
-} from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
-import {
-  TableColumnPickerComponent,
-} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import {
+  TableColumnPickerComponent,
+} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import {
+  IxTableDetailsRowComponent,
+} from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from 'app/pages/data-protection/replication/replication-list/replication-list.component';

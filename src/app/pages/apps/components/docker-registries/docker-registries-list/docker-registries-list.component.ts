@@ -16,16 +16,16 @@ import { dockerHubRegistry, DockerRegistry } from 'app/interfaces/docker-registr
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { column } from 'app/modules/tn-table/column-configs';
 import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
 import { createTable, mapTnSortToProviderSorting, toDisplayedColumns } from 'app/modules/tn-table/utils';
-import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { dockerRegistriesListElements } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.elements';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
-import { column } from 'app/modules/tn-table/column-configs';
 
 @Component({
   selector: 'ix-docker-registries-list',

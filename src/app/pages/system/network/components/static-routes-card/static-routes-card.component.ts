@@ -13,14 +13,14 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
-import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import {
   convertStringToId, dataProviderLoading, dataProviderRows, mapTnSortToTableSort,
 } from 'app/modules/tn-table/utils';
-import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';

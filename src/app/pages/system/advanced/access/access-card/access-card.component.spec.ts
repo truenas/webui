@@ -11,14 +11,14 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import {
-  IxTablePagerShowMoreComponent,
-} from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';

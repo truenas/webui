@@ -10,12 +10,12 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
 import { langChangeSignal } from 'app/helpers/translated.helper';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import type { BaseDataProvider } from 'app/modules/tn-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
 import { TableFilter } from 'app/modules/tn-table/interfaces/table-filter.interface';
 import { SortValue, TableSort } from 'app/modules/tn-table/interfaces/table-sort.interface';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 
 /**
  * Everything a `tn-table` list needs around the table itself: the column model it declares

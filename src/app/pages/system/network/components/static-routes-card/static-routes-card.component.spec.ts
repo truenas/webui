@@ -6,12 +6,12 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import {
-  IxTablePagerShowMoreComponent,
-} from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { StaticRouteDeleteDialog } from 'app/pages/system/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRoutesCardComponent } from 'app/pages/system/network/components/static-routes-card/static-routes-card.component';
 

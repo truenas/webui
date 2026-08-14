@@ -14,12 +14,12 @@ import { SmbSession } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { column } from 'app/modules/tn-table/column-configs';
 import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { column } from 'app/modules/tn-table/column-configs';
 
 @Component({
   selector: 'ix-smb-session-list',

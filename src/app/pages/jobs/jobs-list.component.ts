@@ -31,9 +31,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
-import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import {
   JobSlice,
   selectAllNonTransientJobs,
@@ -42,6 +39,9 @@ import {
   selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
+import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TaskStateCellComponent } from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';

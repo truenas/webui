@@ -16,16 +16,16 @@ import { PeriodicSnapshotTaskUi, PeriodicSnapshotTask } from 'app/interfaces/per
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import {
-  IxTableDetailsRowComponent,
-} from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
-import {
-  TableColumnPickerComponent,
-} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import {
+  TableColumnPickerComponent,
+} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import {
+  IxTableDetailsRowComponent,
+} from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SnapshotTaskFormComponent,

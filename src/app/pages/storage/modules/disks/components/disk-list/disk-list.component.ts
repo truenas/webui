@@ -22,17 +22,16 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Disk, DetailsDisk, ExtraDiskQueryOptions } from 'app/interfaces/disk.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
-import { IxTableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
-import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
-import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
-import {
-  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
-} from 'app/modules/tn-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
-import { reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { column } from 'app/modules/tn-table/column-configs';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { IxTableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
+import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
+import { createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+  toUniqueRowTag, reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -42,7 +41,6 @@ import { UnlockSedDialog } from 'app/pages/storage/modules/disks/components/disk
 import { DiskWipeDialog } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 import { sedStatusLabel } from 'app/pages/storage/modules/disks/utils/sed-status-label.utils';
 import { LicenseService } from 'app/services/license.service';
-import { column } from 'app/modules/tn-table/column-configs';
 
 /**
  * A disk row with every display-only value resolved once, when the rows are built, so
@@ -319,7 +317,7 @@ export class DiskListComponent {
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
 
   protected readonly hiddenColumns = computed<TableColumn<DiskRow>[]>(
-    () => this.columns().filter((column) => column?.hidden),
+    () => this.columns().filter((tableColumn) => tableColumn?.hidden),
   );
 
   protected readonly trackByIdentifier = (_: number, row: DiskRow): string => row.identifier;
@@ -366,6 +364,15 @@ export class DiskListComponent {
    */
   protected testIdTag(row: DiskRow): string {
     return normalizeTestIdString(row.name);
+  }
+
+  /**
+   * Row tag the detail row prints its values under. Distinct from {@link testIdTag}: the ids the
+   * detail row resolves predate the tn-table migration and carry the `disk-` prefix the ix-table
+   * column model gave them, so they keep it.
+   */
+  protected detailsRowTag(row: DiskRow): string {
+    return toUniqueRowTag(`disk-${row.name}`);
   }
 
   protected onRowClick(row: DiskRow): void {

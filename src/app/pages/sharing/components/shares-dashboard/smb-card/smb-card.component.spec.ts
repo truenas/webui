@@ -18,15 +18,15 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbSharePurpose, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import {
-  IxTablePagerShowMoreComponent,
-} from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  IxTablePagerShowMoreComponent,
+} from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ServiceActionsMenuService,

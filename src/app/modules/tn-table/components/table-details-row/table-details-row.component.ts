@@ -39,7 +39,13 @@ export class IxTableDetailsRowComponent<T> {
     if (column.formatValue) {
       return column.formatValue(row);
     }
-    const value = column.getValue ? column.getValue(row) : column.propertyName && row[column.propertyName];
+
+    let value: unknown;
+    if (column.getValue) {
+      value = column.getValue(row);
+    } else if (column.propertyName) {
+      value = row[column.propertyName];
+    }
     return value == null ? '' : String(value);
   }
 }

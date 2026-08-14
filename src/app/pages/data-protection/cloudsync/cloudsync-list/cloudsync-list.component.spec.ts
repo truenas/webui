@@ -15,18 +15,18 @@ import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import {
-  IxTableDetailsRowComponent,
-} from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
-import {
-  TableColumnPickerComponent,
-} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  TableColumnPickerComponent,
+} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import {
+  IxTableDetailsRowComponent,
+} from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';

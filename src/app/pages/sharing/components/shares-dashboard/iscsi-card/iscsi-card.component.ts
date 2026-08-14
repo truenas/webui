@@ -36,14 +36,14 @@ import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
-import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { IxTablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import {
   dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
-import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';

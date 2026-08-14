@@ -16,13 +16,14 @@ import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
-import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
+import { actionsColumn, column } from 'app/modules/tn-table/column-configs';
 import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
-import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -32,7 +33,6 @@ import {
   authorizedAccessListElements,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.elements';
 import { IscsiService } from 'app/services/iscsi.service';
-import { actionsColumn, column } from 'app/modules/tn-table/column-configs';
 
 @Component({
   selector: 'ix-iscsi-authorized-access-list',

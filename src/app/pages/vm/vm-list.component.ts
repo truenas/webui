@@ -35,21 +35,22 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
-import {
-  IxTableDetailsRowComponent,
-} from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
-import {
-  TableColumnPickerComponent,
-} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
-import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
-import {
-  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, memoizedRowTag, toDisplayedColumns,
-} from 'app/modules/tn-table/utils';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { column } from 'app/modules/tn-table/column-configs';
+import {
+  TableColumnPickerComponent,
+} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import {
+  IxTableDetailsRowComponent,
+} from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
+import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
+import {
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, memoizedRowTag, toDisplayedColumns,
+} from 'app/modules/tn-table/utils';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualMachineDetailsRowComponent } from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
@@ -58,7 +59,6 @@ import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { VmService } from 'app/services/vm.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
-import { column } from 'app/modules/tn-table/column-configs';
 
 /**
  * tn-table column name for the derived Display Port column. It has no backing
@@ -223,7 +223,7 @@ export class VmListComponent implements OnInit {
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
 
   protected readonly hiddenColumns = computed<TableColumn<VirtualMachine>[]>(
-    () => this.columns().filter((column) => column?.hidden),
+    () => this.columns().filter((tableColumn) => tableColumn?.hidden),
   );
 
   /**

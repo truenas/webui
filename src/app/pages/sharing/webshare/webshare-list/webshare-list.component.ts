@@ -23,14 +23,15 @@ import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare'
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
-import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
+import { actionsColumn, column } from 'app/modules/tn-table/column-configs';
 import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
-import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -41,7 +42,6 @@ import { WebShareTableRow } from 'app/pages/sharing/webshare/webshare-table-row.
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
-import { actionsColumn, column } from 'app/modules/tn-table/column-configs';
 
 @Component({
   selector: 'ix-webshare-list',
