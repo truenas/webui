@@ -1,7 +1,7 @@
 import { computed, signal, Signal } from '@angular/core';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 
-/** Which of the two lists a value belongs to. Doubles as the list's DOM id and test-id suffix. */
+/** Which of the two lists a value belongs to. Doubles as the suffix of the list's test ids. */
 export type ListType = 'available' | 'selected';
 
 /** How a click or a key press changes the selection. */

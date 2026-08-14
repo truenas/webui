@@ -472,7 +472,9 @@ describe('DualListBoxComponent', () => {
     it('should connect both lists to each other, so an item can be dragged across', () => {
       const group = spectator.query(CdkDropListGroup, { read: CdkDropListGroup });
 
-      expect(group._items.size).toBe(2);
+      expect(group).toBeTruthy();
+      expect(dropListOf('available').injector.get(CdkDropListGroup)).toBe(group);
+      expect(dropListOf('selected').injector.get(CdkDropListGroup)).toBe(group);
     });
 
     it('should handle drag and drop within the same list', () => {

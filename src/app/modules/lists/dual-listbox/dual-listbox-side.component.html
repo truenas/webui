@@ -75,7 +75,8 @@
         <label>{{ side().displayOf(item) }}</label>
       </tn-list-item>
     } @empty {
-      <p class="no-matches" role="presentation">{{ 'No matches found.' | translate }}</p>
+      <!-- Left in the accessibility tree on purpose: it is the only explanation of the empty list. -->
+      <p class="no-matches">{{ 'No matches found.' | translate }}</p>
     }
   </tn-list>
 </div>
