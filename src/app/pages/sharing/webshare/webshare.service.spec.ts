@@ -594,3 +594,56 @@ describe('WebShareService - WebShare service not running', () => {
     );
   });
 });
+
+describe('WebShareService - service state not loaded yet', () => {
+  let spectator: SpectatorService<WebShareService>;
+
+  const createService = createServiceFactory({
+    service: WebShareService,
+    providers: [
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      ]),
+      mockProvider(SnackbarService),
+      mockProvider(TranslateService, {
+        instant: jest.fn((key: string) => key),
+      }),
+      mockProvider(LicenseService, {
+        hasTruenasConnect$: of(true),
+      }),
+      mockProvider(FormSidePanelService),
+      mockProvider(TruenasConnectService, {
+        config: signal(mockConfiguredTncConfig),
+      }),
+      provideMockStore({
+        selectors: [
+          // Services slice not loaded (or service.query failed): no entries.
+          { selector: selectServices, value: [] },
+        ],
+      }),
+      {
+        provide: WINDOW,
+        useValue: {
+          location: {
+            protocol: 'https:',
+            hostname: 'mynas.truenas.direct',
+          },
+          open: jest.fn(),
+        },
+      },
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createService();
+    jest.clearAllMocks();
+  });
+
+  it('does not claim the service is stopped while its state is unknown', () => {
+    // An unloaded slice must not flash "service is not running" on page load —
+    // only a loaded entry with a non-running state produces that reason.
+    expect(spectator.service.webShareUnavailableReason()).toBeNull();
+    expect(spectator.service.canOpenWebShare()).toBe(true);
+  });
+});
