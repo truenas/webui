@@ -1,5 +1,6 @@
 <ix-form
   [formGroup]="form"
+  [isEditMode]="!isNew"
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"
 >
