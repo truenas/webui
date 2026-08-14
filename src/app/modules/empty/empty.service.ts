@@ -13,7 +13,12 @@ import { flattenEmptyMessage } from 'app/modules/pipes/flatten-empty-message/fla
 interface EmptyStateCopy {
   /** `EmptyConfig.title`, translated. */
   title: string;
-  /** `EmptyConfig.message`, translated and flattened to plain text. */
+  /**
+   * `EmptyConfig.message`, translated and flattened to plain text. `''` where the config carries
+   * no message, which is the common case: `tn-empty` renders its description block under
+   * `@if (description())`, so an empty string reads as "no description" exactly like the
+   * `undefined` the call sites passed before, and no empty block or its margin is painted.
+   */
   description: string;
 }
 
@@ -77,11 +82,16 @@ export class EmptyService {
    * from the same catalog {@link titleForType} takes the title from. Empty for a state whose
    * config carries no `message`, which is most of them.
    *
-   * The one place this is derived, deliberately: every call site used to inline
-   * `conf.message ? (conf.message | translate) : ''`, which renders a message's markup as literal
-   * text. The catalog's messages were written for `<ix-empty>`, which took HTML, and several still
-   * carry `<br>`/`<p>` — so the flattening has to sit with the lookup rather than being remembered
-   * at ~30 templates.
+   * The one place this is derived: every call site used to inline
+   * `conf.message ? (conf.message | translate) : ''`.
+   *
+   * The result is flattened as a guard, not because today's catalog needs it: of the four configs
+   * {@link defaultEmptyConfig} can return only `noSearchResultsConfig` carries a `message` at all,
+   * and it is plain text. The messages that do still carry `<br>`/`<p>` — they were written for
+   * `<ix-empty>`, which took HTML — sit on page-specific configs this method never sees, and reach
+   * `tn-empty` through the `flattenEmptyMessage` pipe in their own templates. Flattening here keeps
+   * the two paths equivalent, so routing one of those configs through the service later can't
+   * regress into literal markup.
    */
   descriptionForType(type?: EmptyType | null): string {
     return this.copyForType(type).description;

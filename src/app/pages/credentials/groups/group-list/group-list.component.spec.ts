@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { TestBed } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonComponent, TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
@@ -7,11 +8,10 @@ import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { dummyUser, mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -87,15 +87,6 @@ describe('GroupListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      {
-        provide: AuthService,
-        useFactory: () => {
-          const authService = new MockAuthService();
-          authService.setUser(dummyUser);
-          authService.hasRole = jest.fn(() => hasAccountWrite$);
-          return authService;
-        },
-      },
       mockApi([
         mockCall('privilege.query', []),
         mockCall('group.query', []),
@@ -132,6 +123,9 @@ describe('GroupListComponent', () => {
 
   beforeEach(() => {
     hasAccountWrite$.next(true);
+    // On the instance `mockAuth()` already provides, and before the component is built: the
+    // component calls `hasRole` once, in a field initializer.
+    TestBed.inject(MockAuthService).hasRole = jest.fn(() => hasAccountWrite$);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     store$ = spectator.inject(MockStore);

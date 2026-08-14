@@ -97,9 +97,8 @@ export class GroupListComponent implements OnInit {
    * The sort the list opens with. One declaration for both halves of it — `setDefaultSort` maps
    * it into the data provider and the two-way `[(sortColumn)]`/`[(sortDirection)]` bindings seed
    * the header arrow from it — so the arrow can't end up pointing at a column the provider isn't
-   * sorting by. The table writes the bindings back on every header click, and re-reads them when
-   * it is destroyed and rebuilt (the empty state replaces it whenever the list empties out), so
-   * the arrow survives searching down to zero results and back.
+   * sorting by. The table writes the bindings back on every header click, so the signals track
+   * the header from then on.
    */
   private readonly defaultSort: TnSortEvent = { column: 'gid', direction: 'asc' };
 

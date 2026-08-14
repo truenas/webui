@@ -401,6 +401,7 @@ Implemented in `@truenas/ui-components` and used here directly, so these need at
 | `tn-table` wraps cells by default (no input) | The `tn-table-fixed-wrap` mixin include on all seven Data Protection lists, and its `::ng-deep` into `.tn-table__cell-content`. Equal-width columns are a separate opt-in, `[fixedLayout]`, which none of these lists needs |
 | `tn-table [expandOnRowClick]` | `ExpandOnRowClickDirective` (deleted, with its spec) and its four usages |
 | `tn-table [minColumnWidth]` (opt-in; empty by default, so `[fixedLayout]` alone applies no floor) | Nothing — new. Only applies with `[fixedLayout]`, where it derives a width floor as `minColumnWidth × columnCount` so a narrow viewport scrolls rather than shrinking columns to nothing. Reach for it only where the table can actually get that narrow — `installed-apps-list` sets it in the single-column layout and clears it in the split one |
+| `tn-table [minWidth]` | The `card-table-scroll` mixin in `pages/data-protection/_card-title.scss` and its `::ng-deep` into `.tn-table__table`. Now bound as `[minWidth]="'420px'"` on the five Data Protection task cards, so a narrow card scrolls horizontally instead of clipping its fixed-width state/enabled/actions columns |
 
 Also fixed in the library and adopted since, under NAS-142058, because their consumers sat in
 other feature areas: `[singleExpand]` and `[(sortColumn)]`/`[(sortDirection)]` (which between them
