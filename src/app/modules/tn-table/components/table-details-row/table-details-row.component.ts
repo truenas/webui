@@ -31,8 +31,12 @@ export class IxTableDetailsRowComponent<T> {
   /** Row tag the printed values carry in their test ids, matching the list's own cells. */
   readonly uniqueRowTag = input<string>('');
 
-  /** Columns the dev-mode guard below has already reported, so it fires once each. */
-  private readonly reported = new Set<TableColumn<T>>();
+  /**
+   * Column titles the dev-mode guard below has already reported. Keyed on the title rather than
+   * the column object because a picker-driven list re-emits `{ ...column }` copies whenever
+   * visibility or the language changes, so object identity goes stale under this row.
+   */
+  private readonly reported = new Set<string>();
 
   protected value(column: TableColumn<T>): string {
     const row = this.row();
@@ -63,13 +67,15 @@ export class IxTableDetailsRowComponent<T> {
    * through a pipe or a cell component the row cannot reach. Keyed on the printed text rather than
    * `typeof`, so an array of strings (which prints readably, and prints the same in the cell) does
    * not trip it. Reports rather than throws — the trade `guardSortValue` makes on the sort path —
-   * and at most once per column per session.
+   * and at most once per column per rendered detail row: this component is instantiated per
+   * expansion, so expanding the same row again reports again.
    */
   private reportUnprintable(column: TableColumn<T>, text: string): void {
-    if (!isDevMode() || !text.includes('[object ') || this.reported.has(column)) {
+    const title = column.title ?? column.columnName ?? String(column.propertyName);
+    if (!isDevMode() || !text.includes('[object ') || this.reported.has(title)) {
       return;
     }
-    this.reported.add(column);
+    this.reported.add(title);
     console.error(
       `[ix-table-details-row] column "${column.title}" prints as "${text}". Give it a \`formatValue\` `
       + 'saying how a detail row should print it — the table\'s own cell does that formatting in '
