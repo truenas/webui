@@ -27,6 +27,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -79,6 +80,7 @@ export class VmEditFormComponent extends IxFormHostForm implements OnInit {
   readonly requiredRoles = [Role.VmWrite];
 
   protected readonly InputType = InputType;
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   protected showCpuModelField = true;
 
@@ -161,6 +163,12 @@ export class VmEditFormComponent extends IxFormHostForm implements OnInit {
     this.setupGpuControl(this.existingVm);
   }
 
+  /**
+   * Deliberately ignores the submit event and reads `this.form.value`: the event's `allValues` is
+   * `getRawValue()`, which INCLUDES disabled controls. `pin_vcpus` is disabled whenever `cpuset` is
+   * empty, so building the payload from `allValues` would start sending `pin_vcpus: false` for VMs
+   * that never sent the key.
+   */
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const vmPayload = {
       ...this.form.value,
