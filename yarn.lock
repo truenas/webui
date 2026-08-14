@@ -8153,15 +8153,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:~3.4.12":
-  version: 3.4.12
-  resolution: "dompurify@npm:3.4.12"
+"dompurify@npm:~3.4.13":
+  version: 3.4.13
+  resolution: "dompurify@npm:3.4.13"
   dependencies:
     "@types/trusted-types": "npm:^2.0.7"
   dependenciesMeta:
     "@types/trusted-types":
       optional: true
-  checksum: 10/f826b68920887eb75115a162facb42380d1c3fac441548217b30068c9fadeed14f63fa1f7a1d2ab6f63613e5a0f897aa245c9224d4abf7939cd8ae58c04646af
+  checksum: 10/0db0a309a868a38aca042f606b37446977c35ee4501850a8c1bf2781337d79871daf1f4344bbf5b545f2a8c62e4d4e192c8fd6f1ff49ecec7c865c55a0aefee3
   languageName: node
   linkType: hard
 
@@ -12884,11 +12884,11 @@ __metadata:
   linkType: hard
 
 "nanoid@npm:^3.3.16":
-  version: 3.3.16
-  resolution: "nanoid@npm:3.3.16"
+  version: 3.3.18
+  resolution: "nanoid@npm:3.3.18"
   bin:
     nanoid: bin/nanoid.cjs
-  checksum: 10/8004af92b5541af1dbd23b69845b5026f777d5b7ef07163cea1837aae86e052ced8b383cecbf8a4f1b5e77ae207df96dc45e16b9e0fa3c4b761d085f1e42851b
+  checksum: 10/1b3b4fdac831b92b56d1dbe8b1e63a372432faf86ea383134e3b53141ef8108a60b7f84343b5cefecac9550bb74edf8164da93ea07d1c4f757039bc75d8a5d9e
   languageName: node
   linkType: hard
 
@@ -16136,7 +16136,7 @@ __metadata:
     d3: "npm:~7.9.0"
     date-fns: "npm:~4.1.0"
     date-fns-tz: "npm:~3.2.0"
-    dompurify: "npm:~3.4.12"
+    dompurify: "npm:~3.4.13"
     dygraphs: "npm:~2.2.1"
     email-validator: "npm:~2.0.4"
     fontfaceobserver: "npm:^2.3.0"

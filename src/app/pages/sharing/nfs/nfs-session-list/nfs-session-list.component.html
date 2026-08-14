@@ -17,13 +17,13 @@
   @if (activeNfsType() === NfsType.Nfs3) {
     <ix-table-column-picker
       [columns]="nfs3Columns()"
-      [columnPreferencesKey]="'nfsSessionList'"
+      [columnPreferencesKey]="'nfs3SessionList'"
       (columnsChange)="onColumnsChange($event)"
     ></ix-table-column-picker>
   } @else {
     <ix-table-column-picker
       [columns]="nfs4Columns()"
-      [columnPreferencesKey]="'nfsSessionList'"
+      [columnPreferencesKey]="'nfs4SessionList'"
       (columnsChange)="onColumnsChange($event)"
     ></ix-table-column-picker>
   }
