@@ -1,8 +1,7 @@
+<!-- Panel-hosted only: the title, Save and role gating live on the <tn-side-panel> host. -->
 <ix-form
   [formGroup]="form"
   [isEditMode]="true"
-  [title]="'Edit VM' | translate"
-  [requiredRoles]="requiredRoles"
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"
 >
@@ -31,6 +30,8 @@
         formControlName="time"
         [options]="(timeOptions$ | async) ?? []"
         [optionTestIdKey]="optionTestIdByLabel"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -43,6 +44,8 @@
         formControlName="bootloader"
         [options]="(bootloaderOptions$ | async) ?? []"
         [optionTestIdKey]="optionTestIdByLabel"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -128,6 +131,8 @@
         formControlName="cpu_mode"
         [options]="(cpuModeOptions$ | async) ?? []"
         [optionTestIdKey]="optionTestIdByLabel"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -138,6 +143,8 @@
           [options]="(cpuModelOptions$ | async) ?? []"
           [optionTestIdKey]="optionTestIdByLabel"
           [allowEmpty]="true"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
     }
@@ -192,6 +199,8 @@
         [multiple]="true"
         [options]="(gpuOptions$ | async) ?? []"
         [optionTestIdKey]="optionTestIdByLabel"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
   </tn-form-section>

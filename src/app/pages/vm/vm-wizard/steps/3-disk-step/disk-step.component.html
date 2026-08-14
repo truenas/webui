@@ -4,15 +4,20 @@
       [label]="'Disk' | translate"
       [tooltip]="helptext.disk_radio_tooltip | translate"
     >
-      @for (option of (newOrExistingOptions$ | async) ?? []; track option.value) {
-        <tn-radio
-          name="newOrExisting"
-          formControlName="newOrExisting"
-          [value]="option.value"
-          [label]="option.label"
-          [testId]="['newOrExisting', option.value]"
-        ></tn-radio>
-      }
+      <!--
+        The control is bound ONCE on the group — binding it to each standalone `tn-radio` leaves
+        the deselected option rendering stale — and the options are projected rather than passed
+        as `[options]` so the per-option test ids survive.
+      -->
+      <tn-radio-group formControlName="newOrExisting">
+        @for (option of (newOrExistingOptions$ | async) ?? []; track option.value) {
+          <tn-radio
+            [value]="option.value"
+            [label]="option.label"
+            [testId]="['newOrExisting', option.value]"
+          ></tn-radio>
+        }
+      </tn-radio-group>
     </tn-form-field>
 
     <tn-form-field
@@ -43,6 +48,8 @@
         formControlName="hdd_type"
         [options]="(hddTypeOptions$ | async) ?? []"
         [optionTestIdKey]="optionTestIdByLabel"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -56,6 +63,8 @@
           formControlName="datastore"
           [options]="(datastoreOptions$ | async) ?? []"
           [optionTestIdKey]="optionTestIdByLabel"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
 
@@ -78,6 +87,8 @@
           formControlName="hdd_path"
           [options]="(hddPathOptions$ | async) ?? []"
           [optionTestIdKey]="optionTestIdByLabel"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
 

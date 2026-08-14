@@ -28,6 +28,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import {
   forbiddenAsyncValues,
@@ -91,6 +92,7 @@ export class OsStepComponent implements SummaryProvider {
   readonly helptext = helptextVmWizard;
   readonly VmOs = VmOs;
   protected readonly InputType = InputType;
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   readonly osOptions$ = of(mapToOptions(vmOsLabels, this.translate));
   readonly timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));

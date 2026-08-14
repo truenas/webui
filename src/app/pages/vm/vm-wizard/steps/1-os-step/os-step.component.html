@@ -9,6 +9,8 @@
         formControlName="os"
         [options]="(osOptions$ | async) ?? []"
         [optionTestIdKey]="optionTestIdByLabel"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -48,6 +50,8 @@
         formControlName="time"
         [options]="(timeOptions$ | async) ?? []"
         [optionTestIdKey]="optionTestIdByLabel"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -60,6 +64,8 @@
         formControlName="bootloader"
         [options]="(bootloaderOptions$ | async) ?? []"
         [optionTestIdKey]="optionTestIdByLabel"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -112,6 +118,8 @@
           formControlName="vnc_bind"
           [options]="(bindOptions$ | async) ?? []"
           [optionTestIdKey]="optionTestIdByLabel"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
 
@@ -130,8 +138,8 @@
 
       <tn-banner
         type="info"
-        [heading]="'Note' | translate"
-        [message]="'VNC requires a separate client application and cannot be accessed through the web browser. Password is limited to 8 characters.' | translate"
+        [heading]="'Requires separate client software' | translate"
+        [message]="'VNC requires a separate client application and cannot be accessed through the web browser.' | translate"
       ></tn-banner>
     }
   </tn-form-section>

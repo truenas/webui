@@ -20,6 +20,8 @@
         [options]="(gpuOptions$ | async) ?? []"
         [optionTestIdKey]="optionTestIdByLabel"
         [multiple]="true"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
   </tn-form-section>

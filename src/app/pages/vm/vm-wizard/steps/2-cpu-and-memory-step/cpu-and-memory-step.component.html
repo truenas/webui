@@ -67,6 +67,8 @@
         formControlName="cpu_mode"
         [options]="(cpuModes$ | async) ?? []"
         [optionTestIdKey]="optionTestIdByLabel"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -77,6 +79,8 @@
           [options]="(cpuModels$ | async) ?? []"
           [optionTestIdKey]="optionTestIdByLabel"
           [allowEmpty]="true"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
     }
