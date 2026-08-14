@@ -25,7 +25,8 @@
   ></ix-basic-search>
 </ix-page-header>
 
-@let emptyConf = emptyService.defaultEmptyConfig(emptyType$ | async);
+@let emptyType = emptyType$ | async;
+@let emptyConf = emptyService.defaultEmptyConfig(emptyType);
 <tn-table
   [ixUiSearch]="searchableElements.elements.jobs"
   [dataSource]="rows()"
@@ -35,7 +36,7 @@
   [expandable]="true"
   [singleExpand]="true"
   [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
-  [emptyIcon]="emptyConf?.icon ?? ''"
+  [emptyIcon]="emptyService.iconForType(emptyType)"
   (sortChange)="onSortChange($event)"
   (selectionChange)="onTableReset()"
 >
