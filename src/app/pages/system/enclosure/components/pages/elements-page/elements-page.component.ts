@@ -10,7 +10,6 @@ import {
   TnSortEvent,
   TnTableColumnDirective,
   TnTableComponent,
-  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -20,6 +19,7 @@ import { EnclosureElement } from 'app/interfaces/enclosure.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { EnclosureHeaderComponent } from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
@@ -36,7 +36,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
-    TnTestIdDirective,
+    TableTextCellComponent,
     TranslateModule,
     AsyncPipe,
   ],

@@ -10,7 +10,6 @@ import {
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
-  TnTestIdDirective,
   TnTooltipDirective,
   tnIconMarker,
 } from '@truenas/ui-components';
@@ -32,6 +31,7 @@ import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provi
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getJbofFormConfig } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof.form-config';
 import { jbofListElements } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.elements';
@@ -52,8 +52,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
-    TnTestIdDirective,
     TableActionsCellComponent,
+    TableTextCellComponent,
     TnTablePagerComponent,
     TranslateModule,
     AsyncPipe,

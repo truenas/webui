@@ -26,30 +26,36 @@
     <ng-container [tnColumnDef]="'description'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.description }}</span>
+        <ix-table-text-cell
+          [value]="row.description"
+          [title]="'Description' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [tooltip]="row.description || ''"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'ips'">
       <ng-template tnHeaderCellDef>{{ 'IPs' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('IPs' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ formatIps(row) }}</span>
+        <ix-table-text-cell
+          [value]="formatIps(row)"
+          [title]="'IPs' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [tooltip]="formatIps(row)"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'mgmt_username'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Username' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span
-          tnTestIdType="text"
-          [tnTestId]="[('Username' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.mgmt_username }}</span>
+        <ix-table-text-cell
+          [value]="row.mgmt_username"
+          [title]="'Username' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [tooltip]="row.mgmt_username || ''"
+        ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
