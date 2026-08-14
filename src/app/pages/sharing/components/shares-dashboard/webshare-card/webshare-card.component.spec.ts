@@ -478,6 +478,97 @@ describe('WebShareCardComponent - No WebShare users configured', () => {
   });
 });
 
+describe('WebShareCardComponent - WebShare service not running', () => {
+  let spectator: Spectator<WebShareCardComponent>;
+  let loader: HarnessLoader;
+
+  const mockTnConnectConfig: TruenasConnectConfig = {
+    enabled: true,
+    status: TruenasConnectStatus.Configured,
+  } as TruenasConnectConfig;
+
+  const mockService: Service = {
+    id: 10,
+    service: ServiceName.WebShare,
+    enable: false,
+    state: ServiceStatus.Stopped,
+  } as Service;
+
+  const createComponent = createComponentFactory({
+    component: WebShareCardComponent,
+    imports: [IxTablePagerShowMoreComponent,
+    ],
+    providers: [
+      mockAuth(),
+      mockProvider(SlideIn),
+      mockProvider(DialogService),
+      mockProvider(SnackbarService),
+      mockApi([
+        mockCall('sharing.webshare.query', []),
+        mockCall('user.query', [{ id: 1, username: 'testuser', webshare: true } as User]),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      ]),
+      provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
+        selectors: [
+          {
+            selector: selectSystemInfo,
+            value: {
+              license: { features: ['TRUENAS_CONNECT'] },
+            },
+          },
+          {
+            selector: selectServices,
+            value: [mockService],
+          },
+        ],
+      }),
+      mockProvider(TruenasConnectService, {
+        config$: of(mockTnConnectConfig),
+        config: signal(mockTnConnectConfig),
+        openStatusModal: jest.fn(),
+      }),
+      provideRouter([]),
+      {
+        provide: WINDOW,
+        useValue: {
+          location: {
+            origin: 'http://test.truenas.direct:4200',
+            hostname: 'test.truenas.direct',
+            protocol: 'http:',
+          } as Location,
+          open: jest.fn(),
+        } as unknown as Window,
+      },
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('disables the Open WebShare button while the service is stopped', async () => {
+    const openButton = await loader.getHarness(
+      TnButtonHarness.with({ label: 'Open WebShare' }),
+    );
+    expect(await openButton.isDisabled()).toBe(true);
+  });
+
+  it('explains why the button is disabled via the action tooltip', () => {
+    const openAction = (spectator.component as unknown as {
+      openAction: Signal<{ tooltip?: string } | undefined>;
+    }).openAction();
+
+    expect(openAction?.tooltip).toBe('WebShare is unavailable because the WebShare service is not running.');
+  });
+});
+
 describe('WebShareCardComponent - TrueNAS Connect not configured but service running', () => {
   let spectator: Spectator<WebShareCardComponent>;
   let loader: HarnessLoader;

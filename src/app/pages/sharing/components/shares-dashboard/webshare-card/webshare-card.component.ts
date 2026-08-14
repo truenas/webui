@@ -151,6 +151,7 @@ export class WebShareCardComponent implements OnInit {
     return {
       label: this.translate.instant('Open WebShare'),
       disabled: !this.canOpenWebShare(),
+      tooltip: this.webShareService.webShareUnavailableReason() ?? undefined,
       testId: 'button-webshare-open',
       handler: () => this.openWebShare(),
     };
