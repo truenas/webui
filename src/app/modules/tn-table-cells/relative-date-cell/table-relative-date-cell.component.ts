@@ -77,8 +77,11 @@ export class TableRelativeDateCellComponent {
 
   protected readonly date = translated<string>(() => {
     const value = this.value();
-    // Depends on *now*, not just on `value` — take the clock dependency explicitly.
-    this.tick();
+    if (value && isValid(value)) {
+      // Depends on *now*, not just on `value` — take the clock dependency explicitly. Only on
+      // this branch: "N/A" and an already-formatted invalid date do not age.
+      this.tick();
+    }
     return formatRelativeDateValue(value, this.translate);
   });
 

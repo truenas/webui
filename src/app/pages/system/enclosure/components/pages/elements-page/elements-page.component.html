@@ -13,17 +13,32 @@
     >
       <ng-container [tnColumnDef]="'descriptor'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Descriptor' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.descriptor }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Descriptor' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.descriptor }}</span>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'status'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Status' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.status }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Status' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.status }}</span>
+        </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'value'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Value' | translate }}</ng-template>
-        <ng-template let-row tnCellDef>{{ row.value }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <span
+            tnTestIdType="text"
+            [tnTestId]="[('Value' | translate), uniqueRowTag(row), 'row-text']"
+          >{{ row.value }}</span>
+        </ng-template>
       </ng-container>
     </tn-table>
   }

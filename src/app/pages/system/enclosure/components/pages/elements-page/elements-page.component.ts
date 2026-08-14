@@ -10,6 +10,7 @@ import {
   TnSortEvent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -18,7 +19,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EnclosureElement } from 'app/interfaces/enclosure.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
-import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
+import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { EnclosureHeaderComponent } from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
@@ -35,6 +36,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
+    TnTestIdDirective,
     TranslateModule,
     AsyncPipe,
   ],
@@ -73,6 +75,10 @@ export class ElementsPageComponent {
   protected readonly displayedColumns = ['descriptor', 'status', 'value'];
 
   protected readonly trackByDescriptor = (_: number, row: EnclosureElement): string => row.descriptor;
+
+  protected uniqueRowTag(row: EnclosureElement): string {
+    return toUniqueRowTag(row.descriptor);
+  }
 
   protected onSortChange(event: TnSortEvent): void {
     this.dataProvider().setSorting(mapTnSortToTableSort<EnclosureElement>(event, this.displayedColumns));

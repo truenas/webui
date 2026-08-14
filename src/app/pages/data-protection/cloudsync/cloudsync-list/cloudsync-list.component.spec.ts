@@ -3,7 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnDialog, TnTableHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnSelectHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent, MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -100,8 +102,13 @@ describe('CloudSyncListComponent', () => {
     overrideComponents: [
       [
         CloudSyncListComponent, {
-          remove: { imports: [ScheduleDescriptionPipe] },
-          add: { imports: [MockPipe(ScheduleDescriptionPipe, jest.fn(() => 'At 00:00, every day'))] },
+          // Both arms: the template pipes `schedule` through it, and the column model calls the
+          // provided instance so a detail row prints a description instead of `[object Object]`.
+          remove: { imports: [ScheduleDescriptionPipe], providers: [ScheduleDescriptionPipe] },
+          add: {
+            imports: [MockPipe(ScheduleDescriptionPipe, jest.fn(() => 'At 00:00, every day'))],
+            providers: [mockProvider(ScheduleDescriptionPipe, { transform: () => 'At 00:00, every day' })],
+          },
         },
       ],
     ],
@@ -174,6 +181,24 @@ describe('CloudSyncListComponent', () => {
     await table.clickRow(0);
 
     expect(await table.isRowExpanded(0)).toBe(true);
+  });
+
+  // A detail row prints text, so every column whose cell formats its value in the template has to
+  // say how to print it — otherwise Frequency reads `[object Object]` and Enabled reads `true`.
+  it('prints the hidden Frequency, Enabled and State columns the way their cells render them', async () => {
+    const picker = await loader.getHarness(TnSelectHarness.with({ ancestor: 'ix-table-column-picker' }));
+    await picker.open();
+    await picker.selectOption('Frequency');
+    await picker.selectOption('Enabled');
+    await picker.selectOption('State');
+    spectator.detectChanges();
+
+    await table.toggleRowExpansion(0);
+
+    const detailsRow = spectator.query('ix-table-details-row');
+    expect(detailsRow).toHaveText('Frequency:At 00:00, every day');
+    expect(detailsRow).toHaveText('Enabled:Yes');
+    expect(detailsRow).toHaveText('State:Pending');
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {

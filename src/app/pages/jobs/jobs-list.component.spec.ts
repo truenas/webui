@@ -105,6 +105,21 @@ describe('JobsListComponent', () => {
     );
   });
 
+  // `Job.time_started` is an `ApiTimestamp`, so a bare `+job.time_started` orders every row by NaN
+  // — the rows come back in whatever order they went in, which reads as a working sort.
+  it('sorts the date columns by the timestamp inside the ApiTimestamp', async () => {
+    store$.overrideSelector(selectJobs, fakeJobDataSource);
+    store$.refreshState();
+
+    const table = await loader.getHarness(TnTableHarness);
+    await table.clickSortHeader('time_started');
+
+    // The second job started 6ms before the first, so ascending puts it on top.
+    expect(await table.getRowTexts(0)).toEqual(
+      ['cloudsync.sync', 'Completed', '2022-05-28 10:00:01', '2022-05-28 10:00:01'],
+    );
+  });
+
   it('filters jobs down to failed ones when the Failed tab is selected', async () => {
     store$.overrideSelector(selectJobs, fakeJobDataSource);
     store$.refreshState();

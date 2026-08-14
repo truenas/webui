@@ -93,7 +93,7 @@
       <ng-template tnHeaderCellDef>{{ titles().sourceDataset }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
-          [value]="row.source_datasets"
+          [value]="sourceDatasets(row)"
           [title]="titles().sourceDataset"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>

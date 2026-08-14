@@ -22,7 +22,7 @@ import { cloudSyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { JobState } from 'app/enums/job-state.enum';
+import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -37,6 +37,7 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
+import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -91,6 +92,10 @@ import { AppState } from 'app/store';
     FlattenEmptyMessagePipe,
     TranslateModule,
   ],
+  // The two pipes are provided as well as imported: the template pipes through them, and the
+  // column model calls them directly so a details row prints what the cell shows rather than a
+  // raw schedule object or an untranslated state code.
+  providers: [ScheduleDescriptionPipe, JobStateDisplayPipe],
 })
 export class CloudSyncListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
@@ -105,6 +110,8 @@ export class CloudSyncListComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
   private destroyRef = inject(DestroyRef);
+  private scheduleDescription = inject(ScheduleDescriptionPipe);
+  private stateDisplay = inject(JobStateDisplayPipe);
 
   protected readonly searchableElements = cloudSyncListElements;
   protected readonly EmptyType = EmptyType;
@@ -189,6 +196,8 @@ export class CloudSyncListComponent implements OnInit {
       column({
         title: this.titles().frequency,
         getValue: (task) => task.schedule,
+        // The table shows this through <ix-table-text-cell>; a details row prints it.
+        formatValue: (task) => this.scheduleDescription.transform(task.schedule),
         propertyName: 'frequency_sort_key',
         sortBy: (task) => task.frequency_sort_key,
       }),
@@ -212,11 +221,14 @@ export class CloudSyncListComponent implements OnInit {
         title: this.titles().state,
         columnName: 'state',
         getValue: (row) => row.state.state,
-        cssClass: 'state-button',
+        // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it.
+        formatValue: (row) => this.stateText(row.state.state),
       }),
       column({
         title: this.titles().enabled,
         propertyName: 'enabled',
+        // The table shows this as Yes/No in the template; a details row prints it.
+        formatValue: (task) => this.translate.instant(task.enabled ? 'Yes' : 'No'),
       }),
     ]),
   });
@@ -240,6 +252,11 @@ export class CloudSyncListComponent implements OnInit {
   protected readonly getSchedule: (task: CloudSyncTaskUi) => string = this.list.perRow(
     (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
   );
+
+  /** The pill's label, so a hidden State column reads "Completed" and not "SUCCESS". */
+  private stateText(state: DisplayableState | undefined): string {
+    return state ? this.stateDisplay.transform(state) : this.translate.instant('N/A');
+  }
 
   protected getNextRun(task: CloudSyncTaskUi): string {
     // For disabled tasks, show "Disabled" text; for enabled tasks, the

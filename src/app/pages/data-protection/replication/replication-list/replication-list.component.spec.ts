@@ -295,6 +295,24 @@ describe('ReplicationListComponent', () => {
     expect(await loader.getAllHarnesses(TnSlideToggleHarness)).toHaveLength(0);
   });
 
+  // A detail row prints text, so every column whose cell formats its value in the template has to
+  // say how to print it — otherwise the row shows a raw API code or an epoch number.
+  it('prints the hidden State and Last Run columns the way their cells render them', async () => {
+    const picker = await loader.getHarness(TnSelectHarness.with({ ancestor: 'ix-table-column-picker' }));
+    await picker.open();
+    await picker.selectOption('State');
+    await picker.selectOption('Last Run');
+    spectator.detectChanges();
+
+    await table.toggleRowExpansion(0);
+
+    // The job subscription has replaced the task's own state with its last job by now.
+    const detailsRow = spectator.query('ix-table-details-row');
+    expect(detailsRow).toHaveText('State:Completed');
+    expect(detailsRow).not.toHaveText(JobState.Success);
+    expect(detailsRow).toHaveText('Last Run:N/A');
+  });
+
   it('checks if downloads encryption keys when button is pressed', async () => {
     await table.toggleRowExpansion(0);
 

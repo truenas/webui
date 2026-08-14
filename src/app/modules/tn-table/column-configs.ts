@@ -13,8 +13,10 @@ export function column<T>(config: TableColumn<T>): TableColumn<T> {
 }
 
 /**
- * An actions column: no title (so the column picker leaves it alone) and never sortable.
+ * An actions column: no title, so the column picker leaves it alone. Sortability is the
+ * template's to decide — a column is sortable only where its `[tnColumnDef]` says `[sortable]`,
+ * and an actions column never does.
  */
 export function actionsColumn<T>(config: TableColumn<T> = {}): TableColumn<T> {
-  return { disableSorting: true, ...config };
+  return { ...config };
 }

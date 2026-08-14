@@ -253,8 +253,8 @@ export class JobsListComponent implements OnInit {
     this.dataProvider.setSorting(mapTnSortToTableSort<Job>(event, this.displayedColumns, {
       sortAccessors: {
         /* eslint-disable @typescript-eslint/naming-convention -- API field names */
-        time_started: (job: Job) => +job.time_started,
-        time_finished: (job: Job) => Number(job.time_finished),
+        time_started: (job: Job) => this.toDate(job.time_started) ?? 0,
+        time_finished: (job: Job) => this.toDate(job.time_finished) ?? 0,
         /* eslint-enable @typescript-eslint/naming-convention */
       },
     }));

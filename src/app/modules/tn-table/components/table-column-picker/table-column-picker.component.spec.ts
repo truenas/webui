@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { TnSelectHarness } from '@truenas/ui-components';
-import { Column, ColumnComponent } from 'app/modules/tn-table/interfaces/column-component.class';
+import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
 import { preferredColumnsUpdated } from 'app/store/preferences/preferences.actions';
 import { TableColumnPickerComponent } from './table-column-picker.component';
 
@@ -14,11 +14,11 @@ describe('TableColumnPickerComponent', () => {
   let loader: HarnessLoader;
   let store$: MockStore;
 
-  const makeColumns = (): Column<Row, ColumnComponent<Row>>[] => ([
+  const makeColumns = (): TableColumn<Row>[] => ([
     { propertyName: 'name', title: 'Name', hidden: false },
     { propertyName: 'path', title: 'Path', hidden: false },
     { hidden: false }, // actions column: no title -> not user-toggleable
-  ] as Column<Row, ColumnComponent<Row>>[]);
+  ] as TableColumn<Row>[]);
 
   const createComponent = createComponentFactory({
     component: TableColumnPickerComponent<Row>,
@@ -49,7 +49,7 @@ describe('TableColumnPickerComponent', () => {
   });
 
   it('emits updated column copies and persists when a column is toggled off', async () => {
-    let emitted: Column<Row, ColumnComponent<Row>>[] | undefined;
+    let emitted: TableColumn<Row>[] | undefined;
     spectator.component.columnsChange.subscribe((columns) => emitted = columns);
 
     const select = await loader.getHarness(TnSelectHarness);
@@ -66,7 +66,7 @@ describe('TableColumnPickerComponent', () => {
   });
 
   it('keeps at least one column visible', async () => {
-    let emitted: Column<Row, ColumnComponent<Row>>[] | undefined;
+    let emitted: TableColumn<Row>[] | undefined;
     spectator.component.columnsChange.subscribe((columns) => emitted = columns);
 
     const select = await loader.getHarness(TnSelectHarness);
@@ -86,7 +86,7 @@ describe('TableColumnPickerComponent', () => {
       props: { columns: makeColumns(), columnPreferencesKey: 'testList' },
       detectChanges: false,
     });
-    let emitted: Column<Row, ColumnComponent<Row>>[] | undefined;
+    let emitted: TableColumn<Row>[] | undefined;
     spectator.component.columnsChange.subscribe((columns) => emitted = columns);
     spectator.detectChanges();
 
@@ -102,7 +102,7 @@ describe('TableColumnPickerComponent', () => {
       props: { columns: makeColumns(), columnPreferencesKey: 'testList' },
       detectChanges: false,
     });
-    let emitted: Column<Row, ColumnComponent<Row>>[] | undefined;
+    let emitted: TableColumn<Row>[] | undefined;
     spectator.component.columnsChange.subscribe((columns) => emitted = columns);
     spectator.detectChanges();
 
@@ -120,7 +120,7 @@ describe('TableColumnPickerComponent', () => {
       props: { columns: makeColumns(), columnPreferencesKey: 'testList' },
       detectChanges: false,
     });
-    let emitted: Column<Row, ColumnComponent<Row>>[] | undefined;
+    let emitted: TableColumn<Row>[] | undefined;
     spectator.component.columnsChange.subscribe((columns) => emitted = columns);
     spectator.detectChanges();
 
@@ -133,12 +133,12 @@ describe('TableColumnPickerComponent', () => {
         columns: [
           { propertyName: 'name', title: 'Name', hidden: true },
           { propertyName: 'path', title: 'Path', hidden: true },
-        ] as Column<Row, ColumnComponent<Row>>[],
+        ] as TableColumn<Row>[],
         columnPreferencesKey: 'testList',
       },
       detectChanges: false,
     });
-    let emitted: Column<Row, ColumnComponent<Row>>[] | undefined;
+    let emitted: TableColumn<Row>[] | undefined;
     spectator.component.columnsChange.subscribe((columns) => emitted = columns);
     spectator.detectChanges();
 

@@ -219,7 +219,6 @@ export class RsyncTaskListComponent implements OnInit {
         title: this.titles().status,
         columnName: 'status',
         getValue: (row) => this.getTaskState(row),
-        cssClass: 'state-button',
       }),
       column({
         title: this.titles().enabled,

@@ -69,6 +69,14 @@ describe('ElementsComponent', () => {
     expect(await table.getRowTexts(1)).toEqual(['12V Sensor', 'OK', '12.01V']);
   });
 
+  // The cells carry the same data-test values the pre-migration `textColumn` cells resolved, so
+  // external e2e selectors keep working.
+  it('tags each cell with a per-row test id', () => {
+    expect(spectator.query('[data-test="text-descriptor-5-v-sensor-row-text"]')).toExist();
+    expect(spectator.query('[data-test="text-status-5-v-sensor-row-text"]')).toExist();
+    expect(spectator.query('[data-test="text-value-5-v-sensor-row-text"]')).toExist();
+  });
+
   it('renders an error when view from route param is not available for current enclosure', () => {
     spectator.setRouteParam('view', 'Cooling Fan');
 

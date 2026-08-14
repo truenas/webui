@@ -28,8 +28,6 @@ export interface TableColumn<T> {
   /** Whether the column starts hidden. The column picker writes this back. */
   hidden?: boolean;
 
-  disableSorting?: boolean;
-
   /**
    * Marker class for a column that something outside the table has to find later — the tier
    * column, which `SharingTierService` un-hides once tiering is on. `tn-table` does not render it.

@@ -19,7 +19,7 @@ import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { JobState } from 'app/enums/job-state.enum';
+import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -31,6 +31,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
+import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -42,6 +43,7 @@ import { IxTableDetailsRowComponent } from 'app/modules/tn-table/components/tabl
 import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/tn-table/utils';
 import {
   TableRelativeDateCellComponent,
+  formatRelativeDateValue,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
 import {
   TaskStateCellComponent,
@@ -90,6 +92,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FlattenEmptyMessagePipe,
     TranslateModule,
   ],
+  // Provided as well as imported: the column model calls it directly so a details row labels a
+  // hidden State column the way the pill does, rather than printing the raw API code.
+  providers: [JobStateDisplayPipe],
 })
 export class ReplicationListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
@@ -103,6 +108,7 @@ export class ReplicationListComponent implements OnInit {
   private download = inject(DownloadService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
+  private stateDisplay = inject(JobStateDisplayPipe);
 
   private replicationTasks: ReplicationTask[] = [];
   protected readonly searchQuery = signal('');
@@ -147,6 +153,15 @@ export class ReplicationListComponent implements OnInit {
     return this.translate.instant(value ? 'Yes' : 'No');
   }
 
+  protected sourceDatasets(row: ReplicationTask): string {
+    return (row.source_datasets || []).join(', ');
+  }
+
+  /** The pill's label, so a hidden State column reads "Completed" and not "SUCCESS". */
+  private stateText(state: DisplayableState | undefined): string {
+    return state ? this.stateDisplay.transform(state) : this.translate.instant('N/A');
+  }
+
   protected readonly list = tnTableListHost<ReplicationTask>(this.dataProvider, {
     columns: () => createTable<ReplicationTask>([
       column({
@@ -171,6 +186,9 @@ export class ReplicationListComponent implements OnInit {
       column({
         title: this.titles().sourceDataset,
         propertyName: 'source_datasets',
+        // A list of datasets: the cell joins them and a details row has to print the same text,
+        // or it falls back to String(array) — a comma-run with no spaces.
+        formatValue: (row) => this.sourceDatasets(row),
         hidden: true,
       }),
       column({
@@ -195,12 +213,15 @@ export class ReplicationListComponent implements OnInit {
         title: this.titles().lastRun,
         columnName: 'last-run',
         getValue: (row) => row.state?.datetime?.$date,
+        // The table shows this through <ix-table-relative-date-cell>; a details row prints it.
+        formatValue: (row) => formatRelativeDateValue(row.state?.datetime?.$date, this.translate),
       }),
       column({
         title: this.titles().state,
         columnName: 'state',
         getValue: (row) => row.state.state,
-        cssClass: 'state-button',
+        // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it.
+        formatValue: (row) => this.stateText(row.state.state),
       }),
       // The visible column renders as an <ix-table-toggle-cell>, but once the picker hides it
       // <ix-table-details-row> only prints text — so it reads as Yes/No there. Read-only in the

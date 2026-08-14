@@ -411,7 +411,7 @@ describe('createTable', () => {
 describe('toDisplayedColumns', () => {
   interface Row { name: string; path: string }
 
-  const columns = (overrides: Partial<ColumnComponent<Row>>[] = []): TableColumn<Row>[] => ([
+  const columns = (overrides: Partial<TableColumn<Row>>[] = []): TableColumn<Row>[] => ([
     { propertyName: 'name', title: 'Name', ...overrides[0] },
     { propertyName: 'path', title: 'Path', ...overrides[1] },
     { ...overrides[2] }, // actions column: no propertyName / title
@@ -444,7 +444,7 @@ describe('toDisplayedColumns', () => {
 });
 
 describe('tnTableListHost', () => {
-  interface Row { name: string }
+  interface Row { name: string; path?: string }
 
   let langChange$: Subject<LangChangeEvent>;
   let currentPage$: BehaviorSubject<Row[]>;
