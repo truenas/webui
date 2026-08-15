@@ -1,10 +1,3 @@
-// tn-form-section fields are flush-left, but ix-form-actions keeps the legacy
-// `.ix-form-container` 10px gutter, leaving the Advanced Options / submit buttons
-// indented relative to the fields above. Drop the gutter so they line up.
-:host ::ng-deep ix-form-actions {
-  margin-left: 0 !important;
-}
-
 .environment-variable {
   display: grid;
   gap: 1rem;
