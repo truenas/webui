@@ -64,6 +64,20 @@ describe('IxTableDetailsRowComponent', () => {
     expect(spectator.query('[data-test="text-name-row-first-row-text"]')).toExist();
   });
 
+  // The ix cell components tagged a value by cell kind, so a hidden Yes/No or relative-date
+  // column resolved its own suffix rather than `row-text` — selectors aimed at those values keep
+  // matching in the details row.
+  it('tags the printed value with the suffix the column\'s own cell resolves', () => {
+    setColumns([{
+      title: 'Recursive',
+      propertyName: 'enabled',
+      formatValue: (row) => (row.enabled ? 'Yes' : 'No'),
+      testIdSuffix: 'row-yesno',
+    }]);
+
+    expect(spectator.query('[data-test="text-recursive-row-first-row-yesno"]')).toExist();
+  });
+
   it('renders nothing when every column is visible', () => {
     setColumns([]);
 

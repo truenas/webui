@@ -5,7 +5,7 @@
         <b>{{ column.title ? (column.title | translate) : '' }}:</b>
         <span
           tnTestIdType="text"
-          [tnTestId]="[column.title, uniqueRowTag(), 'row-text']"
+          [tnTestId]="[column.title, uniqueRowTag(), column.testIdSuffix ?? 'row-text']"
         >{{ value(column) }}</span>
       </div>
     }

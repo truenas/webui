@@ -212,8 +212,10 @@ export class CloudSyncListComponent implements OnInit {
         title: this.titles().lastRun,
         hidden: true,
         getValue: (task) => task.job?.time_finished?.$date,
-        // The table shows this through <ix-table-relative-date-cell>; a details row prints it.
+        // The table shows this through <ix-table-relative-date-cell>; a details row prints it,
+        // under the id that cell resolves.
         formatValue: (task) => formatRelativeDateValue(task.job?.time_finished?.$date, this.translate),
+        testIdSuffix: 'row-relative-date',
         propertyName: 'last_run_sort_key',
         sortBy: (task) => task.last_run_sort_key,
       }),

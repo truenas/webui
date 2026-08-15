@@ -201,14 +201,17 @@ export class ReplicationListComponent implements OnInit {
         title: this.titles().recursive,
         propertyName: 'recursive',
         hidden: true,
-        // The table shows this as Yes/No in the template; a details row prints it.
+        // The table shows this as Yes/No in the template; a details row prints it, under the id
+        // that cell resolves.
         formatValue: (row) => this.yesNoText(row.recursive),
+        testIdSuffix: 'row-yesno',
       }),
       column({
         title: this.titles().auto,
         propertyName: 'auto',
         hidden: true,
         formatValue: (row) => this.yesNoText(row.auto),
+        testIdSuffix: 'row-yesno',
       }),
       column({
         title: this.titles().lastRun,

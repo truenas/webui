@@ -1,6 +1,14 @@
 import { SortValue } from 'app/modules/tn-table/interfaces/table-sort.interface';
 
 /**
+ * The test-id suffix a cell resolves for the value it renders — ix-table tagged a cell by kind,
+ * and Release Engineering selects on those ids. The tn-table cell components each resolve one of
+ * these, and a column carries it so a details row can tag the same value the same way.
+ */
+export type TableCellTestIdSuffix
+  = 'row-text' | 'row-yesno' | 'row-schedule' | 'row-relative-date' | 'row-state';
+
+/**
  * A column of a `tn-table`, as everything *around* the table needs to know it: the column picker
  * lists it, `toDisplayedColumns` turns it into `[displayedColumns]`, the data provider sorts by
  * it, and a details row renders it while it is hidden.
@@ -41,4 +49,12 @@ export interface TableColumn<T> {
    * row cannot reach it.
    */
   formatValue?: (row: T) => string;
+
+  /**
+   * Test-id suffix a details row gives this column's printed value, matching what the column's
+   * own cell resolves while it is visible — a selector aimed at a value then matches whether the
+   * column is on screen or in the details row. Defaults to `row-text`, so only a column whose
+   * cell is not a plain text cell needs to say anything.
+   */
+  testIdSuffix?: TableCellTestIdSuffix;
 }

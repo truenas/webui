@@ -180,16 +180,20 @@ export class SnapshotTaskListComponent implements OnInit {
         title: this.titles().nextRun,
         columnName: 'next-run',
         getValue: (task) => this.getNextRun(task),
-        // The table shows this through <ix-table-relative-date-cell>; a details row prints it.
+        // The table shows this through <ix-table-relative-date-cell>; a details row prints it,
+        // under the id that cell resolves.
         formatValue: (task) => formatRelativeDateValue(this.getNextRun(task), this.translate),
+        testIdSuffix: 'row-relative-date',
       }),
       column({
         title: this.titles().lastRun,
         columnName: 'last-run',
         hidden: true,
         getValue: (row) => row.state?.datetime?.$date,
-        // The table shows this through <ix-table-relative-date-cell>; a details row prints it.
+        // The table shows this through <ix-table-relative-date-cell>; a details row prints it,
+        // under the id that cell resolves.
         formatValue: (row) => formatRelativeDateValue(row.state?.datetime?.$date, this.translate),
+        testIdSuffix: 'row-relative-date',
       }),
       column({
         title: this.titles().keepSnapshotFor,
