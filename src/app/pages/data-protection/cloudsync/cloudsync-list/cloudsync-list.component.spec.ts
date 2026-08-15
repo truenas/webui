@@ -199,6 +199,12 @@ describe('CloudSyncListComponent', () => {
     expect(detailsRow).toHaveText('Frequency:At 00:00, every day');
     expect(detailsRow).toHaveText('Enabled:Yes');
     expect(detailsRow).toHaveText('State:Pending');
+
+    // Each printed value keeps the suffix its own cell resolves, so a selector aimed at a value
+    // survives the user hiding the column.
+    expect(spectator.query('[data-test="text-frequency-cloudsync-task-custom-cloudlist-row-schedule"]')).toExist();
+    expect(spectator.query('[data-test="text-enabled-cloudsync-task-custom-cloudlist-row-yesno"]')).toExist();
+    expect(spectator.query('[data-test="text-state-cloudsync-task-custom-cloudlist-row-state"]')).toExist();
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {

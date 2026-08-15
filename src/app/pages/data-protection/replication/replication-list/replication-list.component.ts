@@ -217,15 +217,19 @@ export class ReplicationListComponent implements OnInit {
         title: this.titles().lastRun,
         columnName: 'last-run',
         getValue: (row) => row.state?.datetime?.$date,
-        // The table shows this through <ix-table-relative-date-cell>; a details row prints it.
+        // The table shows this through <ix-table-relative-date-cell>; a details row prints it,
+        // under the id that cell resolves.
         formatValue: (row) => formatRelativeDateValue(row.state?.datetime?.$date, this.translate),
+        testIdSuffix: 'row-relative-date',
       }),
       column({
         title: this.titles().state,
         columnName: 'state',
         getValue: (row) => row.state.state,
-        // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it.
+        // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it,
+        // under the suffix that pill resolves.
         formatValue: (row) => this.stateText(row.state.state),
+        testIdSuffix: 'row-state',
       }),
       // The visible column renders as an <ix-table-toggle-cell>, but once the picker hides it
       // <ix-table-details-row> only prints text — so it reads as Yes/No there. Read-only in the
@@ -235,6 +239,7 @@ export class ReplicationListComponent implements OnInit {
         title: this.titles().enabled,
         propertyName: 'enabled',
         formatValue: (row) => this.yesNoText(row.enabled),
+        testIdSuffix: 'row-toggle',
       }),
       column({
         title: this.titles().lastSnapshot,

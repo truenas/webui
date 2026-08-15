@@ -196,8 +196,10 @@ export class CloudSyncListComponent implements OnInit {
       column({
         title: this.titles().frequency,
         getValue: (task) => task.schedule,
-        // The table shows this through <ix-table-text-cell>; a details row prints it.
+        // The table shows this through <ix-table-text-cell>; a details row prints it, under the
+        // id that cell resolves.
         formatValue: (task) => this.scheduleDescription.transform(task.schedule),
+        testIdSuffix: 'row-schedule',
         propertyName: 'frequency_sort_key',
         sortBy: (task) => task.frequency_sort_key,
       }),
@@ -223,14 +225,18 @@ export class CloudSyncListComponent implements OnInit {
         title: this.titles().state,
         columnName: 'state',
         getValue: (row) => row.state.state,
-        // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it.
+        // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it,
+        // under the suffix that pill resolves.
         formatValue: (row) => this.stateText(row.state.state),
+        testIdSuffix: 'row-state',
       }),
       column({
         title: this.titles().enabled,
         propertyName: 'enabled',
-        // The table shows this as Yes/No in the template; a details row prints it.
+        // The table shows this as Yes/No in the template; a details row prints it, under the id
+        // that cell resolves.
         formatValue: (task) => this.translate.instant(task.enabled ? 'Yes' : 'No'),
+        testIdSuffix: 'row-yesno',
       }),
     ]),
   });

@@ -6,7 +6,7 @@ import { SortValue } from 'app/modules/tn-table/interfaces/table-sort.interface'
  * these, and a column carries it so a details row can tag the same value the same way.
  */
 export type TableCellTestIdSuffix
-  = 'row-text' | 'row-yesno' | 'row-schedule' | 'row-relative-date' | 'row-state';
+  = 'row-text' | 'row-yesno' | 'row-schedule' | 'row-relative-date' | 'row-state' | 'row-toggle';
 
 /**
  * A column of a `tn-table`, as everything *around* the table needs to know it: the column picker
@@ -52,9 +52,14 @@ export interface TableColumn<T> {
 
   /**
    * Test-id suffix a details row gives this column's printed value, matching what the column's
-   * own cell resolves while it is visible — a selector aimed at a value then matches whether the
-   * column is on screen or in the details row. Defaults to `row-text`, so only a column whose
-   * cell is not a plain text cell needs to say anything.
+   * own cell resolves while it is visible. Defaults to `row-text`, so only a column whose cell is
+   * not a plain text cell needs to say anything — but any titled column can be hidden by the
+   * picker, so declare it on every such column rather than only the ones that start hidden.
+   *
+   * The suffix is the whole of what a details row can match: it prints text, so the id it
+   * resolves is always prefixed `text`. That is the cell's own prefix for a text or relative-date
+   * cell, and byte-identical there; a state pill or a toggle carries its own element prefix,
+   * which a printed value cannot reproduce.
    */
   testIdSuffix?: TableCellTestIdSuffix;
 }

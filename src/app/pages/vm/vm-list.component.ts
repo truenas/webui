@@ -161,11 +161,17 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Running'),
       propertyName: 'status',
       getValue: (row) => this.yesNo(this.isRunning(row)),
+      // The table shows this as an <ix-table-toggle-cell>; a details row prints Yes/No, under the
+      // suffix that toggle resolves.
+      testIdSuffix: 'row-toggle',
     }),
     column({
       title: this.translate.instant('Start on Boot'),
       propertyName: 'autostart',
       getValue: (row) => this.yesNo(this.isAutostartEnabled(row)),
+      // The table shows this as an <ix-table-toggle-cell>; a details row prints Yes/No, under the
+      // suffix that toggle resolves.
+      testIdSuffix: 'row-toggle',
     }),
     column({
       title: this.translate.instant('Virtual CPUs'),

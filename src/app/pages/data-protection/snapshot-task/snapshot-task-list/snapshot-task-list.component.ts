@@ -172,8 +172,10 @@ export class SnapshotTaskListComponent implements OnInit {
         title: this.titles().frequency,
         columnName: 'frequency',
         getValue: (row) => row.schedule,
-        // The table shows this through <ix-table-text-cell>; a details row prints it.
+        // The table shows this through <ix-table-text-cell>; a details row prints it, under the
+        // id that cell resolves.
         formatValue: (row) => this.scheduleDescription.transform(row.schedule),
+        testIdSuffix: 'row-schedule',
       }),
       column({
         hidden: true,
@@ -222,8 +224,10 @@ export class SnapshotTaskListComponent implements OnInit {
         title: this.titles().state,
         columnName: 'state',
         getValue: (row) => row.state.state,
-        // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it.
+        // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it,
+        // under the suffix that pill resolves.
         formatValue: (row) => this.stateText(row.state.state),
+        testIdSuffix: 'row-state',
       }),
     ]),
   });
