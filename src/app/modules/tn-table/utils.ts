@@ -97,9 +97,10 @@ export function memoizedRowTag<T extends object>(build: (row: T) => string): (ro
  * worse trade than a loud console error.
  */
 function assertMigratedColumns<T>(columns: TableColumn<T>[]): void {
-  // Checked on the RESOLVED names, so the single-unnamed case is caught too: one such column
-  // resolves to 'actions', which collides with the name `appendedColumns: ['actions']` adds. That
-  // duplicate in `displayedColumns` is the whole failure mode this guard exists for.
+  // Checked on the RESOLVED names, so a column with neither `propertyName` nor `columnName` is
+  // caught too: every such column resolves to 'actions', so a second one collides with the first.
+  // A collision with an appended column is not visible from here — `createTable` only ever sees
+  // the model — and is caught by `assertUniqueDisplayedColumns` where the two lists meet.
   const seen = new Set<string>();
   const duplicates = new Set<string>();
   for (const column of columns) {
@@ -113,7 +114,7 @@ function assertMigratedColumns<T>(columns: TableColumn<T>[]): void {
     console.error(
       `[createTable] columns resolve to duplicate tn-table names: ${[...duplicates].join(', ')}. `
       + 'Each column needs its own `propertyName` or `columnName` — a column with neither falls '
-      + 'back to "actions", which also collides with an appended actions column.',
+      + 'back to "actions".',
     );
   }
 
@@ -124,6 +125,28 @@ function assertMigratedColumns<T>(columns: TableColumn<T>[]): void {
       + 'so it must declare `getValue` — that is what the detail row renders and what sorting uses.',
     );
   }
+}
+
+/**
+ * Dev-mode guard for the names a list actually feeds `[displayedColumns]`. This is the only place
+ * the column model and `appendedColumns` are both in scope, so it is where an appended name
+ * colliding with a modelled one shows up — a duplicate there makes `tn-table` look up the same
+ * `[tnColumnDef]` twice and render the appended cell in both places.
+ *
+ * Reports each distinct list once: the names are recomputed whenever visibility or the language
+ * changes, and a standing collision would otherwise log on every pass.
+ */
+function assertUniqueDisplayedColumns(names: string[], reported: Set<string>): void {
+  const duplicates = [...new Set(names.filter((name, index) => names.indexOf(name) !== index))];
+  if (!duplicates.length || reported.has(duplicates.join(','))) {
+    return;
+  }
+  reported.add(duplicates.join(','));
+  console.error(
+    `[tnTableListHost] displayedColumns has duplicate names: ${duplicates.join(', ')}. `
+    + 'An appended column must not repeat a name the column model already resolves — a column '
+    + 'with neither `propertyName` nor `columnName` falls back to "actions".',
+  );
 }
 
 /**
@@ -591,9 +614,17 @@ export function tnTableListHost<T extends object>(
     ));
   });
 
+  const reportedDuplicates = new Set<string>();
+
   return {
     ...withSorting(
-      computed(() => [...toDisplayedColumns(columns()), ...appendedColumns]),
+      computed(() => {
+        const names = [...toDisplayedColumns(columns()), ...appendedColumns];
+        if (isDevMode()) {
+          assertUniqueDisplayedColumns(names, reportedDuplicates);
+        }
+        return names;
+      }),
       (columnName) => columnSortBy(columns().find((column) => tnColumnName(column) === columnName)),
     ),
     columns,

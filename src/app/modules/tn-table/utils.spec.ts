@@ -557,6 +557,37 @@ describe('tnTableListHost', () => {
       });
     });
 
+    // `createTable` only ever sees the model, so a modelled column colliding with an appended one
+    // is only visible here — a column with neither `propertyName` nor `columnName` resolves to
+    // 'actions', the same name `appendedColumns` adds.
+    it('reports a modelled column colliding with an appended one, once per collision', () => {
+      const error = jest.spyOn(console, 'error').mockImplementation();
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, {
+          columns: () => [{ title: 'Name', propertyName: 'name' }, { title: 'Actions' }] as TableColumn<Row>[],
+          appendedColumns: ['actions'],
+        });
+
+        expect(list.displayedColumns()).toEqual(['name', 'actions', 'actions']);
+        list.displayedColumns();
+
+        expect(error).toHaveBeenCalledTimes(1);
+        expect(error).toHaveBeenCalledWith(expect.stringContaining('duplicate names: actions'));
+      });
+      error.mockRestore();
+    });
+
+    it('stays quiet when the appended names are all its own', () => {
+      const error = jest.spyOn(console, 'error').mockImplementation();
+      TestBed.runInInjectionContext(() => {
+        const list = tnTableListHost<Row>(provider, { columns: () => columns(), appendedColumns: ['actions'] });
+        list.displayedColumns();
+
+        expect(error).not.toHaveBeenCalled();
+      });
+      error.mockRestore();
+    });
+
     it('re-derives the displayed columns when the picker changes visibility', () => {
       TestBed.runInInjectionContext(() => {
         const list = tnTableListHost<Row>(provider, { columns: () => columns() });
