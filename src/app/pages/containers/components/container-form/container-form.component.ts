@@ -41,7 +41,6 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   Container,
   ContainerEnvVariablesFormGroup,
@@ -112,7 +111,8 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
 
   protected readonly InputType = InputType;
   protected readonly isLoading = signal<boolean>(false);
-  protected readonly requiredRoles = [Role.ContainerWrite];
+  /** Public because the `<tn-side-panel>` host reads it to gate its footer Save. */
+  readonly requiredRoles = [Role.ContainerWrite];
 
   protected readonly slashRootNode = [slashRootNode];
 
@@ -376,7 +376,7 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
     this.form.controls.disks.removeAt(index);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     if (this.isEditMode()) {
@@ -564,6 +564,4 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
       return env;
     }, {});
   }
-
-  protected readonly containersHelptext = containersHelptext;
 }
