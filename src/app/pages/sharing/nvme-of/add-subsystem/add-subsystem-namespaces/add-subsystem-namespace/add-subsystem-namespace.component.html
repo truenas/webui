@@ -1,3 +1,11 @@
-<ix-base-namespace-form
-  (submitted)="onNamespaceSubmitted($event)"
-></ix-base-namespace-form>
+<!--
+  No `<form>` and no Save button here — the tn-side-panel host renders the footer and calls submit()
+  itself, so nothing on this side needs a submit target.
+
+  This does cost Enter-to-submit, which the sibling NamespaceFormComponent has (its `<ix-form>`
+  renders a real form with ngSubmit). Accepted rather than papered over with a bare `<form>`: implicit
+  submission only fires when a single field blocks it, so a form here would give Enter on the Zvol
+  branch (one ix-explorer, whose autocomplete may consume it anyway) and nothing on the New File
+  branch (path + filename) — inconsistent with itself, not just with the sibling.
+-->
+<ix-base-namespace-form [group]="form"></ix-base-namespace-form>

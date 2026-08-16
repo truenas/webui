@@ -15,7 +15,6 @@ import {
   FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -68,7 +67,9 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
+import {
+  advancedModeFooterAction, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
@@ -168,16 +169,19 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
   readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   /**
-   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Re-read each
-   * change detection, so the label flips with {@link isAdvancedMode}.
+   * The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). Opening the
+   * section re-runs the audit validation the hidden fields carry.
    */
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
+    onToggle: (isAdvanced) => {
+      if (isAdvanced) {
+        this.updateAuditValidationState();
+      }
+    },
+  });
+
   get footerActions(): SidePanelFooterAction[] {
-    // Labels are extraction markers — the panel container pipes them through `translate`.
-    return [{
-      label: this.isAdvancedMode() ? T('Basic Options') : T('Advanced Options'),
-      testId: 'toggle-advanced-options',
-      onClick: () => this.toggleAdvancedMode(),
-    }];
+    return this.advancedToggle();
   }
 
   private wasStripAclWarningShown = false;
@@ -356,14 +360,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
 
     if (this.hasAdvancedErrorsInternal()) {
       this.isAdvancedMode.set(true);
-      this.updateAuditValidationState();
-    }
-  }
-
-  protected toggleAdvancedMode(): void {
-    this.isAdvancedMode.update((isAdvanced) => !isAdvanced);
-
-    if (this.isAdvancedMode()) {
       this.updateAuditValidationState();
     }
   }

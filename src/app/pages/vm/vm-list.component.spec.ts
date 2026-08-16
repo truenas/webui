@@ -1,29 +1,33 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonHarness, TnEmptyHarness, TnSelectHarness, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { VmBootloader, VmDeviceType, VmDisplayType, VmState } from 'app/enums/vm.enum';
+import { ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
-  IxTableColumnsSelectorComponent,
-} from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+  TableColumnPickerComponent,
+} from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  VirtualMachineDetailsRowComponent,
+} from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
 import { VmListComponent } from 'app/pages/vm/vm-list.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -92,18 +96,15 @@ const virtualMachines = [
 describe('VmListComponent', () => {
   let spectator: Spectator<VmListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
-  let vmSubscriptionSubject$: Subject<unknown>;
+  let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
     component: VmListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
+      TableColumnPickerComponent,
       FileSizePipe,
-      IxTableDetailsRowDirective,
-      MockComponent(VmWizardComponent),
     ],
     providers: [
       mockAuth(),
@@ -130,223 +131,315 @@ describe('VmListComponent', () => {
         getAvailableMemory: jest.fn(() => of(4096)),
         hasVirtualizationSupport$: of(true),
       }),
-      mockProvider(SlideIn, {
+      mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
     ],
   });
 
   beforeEach(async () => {
-    vmSubscriptionSubject$ = new Subject();
-
     spectator = createComponent();
-
-    // Mock the subscribe method after component creation
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    jest.spyOn(spectator.inject(ApiService), 'subscribe').mockImplementation((): any => {
-      return vmSubscriptionSubject$.asObservable();
-    });
-
-    // Initialize the vmMap with test data
-    virtualMachines.forEach((vm) => {
-      spectator.component.vmMap.set(vm.id, vm);
-    });
-
-    // Initialize the subscription by calling the method directly
-    spectator.component.subscribeToVmEvents();
-
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
+  /**
+   * Pushes a `vm.query` websocket event, the same path production uses to learn a VM was added,
+   * changed or removed. Preferred over seeding the component's row map directly: it also covers
+   * the subscription that maintains it, and keeps these cases off the component's internals.
+   */
+  function emitVmEvent(event: Partial<ApiEventTyped>): void {
+    spectator.inject(MockApiService).emitSubscribeEvent(event as ApiEventTyped);
+    spectator.detectChanges();
+  }
+
+  /**
+   * Reveals a column the picker hides by default, so the cell it renders can be asserted on. The
+   * picker is a multiselect, so selecting adds to the visible set rather than replacing it.
+   */
+  async function showColumn(title: string): Promise<void> {
+    const picker = await loader.getHarness(TnSelectHarness);
+    await picker.selectOption(title);
+    await picker.close();
+    spectator.detectChanges();
+  }
+
+  async function getNames(): Promise<string[]> {
+    const rows = await table.getAllRowTexts();
+    return rows.map((cells) => cells[0]);
+  }
+
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Running', 'Start on Boot'],
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'Running', 'Start on Boot']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['test', '', ''],
       ['test_refactoring', '', ''],
       ['test_with_spice', '', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 
   it('opens vm wizard when "Add" button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(VmWizardComponent);
-  });
-
-  describe('getDisplayPort', () => {
-    it('returns "N/A" when display is not available', () => {
-      const vm = virtualMachines[1]; // test_refactoring with display_available: false
-      const result = spectator.component.getDisplayPort(vm);
-      expect(result).toBe('N/A');
-    });
-
-    it('returns false when no devices exist', () => {
-      const vm = { ...virtualMachines[0], devices: [] as VmDisplayDevice[] };
-      const result = spectator.component.getDisplayPort(vm);
-      expect(result).toBe(false);
-    });
-
-    it('returns false when no display devices exist', () => {
-      const vm = {
-        ...virtualMachines[0],
-        devices: [] as VmDisplayDevice[],
-      };
-      const result = spectator.component.getDisplayPort(vm);
-      expect(result).toBe(false);
-    });
-
-    it('returns VNC port for VNC display device', () => {
-      const vm = virtualMachines[0]; // test with VNC display
-      const result = spectator.component.getDisplayPort(vm);
-      expect(result).toBe('VNC:5900');
-    });
-
-    it('returns SPICE port for SPICE display device', () => {
-      const vm = virtualMachines[2]; // test_with_spice
-      const result = spectator.component.getDisplayPort(vm);
-      expect(result).toBe('SPICE:5901');
-    });
-
-    it('returns multiple ports when multiple display devices exist', () => {
-      const vm = {
-        ...virtualMachines[0],
-        devices: [
-          {
-            attributes: {
-              dtype: VmDeviceType.Display,
-              type: VmDisplayType.Vnc,
-              port: 5900,
-            },
-          },
-          {
-            attributes: {
-              dtype: VmDeviceType.Display,
-              type: VmDisplayType.Spice,
-              port: 5901,
-            },
-          },
-        ] as VmDisplayDevice[],
-      };
-      const result = spectator.component.getDisplayPort(vm);
-      expect(result).toBe('VNC:5900, SPICE:5901');
+    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(VmWizardComponent, {
+      title: 'Create Virtual Machine',
+      wide: true,
+      footerless: true,
     });
   });
 
-  describe('subscribeToVmEvents', () => {
-    it('should preserve devices when VM update does not include devices', () => {
-      // Initial VM has devices
-      const originalVm = virtualMachines[0];
-      spectator.component.vmMap.set(originalVm.id, originalVm);
+  describe('row expansion', () => {
+    it('expands a row into the VM details row on click', async () => {
+      expect(await table.isRowExpanded(0)).toBe(false);
 
-      // Simulate a partial update without devices (like a state change)
-      const partialUpdate = {
-        id: originalVm.id,
-        status: { state: VmState.Stopped },
-      };
+      await table.clickRow(0);
 
-      vmSubscriptionSubject$.next({
-        msg: CollectionChangeType.Changed,
-        id: originalVm.id,
-        fields: partialUpdate,
-      });
-
-      const updatedVm = spectator.component.vmMap.get(originalVm.id);
-      expect(updatedVm?.devices).toEqual(originalVm.devices);
-      expect(updatedVm?.status?.state).toBe(VmState.Stopped);
+      expect(await table.isRowExpanded(0)).toBe(true);
+      expect(spectator.query(VirtualMachineDetailsRowComponent)).toBeTruthy();
     });
 
-    it('should update devices when VM update includes devices', () => {
-      const originalVm = virtualMachines[0];
-      spectator.component.vmMap.set(originalVm.id, originalVm);
+    it('keeps only one row expanded at a time', async () => {
+      await table.clickRow(0);
+      await table.clickRow(1);
 
-      const newDevices = [
-        {
-          id: 3,
-          attributes: {
-            dtype: VmDeviceType.Display,
-            type: VmDisplayType.Spice,
-            port: 5999,
-          },
-        },
-      ] as VmDisplayDevice[];
+      expect(await table.getExpandedRowCount()).toBe(1);
+      expect(await table.isRowExpanded(0)).toBe(false);
+      expect(await table.isRowExpanded(1)).toBe(true);
+    });
+  });
 
-      const updateWithDevices = {
-        id: originalVm.id,
-        devices: newDevices,
-        status: originalVm.status,
-      };
+  describe('toggle columns', () => {
+    /**
+     * Addresses a toggle by its resolved test ID rather than by position in
+     * `getAllHarnesses` — with two toggle columns per row, a positional lookup silently
+     * follows a column reorder onto the wrong switch.
+     */
+    function getToggle(column: 'running' | 'start-on-boot', vmName: string): Promise<TnSlideToggleHarness> {
+      return loader.getHarness(TnSlideToggleHarness.with({
+        testId: `toggle-${column}-virtual-machine-${vmName.replace(/_/g, '-')}-row-toggle`,
+      }));
+    }
 
-      vmSubscriptionSubject$.next({
-        msg: CollectionChangeType.Changed,
-        id: originalVm.id,
-        fields: updateWithDevices,
-      });
-
-      const updatedVm = spectator.component.vmMap.get(originalVm.id);
-      expect(updatedVm?.devices).toEqual(newDevices);
+    it('reflects VM running and autostart state', async () => {
+      expect(await (await getToggle('running', 'test')).isChecked()).toBe(true);
+      expect(await (await getToggle('start-on-boot', 'test')).isChecked()).toBe(true);
+      expect(await (await getToggle('running', 'test_refactoring')).isChecked()).toBe(false);
+      expect(await (await getToggle('start-on-boot', 'test_refactoring')).isChecked()).toBe(false);
     });
 
-    it('should add new VM to map when VM is added', () => {
-      const newVm = {
-        id: 999,
-        name: 'new_vm',
-        devices: [],
-        display_available: false,
-        status: {
-          state: VmState.Stopped,
-          pid: null,
-          domain_state: 'SHUTOFF',
-        },
-        autostart: false,
-        bootloader: VmBootloader.Uefi,
-      } as VirtualMachine;
+    it('reverts the Running toggle when the stop dialog is cancelled', async () => {
+      // Answer through a Subject rather than of(false) so the flip is optimistic first and the
+      // revert lands afterwards — the same ordering as the real confirmation dialog.
+      const stopConfirmed$ = new Subject<boolean>();
+      jest.spyOn(spectator.inject(VmService), 'doStop').mockReturnValue(stopConfirmed$.asObservable());
 
-      vmSubscriptionSubject$.next({
+      const toggle = await getToggle('running', 'test');
+      await toggle.uncheck();
+
+      expect(spectator.inject(VmService).doStop).toHaveBeenCalledWith(virtualMachines[0]);
+      expect(await toggle.isChecked()).toBe(false);
+
+      stopConfirmed$.next(false);
+      spectator.detectChanges();
+
+      expect(await toggle.isChecked()).toBe(true);
+    });
+
+    it('reverts the Start on Boot toggle when the update fails', async () => {
+      const autostartUpdated$ = new Subject<boolean>();
+      jest.spyOn(spectator.inject(VmService), 'toggleVmAutostart').mockReturnValue(autostartUpdated$.asObservable());
+
+      const toggle = await getToggle('start-on-boot', 'test');
+      await toggle.uncheck();
+
+      expect(spectator.inject(VmService).toggleVmAutostart).toHaveBeenCalledWith(virtualMachines[0]);
+
+      autostartUpdated$.next(false);
+      spectator.detectChanges();
+
+      expect(await toggle.isChecked()).toBe(true);
+    });
+
+    // Regression: the table is [clickable], and its row handler preventDefaults Enter/Space
+    // for any keydown that reaches it — which would cancel the checkbox's own Space
+    // activation and expand the row instead of flipping the switch.
+    it('does not let Space on a toggle reach the clickable row', async () => {
+      // White-box: no harness can express this. `TestElement.dispatchEvent` does not hand the
+      // event back, so `defaultPrevented` is unreachable through the abstraction — the raw
+      // element is the only way to observe it. Scoped to the cell so it can't match elsewhere.
+      const toggleInput = spectator.query('ix-table-toggle-cell input');
+      const event = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
+      toggleInput.dispatchEvent(event);
+      spectator.detectChanges();
+
+      expect(event.defaultPrevented).toBe(false);
+      expect(await table.getExpandedRowCount()).toBe(0);
+    });
+  });
+
+  describe('Display Port column', () => {
+    beforeEach(async () => {
+      await showColumn('Display Port');
+    });
+
+    it('renders a port per display device, and N/A where display is unavailable', async () => {
+      expect(await table.getCellText(0, 'display_port')).toBe('VNC:5900');
+      expect(await table.getCellText(1, 'display_port')).toBe('N/A');
+      expect(await table.getCellText(2, 'display_port')).toBe('SPICE:5901');
+    });
+
+    it('lists every display device a VM has', async () => {
+      emitVmEvent({
+        msg: CollectionChangeType.Changed,
+        id: virtualMachines[0].id,
+        fields: {
+          id: virtualMachines[0].id,
+          devices: [
+            { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc, port: 5900 } },
+            { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Spice, port: 5901 } },
+          ] as VmDisplayDevice[],
+        },
+      });
+
+      expect(await table.getCellText(0, 'display_port')).toBe('VNC:5900, SPICE:5901');
+    });
+
+    // Covers `sortAccessors`: the cells are derived text, so sorting them as rendered would
+    // order 'N/A' < 'SPICE:5901' < 'VNC:5900'. The accessor sorts by the lowest port instead,
+    // with the VMs that have no port pushed to the end.
+    it('sorts by the lowest port number rather than by the rendered text', async () => {
+      // Ports deliberately out of order: taking the first (5902) rather than the lowest (5900)
+      // would drop this VM behind test_with_spice's 5901.
+      emitVmEvent({
+        msg: CollectionChangeType.Changed,
+        id: virtualMachines[0].id,
+        fields: {
+          id: virtualMachines[0].id,
+          devices: [
+            { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc, port: 5902 } },
+            { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc, port: 5900 } },
+            { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc, port: 5901 } },
+          ] as VmDisplayDevice[],
+        },
+      });
+
+      await table.clickSortHeader('display_port');
+      spectator.detectChanges();
+
+      expect(await getNames()).toEqual(['test', 'test_with_spice', 'test_refactoring']);
+    });
+  });
+
+  describe('vm.query subscription', () => {
+    it('adds a row when a VM is added', async () => {
+      emitVmEvent({
         msg: CollectionChangeType.Added,
-        id: newVm.id,
-        fields: newVm,
+        id: 999,
+        fields: {
+          id: 999,
+          name: 'new_vm',
+          devices: [],
+          display_available: false,
+          status: { state: VmState.Stopped, pid: null, domain_state: 'SHUTOFF' },
+          autostart: false,
+          bootloader: VmBootloader.Uefi,
+        } as VirtualMachine,
       });
 
-      expect(spectator.component.vmMap.get(newVm.id)).toEqual(newVm);
+      expect(await getNames()).toEqual(['test', 'test_refactoring', 'test_with_spice', 'new_vm']);
     });
 
-    it('should remove VM from map when VM is removed', () => {
-      const vmToRemove = virtualMachines[0];
-      spectator.component.vmMap.set(vmToRemove.id, vmToRemove);
+    it('drops the row when a VM is removed', async () => {
+      emitVmEvent({ msg: CollectionChangeType.Removed, id: virtualMachines[0].id });
 
-      vmSubscriptionSubject$.next({
-        msg: CollectionChangeType.Removed,
-        id: vmToRemove.id,
+      expect(await getNames()).toEqual(['test_refactoring', 'test_with_spice']);
+    });
+
+    // Regression: a state-change event carries no `devices`, and merging it naively over the
+    // cached VM would blank the Display Port cell for as long as the list stays open.
+    it('applies a partial update without losing the devices it omits', async () => {
+      await showColumn('Display Port');
+
+      emitVmEvent({
+        msg: CollectionChangeType.Changed,
+        id: virtualMachines[0].id,
+        fields: { id: virtualMachines[0].id, status: { state: VmState.Stopped } },
       });
 
-      expect(spectator.component.vmMap.has(vmToRemove.id)).toBe(false);
+      expect(await table.getCellText(0, 'display_port')).toBe('VNC:5900');
+
+      const running = await loader.getHarness(TnSlideToggleHarness.with({
+        testId: 'toggle-running-virtual-machine-test-row-toggle',
+      }));
+      expect(await running.isChecked()).toBe(false);
+    });
+
+    it('applies the devices an update does carry', async () => {
+      await showColumn('Display Port');
+
+      emitVmEvent({
+        msg: CollectionChangeType.Changed,
+        id: virtualMachines[0].id,
+        fields: {
+          id: virtualMachines[0].id,
+          devices: [
+            { id: 3, attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Spice, port: 5999 } },
+          ] as VmDisplayDevice[],
+        },
+      });
+
+      expect(await table.getCellText(0, 'display_port')).toBe('SPICE:5999');
     });
   });
+});
 
-  describe('getDisplayPortSortValue', () => {
-    it('returns MAX_SAFE_INTEGER for VMs without display available', () => {
-      const vm = virtualMachines[1]; // display_available: false
-      const result = spectator.component.getDisplayPortSortValue(vm);
-      expect(result).toBe(Number.MAX_SAFE_INTEGER);
-    });
+describe('VmListComponent without virtualization support', () => {
+  let spectator: Spectator<VmListComponent>;
+  let loader: HarnessLoader;
 
-    it('returns lowest port number for sorting when multiple display devices exist', () => {
-      const vm = {
-        ...virtualMachines[0],
-        devices: [
-          { attributes: { dtype: VmDeviceType.Display, port: 5902 } },
-          { attributes: { dtype: VmDeviceType.Display, port: 5900 } },
-          { attributes: { dtype: VmDeviceType.Display, port: 5901 } },
-        ] as VmDisplayDevice[],
-      };
+  // Own factory rather than a per-test provider override: `hasVirtualizationSupport` is read
+  // into a signal in a field initializer, so the provider has to be in place at construction.
+  const createComponent = createComponentFactory({
+    component: VmListComponent,
+    imports: [
+      MockComponent(PageHeaderComponent),
+      BasicSearchComponent,
+      TableColumnPickerComponent,
+      FileSizePipe,
+    ],
+    providers: [
+      mockAuth(),
+      mockApi([mockCall('vm.query', [])]),
+      provideMockStore({
+        initialState: {
+          preferences: { preferences: { vmList: {} } },
+          systemInfo: {
+            systemInfo: null,
+            productType: ProductType.CommunityEdition,
+            isIxHardware: false,
+            buildYear: 2024,
+          },
+        },
+      }),
+      mockProvider(SystemGeneralService),
+      mockProvider(VmService, {
+        getAvailableMemory: jest.fn(() => of(4096)),
+        hasVirtualizationSupport$: of(false),
+      }),
+      mockProvider(FormSidePanelService),
+    ],
+  });
 
-      const result = spectator.component.getDisplayPortSortValue(vm);
-      expect(result).toBe(5900);
-    });
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('renders the unsupported empty state instead of the table', async () => {
+    expect(await loader.getAllHarnesses(TnTableHarness)).toHaveLength(0);
+
+    const empty = await loader.getHarness(TnEmptyHarness);
+    expect(await empty.getTitle()).toBe('Virtualization is not supported');
   });
 });

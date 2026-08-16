@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, output, signal, viewChild, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -19,8 +21,7 @@ import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-mac
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
@@ -48,7 +49,6 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
     TnStepperComponent,
     TnStepComponent,
     OsStepComponent,
@@ -65,8 +65,7 @@ import { GpuService } from 'app/services/gpu/gpu.service';
     TranslateModule,
   ],
 })
-export class VmWizardComponent implements OnInit {
-  private cdr = inject(ChangeDetectorRef);
+export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
@@ -75,8 +74,13 @@ export class VmWizardComponent implements OnInit {
   private vmGpuService = inject(VmGpuService);
   private snackbar = inject(SnackbarService);
   private errorParser = inject(ErrorParserService);
-  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
+
+  /**
+   * Emitted to the hosting `<tn-side-panel>`. The wizard is opened footerless — its stepper
+   * owns the Back/Save buttons — so the panel has no Save of its own and closes on this.
+   */
+  readonly closed = output<boolean>();
 
   protected readonly osStep = viewChild.required(OsStepComponent);
   // TODO: Should be protected, but used in the test.
@@ -113,20 +117,27 @@ export class VmWizardComponent implements OnInit {
     return this.gpuStep().form.value;
   }
 
-  isLoading = false;
+  protected readonly isLoading = signal(false);
   summary: SummarySection[];
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(Boolean(
-        this.osStep()?.form?.dirty
-        || this.cpuAndMemoryStep()?.form?.dirty
-        || this.diskStep()?.form?.dirty
-        || this.networkInterfaceStep()?.form?.dirty
-        || this.installationMediaStep()?.form?.dirty
-        || this.gpuStep()?.form?.dirty,
-      ));
-    });
+  /**
+   * Host hook (`<tn-side-panel>` closeGuard): any dirty step means there are edits to confirm
+   * discarding. Replaces the SlideIn host's `requireConfirmationWhen`.
+   */
+  hasUnsavedChanges(): boolean {
+    return Boolean(
+      this.osStep()?.form?.dirty
+      || this.cpuAndMemoryStep()?.form?.dirty
+      || this.diskStep()?.form?.dirty
+      || this.networkInterfaceStep()?.form?.dirty
+      || this.installationMediaStep()?.form?.dirty
+      || this.gpuStep()?.form?.dirty,
+    );
+  }
+
+  /** The footerless `<tn-side-panel>` host shows its progress bar while this is true. */
+  isBusy(): boolean {
+    return this.isLoading();
   }
 
   ngOnInit(): void {
@@ -147,8 +158,7 @@ export class VmWizardComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     // Track the zvol path if we create one for import
     let importedZvolPath: string | null = null;
@@ -169,13 +179,12 @@ export class VmWizardComponent implements OnInit {
     )
       .subscribe({
         next: () => {
-          this.isLoading = false;
-          this.slideInRef.close({ response: true });
+          this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Virtual machine created'));
-          this.cdr.markForCheck();
+          this.closed.emit(true);
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
 
           // Check if this is an image conversion error
           if (this.diskForm.import_image && error instanceof Error && error.message.includes('Image conversion failed')) {
@@ -189,7 +198,6 @@ export class VmWizardComponent implements OnInit {
             // For other errors, show the error modal
             this.errorHandler.showErrorModal(error);
           }
-          this.cdr.markForCheck();
         },
       });
   }

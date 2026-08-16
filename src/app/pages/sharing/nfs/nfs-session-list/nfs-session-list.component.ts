@@ -19,10 +19,9 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import {
-  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
 
@@ -166,11 +165,11 @@ export class NfsSessionListComponent implements OnInit {
   }
 
   protected uniqueRowTag3(row: Nfs3Session): string {
-    return normalizeTestIdString(convertStringToId('nfs3-session-' + row.export + '-' + row.ip));
+    return toUniqueRowTag('nfs3-session-' + row.export + '-' + row.ip);
   }
 
   protected uniqueRowTag4(row: Nfs4Session['info']): string {
-    return normalizeTestIdString(convertStringToId(`nfs4-session-${row.address}-${row.clientid}`));
+    return toUniqueRowTag(`nfs4-session-${row.address}-${row.clientid}`);
   }
 
   ngOnInit(): void {

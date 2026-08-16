@@ -1,15 +1,18 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  forkJoin, of, switchMap,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import {
+  Observable, forkJoin, of, switchMap,
 } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { MiB } from 'app/constants/bytes.constant';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmCpuModeLabels, vmTimeNames,
@@ -19,23 +22,18 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { CriticalGpuPreventionService } from 'app/services/gpu/critical-gpu-prevention.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
@@ -47,42 +45,44 @@ import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-valid
   providers: [CpuValidatorService],
   standalone: true,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    IxFormComponent,
     ReactiveFormsModule,
-    IxFieldsetComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    TnSelectComponent,
+    TnCheckboxComponent,
     IxInputComponent,
-    IxSelectComponent,
-    IxCheckboxComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     TranslateModule,
+    AsyncPipe,
   ],
 })
-export class VmEditFormComponent implements OnInit {
+export class VmEditFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   formatter = inject(IxFormatterService);
-  private errorHandler = inject(ErrorHandlerService);
-  private cdr = inject(ChangeDetectorRef);
   private cpuValidator = inject(CpuValidatorService);
   private validators = inject(IxValidatorsService);
   private gpuValidator = inject(IsolatedGpuValidatorService);
   private gpuService = inject(GpuService);
   private vmGpuService = inject(VmGpuService);
-  private snackbar = inject(SnackbarService);
-  private dialog = inject(DialogService);
   private criticalGpuPrevention = inject(CriticalGpuPreventionService);
-  slideInRef = inject<SlideInRef<VirtualMachine, boolean>>(SlideInRef);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.VmWrite];
+  /**
+   * The VM to edit, supplied by the `<tn-side-panel>` host. Required: this form has no add
+   * mode, and `handleSubmit` dereferences the VM's id — without it the panel would open a
+   * form that looks fine and then throws on Save.
+   */
+  readonly vmToEdit = input.required<VirtualMachine>();
 
-  showCpuModelField = true;
+  readonly requiredRoles = [Role.VmWrite];
+
+  protected readonly InputType = InputType;
+  protected readonly tnSelectLabels = tnSelectLabels;
+
+  protected showCpuModelField = true;
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
@@ -111,7 +111,6 @@ export class VmEditFormComponent implements OnInit {
     gpus: [[] as string[], [], [this.gpuValidator.validateGpu]],
   });
 
-  isLoading = false;
   timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));
   bootloaderOptions$ = this.api.call('vm.bootloader_options').pipe(
     choicesToOptions(),
@@ -140,23 +139,17 @@ export class VmEditFormComponent implements OnInit {
 
   protected existingVm: VirtualMachine;
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-    this.existingVm = this.slideInRef.getData();
-  }
-
   ngOnInit(): void {
+    // Resolved here rather than in a field initializer: the `vmToEdit` input the side-panel
+    // host sets is only populated before ngOnInit.
+    this.existingVm = this.vmToEdit();
+
     this.listenForFormValueChanges();
     this.setupCriticalGpuPrevention();
-
-    if (this.existingVm) {
-      this.setVmForEdit();
-    }
+    this.setVmForEdit();
   }
 
-  setVmForEdit(): void {
+  private setVmForEdit(): void {
     if (this.existingVm.cpu_mode !== VmCpuMode.Custom) {
       this.showCpuModelField = false;
     }
@@ -170,10 +163,13 @@ export class VmEditFormComponent implements OnInit {
     this.setupGpuControl(this.existingVm);
   }
 
-  onSubmit(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
-
+  /**
+   * Deliberately ignores the submit event and reads `this.form.value`: the event's `allValues` is
+   * `getRawValue()`, which INCLUDES disabled controls. `pin_vcpus` is disabled whenever `cpuset` is
+   * empty, so building the payload from `allValues` would start sending `pin_vcpus: false` for VMs
+   * that never sent the key.
+   */
+  protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const vmPayload = {
       ...this.form.value,
       memory: Math.round(Number(this.form.value.memory) / MiB),
@@ -189,26 +185,18 @@ export class VmEditFormComponent implements OnInit {
     }
 
     const gpusIds = this.form.getRawValue().gpus;
-    this.gpuService.addIsolatedGpuPciIds(gpusIds).pipe(
+    const request$: Observable<unknown> = this.gpuService.addIsolatedGpuPciIds(gpusIds).pipe(
       switchMap(() => forkJoin([
         this.api.call('vm.update', [this.existingVm.id, vmPayload]),
         this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
       ])),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
-        this.snackbar.success(this.translate.instant('VM updated successfully.'));
-        this.slideInRef.close({ response: true });
-      },
-      error: (error: unknown) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
-        this.errorHandler.showErrorModal(error);
-      },
-    });
-  }
+    );
+
+    return {
+      request$,
+      successMessage: this.translate.instant('VM updated successfully.'),
+    };
+  };
 
   private setupGpuControl(vm: VirtualMachine): void {
     const vmPciSlots = vm.devices

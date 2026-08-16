@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnIconButtonHarness, TnTableHarness,
+  TnButtonHarness, TnIconButtonHarness, TnSelectHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -85,6 +85,15 @@ describe('DockerRegistriesListComponent', () => {
     expect(await table.getCellText(0, 'name')).toBe('Docker Hub');
     expect(await table.getCellText(0, 'username')).toBe('docker');
     expect(await table.getCellText(0, 'uri')).toBe(dockerHubRegistry);
+  });
+
+  it('hides a column from the table when it is deselected in the column picker', async () => {
+    const picker = await loader.getHarness(TnSelectHarness);
+    await picker.open();
+    await picker.selectOption('Username');
+
+    expect(await table.getHeaderTexts()).toEqual(expect.not.arrayContaining(['Username']));
+    expect(await table.getHeaderTexts()).toEqual(expect.arrayContaining(['Name', 'URI']));
   });
 
   it('opens delete dialog when the row "Delete" button is pressed', async () => {

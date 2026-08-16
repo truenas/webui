@@ -81,6 +81,25 @@ describe('TableActionsCellComponent', () => {
     expect(spectator.query('[data-test="button-card-smb-share-smb123-more-action"]')).toBeNull();
   });
 
+  // A `[clickable]` tn-table listens for click and keydown on the <tr>. Both must stop at
+  // the cell, or activating a row action also toggles the row — and tn-table's keydown
+  // handler calls preventDefault(), which would cancel the action entirely. The click half
+  // is covered end-to-end in all-cloud-backups.component.spec.ts, where a real clickable
+  // row exists; jsdom does not propagate a synthetic click to it in this bare fixture.
+  const actionButton = '[data-test="button-card-smb-share-smb123-mdi-pencil-row-action"]';
+
+  it('stops a keydown from propagating out of the cell to the surrounding row', () => {
+    setup([editAction]);
+    spectator.detectChanges();
+
+    const onRowKeydown = jest.fn();
+    spectator.element.addEventListener('keydown', onRowKeydown);
+
+    spectator.dispatchKeyboardEvent(actionButton, 'keydown', 'Enter');
+
+    expect(onRowKeydown).not.toHaveBeenCalled();
+  });
+
   it('keeps an action visible when its async hidden() resolves to false', async () => {
     setup([editAction, { ...deleteAction, hidden: () => of(false) }]);
     spectator.detectChanges();

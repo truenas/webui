@@ -1,14 +1,12 @@
 <ix-page-header>
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
     color="primary"
-    ixTest="add-task"
+    [testId]="'add-task'"
+    [label]="'Add' | translate"
     [ixUiSearch]="searchableElements.elements.add"
-    (click)="openForm()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    (onClick)="openForm()"
+  ></tn-button>
 </ix-page-header>
 
 @let cloudBackup = dataProvider?.expandedRow;

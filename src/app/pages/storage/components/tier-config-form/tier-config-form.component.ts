@@ -10,7 +10,6 @@ import {
   TnBannerComponent, TnCheckboxComponent,
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
-import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -47,21 +46,37 @@ export class TierConfigFormComponent extends SidePanelForm implements OnInit {
   protected readonly enabledWarningMessage = T('Once tiering is on, SMB shares and Webshares stop following nested datasets. Each share will expose only its own dataset, and any child datasets under it will no longer be visible to clients through that share. Create a separate share for each dataset you want to expose.');
 
   protected readonly helptext = {
-    maxConcurrentJobs: T('Maximum number of tiering rewrite jobs that can run in parallel. Higher values speed up data movement between tiers but increase CPU and I/O load on the system.'),
-    maxUsedPercentage: T('Pool capacity threshold (in percent) above which tiering will move data off the performance tier to keep free space available. Lower values reserve more free space; higher values let the performance tier fill more before data is migrated.'),
+    maxConcurrentJobs: T('Maximum number of tiering jobs that can run at the same time ({min}–{max}). Higher values speed up data movement between tiers but increase CPU and I/O load on the system.'),
+    maxUsedPercentage: T('Stop moving data between tiers when the pool reaches this percentage full ({min}–{max}). This keeps tiering from using up the last of the pool\'s free space.'),
+    performanceTierReserve: T('Percentage of the performance tier kept in reserve ({min}–{max}). When only this much space is left on the performance tier, new data goes to the regular tier instead. Shown as reserved space on the pool Usage card.'),
   };
 
+  // Bounds mirror the zfs.tier.update API schema and are interpolated into the field hints.
+  protected readonly concurrentJobsRange = { min: 1, max: 10 };
+  protected readonly maxUsedRange = { min: 70, max: 95 };
+  protected readonly reserveRange = { min: 10, max: 30 };
+
   private static readonly defaultMaxConcurrentJobs = 1;
+  private static readonly defaultMaxUsedPercent = 80;
+  private static readonly defaultReservePercent = 25;
 
   readonly form = this.fb.nonNullable.group({
     enabled: [false],
     max_concurrent_jobs: [
       TierConfigFormComponent.defaultMaxConcurrentJobs,
-      [Validators.required, Validators.min(1)],
+      [
+        Validators.required,
+        Validators.min(this.concurrentJobsRange.min),
+        Validators.max(this.concurrentJobsRange.max),
+      ],
     ],
     max_used_percentage: [
-      poolLowCapacityPercent,
-      [Validators.required, Validators.min(0), Validators.max(100)],
+      TierConfigFormComponent.defaultMaxUsedPercent,
+      [Validators.required, Validators.min(this.maxUsedRange.min), Validators.max(this.maxUsedRange.max)],
+    ],
+    special_class_metadata_reserve_pct: [
+      TierConfigFormComponent.defaultReservePercent,
+      [Validators.required, Validators.min(this.reserveRange.min), Validators.max(this.reserveRange.max)],
     ],
   });
 

@@ -122,8 +122,18 @@ export class FormSidePanelService {
    * than {@link SlideInResult}'s own `=== undefined` rule, so a form must never close with `0`,
    * `''`, `null` or `false` to mean success — hand back the record, or a non-empty wrapper. (An
    * empty array is truthy, so a bulk save that changed nothing still resolves as a success.)
+   *
+   * A form whose payload has a `null` fallback (`IxFormHostForm<Dataset | null>`) is still accepted
+   * here, and emitting that `null` does tear the panel down — but it resolves as a CANCEL, not a
+   * save: the opener's `onSuccess` never runs, so its snackbar and store refresh are skipped. Use
+   * that fallback only as a safety net for an endpoint that is expected to return the saved record
+   * (without it, a record-less success would leave the panel stuck open), never as a routine
+   * "saved, no record" path.
    */
-  open<R = boolean>(component: Type<SidePanelHostCloseable<R>>, options: FormSidePanelOptions = {}): SlideInResult<R> {
+  open<R = boolean>(
+    component: Type<SidePanelHostCloseable<R>>,
+    options: FormSidePanelOptions = {},
+  ): SlideInResult<R> {
     const top = this.stack[this.stack.length - 1];
     // Dedupe a re-entrant open of the component already on top (e.g. a double-fired menu click);
     // a different component is a genuine nested open and stacks on top.

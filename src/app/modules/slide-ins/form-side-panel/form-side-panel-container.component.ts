@@ -1,9 +1,12 @@
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
 import {
-  ChangeDetectionStrategy, Component, ComponentRef, inject, input, model, output, signal, type Signal,
+  ChangeDetectionStrategy, Component, ComponentRef, inject, input, model, output, signal,
+  type Signal,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
+  TnBannerActionDirective,
+  TnBannerComponent,
   TnButtonComponent,
   TnIconButtonComponent,
   TnMenuComponent,
@@ -17,52 +20,11 @@ import {
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import {
+  SidePanelFooterAction, SidePanelFooterMenu,
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelHostCloseable, SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
-
-/**
- * A secondary action rendered in the side-panel footer alongside the built-in Save (e.g. a form's
- * "Send Test Alert"). Listed in {@link HostedSidePanelForm.footerActions}; the container renders one
- * `tn-button` per entry, before Save.
- */
-export interface SidePanelFooterAction {
-  /** Untranslated marker; the container pipes it through `translate`. */
-  label: string;
-  testId: TnTestIdValue;
-  /** `tn-button` color; defaults to `'default'` (secondary). */
-  color?: 'primary' | 'secondary' | 'warn' | 'default';
-  /** Roles required to show the action (omit / empty = always shown). */
-  requiredRoles?: Role[];
-  /** Re-evaluated each change detection — read signals inside for reactive disabling. */
-  disabled?: () => boolean;
-  onClick: () => void;
-}
-
-/** A single action inside a {@link SidePanelFooterMenu}. */
-export interface SidePanelFooterMenuItem {
-  /** Untranslated marker; the container pipes it through `translate`. */
-  label: string;
-  testId: TnTestIdValue;
-  icon?: string;
-  iconLibrary?: 'material' | 'mdi' | 'custom' | 'lucide';
-  /** Roles required to show the item (omit / empty = always shown). */
-  requiredRoles?: Role[];
-  /** Re-evaluated each change detection — read signals inside for reactive disabling. */
-  disabled?: () => boolean;
-  onClick: () => void;
-}
-
-/**
- * A dropdown of secondary actions rendered in the footer before Save. Use instead of a flat
- * {@link SidePanelFooterAction}[] when several actions would crowd the footer — the container
- * renders one `dots-vertical` icon-button trigger opening a `tn-menu` of the {@link items}.
- */
-export interface SidePanelFooterMenu {
-  /** Trigger button accessible name / tooltip (untranslated marker). */
-  label: string;
-  testId: TnTestIdValue;
-  items: SidePanelFooterMenuItem[];
-}
 
 /**
  * A {@link SidePanelHostForm} that may expose `requiredRoles` to gate its Save action, plus optional
@@ -92,6 +54,17 @@ export type HostedSidePanelForm = SidePanelHostForm & {
    * not `isBusy` — to switch Save to "Saving…", so a load never mislabels Save. Optional.
    */
   readonly isSubmitting?: () => boolean;
+  /**
+   * Whether the form's initial data load failed, leaving it on defaults the user never saw. The
+   * host renders a banner saying so, because the form's own one-shot error modal is gone as soon
+   * as it is dismissed and a greyed-out Save alone doesn't explain itself. Optional.
+   */
+  readonly hasLoadFailed?: () => boolean;
+  /**
+   * Re-runs the failed load. Paired with {@link hasLoadFailed} — the banner only offers Retry when
+   * a form exposes this. Optional.
+   */
+  readonly retryLoad?: () => void;
 };
 
 /**
@@ -110,6 +83,8 @@ export type HostedSidePanelForm = SidePanelHostForm & {
   imports: [
     TnSidePanelComponent,
     TnSidePanelActionDirective,
+    TnBannerComponent,
+    TnBannerActionDirective,
     TnButtonComponent,
     TnIconButtonComponent,
     TnMenuComponent,

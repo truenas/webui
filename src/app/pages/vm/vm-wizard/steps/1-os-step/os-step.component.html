@@ -1,132 +1,144 @@
 <form [formGroup]="form">
-  <tn-form-field
-    [label]="'Guest Operating System' | translate"
-    [tooltip]="helptext.os_tooltip | translate"
-    [required]="true"
-  >
-    <tn-select
-      formControlName="os"
-      [options]="(osOptions$ | async) ?? []"
-    ></tn-select>
-  </tn-form-field>
-
-  @if (form.controls.os.value === VmOs.Windows) {
-    <tn-form-field [tooltip]="helptext.hyperv_enlightenments_tooltip | translate">
-      <tn-checkbox
-        formControlName="hyperv_enlightenments"
-        [label]="'Enable Hyper-V Enlightenments' | translate"
-      ></tn-checkbox>
-    </tn-form-field>
-  }
-
-  <tn-form-field
-    [label]="'Name' | translate"
-    [tooltip]="helptext.name_tooltip | translate"
-    [required]="true"
-  >
-    <tn-input
-      formControlName="name"
-      [required]="true"
-    ></tn-input>
-  </tn-form-field>
-
-  <tn-form-field
-    [label]="'Description' | translate"
-    [tooltip]="helptext.description_tooltip | translate"
-  >
-    <tn-input formControlName="description"></tn-input>
-  </tn-form-field>
-
-  <tn-form-field
-    [label]="'System Clock' | translate"
-    [tooltip]="helptext.time_tooltip | translate"
-    [required]="true"
-  >
-    <tn-select
-      formControlName="time"
-      [options]="(timeOptions$ | async) ?? []"
-    ></tn-select>
-  </tn-form-field>
-
-  <tn-form-field
-    [label]="'Boot Method' | translate"
-    [tooltip]="helptext.bootloader_tooltip | translate"
-    [required]="true"
-  >
-    <tn-select
-      formControlName="bootloader"
-      [options]="(bootloaderOptions$ | async) ?? []"
-    ></tn-select>
-  </tn-form-field>
-
-  <tn-form-field [tooltip]="helptext.enableSecureBoot | translate">
-    <tn-checkbox
-      formControlName="enable_secure_boot"
-      [label]="'Enable Secure Boot' | translate"
-    ></tn-checkbox>
-  </tn-form-field>
-
-  <tn-form-field [tooltip]="helptext.enableTrustedPlatformModule | translate">
-    <tn-checkbox
-      formControlName="trusted_platform_module"
-      [label]="'Enable Trusted Platform Module (TPM)' | translate"
-    ></tn-checkbox>
-  </tn-form-field>
-
-  <tn-form-field
-    [label]="'Shutdown Timeout' | translate"
-    [tooltip]="helptext.shutdown_timeout.tooltip | translate"
-  >
-    <tn-input
-      formControlName="shutdown_timeout"
-      [inputType]="InputType.Number"
-      [allowDecimals]="false"
-    ></tn-input>
-  </tn-form-field>
-
-  <tn-form-field [tooltip]="helptext.autostart_tooltip | translate">
-    <tn-checkbox
-      formControlName="autostart"
-      [label]="'Start on Boot' | translate"
-    ></tn-checkbox>
-  </tn-form-field>
-
-  <tn-form-field [tooltip]="helptext.enable_vnc_tooltip | translate">
-    <tn-checkbox
-      formControlName="enable_vnc"
-      [label]="'Enable Display (VNC)' | translate"
-    ></tn-checkbox>
-  </tn-form-field>
-
-  @if (form.value.enable_vnc) {
+  <tn-form-section>
     <tn-form-field
-      [label]="'Bind' | translate"
-      [tooltip]="helptext.vnc_bind_tooltip | translate"
+      [label]="'Guest Operating System' | translate"
+      [tooltip]="helptext.os_tooltip | translate"
       [required]="true"
     >
       <tn-select
-        formControlName="vnc_bind"
-        [options]="(bindOptions$ | async) ?? []"
+        formControlName="os"
+        [options]="(osOptions$ | async) ?? []"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+      ></tn-select>
+    </tn-form-field>
+
+    @if (form.controls.os.value === VmOs.Windows) {
+      <tn-form-field [tooltip]="helptext.hyperv_enlightenments_tooltip | translate">
+        <tn-checkbox
+          formControlName="hyperv_enlightenments"
+          [label]="'Enable Hyper-V Enlightenments' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+    }
+
+    <tn-form-field
+      [label]="'Name' | translate"
+      [tooltip]="helptext.name_tooltip | translate"
+      [required]="true"
+    >
+      <tn-input
+        formControlName="name"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Description' | translate"
+      [tooltip]="helptext.description_tooltip | translate"
+    >
+      <tn-input formControlName="description"></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'System Clock' | translate"
+      [tooltip]="helptext.time_tooltip | translate"
+      [required]="true"
+    >
+      <tn-select
+        formControlName="time"
+        [options]="(timeOptions$ | async) ?? []"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
     <tn-form-field
-      [label]="'Password' | translate"
-      [tooltip]="helptext.vnc_password_tooltip | translate"
+      [label]="'Boot Method' | translate"
+      [tooltip]="helptext.bootloader_tooltip | translate"
       [required]="true"
     >
+      <tn-select
+        formControlName="bootloader"
+        [options]="(bootloaderOptions$ | async) ?? []"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+      ></tn-select>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="helptext.enableSecureBoot | translate">
+      <tn-checkbox
+        formControlName="enable_secure_boot"
+        [label]="'Enable Secure Boot' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="helptext.enableTrustedPlatformModule | translate">
+      <tn-checkbox
+        formControlName="trusted_platform_module"
+        [label]="'Enable Trusted Platform Module (TPM)' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    <tn-form-field
+      [label]="'Shutdown Timeout' | translate"
+      [tooltip]="helptext.shutdown_timeout.tooltip | translate"
+    >
       <tn-input
-        formControlName="vnc_password"
-        [inputType]="InputType.Password"
-        [required]="true"
-        [testId]="'vnc_password'"
+        formControlName="shutdown_timeout"
+        [inputType]="InputType.Number"
+        [allowDecimals]="false"
       ></tn-input>
     </tn-form-field>
 
-    <div class="vnc-warning">
-      <p><strong>{{ 'Note' | translate }}:</strong> {{ 'VNC requires a separate client application and cannot be accessed through the web browser. Password is limited to 8 characters.' | translate }}</p>
-    </div>
-  }
+    <tn-form-field [tooltip]="helptext.autostart_tooltip | translate">
+      <tn-checkbox
+        formControlName="autostart"
+        [label]="'Start on Boot' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="helptext.enable_vnc_tooltip | translate">
+      <tn-checkbox
+        formControlName="enable_vnc"
+        [label]="'Enable Display (VNC)' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    @if (form.value.enable_vnc) {
+      <tn-form-field
+        [label]="'Bind' | translate"
+        [tooltip]="helptext.vnc_bind_tooltip | translate"
+        [required]="true"
+      >
+        <tn-select
+          formControlName="vnc_bind"
+          [options]="(bindOptions$ | async) ?? []"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+        ></tn-select>
+      </tn-form-field>
+
+      <tn-form-field
+        [label]="'Password' | translate"
+        [tooltip]="helptext.vnc_password_tooltip | translate"
+        [required]="true"
+      >
+        <tn-input
+          formControlName="vnc_password"
+          [inputType]="InputType.Password"
+          [required]="true"
+          [testId]="'vnc_password'"
+        ></tn-input>
+      </tn-form-field>
+
+      <tn-banner
+        type="info"
+        [heading]="'Requires separate client software' | translate"
+        [message]="'VNC requires a separate client application and cannot be accessed through the web browser.' | translate"
+      ></tn-banner>
+    }
+  </tn-form-section>
 
   <ix-form-actions>
     <tn-button

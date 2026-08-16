@@ -155,10 +155,9 @@ describe('PoolManagerStore', () => {
   });
 
   describe('methods - options', () => {
-    it('setGeneralOptions - sets options such as name and encryption', async () => {
+    it('setGeneralOptions - sets options such as name', async () => {
       const generalOptions = {
         name: 'tank',
-        encryption: 'AES-128',
         nameErrors: null,
       } as PoolManagerState;
       spectator.service.setGeneralOptions(generalOptions);
@@ -166,7 +165,6 @@ describe('PoolManagerStore', () => {
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
         ...initialState,
         name: generalOptions.name,
-        encryption: generalOptions.encryption,
         nameErrors: null,
       });
     });
@@ -345,42 +343,36 @@ describe('PoolManagerStore', () => {
 
   describe('SED encryption', () => {
     describe('setEncryptionOptions', () => {
-      it('sets encryption type, encryption algorithm, and SED password', async () => {
+      it('sets encryption type and SED password', async () => {
         spectator.service.setEncryptionOptions({
           encryptionType: EncryptionType.Sed,
-          encryption: null,
           sedPassword: 'mypassword',
         });
 
         const state = await firstValueFrom(spectator.service.state$);
         expect(state.encryptionType).toBe(EncryptionType.Sed);
-        expect(state.encryption).toBeNull();
         expect(state.sedPassword).toBe('mypassword');
       });
 
-      it('sets software encryption with algorithm', async () => {
+      it('sets software encryption', async () => {
         spectator.service.setEncryptionOptions({
           encryptionType: EncryptionType.Software,
-          encryption: 'AES-256-GCM',
           sedPassword: null,
         });
 
         const state = await firstValueFrom(spectator.service.state$);
         expect(state.encryptionType).toBe(EncryptionType.Software);
-        expect(state.encryption).toBe('AES-256-GCM');
         expect(state.sedPassword).toBeNull();
       });
 
       it('sets no encryption', async () => {
         spectator.service.setEncryptionOptions({
           encryptionType: EncryptionType.None,
-          encryption: null,
           sedPassword: null,
         });
 
         const state = await firstValueFrom(spectator.service.state$);
         expect(state.encryptionType).toBe(EncryptionType.None);
-        expect(state.encryption).toBeNull();
         expect(state.sedPassword).toBeNull();
       });
 
@@ -389,7 +381,6 @@ describe('PoolManagerStore', () => {
 
         spectator.service.setEncryptionOptions({
           encryptionType: EncryptionType.Sed,
-          encryption: null,
           sedPassword: 'mypassword',
         });
 
@@ -418,7 +409,6 @@ describe('PoolManagerStore', () => {
       it('encryptionType$ - returns encryption type', async () => {
         spectator.service.setEncryptionOptions({
           encryptionType: EncryptionType.Sed,
-          encryption: null,
           sedPassword: 'password',
         });
 
@@ -428,7 +418,6 @@ describe('PoolManagerStore', () => {
       it('sedPassword$ - returns SED password', async () => {
         spectator.service.setEncryptionOptions({
           encryptionType: EncryptionType.Sed,
-          encryption: null,
           sedPassword: 'mypassword',
         });
 

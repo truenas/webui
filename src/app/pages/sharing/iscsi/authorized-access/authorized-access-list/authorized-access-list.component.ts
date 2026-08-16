@@ -22,10 +22,9 @@ import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import {
-  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -137,7 +136,7 @@ export class AuthorizedAccessListComponent implements OnInit {
   protected readonly trackByAuthId = (_index: number, row: IscsiAuthAccess): number => row.id;
 
   protected uniqueRowTag(row: IscsiAuthAccess): string {
-    return normalizeTestIdString(convertStringToId('iscsi-authorized-access-' + row.user + '-' + row.peeruser));
+    return toUniqueRowTag('iscsi-authorized-access-' + row.user + '-' + row.peeruser);
   }
 
   protected ariaLabel(row: IscsiAuthAccess): string {

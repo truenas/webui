@@ -6,7 +6,7 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,8 +15,6 @@ import {
 } from 'app/enums/vm.enum';
 import { VirtualMachine, VmPortWizardResult } from 'app/interfaces/virtual-machine.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -43,12 +41,7 @@ describe('VmWizardComponent', () => {
   let spectator: Spectator<VmWizardComponent>;
   let loader: HarnessLoader;
   let nextButton: TnButtonHarness;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
+  let closedSpy: jest.Mock;
 
   const createComponent = createComponentFactory({
     component: VmWizardComponent,
@@ -66,7 +59,6 @@ describe('VmWizardComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockProvider(SlideIn),
       mockProvider(GpuService),
       mockProvider(VmGpuService),
       mockAuth(),
@@ -145,12 +137,13 @@ describe('VmWizardComponent', () => {
       mockProvider(VmGpuService, {
         updateVmGpus: jest.fn(() => of(undefined)),
       }),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
   beforeEach(async () => {
     spectator = createComponent();
+    closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     await updateStepHarnesses();
   });
@@ -370,6 +363,28 @@ describe('VmWizardComponent', () => {
       ['0000:03:00.0'],
     );
     expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0']);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(closedSpy).toHaveBeenCalledWith(true);
+  });
+
+  // The footerless panel host renders its progress bar from `form()?.isBusy?.()`, an OPTIONAL
+  // member — dropping it compiles and passes every other test while silently shipping a wizard
+  // whose save gives no feedback.
+  it('reports busy to the side panel host while the save is in flight', async () => {
+    await fillWizard();
+    expect(spectator.component.isBusy()).toBe(false);
+
+    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(NEVER);
+    const submit = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await submit.click();
+
+    expect(spectator.component.isBusy()).toBe(true);
+  });
+
+  it('reports unsaved changes to the side panel host once a step is edited', async () => {
+    expect(spectator.component.hasUnsavedChanges()).toBe(false);
+
+    await setInput('name', 'test');
+
+    expect(spectator.component.hasUnsavedChanges()).toBe(true);
   });
 });

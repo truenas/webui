@@ -1,8 +1,10 @@
-import { HarnessLoader } from '@angular/cdk/testing';
+import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { AsyncValidatorFn, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -13,8 +15,9 @@ import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
@@ -27,6 +30,7 @@ describe('VmEditFormComponent', () => {
   let spectator: Spectator<VmEditFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  let closedSpy: jest.Mock;
   const existingVm = {
     id: 4,
     name: 'My VM',
@@ -60,19 +64,16 @@ describe('VmEditFormComponent', () => {
     ] as VmDevice[],
   } as VirtualMachine;
 
-  const slideInRef: SlideInRef<VirtualMachine | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => existingVm),
-  };
-
   const createComponent = createComponentFactory({
     component: VmEditFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
+      // Close synchronously on submit — the panel's minimum-feedback timer would otherwise
+      // defer `closed` past the end of the test.
+      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockApi([
         mockCall('vm.bootloader_options', {
           UEFI: 'UEFI',
@@ -173,51 +174,108 @@ describe('VmEditFormComponent', () => {
     ],
   });
 
+  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
+    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
+    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
+    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+
   beforeEach(async () => {
-    spectator = createComponent();
+    spectator = createComponent({ props: { vmToEdit: existingVm } });
+    closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    // Only the two memory fields are still ix-* controls (they keep the byte formatter).
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('shows values when existing VM is opened for edit', async () => {
-    const formValues = await form.getValues();
-    expect(formValues).toEqual({
-      Name: 'My VM',
-      Description: 'My test description',
-      'System Clock': 'Local',
-      'Boot Method': 'UEFI',
-      'Shutdown Timeout': '90',
-      'Start on Boot': true,
-      'Enable Hyper-V Enlightenments': false,
-      'Enable Trusted Platform Module (TPM)': false,
+  // `canSubmit()` is what enables the panel footer's Save, and it delegates through a
+  // `viewChild(IxFormComponent)` — a broken view query would silently return false, disabling
+  // Save in production while every other test here still passed.
+  it('gates the panel Save on canSubmit()', () => {
+    expect(spectator.component.canSubmit()).toBe(true);
 
-      'Virtual CPUs': '1',
-      Cores: '2',
-      Threads: '3',
-      'Optional: CPU Set (Examples: 0-3,8-11)': '0-3,8-11',
-      'Pin vcpus': false,
-      'CPU Mode': 'Custom',
-      'CPU Model': 'EPYC',
+    // Cleared through the control rather than the harness: TnInputHarness.setValue('') sends
+    // no keys and throws.
+    spectator.component.form.controls.name.setValue('');
+    spectator.detectChanges();
+
+    expect(spectator.component.canSubmit()).toBe(false);
+  });
+
+  // The panel footer owns Save, so the form itself must render none — an ungated in-form Save
+  // would show up twice.
+  it('renders no Save of its own — the panel footer owns it', async () => {
+    expect(await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Save' }))).toHaveLength(0);
+  });
+
+  // Drives the panel's closeGuard; without it an edited form closes silently on backdrop click.
+  it('reports unsaved changes to the panel close guard once edited', async () => {
+    expect(spectator.component.hasUnsavedChanges()).toBe(false);
+
+    await (await getInput('name')).setValue('Edited');
+
+    expect(spectator.component.hasUnsavedChanges()).toBe(true);
+  });
+
+  // The cases below address controls by `formControlName`, which observes no label at all —
+  // whereas the pre-migration label-keyed `form.getValues()` would have failed on a mislabeled
+  // or untranslated field. This keeps the visible copy pinned.
+  it('labels every field', async () => {
+    const fields = await loader.getAllHarnesses(TnFormFieldHarness);
+    const labels = await parallel(() => fields.map((field) => field.getLabel()));
+
+    expect(labels).toEqual(expect.arrayContaining([
+      'Name', 'Description', 'System Clock', 'Boot Method', 'Shutdown Timeout',
+      'Virtual CPUs', 'Cores', 'Threads', 'CPU Mode', 'CPU Model',
+    ]));
+  });
+
+  it('shows values when existing VM is opened for edit', async () => {
+    expect(await (await getInput('name')).getValue()).toBe('My VM');
+    expect(await (await getInput('description')).getValue()).toBe('My test description');
+    expect(await (await getSelect('time')).getDisplayText()).toBe('Local');
+    expect(await (await getSelect('bootloader')).getDisplayText()).toBe('UEFI');
+    expect(await (await getInput('shutdown_timeout')).getValue()).toBe('90');
+    expect(await (await getCheckbox('autostart')).isChecked()).toBe(true);
+    expect(await (await getCheckbox('hyperv_enlightenments')).isChecked()).toBe(false);
+    expect(await (await getCheckbox('trusted_platform_module')).isChecked()).toBe(false);
+
+    expect(await (await getInput('vcpus')).getValue()).toBe('1');
+    expect(await (await getInput('cores')).getValue()).toBe('2');
+    expect(await (await getInput('threads')).getValue()).toBe('3');
+    expect(await (await getInput('cpuset')).getValue()).toBe('0-3,8-11');
+    expect(await (await getCheckbox('pin_vcpus')).isChecked()).toBe(false);
+    expect(await (await getSelect('cpu_mode')).getDisplayText()).toBe('Custom');
+    expect(await (await getSelect('cpu_model')).getDisplayText()).toBe('EPYC');
+    expect(await (await getInput('nodeset')).getValue()).toBe('0-1');
+
+    expect(await (await getCheckbox('hide_from_msr')).isChecked()).toBe(false);
+    expect(await (await getCheckbox('ensure_display_device')).isChecked()).toBe(true);
+    expect(await (await getSelect('gpus')).getDisplayText()).toBe('GeForce [0000:02:00.0]');
+
+    // The memory fields keep the ix-input byte formatter.
+    expect(await form.getValues()).toEqual({
       'Memory Size': '257 MiB',
       'Minimum Memory Size': '256 MiB',
-      'Optional: NUMA nodeset (Example: 0-1)': '0-1',
-
-      'Hide from MSR': false,
-      'Ensure Display Device': true,
-      GPUs: ['GeForce [0000:02:00.0]'],
     });
   });
 
   it('saves updated VM when form is edited and saved', async () => {
+    await (await getInput('name')).setValue('Edited');
+    await (await getInput('description')).setValue('New description');
     await form.fillForm({
-      Name: 'Edited',
-      Description: 'New description',
       'Memory Size': '258 mb',
       'Minimum Memory Size': '257 mb',
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    // Hosted in a <tn-side-panel>: the panel footer owns Save and calls submit() on the form.
+    spectator.component.submit();
+    spectator.detectChanges();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.update', [4, {
       autostart: true,
@@ -241,21 +299,22 @@ describe('VmEditFormComponent', () => {
       trusted_platform_module: false,
       vcpus: 1,
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(closedSpy).toHaveBeenCalledWith(true);
   });
 
   it('sends cpu_model as null when CPU Mode is not Custom', async () => {
+    await (await getInput('name')).setValue('Edited');
+    await (await getInput('description')).setValue('New description');
+    await (await getSelect('cpu_model')).selectOption('EPYC');
+    await (await getSelect('cpu_mode')).selectOption('Host Passthrough');
     await form.fillForm({
-      Name: 'Edited',
-      Description: 'New description',
       'Memory Size': '258 mb',
-      'CPU Model': 'EPYC',
-      'CPU Mode': 'Host Passthrough',
       'Minimum Memory Size': '257 mb',
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    // Hosted in a <tn-side-panel>: the panel footer owns Save and calls submit() on the form.
+    spectator.component.submit();
+    spectator.detectChanges();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.update', [4, {
       autostart: true,
@@ -279,16 +338,16 @@ describe('VmEditFormComponent', () => {
       trusted_platform_module: false,
       vcpus: 1,
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(closedSpy).toHaveBeenCalledWith(true);
   });
 
   it('updates GPU devices when form is edited and saved', async () => {
-    await form.fillForm({
-      GPUs: ['Intel Arc [0000:03:00.0]'],
-    });
+    await (await getSelect('gpus')).selectOption('Intel Arc [0000:03:00.0]');
+    await (await getSelect('gpus')).selectOption('GeForce [0000:02:00.0]');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    // Hosted in a <tn-side-panel>: the panel footer owns Save and calls submit() on the form.
+    spectator.component.submit();
+    spectator.detectChanges();
 
     expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(
       ['0000:03:00.0'],

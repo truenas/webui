@@ -1,64 +1,34 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceSsh } from 'app/helptext/services/components/service-ssh';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import {
+  serviceConfigSavedMessage,
+} from 'app/pages/services/components/service-config-forms.constants';
 
-@Component({
-  selector: 'ix-service-ssh',
-  templateUrl: './service-ssh.component.html',
-  styleUrls: ['./service-ssh.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    AsyncPipe,
-    ModalHeaderComponent,
-    ReactiveFormsModule,
-    TnFormSectionComponent,
-    TnFormFieldComponent,
-    TnInputComponent,
-    IxGroupChipsComponent,
-    TnCheckboxComponent,
-    TnSelectComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
-    TranslateModule,
-  ],
-})
-export class ServiceSshComponent extends SidePanelForm implements OnInit {
-  private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandler = inject(FormErrorHandlerService);
-  private fb = inject(NonNullableFormBuilder);
-  private translate = inject(TranslateService);
-  private snackbar = inject(SnackbarService);
-  private destroyRef = inject(DestroyRef);
-
-  readonly requiredRoles = [Role.SshWrite];
-  protected readonly InputType = InputType;
-
-  protected isFormLoading = signal(false);
-  isBasicMode = true;
-
-  form = this.fb.group({
+// Built here rather than inline in the component, and left with an inferred return type — see
+// the `V` type parameter on IxFormHostForm for why.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createSshForm(fb: NonNullableFormBuilder) {
+  return fb.group({
     tcpport: [null as number | null],
     password_login_groups: [[] as string[]],
     passwordauth: [false],
@@ -71,6 +41,43 @@ export class ServiceSshComponent extends SidePanelForm implements OnInit {
     weak_ciphers: [[] as SshWeakCipher[]],
     options: [''],
   });
+}
+
+/**
+ * The form's own value shape, which is NOT `SshConfigUpdate`: `tcpport` and the two SFTP log
+ * controls are nullable here, and `sftp_log_level` is coerced to `''` for the API in
+ * {@link ServiceSshComponent.handleSubmit}.
+ */
+type SshFormValue = ReturnType<ReturnType<typeof createSshForm>['getRawValue']>;
+
+@Component({
+  selector: 'ix-service-ssh',
+  templateUrl: './service-ssh.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    AsyncPipe,
+    IxFormComponent,
+    ReactiveFormsModule,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnInputComponent,
+    IxGroupChipsComponent,
+    TnCheckboxComponent,
+    TnSelectComponent,
+    TranslateModule,
+  ],
+})
+export class ServiceSshComponent extends IxFormHostForm<boolean, SshFormValue> implements OnInit {
+  private api = inject(ApiService);
+  private fb = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+
+  readonly requiredRoles = [Role.SshWrite];
+  protected readonly InputType = InputType;
+
+  protected readonly isAdvancedMode = signal(false);
+
+  protected readonly form = createSshForm(this.fb);
 
   readonly tooltips = {
     tcpport: helptextServiceSsh.tcpportTooltip,
@@ -93,44 +100,28 @@ export class ServiceSshComponent extends SidePanelForm implements OnInit {
 
   readonly bindInterfaces$ = this.api.call('ssh.bindiface_choices').pipe(choicesToOptions());
 
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
+  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
+    labels: advancedModeSettingLabels,
+  });
+
+  get footerActions(): SidePanelFooterAction[] {
+    return this.advancedToggle();
+  }
 
   ngOnInit(): void {
-    this.isFormLoading.set(true);
-    this.api.call('ssh.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (config) => {
-        this.form.patchValue(config);
-        this.isFormLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    this.loadFormConfig(this.api.call('ssh.config'), (config) => this.form.patchValue(config));
   }
 
-  onAdvancedSettingsToggled(): void {
-    this.isBasicMode = !this.isBasicMode;
-  }
-
-  onSubmit(): void {
-    const values = this.form.value;
+  // `allValues` is copied because it is mutated below.
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<SshFormValue>): SubmitResult => {
+    const values = { ...allValues };
     // Clearing the tn-select empty option writes null; the API expects ''.
     values.sftp_log_level = values.sftp_log_level ?? ('' as SshSftpLogLevel);
 
-    this.isFormLoading.set(true);
-    this.api.call('ssh.update', [values])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.isFormLoading.set(false);
-          this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.isFormLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    return {
+      request$: this.api.call('ssh.update', [values]),
+      successMessage: this.translate.instant(serviceConfigSavedMessage),
+    };
+  };
 }

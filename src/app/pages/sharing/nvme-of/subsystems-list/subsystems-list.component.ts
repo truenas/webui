@@ -11,8 +11,7 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/modules/ix-table/utils';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
+import { dataProviderLoading, dataProviderRows, toUniqueRowTag } from 'app/modules/ix-table/utils';
 import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystem-name-cell/subsystem-name-cell.component';
 
 @Component({
@@ -60,7 +59,7 @@ export class SubsystemsListComponent {
   protected readonly trackBySubsystemId = (_: number, row: NvmeOfSubsystemDetails): number => row.id;
 
   protected uniqueRowTag(row: NvmeOfSubsystemDetails): string {
-    return normalizeTestIdString(convertStringToId('nvmeof-subsys-' + row.name));
+    return toUniqueRowTag('nvmeof-subsys-' + row.name);
   }
 
   constructor() {

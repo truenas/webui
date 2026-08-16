@@ -19,7 +19,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -63,7 +63,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       ]),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(FilesystemService),
-      { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
+      ...ixFormTestingProviders(),
     ],
   });
 

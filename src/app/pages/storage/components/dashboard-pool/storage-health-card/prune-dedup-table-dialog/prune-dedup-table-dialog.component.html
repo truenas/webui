@@ -1,11 +1,18 @@
 <tn-dialog-shell testId="prune-dedup-table" [title]="'Prune Deduplication Table' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="submit()">
-  <ix-radio-group
-    formControlName="pruneBy"
-    [label]="'Prune By' | translate"
-    [options]="pruneByOptions$"
-    [required]="true"
-  ></ix-radio-group>
+  <tn-form-field [label]="'Prune By' | translate" [required]="true">
+    <!-- Options are projected, not passed as `[options]`, so each `<tn-radio>` can pin the
+         legacy `radio-button-*` id — see the radio-group test-id recipe in the tn playbook. -->
+    <tn-radio-group formControlName="pruneBy">
+      @for (option of pruneByOptions; track option.value) {
+        <tn-radio
+          [label]="option.label"
+          [value]="option.value"
+          [testId]="['radio-button', 'prune-by', option.label]"
+        ></tn-radio>
+      }
+    </tn-radio-group>
+  </tn-form-field>
 
   @if (isPruningByPercentage) {
     <ix-label [label]="'Percentage' | translate" [required]="true"></ix-label>

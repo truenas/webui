@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, DestroyRef, signal, OnInit, ChangeDetectorRef, Type, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TnButtonComponent } from '@truenas/ui-components';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -33,7 +33,7 @@ import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/
     TranslateModule,
     UiSearchDirective,
     RequiresRolesDirective,
-    MatButton,
+    TnButtonComponent,
   ],
 })
 export class AllCloudBackupsComponent implements OnInit {

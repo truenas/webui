@@ -1,19 +1,15 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory } from '@ngneat/spectator/jest';
 import {
   TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfGlobalConfig, NvmeOfHost } from 'app/interfaces/nvme-of.interface';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
 
@@ -33,16 +29,7 @@ describe('HostFormComponent', () => {
         } as NvmeOfGlobalConfig),
       ]),
       mockAuth(),
-      mockProvider(SlideIn, {
-        openSlideIns: jest.fn(() => 1),
-      }),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      }),
-      mockProvider(AuthService, {
-        hasRole: jest.fn(() => of(true)),
-      }),
+      ...ixFormTestingProviders(),
     ],
   });
 
@@ -50,7 +37,6 @@ describe('HostFormComponent', () => {
   let component: HostFormComponent;
   let loader: HarnessLoader;
   let api: ApiService;
-  let slideInRef: SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>;
 
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -71,10 +57,15 @@ describe('HostFormComponent', () => {
     component = spectator.component;
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
-    slideInRef = spectator.inject(SlideInRef);
   });
 
   it('creates a new host when form is submitted', async () => {
+    const closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
+
+    // The host panel's footer Save reads canSubmit(), so assert the gate here — hostnqn is required.
+    expect(component.canSubmit()).toBe(false);
+
     await (await getTnInput('hostnqn')).setValue('nqn.2014-08.org');
     await (await getTnCheckbox('requireHostAuthentication')).check();
     await (await getTnInput('dhchap_key')).setValue('1234567890');
@@ -85,8 +76,9 @@ describe('HostFormComponent', () => {
     // The DH Group editable only renders after addDhKeyExchange is checked above.
     await setEditableSelect(1, 'dhchap_dhgroup', '2048-BIT');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    expect(component.canSubmit()).toBe(true);
+
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('nvmet.host.create', [{
       hostnqn: 'nqn.2014-08.org',
@@ -96,9 +88,8 @@ describe('HostFormComponent', () => {
       dhchap_dhgroup: '2048-BIT',
       dhchap_hash: 'SHA-512',
     }]);
-    expect(slideInRef.close).toHaveBeenCalledWith({
-      response: savedHost,
-    });
+    // The created record is handed back through `closed` so the add-host picker can select it.
+    expect(closedSpy).toHaveBeenCalledWith(savedHost);
   });
 
   describe('edits', () => {
@@ -139,12 +130,15 @@ describe('HostFormComponent', () => {
     });
 
     it('updates an existing host', async () => {
+      const closedSpy = jest.fn();
+      spectator.component.closed.subscribe(closedSpy);
+
       await (await getTnInput('hostnqn')).setValue('nqn.2014-09.org');
       await (await getTnCheckbox('requireHostAuthentication')).uncheck();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
+      expect(closedSpy).toHaveBeenCalledWith(savedHost);
       expect(api.call).toHaveBeenCalledWith('nvmet.host.update', [23, {
         hostnqn: 'nqn.2014-09.org',
         description: '',
@@ -247,8 +241,7 @@ describe('HostFormComponent', () => {
       await (await getTnInput('hostnqn')).setValue('nqn.2014-08.org.example');
       await (await getTnInput('description')).setValue('Test host description');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenLastCalledWith('nvmet.host.create', [{
         hostnqn: 'nqn.2014-08.org.example',
@@ -275,8 +268,7 @@ describe('HostFormComponent', () => {
 
       await (await getTnInput('description')).setValue('Updated description');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenLastCalledWith('nvmet.host.update', [24, {
         hostnqn: 'nqn.2014-08.org',

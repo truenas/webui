@@ -17,9 +17,8 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import {
-  convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/ix-table/utils';
-import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -115,7 +114,7 @@ export class SmbSessionListComponent implements OnInit {
   }
 
   protected uniqueRowTag(row: SmbSession): string {
-    return normalizeTestIdString(convertStringToId('smb-session-' + row.session_id));
+    return toUniqueRowTag('smb-session-' + row.session_id);
   }
 
   protected onColumnsChange(columns: ReturnType<typeof this.columns>): void {

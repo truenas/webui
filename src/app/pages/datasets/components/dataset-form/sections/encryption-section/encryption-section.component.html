@@ -72,16 +72,6 @@
             ></tn-input>
           </tn-form-field>
         }
-        <tn-form-field
-          [label]="'Algorithm' | translate"
-          [tooltip]="helptext.encryption.algorithmTooltip | translate"
-          [required]="true"
-        >
-          <tn-select
-            formControlName="algorithm"
-            [options]="(algorithmOptions$ | async) ?? []"
-          ></tn-select>
-        </tn-form-field>
       }
     }
   </tn-form-section>

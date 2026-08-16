@@ -1,49 +1,15 @@
+# Automation opening PRs here must use a PAT/app token (see update-translations.yml):
+# GITHUB_TOKEN does not fire pull_request, so this would never report on such a PR.
+#
+# Reports as "check-ticket / <job name in ux-github-workflows>". Branch protection
+# matches that whole string, so the shared workflow's job name is API — renaming it
+# there silently stops this check reporting here.
 name: Check Ticket
-
-# NOTE: if this is made a required status check, remember that PRs opened with the
-# default GITHUB_TOKEN never fire pull_request events, so this workflow never runs and
-# never reports — such a PR is unmergeable with no way to unblock it from the PR side.
-# PRs opened by automation must use a PAT/app token (see update-translations.yml).
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
-
-permissions:
-  contents: read
-
-concurrency:
-  group: check-ticket-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
-
 jobs:
   check-ticket:
-    name: Check PR references a ticket
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check ticket reference in PR title
-        uses: actions/github-script@v7
-        with:
-          script: |
-            // Case-sensitive on purpose: bugclerk only links the Jira ticket for uppercase NAS-.
-            const TICKET_PATTERN = /\bNAS-\d+\b/;
-            const WRONG_CASE_PATTERN = new RegExp(TICKET_PATTERN.source, 'i');
-
-            // Every pull request needs a ticket — no bot or label exemptions.
-            const title = context.payload.pull_request.title || '';
-
-            if (TICKET_PATTERN.test(title)) {
-              core.info(`Found ticket ${title.match(TICKET_PATTERN)[0]} in PR title.`);
-              return;
-            }
-
-            const wrongCase = title.match(WRONG_CASE_PATTERN);
-
-            core.setFailed(
-              (wrongCase
-                ? `This pull request references "${wrongCase[0]}", but the ticket must be uppercase (NAS-).\n\n`
-                : `This pull request does not reference a ticket.\n\n`) +
-              `Current title: "${title}"\n\n` +
-              `Add the ticket number to the pull request title, for example:\n` +
-              `  NAS-12345: Fix broken thing\n` +
-              `  NAS-12345 / 27.0.0-BETA.1 / Fix broken thing`
-            );
+    permissions:
+      contents: read
+    uses: iXsystems/ux-github-workflows/.github/workflows/check-ticket.yml@master

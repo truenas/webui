@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
-import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnButtonHarness, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponents, MockDirective } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -15,7 +15,6 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
@@ -32,7 +31,7 @@ import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-
 describe('AllCloudBackupsComponent', () => {
   let spectator: Spectator<AllCloudBackupsComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const cloudBackups = [
     {
@@ -124,8 +123,14 @@ describe('AllCloudBackupsComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
+
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    const [trigger] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
 
   it('checks used components on page', () => {
     expect(spectator.query(PageHeaderComponent)).toExist();
@@ -133,7 +138,7 @@ describe('AllCloudBackupsComponent', () => {
   });
 
   it('shows form to create new Cloud Backup when Add button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
@@ -148,13 +153,22 @@ describe('AllCloudBackupsComponent', () => {
 
   describe('cloud backup list', () => {
     it('should show table rows', async () => {
-      const expectedRows = [
-        ['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', ''],
+      expect(await table.getHeaderTexts()).toEqual(['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', 'Actions']);
+      expect(await table.getAllRowTexts()).toEqual([
         ['UA', '', 'No', 'Completed', '1 min. ago', ''],
         ['UAH', '', 'No', 'Completed', '1 min. ago', ''],
-      ];
-      const cells = await table.getCellTexts();
-      expect(cells).toEqual(expectedRows);
+      ]);
+    });
+
+    // The rows are `[clickable]` and a row click selects the master-detail row, so the
+    // actions cell has to swallow its own clicks — otherwise opening the row menu also
+    // re-selects (or deselects) the row underneath it.
+    it('does not change the selected row when the row action menu is opened', async () => {
+      const selectedBefore = spectator.component.dataProvider.expandedRow;
+
+      await openRowMenu();
+
+      expect(spectator.component.dataProvider.expandedRow).toBe(selectedBefore);
     });
 
     it('sets the default sort for dataProvider', () => {
@@ -168,9 +182,8 @@ describe('AllCloudBackupsComponent', () => {
     });
 
     it('shows form to edit an existing Cloud Backup when Edit button is pressed', async () => {
-      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-      await menu.open();
-      await menu.clickItem({ text: 'Edit' });
+      const menu = await openRowMenu();
+      await menu.clickItem({ label: 'Edit' });
 
       expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
         CloudBackupFormComponent,
@@ -183,9 +196,8 @@ describe('AllCloudBackupsComponent', () => {
     });
 
     it('shows confirmation dialog when Run Now button is pressed', async () => {
-      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-      await menu.open();
-      await menu.clickItem({ text: 'Run job' });
+      const menu = await openRowMenu();
+      await menu.clickItem({ label: 'Run job' });
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
         title: 'Run Now',
@@ -198,9 +210,8 @@ describe('AllCloudBackupsComponent', () => {
     });
 
     it('deletes a Cloud Backup with confirmation when Delete button is pressed', async () => {
-      const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-      await menu.open();
-      await menu.clickItem({ text: 'Delete' });
+      const menu = await openRowMenu();
+      await menu.clickItem({ label: 'Delete' });
 
       expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
         title: 'Confirmation',
@@ -212,8 +223,8 @@ describe('AllCloudBackupsComponent', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
     });
 
-    it('updates Cloud Backup Enabled status once mat-toggle is updated', async () => {
-      const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 1);
+    it('updates Cloud Backup Enabled status once the toggle is updated', async () => {
+      const [toggle] = await loader.getAllHarnesses(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
 
       expect(await toggle.isChecked()).toBe(false);
 

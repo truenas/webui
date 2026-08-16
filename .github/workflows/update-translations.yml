@@ -30,7 +30,9 @@ jobs:
           fetch-depth: 0
 
       - name: Install
-        uses: ./.github/actions/prepare
+        uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+        with:
+          cache-jest: 'true'
 
       - name: Run translations update
         run: |

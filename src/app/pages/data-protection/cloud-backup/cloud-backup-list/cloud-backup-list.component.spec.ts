@@ -1,9 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatMenuHarness } from '@angular/material/menu/testing';
-import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -12,10 +13,9 @@ import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -31,7 +31,7 @@ import { selectSystemConfigState } from 'app/store/system-config/system-config.s
 describe('CloudBackupListComponent', () => {
   let spectator: Spectator<CloudBackupListComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const cloudBackups = [
     {
@@ -85,7 +85,6 @@ describe('CloudBackupListComponent', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(SnackbarService),
-      mockProvider(EmptyService),
       provideMockStore({
         selectors: [
           {
@@ -115,24 +114,27 @@ describe('CloudBackupListComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
     spectator.detectChanges();
   });
 
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    const [trigger] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', 'Actions']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['UA', '', 'No', 'Completed', '1 min. ago', ''],
       ['UAH', '', 'No', 'Completed', '1 min. ago', ''],
-    ];
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 
   it('shows form to edit an existing Cloud Backup when Edit button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Edit' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Edit' });
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
@@ -145,9 +147,8 @@ describe('CloudBackupListComponent', () => {
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Run job' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Run job' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
@@ -166,9 +167,8 @@ describe('CloudBackupListComponent', () => {
 
     const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Run job' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Run job' });
 
     // Wait for the observable to complete
     spectator.detectChanges();
@@ -187,9 +187,8 @@ describe('CloudBackupListComponent', () => {
 
     const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Run job' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Run job' });
 
     // Wait for the observable to complete
     spectator.detectChanges();
@@ -201,9 +200,8 @@ describe('CloudBackupListComponent', () => {
   });
 
   it('deletes a Cloud Backup with confirmation when Delete button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(DialogService).confirmDelete).toHaveBeenCalledWith({
       title: 'Confirmation',
@@ -215,8 +213,26 @@ describe('CloudBackupListComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
   });
 
-  it('updates Cloud Backup Enabled status once mat-toggle is updated', async () => {
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 1);
+  it('sorts through the data provider when a sortable header is clicked', async () => {
+    const dataProvider = spectator.component.dataProvider();
+    jest.spyOn(dataProvider, 'setSorting');
+
+    expect(await table.isSortable('description')).toBe(true);
+    expect(await table.isSortable('enabled')).toBe(true);
+    expect(await table.isSortable('snapshot')).toBe(true);
+
+    await table.clickSortHeader('description');
+
+    expect(dataProvider.setSorting).toHaveBeenCalledWith({
+      propertyName: 'description',
+      direction: SortDirection.Asc,
+      active: 0,
+    });
+    expect(await table.getSortDirection('description')).toBe('ascending');
+  });
+
+  it('updates Cloud Backup Enabled status once the toggle is updated', async () => {
+    const [toggle] = await loader.getAllHarnesses(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
 
     expect(await toggle.isChecked()).toBe(false);
 
@@ -226,5 +242,37 @@ describe('CloudBackupListComponent', () => {
       'cloud_backup.update',
       [1, { enabled: true }],
     );
+  });
+
+  // `[activeRow]` matches by object identity and `expandedRow` may hold a copy, so the
+  // component resolves it back to the rendered reference — as a computed, which has to
+  // stay in step with writes made by this component *and* by its parent.
+  describe('active row', () => {
+    it('marks the clicked row active', async () => {
+      expect(await table.getActiveRowIndex()).toBeNull();
+
+      await table.clickRow(1);
+      spectator.detectChanges();
+
+      expect(await table.getActiveRowIndex()).toBe(1);
+    });
+
+    it('follows a row the parent expands, including a structurally-equal copy', async () => {
+      spectator.component.dataProvider().expandedRow = { ...cloudBackups[0] };
+      spectator.detectChanges();
+
+      expect(await table.getActiveRowIndex()).toBe(0);
+    });
+
+    it('clears the active row when the expansion is cleared', async () => {
+      await table.clickRow(0);
+      spectator.detectChanges();
+      expect(await table.getActiveRowIndex()).toBe(0);
+
+      spectator.component.dataProvider().expandedRow = null;
+      spectator.detectChanges();
+
+      expect(await table.getActiveRowIndex()).toBeNull();
+    });
   });
 });

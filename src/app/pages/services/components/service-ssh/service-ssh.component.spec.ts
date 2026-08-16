@@ -1,22 +1,22 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { SshConfig } from 'app/interfaces/ssh-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
 const fakeGroupDataSource = [{
@@ -33,12 +33,6 @@ describe('ServiceSshComponent', () => {
   let loader: HarnessLoader;
   let api: ApiService;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
@@ -54,6 +48,12 @@ describe('ServiceSshComponent', () => {
   const hasSelect = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
     TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
   )).length > 0;
+  // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`.
+  const toggleAdvancedSettings = (): void => {
+    const [toggleAdvanced] = spectator.component.footerActions;
+    toggleAdvanced.onClick();
+    spectator.detectChanges();
+  };
 
   const createComponent = createRoutingFactory({
     component: ServiceSshComponent,
@@ -82,10 +82,8 @@ describe('ServiceSshComponent', () => {
         }),
         mockCall('ssh.update'),
       ]),
-      mockProvider(SlideIn),
-      mockProvider(FormErrorHandlerService),
+      ...ixFormTestingProviders(),
       mockProvider(DialogService),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of(fakeGroupDataSource)),
         getGroupByName: jest.fn((groupName: string) => {
@@ -114,6 +112,26 @@ describe('ServiceSshComponent', () => {
     api = spectator.inject(ApiService);
   });
 
+  it('blocks Save when the initial config load fails', () => {
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
+      .mockReturnValue(of(true));
+    failApiCall(api, 'ssh.config');
+
+    // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
+    // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
+    // so the assertion would hinge on double-init being harmless.
+    const failed = TestBed.createComponent(ServiceSshComponent);
+    failed.detectChanges();
+
+    expect(showErrorModal).toHaveBeenCalled();
+    // `hasLoadFailed` is what the panel reads (for its banner) and what `<ix-form>`'s
+    // extraDisabled is bound to; that binding blocking Save is covered in the ix-form spec.
+    expect(failed.componentInstance.hasLoadFailed()).toBe(true);
+    expect(failed.componentInstance.canSubmit()).toBe(false);
+  });
+
   it('loads and shows current settings for SSH service when form is opened', async () => {
     expect(api.call).toHaveBeenCalledWith('ssh.config');
 
@@ -123,9 +141,20 @@ describe('ServiceSshComponent', () => {
     expect(await (await getCheckbox('tcpfwd')).isChecked()).toBe(false);
   });
 
-  it('shows advanced settings when Advanced Settings button is pressed', async () => {
-    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-    await advancedButton.click();
+  it('exposes a single footer action that flips between Advanced and Basic Settings', () => {
+    expect(spectator.component.footerActions).toHaveLength(1);
+
+    const [toggleAdvanced] = spectator.component.footerActions;
+    expect(toggleAdvanced.label).toBe('Advanced Settings');
+    expect(toggleAdvanced.testId).toBe('toggle-advanced-options');
+
+    toggleAdvancedSettings();
+
+    expect(spectator.component.footerActions[0].label).toBe('Basic Settings');
+  });
+
+  it('shows advanced settings when advanced mode is toggled', async () => {
+    toggleAdvancedSettings();
 
     expect(await (await getInput('tcpport')).getValue()).toBe('22');
     expect(await (await getCheckbox('passwordauth')).isChecked()).toBe(true);
@@ -146,8 +175,7 @@ describe('ServiceSshComponent', () => {
     await (await getCheckbox('kerberosauth')).check();
     await (await getCheckbox('tcpfwd')).check();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('ssh.update', [{
       // New basic options
@@ -168,8 +196,7 @@ describe('ServiceSshComponent', () => {
   });
 
   it('sends an update payload to websocket when advanced form is filled and saved', async () => {
-    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-    await advancedButton.click();
+    toggleAdvancedSettings();
 
     await (await getSelect('bindiface')).selectOption('macvtap0');
     await (await getCheckbox('compression')).uncheck();
@@ -179,8 +206,7 @@ describe('ServiceSshComponent', () => {
     await (await getSelect('weak_ciphers')).selectOption('AES128-CBC');
     await (await getInput('options')).setValue('new-params');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('ssh.update', [{
       // Old basic options
@@ -201,13 +227,11 @@ describe('ServiceSshComponent', () => {
   });
 
   it('submits an empty SFTP log level when the selection is cleared', async () => {
-    const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Settings' }));
-    await advancedButton.click();
+    toggleAdvancedSettings();
 
     await (await getSelect('sftp_log_level')).selectOption('--');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    spectator.component.submit();
 
     expect(api.call).toHaveBeenCalledWith('ssh.update', [
       expect.objectContaining({ sftp_log_level: '' }),

@@ -4,13 +4,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialogHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialogHarness, TnRadioGroupHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ManageUnusedDiskDialog } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
 import {
   ManageUnusedDiskDialogResource,
@@ -19,7 +17,6 @@ import {
 describe('ManageUnusedDiskDialogComponent', () => {
   let spectator: Spectator<ManageUnusedDiskDialog>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const createComponent = createComponentFactory({
     component: ManageUnusedDiskDialog,
@@ -46,16 +43,15 @@ describe('ManageUnusedDiskDialogComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     jest.spyOn(spectator.inject(Router), 'navigate').mockImplementation();
   });
 
   it('shows only pools that are not offline', async () => {
-    const radioButtonGrp = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Add Disks To:' }));
-    await radioButtonGrp.setValue('Existing Pool');
+    const radioButtonGrp = await loader.getHarness(TnRadioGroupHarness.with({ testId: 'radio-group-to-pool' }));
+    await radioButtonGrp.select('Existing Pool');
 
     const poolSelect = await loader.getHarness(TnSelectHarness);
     const options = await poolSelect.getOptions();
@@ -73,9 +69,8 @@ describe('ManageUnusedDiskDialogComponent', () => {
   });
 
   it('redirects to create pool page when choosing Add Disks To New Pool', async () => {
-    await form.fillForm({
-      'Add Disks To:': 'New Pool',
-    });
+    const radioButtonGrp = await loader.getHarness(TnRadioGroupHarness.with({ testId: 'radio-group-to-pool' }));
+    await radioButtonGrp.select('New Pool');
 
     const addDisksButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Disks' }));
     await addDisksButton.click();
@@ -85,11 +80,8 @@ describe('ManageUnusedDiskDialogComponent', () => {
   });
 
   it('redirects to add disks to pool page when choosing Add Disks To Existing Pool', async () => {
-    await form.fillForm(
-      {
-        'Add Disks To:': 'Existing Pool',
-      },
-    );
+    const radioButtonGrp = await loader.getHarness(TnRadioGroupHarness.with({ testId: 'radio-group-to-pool' }));
+    await radioButtonGrp.select('Existing Pool');
 
     const poolSelect = await loader.getHarness(TnSelectHarness);
     await poolSelect.selectOption(/TEST/);

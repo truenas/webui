@@ -1,4 +1,34 @@
 name: Claude Review
+
+# Calls the shared review workflow in iXsystems/ux-github-workflows, which is
+# where the schema, the severity rubric and the gate script live. Only the
+# trigger below and the secret name are this repo's.
+#
+# It posts inline comments plus one edited-in-place summary, and fails the job
+# at MEDIUM and above. Whether that stops a merge is branch protection, which
+# is set here rather than there.
+#
+# `.claude/review-prompt.md` in this repo is what it reads, and the shared
+# severity rubric is appended after it — so that file says what to look for in
+# *this* code and nothing about grading.
+#
+# Reports as `review / <job names in ux-github-workflows>` — two checks, since
+# the shared workflow runs the write-access gate as a job of its own. The job id
+# below stays `review`, but it stops being a normal job, so adopting this
+# renames the checks now: the single `review` is gone, as is `check-ux-team /
+# Check UX Team Membership`. Any rule or merge-queue config requiring either has
+# to be updated as this merges, not eventually.
+#
+# Branch protection matches those whole strings, so the shared workflow's job
+# names are API from here on: renaming one there silently stops the check
+# reporting. Either way a required check that never reports does not fail, it
+# stays pending — the PR is unmergeable with nothing red on it to explain why.
+# Same caveat, same wording, as `check-ticket.yml` in this repo.
+#
+# The trigger stays here rather than moving upstream: a `workflow_call` has no
+# say in what triggers its caller, and both the `NAS-*` base branches and the
+# i18n ignore are specific to this repo.
+
 on:
   pull_request:
     types: [opened, synchronize]
@@ -7,42 +37,16 @@ on:
       - 'NAS-*'
     paths-ignore:
       - 'src/assets/i18n/**'
-jobs:
-  check-ux-team:
-    permissions:
-      contents: read
-    uses: ./.github/workflows/check-ux-team.yml
 
+jobs:
   review:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: [check-ux-team]
-    if: |
-      needs.check-ux-team.outputs.is_member == 'true' &&
-      !contains(github.event.pull_request.labels.*.name, 'skip-claude')
+    uses: iXsystems/ux-github-workflows/.github/workflows/claude-review.yml@master
     permissions:
       contents: read
       issues: write
       pull-requests: write
       id-token: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 10
-
-      - name: Automatic PR Review
-        uses: anthropics/claude-code-action@v1.0.182
-        with:
-          anthropic_api_key: ${{ secrets.CLAUDE_API_KEY }}
-          claude_args: "--model claude-opus-5"
-          track_progress: true
-          use_sticky_comment: true
-          prompt: |
-            REPO: ${{ github.repository }}
-            PR NUMBER: ${{ github.event.pull_request.number }}
-
-            Please review this pull request using the guidelines below.
-            It should be already checked out in the current directory.
-
-            {{file:.claude/review-prompt.md}}
+    secrets:
+      # Named rather than inherited, because the repos call it different things
+      # — truenas-connect/ui calls the same secret CLAUDE_TOKEN.
+      anthropic-api-key: ${{ secrets.CLAUDE_API_KEY }}

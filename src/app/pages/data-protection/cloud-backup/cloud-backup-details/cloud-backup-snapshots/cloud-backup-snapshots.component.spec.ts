@@ -1,15 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import {
+  TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -40,7 +41,7 @@ const cloudBackupSnapshots = [
 describe('CloudBackupSnapshotsComponent', () => {
   let spectator: Spectator<CloudBackupSnapshotsComponent>;
   let loader: HarnessLoader;
-  let table: IxTableHarness;
+  let table: TnTableHarness;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -89,20 +90,25 @@ describe('CloudBackupSnapshotsComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
+    table = await loader.getHarness(TnTableHarness);
   });
 
+  async function openRowMenu(): Promise<TnMenuHarness> {
+    const [trigger] = await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'dots-vertical' }));
+    await trigger.click();
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
   it('checks page title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Snapshots');
+    // Read the tn-card input rather than its internal <h3>, which is library markup.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Snapshots');
   });
 
   it('handles restore functionality', async () => {
     const formPanel = spectator.inject(FormSidePanelService);
 
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Restore' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Restore' });
 
     expect(formPanel.open).toHaveBeenCalledWith(CloudBackupRestoreFromSnapshotFormComponent, {
       title: 'Restore from Snapshot',
@@ -116,20 +122,16 @@ describe('CloudBackupSnapshotsComponent', () => {
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Snapshot Time', 'Hostname', ''],
+    expect(await table.getHeaderTexts()).toEqual(['Snapshot Time', 'Hostname', 'Actions']);
+    expect(await table.getAllRowTexts()).toEqual([
       ['1 min. ago', 'recent', ''],
       ['8 min. ago', 'older', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    ]);
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
+    const menu = await openRowMenu();
+    await menu.clickItem({ label: 'Delete' });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.delete_snapshot', [1, 'second']);
   });

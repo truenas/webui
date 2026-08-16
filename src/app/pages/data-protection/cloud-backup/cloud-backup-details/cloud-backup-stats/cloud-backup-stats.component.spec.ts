@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnCardComponent } from '@truenas/ui-components';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -43,12 +44,12 @@ describe('CloudBackupStatsComponent', () => {
   });
 
   it('checks card title', () => {
-    const title = spectator.query('h3');
-    expect(title).toHaveText('Details');
+    // Read the tn-card input rather than its internal <h3>, which is library markup.
+    expect(spectator.query(TnCardComponent)!.title()).toBe('Details');
   });
 
   it('renders Details in card', () => {
-    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
+    const chartExtra = spectator.queryAll('tn-card p');
     expect(chartExtra).toHaveLength(10);
     expect(chartExtra[0]).toHaveText('Path: /mnt/test');
     expect(chartExtra[1]).toHaveText('Cache Path: /mnt/cache');
@@ -70,7 +71,7 @@ describe('CloudBackupStatsComponent', () => {
     spectator.setInput('backup', testBackupWithoutRateLimit);
     spectator.detectChanges();
 
-    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
+    const chartExtra = spectator.queryAll('tn-card p');
     expect(chartExtra[6]).toHaveText('Rate Limit: No limit');
   });
 
@@ -82,7 +83,7 @@ describe('CloudBackupStatsComponent', () => {
     spectator.setInput('backup', testBackupWithSmallRateLimit);
     spectator.detectChanges();
 
-    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
+    const chartExtra = spectator.queryAll('tn-card p');
     expect(chartExtra[6]).toHaveText('Rate Limit: 1000 KiB/s');
   });
 });

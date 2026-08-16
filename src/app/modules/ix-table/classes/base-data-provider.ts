@@ -1,4 +1,4 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, signal } from '@angular/core';
 import { orderBy, sortBy } from 'lodash-es';
 import {
   BehaviorSubject, Observable, Subscription, map,
@@ -28,9 +28,28 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   }
 
   currentPage$ = new BehaviorSubject<T[]>([]);
-  expandedRow$ = new BehaviorSubject<T | null>(null);
-  expandedRow: T | null;
   totalRows = 0;
+
+  private readonly expandedRowValue = signal<T | null>(null);
+
+  /**
+   * Backed by a signal so a consumer can derive from it — a `tn-table`
+   * `[activeRow]` that has to resolve the expanded row back to the reference
+   * actually rendered, say, which would otherwise be an O(n) `find()` on every
+   * change-detection pass. Reads and writes stay a plain property, as every
+   * existing call site (and `DataProvider`) expects.
+   *
+   * Because the write is now a signal write, it cannot happen inside a
+   * `computed` (NG0600) — assign it from an event handler, a subscription or an
+   * effect, which is where every caller already does.
+   */
+  get expandedRow(): T | null {
+    return this.expandedRowValue();
+  }
+
+  set expandedRow(row: T | null) {
+    this.expandedRowValue.set(row);
+  }
 
   sorting: TableSort<T> = {
     propertyName: null,

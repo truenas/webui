@@ -1,309 +1,393 @@
-<ix-modal-header
-  [requiredRoles]="requiredRoles"
-  [title]="isNew
-    ? ('Add Device for {vmName}' | translate: { vmName: vmName })
-    : ('Edit Device for {vmName}' | translate: { vmName: vmName })"
-  [loading]="isLoading"
-></ix-modal-header>
+<form class="ix-form-container" (submit)="onSubmit($event)">
+  <tn-form-section>
+    @if (isNew) {
+      <tn-form-field [label]="'Type' | translate" [required]="true">
+        <!--
+          Explicit testId: a standalone `[formControl]` has no control name for tn-select's
+          fallback to derive one from. It is `device-type`, not `type`, because several branches
+          below bind a control literally named `type` (Disk Mode, NIC Adapter Type, Display Type)
+          whose fallback resolves `select-type` — and this picker renders alongside them, so a
+          bare `type` would put two `select-type` nodes in the DOM.
+        -->
+        <tn-select
+          [formControl]="typeControl"
+          [testId]="'device-type'"
+          [options]="(deviceTypes$ | async) ?? []"
+          [placeholder]="tnSelectLabels.placeholder | translate"
+          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+        ></tn-select>
+      </tn-form-field>
+    }
 
-<mat-card>
-  <mat-card-content>
-    <form class="ix-form-container" (submit)="onSubmit($event)">
-      <ix-fieldset>
-        @if (isNew) {
-          <ix-select
-            [formControl]="typeControl"
-            [label]="'Type' | translate"
+    <ng-container [formGroup]="typeSpecificForm">
+      @switch (typeControl.value) {
+        @case (VmDeviceType.Cdrom) {
+          <ix-explorer
+            formControlName="path"
+            [label]="'CD-ROM Path' | translate"
             [required]="true"
-            [options]="deviceTypes$"
-          ></ix-select>
+            [nodeProvider]="fileNodeProvider"
+            [tooltip]="helptext.cd_path_tooltip | translate"
+          >
+            <ix-explorer-create-dataset></ix-explorer-create-dataset>
+          </ix-explorer>
         }
+        @case (VmDeviceType.Disk) {
+          @if (isNew) {
+            <!--
+              Labelled to match the wizard's equivalent control; `tn-radio-group` picks the label
+              up as the group's accessible name. The control is bound ONCE on the group — binding
+              it to each standalone `tn-radio` leaves the deselected option rendering stale — and
+              the options are projected rather than passed as `[options]` so the per-option test
+              ids survive.
+            -->
+            <tn-form-field [label]="'Disk' | translate">
+              <tn-radio-group [formControl]="newOrExistingControl">
+                @for (option of newOrExistingOptions; track option.value) {
+                  <tn-radio
+                    [label]="option.label"
+                    [value]="option.value"
+                    [testId]="['new-or-existing', option.value]"
+                  ></tn-radio>
+                }
+              </tn-radio-group>
+            </tn-form-field>
+          }
 
-        <ng-container [formGroup]="typeSpecificForm">
-          @switch (typeControl.value) {
-            @case (VmDeviceType.Cdrom) {
-              <ix-explorer
+          @if (newOrExistingControl.value === 'new') {
+            <tn-form-field
+              [label]="'Zvol Location' | translate"
+              [tooltip]="helptext.datastore_tooltip | translate"
+              [required]="true"
+            >
+              <tn-select
+                formControlName="datastore"
+                [options]="(datastoreOptions$ | async) ?? []"
+                [placeholder]="tnSelectLabels.placeholder | translate"
+                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+              ></tn-select>
+            </tn-form-field>
+
+            <!--
+              Kept on ix-input: the zvol size must round-trip an exact byte count through
+              `memorySizeFormatting`/`memorySizeParsing`. tn-input's `InputType.Size`
+              re-formats on blur to the nearest round unit, which would silently change
+              the requested volume size.
+            -->
+            <ix-input
+              formControlName="volsize"
+              [label]="'Size' | translate"
+              [required]="true"
+              [format]="formatter.memorySizeFormatting"
+              [parse]="formatter.memorySizeParsing"
+            ></ix-input>
+          } @else {
+            <tn-form-field
+              [label]="'Zvol' | translate"
+              [tooltip]="helptext.zvol_path_tooltip | translate"
+              [required]="true"
+            >
+              <tn-select
                 formControlName="path"
-                [label]="'CD-ROM Path' | translate"
-                [required]="true"
-                [nodeProvider]="fileNodeProvider"
-                [tooltip]="helptext.cd_path_tooltip | translate"
-              >
-                <ix-explorer-create-dataset></ix-explorer-create-dataset>
-              </ix-explorer>
-            }
-            @case (VmDeviceType.Disk) {
-              @if (isNew) {
-                <ix-radio-group
-                  [formControl]="newOrExistingControl"
-                  [options]="newOrExistingOptions$"
-                ></ix-radio-group>
-              }
+                [options]="(zvolOptions$ | async) ?? []"
+                [placeholder]="tnSelectLabels.placeholder | translate"
+                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+              ></tn-select>
+            </tn-form-field>
 
-              @if (newOrExistingControl.value === 'new') {
-                <ix-select
-                  formControlName="datastore"
-                  [label]="'Zvol Location' | translate"
-                  [required]="true"
-                  [options]="datastoreOptions$"
-                  [tooltip]="helptext.datastore_tooltip | translate"
-                ></ix-select>
-
-                <ix-input
-                  formControlName="volsize"
-                  [label]="'Size' | translate"
-                  [required]="true"
-                  [format]="formatter.memorySizeFormatting"
-                  [parse]="formatter.memorySizeParsing"
-                ></ix-input>
-              } @else {
-                <ix-select
-                  formControlName="path"
-                  [label]="'Zvol' | translate"
-                  [tooltip]="helptext.zvol_path_tooltip | translate"
-                  [options]="zvolOptions$"
-                  [required]="true"
-                ></ix-select>
-
-                @if (selectedZvolOtherVmNames.length > 0) {
-                  <tn-banner
-                    type="warning"
-                    [heading]="'This zvol is already in use by {vmNames}.'
-                      | translate: { vmNames: selectedZvolOtherVmNames.join(', ') }"
-                  ></tn-banner>
-                }
-              }
-
-              <ix-select
-                formControlName="type"
-                [label]="'Mode' | translate"
-                [tooltip]="helptext.mode_tooltip | translate"
-                [options]="diskModes$"
-                [required]="true"
-              ></ix-select>
-
-              <ix-select
-                formControlName="sectorsize"
-                [label]="'Disk Sector Size' | translate"
-                [tooltip]="helptext.sectorsize_tooltip | translate"
-                [options]="sectorSizes$"
-                [required]="true"
-              ></ix-select>
-            }
-            @case (VmDeviceType.Nic) {
-              <ix-select
-                formControlName="type"
-                [label]="'Adapter Type' | translate"
-                [required]="true"
-                [options]="nicTypes$"
-                [tooltip]="helptext.adapter_type_tooltip | translate"
-              ></ix-select>
-
-              <div class="mac-address">
-                <ix-input
-                  class="mac-input"
-                  formControlName="mac"
-                  [label]="'MAC Address' | translate"
-                  [tooltip]="helptext.mac_tooltip | translate"
-                ></ix-input>
-
-                <div *ixRequiresRoles="requiredRoles">
-                  <button
-                    type="button"
-                    mat-button
-                    ixTest="generate"
-                    (click)="generateMacAddress()"
-                  >
-                    {{ 'Generate' | translate }}
-                  </button>
-                </div>
-              </div>
-              <ix-select
-                formControlName="nic_attach"
-                [label]="'NIC To Attach' | translate"
-                [tooltip]="helptext.nic_attach_tooltip | translate"
-                [required]="true"
-                [options]="nicOptions$"
-              ></ix-select>
-
-              <ix-checkbox
-                formControlName="trust_guest_rx_filters"
-                [label]="'Trust Guest Filters' | translate"
-              ></ix-checkbox>
-            }
-            @case (VmDeviceType.Raw) {
-              <ix-explorer
-                #rawFileExplorer
-                formControlName="path"
-                [label]="'Raw File' | translate"
-                [required]="true"
-                [nodeProvider]="fileNodeProvider"
-                [tooltip]="helptext.raw_file_path_tooltip | translate"
-              >
-                <ix-explorer-create-dataset></ix-explorer-create-dataset>
-              </ix-explorer>
-
-              <ix-select
-                formControlName="sectorsize"
-                [label]="'Disk Sector Size' | translate"
-                [options]="sectorSizes$"
-                [tooltip]="helptext.sectorsize_tooltip | translate"
-                [required]="true"
-              ></ix-select>
-
-              <ix-select
-                formControlName="type"
-                [label]="'Mode' | translate"
-                [options]="diskModes$"
-                [tooltip]="helptext.mode_tooltip | translate"
-                [required]="true"
-              ></ix-select>
-
-              <ix-input
-                formControlName="size"
-                [label]="'Raw Filesize' | translate"
-                [format]="formatter.memorySizeFormatting"
-                [parse]="formatter.memorySizeParsing"
-                [tooltip]="helptext.raw_size_tooltip | translate"
-                [hint]="'Must be specified if the raw file needs to be created' | translate"
-              ></ix-input>
-            }
-            @case (VmDeviceType.Pci) {
-              <ix-combobox
-                formControlName="pptdev"
-                [label]="'PCI Passthrough Device' | translate"
-                [provider]="passthroughProvider"
-                [tooltip]="helptext.pptdev_tooltip | translate"
-                [required]="true"
-              ></ix-combobox>
-            }
-            @case (VmDeviceType.Usb) {
-              <ix-select
-                formControlName="controller_type"
-                [label]="'Controller Type' | translate"
-                [options]="usbControllerOptions$"
-                [required]="true"
-              ></ix-select>
-              <ix-select
-                formControlName="device"
-                [label]="'Device' | translate"
-                [options]="usbDeviceOptions$"
-                [required]="true"
-              ></ix-select>
-              @if (usbForm.controls.usb.enabled) {
-                <ng-container [formGroup]="usbForm.controls.usb">
-                  <ix-input
-                    formControlName="vendor_id"
-                    [label]="'Vendor ID' | translate"
-                    [required]="true"
-                  ></ix-input>
-                  <ix-input
-                    formControlName="product_id"
-                    [label]="'Product ID' | translate"
-                    [required]="true"
-                  ></ix-input>
-                  <ix-errors [control]="usbForm.controls.usb"></ix-errors>
-                </ng-container>
-              }
-            }
-            @case (VmDeviceType.Display) {
-              @if (isNew) {
-                <ix-select
-                  formControlName="type"
-                  [label]="'Display Type' | translate"
-                  [options]="displayTypes$"
-                  [required]="true"
-                  [tooltip]="'Select the display protocol type.' | translate"
-                ></ix-select>
-              } @else {
-                <div class="display-type-info">
-                  <label>{{ 'Display Type' | translate }}</label>
-                  <p><strong>{{ getCurrentDisplayTypeLabel() }}</strong></p>
-                </div>
-              }
-
-              @if (!isNew || getCurrentDisplayType()) {
-                <ix-select
-                  formControlName="bind"
-                  [label]="'Bind' | translate"
-                  [options]="bindOptions$"
-                  [required]="true"
-                  [tooltip]="helptext.bind_tooltip | translate"
-                ></ix-select>
-
-                <ix-input
-                  formControlName="password"
-                  type="password"
-                  [label]="'Password' | translate"
-                  [required]="true"
-                  [tooltip]="helptext.password_tooltip | translate"
-                ></ix-input>
-
-                <ix-select
-                  formControlName="resolution"
-                  [label]="'Resolution' | translate"
-                  [options]="resolutions$"
-                  [required]="true"
-                  [tooltip]="helptext.resolution_tooltip | translate"
-                ></ix-select>
-
-                <ix-input
-                  formControlName="port"
-                  type="number"
-                  [label]="'Port (optional)' | translate"
-                  [tooltip]="helptext.port_tooltip | translate"
-                ></ix-input>
-
-                @if (getCurrentDisplayType() === VmDisplayType.Spice) {
-                  <ix-checkbox
-                    formControlName="web"
-                    [label]="'Web Interface' | translate"
-                    [tooltip]="helptext.web_tooltip | translate"
-                  ></ix-checkbox>
-
-                  @if (displayForm.controls.web.value) {
-                    <ix-input
-                      formControlName="web_port"
-                      type="number"
-                      [label]="'Web Port' | translate"
-                      [tooltip]="helptext.web_port_tooltip | translate"
-                    ></ix-input>
-                  }
-                }
-
-                @if (getCurrentDisplayType() === VmDisplayType.Vnc) {
-                  <div class="vnc-warning">
-                    <p><strong>{{ 'Note' | translate }}:</strong> {{ 'VNC requires a separate client application and cannot be accessed through the web browser. Password is limited to 8 characters.' | translate }}</p>
-                  </div>
-                }
-              } @else {
-                <div class="display-type-prompt">
-                  <p class="muted">{{ 'Select a display type above to configure display settings.' | translate }}</p>
-                </div>
-              }
+            @if (selectedZvolOtherVmNames.length > 0) {
+              <tn-banner
+                type="warning"
+                [heading]="'This zvol is already in use by {vmNames}.'
+                  | translate: { vmNames: selectedZvolOtherVmNames.join(', ') }"
+              ></tn-banner>
             }
           }
-        </ng-container>
 
-        <ix-input
-          type="number"
-          [formControl]="orderControl"
-          [label]="'Device Order' | translate"
-        ></ix-input>
-      </ix-fieldset>
+          <tn-form-field
+            [label]="'Mode' | translate"
+            [tooltip]="helptext.mode_tooltip | translate"
+            [required]="true"
+          >
+            <tn-select
+              formControlName="type"
+              [options]="(diskModes$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+            ></tn-select>
+          </tn-form-field>
 
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          type="submit"
-          mat-button
-          color="primary"
-          ixTest="save"
-          [disabled]="typeSpecificForm.invalid || isLoading"
-        >
-          {{ 'Save' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
-  </mat-card-content>
-</mat-card>
+          <tn-form-field
+            [label]="'Disk Sector Size' | translate"
+            [tooltip]="helptext.sectorsize_tooltip | translate"
+            [required]="true"
+          >
+            <tn-select
+              formControlName="sectorsize"
+              [options]="(sectorSizes$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+            ></tn-select>
+          </tn-form-field>
+        }
+        @case (VmDeviceType.Nic) {
+          <tn-form-field
+            [label]="'Adapter Type' | translate"
+            [tooltip]="helptext.adapter_type_tooltip | translate"
+            [required]="true"
+          >
+            <tn-select
+              formControlName="type"
+              [options]="(nicTypes$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+            ></tn-select>
+          </tn-form-field>
+
+          <div class="mac-address">
+            <tn-form-field
+              class="mac-input"
+              [label]="'MAC Address' | translate"
+              [tooltip]="helptext.mac_tooltip | translate"
+            >
+              <tn-input formControlName="mac"></tn-input>
+            </tn-form-field>
+
+            <div *ixRequiresRoles="requiredRoles">
+              <tn-button
+                [testId]="'generate'"
+                [label]="'Generate' | translate"
+                (onClick)="generateMacAddress()"
+              ></tn-button>
+            </div>
+          </div>
+
+          <tn-form-field
+            [label]="'NIC To Attach' | translate"
+            [tooltip]="helptext.nic_attach_tooltip | translate"
+            [required]="true"
+          >
+            <tn-select
+              formControlName="nic_attach"
+              [options]="(nicOptions$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+            ></tn-select>
+          </tn-form-field>
+
+          <tn-form-field>
+            <tn-checkbox
+              formControlName="trust_guest_rx_filters"
+              [label]="'Trust Guest Filters' | translate"
+            ></tn-checkbox>
+          </tn-form-field>
+        }
+        @case (VmDeviceType.Raw) {
+          <ix-explorer
+            #rawFileExplorer
+            formControlName="path"
+            [label]="'Raw File' | translate"
+            [required]="true"
+            [nodeProvider]="fileNodeProvider"
+            [tooltip]="helptext.raw_file_path_tooltip | translate"
+          >
+            <ix-explorer-create-dataset></ix-explorer-create-dataset>
+          </ix-explorer>
+
+          <tn-form-field
+            [label]="'Disk Sector Size' | translate"
+            [tooltip]="helptext.sectorsize_tooltip | translate"
+            [required]="true"
+          >
+            <tn-select
+              formControlName="sectorsize"
+              [options]="(sectorSizes$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+            ></tn-select>
+          </tn-form-field>
+
+          <tn-form-field
+            [label]="'Mode' | translate"
+            [tooltip]="helptext.mode_tooltip | translate"
+            [required]="true"
+          >
+            <tn-select
+              formControlName="type"
+              [options]="(diskModes$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+            ></tn-select>
+          </tn-form-field>
+
+          <!-- Exact-byte field — see the Size note above. -->
+          <ix-input
+            formControlName="size"
+            [label]="'Raw Filesize' | translate"
+            [format]="formatter.memorySizeFormatting"
+            [parse]="formatter.memorySizeParsing"
+            [tooltip]="helptext.raw_size_tooltip | translate"
+            [hint]="'Must be specified if the raw file needs to be created' | translate"
+          ></ix-input>
+        }
+        @case (VmDeviceType.Pci) {
+          <ix-combobox
+            formControlName="pptdev"
+            [label]="'PCI Passthrough Device' | translate"
+            [provider]="passthroughProvider"
+            [tooltip]="helptext.pptdev_tooltip | translate"
+            [required]="true"
+          ></ix-combobox>
+        }
+        @case (VmDeviceType.Usb) {
+          <tn-form-field [label]="'Controller Type' | translate" [required]="true">
+            <tn-select
+              formControlName="controller_type"
+              [options]="(usbControllerOptions$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+            ></tn-select>
+          </tn-form-field>
+          <tn-form-field [label]="'Device' | translate" [required]="true">
+            <tn-select
+              formControlName="device"
+              [options]="(usbDeviceOptions$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+            ></tn-select>
+          </tn-form-field>
+          @if (usbForm.controls.usb.enabled) {
+            <ng-container [formGroup]="usbForm.controls.usb">
+              <tn-form-field [label]="'Vendor ID' | translate" [required]="true">
+                <tn-input formControlName="vendor_id"></tn-input>
+              </tn-form-field>
+              <tn-form-field [label]="'Product ID' | translate" [required]="true">
+                <tn-input formControlName="product_id"></tn-input>
+              </tn-form-field>
+              <ix-errors [control]="usbForm.controls.usb"></ix-errors>
+            </ng-container>
+          }
+        }
+        @case (VmDeviceType.Display) {
+          @if (isNew) {
+            <tn-form-field
+              [label]="'Display Type' | translate"
+              [tooltip]="'Select the display protocol type.' | translate"
+              [required]="true"
+            >
+              <tn-select
+                formControlName="type"
+                [options]="(displayTypes$ | async) ?? []"
+                [placeholder]="tnSelectLabels.placeholder | translate"
+                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+              ></tn-select>
+            </tn-form-field>
+          } @else {
+            <div class="display-type-info">
+              <label>{{ 'Display Type' | translate }}</label>
+              <p><strong>{{ getCurrentDisplayTypeLabel() }}</strong></p>
+            </div>
+          }
+
+          @if (!isNew || getCurrentDisplayType()) {
+            <tn-form-field
+              [label]="'Bind' | translate"
+              [tooltip]="helptext.bind_tooltip | translate"
+              [required]="true"
+            >
+              <tn-select
+                formControlName="bind"
+                [options]="(bindOptions$ | async) ?? []"
+                [placeholder]="tnSelectLabels.placeholder | translate"
+                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+              ></tn-select>
+            </tn-form-field>
+
+            <tn-form-field
+              [label]="'Password' | translate"
+              [tooltip]="helptext.password_tooltip | translate"
+              [required]="true"
+            >
+              <!--
+                Explicit testId even though it matches the control name: tn-input derives the
+                visibility toggle's id from the raw `testId` input (NOT the control-name
+                fallback), so without it the toggle collapses to a non-unique
+                `button-toggle-password`.
+              -->
+              <tn-input
+                formControlName="password"
+                [testId]="'password'"
+                [inputType]="InputType.Password"
+              ></tn-input>
+            </tn-form-field>
+
+            <tn-form-field
+              [label]="'Resolution' | translate"
+              [tooltip]="helptext.resolution_tooltip | translate"
+              [required]="true"
+            >
+              <tn-select
+                formControlName="resolution"
+                [options]="(resolutions$ | async) ?? []"
+                [placeholder]="tnSelectLabels.placeholder | translate"
+                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
+              ></tn-select>
+            </tn-form-field>
+
+            <tn-form-field
+              [label]="'Port (optional)' | translate"
+              [tooltip]="helptext.port_tooltip | translate"
+            >
+              <tn-input
+                formControlName="port"
+                [inputType]="InputType.Number"
+              ></tn-input>
+            </tn-form-field>
+
+            @if (getCurrentDisplayType() === VmDisplayType.Spice) {
+              <tn-form-field [tooltip]="helptext.web_tooltip | translate">
+                <tn-checkbox
+                  formControlName="web"
+                  [label]="'Web Interface' | translate"
+                ></tn-checkbox>
+              </tn-form-field>
+
+              @if (displayForm.controls.web.value) {
+                <tn-form-field
+                  [label]="'Web Port' | translate"
+                  [tooltip]="helptext.web_port_tooltip | translate"
+                >
+                  <tn-input
+                    formControlName="web_port"
+                    [inputType]="InputType.Number"
+                  ></tn-input>
+                </tn-form-field>
+              }
+            }
+
+            @if (getCurrentDisplayType() === VmDisplayType.Vnc) {
+              <tn-banner
+                type="info"
+                [heading]="'Requires separate client software' | translate"
+                [message]="'VNC requires a separate client application and cannot be accessed through the web browser.' | translate"
+              ></tn-banner>
+            }
+          } @else {
+            <div class="display-type-prompt">
+              <p class="muted">{{ 'Select a display type above to configure display settings.' | translate }}</p>
+            </div>
+          }
+        }
+      }
+    </ng-container>
+
+    <tn-form-field [label]="'Device Order' | translate">
+      <!-- Explicit testId for the same reason as Type above: no control name to fall back on. -->
+      <tn-input
+        [formControl]="orderControl"
+        [testId]="'order'"
+        [inputType]="InputType.Number"
+      ></tn-input>
+    </tn-form-field>
+  </tn-form-section>
+</form>

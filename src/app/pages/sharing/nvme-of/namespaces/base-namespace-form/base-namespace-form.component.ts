@@ -1,18 +1,16 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, computed, inject, input, output } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ReactiveFormsModule } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnButtonToggleComponent, TnButtonToggleGroupComponent,
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnFormFieldComponent, TnFormFieldErrorMessages, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
-import { startWith } from 'rxjs';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
@@ -20,15 +18,18 @@ import {
   ExplorerCreateZvolComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
+import {
+  FormNamespaceType, NamespaceFormGroup, syncNewFileControls,
+} from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.utils';
 import { FilesystemService } from 'app/services/filesystem.service';
 
-enum FormNamespaceType {
-  Zvol = 'Zvol',
-  NewFile = 'NewFile',
-  ExistingFile = 'ExistingFile',
+/** Backs the unique `aria-labelledby` target below, so two mounted instances can't collide. */
+let typeToggleLabelIdCounter = 0;
+
+function nextTypeToggleLabelId(): string {
+  typeToggleLabelIdCounter += 1;
+  return `namespace-device-type-label-${typeToggleLabelIdCounter}`;
 }
 
 const typeOptions: Option[] = [
@@ -46,6 +47,20 @@ const typeOptions: Option[] = [
   },
 ];
 
+/**
+ * Renders the namespace controls into a form group its host owns — it neither builds the group nor
+ * submits it. Both side-panel wrappers (one saving through `<ix-form>`, one collecting changes in
+ * memory for the Add Subsystem wizard) build the group with `createNamespaceForm` and drive
+ * submission themselves.
+ *
+ * The group arrives as the {@link group} input and is bound to a `[formGroup]` in this component's
+ * own template, rather than inherited from the host's `ControlContainer` through projection — which
+ * would put an invisible contract on every host (re-provide the container here, and keep a
+ * `FormGroupDirective` on the host element).
+ *
+ * Renders no `<form>` element of its own, so it composes inside either host without nesting a
+ * second form.
+ */
 @Component({
   selector: 'ix-base-namespace-form',
   templateUrl: './base-namespace-form.component.html',
@@ -64,17 +79,24 @@ const typeOptions: Option[] = [
     ExplorerCreateZvolComponent,
   ],
 })
-export class BaseNamespaceFormComponent implements OnInit, OnChanges {
-  private formBuilder = inject(NonNullableFormBuilder);
+export class BaseNamespaceFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
-  namespace = input<NvmeOfNamespace>();
-  error = input<unknown>(null);
+  /**
+   * The group to render into, built by the host with `createNamespaceForm`. It backs both the
+   * template's `[formGroup]` and the `device_type` branching below, so "the group I branch on" and
+   * "the group my controls write to" are the same object by construction.
+   *
+   * Expected to be STABLE for the component's lifetime — `ngOnInit` reads it once to wire the
+   * branch sync, so swapping the instance later would leave that wiring on the old group (New File
+   * controls never re-enabled). Both hosts build it as a field initializer and never reassign it.
+   */
+  readonly group = input.required<NamespaceFormGroup>();
 
-  submitted = output<NamespaceChanges>();
+  /** Existing namespace to prefill from; absent in create mode. */
+  readonly namespace = input<NvmeOfNamespace>();
 
   protected readonly zvolsRootNode = [zvolsRootNode];
   protected readonly zvolProvider = this.filesystemService.getFilesystemNodeProvider({
@@ -85,94 +107,45 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
   protected readonly directoryProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   protected readonly fileProvider = this.filesystemService.getFilesystemNodeProvider();
 
-  protected isNew = computed(() => !this.namespace());
-
-  /** Public — side-panel host wrappers delegate their `SidePanelForm.form` to it. */
-  readonly form = this.formBuilder.group({
-    device_type: [FormNamespaceType.Zvol],
-    device_path: ['', Validators.required],
-    filename: [''],
-    filesize: [null as number | null],
-  });
-
-  private readonly formStatus = toSignal(
-    this.form.statusChanges.pipe(startWith(this.form.status)),
-    { initialValue: this.form.status },
-  );
-
-  /** Mirrors `SidePanelForm.trackCanSubmit` semantics: block only on INVALID, not PENDING. */
-  readonly canSubmit = computed(() => this.formStatus() !== 'INVALID');
-
   protected readonly FormNamespaceType = FormNamespaceType;
   protected readonly InputType = InputType;
-  protected readonly typeToggleLabelId = 'namespace-device-type-label';
+  protected readonly typeToggleLabelId = nextTypeToggleLabelId();
 
   protected typeOptions = translateOptions(this.translate, typeOptions);
 
-  get isFormDirty(): boolean {
-    return this.form.dirty;
-  }
-
-  constructor() {
-    this.clearPathOnTypeChanges();
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<BaseNamespaceFormComponent>): void {
-    if (changes.error && changes.error.currentValue) {
-      this.formErrorHandler.handleValidationErrors(this.error(), this.form);
-    }
-  }
+  /**
+   * The size floor `syncNewFileControls` puts on `filesize` is a byte count, so the app-wide
+   * resolver would render it as "Minimum value is 1" next to an input that speaks in MiB.
+   */
+  protected readonly filesizeErrorMessages: TnFormFieldErrorMessages = {
+    min: this.translate.instant(T('File size must be greater than 0.')),
+  };
 
   ngOnInit(): void {
-    if (this.namespace()) {
-      this.form.patchValue({
-        ...this.namespace(),
-        device_type: this.namespace().device_type === NvmeOfNamespaceType.Zvol
+    const form = this.group();
+    const namespace = this.namespace();
+
+    if (namespace) {
+      // Only the two fields this form models for an existing namespace. Spreading the whole record
+      // would also seed `filesize`, which the New File branch then shows pre-filled with the old
+      // file's size next to a blank filename — and `toNamespaceChanges` reads `getRawValue()`.
+      form.patchValue({
+        device_path: namespace.device_path,
+        device_type: namespace.device_type === NvmeOfNamespaceType.Zvol
           ? FormNamespaceType.Zvol
           : FormNamespaceType.ExistingFile,
       });
     }
-  }
 
-  /** Public entry point for side-panel host wrappers to trigger submission. */
-  submit(): void {
-    this.onSubmit();
-  }
+    syncNewFileControls(form, form.controls.device_type.value);
 
-  protected onSubmit(): void {
-    if (this.form.invalid) {
-      return;
-    }
-
-    const value = this.form.value;
-    let path = '';
-
-    switch (value.device_type) {
-      case FormNamespaceType.Zvol:
-        path = value.device_path.replace('/dev/zvol/', 'zvol/');
-        break;
-      case FormNamespaceType.NewFile: {
-        const directory = value.device_path.replace(/\/$/, '');
-        path = `${directory}/${value.filename}`;
-        break;
-      }
-      default:
-        path = value.device_path;
-        break;
-    }
-
-    this.submitted.emit({
-      device_path: path,
-      device_type: value.device_type === FormNamespaceType.Zvol ? NvmeOfNamespaceType.Zvol : NvmeOfNamespaceType.File,
-      filesize: value.device_type === FormNamespaceType.NewFile ? value.filesize : undefined,
-    });
-  }
-
-  private clearPathOnTypeChanges(): void {
-    this.form.controls.device_type.valueChanges
+    // Subscribed AFTER the prefill above so patching `device_type` on an existing namespace
+    // doesn't immediately clear the path it was just given.
+    form.controls.device_type.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        this.form.patchValue({ device_path: '' });
+      .subscribe((type) => {
+        form.patchValue({ device_path: '' });
+        syncNewFileControls(form, type);
       });
   }
 }

@@ -1,26 +1,39 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, computed, effect,
+  ChangeDetectionStrategy, Component, OnInit, inject, computed, effect,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WebSharePasskey, webSharePasskeyLabels } from 'app/enums/webshare-passkey.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceWebshare } from 'app/helptext/services/components/service-webshare';
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  serviceConfigSavedMessage,
+} from 'app/pages/services/components/service-config-forms.constants';
+
+// Built here rather than inline in the component, and left with an inferred return type — see
+// the `V` type parameter on IxFormHostForm for why.
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createWebshareForm(fb: NonNullableFormBuilder) {
+  return fb.group({
+    search: [false],
+    passkey: [WebSharePasskey.Disabled, Validators.required],
+  });
+}
+
+/** The form's own value shape rather than `WebShareConfigUpdate`, which `search` can drift from. */
+type WebShareFormValue = ReturnType<ReturnType<typeof createWebshareForm>['getRawValue']>;
 
 @Component({
   selector: 'ix-service-webshare',
@@ -29,35 +42,24 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    IxFormComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnCheckboxComponent,
     TnSelectComponent,
-    FormActionsComponent,
-    TnButtonComponent,
     TranslateModule,
-    RequiresRolesDirective,
   ],
 })
-export class ServiceWebshareComponent extends SidePanelForm implements OnInit {
+export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFormValue> implements OnInit {
   readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
 
   private api = inject(ApiService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private fb = inject(NonNullableFormBuilder);
-  private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
   private truenasConnectService = inject(TruenasConnectService);
 
-  readonly isFormLoading = signal(false);
-
-  protected readonly form = this.fb.group({
-    search: [false],
-    passkey: [WebSharePasskey.Disabled, Validators.required],
-  });
+  protected readonly form = createWebshareForm(this.fb);
 
   readonly helptext = helptextServiceWebshare;
   readonly passkeyOptions = mapToOptions(webSharePasskeyLabels, this.translate);
@@ -70,9 +72,6 @@ export class ServiceWebshareComponent extends SidePanelForm implements OnInit {
   protected readonly isTruenasConnectConfigured = computed(
     () => this.truenasConnectService.config()?.status === TruenasConnectStatus.Configured,
   );
-
-  /** Public signal hosts can read to disable a Save action while invalid or loading. */
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   constructor() {
     super();
@@ -91,39 +90,21 @@ export class ServiceWebshareComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isFormLoading.set(true);
-    this.api.call('webshare.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (config: WebShareConfig) => {
-        this.form.patchValue({
-          // `webshare.config` is async, so it can resolve after the guard effect has already
-          // locked the control off. Gate the loaded value too, otherwise a stale `search: true`
-          // from the backend would be restored while Connect is disabled and then submitted.
-          search: config.search && this.isTruenasConnectConfigured(),
-          passkey: config.passkey,
-        });
-        this.isFormLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-      },
+    this.loadFormConfig(this.api.call('webshare.config'), (config: WebShareConfig) => {
+      this.form.patchValue({
+        // `webshare.config` is async, so it can resolve after the guard effect has already
+        // locked the control off. Gate the loaded value too, otherwise a stale `search: true`
+        // from the backend would be restored while Connect is disabled and then submitted.
+        search: config.search && this.isTruenasConnectConfigured(),
+        passkey: config.passkey,
+      });
     });
   }
 
-  onSubmit(): void {
-    const values = this.form.getRawValue();
-
-    this.isFormLoading.set(true);
-    this.api.call('webshare.update', [values]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.isFormLoading.set(false);
-        this.snackbar.success(this.translate.instant('Service configuration saved'));
-        this.close(true);
-      },
-      error: (error: unknown) => {
-        this.isFormLoading.set(false);
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+  // `allValues` is the wrapper's own getRawValue() snapshot, so the `search` control still reaches
+  // the API (as false) while it is disabled by the TrueNAS Connect guard.
+  protected handleSubmit = ({ allValues }: FormSubmitEvent<WebShareFormValue>): SubmitResult => ({
+    request$: this.api.call('webshare.update', [allValues]),
+    successMessage: this.translate.instant(serviceConfigSavedMessage),
+  });
 }

@@ -1,160 +1,128 @@
 @if (vmStateInfo().isRunning) {
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    [attr.aria-label]="'Stop' | translate"
-    [ixTest]="['stop', vm().id]"
-    (click)="doStop()"
-  >
-    <tn-icon name="stop-circle" library="mdi"></tn-icon>
-    <span>{{ 'Stop' | translate }}</span>
-  </button>
+    icon="mdi-stop-circle"
+    [label]="'Stop' | translate"
+    [ariaLabel]="'Stop' | translate"
+    [testId]="['stop', vm().id]"
+    (onClick)="doStop()"
+  ></tn-button>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    [attr.aria-label]="'Restart' | translate"
-    [ixTest]="['restart', vm().id]"
-    (click)="doRestart()"
-  >
-    <tn-icon name="restart" library="mdi"></tn-icon>
-    <span>{{ 'Restart' | translate }}</span>
-  </button>
+    icon="mdi-restart"
+    [label]="'Restart' | translate"
+    [ariaLabel]="'Restart' | translate"
+    [testId]="['restart', vm().id]"
+    (onClick)="doRestart()"
+  ></tn-button>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    [attr.aria-label]="resetAriaLabel"
+    icon="mdi-restart-alert"
+    [label]="'Reset' | translate"
+    [ariaLabel]="resetAriaLabel"
     [tnTooltip]="resetTooltip"
-    [ixTest]="['reset', vm().id]"
-    (click)="doReset()"
-  >
-    <tn-icon name="restart-alert" library="mdi"></tn-icon>
-    <span>{{ 'Reset' | translate }}</span>
-  </button>
+    [testId]="['reset', vm().id]"
+    (onClick)="doReset()"
+  ></tn-button>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    [attr.aria-label]="'Power Off' | translate"
-    [ixTest]="['power_off', vm().id]"
-    (click)="doPowerOff()"
-  >
-    <tn-icon name="power" library="mdi"></tn-icon>
-    <span>{{ 'Power Off' | translate }}</span>
-  </button>
+    icon="mdi-power"
+    [label]="'Power Off' | translate"
+    [ariaLabel]="'Power Off' | translate"
+    [testId]="['power_off', vm().id]"
+    (onClick)="doPowerOff()"
+  ></tn-button>
 } @else if (vmStateInfo().isSuspended) {
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    [attr.aria-label]="'Resume' | translate"
-    [ixTest]="['resume', vm().id]"
-    (click)="doStart()"
-  >
-    <tn-icon name="play-circle" library="mdi"></tn-icon>
-    <span>{{ 'Resume' | translate }}</span>
-  </button>
+    icon="mdi-play-circle"
+    [label]="'Resume' | translate"
+    [ariaLabel]="'Resume' | translate"
+    [testId]="['resume', vm().id]"
+    (onClick)="doStart()"
+  ></tn-button>
 
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    [attr.aria-label]="'Power Off' | translate"
-    [ixTest]="['power_off', vm().id]"
-    (click)="doPowerOff()"
-  >
-    <tn-icon name="power" library="mdi"></tn-icon>
-    <span>{{ 'Power Off' | translate }}</span>
-  </button>
+    icon="mdi-power"
+    [label]="'Power Off' | translate"
+    [ariaLabel]="'Power Off' | translate"
+    [testId]="['power_off', vm().id]"
+    (onClick)="doPowerOff()"
+  ></tn-button>
 } @else {
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    [ixTest]="['start', vm().id]"
-    [attr.aria-label]="'Start' | translate"
-    (click)="doStart()"
-  >
-    <tn-icon name="play-circle" library="mdi"></tn-icon>
-    <span>{{ 'Start' | translate }}</span>
-  </button>
+    icon="mdi-play-circle"
+    [label]="'Start' | translate"
+    [ariaLabel]="'Start' | translate"
+    [testId]="['start', vm().id]"
+    (onClick)="doStart()"
+  ></tn-button>
 }
 
-<button
-  mat-button
-  [ixTest]="['edit', vm().id]"
-  [attr.aria-label]="'Edit' | translate"
-  (click)="doEdit()"
->
-  <tn-icon name="pencil" library="mdi"></tn-icon>
-  <span>{{ 'Edit' | translate }}</span>
-</button>
+<tn-button
+  icon="mdi-pencil"
+  [label]="'Edit' | translate"
+  [ariaLabel]="'Edit' | translate"
+  [testId]="['edit', vm().id]"
+  (onClick)="doEdit()"
+></tn-button>
 
-<button
+<tn-button
   *ixRequiresRoles="requiredRoles"
-  mat-button
-  [attr.aria-label]="'Delete' | translate"
-  [ixTest]="['delete', vm().id]"
-  (click)="doDelete()"
->
-  <tn-icon name="delete" library="mdi"></tn-icon>
-  <span>{{ 'Delete' | translate }}</span>
-</button>
+  icon="mdi-delete"
+  [label]="'Delete' | translate"
+  [ariaLabel]="'Delete' | translate"
+  [testId]="['delete', vm().id]"
+  (onClick)="doDelete()"
+></tn-button>
 
-<button
-  mat-button
-  [attr.aria-label]="'Devices' | translate"
-  [ixTest]="['devices', vm().id]"
-  (click)="openDevices()"
->
-  <tn-icon name="hub" library="mdi"></tn-icon>
-  <span>{{ 'Devices' | translate }}</span>
-</button>
+<tn-button
+  icon="mdi-hub"
+  [label]="'Devices' | translate"
+  [ariaLabel]="'Devices' | translate"
+  [testId]="['devices', vm().id]"
+  (onClick)="openDevices()"
+></tn-button>
 
-<button
+<tn-button
   *ixRequiresRoles="requiredRoles"
-  mat-button
-  [attr.aria-label]="'Clone' | translate"
-  [ixTest]="['clone', vm().id]"
-  (click)="doClone()"
->
-  <tn-icon name="content-copy" library="mdi"></tn-icon>
-  <span>{{ 'Clone' | translate }}</span>
-</button>
+  icon="mdi-content-copy"
+  [label]="'Clone' | translate"
+  [ariaLabel]="'Clone' | translate"
+  [testId]="['clone', vm().id]"
+  (onClick)="doClone()"
+></tn-button>
 
 @if (showDisplayButton()) {
-  <button
-    mat-button
-    [attr.aria-label]="'Display' | translate"
-    [ixTest]="['open_display', vm().id]"
-    (click)="openDisplay()"
-  >
-    <tn-icon name="monitor" library="mdi"></tn-icon>
-    <span>{{ 'Display' | translate }}</span>
-  </button>
+  <tn-button
+    icon="mdi-monitor"
+    [label]="'Display' | translate"
+    [ariaLabel]="'Display' | translate"
+    [testId]="['open_display', vm().id]"
+    (onClick)="openDisplay()"
+  ></tn-button>
 }
 
 @if (vmStateInfo().isRunning) {
-  <button
-    mat-button
-    [ixTest]="['open_serial_shell', vm().id]"
-    [attr.aria-label]="'Serial Shell' | translate"
-    (click)="openSerialShell()"
-  >
-    <tn-icon name="chevron-right" library="mdi"></tn-icon>
-    <span>{{ 'Serial Shell' | translate }}</span>
-  </button>
+  <tn-button
+    icon="mdi-chevron-right"
+    [label]="'Serial Shell' | translate"
+    [ariaLabel]="'Serial Shell' | translate"
+    [testId]="['open_serial_shell', vm().id]"
+    (onClick)="openSerialShell()"
+  ></tn-button>
 }
 
-<button
+<tn-button
   *ixRequiresRoles="requiredReadRoles"
-  mat-button
-  [ixTest]="['download_logs', vm().id]"
-  [attr.aria-label]="'Download Logs' | translate"
-  (click)="downloadLogs()"
->
-  <tn-icon name="content-paste" library="mdi"></tn-icon>
-  <span>{{ 'Download Logs' | translate }}</span>
-</button>
-
-
-
-
+  icon="mdi-content-paste"
+  [label]="'Download Logs' | translate"
+  [ariaLabel]="'Download Logs' | translate"
+  [testId]="['download_logs', vm().id]"
+  (onClick)="downloadLogs()"
+></tn-button>

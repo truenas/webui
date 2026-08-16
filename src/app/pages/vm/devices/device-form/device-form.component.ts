@@ -1,15 +1,20 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, viewChild } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit,
+  inject, input, output, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnBannerComponent } from '@truenas/ui-components';
-import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import {
+  InputType, TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
+  TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import { BehaviorSubject, EMPTY, Observable, forkJoin, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -30,23 +35,17 @@ import {
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AnnotatedZvolOption, buildAnnotatedZvolOptions,
@@ -58,6 +57,12 @@ import { NetworkService } from 'app/services/network.service';
 
 const specifyCustom = T('Specify custom');
 
+export interface DeviceFormData {
+  virtualMachineId?: number;
+  device?: VmDevice;
+  vmName?: string;
+}
+
 @Component({
   selector: 'ix-device-form',
   templateUrl: './device-form.component.html',
@@ -65,28 +70,27 @@ const specifyCustom = T('Specify custom');
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    AsyncPipe,
     ReactiveFormsModule,
-    IxFieldsetComponent,
-    IxSelectComponent,
+    TnFormSectionComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
+    TnInputComponent,
+    TnCheckboxComponent,
+    TnRadioComponent,
+    TnRadioGroupComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     IxComboboxComponent,
     IxInputComponent,
-    IxRadioGroupComponent,
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    IxCheckboxComponent,
+    TnButtonComponent,
     IxErrorsComponent,
-    FormActionsComponent,
     TranslateModule,
     TnBannerComponent,
   ],
 })
-export class DeviceFormComponent implements OnInit {
+export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
@@ -98,20 +102,86 @@ export class DeviceFormComponent implements OnInit {
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private fileValidator = inject(FileValidatorService);
-  slideInRef = inject<SlideInRef<{
-    virtualMachineId?: number;
-    device?: VmDevice;
-    vmName?: string;
-  } | undefined, boolean>>(SlideInRef);
-
   private destroyRef = inject(DestroyRef);
 
-  protected readonly requiredRoles = [Role.VmDeviceWrite];
+  /**
+   * Device + VM context, supplied by the `<tn-side-panel>` host. Required: `onSend()` posts
+   * `vm: this.virtualMachineId`, which is only ever assigned from this input, so a panel opened
+   * without it would render a form that looks fine and then save against an undefined VM.
+   */
+  readonly deviceFormData = input.required<DeviceFormData>();
+
+  /** Emitted to the hosting `<tn-side-panel>` after a successful save. */
+  readonly closed = output<boolean>();
+
+  readonly requiredRoles = [Role.VmDeviceWrite];
   protected formatter = inject(IxFormatterService);
+  protected readonly InputType = InputType;
+  protected readonly tnSelectLabels = tnSelectLabels;
 
+  private readonly isLoading = signal(false);
+  private vmName: string;
 
-  isLoading = false;
-  protected vmName: string;
+  /**
+   * Gates the panel footer Save on the same controls `hasUnsavedChanges()` guards: the three
+   * standalone controls live outside `typeSpecificForm` but are part of the same submission,
+   * and `typeControl` carries `Validators.required`. They use `!.invalid` rather than `.valid`
+   * because `.valid` is false for a *disabled* control, which would silently lock Save with
+   * nothing on screen to explain it should a type-specific branch ever disable one of them.
+   * `typeSpecificForm` keeps the `.valid` spelling so a PENDING async validator inside it
+   * doesn't read as submittable.
+   *
+   * `typeControl` is checked first on purpose: `typeSpecificForm` is keyed off its value and
+   * resolves to `undefined` for one outside `VmDeviceType`, so the short-circuit is what keeps
+   * a cleared type from dereferencing it.
+   */
+  canSubmit(): boolean {
+    return !this.typeControl.invalid
+      && !this.orderControl.invalid
+      && !this.newOrExistingControl.invalid
+      && this.typeSpecificForm.valid
+      && !this.isLoading();
+  }
+
+  /** Whether the form is currently submitting; the host shows a progress bar while true. */
+  isBusy(): boolean {
+    return this.isLoading();
+  }
+
+  /**
+   * `isLoading` is only ever set around a submit (this form has no initial load), so it
+   * doubles as the host's "Saving…" signal for the footer Save.
+   */
+  isSubmitting(): boolean {
+    return this.isLoading();
+  }
+
+  /**
+   * Entry point for the `<tn-side-panel>` footer Save. Gated here rather than relying on the
+   * host disabling the button, so the invariant lives in the one component that owns the forms —
+   * and so a second click during the PCI pre-flight window can't fire a duplicate create.
+   */
+  submit(): void {
+    if (!this.canSubmit()) {
+      return;
+    }
+    this.confirmAndSend();
+  }
+
+  hasUnsavedChanges(): boolean {
+    // The three standalone controls live outside `typeSpecificForm` but are rendered in the
+    // same panel, so edits confined to them must still trip the host's close guard.
+    //
+    // `typeSpecificForm` is guarded by the type check rather than read with `?.`: the getter is
+    // keyed off `typeControl` and its default branch calls `assertUnreachable`, which logs on
+    // every pass. This guard is the host's close guard, so it can run repeatedly for one dismissal
+    // (backdrop, Escape, X) — checking the value up front keeps a cleared type off that branch
+    // entirely instead of logging each time.
+    return this.typeControl.dirty
+      || this.orderControl.dirty
+      || this.newOrExistingControl.dirty
+      || (this.typeControl.value !== null && this.typeSpecificForm.dirty);
+  }
 
   get isNew(): boolean {
     return !this.existingDevice;
@@ -124,7 +194,7 @@ export class DeviceFormComponent implements OnInit {
     return this.displayForm.value.type || null;
   }
 
-  getCurrentDisplayTypeLabel(): string {
+  protected getCurrentDisplayTypeLabel(): string {
     const displayType = this.getCurrentDisplayType();
     if (displayType === VmDisplayType.Spice) {
       return 'SPICE';
@@ -132,7 +202,7 @@ export class DeviceFormComponent implements OnInit {
     if (displayType === VmDisplayType.Vnc) {
       return 'VNC';
     }
-    return 'Unknown';
+    return this.translate.instant('Unknown');
   }
 
   private updateDisplayFormForType(displayType: VmDisplayType | null): void {
@@ -160,7 +230,7 @@ export class DeviceFormComponent implements OnInit {
   }
 
   existingDevice: VmDevice;
-  protected slideInData: { virtualMachineId?: number; device?: VmDevice; vmName?: string } | undefined;
+  private hostData: DeviceFormData;
 
   readonly rawFileExplorer = viewChild<IxExplorerComponent>('rawFileExplorer');
 
@@ -224,10 +294,10 @@ export class DeviceFormComponent implements OnInit {
   readonly VmDeviceType = VmDeviceType;
   readonly VmDisplayType = VmDisplayType;
 
-  readonly newOrExistingOptions$ = of([
+  readonly newOrExistingOptions = [
     { label: this.translate.instant('Create new disk image'), value: 'new' as const },
     { label: this.translate.instant('Use existing disk image'), value: 'existing' as const },
-  ]);
+  ];
 
   readonly datastoreOptions$ = this.api
     .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
@@ -330,17 +400,17 @@ export class DeviceFormComponent implements OnInit {
     return match?.otherVmNames ?? [];
   }
 
-  constructor() {
-    const slideInRef = this.slideInRef;
+  /**
+   * Resolves the host-supplied context and derives the zvol options from it. Runs at the top of
+   * `ngOnInit` rather than in the constructor because the `deviceFormData` input the
+   * `<tn-side-panel>` host sets is only populated before `ngOnInit`.
+   */
+  private resolveHostData(): void {
+    this.hostData = this.deviceFormData();
+    this.vmName = this.hostData.vmName;
 
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.typeSpecificForm.dirty);
-    });
-    this.slideInData = slideInRef.getData();
-    this.vmName = this.slideInData?.vmName;
-
-    const existingDiskPath = this.slideInData?.device?.attributes?.dtype === VmDeviceType.Disk
-      ? (this.slideInData.device as VmDiskDevice).attributes.path
+    const existingDiskPath = this.hostData.device?.attributes?.dtype === VmDeviceType.Disk
+      ? (this.hostData.device as VmDiskDevice).attributes.path
       : null;
 
     this.zvolOptions$ = forkJoin([
@@ -356,7 +426,7 @@ export class DeviceFormComponent implements OnInit {
           choices,
           diskDevices,
           vms,
-          this.slideInData?.virtualMachineId ?? null,
+          this.hostData.virtualMachineId ?? null,
           existingDiskPath,
         );
       }),
@@ -366,6 +436,8 @@ export class DeviceFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.resolveHostData();
+
     this.usbForm.controls.usb.disable();
     this.usbForm.controls.device.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((device) => {
       if (device === specifyCustom) {
@@ -389,13 +461,13 @@ export class DeviceFormComponent implements OnInit {
       this.setDiskFormValidators(value as 'new' | 'existing');
     });
 
-    if (this.slideInData?.virtualMachineId) {
-      this.virtualMachineId = this.slideInData.virtualMachineId;
+    if (this.hostData.virtualMachineId) {
+      this.virtualMachineId = this.hostData.virtualMachineId;
       this.setVirtualMachineId();
     }
 
-    if (this.slideInData?.device) {
-      this.existingDevice = this.slideInData.device;
+    if (this.hostData.device) {
+      this.existingDevice = this.hostData.device;
       this.setDeviceForEdit();
     }
 
@@ -562,36 +634,81 @@ export class DeviceFormComponent implements OnInit {
     return true;
   }
 
-  onSubmit(event: SubmitEvent): void {
+  /**
+   * Implicit form submission (Enter in a field); delegates to the same gated entry point as the
+   * panel footer Save so there is one gate rather than two that can drift. The gate matters more
+   * here than on the footer: the container's busy overlay blocks the mouse, not the keyboard, so
+   * a second Enter would otherwise fire a duplicate create while a submit is in flight.
+   */
+  protected onSubmit(event: SubmitEvent): void {
     event.preventDefault();
+    this.submit();
+  }
 
-    if (this.typeControl.value === VmDeviceType.Pci) {
-      forkJoin([
-        this.api.call('vm.device.passthrough_device_choices'),
-        this.api.call('system.advanced.config'),
-      ])
-        .pipe(
-          this.errorHandler.withErrorHandler(),
-          takeUntilDestroyed(this.destroyRef),
-        )
-        .subscribe(([passthroughDevices, advancedConfig]) => {
-          const dev = this.pciForm.controls.pptdev.value;
-          if (!passthroughDevices[dev]?.reset_mechanism_defined && !advancedConfig.isolated_gpu_pci_ids.includes(dev)) {
-            this.dialogService.confirm({
-              title: this.translate.instant('Warning'),
-              message: this.translate.instant('PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.'),
-            }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => confirmed && this.onSend());
-          } else {
-            this.onSend();
-          }
-        });
-    } else {
+  /**
+   * Submits, first confirming with the user when a PCI passthrough device has no reset
+   * mechanism.
+   *
+   * The busy flag is raised before the pre-flight calls rather than inside `onSend()`, so that
+   * the footer Save is disabled (and the panel shows progress) for the whole window instead of
+   * only once the create/update starts — otherwise a second click during the two round-trips
+   * and the confirmation dialog could stack another dialog and a duplicate create.
+   */
+  private confirmAndSend(): void {
+    if (this.typeControl.value !== VmDeviceType.Pci) {
       this.onSend();
+      return;
     }
+
+    this.isLoading.set(true);
+
+    this.confirmPciResetMechanism()
+      .pipe(
+        // Spelled out rather than `withErrorHandler()` because a failed pre-flight call has to
+        // release the busy flag as well — that operator swallows the failure into EMPTY, which
+        // never reaches the subscriber below and would leave the form locked.
+        catchError((error: unknown) => {
+          this.isLoading.set(false);
+          this.errorHandler.showErrorModal(error);
+          return EMPTY;
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((confirmed) => {
+        if (!confirmed) {
+          this.isLoading.set(false);
+          return;
+        }
+        // `onSend()` takes over the flag that is already raised.
+        this.onSend();
+      });
+  }
+
+  /**
+   * Emits whether the PCI device may be submitted: `true` outright when it has a reset mechanism
+   * (or is an isolated GPU), otherwise whatever the user answers in the warning dialog.
+   */
+  private confirmPciResetMechanism(): Observable<boolean> {
+    return forkJoin([
+      this.api.call('vm.device.passthrough_device_choices'),
+      this.api.call('system.advanced.config'),
+    ]).pipe(
+      switchMap(([passthroughDevices, advancedConfig]) => {
+        const dev = this.pciForm.controls.pptdev.value;
+        if (passthroughDevices[dev]?.reset_mechanism_defined || advancedConfig.isolated_gpu_pci_ids.includes(dev)) {
+          return of(true);
+        }
+
+        return this.dialogService.confirm({
+          title: this.translate.instant('Warning'),
+          message: this.translate.instant('PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.'),
+        });
+      }),
+    );
   }
 
   private onSend(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     const update: VmDeviceUpdate = {
       vm: this.virtualMachineId,
@@ -612,13 +729,15 @@ export class DeviceFormComponent implements OnInit {
           } else {
             this.snackbar.success(this.translate.instant('Device updated'));
           }
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.slideInRef.close({ response: true });
+          this.isLoading.set(false);
+          this.closed.emit(true);
         },
         error: (error: unknown) => {
           this.handleFormError(error);
-          this.isLoading = false;
+          this.isLoading.set(false);
+          // Unlike the success path — where `isLoading` is a signal and `closed` tears the panel
+          // down anyway — `handleValidationErrors` writes errors onto the form controls, which
+          // are not signals, so OnPush needs telling.
           this.cdr.markForCheck();
         },
       });
