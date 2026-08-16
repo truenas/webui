@@ -136,6 +136,27 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query('.warning-container')).toHaveText('Warning: Low Capacity');
     expect(spectator.query(GaugeChartComponent)!.label).toBe('81%');
     expect(spectator.query(GaugeChartComponent)!.value).toBeCloseTo(81, 0);
+    expect(spectator.query(GaugeChartComponent)!.colorFill).toBe('#E68D37');
+  });
+
+  it('renders component values when usage is above 90%', () => {
+    spectator.setInput('poolState', {
+      healthy: true,
+      name: 'bingo',
+      status: 'ONLINE',
+      used: 2199792913690,
+      available: 109989645684,
+
+      topology: {
+        data: [{
+          disk: 'sda',
+          type: TopologyItemType.Disk,
+        }],
+      },
+    } as Pool);
+
+    expect(spectator.query('.warning-container')).toHaveText('Critical: Low Capacity');
+    expect(spectator.query(GaugeChartComponent)!.label).toBe('95.2%');
     expect(spectator.query(GaugeChartComponent)!.colorFill).toBe('#CE2929');
   });
 
@@ -160,6 +181,24 @@ describe('PoolUsageCardComponent', () => {
 
     expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Warn);
     expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool is using more than 80% of available space');
+
+    spectator.setInput('poolState', {
+      healthy: true,
+      name: 'bingo',
+      status: 'ONLINE',
+      used: 2199792913690,
+      available: 109989645684,
+
+      topology: {
+        data: [{
+          disk: 'sda',
+          type: TopologyItemType.Disk,
+        }],
+      },
+    } as Pool);
+
+    expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Error);
+    expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool is using more than 90% of available space');
   });
 
   it('should pre-select disks when user click "View Disk Reports" link', () => {

@@ -7,7 +7,9 @@ import {
   TnCardComponent, TnIconButtonComponent, TnIconComponent, TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { getPoolCapacityLevel } from 'app/constants/pool-capacity.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { PoolCapacityLevel } from 'app/enums/pool-capacity-level.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -168,10 +170,10 @@ export class WidgetStorageComponent {
   private getUsedSpaceItemInfo(pool: Pool): ItemInfo {
     const usedSpace = Number(this.poolStats()?.[pool.name]?.used);
     const totalSpace = Number(this.poolStats()?.[pool.name]?.total);
-    const usedSpacePercent = usedSpace / totalSpace;
+    const usedSpaceFraction = usedSpace / totalSpace;
     let level = StatusLevel.Safe;
     let icon = statusIcons.checkCircle;
-    let value = this.percentPipe.transform(usedSpacePercent, '1.2-2') || '?';
+    let value = this.percentPipe.transform(usedSpaceFraction, '1.2-2') || '?';
 
     if (!usedSpace) {
       return {
@@ -190,12 +192,17 @@ export class WidgetStorageComponent {
       });
     }
 
-    if (usedSpacePercent >= 90) {
-      level = StatusLevel.Error;
-      icon = statusIcons.error;
-    } else if (usedSpacePercent >= 80) {
-      level = StatusLevel.Warn;
-      icon = statusIcons.error;
+    switch (getPoolCapacityLevel(usedSpaceFraction * 100)) {
+      case PoolCapacityLevel.Critical:
+        level = StatusLevel.Error;
+        icon = statusIcons.error;
+        break;
+      case PoolCapacityLevel.Warning:
+        level = StatusLevel.Warn;
+        icon = statusIcons.mdiAlert;
+        break;
+      case PoolCapacityLevel.Safe:
+        break;
     }
 
     return {

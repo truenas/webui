@@ -8,8 +8,11 @@ import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
   TnTestIdDirective,
 } from '@truenas/ui-components';
-import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
+import {
+  getPoolCapacityLevel, poolCriticalCapacityPercent, poolLowCapacityPercent,
+} from 'app/constants/pool-capacity.constant';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { PoolCapacityLevel } from 'app/enums/pool-capacity-level.enum';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { GaugeChartComponent, GaugeSegment } from 'app/modules/charts/gauge-chart/gauge-chart.component';
@@ -51,7 +54,8 @@ export class PoolUsageCardComponent implements OnInit {
   protected readonly tierEnabled = this.tierService.tierEnabled;
   protected readonly reservePct = this.tierService.metadataReservePct;
 
-  chartLowCapacityColor: string;
+  chartWarningColor: string;
+  chartCriticalColor: string;
   chartFillColor: string;
   chartBlankColor: string;
 
@@ -60,11 +64,20 @@ export class PoolUsageCardComponent implements OnInit {
   ngOnInit(): void {
     this.chartBlankColor = this.themeService.currentTheme().bg1;
     this.chartFillColor = this.themeService.currentTheme().primary;
-    this.chartLowCapacityColor = this.themeService.currentTheme().red;
+    this.chartWarningColor = this.themeService.currentTheme().orange;
+    this.chartCriticalColor = this.themeService.currentTheme().red;
   }
 
+  protected capacityLevel = computed(() => {
+    return getPoolCapacityLevel(this.usedPercentage());
+  });
+
   protected isLowCapacity = computed(() => {
-    return this.usedPercentage() >= poolLowCapacityPercent;
+    return this.capacityLevel() !== PoolCapacityLevel.Safe;
+  });
+
+  protected isCriticalCapacity = computed(() => {
+    return this.capacityLevel() === PoolCapacityLevel.Critical;
   });
 
   protected disks = computed(() => {
@@ -92,17 +105,25 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected iconType = computed(() => {
-    if (this.isLowCapacity()) {
-      return PoolCardIconType.Warn;
+    switch (this.capacityLevel()) {
+      case PoolCapacityLevel.Critical:
+        return PoolCardIconType.Error;
+      case PoolCapacityLevel.Warning:
+        return PoolCardIconType.Warn;
+      default:
+        return PoolCardIconType.Safe;
     }
-    return PoolCardIconType.Safe;
   });
 
   protected iconTooltip = computed(() => {
-    if (this.isLowCapacity()) {
-      return this.translate.instant('Pool is using more than {maxPct}% of available space', { maxPct: poolLowCapacityPercent });
+    switch (this.capacityLevel()) {
+      case PoolCapacityLevel.Critical:
+        return this.translate.instant('Pool is using more than {maxPct}% of available space', { maxPct: poolCriticalCapacityPercent });
+      case PoolCapacityLevel.Warning:
+        return this.translate.instant('Pool is using more than {maxPct}% of available space', { maxPct: poolLowCapacityPercent });
+      default:
+        return this.translate.instant('Everything is fine');
     }
-    return this.translate.instant('Everything is fine');
   });
 
   protected hasSpecialVdev = computed(() => {

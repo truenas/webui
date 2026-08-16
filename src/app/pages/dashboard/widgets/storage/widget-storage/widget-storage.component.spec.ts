@@ -109,6 +109,8 @@ describe('WidgetStorageComponent', () => {
   let spectator: Spectator<WidgetStorageComponent>;
   const pools$ = new BehaviorSubject<Pool[]>([]);
   const scans$ = new BehaviorSubject<PoolScan>(null);
+  // Mutable so individual tests can dial the usage up before creating the component.
+  let poolStats: Record<string, { available: number; used: number; total: number }>;
   const createComponent = createComponentFactory({
     component: WidgetStorageComponent,
     imports: [
@@ -123,15 +125,7 @@ describe('WidgetStorageComponent', () => {
         {
           pools$,
           poolUpdatesWithStaleDetection: () => of({
-            value: {
-              // since we only ever check the size values of the pool with a finished scrub,
-              // we only define the size for the pool with a finished scrub.
-              poolWithFinishedScrub: {
-                available: totalData - usedData,
-                used: usedData,
-                total: totalData,
-              },
-            },
+            value: poolStats,
             isStale: false,
           }),
           scans$,
@@ -149,6 +143,18 @@ describe('WidgetStorageComponent', () => {
       mockProvider(PercentPipe),
       mockAuth(),
     ],
+  });
+
+  beforeEach(() => {
+    // since we only ever check the size values of the pool with a finished scrub,
+    // we only define the size for the pool with a finished scrub.
+    poolStats = {
+      poolWithFinishedScrub: {
+        available: totalData - usedData,
+        used: usedData,
+        total: totalData,
+      },
+    };
   });
 
   describe('Single Pool Configuration', () => {
@@ -242,6 +248,49 @@ describe('WidgetStorageComponent', () => {
           ],
         },
       );
+    });
+  });
+
+  describe('Used Space Thresholds', () => {
+    function createWithUsage(usedPercent: number): void {
+      poolStats.poolWithFinishedScrub = {
+        available: totalData - (totalData * usedPercent) / 100,
+        used: (totalData * usedPercent) / 100,
+        total: totalData,
+      };
+      pools$.next([poolWithFinishedScrub]);
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Full,
+        },
+      });
+    }
+
+    it('reports used space as safe below 80%', () => {
+      createWithUsage(79);
+
+      expect(spectator.component.poolsInfo()[0].usedSpace).toMatchObject({
+        level: 'safe',
+        icon: 'mat-check_circle',
+      });
+    });
+
+    it('warns when used space is at or above 80%', () => {
+      createWithUsage(83.9);
+
+      expect(spectator.component.poolsInfo()[0].usedSpace).toMatchObject({
+        level: 'warn',
+        icon: 'mdi-alert',
+      });
+    });
+
+    it('errors when used space is at or above 90%', () => {
+      createWithUsage(91);
+
+      expect(spectator.component.poolsInfo()[0].usedSpace).toMatchObject({
+        level: 'error',
+        icon: 'mat-error',
+      });
     });
   });
 

@@ -5,7 +5,8 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { formatDuration } from 'date-fns';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap } from 'rxjs';
-import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
+import { getPoolCapacityLevel } from 'app/constants/pool-capacity.constant';
+import { PoolCapacityLevel } from 'app/enums/pool-capacity-level.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyWarning, VDevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -44,7 +45,8 @@ export class PoolUsageGaugeComponent implements OnInit {
   readonly pool = input<Pool>();
   readonly size = input<number>(150);
 
-  protected chartLowCapacityColor: string;
+  protected chartWarningColor: string;
+  protected chartCriticalColor: string;
   protected chartFillColor: string;
   protected chartBlankColor: string;
 
@@ -73,8 +75,16 @@ export class PoolUsageGaugeComponent implements OnInit {
     return this.poolStats()?.used / this.capacity() * 100;
   });
 
+  protected capacityLevel = computed(() => {
+    return getPoolCapacityLevel(this.usedPercentage());
+  });
+
   protected isLowCapacity = computed(() => {
-    return this.usedPercentage() >= poolLowCapacityPercent;
+    return this.capacityLevel() !== PoolCapacityLevel.Safe;
+  });
+
+  protected isCriticalCapacity = computed(() => {
+    return this.capacityLevel() === PoolCapacityLevel.Critical;
   });
 
   protected dataTopology = computed(() => {
@@ -98,7 +108,8 @@ export class PoolUsageGaugeComponent implements OnInit {
   ngOnInit(): void {
     this.chartBlankColor = this.themeService.currentTheme().bg2;
     this.chartFillColor = this.themeService.currentTheme().primary;
-    this.chartLowCapacityColor = this.themeService.currentTheme().red;
+    this.chartWarningColor = this.themeService.currentTheme().orange;
+    this.chartCriticalColor = this.themeService.currentTheme().red;
   }
 
   private parseTopologyData(): string {
