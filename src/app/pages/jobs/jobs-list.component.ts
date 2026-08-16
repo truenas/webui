@@ -41,7 +41,7 @@ import {
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
+import { mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
 import { TaskStateCellComponent } from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
@@ -134,13 +134,13 @@ export class JobsListComponent implements OnInit {
         }
 
         if (tableId !== this.lastSyncedExpandedId) {
-          // The table moved on its own — the user toggled a chevron. Adopt it and, on expand, put
-          // the job in the URL, as ix-table's `(expanded)` output used to.
+          // The table moved on its own — the user toggled a chevron. Adopt it and put the job in
+          // the URL, as ix-table's `(expanded)` output used to. A collapse clears the parameter
+          // rather than leaving `?jobId=` pointing at a row that is no longer open, which would
+          // re-expand it on the next reload.
           this.lastSyncedExpandedId = tableId;
           this.expandedJobId.set(tableId);
-          if (tableId !== null) {
-            this.navigateToJob(tableId);
-          }
+          this.navigateToJob(tableId);
           return;
         }
 
@@ -169,6 +169,10 @@ export class JobsListComponent implements OnInit {
   private openExpandedRow(table: TnTableComponent<Job>, rows: Job[], jobId: number | null): void {
     const expandedRow = jobId === null ? undefined : rows.find((job) => job.id === jobId);
     if (!expandedRow) {
+      // The job is not on the current page — a tab switch, a search. Record that the empty table
+      // is what we asked for, so the effect doesn't read it as the user collapsing the row, and
+      // keep `expandedJobId`: the row re-opens on its own once the job is listed again.
+      this.lastSyncedExpandedId = null;
       return;
     }
     this.lastSyncedExpandedId = jobId;
@@ -233,9 +237,14 @@ export class JobsListComponent implements OnInit {
       });
   }
 
-  protected uniqueRowTag(job: Job): string {
-    return toUniqueRowTag(`job-${job.id}`);
-  }
+  /**
+   * Memoized: every cell of every row calls this on each change-detection pass, and the jobs
+   * subscription runs a pass on every progress tick of every running job.
+   *
+   * Not applied to {@link ariaLabel}, which is translated — a cache keyed on the row object alone
+   * would freeze it in whichever locale rendered first.
+   */
+  protected readonly uniqueRowTag = memoizedRowTag<Job>((job) => `job-${job.id}`);
 
   protected ariaLabel(job: Job): string {
     return [String(job.description), this.translate.instant('Job')].join(' ');
@@ -260,7 +269,8 @@ export class JobsListComponent implements OnInit {
     }));
   }
 
-  private navigateToJob(jobId: number): void {
+  /** Writes the open job into `?jobId=`; `null` drops the parameter. */
+  private navigateToJob(jobId: number | null): void {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { jobId },

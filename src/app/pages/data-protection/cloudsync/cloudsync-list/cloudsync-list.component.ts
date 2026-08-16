@@ -22,7 +22,7 @@ import { cloudSyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { DisplayableState, JobState } from 'app/enums/job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -37,7 +37,6 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
-import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -46,12 +45,12 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { column } from 'app/modules/tn-table/column-configs';
 import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
-import { IxTableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
+import { TableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/tn-table/utils';
 import { TableRelativeDateCellComponent,
   formatRelativeDateValue } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
 import {
-  TaskStateCellComponent,
+  formatTaskStateValue, TaskStateCellComponent,
 } from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -83,7 +82,7 @@ import { AppState } from 'app/store';
     TnCellDefDirective,
     TnDetailRowDefDirective,
     TnTablePagerComponent,
-    IxTableDetailsRowComponent,
+    TableDetailsRowComponent,
     TableRelativeDateCellComponent,
     TableTextCellComponent,
     TaskStateCellComponent,
@@ -92,10 +91,10 @@ import { AppState } from 'app/store';
     FlattenEmptyMessagePipe,
     TranslateModule,
   ],
-  // Both pipes are provided so the column model can inject and call them directly: a details row
-  // prints what the cell shows rather than a raw schedule object or an untranslated state code.
-  // `ScheduleDescriptionPipe` is imported too, because the template also pipes through it.
-  providers: [ScheduleDescriptionPipe, JobStateDisplayPipe],
+  // Provided so the column model can inject and call it directly: a details row prints the
+  // schedule description the cell shows rather than a raw schedule object. Imported too, because
+  // the template also pipes through it.
+  providers: [ScheduleDescriptionPipe],
 })
 export class CloudSyncListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
@@ -111,7 +110,6 @@ export class CloudSyncListComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private destroyRef = inject(DestroyRef);
   private scheduleDescription = inject(ScheduleDescriptionPipe);
-  private stateDisplay = inject(JobStateDisplayPipe);
 
   protected readonly searchableElements = cloudSyncListElements;
   protected readonly EmptyType = EmptyType;
@@ -227,7 +225,7 @@ export class CloudSyncListComponent implements OnInit {
         getValue: (row) => row.state.state,
         // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it,
         // under the suffix that pill resolves.
-        formatValue: (row) => this.stateText(row.state.state),
+        formatValue: (row) => formatTaskStateValue(row.state.state, this.translate),
         testIdSuffix: 'row-state',
       }),
       column({
@@ -261,10 +259,6 @@ export class CloudSyncListComponent implements OnInit {
     (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
   );
 
-  /** The pill's label, so a hidden State column reads "Completed" and not "SUCCESS". */
-  private stateText(state: DisplayableState | undefined): string {
-    return state ? this.stateDisplay.transform(state) : this.translate.instant('N/A');
-  }
 
   protected getNextRun(task: CloudSyncTaskUi): string {
     // For disabled tasks, show "Disabled" text; for enabled tasks, the

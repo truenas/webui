@@ -15,7 +15,7 @@ import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
-import { IxTablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
+import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import {
@@ -49,7 +49,7 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
     TableActionsCellComponent,
     UiSearchDirective,
     RequiresRolesDirective,
-    IxTablePagerShowMoreComponent,
+    TablePagerShowMoreComponent,
     TranslateModule,
     TooltipComponent,
   ],

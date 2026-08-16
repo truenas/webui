@@ -29,7 +29,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
-import { IxTablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
+import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
@@ -62,7 +62,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnCellDefDirective,
     TnEmptyComponent,
     TableActionsCellComponent,
-    IxTablePagerShowMoreComponent,
+    TablePagerShowMoreComponent,
     RequiresRolesDirective,
     UiSearchDirective,
     TranslateModule,

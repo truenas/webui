@@ -13,7 +13,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
-  IxTablePagerShowMoreComponent,
+  TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SshConnectionCardComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.component';
@@ -58,7 +58,7 @@ describe('SshConnectionCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SshConnectionCardComponent,
     imports: [
-      IxTablePagerShowMoreComponent,
+      TablePagerShowMoreComponent,
     ],
     providers: [
       mockApi([

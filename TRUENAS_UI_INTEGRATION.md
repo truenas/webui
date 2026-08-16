@@ -403,7 +403,8 @@ pinned `~0.4.9` (they landed after `0.3.26`, the version this work started again
 
 Also fixed in the library and available, but not adopted here because their consumers sit in other
 feature areas: `[singleExpand]` (would delete `restrictToSingleExpandedRow`),
-`[(sortColumn)]`/`[(sortDirection)]` (would delete `reflectSortIntoTable`), `[emptyDescription]`
+`[(sortColumn)]`/`[(sortDirection)]` (would delete `reflectSortIntoTable`) — both helpers live in
+`tn-table/temp-workarounds.ts`, so that cleanup is a file deletion — `[emptyDescription]`
 (the second empty-state line `dataProviderEmptyState` drops), `TnMenuTriggerDirective`'s
 `aria-haspopup`/`aria-expanded` + public `isOpen`, and `tn-side-panel [closeButtonAriaLabel]`.
 

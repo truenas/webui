@@ -35,7 +35,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
-import { IxTablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
+import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/utils';
@@ -77,7 +77,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
-    IxTablePagerShowMoreComponent,
+    TablePagerShowMoreComponent,
     TranslateModule,
     AsyncPipe,
     RouterLink,

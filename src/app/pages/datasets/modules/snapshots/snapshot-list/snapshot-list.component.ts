@@ -38,7 +38,8 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { TableFilter } from 'app/modules/tn-table/interfaces/table-filter.interface';
-import { mapTnSortToTableSort, restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
+import { restrictToSingleExpandedRow } from 'app/modules/tn-table/temp-workarounds';
+import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';

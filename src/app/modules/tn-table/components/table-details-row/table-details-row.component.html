@@ -2,11 +2,11 @@
   <dl class="table-hidden-columns">
     @for (column of hiddenColumns(); track column) {
       <div>
-        <b>{{ column.title ? (column.title | translate) : '' }}:</b>
-        <span
+        <dt>{{ column.title ? (column.title | translate) : '' }}:</dt>
+        <dd
           tnTestIdType="text"
           [tnTestId]="[column.title, uniqueRowTag(), column.testIdSuffix ?? 'row-text']"
-        >{{ value(column) }}</span>
+        >{{ value(column) }}</dd>
       </div>
     }
     <tn-divider></tn-divider>

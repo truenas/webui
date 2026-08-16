@@ -20,6 +20,15 @@
     gap: 6px;
   }
 
+  dt {
+    font-weight: bold;
+  }
+
+  dd {
+    // A `dd` is indented by default; the label and value sit side by side here.
+    margin: 0;
+  }
+
   tn-divider {
     display: block;
     margin-top: 6px;

@@ -36,7 +36,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { IxTablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
+import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { convertStringToId } from 'app/modules/tn-table/utils';
 import {
@@ -81,7 +81,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
-    IxTablePagerShowMoreComponent,
+    TablePagerShowMoreComponent,
     TranslateModule,
     AsyncPipe,
     TnEmptyComponent,

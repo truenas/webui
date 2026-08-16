@@ -19,7 +19,7 @@ import { DataProvider } from 'app/modules/tn-table/interfaces/data-provider.inte
     TranslateModule,
   ],
 })
-export class IxTablePagerShowMoreComponent<T> implements OnInit {
+export class TablePagerShowMoreComponent<T> implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);

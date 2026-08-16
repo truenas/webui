@@ -19,7 +19,7 @@ import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { DisplayableState, JobState } from 'app/enums/job-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -31,7 +31,6 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
-import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -39,14 +38,14 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { column } from 'app/modules/tn-table/column-configs';
 import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
-import { IxTableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
+import { TableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/tn-table/utils';
 import {
   TableRelativeDateCellComponent,
   formatRelativeDateValue,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
 import {
-  TaskStateCellComponent,
+  formatTaskStateValue, TaskStateCellComponent,
 } from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
@@ -83,7 +82,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnCellDefDirective,
     TnDetailRowDefDirective,
     TnTablePagerComponent,
-    IxTableDetailsRowComponent,
+    TableDetailsRowComponent,
     TableRelativeDateCellComponent,
     TableTextCellComponent,
     TableToggleCellComponent,
@@ -92,10 +91,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FlattenEmptyMessagePipe,
     TranslateModule,
   ],
-  // Provided, not imported: no template pipes through it. The column model injects and calls it
-  // so a details row labels a hidden State column the way the pill does, rather than printing the
-  // raw API code.
-  providers: [JobStateDisplayPipe],
 })
 export class ReplicationListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
@@ -109,7 +104,6 @@ export class ReplicationListComponent implements OnInit {
   private download = inject(DownloadService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
-  private stateDisplay = inject(JobStateDisplayPipe);
 
   private replicationTasks: ReplicationTask[] = [];
   protected readonly searchQuery = signal('');
@@ -158,10 +152,6 @@ export class ReplicationListComponent implements OnInit {
     return (row.source_datasets || []).join(', ');
   }
 
-  /** The pill's label, so a hidden State column reads "Completed" and not "SUCCESS". */
-  private stateText(state: DisplayableState | undefined): string {
-    return state ? this.stateDisplay.transform(state) : this.translate.instant('N/A');
-  }
 
   protected readonly list = tnTableListHost<ReplicationTask>(this.dataProvider, {
     columns: () => createTable<ReplicationTask>([
@@ -228,7 +218,7 @@ export class ReplicationListComponent implements OnInit {
         getValue: (row) => row.state.state,
         // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it,
         // under the suffix that pill resolves.
-        formatValue: (row) => this.stateText(row.state.state),
+        formatValue: (row) => formatTaskStateValue(row.state.state, this.translate),
         testIdSuffix: 'row-state',
       }),
       // The visible column renders as an <ix-table-toggle-cell>, but once the picker hides it

@@ -194,7 +194,7 @@ export class SmbListComponent implements OnInit {
       title: this.translate.instant('Audit Logging'),
       propertyName: 'audit',
     }),
-    actionsColumn({}),
+    actionsColumn(),
   ]));
 
   protected readonly displayedColumns = computed<string[]>(() => {

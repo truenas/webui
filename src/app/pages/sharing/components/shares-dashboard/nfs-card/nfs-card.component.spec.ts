@@ -25,7 +25,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
-  IxTablePagerShowMoreComponent,
+  TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
@@ -70,7 +70,7 @@ describe('NfsCardComponent', () => {
     getData: jest.fn((): undefined => undefined),
   };
 
-  const commonImports = [IxTablePagerShowMoreComponent];
+  const commonImports = [TablePagerShowMoreComponent];
 
   const commonProviders = [
     mockAuth(),

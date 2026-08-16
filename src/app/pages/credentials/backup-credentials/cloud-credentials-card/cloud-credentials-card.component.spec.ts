@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
-  IxTablePagerShowMoreComponent,
+  TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
@@ -61,7 +61,7 @@ describe('CloudCredentialsCardComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudCredentialsCardComponent,
     imports: [
-      IxTablePagerShowMoreComponent,
+      TablePagerShowMoreComponent,
     ],
     providers: [
       mockApi([

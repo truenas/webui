@@ -19,7 +19,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
-  IxTablePagerShowMoreComponent,
+  TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
 import {
@@ -65,7 +65,7 @@ describe('IscsiCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IscsiCardComponent,
-    imports: [IxTablePagerShowMoreComponent,
+    imports: [TablePagerShowMoreComponent,
     ],
     providers: [
       mockAuth(),

@@ -36,7 +36,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { reflectSortIntoTable } from 'app/modules/tn-table/utils';
+import { reflectSortIntoTable } from 'app/modules/tn-table/temp-workarounds';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerListBulkActionsComponent } from 'app/pages/containers/components/all-containers/container-list/container-list-bulk-actions/container-list-bulk-actions.component';
 import { ContainerStatusCellComponent } from 'app/pages/containers/components/all-containers/container-list/container-status-cell/container-status-cell.component';

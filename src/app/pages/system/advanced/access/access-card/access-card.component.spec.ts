@@ -17,7 +17,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
-  IxTablePagerShowMoreComponent,
+  TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
@@ -52,7 +52,7 @@ describe('AccessCardComponent', () => {
     imports: [
       FakeFormatDateTimePipe,
       YesNoPipe,
-      IxTablePagerShowMoreComponent,
+      TablePagerShowMoreComponent,
     ],
     providers: [
       mockProvider(LocaleService, {

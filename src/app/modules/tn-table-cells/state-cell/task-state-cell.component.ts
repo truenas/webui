@@ -18,10 +18,25 @@ import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialog } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
-import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
+import { formatJobStateValue, JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { stopRowActivationKeys } from 'app/modules/tn-table-cells/stop-row-activation-keys';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailedJobError } from 'app/services/errors/error.classes';
+
+/**
+ * The label this cell's pill shows, as a plain function.
+ *
+ * Also used by `ix-table-details-row`, which prints a hidden state column as text and cannot
+ * reach the cell — without it the row shows the raw API code ("SUCCESS") where the pill says
+ * "Completed". Falls back to "N/A" for a row with no state, as the details row has nothing else
+ * to print there.
+ */
+export function formatTaskStateValue(
+  state: DisplayableState | null | undefined,
+  translate: TranslateService,
+): string {
+  return formatJobStateValue(state, translate) || translate.instant('N/A');
+}
 
 /**
  * tn-table replacement for the ix-table `stateButtonColumn` cell renderer.
@@ -46,7 +61,6 @@ import { FailedJobError } from 'app/services/errors/error.classes';
     TnTestIdDirective,
     JobStateDisplayPipe,
   ],
-  providers: [JobStateDisplayPipe],
 })
 export class TaskStateCellComponent {
   private matDialog = inject(MatDialog);
@@ -55,7 +69,6 @@ export class TaskStateCellComponent {
   private errorHandler = inject(ErrorHandlerService);
   private store$ = inject<Store<JobSlice>>(Store);
   private destroyRef = inject(DestroyRef);
-  private stateDisplay = inject(JobStateDisplayPipe);
 
   /** Displayable state shown in the pill (e.g. the task's job state). */
   readonly state = input.required<DisplayableState | null | undefined>();
@@ -73,7 +86,7 @@ export class TaskStateCellComponent {
    * status by colour alone.
    */
   protected readonly accessibleName = computed(() => {
-    const stateText = this.stateDisplay.transform(this.state());
+    const stateText = formatJobStateValue(this.state(), this.translate);
     return stateText ? `${this.ariaLabel()}, ${stateText}` : this.ariaLabel();
   });
 

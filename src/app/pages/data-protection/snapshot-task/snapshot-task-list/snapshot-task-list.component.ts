@@ -21,7 +21,6 @@ import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { DisplayableState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { translated } from 'app/helpers/translated.helper';
@@ -34,7 +33,6 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
-import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -43,13 +41,13 @@ import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provi
 import { column } from 'app/modules/tn-table/column-configs';
 import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import {
-  IxTableDetailsRowComponent,
+  TableDetailsRowComponent,
 } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/tn-table/utils';
 import { TableRelativeDateCellComponent,
   formatRelativeDateValue } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
 import {
-  TaskStateCellComponent,
+  formatTaskStateValue, TaskStateCellComponent,
 } from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -67,7 +65,7 @@ import { TaskService } from 'app/services/task.service';
   // Both pipes are provided so the column model can inject and call them directly: a details row
   // prints what the cell shows rather than a raw schedule object or an untranslated state code.
   // `ScheduleDescriptionPipe` is imported too, because the template also pipes through it.
-  providers: [TaskService, StorageService, ScheduleDescriptionPipe, JobStateDisplayPipe],
+  providers: [TaskService, StorageService, ScheduleDescriptionPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
@@ -84,7 +82,7 @@ import { TaskService } from 'app/services/task.service';
     TnCellDefDirective,
     TnDetailRowDefDirective,
     TnTablePagerComponent,
-    IxTableDetailsRowComponent,
+    TableDetailsRowComponent,
     TableRelativeDateCellComponent,
     TableTextCellComponent,
     TaskStateCellComponent,
@@ -106,7 +104,6 @@ export class SnapshotTaskListComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private loader = inject(LoaderService);
   private scheduleDescription = inject(ScheduleDescriptionPipe);
-  private stateDisplay = inject(JobStateDisplayPipe);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = snapshotTaskListElements;
@@ -226,16 +223,12 @@ export class SnapshotTaskListComponent implements OnInit {
         getValue: (row) => row.state.state,
         // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it,
         // under the suffix that pill resolves.
-        formatValue: (row) => this.stateText(row.state.state),
+        formatValue: (row) => formatTaskStateValue(row.state.state, this.translate),
         testIdSuffix: 'row-state',
       }),
     ]),
   });
 
-  /** The pill's label, so a hidden State column reads "Completed" and not "FINISHED". */
-  private stateText(state: DisplayableState | undefined): string {
-    return state ? this.stateDisplay.transform(state) : this.translate.instant('N/A');
-  }
 
   protected readonly trackByTaskId = (_index: number, row: PeriodicSnapshotTaskUi): number => row.id;
 

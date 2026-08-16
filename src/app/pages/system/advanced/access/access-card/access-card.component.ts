@@ -28,7 +28,7 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
-import { IxTablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
+import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import {
   TableActionsCellComponent,
@@ -61,7 +61,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnEmptyComponent,
     TableActionsCellComponent,
     IxDateComponent,
-    IxTablePagerShowMoreComponent,
+    TablePagerShowMoreComponent,
     TestOverrideDirective,
     TranslateModule,
     YesNoPipe,

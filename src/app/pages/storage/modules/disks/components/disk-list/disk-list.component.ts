@@ -28,10 +28,12 @@ import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.uti
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { column } from 'app/modules/tn-table/column-configs';
 import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
-import { IxTableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
+import { TableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
-import { createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
-  toUniqueRowTag, reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
+import { reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/temp-workarounds';
+import {
+  createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
+} from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -114,7 +116,7 @@ function toDisk(row: DiskRow): Disk {
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TnDetailRowDefDirective,
-    IxTableDetailsRowComponent,
+    TableDetailsRowComponent,
     TnTablePagerComponent,
     TranslateModule,
   ],

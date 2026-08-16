@@ -4,7 +4,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
-import { IxTablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
+import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 
 interface TestTableData {
   numberField: number;
@@ -19,12 +19,12 @@ const testTableData: TestTableData[] = [
   { numberField: 3, stringField: 'd', booleanField: true },
 ];
 
-describe('IxTablePagerShowMoreComponent', () => {
-  let spectator: Spectator<IxTablePagerShowMoreComponent<TestTableData>>;
+describe('TablePagerShowMoreComponent', () => {
+  let spectator: Spectator<TablePagerShowMoreComponent<TestTableData>>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: IxTablePagerShowMoreComponent<TestTableData>,
+    component: TablePagerShowMoreComponent<TestTableData>,
   });
 
   beforeEach(() => {

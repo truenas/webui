@@ -22,7 +22,8 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
-import { mapTnSortToTableSort, reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
+import { reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/temp-workarounds';
+import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { getGroupFormConfig } from 'app/pages/credentials/groups/group-form/group.form-config';

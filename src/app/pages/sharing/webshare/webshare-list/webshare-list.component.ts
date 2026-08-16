@@ -153,7 +153,7 @@ export class WebShareListComponent implements OnInit {
       title: this.translate.instant('Path'),
       propertyName: 'path',
     }),
-    actionsColumn({}),
+    actionsColumn(),
   ]));
 
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));

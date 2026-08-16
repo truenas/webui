@@ -38,7 +38,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { IxTablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
+import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { convertStringToId } from 'app/modules/tn-table/utils';
 import {
@@ -78,7 +78,7 @@ import { TaskService } from 'app/services/task.service';
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
-    IxTablePagerShowMoreComponent,
+    TablePagerShowMoreComponent,
     TableToggleCellComponent,
     TableActionsCellComponent,
     TaskStateCellComponent,

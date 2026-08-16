@@ -166,7 +166,8 @@ describe('JobsListComponent', () => {
     await table.toggleRowExpansion(0);
     await table.toggleRowExpansion(1);
 
-    expect(spectator.queryAll('.tn-table__row--expanded')).toHaveLength(1);
+    expect(await table.getExpandedRowCount()).toBe(1);
+    expect(await table.isRowExpanded(1)).toBe(true);
   });
 
   it('should auto-expand row when jobId query parameter is provided', async () => {
@@ -181,11 +182,13 @@ describe('JobsListComponent', () => {
     await spectator.fixture.whenStable();
     spectator.detectChanges();
 
-    expect(spectator.queryAll('.tn-table__row--expanded')).toHaveLength(1);
-    expect(spectator.query('.tn-table__row--expanded')).toContainText('cloudsync.sync');
+    const table = await loader.getHarness(TnTableHarness);
+    expect(await table.getExpandedRowCount()).toBe(1);
+    expect(await table.isRowExpanded(0)).toBe(true);
+    expect(await table.getRowTexts(0)).toContain('cloudsync.sync');
   });
 
-  it('should not expand any row when jobId query parameter does not match any job', () => {
+  it('should not expand any row when jobId query parameter does not match any job', async () => {
     const mockActivatedRoute = spectator.inject(ActivatedRoute);
     mockActivatedRoute.queryParams = of({ jobId: '999' });
 
@@ -194,10 +197,11 @@ describe('JobsListComponent', () => {
     spectator.component.ngOnInit();
     spectator.detectChanges();
 
-    expect(spectator.queryAll('.tn-table__row--expanded')).toHaveLength(0);
+    const table = await loader.getHarness(TnTableHarness);
+    expect(await table.getExpandedRowCount()).toBe(0);
   });
 
-  it('should not expand any row when no jobId query parameter is provided', () => {
+  it('should not expand any row when no jobId query parameter is provided', async () => {
     const mockActivatedRoute = spectator.inject(ActivatedRoute);
     mockActivatedRoute.queryParams = of({});
 
@@ -206,7 +210,8 @@ describe('JobsListComponent', () => {
     spectator.component.ngOnInit();
     spectator.detectChanges();
 
-    expect(spectator.queryAll('.tn-table__row--expanded')).toHaveLength(0);
+    const table = await loader.getHarness(TnTableHarness);
+    expect(await table.getExpandedRowCount()).toBe(0);
   });
 
   it('keeps the detail row open when the store pushes a fresh copy of the job', async () => {
@@ -225,6 +230,28 @@ describe('JobsListComponent', () => {
     expect(await table.getExpandedRowCount()).toBe(1);
   });
 
+  // The job leaves the current page while its detail row is open — the table empties its expanded
+  // set, which must not be read as the user having collapsed the row.
+  it('re-opens the detail row when the job comes back to the current tab', async () => {
+    store$.overrideSelector(selectJobs, fakeJobDataSource);
+    store$.refreshState();
+
+    const table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowExpansion(0);
+    expect(await table.getExpandedRowCount()).toBe(1);
+
+    // Neither fake job is running, so this tab lists nothing.
+    await (await loader.getHarness(TnButtonToggleHarness.with({ label: 'Active' }))).check();
+    spectator.detectChanges();
+    expect(await table.getExpandedRowCount()).toBe(0);
+
+    await (await loader.getHarness(TnButtonToggleHarness.with({ label: 'All' }))).check();
+    spectator.detectChanges();
+
+    expect(await table.getExpandedRowCount()).toBe(1);
+    expect(await table.isRowExpanded(0)).toBe(true);
+  });
+
   it('sets URL parameters when a row is expanded', async () => {
     const route = spectator.inject(ActivatedRoute);
 
@@ -239,6 +266,24 @@ describe('JobsListComponent', () => {
     expect(navigateSpy).toHaveBeenCalledWith([], {
       relativeTo: route,
       queryParams: { jobId: fakeJobDataSource[0].id },
+      queryParamsHandling: 'merge',
+    });
+  });
+
+  // Otherwise `?jobId=` outlives the open row and re-expands it on the next reload.
+  it('clears the URL parameter when the row is collapsed again', async () => {
+    const route = spectator.inject(ActivatedRoute);
+    const navigateSpy = jest.spyOn(spectator.inject(Router), 'navigate');
+    store$.overrideSelector(selectJobs, fakeJobDataSource);
+    store$.refreshState();
+
+    const table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowExpansion(0);
+    await table.toggleRowExpansion(0);
+
+    expect(navigateSpy).toHaveBeenLastCalledWith([], {
+      relativeTo: route,
+      queryParams: { jobId: null },
       queryParamsHandling: 'merge',
     });
   });

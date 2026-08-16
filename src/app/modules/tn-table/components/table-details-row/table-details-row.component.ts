@@ -25,7 +25,7 @@ import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interf
     TranslateModule,
   ],
 })
-export class IxTableDetailsRowComponent<T> {
+export class TableDetailsRowComponent<T> {
   readonly hiddenColumns = input<TableColumn<T>[]>([]);
   readonly row = input<T>();
   /** Row tag the printed values carry in their test ids, matching the list's own cells. */

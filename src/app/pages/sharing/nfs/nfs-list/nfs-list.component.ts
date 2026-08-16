@@ -164,7 +164,7 @@ export class NfsListComponent implements OnInit {
       propertyName: 'expose_snapshots',
       hidden: !this.isEnterprise(),
     }),
-    actionsColumn({}),
+    actionsColumn(),
   ]));
 
   protected readonly displayedColumns = computed<string[]>(() => {

@@ -45,7 +45,7 @@ import {
   TableColumnPickerComponent,
 } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import {
-  IxTableDetailsRowComponent,
+  TableDetailsRowComponent,
 } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
 import {
@@ -91,7 +91,7 @@ const displayPortColumn = 'display_port';
     TnDetailRowDefDirective,
     TnTestIdDirective,
     TableToggleCellComponent,
-    IxTableDetailsRowComponent,
+    TableDetailsRowComponent,
     VirtualMachineDetailsRowComponent,
     TnTablePagerComponent,
     TnCardComponent,

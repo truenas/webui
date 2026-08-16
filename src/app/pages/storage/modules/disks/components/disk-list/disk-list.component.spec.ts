@@ -22,7 +22,7 @@ import {
   TableColumnPickerComponent,
 } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import {
-  IxTableDetailsRowComponent,
+  TableDetailsRowComponent,
 } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -119,7 +119,7 @@ describe('DiskListComponent', () => {
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
       TableColumnPickerComponent,
-      IxTableDetailsRowComponent,
+      TableDetailsRowComponent,
     ],
     providers: [
       mockAuth(),
@@ -543,7 +543,7 @@ describe('DiskListComponent - without SED license', () => {
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
       TableColumnPickerComponent,
-      IxTableDetailsRowComponent,
+      TableDetailsRowComponent,
     ],
     providers: [
       mockAuth(),

@@ -1,6 +1,6 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import {
-  IxTableDetailsRowComponent,
+  TableDetailsRowComponent,
 } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
 
@@ -15,11 +15,11 @@ const testRow: TestRow = {
   name: 'first', size: 0, enabled: false, lastRun: 1653730000000,
 };
 
-describe('IxTableDetailsRowComponent', () => {
-  let spectator: Spectator<IxTableDetailsRowComponent<TestRow>>;
+describe('TableDetailsRowComponent', () => {
+  let spectator: Spectator<TableDetailsRowComponent<TestRow>>;
 
   const createComponent = createComponentFactory({
-    component: IxTableDetailsRowComponent<TestRow>,
+    component: TableDetailsRowComponent<TestRow>,
   });
 
   function setColumns(hiddenColumns: TableColumn<TestRow>[]): void {
