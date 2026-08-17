@@ -10,7 +10,6 @@
  * so they are `link-users` rather than `link-users-menu`.
  */
 export const navLocators = {
-  dashboard: '[data-test="link-dashboard-menu"]',
   storage: '[data-test="link-storage-menu"]',
   datasets: '[data-test="link-datasets-menu"]',
   shares: '[data-test="link-shares-menu"]',

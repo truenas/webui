@@ -279,8 +279,10 @@ refresh rather than fail obscurely.
 has the right logic (WebSocket → `auth.login_ex` with `login_options.reconnect_token`
 → token) but hardcodes `http://localhost:${port}` as the base URL, which is
 incompatible with `shipped` mode (R2.11). webui-e2e implements its own version
-taking the UI base URL as a parameter — roughly 40 lines. Do not shell out to
-`yarn auth-url`; it also implies a webui checkout, violating R2.10.
+taking the UI base URL as a parameter — roughly 40 lines. The hardcoded base URL
+carries this on its own; an earlier revision also cited R2.10 against shelling
+out to `yarn auth-url`, but R2.10 has since been revised to permit in-tree
+coupling, so that half of the reason is gone.
 
 ---
 
@@ -301,10 +303,24 @@ in-house:
 **R5.3 — Selectors live in a locator layer.** Never inline in test bodies. A
 renamed test ID must be a one-line fix.
 
-**R5.4 — Two naming conventions coexist.** `[ixTest]` auto-prefixes the element
-type (`button-reset-settings`, `row-…`, `input-…`); library `testId` values are
-verbatim and unprefixed by design. The locator layer must not assume a single
-naming scheme.
+**R5.4 — Two naming conventions coexist, and both prefix. (Revised.)** `[ixTest]`
+auto-prefixes the element type (`button-reset-settings`, `row-…`, `input-…`), and
+so does the library: a component declaring `tnTestIdType` has the directive
+compose `${type}-${base}`, so `<tn-input [testId]="'username'">` emits
+`input-username` and `<tn-icon-button testId="user-menu">` emits
+`button-user-menu`.
+
+This requirement previously said library values were "verbatim and unprefixed by
+design", which is backwards for almost everything the suite drives — it would
+send a new author to `[data-test="save"]` instead of `[data-test="button-save"]`
+and cost them an opaque timeout. Verbatim *is* real, but as the exception:
+components applying the directive through `hostDirectives` without
+`tnTestIdType`, such as `tn-tree-node`. `locators/signin.ts` records why the
+library's own `docs/test_ids.md` is stale on this point; the code is
+authoritative.
+
+The two normalizers also disagree — see `e2e/CLAUDE.md`, which has the derivation
+table. The locator layer must not assume a single naming scheme.
 
 **R5.5 — Navigation is relative to the configured base URL. No absolute paths,
 ever.** A previous revision downgraded this to hygiene on the grounds that both

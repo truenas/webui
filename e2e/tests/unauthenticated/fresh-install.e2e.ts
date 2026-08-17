@@ -51,15 +51,47 @@ const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 /**
  * Restores the fresh-instance premise the story depends on.
  *
- * Order matters twice over: the service is stopped before its share is removed,
- * and the share before the pool, so nothing is ever left pointing at a path
- * that has ceased to exist.
+ * Order matters: the service is stopped before its share is removed, and the
+ * share before the pool, so nothing is ever left pointing at a path that has
+ * ceased to exist. The user goes last because it is the cheapest thing to leak —
+ * a leftover account costs the next run nothing, while a leftover pool holds its
+ * disks and starves every later run (R3.2).
+ *
+ * Every step runs even when an earlier one throws, and the failures are reported
+ * together. Plain sequential `await`s meant one failing call abandoned the rest,
+ * so a `user.delete` that kept failing would wedge the suite: `afterEach` would
+ * leak the pool, and the retry's `beforeEach` would throw at the same first call
+ * and never reach the export either.
+ *
+ * (An earlier revision moved the user deletion to the front, reasoning that
+ * `pool.export` restarts services and leaves the socket unreliable for whatever
+ * runs next. That was wrong twice over. `ensurePoolAbsent` only returns once
+ * `waitUntil` has had a query answered, so the socket is demonstrably working by
+ * then — and putting the user first meant a failure there aborted cleanup before
+ * the pool, inverting exactly the priority above.)
  */
 async function cleanUp(api: TrueNasApiClient): Promise<void> {
-  await ensureSmbServiceStopped(api);
-  await ensureSmbShareAbsent(api, share);
-  await ensurePoolAbsent(api, pool.name);
-  await ensureUserAbsent(api, testAdmin.username);
+  const steps: [string, () => Promise<unknown>][] = [
+    ['stop the SMB service', () => ensureSmbServiceStopped(api)],
+    ['remove the SMB share', () => ensureSmbShareAbsent(api, share)],
+    ['export the pool', () => ensurePoolAbsent(api, pool.name)],
+    ['delete the admin user', () => ensureUserAbsent(api, testAdmin.username)],
+  ];
+
+  const failures: string[] = [];
+
+  for (const [what, run] of steps) {
+    try {
+      await run();
+    } catch (error) {
+      failures.push(`${what} — ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  if (failures.length > 0) {
+    const bulleted = failures.map((failure) => `  • ${failure}`).join('\n');
+    throw new Error(`Cleanup did not complete:\n${bulleted}`);
+  }
 }
 
 test.beforeEach(async ({ api }) => {

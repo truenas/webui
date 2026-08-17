@@ -6,7 +6,7 @@
  * the API — preconditions (R3.1), teardown (R3.2), artifact collection (R7.2) —
  * goes through a client obtained here.
  */
-import { createTrueNasClient, type TrueNasApiClient } from '@truenas/api-client';
+import { createTrueNasClient, type AuthResponse, type TrueNasApiClient } from '@truenas/api-client';
 import { filter, firstValueFrom, take, timeout } from 'rxjs';
 import type { TargetConfig } from '../config';
 
@@ -35,7 +35,9 @@ const loginTimeoutMs = 30_000;
  * network error, and silently falls back to `FALLBACK_VERSION`; the visible
  * symptom is this function timing out on the socket 30 seconds later.
  *
- * @throws if the socket cannot be opened or credentials are rejected.
+ * @throws if the socket cannot be opened, or if login does not end in an
+ * authenticated session — which includes outcomes the client itself does not
+ * treat as errors, such as a two-factor challenge.
  */
 export async function connectAndLogin(config: TargetConfig): Promise<TrueNasApiClient> {
   const client = await createTrueNasClient({
@@ -43,6 +45,8 @@ export async function connectAndLogin(config: TargetConfig): Promise<TrueNasApiC
     hostnames: [config.middlewareHost],
     enabled: true,
   });
+
+  let auth: AuthResponse;
 
   try {
     await firstValueFrom(
@@ -53,7 +57,7 @@ export async function connectAndLogin(config: TargetConfig): Promise<TrueNasApiC
       ),
     );
 
-    await firstValueFrom(
+    auth = await firstValueFrom(
       client.authenticator
         .loginWithUserPass(config.username, config.password)
         .pipe(timeout(loginTimeoutMs)),
@@ -65,6 +69,33 @@ export async function connectAndLogin(config: TargetConfig): Promise<TrueNasApiC
       `Could not authenticate against middleware at ${config.middlewareHost}: `
       + (error instanceof Error ? error.message : String(error)),
       { cause: error },
+    );
+  }
+
+  // Deliberately outside the try. The client only *throws* on `AUTH_ERR`;
+  // `OTP_REQUIRED`, `EXPIRED` and `REDIRECT` all resolve normally with the
+  // session still unauthenticated, so treating a non-throwing emission as
+  // success hands back a client that looks connected and then fails on its first
+  // real call — up to a minute later, as an authorization error naming neither
+  // the account nor the reason.
+  //
+  // Raising it here rather than in the block above keeps the message intact:
+  // inside the try it would be caught and re-wrapped by the handler that exists
+  // for transport failures, and the socket would be closed twice.
+  //
+  // Compared as a string because the package declares `AuthResponseType` but
+  // does not export it — only the `AuthResponse` interface referencing it.
+  const outcome = String(auth.response_type);
+
+  if (outcome !== 'SUCCESS') {
+    client.close();
+    throw new Error(
+      `Middleware at ${config.middlewareHost} did not authenticate "${config.username}": `
+      + `${outcome}. `
+      + (outcome === 'OTP_REQUIRED'
+        ? 'The account has two-factor authentication enabled. The suite cannot complete that '
+        + 'challenge — point the suite at an account without it.'
+        : 'The credentials were accepted but the session is not usable.'),
     );
   }
 

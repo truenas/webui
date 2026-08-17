@@ -151,22 +151,36 @@ testing the UI.
 tests/       one file per user story; reads as prose
 flows/       UI-driving actions   — createPool(), createSmbShare()
 locators/    data-test constants and Locator factories, per screen
-fixtures/    API-driving setup    — givenPool(), givenDataset()
-support/     config, auth, WS capture, artifact collection
+fixtures/    API-driving setup and cleanup — ensurePoolAbsent(), requireUnusedDisks()
+support/     config, auth, API client, the shared `test` object
 ```
 
-**Naming carries the rule.** UI actions read as imperatives (`createPool`); API
-preconditions read as `given*` (`givenPool`). A test that says
-`givenPool()` then `createDataset()` is unambiguous about which half is under
-test. This convention is cheap and survives new contributors.
+**Naming carries the rule.** UI actions read as imperatives (`createRaidz2Pool`);
+API-side helpers say what they guarantee — `ensure*` for idempotent cleanup that
+must be safe to run twice, `require*` for a precondition that fails loudly when
+the appliance cannot support the test. A test that says `ensurePoolAbsent()` then
+`createRaidz2Pool()` is unambiguous about which half is under test.
 
-**`locators/` is the only place selector strings appear** (**R5.3**). It must
-accommodate both naming conventions (**R5.4**) — `[ixTest]` auto-prefixes the
-element type (`button-reset-settings`), library `testId` values are verbatim.
+*(An earlier revision specified `given*` — `givenPool()`, `givenDataset()`. No
+such function was ever written. `ensure*`/`require*` is what exists and it
+distinguishes two things `given*` collapses, so this record follows the code.)*
 
-**`fixtures/` uses Playwright fixtures, not helper calls.** Fixture teardown runs
-after failure and after timeout, which is what **R3.2** actually requires; an
-explicit `afterEach` is easier to bypass.
+**`locators/` is the only place selector strings appear** (**R5.3**), with two
+documented exceptions in `support/constants.ts`: `adminLayout` and
+`errorDialogRole`, both harness plumbing rather than test assertions. It must
+accommodate both naming conventions (**R5.4**) — `[ixTest]` and the library's
+`tnTestIdType` each prefix the element type, and their kebab-casers disagree.
+
+**`fixtures/` is plain async helpers called from explicit `beforeEach`/
+`afterEach`, not Playwright fixtures.** An earlier revision specified Playwright
+fixtures on the grounds that "an explicit `afterEach` is easier to bypass" —
+but `test.afterEach` does run after failure and after timeout, so it satisfies
+**R3.2** as written and the premise for preferring fixtures was weaker than
+stated. Cleanup that must also run *before* a test (**R3.5**, re-runnable against
+a dirty appliance) reads more directly as a call in both hooks than as fixture
+setup. The only true Playwright fixtures are `config` and `api` in
+`support/fixtures.ts`, which are worker-scoped because a connection costs a
+sign-in.
 
 ---
 
@@ -210,7 +224,17 @@ overruns.
 ## T6. Waiting strategy
 
 - **UI waits** — Playwright web-first assertions only. No `waitForTimeout`.
-- **API waits** — `core.job_wait` / `JobState`, never polling loops.
+- **API waits** — poll the observable outcome. Never `waitForTimeout`; never a
+  guessed sleep. In a spec that means `expect.poll`; in a fixture it means
+  `support/wait.ts`'s `waitUntil`, which keeps the domain-specific failure
+  message that an assertion helper would bury.
+
+  *(An earlier revision said "`core.job_wait` / `JobState`, never polling loops".
+  That is the destination, not the current state: the curated call directory does
+  not expose the job surface, so `pool.export` and `service.control` return
+  before their work is done and asking again is the only honest test of
+  completion. Switch to awaiting jobs directly when the typed surface lands —
+  tracked under "Temporary scaffolding" in `e2e/CLAUDE.md`.)*
 - **Timeouts are per-operation and explicit.** Pool creation legitimately takes
   minutes; a global timeout tuned for it would let genuinely hung tests run long.
 
@@ -330,9 +354,19 @@ in the other.
 Phase 0: `truenas-connection.ts` builds `wss://${hostname}${path}` — the client
 speaks secure WebSocket exclusively — and test appliances present self-signed
 certificates, which Node rejects by default. The runner therefore needs
-`NODE_TLS_REJECT_UNAUTHORIZED=0` for the `shipped` profile. That is a blunt
-instrument and is accepted only because the targets are disposable internal test
-VMs; it is documented in the README and `.env.example` rather than set silently.
+`NODE_TLS_REJECT_UNAUTHORIZED=0` — for **both** profiles, not just `shipped`.
+Scoping it to the profile was tried and was a bug: `branch` changes where the
+*browser* loads the UI from, while the API client still connects to the same
+appliance over `wss://`, and the symptom was a 30 second socket timeout rather
+than a certificate error. `playwright.config.ts` sets it unconditionally and
+explains this at the point of use.
+
+It is a blunt instrument, accepted only because the targets are disposable
+internal test VMs. The honest account of the concession — why it cannot currently
+be scoped to the one connection that needs it, and the specific upstream change
+that would let it be — is in `03-plan-and-status.md` under "Not yet". Every run
+also states it in the startup banner. It is *not* documented in the README or
+`.env.example`; an earlier revision claimed it was.
 
 ---
 

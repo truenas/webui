@@ -12,8 +12,16 @@ fixture.
 ## Where we are
 
 Two user-story journeys and a smoke test, green against three different
-appliances including one the suite had never seen. Whole suite runs in ~32
-seconds.
+appliances including one the suite had never seen.
+
+**Total runtime is unmeasured.** This said "~32 seconds", which was measured when
+the smoke test was the whole suite and cannot describe one containing
+`fresh-install.e2e.ts`. The two journeys perform four cold form sign-ins between
+them at ~15s each (R4.1) — a minute before any feature work — and `fresh-install`
+then builds a 9-wide RAIDZ2 pool, which `playwright.config.ts` and
+`flows/storage.ts` both budget in minutes. Several minutes is the plausible
+range; the number itself needs a timed run against a known appliance, and it
+matters because the R8.1 budget and the D2 deferral are both argued from it.
 
 | | |
 |---|---|
@@ -63,6 +71,19 @@ selector discipline and failure legibility are all built and proven.
   undici dispatcher used for both the socket and version discovery. Until then
   the concession is stated on every run in the startup banner rather than left
   to a comment.
+- **Two api-client types are declared but not exported**, and both appear in
+  signatures the package expects callers to satisfy:
+  - `AuthResponseType` — `AuthResponse.response_type` is typed as it, so
+    checking for a successful login means comparing `String(...)` against
+    `'SUCCESS'` (`support/api/client.ts`).
+  - `ServiceControlAction` — the first parameter of `service.control`. Because
+    it is a string enum, the literal `'STOP'` is rejected and there is no way to
+    obtain the value, so that one call still goes through `callUntyped` while
+    `service.query` and `service.update` beside it are typed
+    (`fixtures/storage.ts`).
+
+  Neither is a workaround worth keeping. **The ask**: export both. Verified
+  against `@truenas/api-client@1.0.6`.
 
 ---
 
@@ -152,7 +173,8 @@ easier than reading raw frames.
 - **PR gating (D1)** — reachable now the suite is in-tree, but a gate that flaps
   for unrelated reasons gets ignored. Needs CI and a measured flake rate first.
 - **Parallelism (D2)** — sharding across VM instances, not workers. Only worth
-  it when runtime actually hurts; ~32s today.
+  it when runtime actually hurts. Two journeys are plainly not enough to hurt,
+  but the "~32s" this used to cite was wrong — see "Where we are".
 - **Production-build `branch` profile** — `ng serve` covers local and PR use.
   Serving a production build needs a proxying server, and matters only if the
   dev bundle's differences turn out to matter (R2.11).
@@ -169,7 +191,10 @@ easier than reading raw frames.
   dependency on other teams' review cycles *is* the schedule, and that should be
   an explicit decision rather than a discovered one.
 - **The suite exceeds its runtime budget** (R8.1, ≤45 min) well before the story
-  set is complete. With journeys at ~20s each that is far off, but it would
-  indicate R3.1 being violated — tests driving the UI for preconditions.
+  set is complete. How much headroom there is cannot be said until a journey is
+  actually timed — the "~20s each" this used to assume was the smoke test's
+  figure, and `fresh-install` spends minutes in pool creation alone. Whenever the
+  budget does come under pressure, the first thing to check is R3.1: tests
+  driving the UI for preconditions is what makes a suite slow.
 - **More than one story is quarantined.** Quarantine is a pressure valve, not
   storage for known-broken tests.

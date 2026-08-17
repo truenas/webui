@@ -86,10 +86,46 @@ if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === undefined) {
 const announcedVar = 'TN_TARGET_ANNOUNCED';
 if (!process.env[announcedVar]) {
   process.env[announcedVar] = '1';
-  console.warn(describeTarget(target));
+  // Fields listed explicitly rather than passing `target`, so the credentials on
+  // it have no path to a log line — see `TargetSummary`.
+  console.warn(describeTarget({
+    profile: target.profile,
+    uiBaseUrl: target.uiBaseUrl,
+    middlewareHost: target.middlewareHost,
+    hostSource: target.hostSource,
+  }));
 }
 
 const isCi = !!process.env.CI;
+
+/**
+ * Debugging flags are opt-in on `=1`, matching `TN_KEEP_TEST_DATA` in the specs.
+ *
+ * Not a truthiness check on the raw value: `TN_VIDEO=0` would then *enable*
+ * recording, which is the opposite of what anyone typing it means.
+ */
+const recordVideo = process.env.TN_VIDEO === '1';
+
+/**
+ * `TN_SLOW_MO=<ms>`, or undefined when unset or not a number.
+ *
+ * `Number('')` is 0 and `Number('abc')` is `NaN`; neither is a delay, and both
+ * would otherwise reach `slowMo`.
+ */
+const slowMoMs = (() => {
+  const raw = process.env.TN_SLOW_MO;
+  if (!raw) {
+    return undefined;
+  }
+
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    console.warn(`Ignoring TN_SLOW_MO="${raw}" — expected a positive number of milliseconds.`);
+    return undefined;
+  }
+
+  return parsed;
+})();
 
 export default defineConfig({
   testDir: './e2e',
@@ -170,7 +206,10 @@ export default defineConfig({
      * everything after sign-in is exempt.
      */
     launchOptions: {
-      slowMo: process.env.TN_SLOW_MO ? Number(process.env.TN_SLOW_MO) : undefined,
+      // Parsed rather than truthiness-checked: `Number('abc')` is `NaN`, and
+      // handing `NaN` to `slowMo` is a silent no-op that looks like the flag
+      // being ignored.
+      slowMo: slowMoMs,
     },
 
     /**
@@ -199,7 +238,7 @@ export default defineConfig({
      *
      * Like `TN_SLOW_MO`, there is no CLI flag for this.
      */
-    video: process.env.TN_VIDEO
+    video: recordVideo
       ? { mode: 'on', size: { width: 1280, height: 720 } }
       : 'on-first-retry',
   },

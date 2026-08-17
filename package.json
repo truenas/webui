@@ -114,12 +114,10 @@
     "@ngrx/store-devtools": "~21.0.1",
     "@ngx-translate/core": "~15.0.0",
     "@ngx-translate/http-loader": "~8.0.0",
-    "@playwright/test": "~1.56.0",
     "@popperjs/core": "^2.9.3",
     "@shopify/eslint-plugin": "~50.0.0",
     "@smarttools/eslint-plugin-rxjs": "~1.0.22",
     "@stylistic/eslint-plugin": "~2.9.0",
-    "@truenas/api-client": "~1.0.3",
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master",
     "@truenas/ui-components": "~0.4.9",
     "@types/cheerio": "~0.22.35",
@@ -219,6 +217,8 @@
   "devDependencies": {
     "@angular-eslint/template-parser": "~21.2.0",
     "@mdi/js": "~7.4.47",
+    "@playwright/test": "~1.56.0",
+    "@truenas/api-client": "~1.0.3",
     "@typescript-eslint/types": "~8.41.0",
     "@typescript-eslint/utils": "~8.41.0",
     "prettier": "~3.6.2"

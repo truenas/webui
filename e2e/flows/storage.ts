@@ -25,9 +25,16 @@ async function selectOption(page: Page, select: string, option: string): Promise
  * Picks whichever option a `tn-select` offers first.
  *
  * Used for the disk-size control, whose option ids encode a size and media type
- * that vary per appliance. The suite has already asserted the disk inventory it
- * needs (see `fixtures/storage.ts`), so "the only size on offer" is the right
- * choice rather than a guess.
+ * that vary per appliance, so the test cannot name the one it wants.
+ *
+ * This is a genuine guess, and `requireUnusedDisks` is what makes it a safe one.
+ * The wizard buckets the inventory by type and size and generates the width
+ * options from the *selected* bucket alone, so taking the first bucket is only
+ * sound if some bucket holds the whole vdev — which is the condition that
+ * precondition now asserts. It previously counted disks across the whole
+ * inventory, and an earlier version of this comment claimed there was only one
+ * size on offer. Neither was true: `.first()` is here precisely because there
+ * may be several.
  *
  * `options` must be a selector matching only the given select's options — a
  * `data-test` prefix, never `[role="option"]`. That earlier version matched
@@ -62,6 +69,22 @@ export async function createRaidz2Pool(page: Page, pool: NewPool): Promise<void>
   await expect(page.locator(poolWizardLocators.name)).toBeVisible();
   await page.locator(poolWizardLocators.name).fill(pool.name);
   await page.locator(poolWizardLocators.next).click();
+
+  // The step after General is not always Data. `pool-manager-wizard.component.html`
+  // inserts an "Enclosure Options" step when the appliance reports more than one
+  // enclosure and the platform supports them, and `tn-stepper` renders only the
+  // active step — so on such hardware `select-layout` is simply not in the DOM
+  // and every following action fails on a bare 20 second timeout naming a
+  // selector rather than the reason.
+  //
+  // Virtual appliances have no enclosures, so this holds today. Asserted rather
+  // than assumed because it is exactly the kind of thing that changes when the
+  // suite is first pointed at real hardware.
+  await expect(
+    page.locator(poolWizardLocators.layout),
+    'The Data step did not follow General. An "Enclosure Options" step appears on appliances '
+    + 'reporting multiple enclosures, and this flow does not know how to cross it.',
+  ).toBeVisible();
 
   await selectOption(page, poolWizardLocators.layout, poolWizardLocators.layoutRaidz2);
   await selectFirstOption(page, poolWizardLocators.diskSize, poolWizardLocators.diskSizeOptions);

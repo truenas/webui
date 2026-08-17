@@ -3,8 +3,9 @@
  *
  * webui's `scripts/playwright-helpers/generate-token.ts` does something similar,
  * but hardcodes `http://localhost:${port}` as the base URL — incompatible with
- * the `shipped` profile — and shelling out to it would imply a webui checkout,
- * which R2.10 forbids. So we own this.
+ * the `shipped` profile. That alone is why we own this. (An earlier version of
+ * this comment also cited R2.10 against shelling out to it; R2.10 has since been
+ * revised to permit in-tree coupling, so that reason no longer applies.)
  *
  * We differ from it in one deliberate way. webui asks for a `reconnect_token`
  * via `login_options`, but that field only exists from API v26.0.0 onward

@@ -130,7 +130,12 @@ function readProfile(raw: string | undefined, problems: string[]): ProfileName |
  * was built to live, by default `/`, since only `build:prod` passes
  * `--base-href /ui/`.
  */
-function validateUiBaseUrl(uiBaseUrl: string, profile: ProfileName, problems: string[]): void {
+function validateUiBaseUrl(
+  uiBaseUrl: string,
+  profile: ProfileName,
+  wasOverridden: boolean,
+  problems: string[],
+): void {
   let parsed: URL;
   try {
     parsed = new URL(uiBaseUrl);
@@ -147,10 +152,22 @@ function validateUiBaseUrl(uiBaseUrl: string, profile: ProfileName, problems: st
     );
   }
 
-  if (profile === 'shipped' && parsed.pathname !== shippedUiPath) {
+  // Only an assertion about what this suite *derives*. An explicit
+  // `TN_UI_BASE_URL` is the documented way to point at an appliance whose nginx
+  // serves the UI somewhere else, so rejecting it here made the error message
+  // ("Override TN_UI_BASE_URL only if this appliance is configured differently")
+  // advice the validator forbade anyone from taking — the override was the one
+  // thing guaranteed to fail.
+  //
+  // An override is now allowed through and surfaced in the startup banner
+  // instead of warned about here. This function runs on every config load — main
+  // process, each worker, and each worker respawned after a failed test — so a
+  // `console.warn` in it reprints through the output, which is the problem the
+  // banner's own once-per-run guard exists to solve.
+  if (profile === 'shipped' && !wasOverridden && parsed.pathname !== shippedUiPath) {
     problems.push(
-      `The shipped profile serves the UI at "${shippedUiPath}" (got "${parsed.pathname}"). `
-      + 'Override TN_UI_BASE_URL only if this appliance is configured differently.',
+      `The shipped profile serves the UI at "${shippedUiPath}", but "${parsed.pathname}" was `
+      + 'derived instead. This is a bug in the suite, not your configuration.',
     );
   }
 }
@@ -252,6 +269,7 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
   const username = requireValue('TN_USERNAME', env.TN_USERNAME, problems);
   const password = requireValue('TN_PASSWORD', env.TN_PASSWORD, problems);
 
+  const uiBaseUrlOverridden = !!env.TN_UI_BASE_URL;
   let uiBaseUrl = env.TN_UI_BASE_URL ?? '';
   if (!uiBaseUrl && profile === 'shipped') {
     // Derived, never defaulted — a default host would point at the wrong machine.
@@ -261,7 +279,7 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
   }
 
   if (uiBaseUrl && profile) {
-    validateUiBaseUrl(uiBaseUrl, profile, problems);
+    validateUiBaseUrl(uiBaseUrl, profile, uiBaseUrlOverridden, problems);
   } else if (profile) {
     problems.push('TN_UI_BASE_URL could not be resolved (TN_HOST is required to derive it)');
   }
@@ -291,6 +309,20 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
 }
 
 /**
+ * The subset of {@link TargetConfig} the banner is allowed to see.
+ *
+ * Deliberately not `TargetConfig` itself. Handing the whole object to something
+ * whose job is to build a string for `console.warn` puts `password` one property
+ * access away from a log line, and CodeQL is right to treat that as clear-text
+ * logging of credentials (`js/clear-text-logging-of-sensitive-data`) whether or
+ * not today's implementation reads the field. Narrowing the parameter means the
+ * banner *cannot* leak a credential, rather than merely not doing so.
+ */
+export type TargetSummary = Pick<
+  TargetConfig, 'profile' | 'uiBaseUrl' | 'middlewareHost' | 'hostSource'
+>;
+
+/**
  * The startup banner, naming the machine this run is about to act on.
  *
  * Printed before anything else happens. The suite destroys pools and deletes
@@ -298,11 +330,16 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
  * have to infer — and it is doubly worth stating when the address was borrowed
  * from webui's configuration rather than named outright.
  *
+ * Does not print the account. Knowing the machine is what stops you destroying
+ * the wrong one; the username adds nothing to that and is credential-adjacent
+ * enough to be worth keeping out of CI logs and terminal scrollback. It is in
+ * `.env` if you need it.
+ *
  * The TLS line is read from the environment rather than passed in, so the
  * banner reports what is actually in effect for the process rather than what a
  * caller believes it set.
  */
-export function describeTarget(target: TargetConfig): string {
+export function describeTarget(target: TargetSummary): string {
   const rule = '─'.repeat(72);
   const tls = process.env.NODE_TLS_REJECT_UNAUTHORIZED === '0'
     ? 'verification disabled process-wide (self-signed appliance certificate)'
@@ -315,10 +352,20 @@ export function describeTarget(target: TargetConfig): string {
     `   appliance   ${target.middlewareHost}   (from ${target.hostSource})`,
     `   profile     ${target.profile}`,
     `   UI          ${target.uiBaseUrl}`,
-    `   user        ${target.username}`,
     `   node TLS    ${tls}`,
-    rule,
   ];
+
+  // A non-standard UI path on `shipped` is legal — that is what TN_UI_BASE_URL
+  // is for — but it is unusual enough to say out loud, and the banner is the one
+  // place that prints once per run rather than once per process.
+  if (target.profile === 'shipped' && !target.uiBaseUrl.endsWith(shippedUiPath)) {
+    lines.push(
+      '',
+      `   note        UI path is not "${shippedUiPath}" — TN_UI_BASE_URL override in effect`,
+    );
+  }
+
+  lines.push(rule);
 
   return lines.join('\n');
 }

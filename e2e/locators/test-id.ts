@@ -15,10 +15,25 @@
  * function. Until the library ships a browser-free subpath export for its
  * test-id helpers, a faithful copy is the lesser cost.
  *
- * Kept byte-for-byte identical to the source, so a diff against it is trivial:
- * `node_modules/@truenas/ui-components/fesm2022/truenas-ui-components.mjs`,
- * function `kebabTestSegment` (v0.4.x). If a normalization here ever disagrees
- * with the app, this is the first place to check.
+ * Copied verbatim from `kebabTestSegment` in
+ * `node_modules/@truenas/ui-components/fesm2022/truenas-ui-components.mjs`, so a
+ * diff against it is trivial. If a normalization here ever disagrees with the
+ * app, this is the first place to check.
+ *
+ * **The copy is guarded.**
+ * `src/app/core/testing/utils/e2e-kebab-test-segment-parity.spec.ts` runs both
+ * implementations over a corpus and asserts they agree, so a library bump that
+ * changes the normalizer fails in Jest — in a second, naming this file — rather
+ * than surfacing later as a locator that never matches, twenty minutes into the
+ * slowest test in the suite. The guard lives under `src/` because that is the
+ * only tree where the Angular library resolves and Jest ignores `e2e/`.
+ *
+ * What is enforced is that the two agree on every input in that corpus, not that
+ * the text is identical. A source-text comparison was tried and rejected: it
+ * breaks on a build-tool formatting change while the only extra thing it catches
+ * is drift in a branch no input can reach — which by definition cannot affect a
+ * selector. If you change this function, add the case that motivated it to the
+ * corpus.
  *
  * ## Not the only normalizer
  *
