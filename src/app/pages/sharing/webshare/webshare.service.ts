@@ -1,7 +1,8 @@
 import {
   Injectable, computed, inject, signal,
 } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, of, forkJoin,
@@ -9,6 +10,8 @@ import {
 import {
   defaultIfEmpty, switchMap, take, map, catchError, shareReplay, tap,
 } from 'rxjs/operators';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
@@ -19,6 +22,8 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebShareTableRow } from 'app/pages/sharing/webshare/webshare-table-row.interface';
 import { LicenseService } from 'app/services/license.service';
+import { AppState } from 'app/store';
+import { selectService } from 'app/store/services/services.selectors';
 import { WebShareSharesFormComponent, WebShareFormData } from './webshare-shares-form/webshare-shares-form.component';
 
 @Injectable({
@@ -32,6 +37,7 @@ export class WebShareService {
   private licenseService = inject(LicenseService);
   private formPanel = inject(FormSidePanelService);
   private truenasConnectService = inject(TruenasConnectService);
+  private store$ = inject(Store<AppState>);
 
   /**
    * Port 755 is the standard WebShare service port defined by the backend.
@@ -55,6 +61,23 @@ export class WebShareService {
   );
 
   /**
+   * WebShare service entry from the services store slice. Backed by `service.query`
+   * events, so starting/stopping the service updates this without a page refresh.
+   */
+  private webshareServiceEntry = toSignal(this.store$.select(selectService(ServiceName.WebShare)));
+
+  /**
+   * True only when the service entry is loaded AND not running. While the services
+   * slice has not loaded yet (or `service.query` failed and left it empty), the state
+   * is unknown — treating that as "stopped" would flash a false "service is not
+   * running" reason on every page load.
+   */
+  private isServiceKnownStopped = computed(() => {
+    const service = this.webshareServiceEntry();
+    return !!service && service.state !== ServiceStatus.Running;
+  });
+
+  /**
    * Hostname resolved from TrueNAS Connect IP mappings.
    * When not on a truenas.direct domain, we check if the local IP has a matching hostname.
    */
@@ -72,10 +95,13 @@ export class WebShareService {
   readonly truenasConnectHostname$ = toObservable(this.truenasConnectHostname);
 
   /**
-   * Whether WebShare can be opened. Requires both an accessible hostname
-   * (either the current `.truenas.direct` domain or a resolved hostname) AND that
-   * TrueNAS Connect is currently configured. This reacts to TrueNAS Connect being
-   * disabled so the UI immediately blocks WebShare access without a page refresh.
+   * Whether WebShare can be opened. Requires an accessible hostname
+   * (either the current `.truenas.direct` domain or a resolved hostname), that
+   * TrueNAS Connect is currently configured, AND that the WebShare service is not
+   * known to be stopped — an unloaded services slice does not block, so the button
+   * is usable while the state is still unknown rather than flashing a false reason.
+   * This reacts to TrueNAS Connect being disabled or the service being stopped so the
+   * UI immediately blocks WebShare access without a page refresh.
    */
   readonly canOpenWebShare = computed<boolean>(() => !this.webShareUnavailableReason());
 
@@ -84,12 +110,16 @@ export class WebShareService {
   /**
    * Human-readable explanation of why WebShare cannot be opened, or `null` when it
    * can. Used both for the disabled-button tooltip and the `openWebShare()` snackbar
-   * so the user always sees the actual reason (TrueNAS Connect disabled vs. wrong
-   * domain) rather than a tooltip that only ever blames the domain.
+   * so the user always sees the actual reason (TrueNAS Connect disabled, service
+   * stopped or wrong domain) rather than a tooltip that only ever blames the domain.
    */
   readonly webShareUnavailableReason = computed<TranslatedString | null>(() => {
     if (!this.isTruenasConnectConfigured()) {
       return this.translate.instant('WebShare is unavailable because TrueNAS Connect is disabled.');
+    }
+
+    if (this.isServiceKnownStopped()) {
+      return this.translate.instant('WebShare is unavailable because the WebShare service is not running.');
     }
 
     if (!this.isTruenasDirectDomain && !this.resolvedHostname()) {
