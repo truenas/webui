@@ -266,8 +266,8 @@ function guardSortValue<T>(
 }
 
 /**
- * Bridges the ix-table column model driven by `<ix-table-columns-selector>` to
- * the `displayedColumns` list a `tn-table` expects. The selector toggles each
+ * Bridges the ix-table column model driven by `<ix-table-column-picker>` to
+ * the `displayedColumns` list a `tn-table` expects. The picker toggles each
  * column's `hidden` flag (and persists visibility via `columnPreferencesKey`);
  * this maps the still-visible columns, in declaration order, to the
  * `*tnColumnDef` names a tn-table renders. Shared so every column-selectable

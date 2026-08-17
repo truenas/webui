@@ -80,7 +80,8 @@ describe('AllContainersHeaderComponent', () => {
 
       expect(formPanel.open).toHaveBeenCalledWith(
         ContainerFormComponent,
-        expect.objectContaining({ title: 'Add Container' }),
+        // The panel footer owns Save, so the Add flow labels it "Create".
+        expect.objectContaining({ title: 'Add Container', saveLabel: 'Create' }),
       );
     });
 
