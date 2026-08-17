@@ -3862,18 +3862,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/mcp@npm:latest":
-  version: 0.0.56
-  resolution: "@playwright/mcp@npm:0.0.56"
-  dependencies:
-    playwright: "npm:1.58.0-alpha-2026-01-16"
-    playwright-core: "npm:1.58.0-alpha-2026-01-16"
-  bin:
-    mcp-server-playwright: cli.js
-  checksum: 10/f69cf0d7408c78f605d0c1515c2aa9db7c8c213e3bbb590ff284556d5d6e2c3325e4f7285198d3b7c694eece5292f63dad2c271ec906f6d5e31464e967ee89d7
-  languageName: node
-  linkType: hard
-
 "@playwright/test@npm:~1.56.0":
   version: 1.56.1
   resolution: "@playwright/test@npm:1.56.1"
@@ -13961,15 +13949,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.58.0-alpha-2026-01-16":
-  version: 1.58.0-alpha-2026-01-16
-  resolution: "playwright-core@npm:1.58.0-alpha-2026-01-16"
-  bin:
-    playwright-core: cli.js
-  checksum: 10/a70cfcecba1ec3f8f4a8032474489da376e0684d16202db39a713ffafddef5135981ea96936fc5c6074c3b82b245f7cfd8bbd520d8b69b1130c2e4f59b46dd0b
-  languageName: node
-  linkType: hard
-
 "playwright@npm:1.56.1":
   version: 1.56.1
   resolution: "playwright@npm:1.56.1"
@@ -13982,21 +13961,6 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: 10/f1743f93b26f1d497257771428d93f3c9ed2d75b00d935f0cd1556ff2dc61d47f2df8b381d752fbd2c47082b685f0ffe4cc4b7ba440d7b4ba3a08572aec58fba
-  languageName: node
-  linkType: hard
-
-"playwright@npm:1.58.0-alpha-2026-01-16":
-  version: 1.58.0-alpha-2026-01-16
-  resolution: "playwright@npm:1.58.0-alpha-2026-01-16"
-  dependencies:
-    fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.58.0-alpha-2026-01-16"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    playwright: cli.js
-  checksum: 10/6433499ec7b022ea3608e480afaaca853d8548ae69743ab7594ed9d8eb8a3588d3988f222d9b1333425818f62d45efa8b7298918da85993ad4fe104f56f55b2a
   languageName: node
   linkType: hard
 
@@ -16140,7 +16104,6 @@ __metadata:
     "@ngrx/store-devtools": "npm:~21.0.1"
     "@ngx-translate/core": "npm:~15.0.0"
     "@ngx-translate/http-loader": "npm:~8.0.0"
-    "@playwright/mcp": "npm:latest"
     "@playwright/test": "npm:~1.56.0"
     "@popperjs/core": "npm:^2.9.3"
     "@shopify/eslint-plugin": "npm:~50.0.0"

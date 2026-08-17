@@ -114,9 +114,32 @@ export class MyComponent {
 - Commit messages: `NAS-<issue number>: <description>`.
 - Keep commit message short (to one line).
 
+## Browser testing: which tool
+
+Three different things use Playwright here, for three different jobs. Reaching
+for the wrong one wastes a lot of time.
+
+| Job | Use |
+|---|---|
+| Look at a page you are working on — read it, click through it, screenshot it | **Playwright MCP**, below |
+| Find the `data-test` value for an element | `yarn e2e:ui` and its locator picker |
+| Run or write a regression test against a real appliance | The E2E suite — see `e2e/README.md` and `e2e/CLAUDE.md` |
+
+The MCP is for looking; the suite is for asserting. Do not write regression
+tests by scripting the MCP, and do not run the whole suite to find one selector.
+
 ## Playwright MCP for Browser Testing
 
-**Setup**: Playwright MCP is configured in `.claude/settings.json` with `@playwright/mcp` dependency.
+**Setup**: nothing to install. The server is defined in `.mcp.json`, which runs
+it with `npx @playwright/mcp@latest`; `.claude/settings.json` allowlists the
+tools and sets `enableAllProjectMcpServers`.
+
+> **Do not add `@playwright/mcp` to `package.json`.** npx resolves the server on
+> its own and never reads `node_modules`, so the dependency buys nothing — and it
+> is actively harmful: it pulls a newer `playwright-core` that yarn hoists over
+> the `@playwright/test` the E2E suite pins, after which `playwright test`
+> collects **0 tests** with "You have two different versions of
+> @playwright/test". It was in `package.json` once, for exactly this reason.
 
 **Quick Start**:
 1. Generate authenticated URL: `yarn auth-url /target-path`

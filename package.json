@@ -114,7 +114,6 @@
     "@ngrx/store-devtools": "~21.0.1",
     "@ngx-translate/core": "~15.0.0",
     "@ngx-translate/http-loader": "~8.0.0",
-    "@playwright/mcp": "latest",
     "@playwright/test": "~1.56.0",
     "@popperjs/core": "^2.9.3",
     "@shopify/eslint-plugin": "~50.0.0",
