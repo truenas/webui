@@ -1,14 +1,12 @@
 <div>
-  <h3 class="title">{{ title() }}</h3>
+  <h3 class="card-title">{{ title() }}</h3>
 </div>
 <div>
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
     color="default"
-    ixTest="edit-label"
-    (click)="onEditLabel()"
-  >
-    {{ 'Edit Label' | translate }}
-  </button>
+    [testId]="'edit-label'"
+    [label]="'Edit Label' | translate"
+    (onClick)="onEditLabel()"
+  ></tn-button>
 </div>

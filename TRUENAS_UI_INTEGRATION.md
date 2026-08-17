@@ -389,6 +389,8 @@ the epic's follow-up list.
 | `tn-empty`'s `[title]`/`[description]` are text-only, so an `EmptyConfig.message` written as HTML has to be flattened at runtime | `FlattenEmptyMessagePipe` | library |
 | `tn-empty` caps `[description]` at a readable measure but not `[title]`, so a paragraph-length message stretches the full page width | `tn-empty` rule in `src/assets/styles/components/_tn-empty.scss` | library |
 | Replication "Enabled" is read-only Yes/No in the detail row when the picker hides the column (it was an interactive toggle before); a dead toggle would be worse, so the toggle stays in the visible column only | `replication-list.component.ts` | webui |
+| `tn-card`'s content slot grows (`flex: 1; min-height: 0`) but has no `overflow` and no positioning context, so a full-height card body can neither scroll nor anchor an absolutely-positioned child | `::ng-deep .tn-card__content` in `enclosure-page.component.scss` | library |
+| `tn-table` writes no test id on the header row or on data rows, so ix-table's `row-header` and `row-<rowTag>` ids have no equivalent | every migrated `tn-table`; noted while migrating `jbof-list` / `elements-page` | library |
 
 ### Adopted from the library
 
@@ -400,11 +402,11 @@ pinned `~0.4.9` (they landed after `0.3.26`, the version this work started again
 | `tn-table` wraps cells by default (no input) | The `tn-table-fixed-wrap` mixin include on all seven Data Protection lists, and its `::ng-deep` into `.tn-table__cell-content`. Equal-width columns are a separate opt-in, `[fixedLayout]`, which none of these lists needs |
 | `tn-table [expandOnRowClick]` | `ExpandOnRowClickDirective` (deleted, with its spec) and its four usages |
 | `tn-table [minColumnWidth]` (default `120px`) | Nothing — new. Only applies with `[fixedLayout]`, where it derives a width floor as `minColumnWidth × columnCount` so a narrow viewport scrolls rather than shrinking columns to nothing |
+| `tn-table [emptyDescription]` | Nothing — it restores the empty config's second line (e.g. "No matching results found"), which ix-table rendered under the title and `dataProviderEmptyState` had been dropping. Exposed as `empty.description()` there, so every current and future migrated table binds it the same way |
 
 Also fixed in the library and available, but not adopted here because their consumers sit in other
 feature areas: `[singleExpand]` (would delete `restrictToSingleExpandedRow`),
-`[(sortColumn)]`/`[(sortDirection)]` (would delete `reflectSortIntoTable`), `[emptyDescription]`
-(the second empty-state line `dataProviderEmptyState` drops), `TnMenuTriggerDirective`'s
+`[(sortColumn)]`/`[(sortDirection)]` (would delete `reflectSortIntoTable`), `TnMenuTriggerDirective`'s
 `aria-haspopup`/`aria-expanded` + public `isOpen`, and `tn-side-panel [closeButtonAriaLabel]`.
 
 Two long-standing library bugs surfaced while doing this, both the same root cause — a rule
