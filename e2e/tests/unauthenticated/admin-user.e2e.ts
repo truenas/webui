@@ -8,40 +8,26 @@
  * side channel tests nothing (R4.2).
  *
  * The journey is one test rather than four because the steps are not
- * independently meaningful: "sign out" and "sign in as bob" only say anything
- * in sequence. That is a different case from S3–S8, where each step is a
- * feature in its own right and gets API-provisioned preconditions (R3.1).
+ * independently meaningful: "sign out" and "sign in as the new account" only
+ * say anything in sequence. That is a different case from S3–S8, where each
+ * step is a feature in its own right and gets API-provisioned preconditions
+ * (R3.1).
  */
-import { ensureUserAbsent } from '../../fixtures/users';
+import { ensureUserAbsent, testAdmin } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
 import { createTrueNasAdminUser } from '../../flows/users';
 import { topbarLocators } from '../../locators/topbar';
 import { expect, test } from '../../support/fixtures';
 
-const bob = {
-  username: 'bob',
-  /** Meets the appliance's complexity rules; not a credential of any real account. */
-  password: 'Bob-E2E-Passw0rd!',
-};
-
 /**
- * Fixed rather than run-scoped, which departs from R3.3.
- *
- * Justified here: the nightly gets a fresh VM per run, and execution is serial
- * against a single appliance (R3.4), so there is no concurrent run to collide
- * with. The cost is real but narrow — two developers running against the *same*
- * shared dev VM at once would clash. The idempotent cleanup below keeps the
- * test re-runnable against a dirty box regardless (R3.5).
- */
-/**
- * One API connection for the whole file.
- *
- * Each connection costs a sign-in, and middleware rate-limits unauthenticated
- * calls at 20 per method per IP per 60 seconds (`RateLimitConfig`), with
- * authenticated calls exempt. Connecting per hook spent three sign-ins per run
+ * Removed before the test as well as after it, so an interrupted run leaves the
+ * next one able to start (R3.5). The `api` fixture is worker-scoped, so both
+ * hooks share one connection rather than paying a sign-in each — middleware
+ * rate-limits unauthenticated calls at 20 per method per IP per 60 seconds
+ * (`RateLimitConfig`) and connections are what spend that budget.
  */
 test.beforeEach(async ({ api }) => {
-  await ensureUserAbsent(api, bob.username);
+  await ensureUserAbsent(api, testAdmin.username);
 });
 
 /**
@@ -53,10 +39,10 @@ const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 
 test.afterEach(async ({ api }) => {
   if (keepTestData) {
-    console.warn(`TN_KEEP_TEST_DATA=1 — leaving user "${bob.username}" on the appliance.`);
+    console.warn(`TN_KEEP_TEST_DATA=1 — leaving user "${testAdmin.username}" on the appliance.`);
     return;
   }
-  await ensureUserAbsent(api, bob.username);
+  await ensureUserAbsent(api, testAdmin.username);
 });
 
 test('an admin creates a TrueNAS admin user who can then sign in', async ({ page, config }) => {
@@ -65,20 +51,20 @@ test('an admin creates a TrueNAS admin user who can then sign in', async ({ page
     await expectSignedInAs(page, config.username);
   });
 
-  await test.step('create a TrueNAS admin user named bob', async () => {
-    await createTrueNasAdminUser(page, bob);
+  await test.step(`create a TrueNAS admin user named ${testAdmin.username}`, async () => {
+    await createTrueNasAdminUser(page, testAdmin);
   });
 
   await test.step('sign out', async () => {
     await signOut(page);
   });
 
-  await test.step('sign in as bob', async () => {
-    await signIn(page, bob.username, bob.password);
-    await expectSignedInAs(page, bob.username);
+  await test.step(`sign in as ${testAdmin.username}`, async () => {
+    await signIn(page, testAdmin.username, testAdmin.password);
+    await expectSignedInAs(page, testAdmin.username);
   });
 
-  // Guards against the session simply having been carried over: bob must be
-  // who the app thinks is signed in, not merely *someone*.
+  // Guards against the session simply having been carried over: the new account
+  // must be who the app thinks is signed in, not merely *someone*.
   await expect(page.locator(topbarLocators.userMenu)).not.toContainText(config.username);
 });

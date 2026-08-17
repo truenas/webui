@@ -11,6 +11,8 @@
  *    `kebabTestSegment` — which is NOT lodash. `RAIDZ2` normalizes to `raidz2`,
  *    not `raidz-2`. webui's legacy `[ixTest]` does use lodash and would differ.
  */
+import { confirmDialogLocators } from './dialogs';
+import { kebabTestSegment } from './test-id';
 
 export const poolWizardLocators = {
   /**
@@ -44,8 +46,30 @@ export const poolWizardLocators = {
 
   /** `[testId]="['size-and-type', type()]"` where type is the vdev category. */
   diskSize: '[data-test="select-size-and-type-data"]',
+  /**
+   * Any option of the disk-size select.
+   *
+   * A prefix match, because the option key encodes a size and media type that
+   * vary per appliance — `option-size-and-type-data-20-gi-b-hdd` on one box,
+   * something else on the next. (`gi-b`, not `gib`: `kebabTestSegment` splits
+   * the letter/digit boundary in `GiB`. See `disk-size-selects.component.spec.ts`,
+   * and note 2 in this file's header.)
+   *
+   * The prefix is what makes it safe to take the first match: sibling vdev
+   * categories carry their own `-log-` and `-spare-` prefixes, so this can only
+   * match *this* select's options and a CDK overlay from a previously closed
+   * select cannot be picked up by mistake.
+   */
+  diskSizeOptions: '[data-test^="option-size-and-type-data-"]',
+
   width: '[data-test="select-width-data"]',
+  /** Number of disks in the vdev. Keys are the numbers themselves. */
+  widthOption: (disks: number) => `[data-test="option-width-data-${kebabTestSegment(disks)}"]`,
+
   vdevCount: '[data-test="select-vdevs-number-data"]',
+  vdevCountOption: (count: number) => (
+    `[data-test="option-vdevs-number-data-${kebabTestSegment(count)}"]`
+  ),
 
   saveAndReview: '[data-test="button-save-and-go-to-review-data"]',
   createPool: '[data-test="button-create-pool"]',
@@ -58,8 +82,13 @@ export const datasetLocators = {
    * `<tn-tree-node [testId]="['dataset', dataset.name]">`, applied via
    * `hostDirectives` with no `tnTestIdType`, so the value is written verbatim
    * with no element-type prefix — unlike most controls here.
+   *
+   * The name goes through the library's own normalizer rather than a local
+   * `_` → `-` replacement. That shortcut happened to be right for `e2e_tank`
+   * and wrong for anything else: `MyPool` emits `dataset-my-pool`, not
+   * `dataset-MyPool`.
    */
-  treeNode: (name: string) => `[data-test="dataset-${name.replace(/_/g, '-')}"]`,
+  treeNode: (name: string) => `[data-test="dataset-${kebabTestSegment(name)}"]`,
 
   addDataset: '[data-test="button-add-dataset"]',
   name: '[data-test="input-name"]',
@@ -105,9 +134,10 @@ export const smbLocators = {
    * "No" on the "Configure ACL" prompt that follows share creation.
    *
    * `dialogService.confirm({ cancelText: 'No', hideCheckbox: true })`, so it is
-   * the standard confirm dialog's cancel button despite the custom label.
+   * the standard confirm dialog's cancel button despite the custom label —
+   * hence the reference rather than a second copy of the id.
    */
-  declineAclPrompt: '[data-test="button-dialog-cancel"]',
+  declineAclPrompt: confirmDialogLocators.cancel,
   /**
    * "Start" on the "Start SMB Service" dialog
    * (`start-service-dialog.component.html`, `testId="enable-service"`).

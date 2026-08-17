@@ -1,19 +1,26 @@
 /**
  * Values shared across the harness.
  *
- * Note this is NOT the locator layer (R5.3) — that arrives in Phase 2 under
- * `locators/` and holds `data-test` values per screen. What lives here is
- * infrastructure: paths and the one structural selector the auth flow needs
+ * Note this is NOT the locator layer (R5.3) — that lives under `locators/` and
+ * holds `data-test` values per screen. What lives here is infrastructure: paths
+ * and the two structural selectors the auth and error-detection plumbing need
  * before any page object exists.
  */
+import { join } from 'node:path';
 
 /**
  * Where the authenticated browser state is persisted by the setup project.
  *
  * Under `e2e/` rather than the repository root so the suite keeps its artifacts
  * to itself. Gitignored — it holds a live session token.
+ *
+ * Absolute, derived from this module's own location rather than the process
+ * working directory: both readers of this value (`playwright.config.ts`'s
+ * `storageState` and `auth.setup.ts`'s `storageState({ path })`) resolve a
+ * relative path against `cwd`, so a run invoked from a subdirectory would write
+ * the session token to one place and look for it in another.
  */
-export const storageStatePath = 'e2e/.auth/storage-state.json';
+export const storageStatePath = join(import.meta.dirname, '..', '.auth', 'storage-state.json');
 
 /**
  * The app's root layout element. Present only once authentication has completed

@@ -9,11 +9,11 @@
 import { TrueNasEndpoint, type TrueNasApiClient } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import { callUntyped } from '../support/api/untyped';
+import { waitUntil } from '../support/wait';
 
 const queryTimeoutMs = 30_000;
 const poolGoneTimeoutMs = 3 * 60_000;
 const serviceStopTimeoutMs = 60_000;
-const pollIntervalMs = 2_000;
 
 interface NamedPool {
   id: number;
@@ -105,6 +105,13 @@ interface AclEntry {
  * or DENY entries, so it is evidence of access rather than a permission engine —
  * reimplementing that logic here is how a test becomes confidently wrong. It
  * also does not prove SMB itself serves the share; that needs a real client.
+ *
+ * One more exclusion worth naming: `user.groups` is the *auxiliary* list, and
+ * `user.group` holds the primary group separately. A grant to the primary group
+ * alone would therefore look like no grant at all. That is fine while the SMB
+ * preset works through `builtin_administrators` and `builtin_users`, which are
+ * auxiliary — but if that ever changes, this reports a share as unusable when it
+ * is not.
  */
 export async function findGroupAclGrants(
   client: TrueNasApiClient,
@@ -177,23 +184,21 @@ export async function ensureSmbServiceStopped(client: TrueNasApiClient): Promise
 
   await callUntyped(client, 'service.control', ['STOP', 'cifs', { silent: false }]);
 
-  const deadline = Date.now() + serviceStopTimeoutMs;
-  for (;;) {
-    const [current] = await callUntyped<{ state: string }[]>(
-      client,
-      'service.query',
-      [[['service', '=', 'cifs']]],
-    );
-    if (current?.state !== 'RUNNING') {
-      return;
-    }
-    if (Date.now() > deadline) {
-      throw new Error('SMB service did not stop; the next run will not start from a fresh state.');
-    }
-    await new Promise((resolve) => {
-      setTimeout(resolve, pollIntervalMs);
-    });
-  }
+  // `service.control` is a job, so the call returns before the service is down.
+  await waitUntil(
+    async () => {
+      const [current] = await callUntyped<{ state: string }[]>(
+        client,
+        'service.query',
+        [[['service', '=', 'cifs']]],
+      );
+      return current?.state !== 'RUNNING';
+    },
+    {
+      timeoutMs: serviceStopTimeoutMs,
+      message: 'SMB service did not stop; the next run will not start from a fresh state.',
+    },
+  );
 }
 
 /**
@@ -216,19 +221,13 @@ export async function ensurePoolAbsent(client: TrueNasApiClient, name: string): 
 
   // `pool.export` is a job, so the call returns before the work is done. Poll
   // the observable outcome rather than sleeping a guessed interval (R8.3).
-  const deadline = Date.now() + poolGoneTimeoutMs;
-  for (;;) {
-    if (!(await findPool(client, name))) {
-      return;
-    }
-    if (Date.now() > deadline) {
-      throw new Error(
+  await waitUntil(
+    async () => !(await findPool(client, name)),
+    {
+      timeoutMs: poolGoneTimeoutMs,
+      message:
         `Pool "${name}" still present ${poolGoneTimeoutMs / 1000}s after export was requested. `
         + 'Its disks remain claimed and later runs will be short of inventory.',
-      );
-    }
-    await new Promise((resolve) => {
-      setTimeout(resolve, pollIntervalMs);
-    });
-  }
+    },
+  );
 }

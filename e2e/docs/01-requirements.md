@@ -144,17 +144,25 @@ test in the suite silently carries the setup wizard as a dependency.
 certificate; a locally-served build is plain HTTP. The browser context must
 tolerate the former, without that leniency masking genuine certificate problems.
 
-**R2.10 — Source-tree coupling is deliberate but confined. (Revised.)**
-Originally the inverse: the suite must never assume a local webui checkout. That
-followed from the separate-repo layout and no longer applies in-tree, where
-reading webui's own configuration is the point — `TN_HOST` defaults to whatever
-`yarn ui remote` wrote into `src/environments/environment.ts`.
+**R2.10 — Source-tree coupling is deliberate, confined, and opt-in. (Revised
+twice.)** Originally the inverse: the suite must never assume a local webui
+checkout. That followed from the separate-repo layout and no longer applies
+in-tree, where reading webui's own configuration is useful — `TN_HOST=auto`
+resolves the appliance from whatever `yarn ui remote` wrote into
+`src/environments/environment.ts`.
+
+**Opt-in, not a default.** This was the fallback for any unset `TN_HOST`, and
+the setup instructions told you to leave it unset. Since the suite exports pools
+with `destroy: true` and deletes users, that made the documented happy path a
+destructive run against a machine nobody had named — the developer's own dev
+appliance, in the common case. `TN_HOST` is now required, and every run opens
+with a banner stating the appliance, where the address came from, and whether
+TLS verification is on.
 
 What survives is the *discipline*: the coupling lives in exactly one module
-(`support/webui-environment.ts`) so it stays visible, and environment variables
-always win, so nothing requires a working tree that has ever run that command.
-Verified by running the whole suite with `.env` and `environment.ts` both
-removed.
+(`support/webui-environment.ts`) so it stays visible, and nothing requires a
+working tree that has ever run that command. Verified by running the whole suite
+with `.env` and `environment.ts` both removed, `TN_*` supplied directly.
 
 ### R2.11 Target profiles
 

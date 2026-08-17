@@ -12,6 +12,28 @@ import { callUntyped } from '../support/api/untyped';
 const queryTimeoutMs = 30_000;
 
 /**
+ * The administrator both unauthenticated journeys create, sign in as, and delete.
+ *
+ * One constant rather than the same literal in two specs, because it is one
+ * identity: `admin-user.e2e.ts` and `fresh-install.e2e.ts` each remove this user
+ * in `beforeEach` and `afterEach`, so two copies were two specs sharing state
+ * while reading as though they did not.
+ *
+ * Fixed rather than run-scoped, which departs from R3.3. That holds under the
+ * current execution model and only that one: runs are serial (`workers: 1`,
+ * R3.4) against an appliance the run owns, and scaling out means sharding across
+ * appliances rather than workers (D2). Two runs against a single appliance would
+ * collide here — and equally on the `e2e_tank` pool and on SMB service state,
+ * which is why the answer is run-scoped naming across the suite rather than a
+ * second username here. Tracked under "Hardening" in `docs/03-plan-and-status.md`.
+ */
+export const testAdmin = {
+  username: 'bob',
+  /** Meets the appliance's complexity rules; not a credential of any real account. */
+  password: 'Bob-E2E-Passw0rd!',
+};
+
+/**
  * Removes a user if present, by username. Succeeds when the user does not exist.
  *
  * Idempotent on purpose: it runs both before a test (so a leftover from an

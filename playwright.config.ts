@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-import { loadTargetConfig } from './e2e/support/config';
+import { describeTarget, loadTargetConfig } from './e2e/support/config';
 import { storageStatePath } from './e2e/support/constants';
 
 /**
@@ -42,15 +42,51 @@ const target = loadTargetConfig();
  * version discovery silently falling back to `FALLBACK_VERSION` when its
  * `fetch` hit the same certificate.
  *
+ * ## Why it is process-wide, which is worse than it should be
+ *
+ * `NODE_TLS_REJECT_UNAUTHORIZED` is a blunt instrument: it turns verification
+ * off for every outbound TLS connection this process makes, for the life of the
+ * process, including ones added later by someone who never reads this comment.
+ * Scoping it to the one connection that needs it would be strictly better.
+ *
+ * There is no seam for that today, verified against `@truenas/api-client@1.0.6`
+ * (what `~1.0.3` in `package.json` currently resolves to):
+ * `CreateClientOptions` takes `uuid`, `hostnames`, `enabled`, `systemName` and
+ * `logger` — no `WebSocketCtor`, no dispatcher, no TLS options — and the socket
+ * is built internally from an rxjs `WebSocketSubjectConfig` the caller never
+ * sees. Version discovery's `fetch` needs the same leniency and has no seam
+ * either. `NODE_EXTRA_CA_CERTS` is not an answer while the certificate is
+ * generated per appliance at install time.
+ *
+ * So this stays, deliberately and visibly, until the client exposes one of
+ * those. It is tracked under "Not yet" in `docs/03-plan-and-status.md` so it
+ * does not become permanent by default, and the banner below states it on every
+ * run rather than letting it pass unnoticed.
+ *
  * An explicit value in the environment still wins, so verification can be
  * forced back on.
  */
 if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === undefined) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-  console.warn(
-    `[${target.profile}] Node TLS verification disabled for middleware at `
-    + `${target.middlewareHost} (self-signed appliance certificate). Test targets only.`,
-  );
+}
+
+/**
+ * Announce the resolved target before anything runs.
+ *
+ * This suite exports pools with `destroy: true` and deletes users, so the
+ * machine it is pointed at is not a detail to bury in a log line. Emitted after
+ * the TLS decision above so the banner reports what is actually in effect.
+ *
+ * Guarded because this file is not evaluated once. Playwright re-loads the
+ * config in every worker process, and spawns a replacement worker after a failed
+ * test — so an unguarded `console.warn` reprints the banner partway through the
+ * output, which is precisely where a warning stops being read. Workers are
+ * forked and inherit this environment, so setting the flag here silences them.
+ */
+const announcedVar = 'TN_TARGET_ANNOUNCED';
+if (!process.env[announcedVar]) {
+  process.env[announcedVar] = '1';
+  console.warn(describeTarget(target));
 }
 
 const isCi = !!process.env.CI;
@@ -78,8 +114,15 @@ export default defineConfig({
   workers: 1,
   fullyParallel: false,
 
-  /** R8.2 — one retry absorbs environmental noise; it does not hide flakes. */
-  retries: 1,
+  /**
+   * R8.2 — one retry absorbs environmental noise in CI; it does not hide flakes.
+   *
+   * Off locally, matching `forbidOnly` below. Retrying while iterating on a test
+   * only doubles the wait to learn the same thing, which is why `e2e/CLAUDE.md`
+   * used to tell developers to pass `--retries=0` by hand — a default that has
+   * to be argued away in documentation is the wrong default.
+   */
+  retries: isCi ? 1 : 0,
 
   /** No `.only` reaching CI. */
   forbidOnly: isCi,
@@ -130,14 +173,29 @@ export default defineConfig({
       slowMo: process.env.TN_SLOW_MO ? Number(process.env.TN_SLOW_MO) : undefined,
     },
 
-    /** R7.1 — the artifacts of a failed nightly are the whole product. */
-    trace: 'on-first-retry',
+    /**
+     * R7.1 — the artifacts of a failed nightly are the whole product.
+     *
+     * The mode has to follow `retries` above. `on-first-retry` records nothing
+     * at all when there is no retry, so pairing it with local retries of 0 would
+     * silently take the trace away from exactly the person who needs it — while
+     * `README.md` and `CLAUDE.md` both still tell them to open one. Locally the
+     * trace is retained on failure instead; in CI the retry is the cheaper hook,
+     * since tracing every test on a nightly buys nothing for the ones that pass.
+     */
+    trace: isCi ? 'on-first-retry' : 'retain-on-failure',
     screenshot: 'only-on-failure',
 
     /**
      * `TN_VIDEO=1` records every test at 1280x720, for demonstrating or
-     * reviewing a run. Otherwise video is kept only for a retry, which is when
-     * it earns its cost (R7.1).
+     * reviewing a run. Otherwise video is kept only for a CI retry, which is
+     * when it earns its cost (R7.1).
+     *
+     * Deliberately not given the local `retain-on-failure` treatment the trace
+     * gets: video is recorded for every test and thrown away for the ones that
+     * pass, and unlike a trace it costs on the passing majority while adding
+     * nothing a trace's DOM snapshots do not already show. `TN_VIDEO=1` is there
+     * for the cases where watching it really is what you want.
      *
      * Like `TN_SLOW_MO`, there is no CLI flag for this.
      */

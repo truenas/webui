@@ -3,6 +3,7 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets, goToShares, goToStorage } from './navigation';
+import { confirmDialogLocators } from '../locators/dialogs';
 import { datasetLocators, poolWizardLocators, smbLocators } from '../locators/storage';
 
 /**
@@ -27,10 +28,17 @@ async function selectOption(page: Page, select: string, option: string): Promise
  * that vary per appliance. The suite has already asserted the disk inventory it
  * needs (see `fixtures/storage.ts`), so "the only size on offer" is the right
  * choice rather than a guess.
+ *
+ * `options` must be a selector matching only the given select's options — a
+ * `data-test` prefix, never `[role="option"]`. That earlier version matched
+ * across the whole document, so `.first()` could land on a stale option: CDK
+ * overlays detach on an animation, and this runs immediately after the previous
+ * select has closed. The result would be a wrong disk size in the slowest test
+ * in the suite, which is a miserable way to spend an afternoon.
  */
-async function selectFirstOption(page: Page, select: string): Promise<void> {
+async function selectFirstOption(page: Page, select: string, options: string): Promise<void> {
   await page.locator(select).click();
-  await page.locator('[role="option"]').first().click();
+  await page.locator(options).first().click();
 }
 
 export interface NewPool {
@@ -56,14 +64,10 @@ export async function createRaidz2Pool(page: Page, pool: NewPool): Promise<void>
   await page.locator(poolWizardLocators.next).click();
 
   await selectOption(page, poolWizardLocators.layout, poolWizardLocators.layoutRaidz2);
-  await selectFirstOption(page, poolWizardLocators.diskSize);
+  await selectFirstOption(page, poolWizardLocators.diskSize, poolWizardLocators.diskSizeOptions);
 
-  await selectOption(
-    page,
-    poolWizardLocators.width,
-    `[data-test="option-width-data-${pool.width}"]`,
-  );
-  await selectOption(page, poolWizardLocators.vdevCount, '[data-test="option-vdevs-number-data-1"]');
+  await selectOption(page, poolWizardLocators.width, poolWizardLocators.widthOption(pool.width));
+  await selectOption(page, poolWizardLocators.vdevCount, poolWizardLocators.vdevCountOption(1));
 
   await page.locator(poolWizardLocators.saveAndReview).click();
   await page.locator(poolWizardLocators.createPool).click();
@@ -89,8 +93,8 @@ export async function createRaidz2Pool(page: Page, pool: NewPool): Promise<void>
  * quietly skipped is one that will be.
  */
 export async function confirmDestructiveAction(page: Page): Promise<void> {
-  const confirmCheckbox = page.locator('[data-test="checkbox-confirm"]');
-  const confirmButton = page.locator('[data-test="button-dialog-confirm"]');
+  const confirmCheckbox = page.locator(confirmDialogLocators.checkbox);
+  const confirmButton = page.locator(confirmDialogLocators.confirm);
 
   await expect(confirmCheckbox).toBeVisible();
   await confirmCheckbox.click();

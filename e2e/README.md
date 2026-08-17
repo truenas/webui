@@ -21,16 +21,26 @@ yarn playwright install chromium
 cp .env.example .env
 ```
 
-Fill in `TN_PROFILE`, `TN_USERNAME` and `TN_PASSWORD`. Then point webui at your
-appliance — this configures the dev server, the API proxy **and** these tests
-together:
+Fill in `TN_PROFILE`, `TN_USERNAME`, `TN_PASSWORD` and `TN_HOST`.
+
+`TN_HOST` is the appliance under test, and it is **required** — never inferred.
+These tests export pools with `destroy: true` and delete users, so the target is
+always something you said out loud.
+
+In tree you can point webui at the appliance instead, which configures the dev
+server, the API proxy **and** these tests together:
 
 ```bash
 yarn ui remote -i <vm>
 ```
 
-`TN_HOST` is read from `src/environments/environment.ts`, so that one command is
-all the targeting you need. Set `TN_HOST` in `.env` to override it.
+```ini
+TN_HOST=auto
+```
+
+`auto` reads the address back out of `src/environments/environment.ts`. Every
+run prints a banner naming the appliance it resolved and where the address came
+from — read it before you walk away.
 
 ## Running
 
@@ -46,8 +56,11 @@ yarn e2e --project=unauthenticated
 yarn e2e fresh-install
 ```
 
-The last form filters by filename substring. Add `--retries=0` while iterating —
-a retry on a slow failure only doubles the wait.
+The last form filters by filename substring.
+
+Retries are off locally and on (once) in CI, so iterating already fails fast —
+a retry on a slow failure only doubles the wait to learn the same thing. Pass
+`--retries=1` if you are chasing something intermittent.
 
 ### Targets
 

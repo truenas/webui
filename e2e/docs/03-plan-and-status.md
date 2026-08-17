@@ -42,8 +42,27 @@ selector discipline and failure legibility are all built and proven.
   measured failure rate. Needs weeks of scheduled runs.
 - **Observability**: no WebSocket capture, no middleware log collection, no
   version recording in reports (R7.1, R7.2, R2.4).
-- **Helper coverage**: `findGroupAclGrants`, the polling loops and config
-  validation have no unit tests. Each was verified by hand, once.
+- **Helper coverage**: `findGroupAclGrants`, `waitUntil` and config validation
+  have no unit tests. Each was verified by hand, once.
+- **Scoped TLS leniency**: `playwright.config.ts` sets
+  `NODE_TLS_REJECT_UNAUTHORIZED=0`, which disables certificate verification for
+  every outbound connection the runner makes, for the life of the process —
+  including ones a later change adds without reading the comment. It should be
+  scoped to the one connection that needs it: middleware over `wss://`, plus the
+  version-discovery `fetch` that precedes it.
+
+  Blocked upstream, verified against `@truenas/api-client@1.0.6` — what the
+  `~1.0.3` range in `package.json` currently resolves to.
+  `CreateClientOptions` exposes `uuid`, `hostnames`, `enabled`, `systemName` and
+  `logger` only; the rxjs `WebSocketSubjectConfig` is built internally, so there
+  is no `WebSocketCtor` or dispatcher to hand a lenient agent to, and version
+  discovery's `fetch` has no seam either. `NODE_EXTRA_CA_CERTS` is not an answer
+  while the certificate is generated per appliance at install time.
+
+  **The ask**: one option on `CreateClientOptions` — a `WebSocketCtor`, or an
+  undici dispatcher used for both the socket and version discovery. Until then
+  the concession is stated on every run in the startup banner rather than left
+  to a comment.
 
 ---
 
@@ -93,7 +112,9 @@ v26 leaves the advertised range.
 
 Entirely infrastructure. The suite side is done and verified: it runs from
 environment variables alone, emits JUnit XML and an HTML report, and gates
-`forbidOnly` on `CI`.
+`forbidOnly` on `CI`. `yarn e2e:typecheck` runs in the `lint` job of
+`main.yml` — `e2e/` is outside the root tsconfig's project, so before that
+nothing type-checked this directory at all.
 
 What's needed:
 

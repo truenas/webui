@@ -12,23 +12,27 @@
  * single break reports as three missing capabilities rather than one. Where
  * that trade is not worth making — S3 through S8 — preconditions come from the
  * API instead.
+ *
+ * The first three steps overlap `admin-user.e2e.ts` almost exactly, and that is
+ * intentional rather than an oversight. R3.1 would have the account provisioned
+ * over the API here, since the pool and share work merely depends on it — but
+ * "you cannot use the appliance until you have made yourself an account" is the
+ * defining constraint of day one, and a fresh-install story that starts already
+ * signed in as somebody skips the part that makes it a fresh install. The
+ * duplicated coverage is the price of keeping the premise honest; the two tests
+ * share one identity (`testAdmin`) so it is visibly the same account.
  */
 import type { TrueNasApiClient } from '@truenas/api-client';
 import {
   ensurePoolAbsent, ensureSmbServiceStopped, ensureSmbShareAbsent, findGroupAclGrants,
   requireUnusedDisks,
 } from '../../fixtures/storage';
-import { ensureUserAbsent } from '../../fixtures/users';
+import { ensureUserAbsent, testAdmin } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
 import { createRaidz2Pool, createSmbDataset, createSmbShare } from '../../flows/storage';
 import { createTrueNasAdminUser } from '../../flows/users';
 import { callUntyped } from '../../support/api/untyped';
 import { expect, test } from '../../support/fixtures';
-
-const admin = {
-  username: 'bob',
-  password: 'Bob-E2E-Passw0rd!',
-};
 
 /**
  * Nine disks in a single RAIDZ2 vdev: seven data, two parity, surviving any two
@@ -55,7 +59,7 @@ async function cleanUp(api: TrueNasApiClient): Promise<void> {
   await ensureSmbServiceStopped(api);
   await ensureSmbShareAbsent(api, share);
   await ensurePoolAbsent(api, pool.name);
-  await ensureUserAbsent(api, admin.username);
+  await ensureUserAbsent(api, testAdmin.username);
 }
 
 test.beforeEach(async ({ api }) => {
@@ -65,7 +69,10 @@ test.beforeEach(async ({ api }) => {
 
 test.afterEach(async ({ api }) => {
   if (keepTestData) {
-    console.warn(`TN_KEEP_TEST_DATA=1 — leaving pool "${pool.name}", share "${share}" and user "${admin.username}".`);
+    console.warn(
+      `TN_KEEP_TEST_DATA=1 — leaving pool "${pool.name}", share "${share}" `
+      + `and user "${testAdmin.username}".`,
+    );
     return;
   }
   await cleanUp(api);
@@ -77,13 +84,13 @@ test('an admin sets up a fresh instance: user, pool, dataset, SMB share', async 
   });
 
   await test.step('create their own TrueNAS admin account', async () => {
-    await createTrueNasAdminUser(page, admin);
+    await createTrueNasAdminUser(page, testAdmin);
   });
 
   await test.step('sign out and back in as that account', async () => {
     await signOut(page);
-    await signIn(page, admin.username, admin.password);
-    await expectSignedInAs(page, admin.username);
+    await signIn(page, testAdmin.username, testAdmin.password);
+    await expectSignedInAs(page, testAdmin.username);
   });
 
   await test.step(`create a ${pool.width}-wide RAIDZ2 pool`, async () => {
@@ -144,11 +151,11 @@ test('an admin sets up a fresh instance: user, pool, dataset, SMB share', async 
   // still meet — a regression in either would otherwise ship a share nobody
   // can use, with every UI step still reporting success.
   await test.step('confirm the new admin can actually use the share', async () => {
-    const grants = await findGroupAclGrants(api, admin.username, datasetPath);
+    const grants = await findGroupAclGrants(api, testAdmin.username, datasetPath);
 
     expect(
       grants,
-      `${admin.username} has no write-capable group grant on ${datasetPath}; `
+      `${testAdmin.username} has no write-capable group grant on ${datasetPath}; `
       + 'the share exists but its owner cannot use it',
     ).not.toHaveLength(0);
   });

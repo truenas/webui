@@ -22,6 +22,30 @@ export type ProfileName = 'shipped' | 'branch';
 
 const profiles: readonly ProfileName[] = ['shipped', 'branch'];
 
+/**
+ * Opt-in value for `TN_HOST` that resolves the appliance from webui's own
+ * `environment.ts` rather than naming one.
+ *
+ * Opt-in rather than the default, because this suite is destructive: it exports
+ * pools with `destroy: true` (`fixtures/storage.ts`) and deletes users
+ * (`fixtures/users.ts`).
+ *
+ * This used to be the fallback whenever `TN_HOST` was unset, and the setup
+ * instructions actively told you to leave it unset. So the documented happy path
+ * was a `.env` holding credentials and no target, pointed by inference at
+ * whatever appliance the developer's dev server was on — where a run would
+ * destroy any pool named `e2e_tank` and delete any user named `bob`. Nothing in
+ * the output said which machine that was.
+ *
+ * The convenience is worth keeping — one `yarn ui remote -i <ip>` configuring
+ * both the dev server and the suite is genuinely useful — but it has to be
+ * asked for.
+ */
+const autoHost = 'auto';
+
+/** Where the resolved appliance address came from. Reported at startup. */
+export type HostSource = 'TN_HOST' | 'yarn ui remote';
+
 /** Fully resolved, validated target configuration for a run. */
 export interface TargetConfig {
   /** Which profile produced this configuration. */
@@ -34,6 +58,8 @@ export interface TargetConfig {
   readonly uiBaseUrl: string;
   /** Middleware host, `host` or `host:port`. No scheme — the client adds `wss://`. */
   readonly middlewareHost: string;
+  /** How {@link middlewareHost} was resolved, for the startup banner. */
+  readonly hostSource: HostSource;
   readonly username: string;
   readonly password: string;
   /**
@@ -129,14 +155,80 @@ function validateUiBaseUrl(uiBaseUrl: string, profile: ProfileName, problems: st
   }
 }
 
-function requireValue(
-  name: string,
-  value: string | undefined,
+/**
+ * Rejects the shapes `TN_HOST` is most often given by mistake.
+ *
+ * `host` or `host:port`, no scheme and no path — the client builds
+ * `wss://${host}${path}` itself. The value pasted out of a browser's address bar
+ * is the common error, and left unchecked it fails a long way from its cause: in
+ * `branch` the run dies 30 seconds later on a socket to `wss://https://…`, and
+ * in `shipped` it derives `https://https://host/ui/`, which parses, so the
+ * complaint that surfaces is about `TN_UI_BASE_URL` — a variable the user never
+ * set. Since the point of requiring `TN_HOST` is to make the target
+ * unmistakable, it is worth saying so here instead.
+ */
+function validateMiddlewareHost(host: string, source: HostSource, problems: string[]): void {
+  const from = source === 'TN_HOST' ? 'TN_HOST' : `the remote in environment.ts (TN_HOST=${autoHost})`;
+
+  if (/^[a-z][a-z0-9+.-]*:\/\//i.test(host)) {
+    problems.push(
+      `${from} must be a host or host:port with no scheme (got "${host}"). `
+      + 'The middleware client adds `wss://` and the UI base URL is derived separately.',
+    );
+    return;
+  }
+
+  if (host.includes('/')) {
+    problems.push(`${from} must be a host or host:port with no path (got "${host}")`);
+    return;
+  }
+
+  if (/\s/.test(host)) {
+    problems.push(`${from} contains whitespace (got "${host}")`);
+  }
+}
+
+/**
+ * Resolves the appliance under test.
+ *
+ * Never inferred. See {@link autoHost} — the fallback to webui's configured
+ * remote is available, but only when explicitly asked for.
+ */
+function readMiddlewareHost(
+  raw: string | undefined,
   problems: string[],
-  hint?: string,
-): string {
+): { host: string; source: HostSource } {
+  if (!raw) {
+    problems.push(
+      'TN_HOST is required — the appliance under test, as host or host:port. '
+      + 'It is never inferred: this suite exports pools with destroy:true and deletes '
+      + `users, so pointing it at the wrong machine is destructive. Set TN_HOST=${autoHost} `
+      + 'to reuse whatever `yarn ui remote -i <ip>` pointed webui at.',
+    );
+    return { host: '', source: 'TN_HOST' };
+  }
+
+  if (raw !== autoHost) {
+    validateMiddlewareHost(raw, 'TN_HOST', problems);
+    return { host: raw, source: 'TN_HOST' };
+  }
+
+  const remote = readWebuiRemote();
+  if (!remote) {
+    problems.push(
+      `TN_HOST=${autoHost}, but webui has no remote configured to borrow. `
+      + 'Run `yarn ui remote -i <ip>`, or set TN_HOST to the appliance directly.',
+    );
+    return { host: '', source: 'yarn ui remote' };
+  }
+
+  validateMiddlewareHost(remote, 'yarn ui remote', problems);
+  return { host: remote, source: 'yarn ui remote' };
+}
+
+function requireValue(name: string, value: string | undefined, problems: string[]): string {
   if (!value) {
-    problems.push(hint ? `${name} is required. ${hint}` : `${name} is required`);
+    problems.push(`${name} is required`);
     return '';
   }
   return value;
@@ -155,16 +247,7 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
 
   const profile = readProfile(env.TN_PROFILE, problems);
 
-  // Falls back to whatever `yarn ui remote -i <ip>` pointed webui at, so a
-  // developer configures the appliance once and both the dev server and this
-  // suite follow. An explicit TN_HOST still wins, which is how CI targets a
-  // machine without a working tree that has ever run `yarn ui remote`.
-  const middlewareHost = requireValue(
-    'TN_HOST',
-    env.TN_HOST ?? readWebuiRemote(),
-    problems,
-    'Set it, or point webui at an appliance with `yarn ui remote -i <ip>`.',
-  );
+  const { host: middlewareHost, source: hostSource } = readMiddlewareHost(env.TN_HOST, problems);
 
   const username = requireValue('TN_USERNAME', env.TN_USERNAME, problems);
   const password = requireValue('TN_PASSWORD', env.TN_PASSWORD, problems);
@@ -200,8 +283,42 @@ export function loadTargetConfig(env: NodeJS.ProcessEnv = process.env): TargetCo
     // resolves beneath the base rather than replacing its last segment.
     uiBaseUrl,
     middlewareHost,
+    hostSource,
     username,
     password,
     ignoreHttpsErrors: profile === 'shipped',
   };
+}
+
+/**
+ * The startup banner, naming the machine this run is about to act on.
+ *
+ * Printed before anything else happens. The suite destroys pools and deletes
+ * users, so which appliance it resolved is the one fact a developer must never
+ * have to infer — and it is doubly worth stating when the address was borrowed
+ * from webui's configuration rather than named outright.
+ *
+ * The TLS line is read from the environment rather than passed in, so the
+ * banner reports what is actually in effect for the process rather than what a
+ * caller believes it set.
+ */
+export function describeTarget(target: TargetConfig): string {
+  const rule = '─'.repeat(72);
+  const tls = process.env.NODE_TLS_REJECT_UNAUTHORIZED === '0'
+    ? 'verification disabled process-wide (self-signed appliance certificate)'
+    : 'verified';
+
+  const lines = [
+    rule,
+    ' E2E TARGET — this suite DESTROYS pools, datasets and users',
+    '',
+    `   appliance   ${target.middlewareHost}   (from ${target.hostSource})`,
+    `   profile     ${target.profile}`,
+    `   UI          ${target.uiBaseUrl}`,
+    `   user        ${target.username}`,
+    `   node TLS    ${tls}`,
+    rule,
+  ];
+
+  return lines.join('\n');
 }

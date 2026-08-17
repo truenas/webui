@@ -41,6 +41,12 @@ on the setup project — precisely so the bypass cannot hide a broken login.
 Selectors are `[data-test="…"]` only. No CSS classes, no text matching, no
 XPath, no nth-child.
 
+A `[data-test^="prefix-"]` match is allowed where the exact value is not
+knowable in advance — the disk-size options encode a size and media type that
+differ per appliance. Prefix, never bare role or class: the prefix is what keeps
+the match scoped to one control, so a CDK overlay that has not finished
+detaching cannot be picked up instead.
+
 Search the component template for `testId` or `ixTest`, then work out what is
 actually emitted — **components prefix the value with their element type**:
 
@@ -62,7 +68,10 @@ Three things that will catch you out:
    `kebabTestSegment` turns `RAIDZ2` into `raidz2`; a control declaring
    `[optionTestIdKey]="optionTestIdByKebabLabel"` runs lodash `kebabCase` first,
    which yields `raidz-2`. Derive option ids from the extractor the control
-   actually declares, not from the default.
+   actually declares, not from the default. A locator that interpolates a
+   runtime value — a pool name, a disk count — must put it through
+   `locators/test-id.ts`, which is the library's normalizer replicated. Do not
+   hand-roll a third one.
 3. **A few components write the value verbatim**, with no type prefix — those
    applying the directive via `hostDirectives` without `tnTestIdType`.
 
@@ -130,8 +139,9 @@ fixtures, so a spec never wires up a connection or remembers to close it.
 "Configure ACL" dialog blocking the panel. `test-results/<dir>/` holds the
 screenshot, and the trace has a DOM snapshot per step.
 
-Run with `--retries=0` while iterating; a retry on a slow failure only doubles
-the wait to learn the same thing.
+Retries are off locally and on (once) in CI, so iterating already fails fast — a
+retry on a slow failure only doubles the wait to learn the same thing. Pass
+`--retries=1` if you are chasing something that only shows up intermittently.
 
 Two failures that look like bugs and are not:
 
