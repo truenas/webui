@@ -41,6 +41,7 @@ import { filter, take } from 'rxjs';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
+import { provideTnCalendarIntl } from 'app/core/providers/tn-calendar-intl.provider';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { provideTnTablePagerLabels } from 'app/core/providers/tn-table-pager-labels.provider';
 import { chunkReloadKey, handleChunkLoadError } from 'app/helpers/handle-chunk-load-error';
@@ -138,6 +139,7 @@ bootstrapApplication(AppComponent, {
     },
     provideTnTablePagerLabels(),
     provideTnFormFieldErrors(),
+    provideTnCalendarIntl(),
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();

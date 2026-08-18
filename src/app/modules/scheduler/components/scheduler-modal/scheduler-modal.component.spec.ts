@@ -1,15 +1,13 @@
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatCalendar } from '@angular/material/datepicker';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { MockComponent, MockInstance } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import {
   SchedulerModalConfig,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal-config.interface';
@@ -21,10 +19,6 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 import { SchedulerModalComponent } from './scheduler-modal.component';
 
 describe('SchedulerModalComponent', () => {
-  // Scopes the MockInstance calendar override below to this suite so ng-mocks restores it
-  // afterwards instead of warning about leaked side effects.
-  MockInstance.scope();
-
   let spectator: Spectator<SchedulerModalComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
@@ -81,11 +75,6 @@ describe('SchedulerModalComponent', () => {
       'Days of Week': daysOfWeek.filter(Boolean),
     };
   }
-
-  beforeEach(() => {
-    // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
-    MockInstance(SchedulerPreviewColumnComponent, 'calendar', signal({} as MatCalendar<Date>));
-  });
 
   describe('base operations', () => {
     beforeEach(() => {

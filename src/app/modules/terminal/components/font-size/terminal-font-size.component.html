@@ -4,16 +4,16 @@
     name="minus"
     library="mdi"
     testId="decrease-font-size"
-    [attr.aria-label]="'Decrease font size' | translate"
+    [ariaLabel]="'Decrease font size' | translate"
     [disabled]="fontSize() <= minFontSize"
-    (click)="change(-1)"
+    (onClick)="change(-1)"
   ></tn-icon-button>
   <tn-icon-button
     name="plus"
     library="mdi"
     testId="increase-font-size"
-    [attr.aria-label]="'Increase font size' | translate"
+    [ariaLabel]="'Increase font size' | translate"
     [disabled]="fontSize() >= maxFontSize"
-    (click)="change(1)"
+    (onClick)="change(1)"
   ></tn-icon-button>
 </div>
