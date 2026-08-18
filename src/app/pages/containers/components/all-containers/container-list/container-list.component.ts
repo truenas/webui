@@ -24,7 +24,6 @@ import {
   distinctUntilChanged, filter, map, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container, ContainerStats, ContainerStopParams } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -44,6 +43,7 @@ import {
   StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
 import { ContainerSortField, ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerRunning, isContainerStopped } from 'app/pages/containers/utils/container-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
@@ -194,7 +194,7 @@ export class ContainerListComponent {
   }
 
   protected isStopped(container: Container): boolean {
-    return container?.status?.state === ContainerStatus.Stopped;
+    return isContainerStopped(container);
   }
 
   protected getMetrics(container: Container): ContainerStats | undefined {
@@ -204,7 +204,7 @@ export class ContainerListComponent {
   protected hasMetrics(container: Container): boolean {
     const metrics = this.getMetrics(container);
 
-    return container?.status?.state === ContainerStatus.Running
+    return isContainerRunning(container)
       && !!metrics
       && Object.keys(metrics).length > 0;
   }
