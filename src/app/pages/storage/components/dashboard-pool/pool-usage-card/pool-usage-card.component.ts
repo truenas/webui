@@ -144,7 +144,13 @@ export class PoolUsageCardComponent {
   });
 
   protected chartSegments = computed<GaugeSegment[] | undefined>(() => {
-    if (!this.showTierBreakdown()) {
+    // Severity wins over the tier split: GaugeChartComponent ignores colorFill
+    // whenever segments are set, so a segmented gauge would keep drawing green /
+    // primary while the header icon and the "Critical: Low Capacity" caption go
+    // red. Drop the segments once capacity leaves Safe and let the single
+    // severity-colored fill through; the tier split is still spelled out by the
+    // breakdown bars below.
+    if (!this.showTierBreakdown() || this.capacityLevel() !== PoolCapacityLevel.Safe) {
       return undefined;
     }
     const cap = this.capacity();

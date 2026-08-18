@@ -46,7 +46,10 @@ export interface PoolCapacityGaugeColors {
 
 /**
  * Gauge fill color for a used percentage, so the gauge can never disagree with
- * the severity the rest of the card reports.
+ * the severity the rest of the card reports. Note that a gauge only honors this
+ * fill when it is not segmented - `GaugeChartComponent` colors a segmented gauge
+ * from the segments alone - so consumers passing segments must drop or tint them
+ * once capacity leaves `PoolCapacityLevel.Safe`.
  *
  * @param usedPercent Used space as a percentage (0-100), not a fraction.
  */
