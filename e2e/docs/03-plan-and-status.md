@@ -115,12 +115,27 @@ test, not just S8.
 Waiting on the api-client release that exposes the full typed surface, jobs and
 events, plus a v27 client. When it lands:
 
-- Delete `support/api/untyped.ts` and its five call sites (`sharing.smb.delete`,
-  `service.update`, `service.control`, `pool.export`, `user.delete`)
+- Delete `support/api/untyped.ts` and its **eleven** call sites, covering ten
+  methods:
+  - `fixtures/storage.ts` (8) — `disk.details`, `sharing.smb.query`,
+    `sharing.smb.delete`, `user.query`, `group.query`, `filesystem.getacl`,
+    `service.control`, `pool.export`
+  - `tests/unauthenticated/fresh-install.e2e.ts` (2) — `sharing.smb.query`,
+    `service.query`
+  - `fixtures/users.ts` (1) — `user.delete`
+
+  Not `service.update`, which an earlier version of this list named:
+  `fixtures/storage.ts` calls it through `TrueNasEndpoint.ServiceUpdate`
+  already, as it does `service.query` in `querySmbService`. Note the asymmetry —
+  `service.query` is typed in the fixture and untyped in the spec, which is
+  worth collapsing when this work happens.
 - `pool.export` and `service.control` are **jobs** — await them directly and
-  delete the hand-rolled polling loops in `fixtures/storage.ts`
-- Confirm `disk.get_unused` is included; it works live but appears nowhere in
-  the generated manifest, so it may be absent from the `--dump-api` dump
+  delete the polling in `ensurePoolAbsent` and `ensureSmbServiceStopped`
+- `service.control` needs `ServiceControlAction` exported before it can be typed
+  at all; see the upstream asks under "Not yet"
+- Confirm `disk.details` is included. (This bullet used to name
+  `disk.get_unused`; nothing in `e2e/` calls that any more — see
+  `getSelectableDisks` for why the wizard's inventory is the other endpoint.)
 
 Do it as its own commit, so the diff reads as "remove workaround".
 

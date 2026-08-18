@@ -69,9 +69,9 @@ incidentally:
   re-exported.
 
 **On stability.** The local checkout's README says "early extraction in
-progress" and its `package.json` reads `0.0.0`. Both are stale: the published
-package is **`@truenas/api-client@1.0.3`**. Consume from npm, not the local
-checkout.
+progress" and its `package.json` reads `0.0.0`. Both are stale: the package is
+published on npm and `~1.0.3` currently resolves to **1.0.6**. Consume from npm,
+not the local checkout.
 
 **Cost accepted.** `rxjs ^7.8` is a peer dependency — natural inside an Angular
 app, weight this suite would not otherwise carry. Worth it for typed calls and
@@ -91,7 +91,8 @@ wired into `call()`.
 
 **Resolved upstream — pending release.** A forthcoming version of the client
 exposes the entire API surface fully typed, including jobs and events, and adds
-a v27 client. Verified as *not* shipped in 1.0.7: `ApiCallMethod` there still
+a v27 client. Verified as *not* shipped in 1.0.6 — what `~1.0.3` resolves to,
+and what `yarn.lock` pins: `ApiCallMethod` there still
 derives from the curated `TrueNasEndpoint`-keyed directory, and
 `CLIENT_BY_VERSION_KEY` still maps only `25.10` and `26`. The options below are
 therefore recorded for context, not as a decision to make — the workaround
@@ -99,9 +100,10 @@ stands until the release lands.
 
 When it does, three things follow:
 
-- `e2e/support/api/untyped.ts` and its five call sites are deleted. `tsc` then
-  checks every payload against the real signatures, which is the value the
-  escape hatch has been deferring.
+- `e2e/support/api/untyped.ts` and its eleven call sites are deleted — the list
+  is kept current in `03-plan-and-status.md`, not here. `tsc` then checks every
+  payload against the real signatures, which is the value the escape hatch has
+  been deferring.
 - `pool.export` and `service.control` are **jobs**, not calls. Typed job support
   lets them be awaited directly, removing the hand-rolled polling loops in
   `ensurePoolAbsent` and `ensureSmbServiceStopped`.
@@ -110,9 +112,10 @@ When it does, three things follow:
   frames. Use events for synchronisation and diagnostics only: asserting on
   middleware state instead of the UI would erode R3.1.
 
-`disk.get_unused` is worth confirming separately — it works against a live
-appliance but appears nowhere in the generated manifest, so it may be absent
-from the `--dump-api` dump rather than merely uncurated.
+`disk.details` is worth confirming separately. (This note used to name
+`disk.get_unused`, which the suite no longer calls: the pool wizard reads
+`disk.details` and filters it, so counting the other endpoint over-reported the
+inventory the UI would actually offer. See `getSelectableDisks`.)
 
 For Phase 0 this is fine: `auth.generate_token` is present. **Phase 2 hits the
 wall immediately** — `pool.create`, `pool.export`, `user.create`, `user.delete`,
@@ -375,7 +378,7 @@ also states it in the startup banner. It is *not* documented in the README or
 | Package | Source | Purpose |
 |---|---|---|
 | `@playwright/test` | npm | Automation and runner (T1) |
-| `@truenas/api-client` | npm `^1.0.3` | Middleware client (T3) |
+| `@truenas/api-client` | npm `~1.0.3` | Middleware client (T3) |
 | `rxjs` | npm `^7.8` | Peer dependency of the above |
 | `@truenas/common-typescript` | `github:truenas/tn-common-typescript#master` | Lint config (T9) |
 | `typescript` | npm | — |

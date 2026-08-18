@@ -107,12 +107,29 @@ approved test host before running. Ephemeral VMs make this low-risk, but a stale
 or mistyped target address could point at a real NAS, and the suite creates and
 destroys pools.
 
-**R2.2 — Disk inventory.** The VM is provisioned with **8 small virtual disks**
-(a few GB each) reserved for the suite. Generous provisioning is deliberate: it
-lets pool tests claim their own disks rather than contending for a scarce
-resource, so a failed teardown degrades instead of cascading. The suite must
-enumerate free disks via the API at startup and fail fast with a clear message
-when inventory is short, rather than failing mid-journey with an opaque UI error.
+**R2.2 — Disk inventory. (Revised.)** The VM is provisioned with **at least 9
+identical small virtual disks** (a few GB each) reserved for the suite, plus
+spares if convenient.
+
+**"Identical" is load-bearing, and 9 is a floor rather than a guideline.**
+`fresh-install.e2e.ts` builds a 9-wide RAIDZ2 vdev, and the pool wizard groups
+the inventory by `(type, size)` and generates its width options from the
+*selected* group alone — so nine disks that are not alike offer no 9-wide
+option. `requireUnusedDisks` enforces exactly that, and a VM provisioned to this
+paragraph's previous wording (8 disks) failed the only pool-building journey in
+the suite on every run.
+
+Note also that the wizard's inventory is `disk.details` filtered through
+`filterAllowedDisks`, which discards disks carrying a duplicate serial or an
+exported pool. Hypervisors hand out blank or repeated serials readily, so
+"9 disks exist" and "9 disks are offered" are different claims — set distinct
+serials when provisioning.
+
+Generous provisioning beyond the floor is deliberate: it lets pool tests claim
+their own disks rather than contending for a scarce resource, so a failed
+teardown degrades instead of cascading. The suite must enumerate the disks the
+UI would offer, at startup, and fail fast with a clear message when inventory is
+short, rather than failing mid-journey with an opaque UI error.
 
 **R2.3 — Known-good state.** Satisfied by construction: each run gets a fresh
 VM. No snapshot-revert or reset machinery is required.
@@ -265,9 +282,17 @@ not across workers on one instance.
 
 ## R4. Authentication
 
-**R4.1 — Token-based session reuse.** Non-login tests bypass the ~15 second
-login flow using a `reconnect_token`, captured once per run and reused as an
+**R4.1 — Token-based session reuse. (Revised.)** Non-login tests bypass the ~15
+second login flow using a token captured once per run and reused as an
 authenticated browser session.
+
+The token comes from **`auth.generate_token`**, not the `reconnect_token` this
+requirement originally named. `login_options.reconnect_token` only exists from
+API v26.0.0, while `auth.generate_token` has been present and unchanged since
+v25.10.0 and takes an explicit TTL rather than leaving the run with whatever the
+server defaults to (R4.3). `support/auth/token.ts` cites this requirement by
+number, so the mechanism named here is the one a reader will go looking for; see
+also T5 in `02-technology.md`, which records the same reversal.
 
 **R4.2 — One real login.** S1 drives the actual sign-in form, so the bypass can
 never hide a broken login page.
