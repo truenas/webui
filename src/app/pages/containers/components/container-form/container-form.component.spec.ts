@@ -232,7 +232,53 @@ describe('ContainerFormComponent', () => {
     it('loads the container being edited from the panel input', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.get_instance', [1]);
     });
+
+    // Middleware refuses to rename a container that is not stopped - since 26.0 SUSPENDED
+    // counts as active too - so the form doesn't offer a rename it would reject.
+    it('disables the Name field, because this container is running', async () => {
+      const nameInput = await getInput('name');
+      expect(await nameInput.isDisabled()).toBe(true);
+    });
   });
+
+  describe.each([ContainerStatus.Running, ContainerStatus.Suspended, ContainerStatus.Stopped])(
+    'renaming a %s container',
+    (state) => {
+      const container: Container = { ...existingContainer, status: { ...existingContainer.status, state } };
+
+      const createStateComponent = createComponentFactory({
+        component: ContainerFormComponent,
+        imports: [ReactiveFormsModule],
+        providers: [
+          mockAuth(),
+          mockApi([
+            mockCall('container.pool_choices', { pool1: 'pool1' }),
+            mockCall('lxc.config', {
+              bridge: 'lxdbr0',
+              v4_network: null,
+              v6_network: null,
+              preferred_pool: 'pool1',
+            }),
+            mockCall('container.get_instance', container),
+            mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
+            mockCall('container.query', []),
+          ]),
+          mockProvider(ContainersStore),
+          mockProvider(TnDialog),
+          mockProvider(DialogService),
+          mockProvider(Router),
+        ],
+      });
+
+      it(`${state === ContainerStatus.Stopped ? 'allows' : 'refuses'} the rename`, async () => {
+        spectator = createStateComponent({ props: { editContainer: container } });
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+        const nameInput = await getInput('name');
+        expect(await nameInput.isDisabled()).toBe(state !== ContainerStatus.Stopped);
+      });
+    },
+  );
 
   describe('form structure', () => {
     beforeEach(() => {

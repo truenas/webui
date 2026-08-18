@@ -1,6 +1,6 @@
 <ix-audit-search [dataProvider]="dataProvider()"></ix-audit-search>
 
-@let emptyAttrs = emptyAttrsFor(dataProvider().emptyType$ | async);
+@let emptyType = dataProvider().emptyType$ | async;
 <tn-table
   class="audit-table"
   [ixUiSearch]="searchableElements.elements.audit"
@@ -8,11 +8,13 @@
   [displayedColumns]="displayedColumns"
   [trackBy]="trackByAuditId"
   [clickable]="true"
+  [fixedLayout]="true"
   [activeRow]="dataProvider().expandedRow"
   [loading]="(dataProvider().isLoading$ | async) ?? false"
-  [loadingMessage]="loadingTitle | translate"
-  [emptyMessage]="emptyAttrs.title | translate"
-  [emptyIcon]="emptyAttrs.icon"
+  [loadingMessage]="emptyService.loadingMessage()"
+  [emptyMessage]="emptyService.titleForType(emptyType)"
+  [emptyDescription]="emptyService.descriptionForType(emptyType)"
+  [emptyIcon]="emptyIconFor(emptyType)"
   (sortChange)="onSortChange($event)"
   (rowClick)="onRowClick($event)"
 >

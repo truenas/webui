@@ -29,6 +29,7 @@
   } @else {
     <tn-table
       class="table"
+      [minWidth]="'420px'"
       [dataSource]="(dataProvider.currentPage$ | async) ?? []"
       [displayedColumns]="displayedColumns"
       [trackBy]="trackByTaskId"

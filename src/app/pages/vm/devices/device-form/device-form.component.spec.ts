@@ -2,8 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnRadioHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnFormFieldHarness, TnRadioHarness } from '@truenas/ui-components';
 import { NEVER, Observable, Subject, of, throwError } from 'rxjs';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -113,6 +114,9 @@ describe('DeviceFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      // Mirrors main.ts: tn-form-field resolves validator messages through this app-wide
+      // resolver, so without it the spec would assert the library's English fallback.
+      provideTnFormFieldErrors(),
       mockApi([
         mockCall('vm.device.create'),
         mockCall('vm.device.update'),
@@ -420,6 +424,37 @@ describe('DeviceFormComponent', () => {
           'MAC Address': '00:a0:98:30:09:90',
         });
         expect(api.call).toHaveBeenLastCalledWith('vm.random_mac');
+      });
+
+      // Middleware validates custom MACs as colon-separated only; the dash, unseparated and
+      // Cisco dotted forms saved fine before and then failed at VM start.
+      it.each([
+        ['dash-separated', '10-66-6a-1f-f1-b1'],
+        ['unseparated', '10666a1ff1b1'],
+        ['Cisco dotted', '1066.6a1f.f1b1'],
+      ])('refuses to save a %s MAC address', async (_, mac) => {
+        await fillForm({
+          Type: 'NIC',
+          'Adapter Type': 'VirtIO',
+          'NIC To Attach': 'enp0s4',
+          'MAC Address': mac,
+        });
+
+        expect(spectator.component.canSubmit()).toBe(false);
+        const macField = await loader.getHarness(TnFormFieldHarness.with({ label: 'MAC Address' }));
+        expect(await macField.getErrorMessage())
+          .toBe('MAC address must be colon-separated, for example 00:a0:98:1b:2c:3d');
+      });
+
+      it('accepts a colon-separated MAC address', async () => {
+        await fillForm({
+          Type: 'NIC',
+          'Adapter Type': 'VirtIO',
+          'NIC To Attach': 'enp0s4',
+          'MAC Address': '10:66:6a:1f:f1:b1',
+        });
+
+        expect(spectator.component.canSubmit()).toBe(true);
       });
 
       it('generates a new MAC when Generate button is pressed', async () => {

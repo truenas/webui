@@ -116,13 +116,13 @@ describe('TargetFormComponent', () => {
           },
         ],
       }),
-      ...ixFormTestingProviders(),
       mockProvider(DialogService),
       mockProvider(FibreChannelService, {
         loadTargetPorts: jest.fn(() => of([])),
         linkFiberChannelPortsToTarget: jest.fn(() => of(null)),
         validatePhysicalPortUniqueness: jest.fn(permissiveFcPortValidation),
       }),
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('tn_connect.config'),
         mockCall('fc.fc_host.query', []),
@@ -213,7 +213,9 @@ describe('TargetFormComponent', () => {
         auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
       });
 
-      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
       spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('iscsi.target.create', [{
@@ -236,7 +238,7 @@ describe('TargetFormComponent', () => {
         ],
         auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
       }]);
-      expect(closeSpy).toHaveBeenCalledWith(true);
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
@@ -260,7 +262,9 @@ describe('TargetFormComponent', () => {
         Mode: 'Fibre Channel',
       });
 
-      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
       spectator.component.submit();
 
       expect(api.call).toHaveBeenLastCalledWith(
@@ -280,7 +284,7 @@ describe('TargetFormComponent', () => {
         123,
         [],
       );
-      expect(closeSpy).toHaveBeenCalledWith(true);
+      expect(closed).toHaveBeenCalledWith(true);
     });
 
     it('loads and shows the \'portal\', \'initiator\' and \'auth\'', () => {

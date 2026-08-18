@@ -60,7 +60,6 @@ describe('ExtentFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      ...ixFormTestingProviders(),
       mockProvider(StorageService),
       mockProvider(DialogService),
       mockApi([
@@ -72,6 +71,7 @@ describe('ExtentFormComponent', () => {
           key_device_3: 'value_device_3',
         } as Choices),
       ]),
+      ...ixFormTestingProviders(),
     ],
   });
 
@@ -108,7 +108,9 @@ describe('ExtentFormComponent', () => {
       await (await getTnSelect('blocksize')).selectOption('1024');
       await (await getTnCheckbox('ro')).check();
 
-      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
       spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.extent.create', [{
@@ -128,7 +130,7 @@ describe('ExtentFormComponent', () => {
         type: IscsiExtentType.Disk,
         xen: true,
       }]);
-      expect(closeSpy).toHaveBeenCalledWith(true);
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
@@ -164,7 +166,9 @@ describe('ExtentFormComponent', () => {
       await (await getIxInput('Filesize')).setValue('2049 KiB');
       await (await getTnSelect('blocksize')).selectOption('512');
 
-      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
       spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.update', [
@@ -187,7 +191,7 @@ describe('ExtentFormComponent', () => {
           xen: true,
         },
       ]);
-      expect(closeSpy).toHaveBeenCalledWith(true);
+      expect(closed).toHaveBeenCalledWith(true);
     });
 
     it('sends product_id as null when field is empty', async () => {

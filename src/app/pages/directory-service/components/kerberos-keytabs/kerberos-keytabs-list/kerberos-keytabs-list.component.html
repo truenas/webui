@@ -73,13 +73,16 @@
 }
 
 <ng-template #tableTpl>
+  @let emptyType = dataProvider.emptyType$ | async;
   <tn-table
     class="table"
     [dataSource]="(dataProvider.currentPage$ | async) ?? []"
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByKeytabId"
     [loading]="!!(dataProvider.isLoading$ | async)"
-    [emptyMessage]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async).title"
+    [emptyMessage]="emptyService.titleForType(emptyType)"
+    [emptyDescription]="emptyService.descriptionForType(emptyType)"
+    [emptyIcon]="emptyService.iconForType(emptyType)"
     (sortChange)="onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'name'" [sortable]="true">

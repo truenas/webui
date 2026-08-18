@@ -41,6 +41,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   Container,
   ContainerEnvVariablesFormGroup,
@@ -68,6 +69,7 @@ import {
 } from 'app/pages/containers/components/container-wizard/select-image-dialog/select-image-dialog.component';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerActive } from 'app/pages/containers/utils/container-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -132,14 +134,19 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
       .filter((name) => name !== this.editingContainer?.name)),
   );
 
+  /**
+   * A signal rather than a plain field because the toggle now lives in the `<tn-side-panel>`
+   * footer: the click handler runs in the host container, which never marks this OnPush form
+   * dirty, so a plain field would flip without the advanced sections re-rendering.
+   */
   protected readonly isAdvancedMode = signal(false);
 
-  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
+  /** `testId` pins the `data-test` value this form's in-body toggle already ships with. */
   private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
-    // Keeps the `button-advanced-options` test id the in-form toggle resolved to.
     testId: 'advanced-options',
   });
 
+  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer, before Save. */
   get footerActions(): SidePanelFooterAction[] {
     return this.advancedToggle();
   }
@@ -147,7 +154,20 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   protected readonly isEditMode = signal<boolean>(false);
   protected editingContainer: Container | null = null;
 
-  /** Container to edit; absent when adding. Supplied by the `<tn-side-panel>` host. */
+  /** Middleware refuses to rename a container that is not stopped (RUNNING or SUSPENDED). */
+  protected readonly isRenameBlocked = signal<boolean>(false);
+
+  protected readonly nameTooltip = computed(() => {
+    return this.isRenameBlocked()
+      ? this.translate.instant(containersHelptext.renameRequiresStoppedTooltip)
+      : this.translate.instant(containersHelptext.nameTooltip);
+  });
+
+  /**
+   * Container to edit, handed in by the `<tn-side-panel>` host (which has no `SlideInRef` to
+   * carry data). Absent for Add. Both openers pass the panel title themselves, so this form
+   * derives none of its own chrome.
+   */
   readonly editContainer = input<Container | undefined>(undefined);
 
   protected readonly hasPreferredPool = computed(() => {
@@ -314,6 +334,18 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   }
 
   private populateFormForEdit(container: Container): void {
+    // Middleware refuses to rename a container that is not stopped - since 26.0 that
+    // covers SUSPENDED as well as RUNNING - so don't offer a rename it would reject.
+    // `getRawValue()` still reports the disabled control, so the payload diff is unaffected.
+    const isRenameBlocked = isContainerActive(container);
+    this.isRenameBlocked.set(isRenameBlocked);
+
+    if (isRenameBlocked) {
+      this.form.controls.name.disable();
+    } else {
+      this.form.controls.name.enable();
+    }
+
     this.form.patchValue({
       name: container.name,
       description: container.description || '',

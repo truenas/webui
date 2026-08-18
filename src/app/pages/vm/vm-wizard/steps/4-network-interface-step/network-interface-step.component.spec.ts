@@ -3,8 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
+  TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
 } from '@truenas/ui-components';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VmNicType } from 'app/enums/vm.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -21,6 +22,8 @@ describe('NetworkInterfaceStepComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      // Mirrors main.ts: tn-form-field resolves validator messages through this app-wide resolver.
+      provideTnFormFieldErrors(),
       mockProvider(TnStepperComponent),
       mockApi([
         mockCall('vm.random_mac', '00:00:00:00:00:01'),
@@ -62,6 +65,17 @@ describe('NetworkInterfaceStepComponent', () => {
       nic_type: VmNicType.Virtio,
       trust_guest_rx_filters: true,
     });
+  });
+
+  // Middleware validates custom MACs as colon-separated only; the dash-separated form this
+  // field used to accept saved fine and then failed at VM start.
+  it('rejects a dash-separated MAC address with a message naming the expected format', async () => {
+    const macAddress = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="nic_mac"]' }));
+    await macAddress.setValue('10-66-6a-1f-f1-b1');
+
+    const macField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Mac Address' }));
+    expect(await macField.getErrorMessage())
+      .toBe('MAC address must be colon-separated, for example 00:a0:98:1b:2c:3d');
   });
 
   it('returns field summary when getSummary() is called', async () => {

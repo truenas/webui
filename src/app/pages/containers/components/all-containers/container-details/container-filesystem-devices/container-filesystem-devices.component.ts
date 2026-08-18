@@ -3,8 +3,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnCardAction, TnCardComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import { Container, ContainerDevice, ContainerFilesystemDevice } from 'app/interfaces/container.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -15,6 +16,7 @@ import { DeviceActionsMenuComponent } from 'app/pages/containers/components/comm
 import { getDeviceDescription } from 'app/pages/containers/components/common/utils/get-device-description.utils';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerActive } from 'app/pages/containers/utils/container-status.utils';
 
 @Component({
   selector: 'ix-container-filesystem-devices',
@@ -52,14 +54,20 @@ export class ContainerFilesystemDevicesComponent {
     return {
       label: this.translate.instant('Add'),
       testId: 'add-disk',
+      // Gated like the per-device Edit/Delete menu: middleware refuses the create just the
+      // same, and failing at submit after the form is filled in is worse than not offering it.
+      disabled: this.isContainerActive(),
       handler: () => this.addDisk(),
     };
   });
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
-  protected readonly isContainerRunning = computed(() => {
-    const container = this.containersStore.selectedContainer();
-    return container?.status.state === ContainerStatus.Running;
+  protected readonly helptext = containersHelptext;
+
+  // Middleware refuses device operations on any container that is not stopped, which since
+  // 26.0 includes SUSPENDED - not just RUNNING.
+  protected readonly isContainerActive = computed(() => {
+    return isContainerActive(this.containersStore.selectedContainer());
   });
 
   protected readonly visibleDisks = computed(() => {

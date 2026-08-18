@@ -1,7 +1,9 @@
-<!-- Implicit (Enter-key) submission routes through the host-facing submit() — not onSubmit() —
-     so the panel footer's Save still latches to "Saving…" if this form ever drops to one field.
-     Gated on canSubmit() because Enter fires (submit) even when the host's Save is disabled. -->
-<form class="ix-form-container" [formGroup]="form" (submit)="canSubmit() && submit()">
+<ix-form
+  [formGroup]="form"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section>
     <tn-form-field
       [label]="'Base Name' | translate"
@@ -48,4 +50,4 @@
       ></tn-checkbox>
     </tn-form-field>
   </tn-form-section>
-</form>
+</ix-form>

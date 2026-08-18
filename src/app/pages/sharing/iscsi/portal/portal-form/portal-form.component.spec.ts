@@ -56,9 +56,9 @@ describe('PortalFormComponent', () => {
         mockCall('iscsi.portal.create'),
         mockCall('iscsi.portal.update'),
       ]),
-      ...ixFormTestingProviders(),
       mockProvider(DialogService),
       provideMockStore(),
+      ...ixFormTestingProviders(),
     ],
   });
 
@@ -82,14 +82,16 @@ describe('PortalFormComponent', () => {
       const ipSelect = await loader.getHarness(TnSelectHarness);
       await ipSelect.selectOption('192.168.1.3');
 
-      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
       spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('iscsi.portal.create', [{
         comment: 'work',
         listen: [{ ip: '192.168.1.3' }],
       }]);
-      expect(closeSpy).toHaveBeenCalledWith(true);
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
@@ -118,14 +120,16 @@ describe('PortalFormComponent', () => {
       const ipSelect = await loader.getHarness(TnSelectHarness);
       await ipSelect.selectOption('0.0.0.0');
 
-      const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
       spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('iscsi.portal.update', [1, {
         comment: 'good',
         listen: [{ ip: '0.0.0.0' }],
       }]);
-      expect(closeSpy).toHaveBeenCalledWith(true);
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
