@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, signal, untracked, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, signal, untracked,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -33,7 +33,6 @@ import {
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
-import { reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -178,7 +177,8 @@ export class DiskListComponent {
   protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$, { initialValue: 0 });
   protected readonly emptyType = toSignal(this.dataProvider.emptyType$, { initialValue: EmptyType.Loading });
 
-  protected readonly emptyConfig = computed(() => this.emptyService.defaultEmptyConfig(this.emptyType()));
+  protected readonly emptyMessage = computed(() => this.emptyService.titleForType(this.emptyType()));
+  protected readonly emptyDescription = computed(() => this.emptyService.descriptionForType(this.emptyType()));
   protected readonly emptyIcon = computed(() => this.emptyService.iconForType(this.emptyType()));
 
   // `tn-empty` renders its action whenever `actionText` is set, so keep the previous behavior of
@@ -194,10 +194,13 @@ export class DiskListComponent {
     }
   });
 
-  private readonly table = viewChild(TnTableComponent<DiskRow>);
-
-  // Remembered so the header arrow survives a table rebuild; see `reflectSortIntoTable`.
-  private readonly activeSort = signal<TnSortEvent | null>(null);
+  /**
+   * Two-way bound to the table's header state, so the arrow survives a table rebuild — the empty
+   * state replaces the table whenever the list empties out, and searching down to zero results and
+   * back would otherwise leave a fresh header with no arrow over rows that are still sorted.
+   */
+  protected readonly sortColumn = signal('');
+  protected readonly sortDirection = signal<TnSortEvent['direction']>('');
 
   // By identifier, not row reference: a save rebuilds every row object.
   //
@@ -330,8 +333,6 @@ export class DiskListComponent {
   protected readonly trackByIdentifier = (_: number, row: DiskRow): string => row.identifier;
 
   constructor() {
-    restrictToSingleExpandedRow(this.table);
-    reflectSortIntoTable(this.table, this.activeSort);
     this.clearSelectionWhenRowsChange();
 
     this.dataProvider.load();
@@ -373,12 +374,7 @@ export class DiskListComponent {
     return normalizeTestIdString(row.name);
   }
 
-  protected onRowClick(row: DiskRow): void {
-    this.table()?.toggleRowExpansion(row);
-  }
-
   protected onSortChange(event: TnSortEvent): void {
-    this.activeSort.set(event);
     // Pass the column model so the derived columns keep sorting by their displayed
     // text (and Disk Size by its raw byte count), the way ix-table's head did.
     this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns(), { columns: this.columns() }));

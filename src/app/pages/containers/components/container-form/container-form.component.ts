@@ -134,14 +134,19 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
       .filter((name) => name !== this.editingContainer?.name)),
   );
 
+  /**
+   * A signal rather than a plain field because the toggle now lives in the `<tn-side-panel>`
+   * footer: the click handler runs in the host container, which never marks this OnPush form
+   * dirty, so a plain field would flip without the advanced sections re-rendering.
+   */
   protected readonly isAdvancedMode = signal(false);
 
-  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
+  /** `testId` pins the `data-test` value this form's in-body toggle already ships with. */
   private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
-    // Keeps the `button-advanced-options` test id the in-form toggle resolved to.
     testId: 'advanced-options',
   });
 
+  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer, before Save. */
   get footerActions(): SidePanelFooterAction[] {
     return this.advancedToggle();
   }
@@ -158,7 +163,11 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
       : this.translate.instant(containersHelptext.nameTooltip);
   });
 
-  /** Container to edit; absent when adding. Supplied by the `<tn-side-panel>` host. */
+  /**
+   * Container to edit, handed in by the `<tn-side-panel>` host (which has no `SlideInRef` to
+   * carry data). Absent for Add. Both openers pass the panel title themselves, so this form
+   * derives none of its own chrome.
+   */
   readonly editContainer = input<Container | undefined>(undefined);
 
   protected readonly hasPreferredPool = computed(() => {

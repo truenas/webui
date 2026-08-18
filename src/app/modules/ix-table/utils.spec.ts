@@ -1,7 +1,9 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, NEVER, of, Subject, map } from 'rxjs';
+import {
+  BehaviorSubject, EMPTY, NEVER, of, Subject, map,
+} from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import type { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
@@ -471,7 +473,13 @@ describe('tnTableListHost', () => {
       providers: [
         {
           provide: TranslateService,
-          useValue: { instant: (key: string) => translated(key), onLangChange: langChange$ },
+          useValue: {
+            instant: (key: string) => translated(key),
+            onLangChange: langChange$,
+            // `langChangeSignal` merges all three streams; only the language one is driven here.
+            onTranslationChange: EMPTY,
+            onDefaultLangChange: EMPTY,
+          },
         },
       ],
     });
@@ -494,7 +502,7 @@ describe('tnTableListHost', () => {
         const list = tnTableListHost<Row>(provider, { displayedColumns: ['name'] });
 
         // The catalog's `loadingConfig` title, so the six migrated lists can't drift onto a
-        // second spelling of it (webui carries both 'Loading...' and 'Loading…').
+        // second spelling of it (webui used to carry both 'Loading...' and 'Loading…').
         expect(list.loadingMessage()).toBe('Loading...');
       });
     });
@@ -765,6 +773,9 @@ describe('dataProviderEmptyState', () => {
           useValue: {
             instant: (key: string) => translated(key),
             onLangChange: langChange$,
+            // `langChangeSignal` merges all three streams; only the language one is driven here.
+            onTranslationChange: EMPTY,
+            onDefaultLangChange: EMPTY,
           },
         },
       ],
@@ -800,6 +811,16 @@ describe('dataProviderEmptyState', () => {
       // That config carries no second line, so nothing is rendered under the title.
       expect(empty.description()).toBe('');
       expect(empty.icon()).toBe('mdi-format-list-text');
+    });
+  });
+
+  it('flattens markup out of the description, which was written for ix-empty', () => {
+    translated = () => 'First line.<br>\nSecond line.';
+
+    TestBed.runInInjectionContext(() => {
+      const empty = dataProviderEmptyState(makeProvider(EmptyType.NoSearchResults, 0));
+
+      expect(empty.description()).toBe('First line. Second line.');
     });
   });
 

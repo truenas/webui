@@ -13,6 +13,7 @@ import {
   combineLatest, map, Observable,
 } from 'rxjs';
 import { startWith, take } from 'rxjs/operators';
+import { translated } from 'app/helpers/translated.helper';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -21,7 +22,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
@@ -97,10 +97,10 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   private readonly hasSedCapableDisks = toSignal(this.hasSedCapableDisks$, { initialValue: false });
   private readonly isEnterprise = toSignal(this.isEnterprise$, { initialValue: false });
 
-  // `translatedSignal`, not a plain `computed`: the labels are composed with `instant()` in
+  // `translated`, not a plain `computed`: the labels are composed with `instant()` in
   // TypeScript rather than piped in the template, so they would otherwise freeze at whatever was
   // loaded the first time this ran — including the raw keys, if the bundle had not been merged yet.
-  protected readonly encryptionTypeOptions = translatedSignal<Option<EncryptionType>[]>((translate) => {
+  protected readonly encryptionTypeOptions = translated<Option<EncryptionType>[]>((translate) => {
     const options: Option<EncryptionType>[] = [
       { label: translate.instant(helptextPoolCreation.encryptionTypeNone), value: EncryptionType.None },
       { label: translate.instant(helptextPoolCreation.encryptionTypeSoftware), value: EncryptionType.Software },

@@ -35,7 +35,6 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { reflectSortIntoTable } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerListBulkActionsComponent } from 'app/pages/containers/components/all-containers/container-list/container-list-bulk-actions/container-list-bulk-actions.component';
 import { ContainerStatusCellComponent } from 'app/pages/containers/components/all-containers/container-list/container-status-cell/container-status-cell.component';
@@ -106,15 +105,14 @@ export class ContainerListComponent {
   protected readonly isLoading = this.containersStore.isLoading;
   protected readonly metrics = this.containersStore.metrics;
   protected readonly selectedContainer = this.containersStore.selectedContainer;
+  /**
+   * The store owns the sort, so it is bound one-way onto the header: `onSortChange` writes every
+   * header click back to the store, and this pushes the result — plus the default and any
+   * programmatic sort — onto whichever table instance is mounted.
+   */
   protected readonly sort = this.containersStore.sort;
 
   protected readonly table = viewChild(TnTableComponent);
-
-  /** The store's sort in the shape `reflectSortIntoTable` reflects into the tn-table header. */
-  private readonly headerSort = computed<TnSortEvent>(() => ({
-    column: this.sort().active,
-    direction: this.sort().direction,
-  }));
 
   protected readonly displayedColumns = ['name', 'status', 'autostart', 'cpu', 'ram', 'io', 'controls'];
   protected readonly trackByContainerId = (_: number, container: Container): number => container.id;
@@ -143,9 +141,6 @@ export class ContainerListComponent {
   }, { equal: sameContainers });
 
   constructor() {
-    // Mirrors the store's sort state (the default and any programmatic sort) onto the header.
-    reflectSortIntoTable(this.table, this.headerSort);
-
     toObservable(this.containerId).pipe(
       distinctUntilChanged(),
       tap((containerId) => {

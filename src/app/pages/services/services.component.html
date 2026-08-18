@@ -12,7 +12,9 @@
     [displayedColumns]="displayedColumns"
     [trackBy]="trackByServiceId"
     [loading]="loading"
-    [emptyMessage]="emptyMessage()"
+    [emptyMessage]="emptyService.titleForType(emptyConfig)"
+    [emptyDescription]="emptyService.descriptionForType(emptyConfig)"
+    [emptyIcon]="emptyService.iconForType(emptyConfig)"
     (sortChange)="onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'name'" [sortable]="true">

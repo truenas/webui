@@ -20,17 +20,25 @@ import { Pipe, PipeTransform } from '@angular/core';
  * later in the string ("completes in <5 minutes") would lose the text between them. No catalog
  * message does today, but the input is translator-supplied — prefer `&lt;` in a message that
  * needs a literal one.
+ *
+ * Exported as a plain function as well as a pipe because the same flattening is needed off a
+ * template — `dataProviderEmptyState` resolves its description in TypeScript.
  */
+export function flattenEmptyMessage(message: string | undefined): string {
+  // `EmptyConfig.message` is optional, so this has to tolerate an absent one
+  // rather than throw on the first config that omits it.
+  return (message ?? '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Template-side wrapper around {@link flattenEmptyMessage}. */
 @Pipe({
   name: 'flattenEmptyMessage',
 })
 export class FlattenEmptyMessagePipe implements PipeTransform {
-  // `EmptyConfig.message` is optional, so the pipe has to tolerate an absent one
-  // rather than throw on the first config that omits it.
   transform(message: string | undefined): string {
-    return (message ?? '')
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
+    return flattenEmptyMessage(message);
   }
 }
