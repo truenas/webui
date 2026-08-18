@@ -345,6 +345,12 @@ export interface TableEmptyState {
   type: Signal<EmptyType>;
   /** Translated title for `[emptyMessage]`. */
   message: Signal<string>;
+  /**
+   * Translated second line for `[emptyDescription]` — the empty config's `message`, which
+   * ix-table rendered under the title. Empty string for a config that carries none (most of
+   * them do not), which `tn-table` renders as no second line at all.
+   */
+  description: Signal<string>;
   /** Icon marker for `[emptyIcon]`. */
   icon: Signal<string>;
   /** Row count of the current page, for gating a page-level empty state. */
@@ -354,10 +360,6 @@ export interface TableEmptyState {
 /**
  * A tn-table's empty-state bindings, derived from its data provider. Must be
  * called from an injection context.
- *
- * Only `EmptyConfig.title` survives — `tn-table` has no input for the config's
- * `message`, so the second line ix-table rendered on the no-search-results state
- * is dropped. Tracked under "Migration follow-ups" in TRUENAS_UI_INTEGRATION.md.
  */
 export function dataProviderEmptyState<T>(
   provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
@@ -381,6 +383,11 @@ export function dataProviderEmptyState<T>(
       // but `title` is optional on EmptyConfig.
       const title = emptyService.defaultEmptyConfig(type()).title;
       return title ? translate.instant(title) : '';
+    }),
+    description: computed(() => {
+      lang();
+      const message = emptyService.defaultEmptyConfig(type()).message;
+      return message ? translate.instant(message) : '';
     }),
     icon: computed(() => emptyService.iconForType(type())),
     count: toSignal(fromProvider(provider, (instance) => instance.currentPageCount$), { initialValue: 0 }),
@@ -407,7 +414,7 @@ export interface TnTableListHost<T extends object> {
    * which translate differently, and every fresh copy is a chance to add a third.
    */
   readonly loadingMessage: Signal<string>;
-  /** For `[emptyMessage]`/`[emptyIcon]` and the page-level empty state. */
+  /** For `[emptyMessage]`/`[emptyDescription]`/`[emptyIcon]` and the page-level empty state. */
   readonly empty: TableEmptyState;
   /** For `[displayedColumns]`. */
   readonly displayedColumns: Signal<string[]>;

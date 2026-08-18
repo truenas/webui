@@ -1,9 +1,8 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
@@ -54,7 +53,7 @@ describe('EnclosureHeaderComponent', () => {
       closed: of('new label'),
     } as DialogRef<unknown, SetEnclosureLabelDialog>);
 
-    const editLabel = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Label' }));
+    const editLabel = await loader.getHarness(TnButtonHarness.with({ label: 'Edit Label' }));
     await editLabel.click();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SetEnclosureLabelDialog, {

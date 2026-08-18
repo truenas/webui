@@ -1,13 +1,13 @@
 <div class="container">
   <div class="disk-details-header">
-    <button
-      mat-mini-fab
-      color="primary"
-      ixTest="close-details"
-      (click)="closeDetails()"
-    >
-      <tn-icon name="chevron-left" library="mdi"></tn-icon>
-    </button>
+    <tn-icon-button
+      name="chevron-left"
+      library="mdi"
+      [dense]="true"
+      [testId]="'close-details'"
+      [ariaLabel]="'Back to disks overview' | translate"
+      (onClick)="closeDetails()"
+    ></tn-icon-button>
     <span>
       {{ 'Disk Details for {disk}' | translate : { disk: diskName() } }}
     </span>
