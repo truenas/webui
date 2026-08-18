@@ -100,6 +100,32 @@ describe('ContainerListBulkActionsComponent', () => {
     expect(matDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
   });
 
+  // Middleware treats anything other than STOPPED as active, so a suspended container is a
+  // valid Stop/Restart target and must never be handed to Start.
+  describe('suspended containers', () => {
+    beforeEach(async () => {
+      spectator.setInput('checkedContainers', [
+        { id: 3, status: { state: ContainerStatus.Suspended } },
+      ] as Container[]);
+      await menu.open();
+    });
+
+    it('offers Stop and Restart but not Start', async () => {
+      const [start, stop, restart] = await menu.getItems();
+
+      expect(await start.isDisabled()).toBe(true);
+      expect(await stop.isDisabled()).toBe(false);
+      expect(await restart.isDisabled()).toBe(false);
+    });
+
+    it('stops a suspended container when Stop All Selected is clicked', async () => {
+      await menu.clickItem({ text: 'Stop All Selected' });
+      await spectator.fixture.whenStable();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('container.stop', [3, expect.anything()]);
+    });
+  });
+
   it('emits resetBulkSelection after actions', async () => {
     const resetSpy = jest.spyOn(spectator.component.resetBulkSelection, 'emit');
 

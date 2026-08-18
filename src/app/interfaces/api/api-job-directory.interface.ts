@@ -14,6 +14,7 @@ import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface'
 import { PullContainerImageParams, PullContainerImageResponse } from 'app/interfaces/container-image.interface';
 import {
   Container,
+  ContainerDeleteParams,
   CreateContainer,
 } from 'app/interfaces/container.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -196,6 +197,7 @@ export interface ApiJobDirectory {
 
   // Container
   'container.create': { params: [CreateContainer]; response: Container };
+  'container.delete': { params: ContainerDeleteParams; response: boolean };
   'container.migrate': { params: [containerId: number]; response: boolean };
   'container.stop': { params: [containerId: number, params?: { force?: boolean; force_after_timeout?: boolean }]; response: void };
 

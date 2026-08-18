@@ -4,14 +4,21 @@
       {{ 'Filesystem Devices' | translate }}
     </h3>
 
-    <button
+    <span
       *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="add-disk"
-      (click)="addDisk()"
+      class="add-button-wrapper"
+      [matTooltip]="isContainerActive() ? (helptext.deviceRequiresStoppedTooltip | translate) : ''"
+      [matTooltipDisabled]="!isContainerActive()"
     >
-      {{ 'Add' | translate }}
-    </button>
+      <button
+        mat-button
+        ixTest="add-disk"
+        [disabled]="isContainerActive()"
+        (click)="addDisk()"
+      >
+        {{ 'Add' | translate }}
+      </button>
+    </span>
   </mat-card-header>
 
   <mat-card-content>
@@ -25,8 +32,8 @@
           <ix-device-actions-menu
             [device]="disk"
             [showEdit]="true"
-            [isDisabled]="isContainerRunning()"
-            [disabledTooltip]="isContainerRunning() ? ('Cannot modify devices while container is running. Please stop the container first.' | translate) : null"
+            [isDisabled]="isContainerActive()"
+            [disabledTooltip]="isContainerActive() ? (helptext.deviceRequiresStoppedTooltip | translate) : null"
           ></ix-device-actions-menu>
         </div>
       } @empty {

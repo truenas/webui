@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   ContainerDevice,
 } from 'app/interfaces/container.interface';
@@ -15,6 +16,7 @@ import {
 import { getDeviceDescription } from 'app/pages/containers/components/common/utils/get-device-description.utils';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerActive } from 'app/pages/containers/utils/container-status.utils';
 
 @Component({
   selector: 'ix-container-usb-devices',
@@ -37,9 +39,12 @@ export class ContainerUsbDevicesComponent {
   private translate = inject(TranslateService);
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
-  protected readonly isContainerRunning = computed(() => {
-    const container = this.containersStore.selectedContainer();
-    return container?.status.state === ContainerStatus.Running;
+  protected readonly helptext = containersHelptext;
+
+  // Middleware refuses device operations on any container that is not stopped, which since
+  // 26.0 includes SUSPENDED - not just RUNNING.
+  protected readonly isContainerActive = computed(() => {
+    return isContainerActive(this.containersStore.selectedContainer());
   });
 
   protected readonly shownDevices = computed(() => {

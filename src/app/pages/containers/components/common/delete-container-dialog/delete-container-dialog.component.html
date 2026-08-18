@@ -1,0 +1,61 @@
+<h1 mat-dialog-title>{{ 'Delete Container' | translate }}</h1>
+
+<div mat-dialog-content>
+  <form class="ix-form-container" [formGroup]="form" (submit)="onDelete()">
+    <p class="delete-message">
+      {{ 'Delete {name}?' | translate: { name: container.name } }}
+    </p>
+
+    @if (!isStopped) {
+      <ix-warning
+        class="force-warning"
+        [message]="helptext.forceRequiredWarning | translate"
+      ></ix-warning>
+    }
+
+    <ix-checkbox
+      formControlName="force"
+      [label]="helptext.forceLabel | translate"
+      [tooltip]="(isStopped ? helptext.forceTooltip : helptext.forceRequiredTooltip) | translate"
+    ></ix-checkbox>
+
+    <ix-checkbox
+      formControlName="recursive"
+      [label]="helptext.recursiveLabel | translate"
+      [tooltip]="helptext.recursiveTooltip | translate"
+    ></ix-checkbox>
+
+    @if (isRecursive()) {
+      <ix-warning
+        color="red"
+        class="recursive-warning"
+        [message]="helptext.recursiveWarning | translate"
+      ></ix-warning>
+    }
+
+    <ix-checkbox
+      formControlName="confirm"
+      [label]="helptext.confirmLabel | translate"
+    ></ix-checkbox>
+  </form>
+</div>
+
+<div mat-dialog-actions>
+  <button
+    mat-button
+    ixTest="cancel"
+    [mat-dialog-close]="false"
+  >
+    {{ 'Cancel' | translate }}
+  </button>
+
+  <button
+    mat-button
+    color="warn"
+    ixTest="delete"
+    [disabled]="!canDelete()"
+    (click)="onDelete()"
+  >
+    {{ 'Delete' | translate }}
+  </button>
+</div>

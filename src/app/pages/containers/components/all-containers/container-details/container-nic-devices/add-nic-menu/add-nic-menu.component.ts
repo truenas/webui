@@ -4,6 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, Observable, switchMap } from 'rxjs';
@@ -24,6 +25,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerNicFormDialog } from 'app/pages/containers/components/common/container-nic-form-dialog/container-nic-form-dialog.component';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerActive } from 'app/pages/containers/utils/container-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -36,6 +38,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatDivider,
     MatMenu,
     MatMenuItem,
+    MatTooltip,
     TestDirective,
     TranslateModule,
     MatMenuTrigger,
@@ -59,6 +62,13 @@ export class AddNicMenuComponent {
   private matDialog = inject(MatDialog);
 
   protected readonly helptext = containersHelptext;
+
+  // Middleware refuses device operations on any container that is not stopped, so Add is
+  // gated exactly like the per-device Edit/Delete menu - otherwise the menu opens, the user
+  // fills the dialog in and only then gets a raw refusal.
+  protected readonly isContainerActive = computed(() => {
+    return isContainerActive(this.containersStore.selectedContainer());
+  });
 
   private readonly nicChoices = toSignal(
     this.getNicChoices().pipe(

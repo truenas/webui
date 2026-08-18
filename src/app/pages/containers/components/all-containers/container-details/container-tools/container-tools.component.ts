@@ -9,11 +9,11 @@ import { RouterLink } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { ContainerStatus } from 'app/enums/container.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerRunning } from 'app/pages/containers/utils/container-status.utils';
 
 @Component({
   selector: 'ix-container-tools',
@@ -43,16 +43,16 @@ export class ContainerToolsComponent {
   // system shell, so a user without that privilege can't open it regardless of state.
   protected readonly hasWebShellAccess = toSignal(this.authService.hasWebShellAccess$, { initialValue: false });
 
-  protected readonly isContainerStopped = computed(() => {
-    return this.container()?.status?.state !== ContainerStatus.Running;
-  });
+  // The shell needs a live init process, so RUNNING is the only state it can attach to -
+  // a SUSPENDED container is as unreachable as a stopped one.
+  private readonly isRunning = computed(() => isContainerRunning(this.container()));
 
-  protected readonly canOpenShell = computed(() => this.hasWebShellAccess() && !this.isContainerStopped());
+  protected readonly canOpenShell = computed(() => this.hasWebShellAccess() && this.isRunning());
 
   protected readonly shellTooltip = computed(() => {
     if (!this.hasWebShellAccess()) {
       return helptextGlobal.webShellAccessDenied;
     }
-    return this.isContainerStopped() ? T('Container is not running') : '';
+    return this.isRunning() ? '' : T('Container is not running');
   });
 }

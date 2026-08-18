@@ -14,3 +14,8 @@
   color: var(--fg2);
   padding: 16px 0;
 }
+
+.add-button-wrapper {
+  display: inline-block;
+  flex-shrink: 0;
+}

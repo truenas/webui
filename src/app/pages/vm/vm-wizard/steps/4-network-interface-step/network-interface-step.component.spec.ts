@@ -59,6 +59,16 @@ describe('NetworkInterfaceStepComponent', () => {
     });
   });
 
+  // Middleware validates custom MACs as colon-separated only; the dash-separated form this
+  // field used to accept saved fine and then failed at VM start.
+  it('rejects a dash-separated MAC address with a message naming the expected format', async () => {
+    const macAddress = await loader.getHarness(IxInputHarness.with({ label: 'Mac Address' }));
+    await macAddress.setValue('10-66-6a-1f-f1-b1');
+
+    expect(await macAddress.getErrorText())
+      .toBe('MAC address must be colon-separated, for example 00:a0:98:1b:2c:3d');
+  });
+
   it('returns field summary when getSummary() is called', async () => {
     await fillForm();
 
