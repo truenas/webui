@@ -5,11 +5,9 @@
  * R3.1: a test must not use the API to perform the action it is testing, and
  * must not use the UI to establish state it merely depends on.
  */
-import { TrueNasEndpoint, type TrueNasApiClient } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
-import { callUntyped } from '../support/api/untyped';
-
-const queryTimeoutMs = 30_000;
+import type { E2eApiClient } from '../support/api/client';
+import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 /**
  * The administrator both unauthenticated journeys create, sign in as, and delete.
@@ -46,22 +44,23 @@ export const testAdmin = {
  * Connecting per call also modelled something no user does: signing in twice
  * just to delete an account.
  */
-export async function ensureUserAbsent(client: TrueNasApiClient, username: string): Promise<void> {
-  // The element type is inferred from the call directory. It cannot be named —
-  // the curated directory's `TrueNasUser` is internal to the package — but
-  // inference gives it to us without a cast.
-  const users = await firstValueFrom(
+export async function ensureUserAbsent(client: E2eApiClient, username: string): Promise<void> {
+  // `query`, not `queryOne`. `queryOne` sends `get: true`, and middleware
+  // *errors* unless exactly one entry matches — so against the case this
+  // function exists for, a user who is already absent, it rejects rather than
+  // returning nothing. Filtering server-side and taking the first result keeps
+  // absence an ordinary answer.
+  const [existing] = await firstValueFrom(
     client.api
-      .call(TrueNasEndpoint.UserQuery, [[['username', '=', username]]])
-      .pipe(timeout(queryTimeoutMs)),
+      .query('user.query', [['username', '=', username]])
+      .pipe(timeout(readTimeoutMs)),
   );
 
-  const existing = users[0];
   if (!existing) {
     return;
   }
 
-  // `user.delete` is absent from the client's curated directory — see
-  // support/api/untyped.ts. Deletable once the full API surface lands.
-  await callUntyped(client, 'user.delete', [existing.id, {}]);
+  await firstValueFrom(
+    client.api.call('user.delete', [existing.id]).pipe(timeout(slowCallTimeoutMs)),
+  );
 }
