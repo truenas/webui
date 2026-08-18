@@ -13,7 +13,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerCapabilitiesPolicy, ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
@@ -84,11 +83,6 @@ describe('ContainerFormComponent', () => {
         mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
         mockCall('container.query', []),
       ]),
-      mockProvider(SlideInRef, {
-        getData: jest.fn(() => undefined as Container | undefined),
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      }),
       mockProvider(ContainersStore, {
         reload: jest.fn(),
       }),
@@ -122,35 +116,44 @@ describe('ContainerFormComponent', () => {
     TnSelectHarness.with({ selector: `[formControlName="${formControlName}"]` }),
   );
 
+  /**
+   * The Advanced/Basic toggle and Save live in the `<tn-side-panel>` footer, not in the form,
+   * so both are driven through the host-facing surface the panel container uses.
+   */
+  const toggleAdvanced = async (): Promise<void> => {
+    spectator.component.footerActions[0].onClick();
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+  };
+
+  const submit = async (): Promise<void> => {
+    spectator.component.submit();
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+  };
+
   describe('creating new container', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('shows form title "Add Container"', () => {
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      const title = spectator.component['title']();
-      expect(title).toBe('Add Container');
+    it('does not render its own Save button — the side panel host owns it', async () => {
+      const saveButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Save' }));
+      const createButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Create' }));
+      expect([...saveButtons, ...createButtons]).toHaveLength(0);
     });
 
-    it('sets isAdvancedMode to false by default', () => {
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['isAdvancedMode']).toBe(false);
-    });
+    it('offers the Advanced Options toggle as a side panel footer action', async () => {
+      expect(spectator.component.footerActions).toEqual([
+        expect.objectContaining({ label: 'Advanced Options', testId: 'advanced-options' }),
+      ]);
 
-    it('toggles isAdvancedMode when Advanced Options is clicked', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await toggleAdvanced();
 
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['isAdvancedMode']).toBe(true);
-
-      const basicButton = await loader.getHarness(TnButtonHarness.with({ label: 'Basic Options' }));
-      await basicButton.click();
-
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['isAdvancedMode']).toBe(false);
+      expect(spectator.component.footerActions).toEqual([
+        expect.objectContaining({ label: 'Basic Options', testId: 'advanced-options' }),
+      ]);
     });
 
     it('shows Browse Catalog button for image selection', async () => {
@@ -188,11 +191,6 @@ describe('ContainerFormComponent', () => {
           mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
         ]),
-        mockProvider(SlideInRef, {
-          getData: jest.fn(() => existingContainer as Container | undefined),
-          close: jest.fn(),
-          requireConfirmationWhen: jest.fn(),
-        }),
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
         }),
@@ -210,14 +208,8 @@ describe('ContainerFormComponent', () => {
     });
 
     beforeEach(() => {
-      spectator = createEditComponent();
+      spectator = createEditComponent({ props: { editContainer: existingContainer } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('shows form title with container name', () => {
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      const title = spectator.component['title']();
-      expect(title).toContain('test-container');
     });
 
     it('sets isEditMode to true', () => {
@@ -237,9 +229,8 @@ describe('ContainerFormComponent', () => {
       ).rejects.toThrow();
     });
 
-    it('shows Save button instead of Create button', async () => {
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(saveButton).toBeTruthy();
+    it('loads the container being edited from the panel input', () => {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.get_instance', [1]);
     });
 
     // Middleware refuses to rename a container that is not stopped - since 26.0 SUSPENDED
@@ -272,11 +263,6 @@ describe('ContainerFormComponent', () => {
             mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
             mockCall('container.query', []),
           ]),
-          mockProvider(SlideInRef, {
-            getData: jest.fn(() => container as Container | undefined),
-            close: jest.fn(),
-            requireConfirmationWhen: jest.fn(),
-          }),
           mockProvider(ContainersStore),
           mockProvider(TnDialog),
           mockProvider(DialogService),
@@ -285,7 +271,7 @@ describe('ContainerFormComponent', () => {
       });
 
       it(`${state === ContainerStatus.Stopped ? 'allows' : 'refuses'} the rename`, async () => {
-        spectator = createStateComponent();
+        spectator = createStateComponent({ props: { editContainer: container } });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
         const nameInput = await getInput('name');
@@ -307,8 +293,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('shows CPU Set field in Advanced Settings', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await toggleAdvanced();
 
       const cpusetInput = await getInput('cpuset');
       expect(cpusetInput).toBeTruthy();
@@ -325,8 +310,9 @@ describe('ContainerFormComponent', () => {
       const dialogService = spectator.inject(DialogService);
       const router = spectator.inject(Router);
       const snackbar = spectator.inject(SnackbarService);
-      const slideInRef = spectator.inject(SlideInRef);
       const containersStore = spectator.inject(ContainersStore);
+      const closedSpy = jest.fn();
+      spectator.component.closed.subscribe(closedSpy);
 
       const nameInput = await getInput('name');
       await nameInput.setValue('new-container');
@@ -344,17 +330,16 @@ describe('ContainerFormComponent', () => {
       });
       spectator.detectChanges();
 
-      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create' }));
-      expect(await submitButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
 
-      await submitButton.click();
+      await submit();
 
       expect(dialogService.jobDialog).toHaveBeenCalled();
       const jobDialogCall = (dialogService.jobDialog as jest.Mock).mock.calls[0];
       expect(jobDialogCall[1]).toEqual({ title: 'Creating Container' });
 
       expect(snackbar.success).toHaveBeenCalledWith('Container created');
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
+      expect(closedSpy).toHaveBeenCalledWith(true);
       expect(containersStore.reload).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['/containers', 'view', 1]);
     });
@@ -382,11 +367,6 @@ describe('ContainerFormComponent', () => {
           mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
         ]),
-        mockProvider(SlideInRef, {
-          getData: jest.fn(() => existingContainer as Container | undefined),
-          close: jest.fn(),
-          requireConfirmationWhen: jest.fn(),
-        }),
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
           containerUpdated: jest.fn(),
@@ -406,21 +386,21 @@ describe('ContainerFormComponent', () => {
     });
 
     beforeEach(() => {
-      spectator = createEditComponent();
+      spectator = createEditComponent({ props: { editContainer: existingContainer } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('submits update call with only changed fields when form is submitted', async () => {
       const api = spectator.inject(ApiService);
       const snackbar = spectator.inject(SnackbarService);
-      const slideInRef = spectator.inject(SlideInRef);
       const containersStore = spectator.inject(ContainersStore);
+      const closedSpy = jest.fn();
+      spectator.component.closed.subscribe(closedSpy);
 
       const nameInput = await getInput('name');
       await nameInput.setValue('updated-container');
 
-      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await submitButton.click();
+      await submit();
 
       expect(api.call).toHaveBeenCalledWith('container.update', [
         1,
@@ -430,7 +410,7 @@ describe('ContainerFormComponent', () => {
       ]);
 
       expect(snackbar.success).toHaveBeenCalledWith('Container updated');
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
+      expect(closedSpy).toHaveBeenCalledWith(true);
       expect(containersStore.containerUpdated).toHaveBeenCalledWith(
         expect.objectContaining({ name: 'updated-container' }),
       );
@@ -453,11 +433,7 @@ describe('ContainerFormComponent', () => {
     it('shows "Use Preferred Pool" checkbox in Advanced Settings when preferred pool is configured', async () => {
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
-      spectator.detectChanges();
-
-      await spectator.fixture.whenStable();
+      await toggleAdvanced();
       const usePreferredPoolCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Use Preferred Pool' }));
       expect(usePreferredPoolCheckbox).toBeTruthy();
       expect(await usePreferredPoolCheckbox.isChecked()).toBe(true);
@@ -466,11 +442,7 @@ describe('ContainerFormComponent', () => {
     it('shows pool selector when "Use Preferred Pool" is unchecked', async () => {
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
-      spectator.detectChanges();
-
-      await spectator.fixture.whenStable();
+      await toggleAdvanced();
 
       const usePreferredPoolCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Use Preferred Pool' }));
       await usePreferredPoolCheckbox.uncheck();
@@ -493,8 +465,7 @@ describe('ContainerFormComponent', () => {
       });
       spectator.detectChanges();
 
-      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create' }));
-      await submitButton.click();
+      await submit();
 
       expect(dialogService.jobDialog).toHaveBeenCalled();
       const jobDialogCall = (dialogService.jobDialog as jest.Mock).mock.calls[0];
@@ -532,11 +503,6 @@ describe('ContainerFormComponent', () => {
           mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
         ]),
-        mockProvider(SlideInRef, {
-          getData: jest.fn(() => undefined as Container | undefined),
-          close: jest.fn(),
-          requireConfirmationWhen: jest.fn(),
-        }),
         mockProvider(ContainersStore, {
           initialize: jest.fn(),
         }),
@@ -576,11 +542,7 @@ describe('ContainerFormComponent', () => {
     it('does not show pool selector in Advanced Settings when no preferred pool is configured', async () => {
       await spectator.fixture.whenStable();
 
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
-      spectator.detectChanges();
-
-      await spectator.fixture.whenStable();
+      await toggleAdvanced();
 
       const poolSelects = await loader.getAllHarnesses(TnSelectHarness.with({ selector: '[formControlName="pool"]' }));
       expect(poolSelects).toHaveLength(1);
@@ -594,16 +556,14 @@ describe('ContainerFormComponent', () => {
     });
 
     it('shows ID Map Type in advanced mode for create', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await toggleAdvanced();
 
       const idmapSelect = await getSelect('idmap_type');
       expect(idmapSelect).toBeTruthy();
     });
 
     it('shows slice input when Isolated is selected', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await toggleAdvanced();
 
       const idmapSelect = await getSelect('idmap_type');
       await idmapSelect.selectOption('Isolated');
@@ -614,8 +574,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('shows privileged warning when Privileged is selected', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await toggleAdvanced();
 
       const idmapSelect = await getSelect('idmap_type');
       await idmapSelect.selectOption('Privileged');
@@ -626,8 +585,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('does not show slice input for Default idmap type', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await toggleAdvanced();
 
       await expect(
         getInput('idmap_slice'),
@@ -655,11 +613,6 @@ describe('ContainerFormComponent', () => {
           mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic' }),
           mockCall('container.query', []),
         ]),
-        mockProvider(SlideInRef, {
-          getData: jest.fn(() => existingContainer as Container | undefined),
-          close: jest.fn(),
-          requireConfirmationWhen: jest.fn(),
-        }),
         mockProvider(ContainersStore, { initialize: jest.fn() }),
         mockProvider(TnDialog),
         mockProvider(DialogService),
@@ -668,13 +621,12 @@ describe('ContainerFormComponent', () => {
     });
 
     beforeEach(() => {
-      spectator = createEditComponent();
+      spectator = createEditComponent({ props: { editContainer: existingContainer } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('does not show ID Map Type in edit mode', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await toggleAdvanced();
 
       await expect(
         getSelect('idmap_type'),
@@ -689,8 +641,7 @@ describe('ContainerFormComponent', () => {
     });
 
     it('has only Default and Allow All options', async () => {
-      const advancedButton = await loader.getHarness(TnButtonHarness.with({ label: 'Advanced Options' }));
-      await advancedButton.click();
+      await toggleAdvanced();
 
       const capabilitiesSelect = await getSelect('capabilities_policy');
       const options = await capabilitiesSelect.getOptions();
@@ -717,8 +668,7 @@ describe('ContainerFormComponent', () => {
       });
       spectator.detectChanges();
 
-      const submitButton = await loader.getHarness(TnButtonHarness.with({ label: 'Create' }));
-      await submitButton.click();
+      await submit();
     }
 
     it('sends default idmap when Default is selected', async () => {

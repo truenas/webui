@@ -80,8 +80,12 @@ describe('MiniPageComponent', () => {
   });
 
   it('shows a header with enclosure label', () => {
-    const header = spectator.query('mat-card-header');
-    expect(header).toHaveText('MINI-X');
+    // The library ships no TnCardHarness yet, so the card title can only be asserted
+    // by reaching for its element. See the playbook's upstream-defects table.
+    const header = spectator.query('.tn-card__title');
+    // Exact (trimmed) rather than substring: 'MINI-X' alone would still pass if the
+    // 'Disks on {enclosure}' wrapper were lost.
+    expect(header?.textContent?.trim()).toBe('Disks on MINI-X');
   });
 
   it('shows pools and enclosure components', () => {

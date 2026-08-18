@@ -1,13 +1,18 @@
+@import 'mixins/tn-card';
+
 :host {
   align-items: center;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-bottom: 16px;
   width: 100%;
 }
 
-.title {
-  color: var(--fg2);
-  font-size: 23px;
+// This header is projected through `[tnCardHeader]`, which the library's own
+// `.tn-card__title` rule can't reach. The shared mixin restates that typography so a
+// projected title renders identically to a `[title]`-driven one. Named with a
+// webui-owned class rather than reusing the library's, so a future non-encapsulated
+// `.tn-card__title` rule can't apply on top of this one.
+.card-title {
+  @include tn-card-projected-title;
 }

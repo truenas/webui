@@ -786,6 +786,7 @@ describe('dataProviderEmptyState', () => {
       expect(empty.type()).toBe(EmptyType.NoSearchResults);
       expect(empty.count()).toBe(0);
       expect(empty.message()).toBe('No Search Results.');
+      expect(empty.description()).toBe('No matching results found');
       expect(empty.icon()).toBe('mdi-magnify-scan');
     });
   });
@@ -796,19 +797,23 @@ describe('dataProviderEmptyState', () => {
 
       expect(empty.count()).toBe(3);
       expect(empty.message()).toBe('No records have been added yet');
+      // That config carries no second line, so nothing is rendered under the title.
+      expect(empty.description()).toBe('');
       expect(empty.icon()).toBe('mdi-format-list-text');
     });
   });
 
-  it('re-translates the message when the language changes', () => {
+  it('re-translates the message and description when the language changes', () => {
     TestBed.runInInjectionContext(() => {
       const empty = dataProviderEmptyState(makeProvider(EmptyType.NoSearchResults, 0));
       expect(empty.message()).toBe('No Search Results.');
+      expect(empty.description()).toBe('No matching results found');
 
       translated = () => 'Aucun résultat.';
       langChange$.next({ lang: 'fr' } as LangChangeEvent);
 
       expect(empty.message()).toBe('Aucun résultat.');
+      expect(empty.description()).toBe('Aucun résultat.');
     });
   });
 

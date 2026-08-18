@@ -1,18 +1,26 @@
-<h3>
-  @if (slot().dev) {
-    {{ 'Drive Details {disk}' | translate: { disk: slot().dev } }}
-  } @else {
-    {{ 'Drive Details' | translate }}
-  }
-  <a
-    class="close"
-    mat-icon-button
-    ixTest="close-details"
-    (click)="onClosePressed()"
-  >
-    <tn-icon name="close" library="mdi"></tn-icon>
-  </a>
-</h3>
+<!--
+  The close button is a sibling of the <h3>, not a child: now that it has an accessible
+  name, nesting it would fold that name into the heading's own.
+-->
+<div class="details-header">
+  <h3>
+    @if (slot().dev) {
+      {{ 'Drive Details {disk}' | translate: { disk: slot().dev } }}
+    } @else {
+      {{ 'Drive Details' | translate }}
+    }
+  </h3>
+
+  <!-- Host-pinned to keep the legacy `link-close-details` id the `<a mat-icon-button>` resolved. -->
+  <tn-icon-button
+    name="close"
+    library="mdi"
+    tnTestIdType="link"
+    [tnTestId]="'close-details'"
+    [ariaLabel]="'Close drive details' | translate"
+    (onClick)="onClosePressed()"
+  ></tn-icon-button>
+</div>
 
 <ul class="overview">
   <li class="item">

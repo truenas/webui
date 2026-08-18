@@ -1,14 +1,11 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatAnchor } from '@angular/material/button';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { EmptyType } from 'app/enums/empty-type.enum';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { TranslateModule } from '@ngx-translate/core';
+import {
+  TnButtonComponent, TnEmptyComponent, TnSpinnerComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ViewElementsMenuComponent } from 'app/pages/system/enclosure/components/enclosure-header/view-elements-menu/view-elements-menu.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
@@ -23,38 +20,25 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   ],
   imports: [
     PageHeaderComponent,
-    MatAnchor,
-    TestDirective,
+    TnButtonComponent,
+    TnTestIdDirective,
     RouterLink,
     ViewElementsMenuComponent,
     RouterOutlet,
-    EmptyComponent,
+    TnEmptyComponent,
+    TnSpinnerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class EnclosureDashboardComponent {
-  protected enclosureStore = inject(EnclosureStore);
+  private enclosureStore = inject(EnclosureStore);
   private route = inject(ActivatedRoute);
   private api = inject(ApiService);
-  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  readonly isJbofLicensed$ = this.api.call('jbof.licensed');
+  protected readonly isJbofLicensed = toSignal(this.api.call('jbof.licensed'), { initialValue: 0 });
 
-  readonly selectedEnclosure = this.enclosureStore.selectedEnclosure;
-
-  loadingConf = {
-    type: EmptyType.Loading,
-    large: true,
-  } as EmptyConfig;
-
-  emptyDashboardConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    title: this.translate.instant('Enclosure Unavailable'),
-    message: this.translate.instant('We’re unable to access the enclosure at the moment. Please ensure it’s connected properly and reload the page.'),
-  };
+  protected readonly selectedEnclosure = this.enclosureStore.selectedEnclosure;
 
   protected readonly isLoading = this.enclosureStore.isLoading;
 
