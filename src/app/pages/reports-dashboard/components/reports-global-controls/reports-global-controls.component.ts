@@ -8,6 +8,7 @@ import { TnButtonComponent, TnSelectComponent, TnSlideToggleComponent } from '@t
 import { BehaviorSubject, debounceTime, take } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { SelectOption } from 'app/interfaces/option.interface';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { reportingGlobalControlsElements } from 'app/pages/reports-dashboard/components/reports-global-controls/reports-global-controls.elements';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
@@ -55,6 +56,8 @@ export class ReportsGlobalControlsComponent implements OnInit {
   private translate = inject(TranslateService);
 
   readonly diskOptionsChanged = output<{ devices: string[]; metrics: string[] }>();
+
+  protected readonly tnSelectLabels = tnSelectLabels;
 
   protected form = this.fb.group({
     autoRefresh: [false],

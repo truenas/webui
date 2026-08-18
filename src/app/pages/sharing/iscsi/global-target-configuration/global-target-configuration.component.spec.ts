@@ -124,6 +124,13 @@ describe('TargetGlobalConfigurationComponent', () => {
     expect(await (await getTnCheckbox('iser')).isChecked()).toBe(false);
   });
 
+  // tn-chip-input has no control-name fallback for its test id, so the base must be set explicitly.
+  it('renders a test id on the ISNS Servers field', async () => {
+    const isnsServers = await loader.getHarness(TnChipInputHarness.with({ testId: 'chip-input-isns-servers' }));
+
+    expect(isnsServers).toBeTruthy();
+  });
+
   it('saves form values and closes when the host submits the form', async () => {
     const closed = jest.fn();
     spectator.component.closed.subscribe(closed);
