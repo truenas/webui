@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnIconButtonHarness } from '@truenas/ui-components';
+import { firstValueFrom, of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
@@ -12,6 +13,7 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupMembersComponent } from 'app/pages/credentials/groups/group-members/group-members.component';
 
@@ -43,6 +45,9 @@ describe('GroupMembersComponent', () => {
       ]),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
+      mockProvider(UnsavedChangesService, {
+        showConfirmDialog: jest.fn(() => of(true)),
+      }),
       mockAuth(),
       mockWindow({
         navigator: {
@@ -83,6 +88,49 @@ describe('GroupMembersComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups']);
   });
 
+  async function moveFirstAvailableUserToMembers(): Promise<void> {
+    spectator.detectChanges();
+
+    spectator.click(spectator.queryAll('tn-list[aria-label="All Users"] tn-list-item')[0]);
+
+    const addButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'chevron-right' }));
+    await addButton.click();
+    spectator.detectChanges();
+  }
+
+  it('leaves the page without a prompt when members were not changed', async () => {
+    spectator.detectChanges();
+
+    await expect(firstValueFrom(spectator.component.canDeactivate())).resolves.toBe(true);
+    expect(spectator.inject(UnsavedChangesService).showConfirmDialog).not.toHaveBeenCalled();
+  });
+
+  it('asks to confirm leaving the page when members were changed', async () => {
+    await moveFirstAvailableUserToMembers();
+
+    await expect(firstValueFrom(spectator.component.canDeactivate())).resolves.toBe(true);
+    expect(spectator.inject(UnsavedChangesService).showConfirmDialog).toHaveBeenCalled();
+  });
+
+  it('stays on the page when the unsaved changes prompt is declined', async () => {
+    const unsavedChanges = spectator.inject(UnsavedChangesService);
+    unsavedChanges.showConfirmDialog = jest.fn(() => of(false));
+
+    await moveFirstAvailableUserToMembers();
+
+    await expect(firstValueFrom(spectator.component.canDeactivate())).resolves.toBe(false);
+  });
+
+  it('stops asking to confirm once the changed members are saved', async () => {
+    await moveFirstAvailableUserToMembers();
+
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+
+    await expect(firstValueFrom(spectator.component.canDeactivate())).resolves.toBe(true);
+    expect(spectator.inject(UnsavedChangesService).showConfirmDialog).not.toHaveBeenCalled();
+  });
+
   it('sends an update payload to websocket and closes modal when Save button is pressed', async () => {
     spectator.detectChanges();
 
@@ -104,6 +152,56 @@ describe('GroupMembersComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('group.update', [1, { users: [41, 42] }]);
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups']);
+  });
+});
+
+describe('GroupMembersComponent - initial loading', () => {
+  let spectator: SpectatorRouting<GroupMembersComponent>;
+  let groupQuery$: Subject<Group[]>;
+  let userQuery$: Subject<User[]>;
+
+  const createComponent = createRoutingFactory({
+    component: GroupMembersComponent,
+    imports: [ReactiveFormsModule, DualListBoxComponent],
+    providers: [
+      mockApi([]),
+      mockProvider(ApiService, {
+        call: jest.fn((method: string) => (method === 'group.query' ? groupQuery$ : userQuery$)),
+      }),
+      mockProvider(DialogService),
+      mockProvider(SnackbarService),
+      mockProvider(UnsavedChangesService),
+      mockAuth(),
+      mockWindow({
+        navigator: {
+          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        },
+      }),
+    ],
+    params: { pk: '1' },
+  });
+
+  beforeEach(() => {
+    groupQuery$ = new Subject<Group[]>();
+    userQuery$ = new Subject<User[]>();
+    spectator = createComponent();
+    spectator.detectChanges();
+  });
+
+  it('shows a spinner in place of the picker while the group is loading', () => {
+    expect(spectator.query('tn-spinner')).toExist();
+    expect(spectator.query('ix-dual-listbox')).not.toExist();
+  });
+
+  it('replaces the spinner with the picker once the group loads', () => {
+    groupQuery$.next(fakeGroupDataSource);
+    groupQuery$.complete();
+    userQuery$.next([{ id: 41, username: 'dummy-user' }] as User[]);
+    userQuery$.complete();
+    spectator.detectChanges();
+
+    expect(spectator.query('tn-spinner')).not.toExist();
+    expect(spectator.query('ix-dual-listbox')).toExist();
   });
 });
 

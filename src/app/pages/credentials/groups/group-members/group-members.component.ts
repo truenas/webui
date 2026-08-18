@@ -5,9 +5,10 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCardAction, TnCardComponent, TnCardHeaderDirective, TnCheckboxComponent, TnProgressBarComponent, tnIconMarker,
+  TnCardAction, TnCardComponent, TnCardHeaderDirective, TnCheckboxComponent, TnProgressBarComponent, TnSpinnerComponent,
+  tnIconMarker,
 } from '@truenas/ui-components';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -16,6 +17,8 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { CanComponentDeactivate } from 'app/modules/unsaved-changes/unsaved-form.guard';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -30,11 +33,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnCardHeaderDirective,
     TnCheckboxComponent,
     TnProgressBarComponent,
+    TnSpinnerComponent,
     ReadOnlyComponent,
     TranslateModule,
   ],
 })
-export class GroupMembersComponent implements OnInit {
+export class GroupMembersComponent implements OnInit, CanComponentDeactivate {
   private api = inject(ApiService);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
@@ -42,6 +46,7 @@ export class GroupMembersComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
+  private unsavedChangesService = inject(UnsavedChangesService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AccountWrite];
@@ -49,9 +54,22 @@ export class GroupMembersComponent implements OnInit {
   protected readonly selectedMembers = signal<User[]>([]);
   protected readonly users = signal<User[]>([]);
 
+  /**
+   * The members the group had when the page settled, in the same shape the picker holds them:
+   * ids of loaded users only, so a member the user list doesn't cover can't read as a change.
+   * Null until the group loads, and reset after a successful save so leaving isn't questioned.
+   */
+  private readonly savedMemberIds = signal<number[] | null>(null);
+
   protected readonly isLoading = signal(false);
   protected readonly group = signal<Group | null>(null);
   protected readonly hideBuiltinUsers = signal(false);
+
+  /**
+   * The first load has nothing to show yet, so it gets a spinner in place of the picker.
+   * A later load is a save in flight: the picker stays up and only the progress bar moves.
+   */
+  protected readonly isInitialLoading = computed(() => this.isLoading() && !this.group());
 
   /**
    * Built-in accounts (root, daemon, bin, ...) make up most of the list on a stock system
@@ -90,6 +108,23 @@ export class GroupMembersComponent implements OnInit {
     ]);
 
     return this.users().filter((user) => user.builtin && !shownAnyway.has(user.id)).length;
+  });
+
+  /**
+   * Membership is a set, not a list: moving a member out and back leaves the picker holding
+   * the same people in a different order, and that is not a change worth asking about.
+   */
+  private readonly hasUnsavedChanges = computed(() => {
+    const savedIds = this.savedMemberIds();
+
+    if (!savedIds) {
+      return false;
+    }
+
+    const currentIds = this.selectedMembers().map((user) => user.id);
+
+    return currentIds.length !== savedIds.length
+      || currentIds.some((id) => !savedIds.includes(id));
   });
 
   protected readonly hasAccountWrite = toSignal(
@@ -141,9 +176,12 @@ export class GroupMembersComponent implements OnInit {
           return;
         }
 
+        const members = users.filter((user) => group.users.includes(user.id));
+
         this.group.set(group);
         this.users.set(users);
-        this.selectedMembers.set(users.filter((user) => group.users.includes(user.id)));
+        this.selectedMembers.set(members);
+        this.savedMemberIds.set(members.map((user) => user.id));
         this.isLoading.set(false);
       },
       error: (error: unknown) => {
@@ -152,6 +190,10 @@ export class GroupMembersComponent implements OnInit {
         this.router.navigate(['/', 'credentials', 'groups']);
       },
     });
+  }
+
+  canDeactivate(): Observable<boolean> {
+    return this.hasUnsavedChanges() ? this.unsavedChangesService.showConfirmDialog() : of(true);
   }
 
   protected onCancel(): void {
@@ -167,6 +209,7 @@ export class GroupMembersComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.isLoading.set(false);
+        this.savedMemberIds.set(userIds);
         this.router.navigate(['/', 'credentials', 'groups']);
       },
       error: (error: unknown) => {
