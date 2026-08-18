@@ -808,15 +808,9 @@ describe('dataProviderEmptyState', () => {
 
       expect(empty.count()).toBe(3);
       expect(empty.message()).toBe('No records have been added yet');
-      expect(empty.icon()).toBe('mdi-format-list-text');
-    });
-  });
-
-  it('reports an empty description for a config that carries no message', () => {
-    TestBed.runInInjectionContext(() => {
-      const empty = dataProviderEmptyState(makeProvider(EmptyType.NoPageData, 3));
-
+      // That config carries no second line, so nothing is rendered under the title.
       expect(empty.description()).toBe('');
+      expect(empty.icon()).toBe('mdi-format-list-text');
     });
   });
 
@@ -830,29 +824,17 @@ describe('dataProviderEmptyState', () => {
     });
   });
 
-  it('re-translates the message when the language changes', () => {
+  it('re-translates the message and description when the language changes', () => {
     TestBed.runInInjectionContext(() => {
       const empty = dataProviderEmptyState(makeProvider(EmptyType.NoSearchResults, 0));
       expect(empty.message()).toBe('No Search Results.');
+      expect(empty.description()).toBe('No matching results found');
 
       translated = () => 'Aucun résultat.';
       langChange$.next({ lang: 'fr' } as LangChangeEvent);
 
       expect(empty.message()).toBe('Aucun résultat.');
-    });
-  });
-
-  // The description delegates to EmptyService, which owns its own language dependency — this
-  // guards that delegating didn't drop the re-translation the inline derivation used to do.
-  it('re-translates the description when the language changes', () => {
-    TestBed.runInInjectionContext(() => {
-      const empty = dataProviderEmptyState(makeProvider(EmptyType.NoSearchResults, 0));
-      expect(empty.description()).toBe('No matching results found');
-
-      translated = () => 'Aucun résultat correspondant.';
-      langChange$.next({ lang: 'fr' } as LangChangeEvent);
-
-      expect(empty.description()).toBe('Aucun résultat correspondant.');
+      expect(empty.description()).toBe('Aucun résultat.');
     });
   });
 

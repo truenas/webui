@@ -1,4 +1,7 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconButtonComponent, TnIconButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
@@ -13,6 +16,7 @@ import { getItemValueFactory } from 'app/pages/system/enclosure/utils/get-item-v
 
 describe('MiniDriveDetailsComponent', () => {
   let spectator: Spectator<MiniDriveDetailsComponent>;
+  let loader: HarnessLoader;
   const slot = {
     model: 'A3',
     rotationrate: 7200,
@@ -50,6 +54,7 @@ describe('MiniDriveDetailsComponent', () => {
       },
     });
     getItemValue = getItemValueFactory(spectator);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows pool for the selected slot', () => {
@@ -72,10 +77,22 @@ describe('MiniDriveDetailsComponent', () => {
     expect(getItemValue('Status:')).toMatch('Online');
   });
 
-  it('unselects a slot when X is pressed', () => {
-    spectator.click('tn-icon');
+  it('unselects a slot when the close button is pressed', async () => {
+    const closeButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'close' }));
+    await closeButton.click();
 
     expect(spectator.inject(EnclosureStore).selectSlot).toHaveBeenCalledWith(null);
+  });
+
+  it('keeps the legacy link-close-details test id on the host', () => {
+    // `tn-icon-button` hard-codes `tnTestIdType="button"` on its inner element, so the legacy
+    // `link-*` id is pinned on the host. Guards against a silent rename to `button-close-details`.
+    expect(spectator.query('tn-icon-button')).toHaveAttribute('data-test', 'link-close-details');
+  });
+
+  it('gives the close button an accessible name', () => {
+    // The library ships no `getAriaLabel()` on TnIconButtonHarness yet, so read the public input.
+    expect(spectator.query(TnIconButtonComponent)!.ariaLabel()).toBe('Close drive details');
   });
 
   it('shows friendly VDEV name for data drives', () => {
