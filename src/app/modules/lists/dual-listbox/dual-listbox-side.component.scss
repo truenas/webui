@@ -1,0 +1,125 @@
+@import 'mixins/tn-list';
+
+:host {
+  display: block;
+  margin: 0;
+  width: 100%;
+}
+
+.listbox-header {
+  align-items: center;
+  background-color: var(--lines);
+  border-bottom: 1px solid var(--lines);
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 4px 8px 4px 16px;
+}
+
+.listbox-title {
+  align-items: baseline;
+  color: var(--fg2);
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listbox-count {
+  color: var(--alt-fg2);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+// Flush with the header and the list below it, so all three share one left edge.
+.listbox-search {
+  display: block;
+  padding: 8px 0;
+}
+
+.record-picker {
+  border: 1px solid var(--lines);
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+
+  tn-list {
+    display: block;
+    margin: 0;
+    padding: 0 0 1px;
+
+    &.over {
+      background-color: var(--bg2);
+    }
+
+    tn-list-item {
+      background-color: var(--bg2);
+      border-bottom: 1px solid var(--lines);
+      border-top: thin solid var(--lines);
+      color: var(--fg2);
+      cursor: pointer;
+      display: block;
+      margin-bottom: -1px;
+      min-height: 23px;
+      text-align: left;
+
+      &:first-child {
+        border-top: none;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
+        outline: none;
+      }
+
+      &:hover {
+        background-color: var(--bg1);
+      }
+
+      // Selection state lives on aria-selected, so the highlight and what a screen
+      // reader announces can never drift apart.
+      &[aria-selected='true'] {
+        background-color: var(--primary);
+      }
+
+      &.disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
+      // Wrapping comes from tn-list-item's [wrap] input; these are the row metrics
+      // this drag-drop widget has always used, which are tighter than the library's
+      // standard 48px row.
+      @include tn-list-item-content {
+        min-height: 23px;
+        padding: 12px 16px;
+      }
+
+      @include tn-list-item-primary-text {
+        color: var(--fg2);
+      }
+
+      @include tn-list-item-leading-gap(5px);
+
+      label {
+        cursor: pointer;
+        margin-bottom: -1px;
+        padding: 0;
+        user-select: none;
+        white-space: normal;
+        word-break: break-word;
+      }
+    }
+
+    .no-matches {
+      color: var(--alt-fg2);
+      font-size: 13px;
+      margin: 0;
+      padding: 12px 16px;
+    }
+  }
+}
