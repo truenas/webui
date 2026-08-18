@@ -71,4 +71,20 @@ describe('ContainerNicFormDialogComponent', () => {
     const button = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     expect(await button.isDisabled()).toBeTruthy();
   });
+
+  // Middleware accepts colon-separated MACs only; the dash, unseparated and Cisco dotted
+  // forms used to save and then fail at container start.
+  it.each([
+    ['dash-separated', '10-66-6a-1f-f1-b1'],
+    ['unseparated', '10666a1ff1b1'],
+    ['mixed-separator', '10-66:6a-1f:f1-b1'],
+    ['Cisco dotted', '1066.6a1f.f1b1'],
+  ])('doesnt allow a %s mac value', async (_, mac) => {
+    const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Use Default Mac Address' }));
+    await checkbox.uncheck();
+    const input = await loader.getHarness(TnInputHarness);
+    await input.setValue(mac);
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    expect(await button.isDisabled()).toBeTruthy();
+  });
 });

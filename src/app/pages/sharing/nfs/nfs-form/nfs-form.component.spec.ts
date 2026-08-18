@@ -2,8 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Provider } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-// TODO(NAS-141028): swap to TnButtonHarness once the shared ix-form's Save migrates to tn-button.
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -28,7 +26,6 @@ import {
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -61,12 +58,6 @@ describe('NfsFormComponent', () => {
   let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const getTnCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -128,7 +119,6 @@ describe('NfsFormComponent', () => {
         closed: of(true),
       })),
     }),
-    mockProvider(SlideInRef, slideInRef),
     provideMockStore({
       selectors: [
         {
@@ -141,6 +131,9 @@ describe('NfsFormComponent', () => {
         },
       ],
     }),
+    // The `<ix-form>` this form renders needs its own service mocks, and the bundle also
+    // zeroes the min-feedback hold so a successful close stays synchronous.
+    ...ixFormTestingProviders(),
   ];
 
   const createComponent = createComponentFactory({
@@ -223,8 +216,10 @@ describe('NfsFormComponent', () => {
 
       await (await getTnCheckbox('expose_snapshots')).check();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('sharing.nfs.create', [{
         path: '/mnt/new/ds',
@@ -241,7 +236,7 @@ describe('NfsFormComponent', () => {
         expose_snapshots: true,
       }]);
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
@@ -319,8 +314,10 @@ describe('NfsFormComponent', () => {
       const networks = await loader.getAllHarnesses(IxIpInputWithNetmaskHarness.with({ label: 'Network' }));
       await networks[1].setValue('10.56.1.1/20');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('sharing.nfs.update', [
         1,
@@ -339,7 +336,7 @@ describe('NfsFormComponent', () => {
         },
       ]);
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closed).toHaveBeenCalledWith(true);
     });
 
     it('checks if NFS service is not enabled and enables it after confirmation', async () => {
@@ -347,22 +344,15 @@ describe('NfsFormComponent', () => {
 
       await setDescription('Updated share');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
     });
   });
 
-  describe('side panel host (no SlideInRef)', () => {
+  describe('edit data supplied by the side-panel host', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          { provide: SlideInRef, useValue: null },
-          // The `<ix-form>` this mode renders needs its own service mocks, and the bundle also
-          // zeroes the panel-mode min-feedback hold so the close stays synchronous.
-          ...ixFormTestingProviders(),
-        ],
         props: { nfsShareData: { existingNfsShare: existingShare } },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

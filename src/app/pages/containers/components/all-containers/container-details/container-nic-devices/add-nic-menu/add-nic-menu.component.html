@@ -6,7 +6,9 @@
     variant="filled"
     color="primary"
     [testId]="'add-nic'"
+    [disabled]="isContainerActive()"
     [label]="'Add' | translate"
+    [tnTooltip]="isContainerActive() ? (helptext.deviceRequiresStoppedTooltip | translate) : ''"
     [tnMenuTriggerFor]="addNicMenu"
   ></tn-button>
 

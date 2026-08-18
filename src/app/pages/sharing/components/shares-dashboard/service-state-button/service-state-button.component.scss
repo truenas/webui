@@ -2,3 +2,24 @@
   margin-left: 8px;
   margin-right: 8px;
 }
+
+// Reproduces the outlined-pill look the Material stroked button + `.fn-theme-*` used to give
+// this readout. `background: transparent` is required: the global `.fn-theme-*` helpers paint a
+// filled background, and these badges want the theme colour on the text only.
+.service-status {
+  align-items: center;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 25px;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 700;
+  height: 30px;
+  line-height: 1;
+  padding: 0 16px;
+  white-space: nowrap;
+
+  &.fn-theme-green { color: var(--green); }
+  &.fn-theme-grey { color: var(--grey); }
+  &.fn-theme-orange { color: var(--orange); }
+}

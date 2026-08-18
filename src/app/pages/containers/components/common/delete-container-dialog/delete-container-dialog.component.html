@@ -1,0 +1,65 @@
+<tn-dialog-shell
+  testId="delete-container"
+  [title]="'Delete Container' | translate"
+>
+  <form class="ix-form-container" [formGroup]="form" (submit)="onDelete()">
+    <p class="delete-message">
+      {{ 'Delete {name}?' | translate: { name: container.name } }}
+    </p>
+
+    @if (!isStopped) {
+      <tn-banner
+        type="warning"
+        [message]="helptext.forceRequiredWarning | translate"
+      ></tn-banner>
+    }
+
+    <tn-form-field [tooltip]="(isStopped ? helptext.forceTooltip : helptext.forceRequiredTooltip) | translate">
+      <tn-checkbox
+        testId="force"
+        formControlName="force"
+        [label]="helptext.forceLabel | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    <tn-form-field [tooltip]="helptext.recursiveTooltip | translate">
+      <tn-checkbox
+        testId="recursive"
+        formControlName="recursive"
+        [label]="helptext.recursiveLabel | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+
+    @if (isRecursive()) {
+      <tn-banner
+        type="error"
+        [message]="helptext.recursiveWarning | translate"
+      ></tn-banner>
+    }
+
+    <tn-form-field>
+      <tn-checkbox
+        testId="confirm"
+        formControlName="confirm"
+        [label]="helptext.confirmLabel | translate"
+      ></tn-checkbox>
+    </tn-form-field>
+  </form>
+
+  <ix-form-actions tnDialogAction>
+    <tn-button
+      variant="outline"
+      testId="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close(false)"
+    ></tn-button>
+
+    <tn-button
+      color="warn"
+      testId="delete"
+      [label]="'Delete' | translate"
+      [disabled]="!canDelete()"
+      (onClick)="onDelete()"
+    ></tn-button>
+  </ix-form-actions>
+</tn-dialog-shell>
