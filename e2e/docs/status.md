@@ -14,6 +14,24 @@ and keep it short.**
 
 ## Where we are
 
+Running on **`@truenas/api-client` 2.x**, which types the full generated API
+surface per version rather than a curated subset of 65 endpoints. That removed
+the escape hatch the suite used to need: `support/api/untyped.ts` and its eleven
+call sites are gone, and every middleware call is now checked against the real
+signature. `pool.export` and `service.control` are declared as *jobs*, so both now go
+through `runJob`, which starts the job and then re-reads `core.get_jobs` until it
+reaches a terminal state. That replaced polling for a side effect with reading
+the job's own verdict — and it is deliberately a poll rather than
+`client.api.job()`, because those two jobs restart services over the socket the
+event stream depends on.
+
+`support/api/client.ts` names the API surface the suite is written against —
+**v26**, which is the newest the client can actually negotiate
+(`MAX_SUPPORTED_VERSION` is `v26.0.0`; it has no v27 implementation). Appliances
+advertising v27 connect on v26 anyway. That type parameter is the one place the
+choice is made; left unset the client defaults to v25.10.0, whose smaller
+directory makes most of what the fixtures call look unavailable.
+
 Three tests, green against real appliances. `smoke` proves the authenticated
 session loads; `admin-user` creates a TrueNAS admin and signs in as them;
 `fresh-install` is the day-one journey — user, 9-wide RAIDZ2 pool, dataset, SMB
@@ -49,30 +67,29 @@ argued from a number that does not exist.
 2. **CI.** Only `yarn e2e:typecheck` runs today, in the lint job. Running the
    suite needs runners that can reach the appliance network and a provisioning
    step — see `NAS-e2e-environment-architecture` for that design.
-3. **Retire `support/api/untyped.ts`.** Eleven call sites across
-   `fixtures/storage.ts` (8), `fresh-install.e2e.ts` (2) and `fixtures/users.ts`
-   (1), waiting on an api-client release that types the full surface and jobs.
-   `pool.export` and `service.control` are jobs, so that release also removes
-   the polling in `ensurePoolAbsent` and `ensureSmbServiceStopped`.
-4. **Observability.** No WebSocket capture, no middleware log collection, no
+3. **Observability.** No WebSocket capture, no middleware log collection, no
    version recording in reports. These are what make a 3am failure diagnosable
    by someone who did not write the test.
 
 ## Known gaps
 
 - **TLS verification is disabled process-wide** by `playwright.config.ts`, not
-  scoped to the one connection that needs it. No seam exists in
-  `@truenas/api-client@1.0.6` — see the comment there for what would be needed.
+  scoped to the one connection that needs it. Still no seam in
+  `@truenas/api-client@2.0.1`: `CreateClientOptions` gained nothing for TLS in
+  2.0, so this is the one upstream ask the major version did not answer. See the
+  comment there for what would close it.
 - **Nothing guards the `data-test` contract.** Every locator depends on
   attributes that webui's own convention forbids unit tests from asserting on,
   so they have no coverage in the repository that emits them. NAS-142069 was one
   such attribute deleted by a migration and caught by a person, not by CI.
 - **Fixed names** (`bob`, `e2e_tank`) mean two runs against one appliance
   collide. Fine for one-appliance-per-run; run-scoped naming is the fix.
-- **Upstream asks on `@truenas/api-client`:** `AuthResponseType` and
-  `ServiceControlAction` are declared but not exported, and both appear in
-  signatures callers must satisfy. The second is why `service.control` alone
-  cannot go through the typed API.
+- **One upstream ask left on `@truenas/api-client`:** `AuthResponseType` is
+  declared but not exported, while `AuthResponse.response_type` is typed as it —
+  so `support/api/client.ts` checks a successful login by comparing
+  `String(...)` against `'SUCCESS'`. (`ServiceControlAction` was the same
+  problem in 1.x and is no longer: in 2.x `service.control` is a job and takes
+  the verb as a literal.)
 
 ---
 
@@ -110,8 +127,7 @@ comment instead.
 | R8.2 | At most one retry per test |
 | R8.3 | No fixed sleeps — wait on observable conditions |
 | R8.4 | Quarantine policy for persistently flaky tests |
-| T3 | Middleware client is `@truenas/api-client` |
-| T3.1 | Its typed `call()` covers a curated subset, hence `support/api/untyped.ts` |
+| T3 | Middleware client is `@truenas/api-client` (2.x; T3.1 covered the curated-subset problem that version removed) |
 | T5 | Authentication via a setup project plus `storageState` |
 | T10 | Configuration through target profiles, resolved in one module |
 | D2 | Parallel execution by sharding across appliances — deferred |

@@ -4,7 +4,7 @@
  * Provides a connected, authenticated middleware client as a fixture, so a spec
  * never wires one up by hand. That wiring was previously copied into each spec:
  *
- *     let api: TrueNasApiClient;
+ *     let api: E2eApiClient;
  *     test.beforeAll(async () => { api = await connectAndLogin(config); });
  *     test.afterAll(() => { api?.close(); });
  *
@@ -13,7 +13,7 @@
  * mistake.
  */
 import { test as base } from '@playwright/test';
-import type { TrueNasApiClient } from '@truenas/api-client';
+import type { E2eApiClient } from './api/client';
 import { connectAndLogin } from './api/client';
 import { loadTargetConfig, type TargetConfig } from './config';
 
@@ -27,7 +27,7 @@ export interface E2eWorkerFixtures {
    * action under test. Driving the API to do the thing the test is about is the
    * difference between testing the UI and testing middleware.
    */
-  api: TrueNasApiClient;
+  api: E2eApiClient;
 }
 
 /**

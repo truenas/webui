@@ -22,7 +22,7 @@
  * duplicated coverage is the price of keeping the premise honest; the two tests
  * share one identity (`testAdmin`) so it is visibly the same account.
  */
-import type { TrueNasApiClient } from '@truenas/api-client';
+import { firstValueFrom, timeout } from 'rxjs';
 import {
   ensurePoolAbsent, ensureSmbServiceStopped, ensureSmbShareAbsent, findGroupAclGrants,
   requireUnusedDisks,
@@ -31,8 +31,9 @@ import { ensureUserAbsent, testAdmin } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
 import { createRaidz2Pool, createSmbDataset, createSmbShare } from '../../flows/storage';
 import { createTrueNasAdminUser } from '../../flows/users';
-import { callUntyped } from '../../support/api/untyped';
+import type { E2eApiClient } from '../../support/api/client';
 import { expect, test } from '../../support/fixtures';
+import { readTimeoutMs } from '../../support/timeouts';
 
 /**
  * Nine disks in a single RAIDZ2 vdev: seven data, two parity, surviving any two
@@ -47,6 +48,17 @@ const share = 'e2e-share';
 const datasetPath = `/mnt/${pool.name}/${dataset}`;
 
 const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
+
+/**
+ * Per-call bound inside the service-state poll below.
+ *
+ * Deliberately a fraction of the poll's own 60s budget: equal to it, the call
+ * could only ever expire as the poll did, which bounds nothing. Playwright also
+ * awaits the generator *outside* its try/catch, so a rejection aborts the poll
+ * rather than failing one attempt — hence the catch in the generator too.
+ */
+const serviceStateCallTimeoutMs = 10_000;
+
 
 /**
  * Restores the fresh-instance premise the story depends on.
@@ -65,12 +77,13 @@ const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
  *
  * (An earlier revision moved the user deletion to the front, reasoning that
  * `pool.export` restarts services and leaves the socket unreliable for whatever
- * runs next. That was wrong twice over. `ensurePoolAbsent` only returns once
- * `waitUntil` has had a query answered, so the socket is demonstrably working by
- * then — and putting the user first meant a failure there aborted cleanup before
- * the pool, inverting exactly the priority above.)
+ * runs next. That was wrong twice over. `ensurePoolAbsent` polls `core.get_jobs`
+ * until the export reaches a terminal state, so by the time it returns a query
+ * has just been answered and the connection is demonstrably working — and
+ * putting the user first meant a failure there aborted cleanup before the pool,
+ * inverting exactly the priority above.)
  */
-async function cleanUp(api: TrueNasApiClient): Promise<void> {
+async function cleanUp(api: E2eApiClient): Promise<void> {
   const steps: [string, () => Promise<unknown>][] = [
     ['stop the SMB service', () => ensureSmbServiceStopped(api)],
     ['remove the SMB share', () => ensureSmbShareAbsent(api, share)],
@@ -142,10 +155,8 @@ test('an admin sets up a fresh instance: user, pool, dataset, SMB share', async 
   // whether the appliance is genuinely in the intended state, which is a
   // different question from whether the screens said so.
   await test.step('confirm the appliance is actually serving', async () => {
-    const shares = await callUntyped<{ name: string; path: string; enabled: boolean }[]>(
-      api,
-      'sharing.smb.query',
-      [[['name', '=', share]]],
+    const shares = await firstValueFrom(
+      api.api.query('sharing.smb.query', [['name', '=', share]]).pipe(timeout(readTimeoutMs)),
     );
 
     expect(shares).toHaveLength(1);
@@ -159,17 +170,45 @@ test('an admin sets up a fresh instance: user, pool, dataset, SMB share', async 
     // Polled rather than sampled once: starting a service is a job, so it
     // completes after the dialog closes. Sampling immediately races it and
     // reports STOPPED on a service that is seconds from running (R8.3).
+    // Carried out of the poll so a persistent query fault is named in the
+    // failure rather than hidden behind "SMB never started".
+    let lastPollError: unknown;
+
     await expect.poll(
       async () => {
-        const [cifs] = await callUntyped<{ state: string }[]>(
-          api,
-          'service.query',
-          [[['service', '=', 'cifs']]],
-        );
-        return cifs?.state;
+        // Caught, not just bounded. Playwright awaits this generator outside
+        // its own try/catch, so a rejection aborts the poll outright and
+        // surfaces an rxjs error instead of the message below. Starting the SMB
+        // service restarts it, so a rejected query here is an ordinary step on
+        // the way to RUNNING — report it as "not yet" and let the poll continue.
+        try {
+          const [cifs] = await firstValueFrom(
+            api.api
+              .query('service.query', [['service', '=', 'cifs']])
+              .pipe(timeout(serviceStateCallTimeoutMs)),
+          );
+          return cifs?.state;
+        } catch (error) {
+          // Kept, not swallowed. A bare catch cannot tell "the socket dropped
+          // while cifs restarts" from "this call is broken", and both would
+          // otherwise spend the full budget before blaming SMB.
+          lastPollError = error;
+          return undefined;
+        }
       },
-      { timeout: 60_000, message: 'SMB service never reached RUNNING after the start dialog' },
+      {
+        timeout: 60_000,
+        message: 'SMB service never reached RUNNING after the start dialog',
+      },
     ).toBe('RUNNING');
+
+    if (lastPollError) {
+      const detail = lastPollError instanceof Error
+        ? lastPollError.message
+        : String(lastPollError);
+
+      console.warn(`[e2e] service.query rejected at least once while waiting for SMB: ${detail}`);
+    }
   });
 
   // The share is only useful if the admin who made it can actually read and
