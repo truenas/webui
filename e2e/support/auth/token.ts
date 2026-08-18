@@ -14,8 +14,8 @@
  * supports — and it takes an explicit TTL rather than leaving us with whatever
  * the server's default happens to be (R4.3).
  */
-import { TrueNasEndpoint, type TrueNasApiClient } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
+import type { E2eApiClient } from '../api/client';
 
 /**
  * Token lifetime. Comfortably longer than the ≤45 minute suite budget (R8.1)
@@ -34,16 +34,15 @@ const callTimeoutMs = 15_000;
  * nothing on a short-lived token against a disposable VM.
  */
 export async function generateAuthToken(
-  client: TrueNasApiClient,
+  client: E2eApiClient,
   ttlSeconds: number = tokenTtlSeconds,
 ): Promise<string> {
-  // Addressed via the enum, not the raw string: `ApiCallDirectory` is keyed by
-  // `TrueNasEndpoint` members, and TypeScript treats string enum members
-  // nominally — the literal 'auth.generate_token' is not assignable to them.
+  // `generateToken` is the client's own wrapper over `auth.generate_token`,
+  // added in 2.0. It takes the TTL and the two booleans and fills in the
+  // attributes argument itself, so this is the same call with less to get wrong
+  // than the hand-assembled parameter tuple it replaces.
   const token = await firstValueFrom(
-    client.api
-      .call(TrueNasEndpoint.GenerateToken, [ttlSeconds, {}, false, false])
-      .pipe(timeout(callTimeoutMs)),
+    client.api.generateToken(ttlSeconds, false, false).pipe(timeout(callTimeoutMs)),
   );
 
   if (typeof token !== 'string' || token.length === 0) {

@@ -49,8 +49,8 @@ const target = loadTargetConfig();
  * process, including ones added later by someone who never reads this comment.
  * Scoping it to the one connection that needs it would be strictly better.
  *
- * There is no seam for that today, verified against `@truenas/api-client@1.0.6`
- * (what `~1.0.3` in `package.json` currently resolves to):
+ * There is no seam for that today, verified against `@truenas/api-client@2.0.1`
+ * — 2.0 typed the whole API surface but added nothing for TLS:
  * `CreateClientOptions` takes `uuid`, `hostnames`, `enabled`, `systemName` and
  * `logger` — no `WebSocketCtor`, no dispatcher, no TLS options — and the socket
  * is built internally from an rxjs `WebSocketSubjectConfig` the caller never

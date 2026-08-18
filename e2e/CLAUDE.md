@@ -92,9 +92,11 @@ without adding one.
 **Never `waitForTimeout`.** Wait on conditions.
 
 - UI: Playwright's assertions retry on their own.
-- Middleware jobs: poll the observable outcome with `expect.poll`, or await the
-  job. Pool creation and service control are jobs — they complete *after* the
-  call returns, so asserting immediately races them.
+- Middleware jobs: poll the observable outcome with `expect.poll`. Pool creation
+  and service control are jobs — they complete *after* the call returns, so
+  asserting immediately races them. In a fixture, start the job with `runJob`
+  (see "Talking to middleware" below) rather than awaiting `client.api.job()`,
+  which watches a socket these jobs disrupt.
 - **`isVisible()` does not wait.** Probing for a dialog right after the click
   that opens it returns `false` before it renders, silently skips the
   interaction, and surfaces minutes later as an unrelated timeout. Wait for
@@ -163,12 +165,29 @@ markers that a decision was deliberate, and `docs/status.md` carries a one-line
 gloss of each one the code still cites. **Do not add new ones** — put the reason
 in the comment, where it cannot drift away from the code it explains.
 
-## Temporary scaffolding
+## Talking to middleware
 
-`support/api/untyped.ts` exists only because `@truenas/api-client`'s typed
-`call()` covers a curated subset of the API, missing `user.delete`,
-`pool.export`, `sharing.smb.*` and others. A release exposing the full typed
-surface — including jobs and events — is coming; when it lands, that file and
-its call sites are deleted, and the hand-rolled polling loops in
-`fixtures/storage.ts` can await jobs directly. Do not add new `callUntyped`
-calls where a typed method exists.
+Everything goes through `@truenas/api-client` 2.x, which types the whole
+generated API per version. There is no escape hatch any more and none is needed;
+`support/api/untyped.ts` and its casts are gone.
+
+- **`client.api.query(method, filters)`** for collections.
+- **Not `queryOne`.** It sends `get: true`, and middleware *errors* unless
+  exactly one entry matches — so it rejects when a thing is absent, which is the
+  normal answer for every `ensure*Absent` fixture here. Use `query` and take the
+  first result. This is a trap the suite has already fallen into once.
+- **Jobs go through `runJob` in `support/jobs.ts`**, not `client.api.job()`.
+  `job()` subscribes to job events, and both jobs this suite runs restart
+  services over the socket those events arrive on — so the stream goes quiet on
+  work that actually finished. `runJob` re-reads `core.get_jobs` instead: every
+  attempt is a fresh request, so a reconnect costs one poll rather than the whole
+  budget, and the verdict is the job's own terminal state rather than something
+  inferred from a side effect.
+- **Which API surface?** `E2eApiClient` in `support/api/client.ts` pins it to
+  **v26** — the newest the client implements, whatever the appliance advertises.
+  Unparameterised it defaults to v25.10.0, and most methods look unavailable.
+
+Do not infer a job's success from its side effects. Two revisions of this
+fixture did, and both could report a clean teardown for a failed export: the
+pool row disappears when the export completes, while the `destroy: true` disk
+wipe that `requireUnusedDisks` depends on continues afterwards.

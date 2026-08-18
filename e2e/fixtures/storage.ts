@@ -6,14 +6,22 @@
  * of the inventory it needs (R2.2, R3.2). That is the failure R3.2 exists to
  * prevent, and storage is where it actually bites.
  */
-import { TrueNasEndpoint, type TrueNasApiClient } from '@truenas/api-client';
+import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
-import { callUntyped } from '../support/api/untyped';
-import { waitUntil } from '../support/wait';
+import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
+import { runJob } from '../support/jobs';
+import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
-const queryTimeoutMs = 30_000;
-const poolGoneTimeoutMs = 3 * 60_000;
-const serviceStopTimeoutMs = 60_000;
+
+/**
+ * Deliberately longer than the old budget. The previous code returned as soon as
+ * `pool.query` stopped listing the pool; this waits for the export *job* to
+ * finish, and the `destroy: true` wipe of every member disk runs after the pool
+ * row is gone. Nine disks is the width `fresh-install` builds, so the wait is
+ * strictly longer than the condition it replaced and the ceiling moved with it.
+ */
+const poolExportTimeoutMs = 6 * 60_000;
+const serviceControlTimeoutMs = 60_000;
 
 interface NamedPool {
   id: number;
@@ -70,15 +78,19 @@ interface DiskBucket {
  * exists to pre-empt. Third time the same lesson on this one helper: assert
  * against the source the UI reads, not the one that sounds equivalent.
  */
-async function getSelectableDisks(client: TrueNasApiClient): Promise<UnusedDisk[]> {
-  const details = await callUntyped<DiskDetails>(client, 'disk.details', []);
+async function getSelectableDisks(client: E2eApiClient): Promise<UnusedDisk[]> {
+  // `disk.details` is typed, but only as `unknown[] | Record<string, unknown>` —
+  // the dump does not describe its shape, so the narrowing has to happen here.
+  const details = await firstValueFrom(
+    client.api.call('disk.details', []).pipe(timeout(slowCallTimeoutMs)),
+  ) as unknown as DiskDetails;
 
   return (details.unused ?? []).filter((disk) => (
     !disk.duplicate_serial?.length && !disk.exported_zpool
   ));
 }
 
-async function getUnusedDiskBuckets(client: TrueNasApiClient): Promise<DiskBucket[]> {
+async function getUnusedDiskBuckets(client: E2eApiClient): Promise<DiskBucket[]> {
   const disks = await getSelectableDisks(client);
 
   const byKey = new Map<string, DiskBucket>();
@@ -139,7 +151,7 @@ function typeOrder(type: string): number {
  * second normalizer to keep in step with the app, which is the trap
  * `locators/test-id.ts` already documents.
  */
-export async function requireUnusedDisks(client: TrueNasApiClient, needed: number): Promise<void> {
+export async function requireUnusedDisks(client: E2eApiClient, needed: number): Promise<void> {
   const buckets = await getUnusedDiskBuckets(client);
 
   // The first bucket is the one the select offers first, and therefore the one
@@ -163,13 +175,19 @@ export async function requireUnusedDisks(client: TrueNasApiClient, needed: numbe
   );
 }
 
-async function findPool(client: TrueNasApiClient, name: string): Promise<NamedPool | undefined> {
-  // `pool.query` is typed as taking no params in the curated directory, so the
-  // filter is applied here rather than server-side.
-  const pools = await firstValueFrom(
-    client.api.call(TrueNasEndpoint.PoolQuery).pipe(timeout(queryTimeoutMs)),
+async function findPool(client: E2eApiClient, name: string): Promise<NamedPool | undefined> {
+  // Filtered server-side. The curated directory typed `pool.query` as taking no
+  // parameters, so this used to fetch every pool and filter in memory.
+  //
+  // `query` rather than `queryOne`: the latter sends `get: true`, which makes
+  // middleware error when nothing matches. Every caller here treats "no such
+  // pool" as a normal answer — `ensurePoolAbsent` is documented to succeed when
+  // the pool is already gone — so an absent pool must not throw.
+  const [pool] = await firstValueFrom(
+    client.api.query('pool.query', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
   );
-  return (pools as unknown as NamedPool[]).find((pool) => pool.name === name);
+
+  return pool;
 }
 
 /**
@@ -178,17 +196,24 @@ async function findPool(client: TrueNasApiClient, name: string): Promise<NamedPo
  * Done before the pool is exported so the share is not left pointing at a path
  * that no longer exists.
  */
-export async function ensureSmbShareAbsent(client: TrueNasApiClient, name: string): Promise<void> {
-  const shares = await callUntyped<{ id: number; name: string }[]>(
-    client,
-    'sharing.smb.query',
-    [[['name', '=', name]]],
+export async function ensureSmbShareAbsent(client: E2eApiClient, name: string): Promise<void> {
+  const shares = await firstValueFrom(
+    client.api
+      .query('sharing.smb.query', [['name', '=', name]])
+      .pipe(timeout(readTimeoutMs)),
   );
 
   for (const share of shares) {
-    await callUntyped(client, 'sharing.smb.delete', [share.id]);
+    await firstValueFrom(
+      client.api.call('sharing.smb.delete', [share.id]).pipe(timeout(slowCallTimeoutMs)),
+    );
   }
 }
+
+/** An entry of an NFSv4 ACL, named from the library rather than hand-written. */
+type Nfs4Ace = Extract<
+  CallResponse<E2eApiDirectory, 'filesystem.getacl'>, { acltype: 'NFS4' }
+>['acl'][number];
 
 /**
  * NFSv4 basic permission sets that allow more than reading.
@@ -201,14 +226,6 @@ export async function ensureSmbShareAbsent(client: TrueNasApiClient, name: strin
  * `READ_WRITE`, which is POSIX vocabulary and could never match anything.
  */
 const writeCapablePerms = new Set(['FULL_CONTROL', 'MODIFY']);
-
-interface AclEntry {
-  tag: string;
-  type: string;
-  id: number;
-  who?: string;
-  perms?: { BASIC?: string };
-}
 
 /**
  * ACL entries that grant `username` write access to `path` by group membership.
@@ -226,7 +243,8 @@ interface AclEntry {
  * those groups FULL_CONTROL and MODIFY respectively.
  *
  * Deliberately narrow. It does not evaluate `owner@`/`everyone@`, inheritance,
- * or DENY entries, so it is evidence of access rather than a permission engine —
+ * DENY entries, or advanced (bit-flag) permission sets, so it is evidence of
+ * access rather than a permission engine —
  * reimplementing that logic here is how a test becomes confidently wrong. It
  * also does not prove SMB itself serves the share; that needs a real client.
  *
@@ -238,14 +256,17 @@ interface AclEntry {
  * is not.
  */
 export async function findGroupAclGrants(
-  client: TrueNasApiClient,
+  client: E2eApiClient,
   username: string,
   path: string,
-): Promise<AclEntry[]> {
-  const [user] = await callUntyped<{ groups: number[] }[]>(
-    client,
-    'user.query',
-    [[['username', '=', username]]],
+): Promise<Nfs4Ace[]> {
+  // `query`, not `queryOne` — see `findPool`. The explanatory error below is
+  // the point of looking the user up at all, and `queryOne` would pre-empt it
+  // with a raw middleware error.
+  const [user] = await firstValueFrom(
+    client.api
+      .query('user.query', [['username', '=', username]])
+      .pipe(timeout(readTimeoutMs)),
   );
 
   if (!user) {
@@ -253,24 +274,50 @@ export async function findGroupAclGrants(
   }
 
   // `user.groups` holds group *ids*; ACL entries carry *gids*. Different keys.
-  const groups = await callUntyped<{ gid: number; group: string }[]>(
-    client,
-    'group.query',
-    [[['id', 'in', user.groups]]],
+  const groups = await firstValueFrom(
+    client.api
+      .query('group.query', [['id', 'in', user.groups]])
+      .pipe(timeout(readTimeoutMs)),
   );
   const gids = new Set(groups.map((group) => group.gid));
 
-  const acl = await callUntyped<{ acl: AclEntry[] }>(
-    client,
-    'filesystem.getacl',
-    [path, true, true],
+  // The response is a discriminated union across the ACL flavours, so the
+  // flavour is checked rather than assumed. This function only understands
+  // NFSv4: a POSIX dataset carries no `perms.BASIC`, so every entry would be
+  // filtered out and the caller would report "no write-capable group grant"
+  // without mentioning why, and a dataset with ACLs disabled has `acl: null`,
+  // which would throw a `TypeError` from the filter below instead of the
+  // sentence the caller wrote.
+  const acl = await firstValueFrom(
+    client.api
+      .call('filesystem.getacl', [path, true, true])
+      .pipe(timeout(readTimeoutMs)),
   );
+
+  if (acl.acltype !== 'NFS4') {
+    throw new Error(
+      `Cannot check filesystem access: "${path}" has ${acl.acltype} ACLs, and this check only `
+      + 'understands NFSv4. The SMB dataset preset is what normally makes it NFSv4, so this '
+      + 'means the dataset was not created the way the story assumes.',
+    );
+  }
 
   return acl.acl.filter((entry) => (
     entry.tag === 'GROUP'
     && entry.type === 'ALLOW'
+    // `id` is nullable on the real type, and that is not noise: `owner@` and
+    // `everyone@` entries carry no id. They are the first of the documented
+    // exclusions above, and the type now enforces what the old hand-written
+    // interface merely assumed.
+    && entry.id != null
     && gids.has(entry.id)
-    && writeCapablePerms.has(entry.perms?.BASIC ?? '')
+    // `perms` is a union: an entry carries either a basic set or the advanced
+    // bit flags. Only the basic form is read here, which is the third
+    // documented exclusion — an advanced entry granting write is invisible to
+    // this check. The SMB preset produces basic perms, so it holds for the
+    // story; anything hand-edited would need the bits decoding.
+    && 'BASIC' in entry.perms
+    && writeCapablePerms.has(entry.perms.BASIC)
   ));
 }
 
@@ -287,7 +334,7 @@ export async function findGroupAclGrants(
  * The auto-start flag matters too: the start dialog's toggle defaults to on, so
  * a run that starts the service also enables it at boot.
  */
-export async function ensureSmbServiceStopped(client: TrueNasApiClient): Promise<void> {
+export async function ensureSmbServiceStopped(client: E2eApiClient): Promise<void> {
   const cifs = await querySmbService(client);
 
   // Not `return` on empty. That is the inference the polling guard below exists
@@ -308,8 +355,8 @@ export async function ensureSmbServiceStopped(client: TrueNasApiClient): Promise
   if (cifs.enable) {
     await firstValueFrom(
       client.api
-        .call(TrueNasEndpoint.ServiceUpdate, [cifs.id, { enable: false }])
-        .pipe(timeout(queryTimeoutMs)),
+        .call('service.update', [cifs.id, { enable: false }])
+        .pipe(timeout(readTimeoutMs)),
     );
   }
 
@@ -317,29 +364,16 @@ export async function ensureSmbServiceStopped(client: TrueNasApiClient): Promise
     return;
   }
 
-  // The one call here that cannot be typed. `service.control`'s first parameter
-  // is `ServiceControlAction`, a string enum the package declares but does not
-  // export — so the literal `'STOP'` is rejected and there is no way to obtain
-  // the value the signature demands. Same packaging gap as `AuthResponseType`
-  // in `support/api/client.ts`; both are recorded in `docs/status.md`.
-  await callUntyped(client, 'service.control', ['STOP', 'cifs', { silent: false }]);
-
-  // `service.control` is a job, so the call returns before the service is down.
-  await waitUntil(
-    async () => {
-      const current = await querySmbService(client);
-
-      // `undefined` means the query came back empty, not that the service
-      // stopped. That happens transiently across the reconnect a service
-      // restart causes, and reading it as "stopped" would return while SMB is
-      // still running — after which the next run meets the "Restart SMB
-      // Service" dialog instead of "Start", `button-enable-service` never
-      // renders, and a 90 second timeout is the first anyone hears of it.
-      return current !== undefined && current.state !== 'RUNNING';
-    },
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('service.control', ['STOP', 'cifs', { silent: false }]),
     {
-      timeoutMs: serviceStopTimeoutMs,
-      message: 'SMB service did not stop; the next run will not start from a fresh state.',
+      timeoutMs: serviceControlTimeoutMs,
+      whatItCosts: 'SMB service did not stop; the next run will not start from a fresh state.',
+      confirm: async () => {
+        const current = await querySmbService(client);
+        return current !== undefined && current.state !== 'RUNNING';
+      },
     },
   );
 }
@@ -350,26 +384,19 @@ interface SmbServiceState {
   enable: boolean;
 }
 
-/**
- * The `cifs` service row, or undefined when the query returns nothing.
- *
- * Typed rather than routed through `callUntyped`: `service.query` and
- * `service.update` are both in the client's curated directory, and `untyped.ts`
- * is explicit that the escape hatch is for genuine gaps only. The response still
- * needs narrowing because the directory types it as a union covering counts and
- * single entries as well as arrays — the same shape `findPool` deals with.
- * `service.control` is in the directory too but cannot be called this way; see
- * the note at its call site.
- */
-async function querySmbService(client: TrueNasApiClient): Promise<SmbServiceState | undefined> {
-  const services = await firstValueFrom(
+/** The `cifs` service row, or undefined when the query returns nothing. */
+async function querySmbService(client: E2eApiClient): Promise<SmbServiceState | undefined> {
+  // `query`, not `queryOne` — see `findPool`. An empty result has to be
+  // representable here, because the caller distinguishes it from "stopped".
+  const [cifs] = await firstValueFrom(
     client.api
-      .call(TrueNasEndpoint.ServiceQuery, [[['service', '=', 'cifs']]])
-      .pipe(timeout(queryTimeoutMs)),
+      .query('service.query', [['service', '=', 'cifs']])
+      .pipe(timeout(readTimeoutMs)),
   );
 
-  return (services as unknown as SmbServiceState[])[0];
+  return cifs;
 }
+
 
 /**
  * Exports and destroys a pool by name, if present. Succeeds when absent.
@@ -378,26 +405,24 @@ async function querySmbService(client: TrueNasApiClient): Promise<SmbServiceStat
  * inventory; `cascade` removes attachments (shares, tasks) that would otherwise
  * block the export.
  */
-export async function ensurePoolAbsent(client: TrueNasApiClient, name: string): Promise<void> {
+export async function ensurePoolAbsent(client: E2eApiClient, name: string): Promise<void> {
   const pool = await findPool(client, name);
   if (!pool) {
     return;
   }
 
-  await callUntyped(client, 'pool.export', [
-    pool.id,
-    { cascade: true, restart_services: true, destroy: true },
-  ]);
-
-  // `pool.export` is a job, so the call returns before the work is done. Poll
-  // the observable outcome rather than sleeping a guessed interval (R8.3).
-  await waitUntil(
-    async () => !(await findPool(client, name)),
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('pool.export', [
+      pool.id,
+      { cascade: true, restart_services: true, destroy: true },
+    ]),
     {
-      timeoutMs: poolGoneTimeoutMs,
-      message:
-        `Pool "${name}" still present ${poolGoneTimeoutMs / 1000}s after export was requested. `
-        + 'Its disks remain claimed and later runs will be short of inventory.',
+      timeoutMs: poolExportTimeoutMs,
+      whatItCosts:
+        `Pool "${name}" was not exported, so its disks remain claimed and later runs `
+        + 'will be short of inventory.',
+      confirm: async () => !(await findPool(client, name)),
     },
   );
 }
