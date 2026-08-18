@@ -52,8 +52,9 @@ declarative actions, and `tn-icon` (already migrated — always `tn-icon`, never
 >   `<ng-template tnDetailRowDef>` for detail rows, with `<ix-table-details-row>` printing the
 >   columns the picker has hidden. Everything around the table — data providers, `createTable`,
 >   `column()`/`actionsColumn()`, `toDisplayedColumns`, `mapTnSortToTableSort`,
->   `tnTableListHost`, `<ix-table-column-picker>`, `<tn-table-pager>` — now lives in
->   `app/modules/tn-table/`, with stand-ins for library gaps in its `temp-workarounds.ts`.
+>   `tnTableListHost`, `<ix-table-column-picker>`, `<ix-table-pager-show-more>` — now lives in
+>   `app/modules/tn-table/`. The pager itself, `<tn-table-pager>`, comes from
+>   `@truenas/ui-components`.
 >   Reference: `cron-list`, `portal-list`, `jobs-list`.
 > - **`ix-*` form controls → `tn-form` primitives.** `ix-fieldset` → `<tn-form-section
 >   [heading]>` (there is **no `tn-fieldset`**). Wrap each control in `<tn-form-field [label]
