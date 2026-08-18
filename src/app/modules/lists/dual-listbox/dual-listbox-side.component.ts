@@ -18,9 +18,9 @@ import {
   TnIconButtonComponent, TnIconComponent, TnInputComponent, TnListComponent, TnListIconDirective,
   TnListItemComponent, tnIconMarker,
 } from '@truenas/ui-components';
+import { translated } from 'app/helpers/translated.helper';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { DualListBoxSide, ListType, SelectionModifiers } from 'app/modules/lists/dual-listbox/dual-listbox-side';
-import { translatedSignal } from 'app/modules/translate/translated-signal';
 
 /** How long a type-ahead buffer stays alive between keystrokes. */
 const typeAheadResetTimeout = 800;
@@ -63,7 +63,7 @@ export class DualListBoxSideComponent<T> {
 
   readonly dropped = output<CdkDragDrop<T[]>>();
 
-  protected countLabel = translatedSignal((translate) => {
+  protected countLabel = translated((translate) => {
     const shown = this.side().visibleItems().length;
     const total = this.side().items().length;
 
@@ -80,7 +80,7 @@ export class DualListBoxSideComponent<T> {
       : tnIconMarker('sort-alphabetical-descending', 'mdi')
   ));
 
-  protected sortLabel = translatedSignal((translate: TranslateService) => (
+  protected sortLabel = translated((translate: TranslateService) => (
     this.side().sortDirection() === SortDirection.Asc
       ? translate.instant('Sorted A to Z. Click to sort Z to A.')
       : translate.instant('Sorted Z to A. Click to sort A to Z.')
