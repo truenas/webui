@@ -62,9 +62,9 @@ import { TaskService } from 'app/services/task.service';
   selector: 'ix-snapshot-task-list',
   styleUrls: ['./snapshot-task-list.component.scss'],
   templateUrl: './snapshot-task-list.component.html',
-  // Both pipes are provided so the column model can inject and call them directly: a details row
-  // prints what the cell shows rather than a raw schedule object or an untranslated state code.
-  // `ScheduleDescriptionPipe` is imported too, because the template also pipes through it.
+  // Provided so the column model can inject and call it directly: a details row prints the
+  // schedule description the cell shows rather than a raw schedule object. Imported too, because
+  // the template also pipes through it.
   providers: [TaskService, StorageService, ScheduleDescriptionPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -228,7 +228,6 @@ export class SnapshotTaskListComponent implements OnInit {
       }),
     ]),
   });
-
 
   protected readonly trackByTaskId = (_index: number, row: PeriodicSnapshotTaskUi): number => row.id;
 

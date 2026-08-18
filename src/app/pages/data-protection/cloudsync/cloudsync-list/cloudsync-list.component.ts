@@ -259,7 +259,6 @@ export class CloudSyncListComponent implements OnInit {
     (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
   );
 
-
   protected getNextRun(task: CloudSyncTaskUi): string {
     // For disabled tasks, show "Disabled" text; for enabled tasks, the
     // pre-computed relative time string.

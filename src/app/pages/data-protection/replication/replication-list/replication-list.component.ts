@@ -152,7 +152,6 @@ export class ReplicationListComponent implements OnInit {
     return (row.source_datasets || []).join(', ');
   }
 
-
   protected readonly list = tnTableListHost<ReplicationTask>(this.dataProvider, {
     columns: () => createTable<ReplicationTask>([
       column({
