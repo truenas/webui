@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject, signal, viewChild,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, computed, DestroyRef, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { select, Store } from '@ngrx/store';
@@ -17,12 +17,12 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { formatRoleNames, Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
-import { reflectSortIntoTable, restrictToSingleExpandedRow } from 'app/modules/tn-table/temp-workarounds';
 import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
@@ -37,7 +37,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 @Component({
   selector: 'ix-group-list',
   templateUrl: './group-list.component.html',
-  styleUrls: ['./group-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BasicSearchComponent,
@@ -64,32 +63,47 @@ export class GroupListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private formPanel = inject(FormSidePanelService);
   private api = inject(ApiService);
+  private authService = inject(AuthService);
 
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = groupListElements;
 
   protected readonly dataProvider = new ArrayDataProvider<Group>();
   protected readonly currentPage = toSignal(this.dataProvider.currentPage$, { initialValue: [] as Group[] });
-  protected readonly table = viewChild(TnTableComponent<Group>);
 
   protected readonly displayedColumns = ['group', 'gid', 'builtin', 'sudo', 'smb', 'roles'];
   protected readonly trackById = (_: number, row: Group): number => row.id;
 
+  private readonly hasAccountWrite = toSignal(this.authService.hasRole(this.requiredRoles), {
+    initialValue: false,
+  });
+
+  /**
+   * Only expand rows whose detail panel would actually render an action: `ix-group-details-row`
+   * shows Members for local groups, Edit for editable local ones, and Delete for non-builtin
+   * groups with AccountWrite. Without this, builtin/non-local rows expand into a blank panel.
+   *
+   * A `computed` of the predicate, not a plain arrow that reads the role signal internally:
+   * `hasAccountWrite` starts `false` and flips once the role resolves, and only a new function
+   * identity is guaranteed to make the table re-evaluate expandability. A stable identity would
+   * leave that up to whether `tn-table` calls the predicate from a reactive binding.
+   */
+  protected readonly canExpandGroup = computed(() => {
+    const hasAccountWrite = this.hasAccountWrite();
+    return (group: Group): boolean => group.local || (!group.builtin && hasAccountWrite);
+  });
+
   /**
    * The sort the list opens with. One declaration for both halves of it — `setDefaultSort` maps
-   * it into the data provider and `activeSort` seeds the header arrow from it — so the arrow
-   * can't end up pointing at a column the provider isn't sorting by.
+   * it into the data provider and the two-way `[(sortColumn)]`/`[(sortDirection)]` bindings seed
+   * the header arrow from it — so the arrow can't end up pointing at a column the provider isn't
+   * sorting by. The table writes the bindings back on every header click, so the signals track
+   * the header from then on.
    */
   private readonly defaultSort: TnSortEvent = { column: 'gid', direction: 'asc' };
 
-  // Remembered so the arrow shows from the start and survives a table rebuild; see
-  // `reflectSortIntoTable`.
-  private readonly activeSort = signal<TnSortEvent | null>(this.defaultSort);
-
-  constructor() {
-    restrictToSingleExpandedRow(this.table);
-    reflectSortIntoTable(this.table, this.activeSort);
-  }
+  protected readonly sortColumn = signal(this.defaultSort.column);
+  protected readonly sortDirection = signal(this.defaultSort.direction);
 
   protected hideBuiltinGroups = true;
   protected readonly searchQuery = signal('');
@@ -117,22 +131,19 @@ export class GroupListComponent implements OnInit {
     }),
   );
 
-  private readonly emptyMessage$: Observable<string> = this.emptyType$.pipe(
-    map((type) => this.translate.instant(this.emptyService.defaultEmptyConfig(type).title)),
-  );
+  private readonly emptyType = toSignal(this.emptyType$, { initialValue: EmptyType.Loading });
 
-  protected readonly emptyMessage = toSignal(this.emptyMessage$, { initialValue: '' });
+  protected readonly emptyMessage = computed(() => this.emptyService.titleForType(this.emptyType()));
+
+  protected readonly emptyDescription = computed(() => this.emptyService.descriptionForType(this.emptyType()));
+
+  protected readonly emptyIcon = computed(() => this.emptyService.iconForType(this.emptyType()));
 
   protected getRolesValue(row: Group): string {
     return formatRoleNames(row.roles, (key) => this.translate.instant(key)) || this.translate.instant('N/A');
   }
 
-  protected onRowClick(row: Group): void {
-    this.table()?.toggleRowExpansion(row);
-  }
-
   protected onSortChange(event: TnSortEvent): void {
-    this.activeSort.set(event);
     this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns));
   }
 

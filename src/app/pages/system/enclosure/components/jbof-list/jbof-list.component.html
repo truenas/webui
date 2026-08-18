@@ -13,16 +13,17 @@
 </ix-page-header>
 
 <div class="table-container" [ixUiSearch]="searchableElements.elements.jbof">
-  @let emptyType = dataProvider.emptyType$ | async;
-  @let emptyConf = emptyService.defaultEmptyConfig(emptyType);
   <tn-table
-    [dataSource]="(dataProvider.currentPage$ | async) ?? []"
-    [displayedColumns]="displayedColumns"
+    [testId]="'table-table'"
+    [dataSource]="list.rows()"
+    [displayedColumns]="list.displayedColumns()"
     [trackBy]="trackByJbofId"
-    [loading]="!!(dataProvider.isLoading$ | async)"
-    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
-    [emptyIcon]="emptyService.iconForType(emptyType)"
-    (sortChange)="onSortChange($event)"
+    [loading]="list.isLoading()"
+    [loadingMessage]="list.loadingMessage()"
+    [emptyMessage]="list.empty.message()"
+    [emptyDescription]="list.empty.description()"
+    [emptyIcon]="list.empty.icon()"
+    (sortChange)="list.onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'description'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
@@ -31,19 +32,17 @@
           [value]="row.description"
           [title]="'Description' | translate"
           [uniqueRowTag]="uniqueRowTag(row)"
-          [tooltip]="row.description || ''"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'ips'">
+    <ng-container [tnColumnDef]="'ips'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'IPs' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
-          [value]="formatIps(row)"
+          [value]="ipsText(row)"
           [title]="'IPs' | translate"
           [uniqueRowTag]="uniqueRowTag(row)"
-          [tooltip]="formatIps(row)"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>
@@ -55,7 +54,6 @@
           [value]="row.mgmt_username"
           [title]="'Username' | translate"
           [uniqueRowTag]="uniqueRowTag(row)"
-          [tooltip]="row.mgmt_username || ''"
         ></ix-table-text-cell>
       </ng-template>
     </ng-container>

@@ -20,8 +20,6 @@ import { SmbSharePurpose, SmbShare, SmbSharesec } from 'app/interfaces/smb-share
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -62,12 +60,6 @@ describe('SmbCardComponent', () => {
     },
   ] as SmbShare[];
 
-  const slideInRef: SlideInRef<SmbShare | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const commonImports = [TablePagerShowMoreComponent];
 
   const commonProviders = [
@@ -76,7 +68,6 @@ describe('SmbCardComponent', () => {
       confirm: jest.fn(() => of(true)),
       confirmDelete: jest.fn(() => of(undefined)),
     }),
-    mockProvider(SlideInRef, slideInRef),
     mockProvider(TnDialog, {
       open: jest.fn(() => ({
         closed: of(true),
@@ -84,9 +75,6 @@ describe('SmbCardComponent', () => {
     }),
     mockProvider(LoaderService, {
       withLoader: jest.fn(() => (source$: unknown) => source$),
-    }),
-    mockProvider(SlideIn, {
-      open: jest.fn(() => SlideInResult.empty()),
     }),
     mockProvider(FormSidePanelService, {
       open: jest.fn(() => SlideInResult.empty()),

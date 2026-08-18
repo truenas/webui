@@ -1,9 +1,6 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
-import { MockComponent, MockDirective } from 'ng-mocks';
+import { TnTooltipDirective } from '@truenas/ui-components';
+import { MockDirective } from 'ng-mocks';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -12,7 +9,6 @@ import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares
 
 describe('ServiceStateButtonComponent', () => {
   let spectator: Spectator<ServiceStateButtonComponent>;
-  let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
     component: ServiceStateButtonComponent,
@@ -20,29 +16,37 @@ describe('ServiceStateButtonComponent', () => {
       MapValuePipe,
     ],
     declarations: [
-      MockComponent(TnIconComponent),
       MockDirective(TnTooltipDirective),
     ],
   });
 
+  const getStatus = (): HTMLElement => spectator.query('.service-status') as HTMLElement;
+
   beforeEach(() => {
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     spectator.fixture.detectChanges();
   });
 
-  it('shows service status based on service state', async () => {
+  it('shows service status based on service state', () => {
     spectator.setInput('service', { id: 1, service: ServiceName.Nfs, state: ServiceStatus.Running } as Service);
-    spectator.setInput('count', 5);
-    const runningButton = await loader.getHarness(MatButtonHarness.with({ text: 'Running' }));
-    expect(runningButton).toExist();
+
+    expect(getStatus()).toHaveText('Running');
+    expect(getStatus()).toHaveClass('fn-theme-green');
 
     spectator.setInput('service', { id: 1, service: ServiceName.Nfs, state: ServiceStatus.Stopped } as Service);
-    const stoppedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stopped' }));
-    expect(stoppedButton).toExist();
-    expect((await (await stoppedButton.host()).getAttribute('class'))?.split(' ').includes('fn-theme-grey')).toBe(true);
 
-    spectator.setInput('count', 0);
-    expect((await (await stoppedButton.host()).getAttribute('class'))?.split(' ').includes('fn-theme-grey')).toBe(true);
+    expect(getStatus()).toHaveText('Stopped');
+    expect(getStatus()).toHaveClass('fn-theme-grey');
+  });
+
+  it('exposes the status as a labelled, non-live region', () => {
+    spectator.setInput('service', { id: 1, service: ServiceName.Nfs, state: ServiceStatus.Running } as Service);
+
+    expect(getStatus()).toHaveAttribute('role', 'img');
+    expect(getStatus()).toHaveAttribute('aria-roledescription', 'Service status');
+    // The tooltip is pointer-only, so the same copy has to reach the accessibility tree.
+    expect(getStatus()).toHaveAttribute('aria-label', 'The NFS service is running');
+    // Preserved verbatim from the `<button [ixTest]>` this readout replaced.
+    expect(getStatus()).toHaveAttribute('data-test', 'button-service-status-nfs');
   });
 });

@@ -11,6 +11,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { translated } from 'app/helpers/translated.helper';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -78,9 +79,11 @@ export class StaticRoutesCardComponent implements OnInit {
 
   // Keep the page-specific message for the no-records case, but surface the API
   // error state distinctly instead of masking it as "No static routes configured".
-  protected readonly emptyMessage = computed(() => {
+  // `translated`, not a plain computed: only the error branch reads the language through
+  // `titleForType`, so the fallback would otherwise freeze on the locale loaded first.
+  protected readonly emptyMessage = translated(() => {
     return this.emptyType() === EmptyType.Errors
-      ? this.translate.instant(this.emptyService.defaultEmptyConfig(EmptyType.Errors).title)
+      ? this.emptyService.titleForType(EmptyType.Errors)
       : this.translate.instant('No static routes configured');
   });
 

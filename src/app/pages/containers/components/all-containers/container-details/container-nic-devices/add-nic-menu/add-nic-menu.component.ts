@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, DestroyRef
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialog, TnMenuComponent, TnMenuItem, TnMenuTriggerDirective,
+  TnButtonComponent, TnDialog, TnMenuComponent, TnMenuItem, TnMenuTriggerDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, Observable, switchMap } from 'rxjs';
@@ -22,6 +22,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerNicFormDialog } from 'app/pages/containers/components/common/container-nic-form-dialog/container-nic-form-dialog.component';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerActive } from 'app/pages/containers/utils/container-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -33,6 +34,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnButtonComponent,
     TnMenuComponent,
     TnMenuTriggerDirective,
+    TnTooltipDirective,
     TranslateModule,
     NgxSkeletonLoaderModule,
     RequiresRolesDirective,
@@ -54,6 +56,13 @@ export class AddNicMenuComponent {
   private tnDialog = inject(TnDialog);
 
   protected readonly helptext = containersHelptext;
+
+  // Middleware refuses device operations on any container that is not stopped, so Add is
+  // gated exactly like the per-device Edit/Delete menu - otherwise the panel opens, the user
+  // fills it in and only then gets a raw refusal.
+  protected readonly isContainerActive = computed(() => {
+    return isContainerActive(this.containersStore.selectedContainer());
+  });
 
   private readonly nicChoices = toSignal(
     this.getNicChoices().pipe(

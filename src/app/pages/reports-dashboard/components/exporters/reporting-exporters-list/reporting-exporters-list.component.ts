@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, inject, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -20,7 +20,6 @@ import {
   TnTestIdDirective,
 } from '@truenas/ui-components';
 import { BehaviorSubject, combineLatest, Observable, of, switchMap } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -30,7 +29,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { convertStringToId } from 'app/modules/tn-table/utils';
@@ -117,20 +115,20 @@ export class ReportingExporterListComponent implements OnInit {
 
   protected readonly isLoading = toSignal(this.isLoading$, { initialValue: true });
 
-  private readonly emptyMessage$ = this.emptyType$.pipe(
-    map((type) => this.translate.instant(this.emptyService.defaultEmptyConfig(type).title)),
-  );
+  private readonly emptyType = toSignal(this.emptyType$, { initialValue: EmptyType.Loading });
 
-  protected readonly emptyMessage = toSignal(this.emptyMessage$, { initialValue: '' });
+  protected readonly emptyMessage = computed(() => this.emptyService.titleForType(this.emptyType()));
+
+  protected readonly emptyDescription = computed(() => this.emptyService.descriptionForType(this.emptyType()));
+
+  protected readonly emptyIcon = computed(() => this.emptyService.iconForType(this.emptyType()));
 
   ngOnInit(): void {
     this.getExporters();
   }
 
-  private readonly exporterForm = ReportingExportersFormComponent as unknown as Type<SidePanelForm>;
-
   protected doAdd(): void {
-    this.formPanel.open(this.exporterForm, {
+    this.formPanel.open(ReportingExportersFormComponent, {
       title: this.translate.instant('Add Reporting Exporter'),
     })
       .onSuccess(() => this.getExporters(), this.destroyRef);
@@ -174,7 +172,7 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   protected doEdit(exporter: ReportingExporter): void {
-    this.formPanel.open(this.exporterForm, {
+    this.formPanel.open(ReportingExportersFormComponent, {
       title: this.translate.instant('Edit Reporting Exporter'),
       inputs: { exporter },
     })

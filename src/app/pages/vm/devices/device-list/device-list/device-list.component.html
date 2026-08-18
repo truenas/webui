@@ -18,15 +18,15 @@
   ></tn-banner>
 }
 
-@let emptyConf = emptyService.defaultEmptyConfig(emptyType());
 <tn-table
   [testId]="'table-table'"
   [dataSource]="rows()"
   [displayedColumns]="displayedColumns"
   [trackBy]="trackByDeviceId"
   [loading]="isLoading()"
-  [emptyMessage]="emptyConf.title | translate"
-  [emptyIcon]="emptyConf.icon || emptyService.iconForType(emptyType())"
+  [emptyMessage]="emptyService.titleForType(emptyType())"
+  [emptyDescription]="emptyService.descriptionForType(emptyType())"
+  [emptyIcon]="emptyService.iconForType(emptyType())"
   (sortChange)="onSortChange($event)"
 >
   <ng-container [tnColumnDef]="'id'" [sortable]="true">

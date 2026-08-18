@@ -92,7 +92,8 @@ export class SshKeypairCardComponent implements OnInit {
 
   // Reflects the data-provider's state (error / no data / no search results) so the empty state
   // shows the correct title/message — not a static "no records" message when the query failed.
-  protected readonly emptyConfig = computed(() => this.emptyService.defaultEmptyConfig(this.emptyType()));
+  protected readonly emptyMessage = computed(() => this.emptyService.titleForType(this.emptyType()));
+  protected readonly emptyDescription = computed(() => this.emptyService.descriptionForType(this.emptyType()));
 
   // State icon for error / no-search states, falling back to the card's own icon for no-data.
   protected readonly emptyIcon = computed(

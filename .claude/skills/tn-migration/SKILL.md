@@ -433,8 +433,8 @@ tracking: `instant()` reads the translations current at first evaluation and the
 re-runs. **Prefer keeping the pipe** — `[description]="messageKey | translate"` — whenever the
 string goes straight into a tn-* input. When it genuinely has to be composed in TypeScript
 (several keys folded into one string, a labels object handed to a library token, an `instant()`
-used as an interpolation parameter), build it with `translatedSignal()`
-(`modules/translate/translated-signal.ts`) rather than re-deriving the
+used as an interpolation parameter), build it with `translated()`
+(`app/helpers/translated.helper.ts`) rather than re-deriving the
 `toSignal(translate.onLangChange)` idiom per component.
 
 ### Shared service-menu builders

@@ -160,7 +160,7 @@ describe('AuditListComponent', () => {
 
   describe('empty state mapping', () => {
     const emptyTypeCases: { emptyType: EmptyType; title: string; icon: string }[] = [
-      { emptyType: EmptyType.Loading, title: 'Loading…', icon: 'mdi-loading' },
+      { emptyType: EmptyType.Loading, title: 'Loading...', icon: 'mdi-loading' },
       { emptyType: EmptyType.Errors, title: 'Cannot retrieve response', icon: 'mdi-alert-octagon' },
       { emptyType: EmptyType.NoSearchResults, title: 'No Search Results.', icon: 'mdi-magnify-scan' },
       { emptyType: EmptyType.FirstUse, title: 'No records have been added yet', icon: 'mdi-format-list-text' },
@@ -182,7 +182,12 @@ describe('AuditListComponent', () => {
       },
     );
 
-    it('falls back to default empty attrs when emptyType is null', () => {
+    it('takes the loading text from the same catalog as the empty titles', () => {
+      const tableComponent = spectator.query(TnTableComponent)!;
+      expect(tableComponent.loadingMessage()).toBe('Loading...');
+    });
+
+    it('falls back to the default empty title and icon when emptyType is null', () => {
       spectator.setInput('dataProvider', {
         ...mockAuditApiDataProvider,
         emptyType$: of(null),

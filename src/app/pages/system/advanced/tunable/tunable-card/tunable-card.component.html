@@ -6,7 +6,7 @@
 >
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
-    <tn-empty [title]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async).title | translate"></tn-empty>
+    <tn-empty [title]="emptyService.titleForType(dataProvider.emptyType$ | async)"></tn-empty>
   } @else {
     <tn-table
       class="table"

@@ -1,15 +1,23 @@
-<mat-card-header>
-  <ix-enclosure-header [title]="title()"></ix-enclosure-header>
-</mat-card-header>
-<mat-card-content>
+<tn-card>
+  <ix-enclosure-header tnCardHeader [title]="title()"></ix-enclosure-header>
+
   @if (!viewElements()) {
-    <ix-empty [conf]="noView"></ix-empty>
+    <tn-empty
+      icon="alert-octagon"
+      iconLibrary="mdi"
+      iconSize="90px"
+      [title]="'N/A' | translate"
+      [description]="'This view is not available for this enclosure.' | translate"
+    ></tn-empty>
   } @else {
     <tn-table
-      [dataSource]="(dataProvider().currentPage$ | async) ?? []"
-      [displayedColumns]="displayedColumns"
-      [trackBy]="trackByDescriptor"
-      (sortChange)="onSortChange($event)"
+      [testId]="'table-table'"
+      [dataSource]="list.rows()"
+      [displayedColumns]="list.displayedColumns()"
+      [emptyMessage]="list.empty.message()"
+      [emptyDescription]="list.empty.description()"
+      [emptyIcon]="list.empty.icon()"
+      (sortChange)="list.onSortChange($event)"
     >
       <ng-container [tnColumnDef]="'descriptor'" [sortable]="true">
         <ng-template tnHeaderCellDef>{{ 'Descriptor' | translate }}</ng-template>
@@ -18,7 +26,6 @@
             [value]="row.descriptor"
             [title]="'Descriptor' | translate"
             [uniqueRowTag]="uniqueRowTag(row)"
-            [tooltip]="row.descriptor || ''"
           ></ix-table-text-cell>
         </ng-template>
       </ng-container>
@@ -30,7 +37,6 @@
             [value]="row.status"
             [title]="'Status' | translate"
             [uniqueRowTag]="uniqueRowTag(row)"
-            [tooltip]="row.status || ''"
           ></ix-table-text-cell>
         </ng-template>
       </ng-container>
@@ -42,10 +48,9 @@
             [value]="row.value"
             [title]="'Value' | translate"
             [uniqueRowTag]="uniqueRowTag(row)"
-            [tooltip]="row.value || ''"
           ></ix-table-text-cell>
         </ng-template>
       </ng-container>
     </tn-table>
   }
-</mat-card-content>
+</tn-card>

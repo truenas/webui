@@ -1,24 +1,22 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatCardHeader, MatCardContent } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
+  TnCardComponent,
+  TnCardHeaderDirective,
   TnCellDefDirective,
+  TnEmptyComponent,
   TnHeaderCellDefDirective,
-  TnSortEvent,
   TnTableColumnDirective,
   TnTableComponent,
 } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { enclosureElementTypeLabels, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EnclosureElement } from 'app/interfaces/enclosure.interface';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
-import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
+import { tnTableListHost } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { EnclosureHeaderComponent } from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
@@ -28,17 +26,16 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   templateUrl: './elements-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCardHeader,
+    TnCardComponent,
+    TnCardHeaderDirective,
     EnclosureHeaderComponent,
-    MatCardContent,
-    EmptyComponent,
+    TnEmptyComponent,
     TnTableComponent,
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
     TableTextCellComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class ElementsPageComponent {
@@ -61,33 +58,33 @@ export class ElementsPageComponent {
     });
   });
 
-  protected readonly noView: EmptyConfig = {
-    title: this.translate.instant('N/A'),
-    message: this.translate.instant('This view is not available for this enclosure.'),
-    large: true,
-    type: EmptyType.Errors,
-  };
-
   protected readonly viewElements = computed(() => {
     return this.store.selectedEnclosure()?.elements?.[this.currentView()];
   });
 
-  protected readonly displayedColumns = ['descriptor', 'status', 'value'];
+  // One provider for the life of the page, refilled per view. Rebuilding it per view would
+  // desync the sort: the `tn-table` instance survives a route change, so its header would keep
+  // showing an arrow for a sort the replacement provider never had. `setRows` re-applies the
+  // provider's current sorting, so the arrow and the rows stay in agreement.
+  protected readonly dataProvider = new ArrayDataProvider<EnclosureElement>();
 
-  protected readonly trackByDescriptor = (_: number, row: EnclosureElement): string => row.descriptor;
-
-  protected uniqueRowTag(row: EnclosureElement): string {
-    return toUniqueRowTag(row.descriptor);
-  }
-
-  protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider().setSorting(mapTnSortToTableSort<EnclosureElement>(event, this.displayedColumns));
-  }
-
-  protected readonly dataProvider = computed(() => {
-    const dataProvider = new ArrayDataProvider<EnclosureElement>();
-    const elements = Object.values(this.viewElements() || {}) as EnclosureElement[];
-    dataProvider.setRows(elements);
-    return dataProvider;
+  // Every column renders a plain property, so each column name is its own sort key.
+  protected readonly list = tnTableListHost<EnclosureElement>(this.dataProvider, {
+    displayedColumns: ['descriptor', 'status', 'value'],
   });
+
+  // No `[trackBy]` here: descriptors come straight off the hardware and aren't guaranteed distinct
+  // within a view (blank or repeated ones on cooling and PSU elements are a thing in the wild), and
+  // duplicate track keys throw NG0955. tn-table falls back to tracking by index, which is what
+  // `viewElements()` keys the elements by anyway.
+  protected readonly uniqueRowTag = this.list.rowTag((row) => row.descriptor);
+
+  constructor() {
+    effect(() => {
+      this.dataProvider.setRows(Object.values(this.viewElements() || {}) as EnclosureElement[]);
+      // `emptyType$` starts as `Loading` and only an async provider ever moves it on, so
+      // without this an element type with no elements renders "Loading..." forever.
+      this.dataProvider.setEmptyType(EmptyType.NoPageData);
+    });
+  }
 }

@@ -24,7 +24,6 @@ import {
   distinctUntilChanged, filter, map, switchMap, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container, ContainerStats, ContainerStopParams } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -36,7 +35,6 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { reflectSortIntoTable } from 'app/modules/tn-table/temp-workarounds';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerListBulkActionsComponent } from 'app/pages/containers/components/all-containers/container-list/container-list-bulk-actions/container-list-bulk-actions.component';
 import { ContainerStatusCellComponent } from 'app/pages/containers/components/all-containers/container-list/container-status-cell/container-status-cell.component';
@@ -44,6 +42,7 @@ import {
   StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
 import { ContainerSortField, ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerRunning, isContainerStopped } from 'app/pages/containers/utils/container-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
@@ -106,15 +105,14 @@ export class ContainerListComponent {
   protected readonly isLoading = this.containersStore.isLoading;
   protected readonly metrics = this.containersStore.metrics;
   protected readonly selectedContainer = this.containersStore.selectedContainer;
+  /**
+   * The store owns the sort, so it is bound one-way onto the header: `onSortChange` writes every
+   * header click back to the store, and this pushes the result — plus the default and any
+   * programmatic sort — onto whichever table instance is mounted.
+   */
   protected readonly sort = this.containersStore.sort;
 
   protected readonly table = viewChild(TnTableComponent);
-
-  /** The store's sort in the shape `reflectSortIntoTable` reflects into the tn-table header. */
-  private readonly headerSort = computed<TnSortEvent>(() => ({
-    column: this.sort().active,
-    direction: this.sort().direction,
-  }));
 
   protected readonly displayedColumns = ['name', 'status', 'autostart', 'cpu', 'ram', 'io', 'controls'];
   protected readonly trackByContainerId = (_: number, container: Container): number => container.id;
@@ -143,9 +141,6 @@ export class ContainerListComponent {
   }, { equal: sameContainers });
 
   constructor() {
-    // Mirrors the store's sort state (the default and any programmatic sort) onto the header.
-    reflectSortIntoTable(this.table, this.headerSort);
-
     toObservable(this.containerId).pipe(
       distinctUntilChanged(),
       tap((containerId) => {
@@ -194,7 +189,7 @@ export class ContainerListComponent {
   }
 
   protected isStopped(container: Container): boolean {
-    return container?.status?.state === ContainerStatus.Stopped;
+    return isContainerStopped(container);
   }
 
   protected getMetrics(container: Container): ContainerStats | undefined {
@@ -204,7 +199,7 @@ export class ContainerListComponent {
   protected hasMetrics(container: Container): boolean {
     const metrics = this.getMetrics(container);
 
-    return container?.status?.state === ContainerStatus.Running
+    return isContainerRunning(container)
       && !!metrics
       && Object.keys(metrics).length > 0;
   }

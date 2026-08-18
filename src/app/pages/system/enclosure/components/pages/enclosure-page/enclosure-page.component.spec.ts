@@ -73,6 +73,15 @@ describe('EnclosurePageComponent', () => {
     spectator = createComponent();
   });
 
+  it('projects the enclosure header into the card header slot', () => {
+    // `tn-card` suppresses its own <h3> when [tnCardHeader] is projected, so losing the
+    // projection (or the directive) would silently leave the card with no header at all.
+    const header = spectator.query(EnclosureHeaderComponent)!;
+    expect(header).toExist();
+    expect(header.title).toBe('Disks on M40');
+    expect(spectator.query('tn-card ix-enclosure-header[tnCardHeader]')).toExist();
+  });
+
   it('should not show progress bar when not loading', () => {
     isLoading.set(false);
     spectator.detectChanges();

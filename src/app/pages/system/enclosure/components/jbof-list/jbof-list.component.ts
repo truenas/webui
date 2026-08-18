@@ -1,20 +1,18 @@
-import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
+  tnIconMarker,
   TnButtonComponent,
   TnCellDefDirective,
   TnHeaderCellDefDirective,
-  TnSortEvent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
   TnTooltipDirective,
-  tnIconMarker,
 } from '@truenas/ui-components';
 import {
-  filter, forkJoin, map, switchMap, tap,
+  filter, forkJoin, map, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -22,14 +20,15 @@ import { Role } from 'app/enums/role.enum';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
-import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
-import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
+import {
+  IconActionConfig,
+} from 'app/modules/tn-table/interfaces/icon-action-config.interface';
+import { tnTableListHost } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -56,7 +55,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TableTextCellComponent,
     TnTablePagerComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class JbofListComponent implements OnInit {
@@ -65,20 +63,20 @@ export class JbofListComponent implements OnInit {
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
-  protected emptyService = inject(EmptyService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.JbofWrite];
   protected readonly searchableElements = jbofListElements;
 
-  searchQuery = signal('');
-  jbofs: Jbof[] = [];
+  protected readonly searchQuery = signal('');
   protected canAddJbof = signal(false);
 
-  dataProvider: AsyncDataProvider<Jbof>;
-
-  protected readonly displayedColumns = ['description', 'ips', 'mgmt_username', 'actions'];
+  // Built here rather than in ngOnInit so `tnTableListHost` below can take it in an
+  // injection context.
+  protected readonly dataProvider = new AsyncDataProvider<Jbof>(
+    this.api.call('jbof.query').pipe(takeUntilDestroyed(this.destroyRef)),
+  );
 
   protected readonly actions: IconActionConfig<Jbof>[] = [
     {
@@ -94,30 +92,31 @@ export class JbofListComponent implements OnInit {
     },
   ];
 
-  protected readonly trackByJbofId = (_: number, row: Jbof): number => row.id;
+  protected readonly list = tnTableListHost<Jbof>(this.dataProvider, {
+    displayedColumns: [
+      'description',
+      // `ips` renders a value no single property holds, so it has to name its own sort key.
+      // `sortBy` is annotated so `list` can be typed without inferring `ipsText`, which is
+      // derived from `list` — leaving it to inference makes the pair circular and both `any`.
+      { name: 'ips', sortBy: (row: Jbof): string => this.ipsText(row) },
+      'mgmt_username',
+      'actions',
+    ],
+  });
 
-  protected uniqueRowTag(row: Jbof): string {
-    return toUniqueRowTag('jbof-' + row.mgmt_username);
-  }
+  protected readonly trackByJbofId = (_index: number, row: Jbof): number => row.id;
 
-  protected ariaLabel(row: Jbof): string {
-    return [row.mgmt_username, this.translate.instant('JBOF')].join(' ');
-  }
+  protected readonly uniqueRowTag = this.list.rowTag((row) => 'jbof-' + row.mgmt_username);
 
-  protected formatIps(row: Jbof): string {
-    return [row.mgmt_ip1, row.mgmt_ip2].filter(Boolean).join(', ');
-  }
+  protected readonly ariaLabel = this.list.perRow(
+    (row) => [row.mgmt_username, this.translate.instant('JBOF')].join(' '),
+  );
 
-  protected onSortChange(event: TnSortEvent): void {
-    this.dataProvider.setSorting(mapTnSortToTableSort<Jbof>(event, this.displayedColumns));
-  }
+  protected readonly ipsText = this.list.perRow(
+    (row) => [row.mgmt_ip1, row.mgmt_ip2].filter(Boolean).join(', '),
+  );
 
   ngOnInit(): void {
-    const request$ = this.api.call('jbof.query').pipe(
-      tap((jbofs) => this.jbofs = jbofs),
-      takeUntilDestroyed(this.destroyRef),
-    );
-    this.dataProvider = new AsyncDataProvider(request$);
     this.getJbofs();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
@@ -163,7 +162,7 @@ export class JbofListComponent implements OnInit {
     this.updateAvailableJbof();
   }
 
-  updateAvailableJbof(): void {
+  private updateAvailableJbof(): void {
     forkJoin([
       this.api.call('jbof.query').pipe(map((jbofs) => jbofs.length)),
       this.api.call('jbof.licensed'),

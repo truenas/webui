@@ -38,7 +38,6 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { TableFilter } from 'app/modules/tn-table/interfaces/table-filter.interface';
-import { restrictToSingleExpandedRow } from 'app/modules/tn-table/temp-workarounds';
 import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
@@ -172,8 +171,6 @@ export class SnapshotListComponent implements OnInit {
   constructor() {
     this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
 
-    restrictToSingleExpandedRow(this.table);
-
     this.showExtraColumnsControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((willShow) => this.onToggleExtraColumns(willShow));
@@ -296,10 +293,6 @@ export class SnapshotListComponent implements OnInit {
 
   protected onSelectionChange(snapshots: ZfsSnapshot[]): void {
     this.selectedSnapshots.set(snapshots);
-  }
-
-  protected onRowClick(row: ZfsSnapshot): void {
-    this.table()?.toggleRowExpansion(row);
   }
 
   protected onSortChange(event: TnSortEvent): void {

@@ -16,7 +16,6 @@ import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   TablePagerShowMoreComponent,
@@ -57,12 +56,6 @@ describe('IscsiCardComponent', () => {
     },
   ] as IscsiTarget[];
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: IscsiCardComponent,
     imports: [TablePagerShowMoreComponent,
@@ -79,7 +72,6 @@ describe('IscsiCardComponent', () => {
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(LicenseService, {
         hasFibreChannel$: of(true),
       }),

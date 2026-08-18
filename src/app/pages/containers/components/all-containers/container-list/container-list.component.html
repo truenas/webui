@@ -45,6 +45,8 @@
     [clickable]="true"
     [activeRow]="selectedContainer() ?? null"
     [loading]="isLoading()"
+    [sortColumn]="sort().active"
+    [sortDirection]="sort().direction"
     (rowClick)="navigateToDetails($event)"
     (selectionChange)="onSelectionChange($event)"
     (sortChange)="onSortChange($event)"

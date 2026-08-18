@@ -1,16 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent,
+  TnMenuComponent,
+  TnMenuItemComponent,
+  TnMenuTriggerDirective,
+} from '@truenas/ui-components';
 import { EnclosureElementType, enclosureElementTypeLabels } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 
 export interface ViewOption {
   url: string[];
   label: string;
+  /**
+   * Pre-normalized so the id keeps resolving off the untranslated source label, exactly as
+   * `[ixTest]="view.label"` did before the label gained a `translate` pipe.
+   */
+  testId: string;
 }
 
 @Component({
@@ -18,12 +26,10 @@ export interface ViewOption {
   templateUrl: './view-elements-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    TestDirective,
-    MatMenuTrigger,
-    TnIconComponent,
-    MatMenu,
-    MatMenuItem,
+    TnButtonComponent,
+    TnMenuComponent,
+    TnMenuItemComponent,
+    TnMenuTriggerDirective,
     TranslateModule,
   ],
 })
@@ -32,7 +38,7 @@ export class ViewElementsMenuComponent {
 
   readonly enclosure = input.required<DashboardEnclosure>();
 
-  readonly views = computed<ViewOption[]>(() => {
+  protected readonly views = computed<ViewOption[]>(() => {
     const enclosure = this.enclosure();
 
     return Object.keys(enclosure.elements)
@@ -43,9 +49,12 @@ export class ViewElementsMenuComponent {
           url = [...url, view];
         }
 
+        const label = enclosureElementTypeLabels.has(view) ? enclosureElementTypeLabels.get(view) : view;
+
         return {
           url,
-          label: enclosureElementTypeLabels.has(view) ? enclosureElementTypeLabels.get(view) : view,
+          label,
+          testId: normalizeTestIdString(label),
         };
       });
   });
