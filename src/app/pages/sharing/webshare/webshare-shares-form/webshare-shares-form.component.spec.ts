@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,9 +11,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebShareValidatorService } from 'app/pages/sharing/webshare/webshare-validator.service';
 import { WebShareFormData, WebShareSharesFormComponent } from './webshare-shares-form.component';
@@ -42,20 +39,9 @@ describe('WebShareSharesFormComponent', () => {
     },
   ];
 
-  const slideInRef: SlideInRef<WebShareFormData | undefined, boolean> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): WebShareFormData | undefined => undefined),
-  };
-
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-
-  const clickSave = async (): Promise<void> => {
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-  };
 
   const createComponent = createComponentFactory({
     component: WebShareSharesFormComponent,
@@ -71,12 +57,9 @@ describe('WebShareSharesFormComponent', () => {
         mockCall('sharing.webshare.update', mockWebShares[0]),
         mockCall('filesystem.stat'),
       ]),
-      mockProvider(SlideIn, {
-        openSlideIns: jest.fn(() => 1),
-      }),
-      mockProvider(SlideInRef, slideInRef),
-      mockProvider(SnackbarService),
-      mockProvider(FormErrorHandlerService),
+      // Mocks the services `<ix-form>` injects, and zeroes the min-feedback hold so a
+      // successful close stays synchronous.
+      ...ixFormTestingProviders(),
       mockProvider(DialogService),
       mockProvider(TranslateService, {
         instant: jest.fn((key: string) => key),
@@ -140,13 +123,16 @@ describe('WebShareSharesFormComponent', () => {
     });
 
     it('should create new WebShare on submit', async () => {
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
       await (await getTnInput('name')).setValue('new_share');
       const form = spectator.component.form;
       form.controls.path.setValue('/mnt/tank/new_share');
       await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      await clickSave();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.create', [{
         name: 'new_share',
@@ -154,9 +140,8 @@ describe('WebShareSharesFormComponent', () => {
         is_home_base: false,
       }]);
 
-      expect(slideInRef.close).toHaveBeenCalledWith({
-        response: mockWebShares[0],
-      });
+      // The form declares no `closeWith`, so the panel host is handed a plain "saved".
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
@@ -201,7 +186,7 @@ describe('WebShareSharesFormComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      await clickSave();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [1, {
         name: 'documents',
@@ -217,7 +202,7 @@ describe('WebShareSharesFormComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      await clickSave();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [1, {
         name: 'updated_documents',
@@ -281,7 +266,7 @@ describe('WebShareSharesFormComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      await clickSave();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [3, {
         name: 'home',
@@ -397,7 +382,7 @@ describe('WebShareSharesFormComponent', () => {
       await spectator.fixture.whenStable();
       spectator.detectChanges();
 
-      await clickSave();
+      spectator.component.submit();
 
       expect(handleErrorSpy).toHaveBeenCalled();
     });
