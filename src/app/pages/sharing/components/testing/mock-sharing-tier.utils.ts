@@ -14,11 +14,18 @@ interface TierRow {
 interface MockOpts {
   enabled?: boolean;
   jobUpdates$?: Observable<ZfsTierRewriteJobEntry>;
+  /**
+   * Per-job status stream returned by `subscribeTierJobStatus`. Defaults to the
+   * same stream as `jobUpdates$`, which is enough for badges that only need to
+   * see a job reach a terminal status.
+   */
+  jobStatus$?: Observable<ZfsTierRewriteJobEntry>;
 }
 
 export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof mockProvider> {
   const enabled = opts.enabled ?? false;
   const jobUpdates$ = opts.jobUpdates$ ?? of();
+  const jobStatus$ = opts.jobStatus$ ?? jobUpdates$;
 
   const buildAction = <T extends TierRow>(actionOpts: { reload: () => void }): IconActionConfig<T> => ({
     iconName: tnIconMarker('swap-horizontal', 'mdi'),
@@ -31,6 +38,7 @@ export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof m
     tierEnabled: signal(enabled).asReadonly(),
     getTierConfig: () => of({ enabled }),
     subscribeTierJobUpdates: () => jobUpdates$,
+    subscribeTierJobStatus: () => jobStatus$,
     tierJobRefreshes$: () => jobUpdates$,
     openChangeTierDialog: jest.fn(() => of(true)),
     openChangeTierDialogForDataset: jest.fn(() => of(true)),
