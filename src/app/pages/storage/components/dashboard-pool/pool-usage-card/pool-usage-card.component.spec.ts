@@ -68,9 +68,10 @@ describe('PoolUsageCardComponent', () => {
           getItem: jest.fn(),
           setItem: jest.fn(),
         },
-        matchMedia: () => ({
+        matchMedia: jest.fn().mockReturnValue({
           matches: false,
           addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
         }),
       }),
     ],
@@ -252,7 +253,6 @@ describe('PoolUsageCardComponent', () => {
       },
     } as Pool);
 
-    spectator.component.ngOnInit();
     spectator.detectChanges();
 
     expect(spectator.query('.list-caption')).not.toExist();
@@ -302,7 +302,6 @@ describe('PoolUsageCardComponent', () => {
       },
     } as Pool);
 
-    spectator.component.ngOnInit();
     spectator.detectChanges();
 
     // Reserve zone is a fixed-width striped overlay (25% of usable). The Used bar

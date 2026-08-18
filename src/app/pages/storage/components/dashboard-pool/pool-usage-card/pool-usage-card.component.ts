@@ -1,6 +1,6 @@
 import { PercentPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, inject, input, OnInit,
+  ChangeDetectionStrategy, Component, computed, inject, input,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -9,7 +9,8 @@ import {
   TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
-  getPoolCapacityLevel, poolCriticalCapacityPercent, poolLowCapacityPercent,
+  getPoolCapacityGaugeFill, getPoolCapacityGaugeLabelStyle, getPoolCapacityLevel, PoolCapacityGaugeColors,
+  poolCriticalCapacityPercent, poolLowCapacityPercent,
 } from 'app/constants/pool-capacity.constant';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { PoolCapacityLevel } from 'app/enums/pool-capacity-level.enum';
@@ -44,8 +45,8 @@ import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-dis
     PercentPipe,
   ],
 })
-export class PoolUsageCardComponent implements OnInit {
-  themeService = inject(ThemeService);
+export class PoolUsageCardComponent {
+  private themeService = inject(ThemeService);
   private translate = inject(TranslateService);
   private tierService = inject(SharingTierService);
 
@@ -54,21 +55,29 @@ export class PoolUsageCardComponent implements OnInit {
   protected readonly tierEnabled = this.tierService.tierEnabled;
   protected readonly reservePct = this.tierService.metadataReservePct;
 
-  chartWarningColor: string;
-  chartCriticalColor: string;
-  chartFillColor: string;
-  chartBlankColor: string;
-
   protected readonly searchableElements = usageCardElements;
 
-  ngOnInit(): void {
-    this.chartBlankColor = this.themeService.currentTheme().bg1;
-    this.chartFillColor = this.themeService.currentTheme().primary;
-    this.chartWarningColor = this.themeService.currentTheme().orange;
-    this.chartCriticalColor = this.themeService.currentTheme().red;
-  }
+  private gaugeColors = computed<PoolCapacityGaugeColors>(() => {
+    const theme = this.themeService.currentTheme();
+    return {
+      blank: theme.bg1,
+      fill: theme.primary,
+      warning: theme.orange,
+      critical: theme.red,
+    };
+  });
 
-  protected capacityLevel = computed(() => {
+  protected gaugeFill = computed(() => {
+    return getPoolCapacityGaugeFill(this.usedPercentage(), this.gaugeColors());
+  });
+
+  protected gaugeLabelStyle = computed(() => {
+    return getPoolCapacityGaugeLabelStyle(this.usedPercentage());
+  });
+
+  protected gaugeBlankColor = computed(() => this.gaugeColors().blank);
+
+  private capacityLevel = computed(() => {
     return getPoolCapacityLevel(this.usedPercentage());
   });
 

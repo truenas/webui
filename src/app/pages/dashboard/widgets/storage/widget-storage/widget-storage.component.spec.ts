@@ -187,7 +187,7 @@ describe('WidgetStorageComponent', () => {
           value: '58.25%',
         },
         disksWithError: {
-          icon: 'mat-error',
+          icon: 'mdi-alert',
           label: 'Disks with Errors',
           level: 'warn',
           value: '1 of 2',

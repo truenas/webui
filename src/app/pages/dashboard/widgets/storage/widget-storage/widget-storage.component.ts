@@ -148,7 +148,7 @@ export class WidgetStorageComponent {
       case PoolStatus.Offline:
       case PoolStatus.Degraded:
         level = StatusLevel.Warn;
-        icon = statusIcons.error;
+        icon = statusIcons.mdiAlert;
         break;
 
       case PoolStatus.Faulted:
@@ -180,7 +180,7 @@ export class WidgetStorageComponent {
         label: this.translate.instant('Used Space'),
         value: this.translate.instant('Unknown'),
         level: StatusLevel.Warn,
-        icon: statusIcons.error,
+        icon: statusIcons.mdiAlert,
       };
     }
 
@@ -215,7 +215,7 @@ export class WidgetStorageComponent {
 
   private getDiskWithErrorsItemInfo(pool: Pool): ItemInfo {
     let level = StatusLevel.Warn;
-    let icon = statusIcons.error;
+    let icon = statusIcons.mdiAlert;
     let unhealthyCount: number | null = null;
     let value: string = this.translate.instant('Unknown');
 
@@ -244,7 +244,7 @@ export class WidgetStorageComponent {
         icon = statusIcons.checkCircle;
       } else {
         level = StatusLevel.Warn;
-        icon = statusIcons.error;
+        icon = statusIcons.mdiAlert;
         unhealthyCount = unhealthy.length;
       }
 
@@ -295,7 +295,7 @@ export class WidgetStorageComponent {
       value = this.formatScanPercentage(scan);
     } else if (endTime && !isScanInProgress) {
       // case: scan is finished.
-      icon = isScanFinished ? statusIcons.checkCircle : statusIcons.error;
+      icon = isScanFinished ? statusIcons.checkCircle : statusIcons.mdiAlert;
       level = isScanFinished ? StatusLevel.Safe : StatusLevel.Warn;
       value = this.formatDateTimePipe.transform(endTime);
     } else {
