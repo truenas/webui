@@ -1,9 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { TestBed } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonComponent, TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
+import { BehaviorSubject } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
@@ -25,6 +28,7 @@ const fakeGroupDataSource: Group[] = [{
   group: 'mock',
   gid: 1000,
   builtin: true,
+  local: true,
   sudo_commands: [] as string[],
   sudo_commands_nopasswd: [] as string[],
   roles: [] as Role[],
@@ -35,6 +39,7 @@ const fakeGroupDataSource: Group[] = [{
   group: 'fake',
   gid: 1001,
   builtin: true,
+  local: true,
   sudo_commands: ['ls'],
   sudo_commands_nopasswd: [],
   roles: [Role.FullAdmin],
@@ -42,10 +47,33 @@ const fakeGroupDataSource: Group[] = [{
   users: [2],
 }] as Group[];
 
+// Neither local nor deletable, so `ix-group-details-row` would render no action at all.
+const nonExpandableGroup = {
+  id: 3,
+  group: 'remote',
+  gid: 1002,
+  builtin: true,
+  local: false,
+  roles: [] as Role[],
+} as Group;
+
+// Not local, so the only action its details row can render is Delete — which needs AccountWrite.
+const remoteDeletableGroup = {
+  id: 4,
+  group: 'remote-deletable',
+  gid: 1003,
+  builtin: false,
+  local: false,
+  roles: [] as Role[],
+} as Group;
+
 describe('GroupListComponent', () => {
   let spectator: Spectator<GroupListComponent>;
   let loader: HarnessLoader;
   let store$: MockStore<GroupsState>;
+
+  // The real `hasRole` resolves asynchronously, so roles can flip after the list has painted.
+  const hasAccountWrite$ = new BehaviorSubject(true);
 
   const createComponent = createComponentFactory({
     component: GroupListComponent,
@@ -94,6 +122,10 @@ describe('GroupListComponent', () => {
   });
 
   beforeEach(() => {
+    hasAccountWrite$.next(true);
+    // On the instance `mockAuth()` already provides, and before the component is built: the
+    // component calls `hasRole` once, in a field initializer.
+    TestBed.inject(MockAuthService).hasRole = jest.fn(() => hasAccountWrite$);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     store$ = spectator.inject(MockStore);
@@ -146,6 +178,36 @@ describe('GroupListComponent', () => {
     await table.clickRow(1);
     expect(await table.isRowExpanded(1)).toBe(true);
     expect(await table.isRowExpanded(0)).toBe(false);
+    expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
+  });
+
+  it('does not expand a group whose details row would be empty', async () => {
+    store$.overrideSelector(selectGroups, [nonExpandableGroup]);
+    store$.refreshState();
+
+    const table = await loader.getHarness(TnTableHarness);
+
+    await table.clickRow(0);
+
+    expect(await table.isRowExpanded(0)).toBe(false);
+    expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(0);
+  });
+
+  it('expands a group that only AccountWrite makes actionable once the role resolves', async () => {
+    hasAccountWrite$.next(false);
+    store$.overrideSelector(selectGroups, [remoteDeletableGroup]);
+    store$.refreshState();
+
+    const table = await loader.getHarness(TnTableHarness);
+
+    await table.clickRow(0);
+    expect(await table.isRowExpanded(0)).toBe(false);
+
+    hasAccountWrite$.next(true);
+    spectator.detectChanges();
+
+    await table.clickRow(0);
+    expect(await table.isRowExpanded(0)).toBe(true);
     expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
   });
 

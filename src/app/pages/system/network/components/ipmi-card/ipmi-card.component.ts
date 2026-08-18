@@ -5,6 +5,7 @@ import { TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCar
 import { of } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { translated } from 'app/helpers/translated.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -62,9 +63,11 @@ export class IpmiCardComponent implements OnInit {
 
   // Keep the page-specific message for the no-records case, but surface the API
   // error state distinctly instead of masking it as "No IPMI channels found".
-  protected readonly emptyMessage = computed(() => {
+  // `translated`, not a plain computed: only the error branch reads the language through
+  // `titleForType`, so the fallback would otherwise freeze on the locale loaded first.
+  protected readonly emptyMessage = translated(() => {
     return this.emptyType() === EmptyType.Errors
-      ? this.translate.instant(this.emptyService.defaultEmptyConfig(EmptyType.Errors).title)
+      ? this.emptyService.titleForType(EmptyType.Errors)
       : this.translate.instant('No IPMI channels found');
   });
 

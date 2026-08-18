@@ -1,17 +1,9 @@
-@if (slideInRef) {
-  <ix-modal-header
-    [requiredRoles]="requiredRoles"
-    [title]="title()"
-    [loading]="isLoading()"
-  ></ix-modal-header>
-}
-
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
     <tn-form-section [heading]="'Basic' | translate">
       <tn-form-field
         [label]="'Name' | translate"
         [required]="true"
-        [tooltip]="'Container name' | translate"
+        [tooltip]="nameTooltip()"
       >
         <tn-input formControlName="name"></tn-input>
       </tn-form-field>
@@ -57,7 +49,7 @@
       }
     </tn-form-section>
 
-    @if (isAdvancedMode) {
+    @if (isAdvancedMode()) {
       @if (!isEditMode() && hasPreferredPool()) {
         <tn-form-section [heading]="'Storage' | translate">
           <tn-form-field [tooltip]="'Use the system preferred pool for this container' | translate">
@@ -199,23 +191,4 @@
         </tn-form-field>
       </tn-form-section>
     }
-
-    <ix-form-actions>
-      @if (slideInRef) {
-        <tn-button
-          color="primary"
-          type="submit"
-          [testId]="isEditMode() ? 'save' : 'create'"
-          [label]="isEditMode() ? ('Save' | translate) : ('Create' | translate)"
-          [disabled]="!canSubmit()"
-        ></tn-button>
-      }
-
-      <tn-button
-        type="button"
-        [testId]="'advanced-options'"
-        [label]="isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate)"
-        (onClick)="isAdvancedMode = !isAdvancedMode"
-      ></tn-button>
-    </ix-form-actions>
   </form>

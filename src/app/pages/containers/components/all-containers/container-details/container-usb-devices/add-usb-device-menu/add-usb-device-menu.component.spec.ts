@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ContainerDeviceType, ContainerType } from 'app/enums/container.enum';
+import { ContainerDeviceType, ContainerStatus, ContainerType } from 'app/enums/container.enum';
 import { AvailableUsb, ContainerDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -110,6 +110,44 @@ describe('AddUsbDeviceMenuComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('USB Device was added');
     });
   });
+
+  // Middleware refuses device operations on any container that is not stopped, so Add has to
+  // be gated like the per-device Edit/Delete menu instead of failing at submit.
+  describe.each([ContainerStatus.Running, ContainerStatus.Suspended, ContainerStatus.Unknown])(
+    'when the container is %s',
+    (state) => {
+      const createComponent = createComponentFactory({
+        component: AddUsbDeviceMenuComponent,
+        providers: [
+          mockAuth(),
+          mockApi([
+            mockCall('container.device.usb_choices', {
+              usb_1_2: {
+                capability: { vendor_id: '0x0781', product_id: '0x0002', product: 'Card Reader' },
+                available: true,
+                description: 'Card Reader',
+              } as AvailableUsb,
+            }),
+          ]),
+          mockProvider(ContainersStore, {
+            selectedContainer: () => ({ id: 123, status: { state } }),
+          }),
+          mockProvider(ContainerDevicesStore, {
+            devices: () => [] as ContainerDevice[],
+            isLoading: () => false,
+          }),
+          mockProvider(SnackbarService),
+        ],
+      });
+
+      it('disables Add', async () => {
+        const loader = TestbedHarnessEnvironment.loader(createComponent().fixture);
+
+        const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+        expect(await trigger.isDisabled()).toBe(true);
+      });
+    },
+  );
 
   describe('with no available devices', () => {
     let spectator: Spectator<AddUsbDeviceMenuComponent>;

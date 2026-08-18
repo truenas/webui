@@ -11,7 +11,7 @@
 <div class="table-container" [ixUiSearch]="searchableElements.elements.initShutDown">
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty
-      [title]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async).title | translate"
+      [title]="emptyService.titleForType(dataProvider.emptyType$ | async)"
     ></tn-empty>
   } @else {
     <tn-table

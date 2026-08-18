@@ -48,12 +48,11 @@
 }
 
 @if (!currentPageCount() && !isLoading()) {
-  @let emptyConfig = emptyService.defaultEmptyConfig(emptyType());
   <tn-empty
     [ixUiSearch]="searchableElements.elements.list"
     [icon]="emptyService.iconForType(emptyType())"
-    [title]="emptyConfig.title | translate"
-    [description]="emptyConfig.message ? (emptyConfig.message | translate) : undefined"
+    [title]="emptyService.titleForType(emptyType())"
+    [description]="emptyService.descriptionForType(emptyType())"
   ></tn-empty>
 } @else {
   <tn-table
@@ -65,9 +64,10 @@
     [selectable]="true"
     [expandable]="true"
     [clickable]="true"
+    [expandOnRowClick]="true"
+    [singleExpand]="true"
     [loading]="isLoading()"
     (selectionChange)="onSelectionChange($event)"
-    (rowClick)="onRowClick($event)"
     (sortChange)="onSortChange($event)"
   >
     <ng-container tnColumnDef="dataset" [sortable]="true">

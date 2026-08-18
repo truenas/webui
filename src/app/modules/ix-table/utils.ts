@@ -2,7 +2,6 @@ import {
   computed, inject, isDevMode, isSignal, signal, Signal,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { TranslateService } from '@ngx-translate/core';
 import { type TnSortEvent } from '@truenas/ui-components';
 import { get, kebabCase } from 'lodash-es';
 import { Observable, switchMap } from 'rxjs';
@@ -343,8 +342,10 @@ export function dataProviderLoading<T>(provider: BaseDataProvider<T> | Signal<Ba
 export interface TableEmptyState {
   /** Current empty type — also drives page-level "first use" empty states. */
   type: Signal<EmptyType>;
-  /** Translated title for `[emptyMessage]`. */
+  /** Translated title for `[emptyMessage]`. See `EmptyService.titleForType`. */
   message: Signal<string>;
+  /** Translated body copy for `[emptyDescription]`. See `EmptyService.descriptionForType`. */
+  description: Signal<string>;
   /** Icon marker for `[emptyIcon]`. */
   icon: Signal<string>;
   /** Row count of the current page, for gating a page-level empty state. */
@@ -355,33 +356,24 @@ export interface TableEmptyState {
  * A tn-table's empty-state bindings, derived from its data provider. Must be
  * called from an injection context.
  *
- * Only `EmptyConfig.title` survives — `tn-table` has no input for the config's
- * `message`, so the second line ix-table rendered on the no-search-results state
- * is dropped. Tracked under "Migration follow-ups" in TRUENAS_UI_INTEGRATION.md.
+ * Both halves of the config survive: `title` goes to `[emptyMessage]` and `message` to
+ * `[emptyDescription]`, which `@truenas/ui-components` 0.4.9 added — before it, the second
+ * line ix-table rendered on the no-search-results state had nowhere to go.
  */
 export function dataProviderEmptyState<T>(
   provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
 ): TableEmptyState {
   const emptyService = inject(EmptyService);
-  const translate = inject(TranslateService);
 
   const type = toSignal(fromProvider(provider, (instance) => instance.emptyType$), {
     initialValue: EmptyType.Loading,
   });
 
-  // Keyed into `message` below so it re-translates on a language change, the way the
-  // `| translate` bindings around it do — `instant()` alone would freeze the first locale.
-  const lang = langChangeSignal();
-
   return {
     type,
-    message: computed(() => {
-      lang();
-      // `defaultEmptyConfig` always resolves to a config (it has a `default:` branch),
-      // but `title` is optional on EmptyConfig.
-      const title = emptyService.defaultEmptyConfig(type()).title;
-      return title ? translate.instant(title) : '';
-    }),
+    // Both resolve their own language dependency, so no `langChangeSignal()` here.
+    message: computed(() => emptyService.titleForType(type())),
+    description: computed(() => emptyService.descriptionForType(type())),
     icon: computed(() => emptyService.iconForType(type())),
     count: toSignal(fromProvider(provider, (instance) => instance.currentPageCount$), { initialValue: 0 }),
   };
@@ -396,16 +388,7 @@ export interface TnTableListHost<T extends object> {
   readonly rows: Signal<T[]>;
   /** For `[loading]`. */
   readonly isLoading: Signal<boolean>;
-  /**
-   * Translated loading text, for `[loadingMessage]`.
-   *
-   * `tn-table` defaults that input to a bare English literal — the library takes no i18n
-   * dependency, so it can only ship the untranslated default and expects the app to pass a
-   * translated one. Resolved here, out of the same `EmptyService` catalog that supplies
-   * {@link empty}'s message, rather than written out as `'Loading...' | translate` in each
-   * template: webui already carries two spellings of that string (`Loading...` and `Loading…`)
-   * which translate differently, and every fresh copy is a chance to add a third.
-   */
+  /** Translated loading text, for `[loadingMessage]`. See `EmptyService.loadingMessage`. */
   readonly loadingMessage: Signal<string>;
   /** For `[emptyMessage]`/`[emptyIcon]` and the page-level empty state. */
   readonly empty: TableEmptyState;
@@ -504,16 +487,8 @@ export function tnTableListHost<T extends object>(
   const empty = dataProviderEmptyState(provider);
   const lang = langChangeSignal();
   const emptyService = inject(EmptyService);
-  const translate = inject(TranslateService);
 
-  // Keyed on `lang()` for the same reason `dataProviderEmptyState` keys its message: `instant()`
-  // alone would freeze whichever locale happened to be active when the list was built.
-  const loadingMessage = computed(() => {
-    lang();
-    // `title` is optional on EmptyConfig, though the loading config always carries one.
-    const title = emptyService.defaultEmptyConfig(EmptyType.Loading).title;
-    return title ? translate.instant(title) : '';
-  });
+  const loadingMessage = computed(() => emptyService.loadingMessage());
 
   function perRow<R>(derive: (row: T) => R): (row: T) => R {
     // A fresh cache per (rows, language), so invalidation is structural.

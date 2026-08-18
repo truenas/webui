@@ -22,17 +22,17 @@
 
 <div class="controls">
   @if (status() === DriveBayLightStatus.Off || status() === DriveBayLightStatus.Clear || !isStatusKnown()) {
-    <button
-      mat-button
-      ixTest="identify"
-      (click)="changeLightStatus(DriveBayLightStatus.On)"
-    >{{ 'Identify' | translate }}</button>
+    <tn-button
+      [testId]="'identify'"
+      [label]="'Identify' | translate"
+      (onClick)="changeLightStatus(DriveBayLightStatus.On)"
+    ></tn-button>
   }
   @if ((status() !== DriveBayLightStatus.Off && status() !== DriveBayLightStatus.Clear) || !isStatusKnown()) {
-    <button
-      mat-button
-      ixTest="turn-off"
-      (click)="changeLightStatus(DriveBayLightStatus.Off)"
-    >{{ 'Turn Off' | translate }}</button>
+    <tn-button
+      [testId]="'turn-off'"
+      [label]="'Turn Off' | translate"
+      (onClick)="changeLightStatus(DriveBayLightStatus.Off)"
+    ></tn-button>
   }
 </div>
