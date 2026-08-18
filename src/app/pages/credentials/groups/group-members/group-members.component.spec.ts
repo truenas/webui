@@ -401,6 +401,23 @@ describe('GroupMembersComponent - built-in users added during the session', () =
     expect(usernamesIn('All Users')).toEqual(['daemon']);
     expect(usernamesIn('Group Members')).toEqual(['dummy-user', 'root']);
   });
+
+  // The label has to describe the source the picker is showing, not the live member list:
+  // a built-in moved back out is on screen again and must not be counted as hidden.
+  it('counts only the built-ins actually off screen while the filter is on', async () => {
+    await move('All Users', 1, 'chevron-right');
+
+    const checkbox = await loader.getHarness(TnCheckboxHarness);
+    await checkbox.check();
+    spectator.detectChanges();
+
+    expect(await checkbox.getLabelText()).toBe('Hide built-in users (1)');
+
+    await move('Group Members', 0, 'chevron-left');
+
+    expect(usernamesIn('All Users')).toEqual(['daemon']);
+    expect(await checkbox.getLabelText()).toBe('Hide built-in users (1)');
+  });
 });
 
 describe('GroupMembersComponent - directory service group', () => {

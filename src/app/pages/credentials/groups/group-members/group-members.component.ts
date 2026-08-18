@@ -98,10 +98,19 @@ export class GroupMembersComponent implements OnInit, CanComponentDeactivate {
   });
 
   /**
-   * Only the built-ins the checkbox would actually take off screen: the ones shown on the
-   * members side either way — already in the group, or moved there since — don't count.
+   * How many built-ins the checkbox takes off screen. While it is ticked that is read back out
+   * of the source the picker was actually given — the live member list can't be used there,
+   * because the source is a snapshot and the two drift apart as members move around, leaving the
+   * label claiming more is hidden than is. While it is not ticked, nothing is hidden yet, so the
+   * count predicts what the snapshot would drop.
    */
   protected readonly builtinUserCount = computed(() => {
+    if (this.hideBuiltinUsers()) {
+      const shown = new Set(this.availableUsers().map((user) => user.id));
+
+      return this.users().filter((user) => user.builtin && !shown.has(user.id)).length;
+    }
+
     const shownAnyway = new Set([
       ...this.group()?.users ?? [],
       ...this.selectedMembers().map((user) => user.id),
