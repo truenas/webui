@@ -70,7 +70,7 @@ describe('PortalFormComponent', () => {
       jest.spyOn(console, 'warn').mockImplementation();
     });
 
-    it('sends an create payload to websocket and closes modal when save is pressed', async () => {
+    it('sends a create payload to websocket and closes when the host submits the form', async () => {
       const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
       await addButton.click();
 
@@ -82,12 +82,16 @@ describe('PortalFormComponent', () => {
       const ipSelect = await loader.getHarness(TnSelectHarness);
       await ipSelect.selectOption('192.168.1.3');
 
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
       spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('iscsi.portal.create', [{
         comment: 'work',
         listen: [{ ip: '192.168.1.3' }],
       }]);
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
@@ -110,11 +114,14 @@ describe('PortalFormComponent', () => {
       expect(await ipSelect.getDisplayText()).toBe('0.0.0.0');
     });
 
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+    it('sends an update payload to websocket and closes when the host submits the form', async () => {
       await (await getTnInput('comment')).setValue('good');
 
       const ipSelect = await loader.getHarness(TnSelectHarness);
       await ipSelect.selectOption('0.0.0.0');
+
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
 
       spectator.component.submit();
 
@@ -122,6 +129,7 @@ describe('PortalFormComponent', () => {
         comment: 'good',
         listen: [{ ip: '0.0.0.0' }],
       }]);
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 

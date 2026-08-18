@@ -58,6 +58,13 @@ describe('TargetFormComponent', () => {
     auth_networks: ['192.168.10.0/24', '192.168.0.0/24'],
   } as IscsiTarget;
 
+  // The factory default for FibreChannelService.validatePhysicalPortUniqueness. Shared so the one
+  // test that overrides it can restore this exact value instead of a second copy that could drift.
+  const permissiveFcPortValidation = (): { valid: boolean; duplicates: string[] } => ({
+    valid: true,
+    duplicates: [],
+  });
+
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
@@ -113,7 +120,7 @@ describe('TargetFormComponent', () => {
       mockProvider(FibreChannelService, {
         loadTargetPorts: jest.fn(() => of([])),
         linkFiberChannelPortsToTarget: jest.fn(() => of(null)),
-        validatePhysicalPortUniqueness: jest.fn(() => ({ valid: true, duplicates: [] as string[] })),
+        validatePhysicalPortUniqueness: jest.fn(permissiveFcPortValidation),
       }),
       ...ixFormTestingProviders(),
       mockApi([
@@ -310,6 +317,37 @@ describe('TargetFormComponent', () => {
         { label: '55', value: 55 },
         { label: '66', value: 66 },
       ]);
+    });
+  });
+
+  // `validatePhysicalPortUniqueness` is one jest.fn shared by every test in this file (it is built
+  // once in the factory's providers), so this block restores the permissive default in afterEach.
+  describe('FC port uniqueness gate', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        props: {
+          targetData: existingTarget,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      jest.spyOn(console, 'warn').mockImplementation();
+    });
+
+    afterEach(() => {
+      (spectator.inject(FibreChannelService).validatePhysicalPortUniqueness as jest.Mock)
+        .mockImplementation(permissiveFcPortValidation);
+    });
+
+    it('blocks the host Save while two FC ports share a physical port', async () => {
+      (spectator.inject(FibreChannelService).validatePhysicalPortUniqueness as jest.Mock)
+        .mockImplementation(() => ({ valid: false, duplicates: ['fc0'] }));
+
+      await form.fillForm({
+        Mode: 'Fibre Channel',
+      });
+
+      expect(spectator.component.canSubmit()).toBe(false);
     });
   });
 
