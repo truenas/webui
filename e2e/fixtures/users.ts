@@ -25,7 +25,7 @@ const queryTimeoutMs = 30_000;
  * appliances rather than workers (D2). Two runs against a single appliance would
  * collide here — and equally on the `e2e_tank` pool and on SMB service state,
  * which is why the answer is run-scoped naming across the suite rather than a
- * second username here. Tracked under "Hardening" in `docs/03-plan-and-status.md`.
+ * second username here. Tracked under "Known gaps" in `docs/status.md`.
  */
 export const testAdmin = {
   username: 'bob',

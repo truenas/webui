@@ -5,7 +5,7 @@
  * `ApiCallDirectory` of ~65 endpoints inherited from TrueNAS Connect — not the
  * full generated API. Several methods the suite needs are missing from it,
  * including `user.delete`, `pool.create`, `pool.export` and `sharing.smb.*`.
- * See T3.1 in `docs/02-technology.md`.
+ * See T3.1 in `docs/status.md`.
  *
  * **This is the only place in the suite that casts around those types.** Keeping
  * it to one function means the eventual fix — widening the client's directory

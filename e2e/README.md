@@ -137,7 +137,7 @@ e2e/
   locators/    data-test values, one module per screen
   fixtures/    API-driving setup and teardown
   support/     config, auth, API client
-  docs/        why it is built this way, and what is planned next
+  docs/        status.md — where the suite is and what is next
 ```
 
 `playwright.config.ts` lives at the repository root, where the CLI looks for it.

@@ -59,7 +59,7 @@ const target = loadTargetConfig();
  * generated per appliance at install time.
  *
  * So this stays, deliberately and visibly, until the client exposes one of
- * those. It is tracked under "Not yet" in `docs/03-plan-and-status.md` so it
+ * those. It is tracked under "Known gaps" in `docs/status.md` so it
  * does not become permanent by default, and the banner below states it on every
  * run rather than letting it pass unnoticed.
  *

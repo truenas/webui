@@ -153,11 +153,15 @@ Two failures that look like bugs and are not:
 
 ## Where things are going
 
-`docs/03-plan-and-status.md` is the living account of what is covered, what is
-not, and what is next. Check it before starting substantial work — and update it
-after. `docs/01-requirements.md` and `docs/02-technology.md` are decision
-records: the `R`/`T`/`D` numbers cited in code comments point there, and they
-explain *why* a piece of code is shaped as it is.
+`docs/status.md` is the living account of what is covered, what is not, and
+what is next. Check it before starting substantial work — and update it after.
+Keep it short: it was written to replace three long records that drifted out of
+agreement with the code faster than they could be corrected.
+
+The `R`/`T`/`D` numbers in code comments came from those records. They survive as
+markers that a decision was deliberate, and `docs/status.md` carries a one-line
+gloss of each one the code still cites. **Do not add new ones** — put the reason
+in the comment, where it cannot drift away from the code it explains.
 
 ## Temporary scaffolding
 

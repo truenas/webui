@@ -3,11 +3,10 @@
  *
  * Deliberately minimal. This test exists to prove the rig — target profile
  * resolution, token generation, authenticated session reuse, and that the app
- * actually renders — not to cover a feature. Feature coverage starts at S1 in
- * Phase 4.
+ * actually renders — not to cover a feature.
  *
- * If this passes in both profiles, every structural assumption in
- * `02-technology.md` has been validated against a real appliance.
+ * If this passes in both profiles, every structural assumption the harness makes
+ * has been validated against a real appliance.
  */
 import { adminLayout } from '../support/constants';
 import { expect, test } from '../support/fixtures';

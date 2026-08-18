@@ -321,7 +321,7 @@ export async function ensureSmbServiceStopped(client: TrueNasApiClient): Promise
   // is `ServiceControlAction`, a string enum the package declares but does not
   // export — so the literal `'STOP'` is rejected and there is no way to obtain
   // the value the signature demands. Same packaging gap as `AuthResponseType`
-  // in `support/api/client.ts`; both are recorded in `docs/03-plan-and-status.md`.
+  // in `support/api/client.ts`; both are recorded in `docs/status.md`.
   await callUntyped(client, 'service.control', ['STOP', 'cifs', { silent: false }]);
 
   // `service.control` is a job, so the call returns before the service is down.
