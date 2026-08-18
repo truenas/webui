@@ -17,12 +17,7 @@
   ></tn-button>
 </ix-page-header>
 
-<!--
-  tn-table's empty state is title + icon only (no message line / projected slot), so we map
-  the EmptyConfig title to [emptyMessage]. The supplementary `message` is intentionally dropped
-  for these records-only states. Revisit if tn-table gains a projectable empty slot (NAS-141021).
--->
-@let emptyConfig = emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async);
+@let emptyType = dataProvider.emptyType$ | async;
 
 <tn-table
   class="table"
@@ -30,8 +25,9 @@
   [dataSource]="(dataProvider.currentPage$ | async) ?? []"
   [displayedColumns]="displayedColumns()"
   [loading]="!!(dataProvider.isLoading$ | async)"
-  [emptyMessage]="(emptyConfig.title || '') | translate"
-  [emptyIcon]="emptyConfig.icon || ''"
+  [emptyMessage]="emptyService.titleForType(emptyType)"
+  [emptyDescription]="emptyService.descriptionForType(emptyType)"
+  [emptyIcon]="emptyService.iconForType(emptyType)"
   (sortChange)="onSortChange($event)"
 >
   <ng-container [tnColumnDef]="'name'" [sortable]="true">

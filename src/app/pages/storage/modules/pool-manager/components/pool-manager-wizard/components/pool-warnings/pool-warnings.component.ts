@@ -9,13 +9,13 @@ import {
 } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { combineLatest, startWith } from 'rxjs';
+import { translated } from 'app/helpers/translated.helper';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { isTnCheckboxChange } from 'app/modules/forms/ix-forms/utils/tn-checkbox-change.utils';
-import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
@@ -63,10 +63,10 @@ export class PoolWarningsComponent implements OnInit {
   disksWithExportedPools: DetailsDisk[] = [];
   poolAndDisks = new Map<string, string[]>();
 
-  // `translatedSignal`, not a plain field: the labels are composed in TypeScript rather than
+  // `translated`, not a plain field: the labels are composed in TypeScript rather than
   // piped in the template, so `instant()` alone would freeze them in whatever language was
   // active when the component was constructed.
-  protected readonly allowNonUniqueSerialDisksOptions = translatedSignal<Option<boolean>[]>(
+  protected readonly allowNonUniqueSerialDisksOptions = translated<Option<boolean>[]>(
     (translate) => [
       { label: translate.instant('Allow'), value: true },
       { label: translate.instant('Don\'t Allow'), value: false },

@@ -7,8 +7,21 @@
 
 h3 {
   @include section-title;
+}
+
+// The drive-details heading carries a trailing close button. The section-title chrome moves
+// onto the row so the <h3> itself can stay text-only.
+.details-header {
+  @include section-title;
+  align-items: center;
   display: flex;
   justify-content: space-between;
+
+  h3 {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
 }
 
 .overview {

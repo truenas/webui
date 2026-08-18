@@ -26,6 +26,8 @@
     [trackBy]="trackById"
     [loading]="isLoading()"
     [emptyMessage]="emptyMessage()"
+    [emptyDescription]="emptyDescription()"
+    [emptyIcon]="emptyIcon()"
     (sortChange)="onSortChange($event)"
   >
     <ng-container tnColumnDef="name" [sortable]="true">

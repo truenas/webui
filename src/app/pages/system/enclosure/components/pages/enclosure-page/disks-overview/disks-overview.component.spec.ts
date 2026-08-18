@@ -1,5 +1,7 @@
-import { byText } from '@ngneat/spectator';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { EnclosureDiskStatus, EnclosureElementType, EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
 import {
   DashboardEnclosure,
@@ -39,6 +41,7 @@ const fakeSelectedEnclosure = {
 
 describe('DisksOverviewComponent', () => {
   let spectator: Spectator<DisksOverviewComponent>;
+  let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
     component: DisksOverviewComponent,
@@ -56,6 +59,7 @@ describe('DisksOverviewComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows tiles', () => {
@@ -94,8 +98,9 @@ describe('DisksOverviewComponent', () => {
     expect(activeTile[0]).toHaveText('All disks healthy');
   });
 
-  it('selects a different view when user presses on the button in the tile', () => {
-    spectator.click(byText('Show Expander Status'));
+  it('selects a different view when user presses on the button in the tile', async () => {
+    const button = await loader.getHarness(TnButtonHarness.with({ label: 'Show Expander Status' }));
+    await button.click();
 
     expect(spectator.inject(EnclosureStore).selectView).toHaveBeenCalledWith(EnclosureView.Expanders);
   });

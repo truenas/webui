@@ -42,6 +42,8 @@
     [trackBy]="trackByAppId"
     [selectable]="true"
     [clickable]="true"
+    [fixedLayout]="true"
+    [minColumnWidth]="tableMinColumnWidth()"
     [activeRow]="selectedApp ?? null"
     [loading]="isLoading()"
     (sortChange)="onSortChange($event)"

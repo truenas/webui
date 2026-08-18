@@ -1,9 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import { throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
@@ -49,10 +48,10 @@ describe('IdentifyLightComponent', () => {
     });
 
     it('shows both Identify and Turn Off buttons', async () => {
-      const identifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Identify' }));
+      const identifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Identify' }));
       expect(identifyButton).toExist();
 
-      const turnOffButton = await loader.getHarness(MatButtonHarness.with({ text: 'Turn Off' }));
+      const turnOffButton = await loader.getHarness(TnButtonHarness.with({ label: 'Turn Off' }));
       expect(turnOffButton).toExist();
     });
   });
@@ -74,7 +73,7 @@ describe('IdentifyLightComponent', () => {
     });
 
     it('shows Identify button', async () => {
-      const identifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Identify' }));
+      const identifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Identify' }));
       expect(identifyButton).toExist();
     });
   });
@@ -96,7 +95,7 @@ describe('IdentifyLightComponent', () => {
     });
 
     it('shows turn off button', async () => {
-      const turnOffButton = await loader.getHarness(MatButtonHarness.with({ text: 'Turn Off' }));
+      const turnOffButton = await loader.getHarness(TnButtonHarness.with({ label: 'Turn Off' }));
       expect(turnOffButton).toExist();
     });
   });
@@ -118,14 +117,14 @@ describe('IdentifyLightComponent', () => {
     });
 
     it('shows Identify button', async () => {
-      const identifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Identify' }));
+      const identifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Identify' }));
       expect(identifyButton).toExist();
     });
   });
 
   describe('changing status', () => {
     it('changes identify status of Off when Turn Off is pressed', async () => {
-      const turnOffButton = await loader.getHarness(MatButtonHarness.with({ text: 'Turn Off' }));
+      const turnOffButton = await loader.getHarness(TnButtonHarness.with({ label: 'Turn Off' }));
       await turnOffButton.click();
 
       expect(spectator.inject(EnclosureStore).changeLightStatus).toHaveBeenCalledWith({
@@ -141,7 +140,7 @@ describe('IdentifyLightComponent', () => {
     });
 
     it('changes identify status to Identify when corresponding button is pressed', async () => {
-      const identifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Identify' }));
+      const identifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Identify' }));
       await identifyButton.click();
 
       expect(spectator.inject(EnclosureStore).changeLightStatus).toHaveBeenCalledWith({
@@ -160,7 +159,7 @@ describe('IdentifyLightComponent', () => {
       const api = spectator.inject(ApiService);
       api.call.mockImplementationOnce(() => throwError(() => new Error('Failed to change status')));
 
-      const identifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Identify' }));
+      const identifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Identify' }));
       await identifyButton.click();
 
       const store = spectator.inject(EnclosureStore);

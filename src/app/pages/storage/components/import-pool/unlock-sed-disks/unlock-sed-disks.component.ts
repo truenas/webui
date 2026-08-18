@@ -18,6 +18,7 @@ import { distinctUntilChanged, filter, finalize, map, switchMap } from 'rxjs/ope
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { translated } from 'app/helpers/translated.helper';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -26,7 +27,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -97,7 +97,7 @@ export class UnlockSedDisksComponent {
    * tn-migration playbook's "Known upstream defects" table; revisit once tn-checkbox wires up
    * the field context.
    */
-  protected readonly updateGlobalSettingsAriaLabel = translatedSignal((translate) => translate.instant(
+  protected readonly updateGlobalSettingsAriaLabel = translated((translate) => translate.instant(
     '{label}. {hint}',
     {
       label: translate.instant(this.updateGlobalSettingsLabel),

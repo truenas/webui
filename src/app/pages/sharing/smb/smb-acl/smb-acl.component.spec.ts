@@ -1,8 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-// TODO(NAS-141028): swap to TnButtonHarness once the shared ix-form's Save migrates to tn-button.
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnAutocompleteHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
@@ -15,9 +13,7 @@ import { SmbSharesec, SmbSharesecAce } from 'app/interfaces/smb-share.interface'
 import { User, User as TnUser } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserService } from 'app/services/user.service';
 import { SmbAclComponent } from './smb-acl.component';
@@ -56,12 +52,6 @@ describe('SmbAclComponent', () => {
     uid: 0,
     username: 'root',
     smb: true,
-  };
-
-  const slideInRef: SlideInRef<string | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
   };
 
   /** All `tn-select`s bound to a given control, in DOM (list-item) order. */
@@ -105,11 +95,8 @@ describe('SmbAclComponent', () => {
           group: 'wheel', id: 1, gid: 1, smb: true,
         }] as Group[]),
       ]),
-      mockProvider(SlideIn, {
-        openSlideIns: jest.fn(() => 1),
-      }),
       mockProvider(DialogService),
-      mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
       mockProvider(UserService, {
         smbUserQueryDsCache: () => of([
           { username: 'root', id: 0, uid: 0 },
@@ -144,10 +131,6 @@ describe('SmbAclComponent', () => {
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     entriesList = await loader.getHarness(IxListHarness);
-  });
-
-  it('shows name of the share in the title', () => {
-    expect(spectator.query(ModalHeaderComponent)).toExist();
   });
 
   describe('user ace', () => {
@@ -248,8 +231,12 @@ describe('SmbAclComponent', () => {
     await (await getSelect('ae_perm', lastIndex)).selectOption('FULL');
     await (await getSelect('ae_type', lastIndex)).selectOption('ALLOWED');
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    const closed = jest.fn();
+    spectator.component.closed.subscribe(closed);
+
+    spectator.component.submit();
+    // The submit pipeline resolves each ACE's user/group id before calling setacl.
+    await spectator.fixture.whenStable();
 
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('sharing.smb.setacl', [{
       share_name: 'myshare',
@@ -271,6 +258,6 @@ describe('SmbAclComponent', () => {
       ],
     }]);
 
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(closed).toHaveBeenCalledWith(true);
   });
 });

@@ -311,7 +311,7 @@ Migration work under epic NAS-141021 turned up several places where
 ### Fixed upstream
 
 The four gaps below were fixed in the library and **require
-`@truenas/ui-components` >= 0.4.7** (the version this app pins). This app now uses the
+`@truenas/ui-components` >= 0.4.7** (the app pins `~0.4.11`). This app now uses the
 library APIs directly and carries no `::ng-deep` workaround for them.
 
 | # | Library gap | Fix | Now used by |
@@ -337,7 +337,7 @@ Gaps 5 and 6 are the same signal that produced gaps 1–4: without them, every n
 
 Because `.tn-list-item__*` is internal markup rather than public API, the three
 workarounds under gap 5 live in `src/assets/styles/mixins/tn-list.scss` (alongside the
-existing `mixins/tn-card.scss` and `mixins/tn-table.scss`) rather than being spelled out
+existing `mixins/tn-card.scss`) rather than being spelled out
 per consumer. A library class rename is then a one-file fix, and each gap disappears
 with a single edit once the corresponding input ships.
 
@@ -392,20 +392,24 @@ the epic's follow-up list.
 
 ### Adopted from the library
 
-Implemented in `@truenas/ui-components` and used here directly, so these need the
-pinned `~0.4.9` (they landed after `0.3.26`, the version this work started against).
+Implemented in `@truenas/ui-components` and used here directly, so these need at least
+0.4.9 (they landed after `0.3.26`, the version this work started against); the app pins
+`~0.4.11`.
 
 | Library addition | What it replaced here |
 | --- | --- |
 | `tn-table` wraps cells by default (no input) | The `tn-table-fixed-wrap` mixin include on all seven Data Protection lists, and its `::ng-deep` into `.tn-table__cell-content`. Equal-width columns are a separate opt-in, `[fixedLayout]`, which none of these lists needs |
 | `tn-table [expandOnRowClick]` | `ExpandOnRowClickDirective` (deleted, with its spec) and its four usages |
-| `tn-table [minColumnWidth]` (default `120px`) | Nothing — new. Only applies with `[fixedLayout]`, where it derives a width floor as `minColumnWidth × columnCount` so a narrow viewport scrolls rather than shrinking columns to nothing |
+| `tn-table [minColumnWidth]` (opt-in; empty by default, so `[fixedLayout]` alone applies no floor) | Nothing — new. Only applies with `[fixedLayout]`, where it derives a width floor as `minColumnWidth × columnCount` so a narrow viewport scrolls rather than shrinking columns to nothing. Reach for it only where the table can actually get that narrow — `installed-apps-list` sets it in the single-column layout and clears it in the split one |
+| `tn-table [minWidth]` | The `card-table-scroll` mixin in `pages/data-protection/_card-title.scss` and its `::ng-deep` into `.tn-table__table`. Now bound as `[minWidth]="'420px'"` on the five Data Protection task cards, so a narrow card scrolls horizontally instead of clipping its fixed-width state/enabled/actions columns |
 
-Also fixed in the library and available, but not adopted here because their consumers sit in other
-feature areas: `[singleExpand]` (would delete `restrictToSingleExpandedRow`),
-`[(sortColumn)]`/`[(sortDirection)]` (would delete `reflectSortIntoTable`), `[emptyDescription]`
-(the second empty-state line `dataProviderEmptyState` drops), `TnMenuTriggerDirective`'s
-`aria-haspopup`/`aria-expanded` + public `isOpen`, and `tn-side-panel [closeButtonAriaLabel]`.
+Also fixed in the library and adopted since, under NAS-142058, because their consumers sat in
+other feature areas: `[singleExpand]` and `[(sortColumn)]`/`[(sortDirection)]` (which between them
+deleted `restrictToSingleExpandedRow`, `reflectSortIntoTable` and the `app/modules/tn-table/utils`
+module they lived in) and `[emptyDescription]`, which restores the second empty-state line —
+`dataProviderEmptyState` now exposes it as `description`, so every `tnTableListHost` list binds it.
+Still unadopted: `TnMenuTriggerDirective`'s `aria-haspopup`/`aria-expanded` + public `isOpen`, and
+`tn-side-panel [closeButtonAriaLabel]`.
 
 Two long-standing library bugs surfaced while doing this, both the same root cause — a rule
 written as a plain `.tn-table` class selector, which emulated encapsulation compiles to

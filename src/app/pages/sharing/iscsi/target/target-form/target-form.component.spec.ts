@@ -1,8 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-// TODO(NAS-141028): swap to TnButtonHarness once the shared ix-form's Save migrates to tn-button.
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
@@ -24,9 +22,8 @@ import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   FcMpioInfoBannerComponent,
@@ -61,11 +58,12 @@ describe('TargetFormComponent', () => {
     auth_networks: ['192.168.10.0/24', '192.168.0.0/24'],
   } as IscsiTarget;
 
-  const slideInRef: SlideInRef<IscsiTarget | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
+  // The factory default for FibreChannelService.validatePhysicalPortUniqueness. Shared so the one
+  // test that overrides it can restore this exact value instead of a second copy that could drift.
+  const permissiveFcPortValidation = (): { valid: boolean; duplicates: string[] } => ({
+    valid: true,
+    duplicates: [],
+  });
 
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -118,16 +116,13 @@ describe('TargetFormComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideIn, {
-        openSlideIns: jest.fn(() => 1),
-      }),
       mockProvider(DialogService),
       mockProvider(FibreChannelService, {
         loadTargetPorts: jest.fn(() => of([])),
         linkFiberChannelPortsToTarget: jest.fn(() => of(null)),
-        validatePhysicalPortUniqueness: jest.fn(() => ({ valid: true, duplicates: [] as string[] })),
+        validatePhysicalPortUniqueness: jest.fn(permissiveFcPortValidation),
       }),
-      mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('tn_connect.config'),
         mockCall('fc.fc_host.query', []),
@@ -218,8 +213,10 @@ describe('TargetFormComponent', () => {
         auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenCalledWith('iscsi.target.create', [{
         name: 'name_new',
@@ -241,7 +238,7 @@ describe('TargetFormComponent', () => {
         ],
         auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
@@ -265,8 +262,10 @@ describe('TargetFormComponent', () => {
         Mode: 'Fibre Channel',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.update',
@@ -285,7 +284,7 @@ describe('TargetFormComponent', () => {
         123,
         [],
       );
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closed).toHaveBeenCalledWith(true);
     });
 
     it('loads and shows the \'portal\', \'initiator\' and \'auth\'', () => {
@@ -318,6 +317,37 @@ describe('TargetFormComponent', () => {
         { label: '55', value: 55 },
         { label: '66', value: 66 },
       ]);
+    });
+  });
+
+  // `validatePhysicalPortUniqueness` is one jest.fn shared by every test in this file (it is built
+  // once in the factory's providers), so this block restores the permissive default in afterEach.
+  describe('FC port uniqueness gate', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        props: {
+          targetData: existingTarget,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      jest.spyOn(console, 'warn').mockImplementation();
+    });
+
+    afterEach(() => {
+      (spectator.inject(FibreChannelService).validatePhysicalPortUniqueness as jest.Mock)
+        .mockImplementation(permissiveFcPortValidation);
+    });
+
+    it('blocks the host Save while two FC ports share a physical port', async () => {
+      (spectator.inject(FibreChannelService).validatePhysicalPortUniqueness as jest.Mock)
+        .mockImplementation(() => ({ valid: false, duplicates: ['fc0'] }));
+
+      await form.fillForm({
+        Mode: 'Fibre Channel',
+      });
+
+      expect(spectator.component.canSubmit()).toBe(false);
     });
   });
 
@@ -417,8 +447,7 @@ describe('TargetFormComponent', () => {
         Mode: 'Fibre Channel',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.update',
@@ -432,9 +461,8 @@ describe('TargetFormComponent', () => {
       );
     });
 
-    it('sends groups array when submitting with iSCSI mode', async () => {
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+    it('sends groups array when submitting with iSCSI mode', () => {
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.update',
@@ -453,8 +481,7 @@ describe('TargetFormComponent', () => {
         Mode: 'Both',
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.update',
@@ -557,8 +584,7 @@ describe('TargetFormComponent', () => {
         Mode: 'Fibre Channel',
       });
 
-      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.create',
@@ -577,8 +603,7 @@ describe('TargetFormComponent', () => {
         Mode: 'iSCSI',
       });
 
-      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.create',

@@ -1,5 +1,4 @@
-import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { NgClass, NgStyle } from '@angular/common';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -12,18 +11,13 @@ import {
   input,
   model,
   signal,
+  viewChild,
 } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
-import {
-  TnIconButtonComponent, TnIconComponent, TnListComponent, TnListIconDirective, TnListItemComponent,
-} from '@truenas/ui-components';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconButtonComponent } from '@truenas/ui-components';
+import { DualListBoxSide } from 'app/modules/lists/dual-listbox/dual-listbox-side';
+import { DualListBoxSideComponent } from 'app/modules/lists/dual-listbox/dual-listbox-side.component';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
-
-interface ListState<T> {
-  items: T[];
-  selectedIndices: Set<number>;
-  lastSelectedIndex: number | null;
-}
 
 @Component({
   selector: 'ix-dual-listbox',
@@ -31,14 +25,9 @@ interface ListState<T> {
   styleUrls: ['./dual-listbox.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgClass,
-    NgStyle,
     DragDropModule,
-    TnIconComponent,
+    DualListBoxSideComponent,
     TnIconButtonComponent,
-    TnListComponent,
-    TnListIconDirective,
-    TnListItemComponent,
     TranslateModule,
   ],
 })
@@ -46,6 +35,7 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   private detectBrowser = inject(DetectBrowserService);
   private destroyRef = inject(DestroyRef);
   private injector = inject(Injector);
+  private translate = inject(TranslateService);
 
   // Inputs
   sourceName = input.required<string>();
@@ -56,74 +46,55 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
   key = input<string>('id');
   display = input<string>('name');
   height = input<string>('250px');
+  /** Sorts both lists alphabetically and shows a sort-direction toggle above each of them. */
   sort = input<boolean>(false);
+  /** Shows a search field above each list. */
+  searchable = input<boolean>(true);
 
   protected isMacOs = this.detectBrowser.isMacOs();
 
-  // Public for testing
-  ariaMessage = signal('');
+  protected ariaMessage = signal('');
 
-  availableList = signal<ListState<T>>({
-    items: [],
-    selectedIndices: new Set(),
-    lastSelectedIndex: null,
-  });
+  protected availableList = new DualListBoxSide<T>({ key: this.key, display: this.display, sort: this.sort });
+  protected selectedList = new DualListBoxSide<T>({ key: this.key, display: this.display, sort: this.sort });
 
-  selectedList = signal<ListState<T>>({
-    items: [],
-    selectedIndices: new Set(),
-    lastSelectedIndex: null,
-  });
+  protected canMoveAllRight = computed(() => this.availableList.visibleItems().length > 0);
+  protected canMoveAllLeft = computed(() => this.selectedList.visibleItems().length > 0);
 
-  // Computed values (public for testing)
-  hasAvailableSelection = computed(() => this.availableList().selectedIndices.size > 0);
-  hasSelectedSelection = computed(() => this.selectedList().selectedIndices.size > 0);
-  canMoveAllRight = computed(() => this.availableList().items.length > 0);
-  canMoveAllLeft = computed(() => this.selectedList().items.length > 0);
+  private availableSide = viewChild.required<DualListBoxSideComponent<T>>('availableSide');
+  private selectedSide = viewChild.required<DualListBoxSideComponent<T>>('selectedSide');
 
-  private isUpdatingFromDrag = false;
   private ariaTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private isUpdatingFromDrag = false;
 
   constructor() {
     // Sync source and destination with internal state
     effect(() => {
-      // Don't sync during drag operations to avoid race conditions
-      if (this.isUpdatingFromDrag) {
-        return;
-      }
-
+      // Read every input up front. Returning before reading them would leave the effect
+      // with no producers on that run, and Angular would never schedule it again — the
+      // lists would stop following `source` for the rest of the component's life.
       const sourceItems = this.source();
       const destItems = this.destination();
       const keyProp = this.key();
       const displayProp = this.display();
 
+      // Don't sync during drag operations to avoid race conditions
+      if (this.isUpdatingFromDrag) {
+        return;
+      }
+
       // Validate that key and display properties exist in items
       this.validateInputs(sourceItems, keyProp, displayProp);
 
       // Get IDs of destination items
-      const destIds = new Set(destItems.map((item) => this.getItemKey(item, keyProp)));
+      const destIds = new Set(destItems.map((item) => this.selectedList.keyOf(item)));
 
       // Available items are those not in destination
-      const available = sourceItems.filter((item) => !destIds.has(this.getItemKey(item, keyProp)));
-
-      // Sort if needed
-      const sortedAvailable = this.sort() ? this.sortItems(available) : available;
-      const sortedSelected = this.sort() ? this.sortItems(destItems) : destItems;
-
-      this.availableList.set({
-        items: sortedAvailable,
-        selectedIndices: new Set(),
-        lastSelectedIndex: null,
-      });
-
-      this.selectedList.set({
-        items: sortedSelected,
-        selectedIndices: new Set(),
-        lastSelectedIndex: null,
-      });
+      this.availableList.reset(sourceItems.filter((item) => !destIds.has(this.availableList.keyOf(item))));
+      this.selectedList.reset(destItems);
     });
 
-    // Clean up ARIA timeout on destroy
+    // Clean up the pending announcement timeout on destroy
     this.destroyRef.onDestroy(() => {
       if (this.ariaTimeoutId !== null) {
         clearTimeout(this.ariaTimeoutId);
@@ -147,30 +118,6 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     }
   }
 
-  private getItemKey(item: T, keyProp: string): unknown {
-    return (item as Record<string, unknown>)[keyProp];
-  }
-
-  private getItemDisplay(item: T, displayProp: string): string {
-    return String((item as Record<string, unknown>)[displayProp] || '');
-  }
-
-  protected getDisplayValue(item: T): string {
-    return this.getItemDisplay(item, this.display());
-  }
-
-  protected trackByKey(index: number, item: T): unknown {
-    return this.getItemKey(item, this.key());
-  }
-
-  private sortItems(items: T[]): T[] {
-    return [...items].sort((a, b) => {
-      const displayA = this.getItemDisplay(a, this.display());
-      const displayB = this.getItemDisplay(b, this.display());
-      return displayA.localeCompare(displayB);
-    });
-  }
-
   private announceChange(message: string): void {
     // Clear any existing timeout
     if (this.ariaTimeoutId !== null) {
@@ -184,206 +131,114 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     }, 1000);
   }
 
-  protected isItemSelected(listState: ListState<T>, index: number): boolean {
-    return listState.selectedIndices.has(index);
+  protected moveSelectedRight(): void {
+    this.moveItems(this.availableList, this.selectedList, this.availableList.selectedItems());
   }
 
-  protected onItemClick(
-    listType: 'available' | 'selected',
-    index: number,
-    event: MouseEvent,
-  ): void {
-    const listState = listType === 'available' ? this.availableList() : this.selectedList();
-    const setList = listType === 'available' ? this.availableList : this.selectedList;
-
-    const isCtrlOrCmd = event.ctrlKey || event.metaKey;
-    const isShift = event.shiftKey;
-
-    const newSelectedIndices = new Set(listState.selectedIndices);
-
-    if (isShift && listState.lastSelectedIndex !== null) {
-      // Shift-click: select range
-      const start = Math.min(listState.lastSelectedIndex, index);
-      const end = Math.max(listState.lastSelectedIndex, index);
-      for (let i = start; i <= end; i++) {
-        newSelectedIndices.add(i);
-      }
-    } else if (isCtrlOrCmd) {
-      // Ctrl/Cmd-click: toggle selection
-      if (newSelectedIndices.has(index)) {
-        newSelectedIndices.delete(index);
-      } else {
-        newSelectedIndices.add(index);
-      }
-    } else {
-      // Regular click: select only this item
-      newSelectedIndices.clear();
-      newSelectedIndices.add(index);
-    }
-
-    setList.set({
-      ...listState,
-      selectedIndices: newSelectedIndices,
-      lastSelectedIndex: index,
-    });
+  protected moveSelectedLeft(): void {
+    this.moveItems(this.selectedList, this.availableList, this.selectedList.selectedItems());
   }
 
-  protected onItemKeydown(listType: 'available' | 'selected', index: number, event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
-      this.onItemClick(listType, index, event as unknown as MouseEvent);
-    }
-  }
-
-  // Public for testing
-  moveSelectedRight(): void {
-    const count = this.availableList().selectedIndices.size;
-    this.moveItems('available', 'selected');
-    this.announceChange(`Moved ${count} item${count === 1 ? '' : 's'} to ${this.targetName()}`);
-  }
-
-  // Public for testing
-  moveSelectedLeft(): void {
-    const count = this.selectedList().selectedIndices.size;
-    this.moveItems('selected', 'available');
-    this.announceChange(`Moved ${count} item${count === 1 ? '' : 's'} to ${this.sourceName()}`);
-  }
-
+  /** Moves every item the list currently shows, so a search field narrows what "all" means. */
   protected moveAllRight(): void {
-    const available = this.availableList();
-    const selected = this.selectedList();
-    const count = available.items.length;
-
-    this.selectedList.set({
-      items: [...selected.items, ...available.items],
-      selectedIndices: new Set(),
-      lastSelectedIndex: null,
-    });
-
-    this.availableList.set({
-      items: [],
-      selectedIndices: new Set(),
-      lastSelectedIndex: null,
-    });
-
-    this.updateDestination();
-    this.announceChange(`Moved all ${count} item${count === 1 ? '' : 's'} to ${this.targetName()}`);
+    this.moveItems(this.availableList, this.selectedList, this.availableList.visibleItems(), true);
   }
 
   protected moveAllLeft(): void {
-    const available = this.availableList();
-    const selected = this.selectedList();
-    const count = selected.items.length;
-
-    this.availableList.set({
-      items: [...available.items, ...selected.items],
-      selectedIndices: new Set(),
-      lastSelectedIndex: null,
-    });
-
-    this.selectedList.set({
-      items: [],
-      selectedIndices: new Set(),
-      lastSelectedIndex: null,
-    });
-
-    this.updateDestination();
-    this.announceChange(`Moved all ${count} item${count === 1 ? '' : 's'} to ${this.sourceName()}`);
+    this.moveItems(this.selectedList, this.availableList, this.selectedList.visibleItems(), true);
   }
 
-  private moveItems(fromType: 'available' | 'selected', toType: 'available' | 'selected'): void {
-    const fromList = fromType === 'available' ? this.availableList() : this.selectedList();
-    const toList = toType === 'available' ? this.availableList() : this.selectedList();
-    const setFromList = fromType === 'available' ? this.availableList : this.selectedList;
-    const setToList = toType === 'available' ? this.availableList : this.selectedList;
+  private moveItems(from: DualListBoxSide<T>, to: DualListBoxSide<T>, itemsToMove: T[], all = false): void {
+    if (!itemsToMove.length) {
+      return;
+    }
 
-    // Get selected items
-    const selectedItems = Array.from(fromList.selectedIndices)
-      .sort((a, b) => b - a) // Sort in reverse to maintain correct indices
-      .map((idx) => fromList.items[idx]);
+    this.transferItems(from, to, itemsToMove);
+    this.announceMove(itemsToMove.length, this.nameOf(to), all);
+    this.restoreFocus(from, to, to.keyOf(itemsToMove[0]));
+  }
 
-    // Remove selected items from source
-    const remainingItems = fromList.items.filter((_, idx) => !fromList.selectedIndices.has(idx));
+  /**
+   * A move empties the selection, which disables the button that made it — and a disabled
+   * button drops focus to `<body>`, leaving a keyboard user to Tab in from the top again.
+   * Land on the first item that just arrived instead: it is where the action happened, and
+   * it gives a screen reader somewhere to go alongside the live-region announcement.
+   */
+  private restoreFocus(from: DualListBoxSide<T>, to: DualListBoxSide<T>, movedKey: unknown): void {
+    afterNextRender(() => {
+      if (this.componentFor(to).focusKey(movedKey)) {
+        return;
+      }
 
-    // Add to destination
-    const newToItems = [...toList.items, ...selectedItems];
+      // The receiving list is filtered and does not show the item: stay on the list it left.
+      if (this.componentFor(from).focusTabStop()) {
+        return;
+      }
 
-    setFromList.set({
-      items: remainingItems,
-      selectedIndices: new Set(),
-      lastSelectedIndex: null,
-    });
+      // Neither list has anything left on screen — both searches filtered everything out.
+      // Land on the search field that is hiding the item, rather than on <body>.
+      this.componentFor(to).focusSearch();
+    }, { injector: this.injector });
+  }
 
-    setToList.set({
-      items: this.sort() ? this.sortItems(newToItems) : newToItems,
-      selectedIndices: new Set(),
-      lastSelectedIndex: null,
-    });
+  private componentFor(side: DualListBoxSide<T>): DualListBoxSideComponent<T> {
+    return side === this.availableList ? this.availableSide() : this.selectedSide();
+  }
+
+  private announceMove(count: number, listName: string, all = false): void {
+    if (count === 1) {
+      this.announceChange(this.translate.instant('Moved 1 item to {list}', { list: listName }));
+      return;
+    }
+
+    this.announceChange(all
+      ? this.translate.instant('Moved all {count} items to {list}', { count, list: listName })
+      : this.translate.instant('Moved {count} items to {list}', { count, list: listName }));
+  }
+
+  private nameOf(side: DualListBoxSide<T>): string {
+    return side === this.selectedList ? this.targetName() : this.sourceName();
+  }
+
+  private transferItems(from: DualListBoxSide<T>, to: DualListBoxSide<T>, itemsToMove: T[]): void {
+    if (!itemsToMove.length) {
+      return;
+    }
+
+    const movedKeys = new Set(itemsToMove.map((item) => from.keyOf(item)));
+
+    from.reset(from.items().filter((item) => !movedKeys.has(from.keyOf(item))));
+    to.reset([...to.items(), ...itemsToMove]);
 
     this.updateDestination();
   }
 
-  // Public for testing
-  onDrop(event: CdkDragDrop<ListState<T>>): void {
+  /** Maps a position within a list's visible items onto a position within its full list. */
+  private absoluteIndex(side: DualListBoxSide<T>, visibleIndex: number): number {
+    const items = side.items();
+    const visible = side.visibleItems();
+
+    if (visibleIndex >= visible.length) {
+      return items.length;
+    }
+
+    const targetKey = side.keyOf(visible[visibleIndex]);
+    const index = items.findIndex((item) => side.keyOf(item) === targetKey);
+    return index === -1 ? items.length : index;
+  }
+
+  /** `to` comes from the template — the side whose list received the drop. */
+  protected onDrop(to: DualListBoxSide<T>, event: CdkDragDrop<T[]>): void {
     this.isUpdatingFromDrag = true;
 
-    if (event.previousContainer === event.container) {
-      // Reorder within same list
-      const listState = event.container.data;
-      const newItems = [...listState.items];
-      moveItemInArray(newItems, event.previousIndex, event.currentIndex);
+    // Only these two lists are connected to each other, so a drop that did not start here
+    // started on the other side.
+    const from = event.previousContainer === event.container ? to : this.otherSide(to);
 
-      if (event.container.id === 'available-list') {
-        this.availableList.set({
-          ...listState,
-          items: newItems,
-        });
-      } else {
-        this.selectedList.set({
-          ...listState,
-          items: newItems,
-        });
-        this.updateDestination();
-      }
-      this.announceChange('Item reordered');
+    if (from === to) {
+      this.reorderWithinList(from, event.previousIndex, event.currentIndex);
     } else {
-      // Transfer between lists
-      const fromList = event.previousContainer.data;
-      const toList = event.container.data;
-
-      const newFromItems = [...fromList.items];
-      const newToItems = [...toList.items];
-      transferArrayItem(newFromItems, newToItems, event.previousIndex, event.currentIndex);
-
-      const targetListName = event.container.id === 'selected-list'
-        ? this.targetName()
-        : this.sourceName();
-
-      if (event.previousContainer.id === 'available-list') {
-        this.availableList.set({
-          ...fromList,
-          items: newFromItems,
-          selectedIndices: new Set(),
-        });
-        this.selectedList.set({
-          ...toList,
-          items: newToItems,
-          selectedIndices: new Set(),
-        });
-      } else {
-        this.selectedList.set({
-          ...fromList,
-          items: newFromItems,
-          selectedIndices: new Set(),
-        });
-        this.availableList.set({
-          ...toList,
-          items: newToItems,
-          selectedIndices: new Set(),
-        });
-      }
-
-      this.updateDestination();
-      this.announceChange(`Item moved to ${targetListName}`);
+      this.transferByDrag(from, to, event.previousIndex, event.currentIndex);
     }
 
     // Reset flag after next render to ensure proper synchronization with Angular's change detection
@@ -392,7 +247,59 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     }, { injector: this.injector });
   }
 
+  private otherSide(side: DualListBoxSide<T>): DualListBoxSide<T> {
+    return side === this.availableList ? this.selectedList : this.availableList;
+  }
+
+  private reorderWithinList(side: DualListBoxSide<T>, previousIndex: number, currentIndex: number): void {
+    // A drop can land where it started — and while sorting is on the template turns CDK's own
+    // sorting off, so every same-list drop reports the index it began at. Nothing moved, so
+    // nothing should be written back or announced.
+    if (previousIndex === currentIndex) {
+      return;
+    }
+
+    const newItems = [...side.items()];
+
+    moveItemInArray(
+      newItems,
+      this.absoluteIndex(side, previousIndex),
+      this.absoluteIndex(side, currentIndex),
+    );
+
+    side.items.set(newItems);
+
+    if (side === this.selectedList) {
+      this.updateDestination();
+    }
+
+    this.announceChange(this.translate.instant('Item reordered'));
+  }
+
+  private transferByDrag(
+    from: DualListBoxSide<T>,
+    to: DualListBoxSide<T>,
+    previousIndex: number,
+    currentIndex: number,
+  ): void {
+    const item = from.visibleItems()[previousIndex];
+
+    if (!item) {
+      return;
+    }
+
+    const itemKey = from.keyOf(item);
+    const newToItems = [...to.items()];
+    newToItems.splice(this.absoluteIndex(to, currentIndex), 0, item);
+
+    from.reset(from.items().filter((fromItem) => from.keyOf(fromItem) !== itemKey));
+    to.reset(newToItems);
+
+    this.updateDestination();
+    this.announceMove(1, this.nameOf(to));
+  }
+
   private updateDestination(): void {
-    this.destination.set(this.selectedList().items);
+    this.destination.set(this.selectedList.items());
   }
 }

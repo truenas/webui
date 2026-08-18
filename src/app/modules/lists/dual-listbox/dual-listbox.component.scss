@@ -1,5 +1,4 @@
 @import 'scss-imports/variables';
-@import 'mixins/tn-list';
 @import 'mixins/a11y';
 
 :host {
@@ -30,80 +29,6 @@
   }
 }
 
-.record-picker {
-  border: 1px solid var(--lines);
-  overflow-x: hidden;
-  overflow-y: auto;
-  position: relative;
-
-  tn-list {
-    display: block;
-    margin: 0;
-    padding: 0 0 1px;
-
-    &.over {
-      background-color: var(--bg2);
-    }
-
-    tn-list-item {
-      background-color: var(--bg2);
-      border-bottom: 1px solid var(--lines);
-      border-top: thin solid var(--lines);
-      color: var(--fg2);
-      cursor: pointer;
-      display: block;
-      margin-bottom: -1px;
-      min-height: 23px;
-      text-align: left;
-
-      &:first-child {
-        border-top: none;
-      }
-
-      &:focus {
-        box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
-        outline: none;
-      }
-
-      &:hover {
-        background-color: var(--bg1);
-      }
-
-      &.selected {
-        background-color: var(--primary);
-      }
-
-      &.disabled {
-        cursor: not-allowed;
-        opacity: 0.5;
-      }
-
-      // Wrapping comes from tn-list-item's [wrap] input; these are the row metrics
-      // this drag-drop widget has always used, which are tighter than the library's
-      // standard 48px row.
-      @include tn-list-item-content {
-        min-height: 23px;
-        padding: 12px 16px;
-      }
-
-      @include tn-list-item-primary-text {
-        color: var(--fg2);
-      }
-
-      @include tn-list-item-leading-gap(5px);
-
-      label {
-        cursor: pointer;
-        margin-bottom: -1px;
-        padding: 0;
-        user-select: none;
-        white-space: normal;
-        word-break: break-word;
-      }
-    }
-  }
-}
-
 .dual-list {
   align-content: flex-start;
   display: flex;
@@ -115,19 +40,8 @@
     grid-template-columns: 44% 12% 44%;
   }
 
-  .listbox {
+  ix-dual-listbox-side {
     flex-grow: 2;
-    margin: 0;
-    width: 100%;
-
-    p {
-      background-color: var(--lines);
-      border-bottom: 1px solid var(--lines);
-      color: var(--fg2);
-      display: flex;
-      margin: 0;
-      padding: 12px 16px;
-    }
   }
 }
 

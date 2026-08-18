@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
@@ -41,9 +40,8 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { WarningHarness } from 'app/modules/forms/ix-forms/components/warning/warning.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
@@ -79,12 +77,6 @@ describe('SmbFormComponent', () => {
     },
   } as SmbShare;
 
-  const slideInRef: SlideInRef<{ existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare } | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const formLabels: Record<string, string> = {
     path: 'Path',
   };
@@ -94,6 +86,12 @@ describe('SmbFormComponent', () => {
   let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
+
+  /** Every validation message the form's `ix-errors` are currently rendering, joined. */
+  const getErrorText = (): string => spectator.queryAll('ix-errors .form-error')
+    .map((element) => element.textContent?.trim() ?? '')
+    .filter(Boolean)
+    .join('\n');
 
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -153,9 +151,6 @@ describe('SmbFormComponent', () => {
         mockCall('user.query', []),
         mockJob('service.control', fakeSuccessfulJob()),
       ]),
-      mockProvider(SlideIn, {
-        openSlideIns: jest.fn(() => 1),
-      }),
       mockProvider(Router),
       mockProvider(LoaderService),
       mockProvider(FilesystemService, {
@@ -178,7 +173,9 @@ describe('SmbFormComponent', () => {
         info: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
-      mockProvider(SlideInRef, slideInRef),
+      // Mocks the services `<ix-form>` injects, and zeroes the min-feedback hold so a
+      // successful close stays synchronous.
+      ...ixFormTestingProviders(),
       provideMockStore({
         selectors: [{
           selector: selectServices,
@@ -236,9 +233,9 @@ describe('SmbFormComponent', () => {
     await setTnCheckbox('enable', false);
   }
 
-  async function clickSave(): Promise<void> {
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+  /** The side-panel host's footer Save drives the form through `submit()`. */
+  function clickSave(): void {
+    spectator.component.submit();
   }
 
   describe('legacy share', () => {
@@ -279,7 +276,7 @@ describe('SmbFormComponent', () => {
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
       await pathControl.setValue('/mnt/pool123/new');
 
-      await clickSave();
+      clickSave();
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(RestartSmbDialog);
 
@@ -305,7 +302,7 @@ describe('SmbFormComponent', () => {
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
       await pathControl.setValue('/mnt/pool123/new');
 
-      await clickSave();
+      clickSave();
 
       expect(tnDialog.open).toHaveBeenCalledWith(RestartSmbDialog);
       // The wrapper still shows its own "SMB share updated" success toast, but the
@@ -350,7 +347,7 @@ describe('SmbFormComponent', () => {
       await applyCommonValues();
       await (await getTnCheckbox('aapl_name_mangling')).check();
 
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [{
         purpose: SmbSharePurpose.DefaultShare,
@@ -384,7 +381,7 @@ describe('SmbFormComponent', () => {
       await (await getTnCheckbox('auto_dataset_creation')).check();
       await (await getTnInput('dataset_naming_schema')).setValue('%u');
 
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -407,7 +404,7 @@ describe('SmbFormComponent', () => {
       await applyCommonValues();
       await (await getTnCheckbox('aapl_name_mangling')).check();
 
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -427,7 +424,7 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('grace_period')).setValue('900');
       await (await getTnCheckbox('aapl_name_mangling')).check();
 
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -449,7 +446,7 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('auto_quota')).setValue('20');
       await (await getTnCheckbox('aapl_name_mangling')).check();
 
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -472,7 +469,7 @@ describe('SmbFormComponent', () => {
       await setTnCheckbox('enabled', true);
       await (await getTnChipInput('remote_path')).addChip('192.168.0.1\\SHARE');
 
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -488,7 +485,7 @@ describe('SmbFormComponent', () => {
       await selectPurpose('Veeam Repository Share');
       await applyCommonValues();
 
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -505,7 +502,7 @@ describe('SmbFormComponent', () => {
       await selectPurpose('Final Cut Pro Storage Share');
       await applyCommonValues();
 
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -539,7 +536,7 @@ describe('SmbFormComponent', () => {
       await hostsAllow.addChip('10.0.0.1');
       await (await getTnChipInput('hostsdeny')).addChip('172.16.0.0/16');
 
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -620,8 +617,7 @@ describe('SmbFormComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
   });
 
@@ -782,7 +778,7 @@ describe('SmbFormComponent', () => {
       mockStore$.refreshState();
 
       await applyCommonValues();
-      await clickSave();
+      clickSave();
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
     });
@@ -911,7 +907,7 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('name')).setValue('test-share');
       await selectPurpose('Default Share');
 
-      await clickSave();
+      clickSave();
 
       // Wait for async operations to complete
       await new Promise<void>((resolve) => {
@@ -1088,8 +1084,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // User should see save button disabled due to validation error
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('should enable save button when group is added to watch list', async () => {
@@ -1104,8 +1099,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Verify save button is initially disabled
-      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
 
       // Add a group to watch list
       const watchListChips = await getTnChipInput('watch_list');
@@ -1115,8 +1109,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // User should now see save button enabled
-      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
     });
 
     it('should enable save button when group is added to ignore list', async () => {
@@ -1131,8 +1124,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Verify save button is initially disabled
-      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
 
       // Add a group to ignore list
       const ignoreListChips = await getTnChipInput('ignore_list');
@@ -1142,8 +1134,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // User should now see save button enabled
-      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
     });
 
     it('should enable save button when audit logging is disabled', async () => {
@@ -1158,8 +1149,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Verify save button is initially disabled
-      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
 
       // Disable audit logging
       await (await getTnCheckbox('enable')).uncheck();
@@ -1168,8 +1158,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // User should now see save button enabled
-      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
     });
 
     it('should display error message when audit logging is enabled without groups', async () => {
@@ -1184,9 +1173,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Verify error message is displayed
-      const errorElement = spectator.query('ix-errors mat-error');
-      expect(errorElement).toBeTruthy();
-      expect(errorElement?.textContent).toContain('At least one group must be specified');
+      expect(getErrorText()).toContain('At least one group must be specified');
     });
 
     it('should re-validate and show error when group is added then removed (reactivity)', async () => {
@@ -1201,8 +1188,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Verify error is initially displayed
-      let errorElement = spectator.query('ix-errors mat-error');
-      expect(errorElement).toBeTruthy();
+      expect(getErrorText()).toContain('At least one group must be specified');
 
       // Add a group to watch list
       const watchListChips = await getTnChipInput('watch_list');
@@ -1212,8 +1198,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Verify error is gone
-      errorElement = spectator.query('ix-errors mat-error');
-      expect(errorElement).toBeFalsy();
+      expect(getErrorText()).toBe('');
 
       // Remove the group
       await watchListChips.removeChip('test');
@@ -1222,9 +1207,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Verify error appears again (validates reactivity)
-      errorElement = spectator.query('ix-errors mat-error');
-      expect(errorElement).toBeTruthy();
-      expect(errorElement?.textContent).toContain('At least one group must be specified');
+      expect(getErrorText()).toContain('At least one group must be specified');
     });
 
     it('should show error when non-existent group is entered in watch list', async () => {
@@ -1260,8 +1243,7 @@ describe('SmbFormComponent', () => {
       expect(await watchListField.getErrorMessage()).toContain('The following groups do not exist: nonexistent');
 
       // Verify save button is disabled
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('should show error when non-existent group is entered in ignore list', async () => {
@@ -1297,8 +1279,7 @@ describe('SmbFormComponent', () => {
       expect(await ignoreListField.getErrorMessage()).toContain('The following groups do not exist: nonexistent');
 
       // Verify save button is disabled
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('should pass validation when all entered groups exist', async () => {
@@ -1336,12 +1317,10 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Verify no error message is displayed
-      const errorElement = spectator.query('ix-errors mat-error');
-      expect(errorElement).toBeFalsy();
+      expect(getErrorText()).toBe('');
 
       // Verify save button is enabled
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
     });
 
     it('should disable save button during async validation', async () => {
@@ -1381,8 +1360,7 @@ describe('SmbFormComponent', () => {
       spectator.detectChanges();
 
       // Verify save button is disabled while validation is pending
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
 
       // Complete the async validation
       delayedObservable$.next({
@@ -1398,7 +1376,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Verify save button is now enabled
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
     });
   });
 
@@ -1450,7 +1428,7 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('name')).setValue('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
 
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -1486,7 +1464,7 @@ describe('SmbFormComponent', () => {
 
       await spectator.fixture.whenStable();
 
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -1532,7 +1510,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
       expect(await (await getTnInput('dataset_naming_schema')).getValue()).toBe('custom-schema');
 
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -1567,7 +1545,7 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       // Leave field empty (should send null for server defaults)
-      await clickSave();
+      clickSave();
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
@@ -1614,8 +1592,7 @@ describe('SmbFormComponent', () => {
       expect(spectator.component['showExtensionsWarning']()).toBe(true);
 
       // Verify submit button is disabled
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
 
       // Verify warning component is shown with correct id
       const warningElement = spectator.query('#apple-extensions-warning');
@@ -1637,8 +1614,7 @@ describe('SmbFormComponent', () => {
       spectator.detectChanges();
 
       // Verify button is disabled
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
 
       // Enable extensions
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -1648,7 +1624,7 @@ describe('SmbFormComponent', () => {
       // Verify warning is gone and button is enabled
       // eslint-disable-next-line @typescript-eslint/dot-notation
       expect(spectator.component['showExtensionsWarning']()).toBe(false);
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
 
       // Verify warning component is no longer shown
       const warningElement = spectator.query('#apple-extensions-warning');
@@ -1671,8 +1647,7 @@ describe('SmbFormComponent', () => {
       // Verify no warning for Default Share
       // eslint-disable-next-line @typescript-eslint/dot-notation
       expect(spectator.component['showExtensionsWarning']()).toBe(false);
-      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
 
       // Switch to Time Machine Share (warning should appear)
       await selectPurpose('Time Machine Share');
@@ -1683,7 +1658,7 @@ describe('SmbFormComponent', () => {
       // Verify warning is shown and button is disabled
       // eslint-disable-next-line @typescript-eslint/dot-notation
       expect(spectator.component['showExtensionsWarning']()).toBe(true);
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
 
       // Enable extensions
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -1693,7 +1668,7 @@ describe('SmbFormComponent', () => {
       // Verify button is enabled
       // eslint-disable-next-line @typescript-eslint/dot-notation
       expect(spectator.component['showExtensionsWarning']()).toBe(false);
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
 
       // Switch to FCP Share (another purpose requiring extensions with extensions disabled)
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -1706,8 +1681,7 @@ describe('SmbFormComponent', () => {
       // Verify warning appears again for FCP share
       // eslint-disable-next-line @typescript-eslint/dot-notation
       expect(spectator.component['showExtensionsWarning']()).toBe(true);
-      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
 
       // Switch back to Default Share (warning should disappear)
       await selectPurpose('Default Share');
@@ -1718,7 +1692,7 @@ describe('SmbFormComponent', () => {
       // Verify warning is gone
       // eslint-disable-next-line @typescript-eslint/dot-notation
       expect(spectator.component['showExtensionsWarning']()).toBe(false);
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
     });
   });
 
@@ -1734,8 +1708,7 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('name')).setValue('locked-share');
       await (await getTnInput('grace_period')).setValue('59');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('should disable save button when grace_period is above maximum (15552000)', async () => {
@@ -1745,8 +1718,7 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('name')).setValue('locked-share');
       await (await getTnInput('grace_period')).setValue('15552001');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
   });
 });

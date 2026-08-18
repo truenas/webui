@@ -39,7 +39,6 @@ import { getMachineTime, LocaleService } from 'app/modules/language/locale.servi
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { restrictToSingleExpandedRow } from 'app/modules/tn-table/utils';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
@@ -172,8 +171,6 @@ export class SnapshotListComponent implements OnInit {
   constructor() {
     this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
 
-    restrictToSingleExpandedRow(this.table);
-
     this.showExtraColumnsControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((willShow) => this.onToggleExtraColumns(willShow));
@@ -296,10 +293,6 @@ export class SnapshotListComponent implements OnInit {
 
   protected onSelectionChange(snapshots: ZfsSnapshot[]): void {
     this.selectedSnapshots.set(snapshots);
-  }
-
-  protected onRowClick(row: ZfsSnapshot): void {
-    this.table()?.toggleRowExpansion(row);
   }
 
   protected onSortChange(event: TnSortEvent): void {
