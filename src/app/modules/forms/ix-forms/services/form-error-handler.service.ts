@@ -11,6 +11,13 @@ import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.servi
 import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
+/**
+ * Flag set on a control whose error came from the backend rather than from a validator. Unlike a
+ * validator result it is pinned with `setErrors()` and never re-evaluates, so consumers that need
+ * to tell a live validation failure from a stale server verdict key off this.
+ */
+export const manualValidateErrorKey = 'manualValidateError';
+
 @Injectable({ providedIn: 'root' })
 export class FormErrorHandlerService {
   private errorHandler = inject(ErrorHandlerService);
@@ -157,7 +164,7 @@ export class FormErrorHandlerService {
     }
 
     control.setErrors({
-      manualValidateError: true,
+      [manualValidateErrorKey]: true,
       manualValidateErrorMsg: errorMessage,
       ixManualValidateError: { message: errorMessage },
     });

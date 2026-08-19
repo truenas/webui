@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  FormArray, FormControlStatus, FormGroup, ReactiveFormsModule,
+  AbstractControl, FormArray, FormControlStatus, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
@@ -25,7 +25,9 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import {
+  FormErrorHandlerService, manualValidateErrorKey,
+} from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -389,6 +391,17 @@ export class IxFormComponent<
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((status) => this.formStatus.set(status));
 
+    // A backend validation failure is pinned onto its control with `setErrors()`, so — unlike a
+    // validator result — it never re-evaluates. Angular drops it when THAT control changes, but an
+    // error the user is meant to answer from a DIFFERENT field (ticking `Force` for an NTP address
+    // the server could not reach) would stay pinned forever, leaving Save disabled with no way out
+    // but re-editing the flagged field. Discard pinned errors on the next edit anywhere in the
+    // form: each described one submission's payload, and the payload has moved on. If the verdict
+    // still stands, the next save pins it again.
+    this.formGroup().valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.dropPinnedServerErrors());
+
     // `defer` keeps the read lazy and picks up a dirtyPredicate set after init.
     // No-op without a SlideIn host — the side-panel host guards discards itself.
     this.slideInRef?.requireConfirmationWhen(() => defer(() => {
@@ -529,6 +542,37 @@ export class IxFormComponent<
     } else {
       this.slideInRef.close({ response: payload });
     }
+  }
+
+  /**
+   * Re-runs the validators of every control still carrying a pinned server error, which replaces
+   * the pinned error with the control's real validation state (an empty required field stays
+   * invalid — it just goes back to saying so for the right reason).
+   *
+   * `emitEvent: false` keeps the recompute out of `valueChanges`, which would re-enter this
+   * handler, while still propagating the new status up the group. That silences `statusChanges`
+   * too, so {@link formStatus} — which a `<tn-side-panel>` host's Save reads through `canSubmit` —
+   * is refreshed by hand.
+   */
+  private dropPinnedServerErrors(): void {
+    const form = this.formGroup();
+    const pinned: AbstractControl[] = [];
+    const collect = (control: AbstractControl): void => {
+      if (control.errors?.[manualValidateErrorKey]) {
+        pinned.push(control);
+      }
+      const children = (control as FormGroup | FormArray).controls;
+      if (children) {
+        Object.values(children).forEach(collect);
+      }
+    };
+    collect(form);
+
+    if (!pinned.length) {
+      return;
+    }
+    pinned.forEach((control) => control.updateValueAndValidity({ emitEvent: false }));
+    this.formStatus.set(form.status);
   }
 
   private getChangedValues(current: T): Partial<T> {

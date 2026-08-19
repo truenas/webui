@@ -925,6 +925,68 @@ describe('IxFormComponent', () => {
     });
   });
 
+  describe('pinned server validation errors', () => {
+    // A backend validation failure is pinned with `setErrors()` and never re-evaluates, so an error
+    // the user answers from a DIFFERENT field (ticking `Force` for an unreachable NTP address) used
+    // to keep Save disabled forever. NAS-142225.
+    const pinServerError = (control: FormControl): void => {
+      control.setErrors({
+        manualValidateError: true,
+        manualValidateErrorMsg: 'Server could not be reached.',
+        ixManualValidateError: { message: 'Server could not be reached.' },
+      });
+      control.markAsTouched();
+    };
+
+    it('drops a pinned error when a different field changes, re-enabling Save', async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      const form = spectator.component.form;
+
+      pinServerError(form.controls.name);
+      spectator.detectChanges();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      form.controls.description.setValue('force');
+      spectator.detectChanges();
+
+      expect(form.controls.name.errors).toBeNull();
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('reports the cleared status to a host-owned Save', () => {
+      spectator = createComponent();
+      const form = spectator.component.form;
+
+      pinServerError(form.controls.name);
+      spectator.detectChanges();
+      expect(spectator.component.ixForm().canSubmit()).toBe(false);
+
+      form.controls.description.setValue('force');
+      spectator.detectChanges();
+
+      expect(spectator.component.ixForm().canSubmit()).toBe(true);
+    });
+
+    it('restores the real validation state instead of blanket-clearing errors', () => {
+      spectator = createComponent();
+      const form = spectator.component.form;
+
+      // `name` is genuinely empty-but-required; the pinned server error masked that.
+      form.controls.name.setValidators(Validators.required);
+      pinServerError(form.controls.name);
+      spectator.detectChanges();
+
+      form.controls.description.setValue('force');
+      spectator.detectChanges();
+
+      expect(form.controls.name.errors).toEqual({ required: true });
+      expect(form.invalid).toBe(true);
+    });
+  });
+
   describe('auto title and extra actions', () => {
     const createAutoTitleComponent = createComponentFactory({
       component: AutoTitleHostComponent,
