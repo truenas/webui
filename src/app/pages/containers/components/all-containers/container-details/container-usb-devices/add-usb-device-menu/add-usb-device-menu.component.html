@@ -1,14 +1,21 @@
 @if (isLoading()) {
   <ngx-skeleton-loader class="loader"></ngx-skeleton-loader>
 } @else if (hasDevicesToAdd()) {
-  <button
+  <span
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    ixTest="add-device"
-    [matMenuTriggerFor]="addDeviceMenu"
+    class="add-button-wrapper"
+    [matTooltip]="isContainerActive() ? (helptext.deviceRequiresStoppedTooltip | translate) : ''"
+    [matTooltipDisabled]="!isContainerActive()"
   >
-    {{ 'Add' | translate }}
-  </button>
+    <button
+      mat-button
+      ixTest="add-device"
+      [disabled]="isContainerActive()"
+      [matMenuTriggerFor]="addDeviceMenu"
+    >
+      {{ 'Add' | translate }}
+    </button>
+  </span>
 
   <mat-menu #addDeviceMenu="matMenu">
     @if (availableUsbDevices().length) {

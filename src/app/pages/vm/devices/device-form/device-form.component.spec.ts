@@ -25,6 +25,7 @@ import {
   VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -294,6 +295,38 @@ describe('DeviceFormComponent', () => {
           'MAC Address': '00:a0:98:30:09:90',
         });
         expect(api.call).toHaveBeenLastCalledWith('vm.random_mac');
+      });
+
+      // Middleware validates custom MACs as colon-separated only; the dash, unseparated and
+      // Cisco dotted forms saved fine before and then failed at VM start.
+      it.each([
+        ['dash-separated', '10-66-6a-1f-f1-b1'],
+        ['unseparated', '10666a1ff1b1'],
+        ['Cisco dotted', '1066.6a1f.f1b1'],
+      ])('refuses to save a %s MAC address', async (_, mac) => {
+        await form.fillForm({
+          Type: 'NIC',
+          'Adapter Type': 'VirtIO',
+          'NIC To Attach': 'enp0s4',
+          'MAC Address': mac,
+        });
+
+        expect(await saveButton.isDisabled()).toBe(true);
+
+        const macField = await loader.getHarness(IxInputHarness.with({ label: 'MAC Address' }));
+        expect(await macField.getErrorText())
+          .toBe('MAC address must be colon-separated, for example 00:a0:98:1b:2c:3d');
+      });
+
+      it('accepts a colon-separated MAC address', async () => {
+        await form.fillForm({
+          Type: 'NIC',
+          'Adapter Type': 'VirtIO',
+          'NIC To Attach': 'enp0s4',
+          'MAC Address': '10:66:6a:1f:f1:b1',
+        });
+
+        expect(await saveButton.isDisabled()).toBe(false);
       });
 
       it('generates a new MAC when Generate button is pressed', async () => {

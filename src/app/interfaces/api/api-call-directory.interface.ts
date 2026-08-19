@@ -929,7 +929,6 @@ export interface ApiCallDirectory {
   'container.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
 
   // Container (actual available endpoints only)
-  'container.delete': { params: [containerId: number]; response: boolean };
   'container.get_instance': { params: [containerId: number]; response: Container };
   'container.image.query_registry': { params: []; response: ContainerImageRegistryResponse[] };
   'container.pool_choices': { params: []; response: Choices };

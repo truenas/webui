@@ -9,6 +9,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { macAddressInvalidMessage } from 'app/constants/mac-address.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -37,6 +38,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -81,6 +83,7 @@ export class DeviceFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private networkService = inject(NetworkService);
+  private validators = inject(IxValidatorsService);
   private filesystemService = inject(FilesystemService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
@@ -168,7 +171,10 @@ export class DeviceFormComponent implements OnInit {
 
   nicForm = this.formBuilder.group({
     type: [null as VmNicType | null, Validators.required],
-    mac: ['', Validators.pattern(this.networkService.macRegex)],
+    mac: ['', this.validators.withMessage(
+      Validators.pattern(this.networkService.macRegex),
+      this.translate.instant(macAddressInvalidMessage),
+    )],
     nic_attach: ['', Validators.required],
     trust_guest_rx_filters: [false],
   });

@@ -1,6 +1,10 @@
 :host {
+  align-items: center;
   box-sizing: border-box;
-  display: flex;
+  // Hug the label instead of stretching the cell, and keep longer statuses
+  // ("Suspended") on one line so the pill doesn't turn into a two-line blob.
+  display: inline-flex;
+  white-space: nowrap;
 
   &.has-cell {
     border: 1px solid transparent;
@@ -15,6 +19,7 @@
     color: var(--status-active);
   }
 
+  &.suspended,
   &.unknown {
     border-color: var(--status-in-progress);
     color: var(--status-in-progress);

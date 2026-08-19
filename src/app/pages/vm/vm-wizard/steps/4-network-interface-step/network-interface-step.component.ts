@@ -5,6 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { macAddressInvalidMessage, macAddressRegex } from 'app/constants/mac-address.constant';
 import { VmNicType, vmNicTypeLabels } from 'app/enums/vm.enum';
 import { nicChoicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -13,6 +14,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -43,10 +45,14 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
+  private validators = inject(IxValidatorsService);
 
   form = this.formBuilder.nonNullable.group({
     nic_type: [VmNicType.Virtio, Validators.required],
-    nic_mac: [helptextVmWizard.NIC_mac_value, Validators.pattern(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
+    nic_mac: [helptextVmWizard.NIC_mac_value, this.validators.withMessage(
+      Validators.pattern(macAddressRegex),
+      this.translate.instant(macAddressInvalidMessage),
+    )],
     nic_attach: ['', Validators.required],
     trust_guest_rx_filters: [false],
   });

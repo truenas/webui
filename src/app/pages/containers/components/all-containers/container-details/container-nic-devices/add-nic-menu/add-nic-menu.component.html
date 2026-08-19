@@ -1,14 +1,21 @@
 @if (isLoadingDevices()) {
   <ngx-skeleton-loader class="loader"></ngx-skeleton-loader>
 } @else if (hasNicsToAdd()) {
-  <button
+  <span
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    ixTest="add-nic"
-    [matMenuTriggerFor]="addNicMenu"
+    class="add-button-wrapper"
+    [matTooltip]="isContainerActive() ? (helptext.deviceRequiresStoppedTooltip | translate) : ''"
+    [matTooltipDisabled]="!isContainerActive()"
   >
-    {{ 'Add' | translate }}
-  </button>
+    <button
+      mat-button
+      ixTest="add-nic"
+      [disabled]="isContainerActive()"
+      [matMenuTriggerFor]="addNicMenu"
+    >
+      {{ 'Add' | translate }}
+    </button>
+  </span>
 
   <mat-menu #addNicMenu="matMenu">
     @for (group of availableNicGroups(); track group.type; let isLast = $last) {

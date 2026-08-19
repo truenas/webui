@@ -2,12 +2,14 @@ import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   AvailableUsb,
   ContainerUsbDevice,
@@ -18,6 +20,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerActive } from 'app/pages/containers/utils/container-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -29,6 +32,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     MatMenu,
     MatMenuItem,
+    MatTooltip,
     TestDirective,
     TranslateModule,
     MatMenuTrigger,
@@ -47,6 +51,15 @@ export class AddUsbDeviceMenuComponent {
   private translate = inject(TranslateService);
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
+
+  protected readonly helptext = containersHelptext;
+
+  // Middleware refuses device operations on any container that is not stopped, so Add is
+  // gated exactly like the per-device Edit/Delete menu - otherwise the menu opens, the user
+  // picks a device and only then gets a raw refusal.
+  protected readonly isContainerActive = computed(() => {
+    return isContainerActive(this.containersStore.selectedContainer());
+  });
 
   private readonly usbChoices = toSignal(
     this.api.call('container.device.usb_choices').pipe(

@@ -5,21 +5,25 @@ import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { containerCapabilitiesPolicyLabels, containerIdmapTypeLabels, containerTimeLabels } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
-import { Container } from 'app/interfaces/container.interface';
+import { Container, ContainerDeleteOptions } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { LoaderService } from 'app/modules/loader/loader.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  DeleteContainerDialog,
+} from 'app/pages/containers/components/common/delete-container-dialog/delete-container-dialog.component';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -51,8 +55,9 @@ export class ContainerGeneralInfoComponent {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
-  private loader = inject(LoaderService);
+  private matDialog = inject(MatDialog);
   private slideIn = inject(SlideIn);
+  private snackbar = inject(SnackbarService);
   private containersStore = inject(ContainersStore);
 
   container = input.required<Container>();
@@ -76,20 +81,36 @@ export class ContainerGeneralInfoComponent {
       });
   }
 
+  /**
+   * `container.delete` is a job: it stops the container when asked to, tears down the libvirt
+   * domain and destroys the container dataset, so it runs behind a job progress dialog rather
+   * than a plain loader. The dialog collects the `force`/`recursive` options middleware now
+   * requires - without `recursive` a container whose dataset has snapshots (a pool-root
+   * periodic snapshot task is enough) cannot be deleted at all.
+   */
   deleteContainer(): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Delete'),
-      message: this.translate.instant('Delete {name}?', { name: this.container().name }),
-      buttonColor: 'warn',
-    }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('container.delete', [this.container().id]).pipe(
-        this.loader.withLoader(),
-      )),
-      this.errorHandler.withErrorHandler(),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.router.navigate(['/containers']);
-    });
+    this.matDialog.open<DeleteContainerDialog, Container, ContainerDeleteOptions | false>(DeleteContainerDialog, {
+      data: this.container(),
+      // The dialog grows when `recursive` reveals its warning. Anchoring it near the top makes it
+      // expand downwards instead of re-centering, which moves the whole dialog under the cursor.
+      position: { top: '10vh' },
+    })
+      .afterClosed()
+      .pipe(
+        filter(Boolean),
+        switchMap((options: ContainerDeleteOptions) => {
+          return this.dialogService.jobDialog(
+            this.api.job('container.delete', [this.container().id, options]),
+            { title: this.translate.instant('Deleting Container') },
+          ).afterClosed();
+        }),
+        this.errorHandler.withErrorHandler(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Container deleted'));
+        this.containersStore.reload();
+        this.router.navigate(['/containers']);
+      });
   }
 }

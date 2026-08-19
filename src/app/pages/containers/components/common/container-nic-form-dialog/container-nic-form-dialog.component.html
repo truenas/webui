@@ -25,7 +25,7 @@
         formControlName="mac"
         [required]="!isEditMode()"
         [label]="'Mac Address' | translate"
-        [tooltip]="isEditMode() ? ('Leave empty to use default MAC address' | translate) : null"
+        [tooltip]="macTooltip()"
       ></ix-input>
     }
 

@@ -10,7 +10,6 @@ import {
   filter, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   Container,
@@ -28,6 +27,7 @@ import {
   StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerRunning, isContainerStopped } from 'app/pages/containers/utils/container-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -62,12 +62,12 @@ export class ContainerRowComponent {
   readonly container = input.required<Container>();
   readonly metrics = input<ContainerStats | undefined>();
   readonly selected = input<boolean>(false);
-  protected readonly isStopped = computed(() => this.container()?.status?.state === ContainerStatus.Stopped);
+  protected readonly isStopped = computed(() => isContainerStopped(this.container()));
 
   readonly hasMetrics = computed(() => {
     const metrics = this.metrics();
 
-    return this.container()?.status?.state === ContainerStatus.Running
+    return isContainerRunning(this.container())
       && metrics
       && Object.keys(metrics).length > 0;
   });

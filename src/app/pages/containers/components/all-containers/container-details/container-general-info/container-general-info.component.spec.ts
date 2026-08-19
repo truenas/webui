@@ -2,10 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { KeyValuePipe } from '@angular/common';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerCapabilitiesPolicy, ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
@@ -14,13 +15,18 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ContainerGeneralInfoComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-general-info/container-general-info.component';
+import {
+  DeleteContainerDialog,
+} from 'app/pages/containers/components/common/delete-container-dialog/delete-container-dialog.component';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 const container = fakeContainer({
   id: 1,
@@ -55,10 +61,19 @@ describe('ContainerGeneralInfoComponent', () => {
         reload: jest.fn(),
       }),
       mockApi([
-        mockCall('container.delete'),
+        mockJob('container.delete'),
       ]),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of({ force: false, recursive: false }),
+        } as MatDialogRef<DeleteContainerDialog>)),
+      }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({ afterClosed: () => of({}) })),
+      }),
+      mockProvider(SnackbarService),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: jest.fn(() => (source$: unknown) => source$),
       }),
       mockProvider(Router),
     ],
@@ -92,14 +107,34 @@ describe('ContainerGeneralInfoComponent', () => {
     expect(cardContent).toContainText('CPU Set: All Host CPUs');
   });
 
-  it('deletes container when "Delete" button is pressed and redirects to list root', async () => {
+  it('deletes container as a job with the options from the dialog and redirects to list root', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('container.delete', [1]);
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      DeleteContainerDialog,
+      expect.objectContaining({ data: container }),
+    );
 
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+      'container.delete',
+      [1, { force: false, recursive: false }],
+    );
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container deleted');
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers']);
+  });
+
+  it('passes force and recursive on to the delete job when the dialog asks for them', async () => {
+    const matDialog = spectator.inject(MatDialog);
+    (matDialog.open as jest.Mock).mockReturnValue({ afterClosed: () => of({ force: true, recursive: true }) });
+
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    await deleteButton.click();
+
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+      'container.delete',
+      [1, { force: true, recursive: true }],
+    );
   });
 
   it('opens edit container form when Edit is pressed', async () => {
@@ -110,14 +145,14 @@ describe('ContainerGeneralInfoComponent', () => {
     expect(spectator.inject(ContainersStore).reload).toHaveBeenCalled();
   });
 
-  it('does not delete container when confirmation is cancelled', async () => {
-    const dialogService = spectator.inject(DialogService);
-    (dialogService.confirm as jest.Mock).mockReturnValue(of(false));
+  it('does not delete container when the delete dialog is cancelled', async () => {
+    const matDialog = spectator.inject(MatDialog);
+    (matDialog.open as jest.Mock).mockReturnValue({ afterClosed: () => of(false) });
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('container.delete', [1]);
+    expect(spectator.inject(ApiService).job).not.toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
   });
 

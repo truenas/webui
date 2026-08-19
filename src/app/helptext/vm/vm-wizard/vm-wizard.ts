@@ -104,7 +104,8 @@ This will improve CPU cache locality and can reduce possible stutter in GPU pass
  paravirtualized network drivers.'),
 
   NIC_mac_tooltip: T('Enter the desired address into the field to\
- override the randomized MAC address.'),
+ override the randomized MAC address.\
+ The address must be colon-separated, for example 00:a0:98:1b:2c:3d.'),
   NIC_mac_value: '00:a0:98:FF:FF:FF',
 
   nic_attach_tooltip: T('Select the physical interface to associate with\
