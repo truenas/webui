@@ -8,11 +8,9 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { finalize, forkJoin, of } from 'rxjs';
-import {
-  catchError,
-  filter, tap,
-} from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -89,36 +87,30 @@ export class FibreChannelPortsComponent implements OnInit {
 
           return ` – ${this.translate.instant('{port} (virtual)', { port: row.name })}`;
         },
-        disableSorting: true,
+        // Sorts by the port name itself rather than the rendered label, which carries a leading
+        // dash on virtual ports and would clump them all together away from their host.
+        sortBy: (row) => portNameSortKey(row.name),
       }),
       textColumn({
         title: this.translate.instant('Target'),
         propertyName: 'target',
-        getValue: (row) => {
-          return row.target?.iscsi_target_name || '-';
-        },
-        disableSorting: true,
+        getValue: (row) => this.targetLabel(row),
       }),
       textColumn({
         title: this.translate.instant('WWPN'),
         propertyName: 'wwpn',
-        getValue: (row) => this.resolveWwpn(row, 'wwpn'),
-        disableSorting: true,
+        getValue: (row) => this.wwpnLabel(row, 'wwpn'),
       }),
       textColumn({
         title: this.translate.instant('WWPN (B)'),
         propertyName: 'wwpn_b',
-        getValue: (row) => this.resolveWwpn(row, 'wwpn_b'),
+        getValue: (row) => this.wwpnLabel(row, 'wwpn_b'),
         hidden: !this.isHa(),
-        disableSorting: true,
       }),
       textColumn({
         title: this.translate.instant('State'),
-        getValue: (row) => {
-          return `A: ${row.aPortState || '–'} B: ${row.bPortState || '–'}`;
-        },
+        getValue: (row) => this.stateLabel(row),
         hidden: !this.isHa(),
-        disableSorting: true,
       }),
       actionsWithMenuColumn({
         disableSorting: true,
@@ -153,44 +145,77 @@ export class FibreChannelPortsComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
-    this.dataProvider.setFilter({
-      query,
-      // TODO: This should be fixed in dataprovider
-      list: this.rows(),
-      columnKeys: ['name', 'wwpn', 'wwpn_b'],
-    });
+    this.applyFilter();
+  }
+
+  private targetLabel(row: FibreChannelPortRow): string {
+    return row.target?.iscsi_target_name || '-';
+  }
+
+  private wwpnLabel(row: FibreChannelPortRow, key: 'wwpn' | 'wwpn_b'): string {
+    return row[key] || '-';
+  }
+
+  private stateLabel(row: FibreChannelPortRow): string {
+    return `A: ${row.aPortState || '–'} B: ${row.bPortState || '–'}`;
+  }
+
+  /**
+   * Re-applies the current search to the loaded rows. Called on reload too, so editing a port
+   * doesn't silently drop the filter the user is looking through.
+   */
+  private applyFilter(): void {
+    const query = this.searchQuery();
+
+    if (query) {
+      this.dataProvider.setFilter({
+        query,
+        // TODO: This should be fixed in dataprovider
+        list: this.rows(),
+        columnKeys: ['name', 'target', 'wwpn', 'wwpn_b'],
+        // The Target cell renders a name off a nested object, which the filter can't reach on its own.
+        preprocessMap: {
+          target: (target) => target?.iscsi_target_name || '',
+        },
+      });
+    } else {
+      this.dataProvider.setRows(this.rows());
+    }
+
+    // ArrayDataProvider never resolves its own empty type, so without this the table shows the
+    // loading placeholder in place of "No Search Results" whenever a search matches nothing.
+    this.dataProvider.setEmptyType(this.rows().length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
   }
 
   private loadTable(): void {
     this.isLoading.set(true);
+    this.dataProvider.setEmptyType(EmptyType.Loading);
     forkJoin([
       this.api.call('fc.fc_host.query'),
       this.api.call('fcport.query'),
       this.api.call('fcport.status'),
     ])
       .pipe(
+        // `withErrorHandler()` is an operator, not a `catchError` selector — handed to `catchError`
+        // it was called with the error itself and threw `error.pipe is not a function`, so a failed
+        // query left the page on its loading placeholder with no error dialog.
+        tap({ error: () => this.dataProvider.setEmptyType(EmptyType.Errors) }),
+        this.errorHandler.withErrorHandler(),
         finalize(() => this.isLoading.set(false)),
-        catchError(this.errorHandler.withErrorHandler()),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([hosts, ports, statuses]: [FibreChannelHost[], FibreChannelPort[], FibreChannelStatus[]]) => {
         this.rows.set(buildPortsTableRow(hosts, ports, statuses));
-        this.dataProvider.setRows(this.rows());
+        this.applyFilter();
       });
   }
+}
 
-  private resolveWwpn(row: FibreChannelPortRow, key: 'wwpn' | 'wwpn_b'): string {
-    if (row?.[key]) {
-      return row[key];
-    }
-
-    const aliasPrefix = row?.host?.alias?.split?.('/')?.[0];
-    const isPhysical = row?.name === aliasPrefix;
-
-    if (isPhysical && row?.host?.[key]) {
-      return row.host[key];
-    }
-
-    return '-';
-  }
+/**
+ * Orders port names the way they read: `fc2` before `fc10`. Plain string comparison orders
+ * digit runs lexically and gets that wrong, so every digit run is zero-padded to a fixed width
+ * first. Virtual ports stay grouped under their host either way — `/` sorts below every digit.
+ */
+function portNameSortKey(name: string): string {
+  return name.replace(/\d+/g, (digits) => digits.padStart(6, '0'));
 }
