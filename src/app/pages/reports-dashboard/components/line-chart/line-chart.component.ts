@@ -108,7 +108,15 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     } as unknown as dygraphs.Options;
 
     if (update) {
-      this.chart.updateOptions(options);
+      this.chart.updateOptions({
+        ...options,
+        // Without `file` the chart keeps plotting whatever it was built with,
+        // so zooming and stepping would redraw the axes and never the series.
+        file: data,
+        // A drag-zoom leaves a dateWindow pinned to a range the newly fetched
+        // data no longer covers. The data we just got is the range to show.
+        dateWindow: null,
+      } as unknown as dygraphs.Options);
     } else {
       this.chart = new Dygraph(this.el().nativeElement, data, options);
     }

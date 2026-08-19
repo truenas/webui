@@ -133,6 +133,19 @@ describe('LineChartComponent', () => {
       expect(mockDygraph).toHaveBeenCalledTimes(constructorCalls);
       expect(chart.updateOptions).toHaveBeenCalled();
     });
+
+    it('passes the refreshed data and clears any drag-zoom window on update', () => {
+      const timestamp = 1755000000;
+      spectator.setInput('data', {
+        ...mockReportingData,
+        data: [[timestamp, 20, 10, 70]],
+      } as ReportingData);
+
+      const options = jest.mocked(spectator.component.chart.updateOptions).mock.lastCall[0];
+
+      expect(options).toMatchObject({ dateWindow: null });
+      expect((options as { file: [Date, ...number[]][] }).file).toEqual([[expect.any(Date), 20, 10, 70]]);
+    });
   });
 
   describe('resize functionality', () => {
