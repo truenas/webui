@@ -447,13 +447,11 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.data) {
-      this.render();
-
-      if (this.chart) {
-        this.render(true);
-      } else {
-        this.render();// make an update method?
-      }
+      // Update the existing chart rather than building a new one. Constructing a
+      // Dygraph clears the wrapper and re-measures its width from an empty
+      // element, which is how auto-refresh used to shrink the graph. It also
+      // leaked the previous chart along with its window listeners.
+      this.render(Boolean(this.chart));
     }
   }
 
@@ -461,11 +459,12 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.render();
   }
 
+  /**
+   * Re-measures the container and redraws. Needed when the container changes
+   * width without a window resize -- Dygraph only watches the window itself.
+   */
   resize(): void {
-    if (this.chart) {
-      // Simple resize - parent component handles width calculation
-      this.chart.resize();
-    }
+    this.chart?.resize();
   }
 
   ngOnDestroy(): void {

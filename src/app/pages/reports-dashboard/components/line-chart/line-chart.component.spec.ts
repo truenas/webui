@@ -118,6 +118,21 @@ describe('LineChartComponent', () => {
         spectator.component.render();
       }).not.toThrow();
     });
+
+    it('updates the existing chart instead of building a new one when data refreshes', () => {
+      const mockDygraph = Dygraph as unknown as jest.Mock;
+      const chart = spectator.component.chart;
+      const constructorCalls = mockDygraph.mock.calls.length;
+
+      spectator.setInput('data', {
+        ...mockReportingData,
+        data: [[Date.now() / 1000, 20, 10, 70]],
+      } as ReportingData);
+
+      expect(spectator.component.chart).toBe(chart);
+      expect(mockDygraph).toHaveBeenCalledTimes(constructorCalls);
+      expect(chart.updateOptions).toHaveBeenCalled();
+    });
   });
 
   describe('resize functionality', () => {

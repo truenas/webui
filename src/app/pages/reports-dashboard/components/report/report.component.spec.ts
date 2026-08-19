@@ -147,7 +147,7 @@ describe('ReportComponent', () => {
       // Fast-forward past the 100ms debounce and the setTimeout in resizeChart
       jest.advanceTimersByTime(200);
 
-      expect(mockLineChart.render).toHaveBeenCalledWith(true);
+      expect(mockLineChart.resize).toHaveBeenCalled();
     });
 
     it('should not resize chart before component is ready', () => {
@@ -159,7 +159,7 @@ describe('ReportComponent', () => {
       // Fast-forward past the 100ms debounce and the setTimeout in resizeChart
       jest.advanceTimersByTime(200);
 
-      expect(mockLineChart.render).not.toHaveBeenCalled();
+      expect(mockLineChart.resize).not.toHaveBeenCalled();
     });
 
     it('should resize chart when menu state changes', () => {
@@ -170,7 +170,7 @@ describe('ReportComponent', () => {
       // Fast-forward timers to trigger the setTimeout in resizeChart
       jest.runAllTimers();
 
-      expect(mockLineChart.render).toHaveBeenCalledWith(true);
+      expect(mockLineChart.resize).toHaveBeenCalled();
     });
 
     it('should handle resize when line chart is not available', () => {

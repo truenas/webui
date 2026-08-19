@@ -25,24 +25,36 @@
   margin: 0;
 
   .chart-wrapper-outer {
-    flex-grow: 1;
-    max-width: calc(90vw - 550px);
-    min-width: 50%;
+    /*
+     * The zero flex-basis is load bearing. With an `auto` basis this element
+     * takes its base size from its content -- the chart canvas, whose width the
+     * chart in turn measures from this element. That circular dependency made
+     * the graph width depend on whatever it had rendered last: it collapsed to
+     * the old 50% floor every time the chart was rebuilt, and grew back only
+     * when something called `resize()`.
+     */
+    flex: 1 1 0;
+    min-width: 0;
     padding-top: 2vh;
 
     @media (max-width: $breakpoint-md) {
-      max-width: 100%;
+      flex-basis: 100%;
       min-width: 100%;
     }
   }
 
   .legend {
+    /* Sized by its own content, so the chart gets all the space that is left. */
     display: flex;
-    flex: 1;
+    flex: 0 1 auto;
     flex-direction: column;
-    flex-shrink: 0;
+    max-width: 40%;
+    min-width: 420px;
 
     @media (max-width: $breakpoint-md) {
+      max-width: 100%;
+      /* The floor above would overflow a narrow viewport once stacked. */
+      min-width: 0;
       width: 100%;
     }
 

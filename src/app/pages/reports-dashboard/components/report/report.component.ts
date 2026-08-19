@@ -567,8 +567,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
 
     // Wait a tick to ensure DOM is updated
     setTimeout(() => {
-      // Force chart to fit its container
-      this.lineChart().render(true); // Force re-render with update=true
+      this.lineChart().resize();
     }, 0);
   }
 }
