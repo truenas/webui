@@ -734,7 +734,10 @@ Three properties make this safe:
   `tn-select`/`tn-autocomplete` in webui pins a key as of NAS-142127, and
   `tn-select-option-test-id.constant.spec.ts` scans every `.html` template and every inline
   `template:` outside a spec to keep it that way — a select added without a key fails that spec by
-  name.
+  name. The value-vs-label half of this was a library defect and is fixed upstream
+  (iXsystems/truenas-ui-components#182: the default is the label there too); the binding survives
+  the bump only for lodash normalization, since the library keeps `ada0`/`ipv4` whole where the
+  legacy ids are `ada-0`/`ipv-4`.
 
 **Attribute name (required once, at the app root).** `{ provide: TN_TEST_ATTR, useValue:
 'data-test' }` makes the library write `data-test` instead of its default `data-testid`.

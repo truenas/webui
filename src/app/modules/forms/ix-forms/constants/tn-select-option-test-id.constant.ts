@@ -26,6 +26,16 @@ import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.uti
  * instead of being re-derived per component. Pass it straight through:
  * `[optionTestIdKey]="optionTestIdByLabel"`.
  *
+ * **The value-vs-label half of this is fixed upstream.** `tn-select` defaulting to the value was a
+ * library defect, not something webui should paper over 294 times, and it is now the label there
+ * too — iXsystems/truenas-ui-components#182. What survives the bump is the *normalization* half:
+ * the library's `kebabTestSegment` deliberately keeps a letter→digit boundary whole (`nvme0n1`,
+ * `ipv4`) where lodash splits it, so a label like `RAIDZ1` or `ada0` still resolves to `raidz1` /
+ * `ada0` without this callback, and Release Engineering selects on the lodash forms `raidz-1` /
+ * `ada-0`. Those two rules are not reconcilable in the library — `nvme-0-n-1` is a worse default
+ * for everyone else — so the binding stays until the legacy ids are retired, at which point the
+ * whole constant and its guard spec go with it.
+ *
  * A select whose id has to come from somewhere other than the label — a lookup keyed by the
  * option value, say — still needs its own callback; see `app-update-dialog.component.ts`.
  *
