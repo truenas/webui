@@ -10,20 +10,22 @@
 .calendar {
   width: 100%;
 
-  ::ng-deep .mat-calendar-table {
-    width: 100%;
-  }
-
-  ::ng-deep .highlighted-date {
-    background: var(--bg1);
-    border-radius: 50%;
+  // TEMP: tn-calendar bakes popup chrome — a drop shadow and its own padding — into its
+  // :host, which is right for the dropdown in advanced-search and wrong for an inline
+  // panel like this one. Drop this block once the library moves that chrome onto a
+  // wrapper; until then two call sites are working around the same assumption.
+  //
+  // The calendar's own `background` is deliberately left alone: the library colours a
+  // marked day relative to that surface, and against this panel's background instead the
+  // two are within 1.03 contrast, i.e. invisible.
+  tn-calendar {
+    box-shadow: none;
+    padding: 0;
   }
 }
 
 .preview-header {
-  margin-bottom: -10px;
-  padding-left: 18px;
-  padding-right: 14px;
+  padding: 8px 12px;
 
   h4 {
     margin-bottom: 4px;
@@ -34,11 +36,6 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
-  margin-right: -5px;
-
-  button {
-    margin-bottom: 1px;
-  }
 }
 
 .crontab-explanation {
@@ -52,16 +49,13 @@
   flex-direction: column;
   margin-top: 10px;
 
+  // Matches .preview-header's horizontal padding so this line sits under the crontab text.
   .timezone-message {
-    margin-left: 14px;
+    margin-left: 12px;
   }
 
   .schedule-example-section {
     flex: 1;
     flex-basis: 0;
   }
-}
-
-.close-wrapper {
-  display: inline-block;
 }

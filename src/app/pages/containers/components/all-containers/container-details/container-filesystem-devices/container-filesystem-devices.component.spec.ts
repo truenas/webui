@@ -99,6 +99,45 @@ describe('ContainerFilesystemDevicesComponent', () => {
     expect(actionsMenu[0].device).toBe(disks[0]);
   });
 
+  // Middleware refuses device operations on any container that is not stopped, so Add is
+  // gated like the per-device Edit/Delete menu instead of failing at submit.
+  describe.each([ContainerStatus.Running, ContainerStatus.Suspended, ContainerStatus.Unknown])(
+    'when the container is %s',
+    (state) => {
+      const createActiveComponent = createComponentFactory({
+        component: ContainerFilesystemDevicesComponent,
+        imports: [
+          MockComponent(DeviceActionsMenuComponent),
+        ],
+        providers: [
+          mockAuth(),
+          mockApi([]),
+          mockProvider(SnackbarService),
+          mockProvider(FilesystemService),
+          mockProvider(FormSidePanelService),
+          mockProvider(ContainersStore, {
+            selectedContainer: () => fakeContainer({
+              id: 1,
+              status: { state, pid: 0, domain_state: null },
+            }),
+          }),
+          mockProvider(ContainerDevicesStore, {
+            isLoading: () => false,
+            devices: () => disks,
+          }),
+        ],
+      });
+
+      it('disables Add', async () => {
+        const activeSpectator = createActiveComponent({ props: { container: fakeContainer({ id: 1 }) } });
+
+        const addButton = await TestbedHarnessEnvironment.loader(activeSpectator.fixture)
+          .getHarness(TnButtonHarness.with({ label: 'Add' }));
+        expect(await addButton.isDisabled()).toBe(true);
+      });
+    },
+  );
+
   describe('side panel', () => {
     it('opens the form side panel to add a disk', async () => {
       const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));

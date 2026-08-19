@@ -57,6 +57,19 @@ describe('ContainerStatusCellComponent', () => {
     expect(spectator.query('span')).toHaveText('Stopped');
   });
 
+  it('checks status for suspended container', () => {
+    setupTest(fakeContainer({
+      status: {
+        state: ContainerStatus.Suspended,
+        pid: 123,
+        domain_state: null,
+      },
+    }));
+
+    expect(spectator.query('span')).toHaveText('Suspended');
+    expect(spectator.element).toHaveClass('suspended');
+  });
+
   it('checks status for stopping container', () => {
     setupTest(fakeContainer({
       status: {

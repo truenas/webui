@@ -225,7 +225,7 @@ describe('FibreChannelPortsComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(error);
-    expect(spectator.inject(EmptyService).defaultEmptyConfig).toHaveBeenLastCalledWith(EmptyType.Errors);
+    expect(spectator.inject(EmptyService).titleForType).toHaveBeenLastCalledWith(EmptyType.Errors);
   });
 
   it('should show/hide WWPN (B) column based on HA status', async () => {

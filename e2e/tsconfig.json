@@ -1,0 +1,31 @@
+{
+  "comment": [
+    "Standalone rather than extending the root tsconfig. That one is configured",
+    "for the Angular application — `baseUrl: src`, `module: es2020`, Angular",
+    "compiler options — none of which apply to a Node-hosted Playwright runner,",
+    "and its `baseUrl` would make bare specifiers resolve against `src/`.",
+    "Playwright resolves this file by proximity to the test files."
+  ],
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": [
+    "**/*.ts",
+    "../playwright.config.ts"
+  ]
+}

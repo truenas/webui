@@ -88,6 +88,37 @@ describe('ContainerNicDevicesComponent', () => {
     expect(addMenu).toExist();
   });
 
+  // Middleware refuses device operations on any container that is not stopped, which
+  // since 26.0 includes SUSPENDED and not just RUNNING.
+  describe.each([ContainerStatus.Running, ContainerStatus.Suspended])('when the container is %s', (state) => {
+    const createActiveComponent = createComponentFactory({
+      component: ContainerNicDevicesComponent,
+      imports: sharedImports,
+      providers: [
+        mockProvider(ContainerDevicesStore, {
+          isLoading: () => false,
+          devices: () => devices,
+        }),
+        mockProvider(ContainersStore, {
+          selectedContainer: () => ({
+            default_network: 'truenasbr0',
+            status: { state },
+          }),
+        }),
+        noPendingChangesProvider,
+      ],
+    });
+
+    it('disables the device actions menu', () => {
+      const activeSpectator = createActiveComponent();
+
+      const actionsMenu = activeSpectator.query(DeviceActionsMenuComponent)!;
+      expect(actionsMenu.isDisabled).toBe(true);
+      expect(actionsMenu.disabledTooltip)
+        .toBe('Cannot modify devices unless the container is stopped. Please stop the container first.');
+    });
+  });
+
   describe('when no NIC devices are configured', () => {
     const createEmptyComponent = createComponentFactory({
       component: ContainerNicDevicesComponent,

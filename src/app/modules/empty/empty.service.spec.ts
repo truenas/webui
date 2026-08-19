@@ -1,4 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { LangChangeEvent, TranslateService, TranslationChangeEvent } from '@ngx-translate/core';
 import { tnIconMarker } from '@truenas/ui-components';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -9,6 +10,78 @@ describe('EmptyService', () => {
 
   beforeEach(() => {
     spectator = createService();
+  });
+
+  describe('titleForType', () => {
+    it('returns the translated config title', () => {
+      expect(spectator.service.titleForType(EmptyType.Errors)).toBe('Cannot retrieve response');
+      expect(spectator.service.titleForType(EmptyType.NoSearchResults)).toBe('No Search Results.');
+      // The default branch too, for a type the enum doesn't cover.
+      expect(spectator.service.titleForType()).toBe('No records have been added yet');
+    });
+  });
+
+  describe('loadingMessage', () => {
+    it('returns the loading title from the same catalog, so tn-table gets one translated spelling', () => {
+      expect(spectator.service.loadingMessage()).toBe(spectator.service.titleForType(EmptyType.Loading));
+      expect(spectator.service.loadingMessage()).toBe('Loading...');
+    });
+  });
+
+  describe('descriptionForType', () => {
+    it('returns the config message for a state that carries one', () => {
+      expect(spectator.service.descriptionForType(EmptyType.NoSearchResults)).toBe('No matching results found');
+    });
+
+    it('returns an empty string for the states whose config is title-only', () => {
+      expect(spectator.service.descriptionForType(EmptyType.NoPageData)).toBe('');
+      expect(spectator.service.descriptionForType(EmptyType.Errors)).toBe('');
+      // The default branch too, for a type the enum doesn't cover.
+      expect(spectator.service.descriptionForType()).toBe('');
+    });
+
+    it('flattens markup, since the catalog messages were written for ix-empty', () => {
+      jest.spyOn(spectator.inject(TranslateService), 'instant')
+        .mockReturnValue('First line.<br>\nSecond line.');
+
+      expect(spectator.service.descriptionForType(EmptyType.NoSearchResults)).toBe('First line. Second line.');
+    });
+  });
+
+  describe('memoization', () => {
+    it('translates a type once, however many times a template asks for its copy', () => {
+      const instant = jest.spyOn(spectator.inject(TranslateService), 'instant');
+
+      for (let pass = 0; pass < 5; pass++) {
+        spectator.service.titleForType(EmptyType.NoSearchResults);
+        spectator.service.descriptionForType(EmptyType.NoSearchResults);
+      }
+
+      // Once for the title, once for the message — the other nine calls are cache hits.
+      expect(instant).toHaveBeenCalledTimes(2);
+    });
+
+    it('re-translates after a language change', () => {
+      expect(spectator.service.titleForType(EmptyType.Errors)).toBe('Cannot retrieve response');
+
+      const translate = spectator.inject(TranslateService);
+      jest.spyOn(translate, 'instant').mockReturnValue('Antwort kann nicht abgerufen werden');
+      translate.onLangChange.emit({ lang: 'de', translations: {} } as LangChangeEvent);
+
+      expect(spectator.service.titleForType(EmptyType.Errors)).toBe('Antwort kann nicht abgerufen werden');
+    });
+
+    it('re-translates when a catalog arrives after the first lookup', () => {
+      // An `instant()` that runs before the active language's catalog is loaded returns the key;
+      // without this invalidation the cache would keep serving that key until a language switch.
+      expect(spectator.service.titleForType(EmptyType.Errors)).toBe('Cannot retrieve response');
+
+      const translate = spectator.inject(TranslateService);
+      jest.spyOn(translate, 'instant').mockReturnValue('Antwort kann nicht abgerufen werden');
+      translate.onTranslationChange.emit({ lang: 'de', translations: {} } as TranslationChangeEvent);
+
+      expect(spectator.service.titleForType(EmptyType.Errors)).toBe('Antwort kann nicht abgerufen werden');
+    });
   });
 
   describe('iconForType', () => {

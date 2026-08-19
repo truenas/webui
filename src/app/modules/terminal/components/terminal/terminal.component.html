@@ -22,9 +22,13 @@
             <ng-container *ngTemplateOutlet="terminalLoading"></ng-container>
           } @else {
             <p>{{ 'Connection lost. Click Reconnect to restore the session.' | translate }}</p>
-            <button mat-button color="primary" [disabled]="isReconnecting()" (click)="reconnect()">
-              {{ 'Reconnect' | translate }}
-            </button>
+            <tn-button
+              color="primary"
+              testId="reconnect"
+              [label]="'Reconnect' | translate"
+              [disabled]="isReconnecting()"
+              (onClick)="reconnect()"
+            ></tn-button>
           }
         }
       </div>

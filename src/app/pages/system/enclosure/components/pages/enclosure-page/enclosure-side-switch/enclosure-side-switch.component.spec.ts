@@ -1,4 +1,7 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import {
   EnclosureSideSwitchComponent,
@@ -8,7 +11,8 @@ import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclos
 
 describe('EnclosureSideSwitchComponent', () => {
   let spectator: Spectator<EnclosureSideSwitchComponent>;
-  let hasMoreThanOneSide = false;
+  let loader: HarnessLoader;
+  let hasMoreThanOneSide: boolean;
 
   const createComponent = createComponentFactory({
     component: EnclosureSideSwitchComponent,
@@ -20,77 +24,66 @@ describe('EnclosureSideSwitchComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        enclosure: {
-          front_loaded: true,
-        } as DashboardEnclosure,
-      },
-    });
+  /**
+   * `hasMoreThanOneSide` is read once at render time, so it has to be set before the
+   * component is created rather than flipped between tests.
+   */
+  function setup(enclosure: Partial<DashboardEnclosure>, moreThanOneSide = true): void {
+    hasMoreThanOneSide = moreThanOneSide;
+    spectator = createComponent({ props: { enclosure: enclosure as DashboardEnclosure } });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  }
+
+  it('does not show side buttons if there is only one side in enclosure', async () => {
+    setup({ front_loaded: true }, false);
+
+    expect(await loader.getAllHarnesses(TnButtonHarness)).toHaveLength(0);
   });
 
-  it('does not show side buttons if there is only one side in enclosure', () => {
-    expect(spectator.query('button')).toBeNull();
-    hasMoreThanOneSide = true;
-  });
+  it('shows button for Front when there is a front side and another one', async () => {
+    setup({ front_loaded: true, rear_slots: 2 });
 
-  it('shows button for Front when there is a front side and another one', () => {
-    spectator.setInput('enclosure', {
-      front_loaded: true,
-      rear_slots: 2,
-    } as DashboardEnclosure);
-
-    const buttons = spectator.queryAll('button');
+    const buttons = await loader.getAllHarnesses(TnButtonHarness);
     expect(buttons).toHaveLength(2);
-    expect(buttons[0]).toHaveText('Front');
+    expect(await buttons[0].getLabel()).toBe('Front');
 
-    spectator.click(buttons[0]);
+    await buttons[0].click();
 
     expect(spectator.inject(EnclosureStore).selectSide).toHaveBeenCalledWith(EnclosureSide.Front);
   });
 
-  it('shows button for Top when there is a top side and another one', () => {
-    spectator.setInput('enclosure', {
-      top_loaded: true,
-      rear_slots: 2,
-    } as DashboardEnclosure);
+  it('shows button for Top when there is a top side and another one', async () => {
+    setup({ top_loaded: true, rear_slots: 2 });
 
-    const buttons = spectator.queryAll('button');
+    const buttons = await loader.getAllHarnesses(TnButtonHarness);
     expect(buttons).toHaveLength(2);
-    expect(buttons[0]).toHaveText('Top');
+    expect(await buttons[0].getLabel()).toBe('Top');
 
-    spectator.click(buttons[0]);
+    await buttons[0].click();
 
     expect(spectator.inject(EnclosureStore).selectSide).toHaveBeenCalledWith(EnclosureSide.Top);
   });
 
-  it('shows button for Rear when there is a rear side and another one', () => {
-    spectator.setInput('enclosure', {
-      rear_slots: 1,
-      internal_slots: 2,
-    } as DashboardEnclosure);
+  it('shows button for Rear when there is a rear side and another one', async () => {
+    setup({ rear_slots: 1, internal_slots: 2 });
 
-    const buttons = spectator.queryAll('button');
+    const buttons = await loader.getAllHarnesses(TnButtonHarness);
     expect(buttons).toHaveLength(2);
-    expect(buttons[0]).toHaveText('Rear');
+    expect(await buttons[0].getLabel()).toBe('Rear');
 
-    spectator.click(buttons[0]);
+    await buttons[0].click();
 
     expect(spectator.inject(EnclosureStore).selectSide).toHaveBeenCalledWith(EnclosureSide.Rear);
   });
 
-  it('shows button for Internal when there is an internal side and another one', () => {
-    spectator.setInput('enclosure', {
-      internal_slots: 1,
-      rear_slots: 2,
-    } as DashboardEnclosure);
+  it('shows button for Internal when there is an internal side and another one', async () => {
+    setup({ internal_slots: 1, rear_slots: 2 });
 
-    const buttons = spectator.queryAll('button');
+    const buttons = await loader.getAllHarnesses(TnButtonHarness);
     expect(buttons).toHaveLength(2);
-    expect(buttons[1]).toHaveText('Internal');
+    expect(await buttons[1].getLabel()).toBe('Internal');
 
-    spectator.click(buttons[1]);
+    await buttons[1].click();
 
     expect(spectator.inject(EnclosureStore).selectSide).toHaveBeenCalledWith(EnclosureSide.Internal);
   });

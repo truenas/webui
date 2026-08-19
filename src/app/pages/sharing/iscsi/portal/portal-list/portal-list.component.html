@@ -24,7 +24,6 @@
     </div>
   </ng-template>
 
-  @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
   <tn-table
     class="table"
     [testId]="'table-table'"
@@ -32,8 +31,9 @@
     [displayedColumns]="displayedColumns()"
     [trackBy]="trackByPortalId"
     [loading]="isLoading()"
-    [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
-    [emptyIcon]="emptyConf?.icon ?? ''"
+    [emptyMessage]="emptyService.titleForType(emptyType())"
+    [emptyDescription]="emptyService.descriptionForType(emptyType())"
+    [emptyIcon]="emptyService.iconForType(emptyType())"
     (sortChange)="onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'id'" [sortable]="true">

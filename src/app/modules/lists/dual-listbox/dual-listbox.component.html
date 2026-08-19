@@ -1,37 +1,16 @@
-<div class="dual-list">
-  <div class="listbox">
-    <p>{{ sourceName() }}</p>
-
-    <div class="record-picker">
-      <tn-list
-        #availableDropList="cdkDropList"
-        cdkDropList
-        id="available-list"
-        [cdkDropListData]="availableList()"
-        [cdkDropListConnectedTo]="[selectedDropList]"
-        [attr.aria-label]="sourceName()"
-        [ngStyle]="{ 'max-height': height(), 'min-height': height() }"
-        (cdkDropListDropped)="onDrop($event)"
-      >
-        @for (item of availableList().items; track trackByKey($index, item); let idx = $index) {
-          <tn-list-item
-            cdkDrag
-            tabindex="0"
-            [wrap]="true"
-            [ngClass]="{ selected: isItemSelected(availableList(), idx) }"
-            (click)="onItemClick('available', idx, $event)"
-            (keydown)="onItemKeydown('available', idx, $event)"
-          >
-            @if (listItemIcon(); as icon) {
-              <tn-icon tnListIcon aria-hidden="true" [name]="icon"></tn-icon>
-            }
-
-            <label>{{ getDisplayValue(item) }}</label>
-          </tn-list-item>
-        }
-      </tn-list>
-    </div>
-  </div>
+<!-- cdkDropListGroup connects the two lists to each other, so neither has to name the other. -->
+<div class="dual-list" cdkDropListGroup>
+  <ix-dual-listbox-side
+    #availableSide
+    listType="available"
+    [side]="availableList"
+    [listName]="sourceName()"
+    [listItemIcon]="listItemIcon()"
+    [height]="height()"
+    [sortable]="sort()"
+    [searchable]="searchable()"
+    (dropped)="onDrop(availableList, $event)"
+  ></ix-dual-listbox-side>
 
   <div class="button-box">
     <tn-icon-button
@@ -42,7 +21,7 @@
       testId="move-selected-right"
       [ariaLabel]="'Move selected items to the right side list' | translate"
       [tooltip]="'Move selected items to the right side list' | translate"
-      [disabled]="!hasAvailableSelection()"
+      [disabled]="!availableList.hasSelection()"
       (onClick)="moveSelectedRight()"
     ></tn-icon-button>
 
@@ -52,8 +31,8 @@
       color="var(--primary)"
       tooltipPosition="right"
       testId="move-all-right"
-      [ariaLabel]="'Move all items to the right side list' | translate"
-      [tooltip]="'Move all items to the right side list' | translate"
+      [ariaLabel]="'Move all listed items to the right side list' | translate"
+      [tooltip]="'Move all listed items to the right side list' | translate"
       [disabled]="!canMoveAllRight()"
       (onClick)="moveAllRight()"
     ></tn-icon-button>
@@ -66,7 +45,7 @@
       testId="move-selected-left"
       [ariaLabel]="'Move selected items to the left side list' | translate"
       [tooltip]="'Move selected items to the left side list' | translate"
-      [disabled]="!hasSelectedSelection()"
+      [disabled]="!selectedList.hasSelection()"
       (onClick)="moveSelectedLeft()"
     ></tn-icon-button>
 
@@ -76,46 +55,24 @@
       color="var(--primary)"
       tooltipPosition="right"
       testId="move-all-left"
-      [ariaLabel]="'Move all items to the left side list' | translate"
-      [tooltip]="'Move all items to the left side list' | translate"
+      [ariaLabel]="'Move all listed items to the left side list' | translate"
+      [tooltip]="'Move all listed items to the left side list' | translate"
       [disabled]="!canMoveAllLeft()"
       (onClick)="moveAllLeft()"
     ></tn-icon-button>
   </div>
 
-  <div class="listbox">
-    <p>{{ targetName() }}</p>
-
-    <div class="record-picker">
-      <tn-list
-        #selectedDropList="cdkDropList"
-        cdkDropList
-        id="selected-list"
-        [cdkDropListData]="selectedList()"
-        [cdkDropListConnectedTo]="[availableDropList]"
-        [attr.aria-label]="targetName()"
-        [ngStyle]="{ 'max-height': height(), 'min-height': height() }"
-        (cdkDropListDropped)="onDrop($event)"
-      >
-        @for (item of selectedList().items; track trackByKey($index, item); let idx = $index) {
-          <tn-list-item
-            cdkDrag
-            tabindex="0"
-            [wrap]="true"
-            [ngClass]="{ selected: isItemSelected(selectedList(), idx) }"
-            (click)="onItemClick('selected', idx, $event)"
-            (keydown)="onItemKeydown('selected', idx, $event)"
-          >
-            @if (listItemIcon(); as icon) {
-              <tn-icon tnListIcon aria-hidden="true" [name]="icon"></tn-icon>
-            }
-
-            <label>{{ getDisplayValue(item) }}</label>
-          </tn-list-item>
-        }
-      </tn-list>
-    </div>
-  </div>
+  <ix-dual-listbox-side
+    #selectedSide
+    listType="selected"
+    [side]="selectedList"
+    [listName]="targetName()"
+    [listItemIcon]="listItemIcon()"
+    [height]="height()"
+    [sortable]="sort()"
+    [searchable]="searchable()"
+    (dropped)="onDrop(selectedList, $event)"
+  ></ix-dual-listbox-side>
 </div>
 
 <div class="hint">
@@ -124,6 +81,7 @@
   } @else {
     {{ 'You can select multiple items with the Ctrl and Shift keys.' | translate }}
   }
+  {{ 'Use the arrow keys to move between items, or start typing to jump to one.' | translate }}
 </div>
 
 <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">

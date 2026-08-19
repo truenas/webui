@@ -32,7 +32,6 @@
     ></tn-button>
   </ix-page-header>
 
-  @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
   <!--
     TEMP: [expandable] makes tn-table render the expand/collapse button itself, with a
     hard-coded English aria-label ('Expand row' / 'Collapse row') and no input to override it
@@ -53,8 +52,9 @@
     [expandOnRowClick]="true"
     [singleExpand]="true"
     [loading]="isLoading()"
-    [emptyMessage]="emptyConf.title | translate"
-    [emptyIcon]="emptyConf.icon || emptyService.iconForType(emptyType())"
+    [emptyMessage]="emptyService.titleForType(emptyType())"
+    [emptyDescription]="emptyService.descriptionForType(emptyType())"
+    [emptyIcon]="emptyService.iconForType(emptyType())"
     (sortChange)="onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'name'" [sortable]="true">

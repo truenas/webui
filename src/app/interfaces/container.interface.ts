@@ -147,6 +147,23 @@ export interface ContainerStopParams {
   force_after_timeout?: boolean;
 }
 
+export interface ContainerDeleteOptions {
+  /**
+   * Stops the container first when it is not already stopped.
+   * Without it, deleting a running or suspended container is refused up front.
+   */
+  force?: boolean;
+
+  /**
+   * Destroys the container dataset together with its child datasets, snapshots,
+   * clones of those snapshots and any holds on them. Not recoverable.
+   * Without it, deleting a container whose dataset has children or snapshots is refused.
+   */
+  recursive?: boolean;
+}
+
+export type ContainerDeleteParams = [containerId: number, options?: ContainerDeleteOptions];
+
 export interface ContainerGlobalConfig {
   bridge: string | null;
   v4_network: string | null;

@@ -6,7 +6,9 @@
     variant="filled"
     color="primary"
     [testId]="'add-usb-device'"
+    [disabled]="isContainerActive()"
     [label]="'Add' | translate"
+    [tnTooltip]="isContainerActive() ? (helptext.deviceRequiresStoppedTooltip | translate) : ''"
     [tnMenuTriggerFor]="addDeviceMenu"
   ></tn-button>
 

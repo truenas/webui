@@ -73,6 +73,11 @@ jobs:
         run: yarn run check-env
       - name: Run linter
         run: yarn lint
+      # `e2e/` is outside the root tsconfig's project — the Playwright runner is
+      # Node-hosted and cannot share the Angular compiler options (see
+      # e2e/tsconfig.json). Without this step nothing type-checks the suite.
+      - name: Type-check the E2E suite
+        run: yarn e2e:typecheck
 
   # Decides which runner the tests below go to. Shared with the Claude review
   # gate and with truenas-connect/ui, which needs the same answer for the same

@@ -13,12 +13,14 @@ export const containerTypeLabels = new Map<ContainerType, string>([
 export enum ContainerStatus {
   Running = 'RUNNING',
   Stopped = 'STOPPED',
+  Suspended = 'SUSPENDED',
   Unknown = 'UNKNOWN',
 }
 
 export const containerStatusLabels = new Map<ContainerStatus, string>([
   [ContainerStatus.Running, T('Running')],
   [ContainerStatus.Stopped, T('Stopped')],
+  [ContainerStatus.Suspended, T('Suspended')],
   [ContainerStatus.Unknown, T('Unknown')],
 ]);
 

@@ -1,11 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   GlobalConfigFormComponent,
@@ -24,8 +23,10 @@ describe('GlobalConfigFormComponent', () => {
     await spectator.fixture.whenStable();
   }
 
-  async function getSaveButton(): Promise<TnButtonHarness> {
-    return loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+  /** The `<tn-side-panel>` host owns Save, so submission goes through the host-facing API. */
+  async function submit(): Promise<void> {
+    spectator.component.submit();
+    await spectator.fixture.whenStable();
   }
 
   const createComponent = createComponentFactory({
@@ -48,16 +49,6 @@ describe('GlobalConfigFormComponent', () => {
         }),
         mockCall('lxc.update'),
       ]),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-        getData: jest.fn(() => ({
-          bridge: 'bridge1',
-          v4_network: '1.2.3.4/24',
-          v6_network: null as string | null,
-          preferred_pool: 'tank',
-        })),
-      }),
       mockAuth(),
     ],
   });
@@ -82,23 +73,29 @@ describe('GlobalConfigFormComponent', () => {
     const v4NetworkInput = await form.getControl('IPv4 Network');
     expect(v4NetworkInput).toBeFalsy();
 
-    // Save button should be enabled when bridge is not automatic
-    const saveButton = await getSaveButton();
-    expect(await saveButton.isDisabled()).toBe(false);
+    // Submittable when bridge is not automatic
+    expect(spectator.component.canSubmit()).toBe(true);
   });
 
-  it('updates global settings and shows network fields when bridge is [AUTO] and closes slide-in', async () => {
+  it('does not render its own Save button — the side panel host owns it', async () => {
+    const saveButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Save' }));
+    expect(saveButtons).toHaveLength(0);
+  });
+
+  it('updates global settings, shows network fields when bridge is [AUTO] and emits closed', async () => {
+    const closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
+
     await selectOption('bridge1', 'Automatic');
 
     // Network fields should now be visible
     const v4NetworkInput = await form.getControl('IPv4 Network');
     expect(v4NetworkInput).toBeTruthy();
 
-    // Save button should be enabled because v4_network already has a value from initial config
-    const saveButton = await getSaveButton();
-    expect(await saveButton.isDisabled()).toBe(false);
+    // Submittable because v4_network already has a value from initial config
+    expect(spectator.component.canSubmit()).toBe(true);
 
-    await saveButton.click();
+    await submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
       bridge: '',
@@ -106,16 +103,13 @@ describe('GlobalConfigFormComponent', () => {
       v6_network: null,
       preferred_pool: 'tank',
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-      response: true,
-    });
+    expect(closedSpy).toHaveBeenCalledWith(true);
   });
 
   it('allows updating preferred pool', async () => {
     await selectOption('tank', 'pool2');
 
-    const saveButton = await getSaveButton();
-    await saveButton.click();
+    await submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
       bridge: 'bridge1',
@@ -135,8 +129,7 @@ describe('GlobalConfigFormComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    const saveButton = await getSaveButton();
-    expect(await saveButton.isDisabled()).toBe(true);
+    expect(spectator.component.canSubmit()).toBe(false);
   });
 
   it('allows submitting with only IPv6 network when bridge is automatic', async () => {
@@ -149,10 +142,9 @@ describe('GlobalConfigFormComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    const saveButton = await getSaveButton();
-    expect(await saveButton.isDisabled()).toBe(false);
+    expect(spectator.component.canSubmit()).toBe(true);
 
-    await saveButton.click();
+    await submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
       bridge: '',
@@ -163,8 +155,7 @@ describe('GlobalConfigFormComponent', () => {
   });
 
   it('allows resetting bridge selection and clears network validators', async () => {
-    let saveButton = await getSaveButton();
-    expect(await saveButton.isDisabled()).toBe(false);
+    expect(spectator.component.canSubmit()).toBe(true);
 
     await selectOption('bridge1', 'Automatic');
 
@@ -175,13 +166,11 @@ describe('GlobalConfigFormComponent', () => {
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    saveButton = await getSaveButton();
-    expect(await saveButton.isDisabled()).toBe(true);
+    expect(spectator.component.canSubmit()).toBe(false);
 
     await selectOption('Automatic', 'bridge1');
 
-    saveButton = await getSaveButton();
-    expect(await saveButton.isDisabled()).toBe(false);
+    expect(spectator.component.canSubmit()).toBe(true);
   });
 
   it('shows hint text when automatic bridge is selected', async () => {
@@ -229,16 +218,6 @@ describe('GlobalConfigFormComponent - automatic bridge', () => {
         }),
         mockCall('lxc.update'),
       ]),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-        getData: jest.fn(() => ({
-          bridge: '',
-          v4_network: '10.0.0.0/24',
-          v6_network: 'fd00::/64',
-          preferred_pool: 'tank',
-        })),
-      }),
       mockAuth(),
     ],
   });
@@ -262,62 +241,5 @@ describe('GlobalConfigFormComponent - automatic bridge', () => {
     // Network fields should be visible
     const v4NetworkInput = await form.getControl('IPv4 Network');
     expect(v4NetworkInput).toBeTruthy();
-  });
-});
-
-describe('GlobalConfigFormComponent - side panel host (no SlideInRef)', () => {
-  let spectator: Spectator<GlobalConfigFormComponent>;
-  let loader: HarnessLoader;
-
-  const createComponent = createComponentFactory({
-    component: GlobalConfigFormComponent,
-    providers: [
-      mockApi([
-        mockCall('lxc.config', {
-          bridge: 'bridge1',
-          v4_network: '1.2.3.4/24',
-          v6_network: null,
-          preferred_pool: 'tank',
-        }),
-        mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', bridge1: 'bridge1' }),
-        mockCall('container.pool_choices', { tank: 'tank' }),
-        mockCall('lxc.update'),
-      ]),
-      mockAuth(),
-    ],
-  });
-
-  beforeEach(async () => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    await spectator.fixture.whenStable();
-  });
-
-  it('self-loads config without a SlideInRef', () => {
-    expect(spectator.component.slideInRef).toBeNull();
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.config');
-  });
-
-  it('does not render the in-form Save button in side-panel mode', async () => {
-    const saveButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Save' }));
-    expect(saveButtons).toHaveLength(0);
-  });
-
-  it('exposes canSubmit and emits closed on submit', async () => {
-    expect(spectator.component.canSubmit()).toBe(true);
-
-    const closedSpy = jest.fn();
-    spectator.component.closed.subscribe(closedSpy);
-
-    spectator.component.submit();
-    await spectator.fixture.whenStable();
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
-      bridge: 'bridge1',
-      v4_network: '1.2.3.4/24',
-      v6_network: null,
-      preferred_pool: 'tank',
-    }]);
-    expect(closedSpy).toHaveBeenCalledWith(true);
   });
 });

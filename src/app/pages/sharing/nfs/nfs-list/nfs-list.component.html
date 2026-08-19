@@ -40,7 +40,6 @@
       [title]="'Optimized for Linux and Unix systems, offering deeper integration in those environments. Choose NFS if you\'re working primarily with Linux servers or need efficient file access in Unix-based workflows.' | translate"
     ></tn-empty>
   } @else {
-    @let emptyConf = emptyService.defaultEmptyConfig(emptyType());
     <tn-table
       class="table"
       [testId]="'table-table'"
@@ -49,8 +48,9 @@
       [displayedColumns]="displayedColumns()"
       [trackBy]="trackByNfsId"
       [loading]="isLoading()"
-      [emptyMessage]="emptyConf?.title ? (emptyConf.title | translate) : ''"
-      [emptyIcon]="emptyConf?.icon ?? ''"
+      [emptyMessage]="emptyService.titleForType(emptyType())"
+      [emptyDescription]="emptyService.descriptionForType(emptyType())"
+      [emptyIcon]="emptyService.iconForType(emptyType())"
       (sortChange)="onSortChange($event)"
     >
       <ng-container [tnColumnDef]="'path'" [sortable]="true">
