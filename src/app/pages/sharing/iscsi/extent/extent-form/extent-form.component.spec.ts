@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { KiB } from 'app/constants/bytes.constant';
@@ -12,8 +11,7 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import { StorageService } from 'app/services/storage.service';
@@ -21,12 +19,6 @@ import { StorageService } from 'app/services/storage.service';
 describe('ExtentFormComponent', () => {
   let spectator: Spectator<ExtentFormComponent>;
   let loader: HarnessLoader;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const existingExtent = {
     id: 123,
@@ -68,9 +60,6 @@ describe('ExtentFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
-        openSlideIns: jest.fn(() => 1),
-      }),
       mockProvider(StorageService),
       mockProvider(DialogService),
       mockApi([
@@ -82,7 +71,7 @@ describe('ExtentFormComponent', () => {
           key_device_3: 'value_device_3',
         } as Choices),
       ]),
-      mockProvider(SlideInRef, slideInRef),
+      ...ixFormTestingProviders(),
     ],
   });
 
@@ -119,8 +108,10 @@ describe('ExtentFormComponent', () => {
       await (await getTnSelect('blocksize')).selectOption('1024');
       await (await getTnCheckbox('ro')).check();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.extent.create', [{
         avail_threshold: null,
@@ -139,7 +130,7 @@ describe('ExtentFormComponent', () => {
         type: IscsiExtentType.Disk,
         xen: true,
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closed).toHaveBeenCalledWith(true);
     });
   });
 
@@ -175,8 +166,10 @@ describe('ExtentFormComponent', () => {
       await (await getIxInput('Filesize')).setValue('2049 KiB');
       await (await getTnSelect('blocksize')).selectOption('512');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const closed = jest.fn();
+      spectator.component.closed.subscribe(closed);
+
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.update', [
         123,
@@ -198,7 +191,7 @@ describe('ExtentFormComponent', () => {
           xen: true,
         },
       ]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closed).toHaveBeenCalledWith(true);
     });
 
     it('sends product_id as null when field is empty', async () => {
@@ -209,8 +202,7 @@ describe('ExtentFormComponent', () => {
       spectator.component.form.controls.product_id.setValue('');
       spectator.detectChanges();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      spectator.component.submit();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.update', [
         123,

@@ -14,7 +14,9 @@ import {
 import {
   map, Observable, of, startWith,
 } from 'rxjs';
+import { macAddressInvalidMessage, macAddressRegex } from 'app/constants/mac-address.constant';
 import { ContainerNicDeviceType, containerNicDeviceTypeLabels } from 'app/enums/container.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import { ContainerNicDevice } from 'app/interfaces/container.interface';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -74,10 +76,12 @@ export class ContainerNicFormDialog {
   protected readonly form = this.fb.group({
     type: [this.getInitialType(), Validators.required],
     use_default: [this.getInitialUseDefault()],
+    // Middleware only accepts colon-separated MACs (libvirt never parsed the dash-separated,
+    // unseparated or Cisco dotted forms, so those saved fine and then failed at container start).
     mac: [this.getInitialMac(), [
       this.ixValidator.withMessage(
-        Validators.pattern('^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$|^([0-9A-Fa-f]{4}\\.){2}([0-9A-Fa-f]{4})$'),
-        this.translate.instant('Not a valid MAC address'),
+        Validators.pattern(macAddressRegex),
+        this.translate.instant(macAddressInvalidMessage),
       ),
     ]],
     trust_guest_rx_filters: [this.getInitialTrustGuestRxFilters()],
@@ -119,6 +123,12 @@ export class ContainerNicFormDialog {
     }),
     startWith(true),
   );
+
+  protected readonly macTooltip = computed(() => {
+    return this.isEditMode()
+      ? this.translate.instant(containersHelptext.macEditTooltip)
+      : this.translate.instant(containersHelptext.macTooltip);
+  });
 
   protected readonly useDefault = toSignal(this.form.controls.use_default.value$);
   protected readonly selectedType = toSignal(this.form.controls.type.value$);

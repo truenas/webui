@@ -47,8 +47,8 @@
 @if (!currentPageCount() && !isLoading()) {
   <tn-empty
     [icon]="emptyIcon()"
-    [title]="emptyConfig().title | translate"
-    [description]="emptyConfig().message ? (emptyConfig().message | translate) : undefined"
+    [title]="emptyMessage()"
+    [description]="emptyDescription()"
     [actionText]="emptyActionText()"
     (onAction)="onEmptyAction()"
   ></tn-empty>
@@ -61,9 +61,12 @@
     [selectable]="true"
     [expandable]="true"
     [clickable]="true"
+    [expandOnRowClick]="true"
+    [singleExpand]="true"
     [loading]="isLoading()"
+    [(sortColumn)]="sortColumn"
+    [(sortDirection)]="sortDirection"
     (selectionChange)="onSelectionChange($event)"
-    (rowClick)="onRowClick($event)"
     (sortChange)="onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'name'" [sortable]="true">

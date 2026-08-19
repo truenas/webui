@@ -4,22 +4,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
   finalize,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import {
-  ModalHeaderComponent,
-} from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -31,14 +26,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrl: './global-config-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormActionsComponent,
-    ModalHeaderComponent,
-    TnButtonComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnSelectComponent,
     ReactiveFormsModule,
-    RequiresRolesDirective,
     TranslateModule,
     AsyncPipe,
     IxIpInputWithNetmaskComponent,
@@ -52,10 +43,12 @@ export class GlobalConfigFormComponent extends SidePanelForm implements OnInit {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
 
-  // LXC role is required for global container configuration (lxc.update, lxc.config)
-  protected readonly requiredRoles = [Role.LxcConfigWrite];
+  /**
+   * LXC role is required for global container configuration (lxc.update, lxc.config).
+   * Public because the `<tn-side-panel>` host reads it to gate its footer Save.
+   */
+  readonly requiredRoles = [Role.LxcConfigWrite];
   protected isFormLoading = signal(false);
-  protected currentConfig = signal<ContainerGlobalConfig | null>(null);
   protected readonly autoBridge = '[AUTO]';
 
   protected readonly form = this.formBuilder.nonNullable.group({
@@ -156,7 +149,6 @@ export class GlobalConfigFormComponent extends SidePanelForm implements OnInit {
       finalize(() => this.isFormLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {
-      this.currentConfig.set(config);
       this.form.patchValue({
         // Transform empty string from API to [AUTO] for the form
         bridge: config.bridge || this.autoBridge,

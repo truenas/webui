@@ -1,6 +1,6 @@
 <ix-form
   [formGroup]="form"
-  [externalLoading]="isLoading()"
+  [isEditMode]="!isNew"
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"
 >
@@ -26,6 +26,8 @@
         formControlName="type"
         [options]="exporterTypeOptions()"
         [optionTestIdKey]="optionTestIdByLabel"
+        [placeholder]="tnSelectLabels.placeholder | translate"
+        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
     <tn-form-field class="checkbox-field">
@@ -37,7 +39,7 @@
     </tn-form-field>
   </tn-form-section>
 
-  @if (!isLoadingSchemas()) {
+  @if (schemasLoaded()) {
     <ix-dynamic-form
       [dynamicSection]="dynamicSection"
       [dynamicForm]="formGroup"

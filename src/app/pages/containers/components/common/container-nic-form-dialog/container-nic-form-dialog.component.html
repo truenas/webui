@@ -24,7 +24,7 @@
     @if (isEditMode() || !useDefault()) {
       <tn-form-field
         [label]="'Mac Address' | translate"
-        [tooltip]="isEditMode() ? ('Leave empty to use default MAC address' | translate) : ''"
+        [tooltip]="macTooltip()"
       >
         <tn-input
           testId="mac"

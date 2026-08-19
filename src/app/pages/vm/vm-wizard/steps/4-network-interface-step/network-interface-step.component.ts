@@ -14,6 +14,7 @@ import {
   TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { macAddressInvalidMessage, macAddressRegex } from 'app/constants/mac-address.constant';
 import { VmNicType, vmNicTypeLabels } from 'app/enums/vm.enum';
 import { nicChoicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -22,6 +23,7 @@ import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -53,10 +55,14 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
+  private validators = inject(IxValidatorsService);
 
   form = this.formBuilder.nonNullable.group({
     nic_type: [VmNicType.Virtio, Validators.required],
-    nic_mac: [helptextVmWizard.NIC_mac_value, Validators.pattern(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
+    nic_mac: [helptextVmWizard.NIC_mac_value, this.validators.withMessage(
+      Validators.pattern(macAddressRegex),
+      this.translate.instant(macAddressInvalidMessage),
+    )],
     nic_attach: ['', Validators.required],
     trust_guest_rx_filters: [false],
   });

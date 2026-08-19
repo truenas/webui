@@ -1,36 +1,75 @@
 <ix-page-header>
   <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
-  <button
+  <tn-button
     *ixRequiresRoles="requiredRoles"
-    mat-button
-    ixTest="add-jbof"
     color="primary"
+    [testId]="'add-jbof'"
+    [label]="'Add' | translate"
     [disabled]="!canAddJbof()"
     [tnTooltip]="'No available licensed Expansion Shelves ' | translate"
     [tnTooltipDisabled]="canAddJbof()"
-    (click)="openForm()"
-  >
-    {{ 'Add' | translate }}
-  </button>
+    (onClick)="openForm()"
+  ></tn-button>
 </ix-page-header>
 
 <div class="table-container" [ixUiSearch]="searchableElements.elements.jbof">
-  <ix-table
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyConfigService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+  <tn-table
+    [testId]="'table-table'"
+    [dataSource]="list.rows()"
+    [displayedColumns]="list.displayedColumns()"
+    [trackBy]="trackByJbofId"
+    [loading]="list.isLoading()"
+    [loadingMessage]="list.loadingMessage()"
+    [emptyMessage]="list.empty.message()"
+    [emptyDescription]="list.empty.description()"
+    [emptyIcon]="list.empty.icon()"
+    (sortChange)="list.onSortChange($event)"
   >
-    <thead
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-    ></thead>
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
-    >
-    </tbody>
-  </ix-table>
+    <ng-container [tnColumnDef]="'description'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Description' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.description"
+          [title]="'Description' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'ips'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'IPs' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="ipsText(row)"
+          [title]="'IPs' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'mgmt_username'" [sortable]="true">
+      <ng-template tnHeaderCellDef>{{ 'Username' | translate }}</ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-text-cell
+          [value]="row.mgmt_username"
+          [title]="'Username' | translate"
+          [uniqueRowTag]="uniqueRowTag(row)"
+        ></ix-table-text-cell>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [tnColumnDef]="'actions'" [width]="'80px'">
+      <ng-template tnHeaderCellDef></ng-template>
+      <ng-template let-row tnCellDef>
+        <ix-table-actions-cell
+          mode="inline"
+          [actions]="actions"
+          [row]="row"
+          [uniqueRowTag]="uniqueRowTag(row)"
+          [ariaLabel]="ariaLabel(row)"
+        ></ix-table-actions-cell>
+      </ng-template>
+    </ng-container>
+  </tn-table>
   <tn-table-pager [dataProvider]="dataProvider"></tn-table-pager>
 </div>

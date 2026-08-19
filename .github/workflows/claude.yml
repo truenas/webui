@@ -47,6 +47,13 @@ jobs:
       pull-requests: write
       id-token: write
     secrets:
+      # Both are mapped on purpose, and the shared workflow prefers the token.
+      # `UX_CLAUDE_CODE_OAUTH_TOKEN` is an org secret granted per repository:
+      # where the grant is missing it resolves to the empty string rather than
+      # failing, so the API key below covers that case and this repo moves to
+      # subscription billing on its own once the grant lands. Drop the key line
+      # when API billing is retired, not before.
+      claude-code-oauth-token: ${{ secrets.UX_CLAUDE_CODE_OAUTH_TOKEN }}
       # Named rather than inherited, because the repos call it different things
       # — truenas-connect/ui calls the same secret CLAUDE_TOKEN.
       anthropic-api-key: ${{ secrets.CLAUDE_API_KEY }}

@@ -1,11 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, input, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnDialog } from '@truenas/ui-components';
+import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   SetEnclosureLabelDialog,
   SetEnclosureLabelDialogData,
@@ -19,8 +17,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RequiresRolesDirective,
-    MatButton,
-    TestDirective,
+    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -33,7 +30,7 @@ export class EnclosureHeaderComponent {
 
   protected readonly requiredRoles = [Role.EnclosureWrite];
 
-  onEditLabel(): void {
+  protected onEditLabel(): void {
     const enclosure = this.enclosureStore.selectedEnclosure();
     if (!enclosure) {
       return;

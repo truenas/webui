@@ -11,12 +11,12 @@ import { timer } from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
+import { translated } from 'app/helpers/translated.helper';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
-import { translatedSignal } from 'app/modules/translate/translated-signal';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 export enum DispersalStrategy {
@@ -69,10 +69,10 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
     }),
   );
 
-  // `translatedSignal`, not a plain field: the labels are composed in TypeScript rather than
+  // `translated`, not a plain field: the labels are composed in TypeScript rather than
   // piped in the template, so `instant()` alone would freeze them in whatever language was
   // active when the component was constructed.
-  protected readonly dispersalOptions = translatedSignal((translate) => [
+  protected readonly dispersalOptions = translated((translate) => [
     {
       label: translate.instant('No Enclosure Dispersal Strategy'),
       value: DispersalStrategy.None,

@@ -1,9 +1,14 @@
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { TnIconButtonHarness } from '@truenas/ui-components';
+import { TnIconButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { DualListBoxComponent } from './dual-listbox.component';
+
+type ListSide = 'available' | 'selected';
+type DropEvent = CdkDragDrop<Record<string, unknown>[]>;
 
 describe('DualListBoxComponent', () => {
   let spectator: Spectator<DualListBoxComponent>;
@@ -18,6 +23,33 @@ describe('DualListBoxComponent', () => {
   const createComponent = createComponentFactory<DualListBoxComponent>({
     component: DualListBoxComponent,
   });
+
+  const getSearchFields = (): Promise<TnInputHarness[]> => loader.getAllHarnesses(TnInputHarness);
+
+  const sideElement = (side: ListSide): HTMLElement => spectator
+    .queryAll<HTMLElement>('ix-dual-listbox-side')[side === 'available' ? 0 : 1];
+
+  const itemsIn = (side: ListSide): HTMLElement[] => Array.from(
+    sideElement(side).querySelectorAll<HTMLElement>('tn-list-item'),
+  );
+  const namesIn = (side: ListSide): string[] => itemsIn(side).map((item) => item.textContent.trim());
+  const selectedNamesIn = (side: ListSide): string[] => itemsIn(side)
+    .filter((item) => item.getAttribute('aria-selected') === 'true')
+    .map((item) => item.textContent.trim());
+
+  const clickItem = (side: ListSide, index: number, modifiers: Partial<MouseEventInit> = {}): void => {
+    itemsIn(side)[index].dispatchEvent(new MouseEvent('click', { bubbles: true, ...modifiers }));
+    spectator.detectChanges();
+  };
+
+  const pressKey = (side: ListSide, index: number, key: string, modifiers: Partial<KeyboardEventInit> = {}): void => {
+    itemsIn(side)[index].dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, ...modifiers }));
+    spectator.detectChanges();
+  };
+
+  const getButton = (name: string): Promise<TnIconButtonHarness> => loader.getHarness(
+    TnIconButtonHarness.with({ name }),
+  );
 
   beforeEach(() => {
     spectator = createComponent({
@@ -34,9 +66,9 @@ describe('DualListBoxComponent', () => {
   });
 
   it('should display source and target names correctly', () => {
-    const paragraphs = spectator.queryAll('p');
-    expect(paragraphs[0]).toHaveText('Available Items');
-    expect(paragraphs[1]).toHaveText('Selected Items');
+    const titles = spectator.queryAll('.listbox-title');
+    expect(titles[0]).toContainText('Available Items');
+    expect(titles[1]).toContainText('Selected Items');
   });
 
   // `.tn-list-item__leading` is internal library markup, selected on here only because
@@ -53,158 +85,147 @@ describe('DualListBoxComponent', () => {
   });
 
   it('should initialize with all items in available list', () => {
-    expect(spectator.component.availableList().items).toHaveLength(3);
-    expect(spectator.component.selectedList().items).toHaveLength(0);
+    expect(namesIn('available')).toEqual(['Item 1', 'Item 2', 'Item 3']);
+    expect(namesIn('selected')).toEqual([]);
   });
 
   it('should select an item when clicked', () => {
-    const listItems = spectator.queryAll('tn-list-item');
-    spectator.click(listItems[0]);
+    clickItem('available', 0);
 
-    expect(spectator.component.availableList().selectedIndices.has(0)).toBe(true);
+    expect(selectedNamesIn('available')).toEqual(['Item 1']);
+  });
+
+  it('should replace the selection on a plain click, so multi-select needs Ctrl or Shift', () => {
+    clickItem('available', 0, { ctrlKey: true });
+    clickItem('available', 1, { ctrlKey: true });
+    expect(selectedNamesIn('available')).toEqual(['Item 1', 'Item 2']);
+
+    clickItem('available', 2);
+
+    expect(selectedNamesIn('available')).toEqual(['Item 3']);
   });
 
   it('should toggle selection with Ctrl key', () => {
-    const listItems = spectator.queryAll('tn-list-item');
-
-    // First click - select item 0
-    spectator.click(listItems[0]);
-    expect(spectator.component.availableList().selectedIndices.has(0)).toBe(true);
+    clickItem('available', 0);
+    expect(selectedNamesIn('available')).toEqual(['Item 1']);
 
     // Ctrl-click item 1 - add to selection
-    listItems[1].dispatchEvent(new MouseEvent('click', { ctrlKey: true, bubbles: true }));
-    spectator.detectChanges();
-    expect(spectator.component.availableList().selectedIndices.has(0)).toBe(true);
-    expect(spectator.component.availableList().selectedIndices.has(1)).toBe(true);
+    clickItem('available', 1, { ctrlKey: true });
+    expect(selectedNamesIn('available')).toEqual(['Item 1', 'Item 2']);
 
     // Ctrl-click item 0 again - remove from selection
-    listItems[0].dispatchEvent(new MouseEvent('click', { ctrlKey: true, bubbles: true }));
-    spectator.detectChanges();
-    expect(spectator.component.availableList().selectedIndices.has(0)).toBe(false);
-    expect(spectator.component.availableList().selectedIndices.has(1)).toBe(true);
+    clickItem('available', 0, { ctrlKey: true });
+    expect(selectedNamesIn('available')).toEqual(['Item 2']);
   });
 
   it('should select range with Shift key', () => {
-    const listItems = spectator.queryAll('tn-list-item');
+    clickItem('available', 0);
+    clickItem('available', 2, { shiftKey: true });
 
-    // First click - select item 0
-    spectator.click(listItems[0]);
-    expect(spectator.component.availableList().selectedIndices.has(0)).toBe(true);
-
-    // Shift-click item 2 - select range 0-2
-    listItems[2].dispatchEvent(new MouseEvent('click', { shiftKey: true, bubbles: true }));
-    spectator.detectChanges();
-    expect(spectator.component.availableList().selectedIndices.has(0)).toBe(true);
-    expect(spectator.component.availableList().selectedIndices.has(1)).toBe(true);
-    expect(spectator.component.availableList().selectedIndices.has(2)).toBe(true);
+    expect(selectedNamesIn('available')).toEqual(['Item 1', 'Item 2', 'Item 3']);
   });
 
   it('should move selected items from available to selected', async () => {
-    // Select first item
-    const listItems = spectator.queryAll('tn-list-item');
-    spectator.click(listItems[0]);
+    clickItem('available', 0);
 
-    // Click move right button
-    const moveRightButton = await loader.getHarness(
-      TnIconButtonHarness.with({ name: 'chevron-right' }),
-    );
-    await moveRightButton.click();
-
+    await (await getButton('chevron-right')).click();
     spectator.detectChanges();
 
-    expect(spectator.component.selectedList().items).toHaveLength(1);
-    expect(spectator.component.selectedList().items[0]).toEqual({ id: 1, name: 'Item 1' });
-    expect(spectator.component.availableList().items).toHaveLength(2);
+    expect(namesIn('selected')).toEqual(['Item 1']);
+    expect(namesIn('available')).toEqual(['Item 2', 'Item 3']);
   });
 
   it('should move selected items from selected to available', async () => {
-    // Set initial state with one item selected
     spectator.setInput('destination', [testData[0]]);
     spectator.detectChanges();
 
-    // Select first item in selected list
-    const listItems = spectator.queryAll('tn-list-item');
-    const selectedListItems = listItems.slice(2); // Skip available list items
-    spectator.click(selectedListItems[0]);
+    clickItem('selected', 0);
 
-    // Click move left button
-    const moveLeftButton = await loader.getHarness(
-      TnIconButtonHarness.with({ name: 'chevron-left' }),
-    );
-    await moveLeftButton.click();
-
+    await (await getButton('chevron-left')).click();
     spectator.detectChanges();
 
-    expect(spectator.component.availableList().items).toHaveLength(3);
-    expect(spectator.component.selectedList().items).toHaveLength(0);
+    expect(namesIn('available')).toEqual(['Item 1', 'Item 2', 'Item 3']);
+    expect(namesIn('selected')).toEqual([]);
   });
 
   it('should move all items from available to selected', async () => {
-    const moveAllRightButton = await loader.getHarness(
-      TnIconButtonHarness.with({ name: 'chevron-double-right' }),
-    );
-    await moveAllRightButton.click();
-
+    await (await getButton('chevron-double-right')).click();
     spectator.detectChanges();
 
-    expect(spectator.component.availableList().items).toHaveLength(0);
-    expect(spectator.component.selectedList().items).toHaveLength(3);
+    expect(namesIn('available')).toEqual([]);
+    expect(namesIn('selected')).toEqual(['Item 1', 'Item 2', 'Item 3']);
   });
 
   it('should move all items from selected to available', async () => {
-    // Set initial state with all items selected
     spectator.setInput('destination', testData);
     spectator.detectChanges();
 
-    const moveAllLeftButton = await loader.getHarness(
-      TnIconButtonHarness.with({ name: 'chevron-double-left' }),
-    );
-    await moveAllLeftButton.click();
-
+    await (await getButton('chevron-double-left')).click();
     spectator.detectChanges();
 
-    expect(spectator.component.availableList().items).toHaveLength(3);
-    expect(spectator.component.selectedList().items).toHaveLength(0);
+    expect(namesIn('available')).toEqual(['Item 1', 'Item 2', 'Item 3']);
+    expect(namesIn('selected')).toEqual([]);
   });
 
   it('should disable move buttons when there is no selection', async () => {
-    const moveRightButton = await loader.getHarness(
-      TnIconButtonHarness.with({ name: 'chevron-right' }),
-    );
-    const moveLeftButton = await loader.getHarness(
-      TnIconButtonHarness.with({ name: 'chevron-left' }),
-    );
-
-    expect(await moveRightButton.isDisabled()).toBe(true);
-    expect(await moveLeftButton.isDisabled()).toBe(true);
+    expect(await (await getButton('chevron-right')).isDisabled()).toBe(true);
+    expect(await (await getButton('chevron-left')).isDisabled()).toBe(true);
   });
 
   it('should enable move right button when items are selected in available list', async () => {
-    // Select first item
-    const listItems = spectator.queryAll('tn-list-item');
-    spectator.click(listItems[0]);
-    spectator.detectChanges();
+    clickItem('available', 0);
 
-    const moveRightButton = await loader.getHarness(
-      TnIconButtonHarness.with({ name: 'chevron-right' }),
-    );
-
-    expect(await moveRightButton.isDisabled()).toBe(false);
+    expect(await (await getButton('chevron-right')).isDisabled()).toBe(false);
   });
 
   it('should update destination model when items are moved', async () => {
-    // Select and move first item
-    const listItems = spectator.queryAll('tn-list-item');
-    spectator.click(listItems[0]);
+    clickItem('available', 0);
 
-    const moveRightButton = await loader.getHarness(
-      TnIconButtonHarness.with({ name: 'chevron-right' }),
-    );
-    await moveRightButton.click();
-
+    await (await getButton('chevron-right')).click();
     spectator.detectChanges();
 
     expect(spectator.component.destination()).toEqual([{ id: 1, name: 'Item 1' }]);
+  });
+
+  // The button that made the move disables itself once the selection clears, and a disabled
+  // button drops focus to <body>, stranding a keyboard user.
+  it('should move focus to the item that just landed in the receiving list', async () => {
+    clickItem('available', 1);
+
+    await (await getButton('chevron-right')).click();
+    spectator.detectChanges();
+
+    expect(namesIn('selected')).toEqual(['Item 2']);
+    expect(document.activeElement).toBe(itemsIn('selected')[0]);
+  });
+
+  it('should keep focus on the source list when the receiving list is not showing the item', async () => {
+    const [, selectedSearch] = await getSearchFields();
+    await selectedSearch.setValue('nothing matches this');
+    spectator.detectChanges();
+
+    clickItem('available', 0);
+
+    await (await getButton('chevron-right')).click();
+    spectator.detectChanges();
+
+    expect(itemsIn('selected')).toHaveLength(0);
+    expect(document.activeElement).toBe(itemsIn('available')[0]);
+  });
+
+  it('should fall back to the receiving search field when neither list shows anything', async () => {
+    const [availableSearch, selectedSearch] = await getSearchFields();
+    await availableSearch.setValue('Item 3');
+    await selectedSearch.setValue('nothing matches this');
+    spectator.detectChanges();
+
+    // The only item the left list still shows moves to a right list that filters it out.
+    await (await getButton('chevron-double-right')).click();
+    spectator.detectChanges();
+
+    expect(itemsIn('available')).toHaveLength(0);
+    expect(itemsIn('selected')).toHaveLength(0);
+    expect(document.activeElement).toBe(spectator.queryAll('.listbox-search input')[1]);
   });
 
   it('should display custom icon when listItemIcon is provided', () => {
@@ -218,227 +239,330 @@ describe('DualListBoxComponent', () => {
   it('should show keyboard shortcut hint', () => {
     const hint = spectator.query('.hint');
     expect(hint).toContainText('You can select multiple items with');
+    expect(hint).toContainText('start typing to jump to one');
+  });
+
+  describe('Search', () => {
+    it('should render a search field above each list', async () => {
+      const searchFields = await getSearchFields();
+
+      expect(searchFields).toHaveLength(2);
+      expect(await searchFields[0].getAriaLabel()).toBe('Search Available Items');
+      expect(await searchFields[1].getAriaLabel()).toBe('Search Selected Items');
+    });
+
+    it('should filter the available list by the search query', async () => {
+      const [availableSearch] = await getSearchFields();
+      await availableSearch.setValue('item 2');
+      spectator.detectChanges();
+
+      expect(namesIn('available')).toEqual(['Item 2']);
+    });
+
+    it('should show how many items are shown out of the total while filtering', async () => {
+      const [availableSearch] = await getSearchFields();
+      await availableSearch.setValue('Item 2');
+      spectator.detectChanges();
+
+      expect(spectator.queryAll('.listbox-count')[0]).toHaveText('1 of 3');
+    });
+
+    it('should show a message when nothing matches the search query', async () => {
+      const [availableSearch] = await getSearchFields();
+      await availableSearch.setValue('nothing matches this');
+      spectator.detectChanges();
+
+      expect(spectator.queryAll('.no-matches')[0]).toHaveText('No matches found.');
+    });
+
+    it('should only move the items matching the search when Move All is used', async () => {
+      const [availableSearch] = await getSearchFields();
+      await availableSearch.setValue('Item 3');
+      spectator.detectChanges();
+
+      await (await getButton('chevron-double-right')).click();
+      spectator.detectChanges();
+
+      expect(namesIn('selected')).toEqual(['Item 3']);
+      // Nothing matches the query anymore, but the two unmatched items stayed put.
+      expect(spectator.queryAll('.listbox-count')[0]).toHaveText('0 of 2');
+    });
+
+    it('should not move a selected item that the search hides, but keeps it selected', async () => {
+      clickItem('available', 0);
+
+      const [availableSearch] = await getSearchFields();
+      await availableSearch.setValue('Item 3');
+      spectator.detectChanges();
+
+      // Item 1 is selected but off screen, so there is nothing left to move.
+      expect(await (await getButton('chevron-right')).isDisabled()).toBe(true);
+
+      // Widening the search brings the item, and the selection it kept, back into view.
+      await availableSearch.setValue('Item');
+      spectator.detectChanges();
+
+      expect(selectedNamesIn('available')).toEqual(['Item 1']);
+      expect(await (await getButton('chevron-right')).isDisabled()).toBe(false);
+    });
+
+    // The listbox is often hosted in a <form> with a submit button, where a text input makes
+    // Enter submit it implicitly — filtering a list must not save the form.
+    it('should swallow Enter, so searching cannot submit an enclosing form', () => {
+      const searchInputs = spectator.queryAll<HTMLElement>('.listbox-search input');
+      const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+
+      searchInputs[0].dispatchEvent(event);
+
+      expect(event.defaultPrevented).toBe(true);
+    });
+
+    it('should not render search fields when searchable is false', async () => {
+      spectator.setInput('searchable', false);
+      spectator.detectChanges();
+
+      expect(await getSearchFields()).toHaveLength(0);
+    });
+  });
+
+  describe('Sorting', () => {
+    const unsortedData = [
+      { id: 3, name: 'Zebra' },
+      { id: 1, name: 'Apple' },
+      { id: 2, name: 'Banana' },
+    ];
+
+    it('should sort items when sort is enabled', () => {
+      spectator.setInput('source', unsortedData);
+      spectator.setInput('sort', true);
+      spectator.detectChanges();
+
+      expect(namesIn('available')).toEqual(['Apple', 'Banana', 'Zebra']);
+    });
+
+    it('should not sort items when sort is disabled', () => {
+      spectator.setInput('source', unsortedData);
+      spectator.setInput('sort', false);
+      spectator.detectChanges();
+
+      expect(namesIn('available')).toEqual(['Zebra', 'Apple', 'Banana']);
+    });
+
+    it('should reverse the sort order when the sort toggle is clicked', async () => {
+      spectator.setInput('source', unsortedData);
+      spectator.setInput('sort', true);
+      spectator.detectChanges();
+
+      await (await getButton('mdi-sort-alphabetical-ascending')).click();
+      spectator.detectChanges();
+
+      expect(namesIn('available')).toEqual(['Zebra', 'Banana', 'Apple']);
+    });
+
+    it('should not render sort toggles when sort is disabled', () => {
+      expect(spectator.queryAll('.listbox-header tn-icon-button')).toHaveLength(0);
+
+      spectator.setInput('sort', true);
+      spectator.detectChanges();
+
+      expect(spectator.queryAll('.listbox-header tn-icon-button')).toHaveLength(2);
+    });
+  });
+
+  describe('Keyboard navigation', () => {
+    it('should move the selection down with the arrow keys', () => {
+      clickItem('available', 0);
+
+      pressKey('available', 0, 'ArrowDown');
+
+      expect(selectedNamesIn('available')).toEqual(['Item 2']);
+    });
+
+    // A native listbox does nothing at a boundary. Clamping to the end would re-select the
+    // focused item, throwing away the rest of a multi-item selection.
+    it('should leave the selection alone when an arrow key hits the end of the list', () => {
+      clickItem('available', 0, { ctrlKey: true });
+      clickItem('available', 2, { ctrlKey: true });
+
+      pressKey('available', 0, 'ArrowUp');
+      expect(selectedNamesIn('available')).toEqual(['Item 1', 'Item 3']);
+
+      pressKey('available', 2, 'ArrowDown');
+      expect(selectedNamesIn('available')).toEqual(['Item 1', 'Item 3']);
+    });
+
+    it('should extend the selection with Shift and the arrow keys', () => {
+      clickItem('available', 0);
+
+      pressKey('available', 0, 'ArrowDown', { shiftKey: true });
+
+      expect(selectedNamesIn('available')).toEqual(['Item 1', 'Item 2']);
+    });
+
+    it('should jump to the last item with End and the first with Home', () => {
+      pressKey('available', 0, 'End');
+      expect(selectedNamesIn('available')).toEqual(['Item 3']);
+
+      pressKey('available', 2, 'Home');
+      expect(selectedNamesIn('available')).toEqual(['Item 1']);
+    });
+
+    it('should toggle the selection with the space key', () => {
+      pressKey('available', 0, ' ');
+      expect(selectedNamesIn('available')).toEqual(['Item 1']);
+
+      pressKey('available', 1, ' ');
+      expect(selectedNamesIn('available')).toEqual(['Item 1', 'Item 2']);
+
+      pressKey('available', 0, ' ');
+      expect(selectedNamesIn('available')).toEqual(['Item 2']);
+    });
+
+    it('should move focus to the first item matching what is typed', () => {
+      spectator.setInput('source', [
+        { id: 1, name: 'Apple' },
+        { id: 2, name: 'Banana' },
+        { id: 3, name: 'Blueberry' },
+      ]);
+      spectator.detectChanges();
+
+      pressKey('available', 0, 'b');
+      expect(itemsIn('available')[1]).toBe(document.activeElement);
+
+      pressKey('available', 1, 'l');
+      expect(itemsIn('available')[2]).toBe(document.activeElement);
+    });
+
+    it('should keep the existing selection when typing to jump to an item', () => {
+      clickItem('available', 0);
+      clickItem('available', 1, { ctrlKey: true });
+
+      pressKey('available', 1, 'i');
+
+      expect(selectedNamesIn('available')).toEqual(['Item 1', 'Item 2']);
+    });
+
+    it('should keep a single tab stop that follows the active item', () => {
+      const tabIndexes = (side: ListSide): string[] => itemsIn(side).map((item) => item.getAttribute('tabindex'));
+
+      expect(tabIndexes('available')).toEqual(['0', '-1', '-1']);
+
+      pressKey('available', 0, 'ArrowDown');
+
+      expect(tabIndexes('available')).toEqual(['-1', '0', '-1']);
+    });
   });
 
   describe('Drag and Drop', () => {
-    it('should handle drag and drop within the same list', () => {
-      const listState = spectator.component.availableList();
-      const initialItems = [...listState.items];
-      expect(initialItems).toHaveLength(3);
+    const dropListOf = (side: ListSide): DebugElement => spectator.debugElement
+      .queryAll(By.directive(CdkDropList))[side === 'available' ? 0 : 1];
 
-      // Create a container reference that will be used in the event
-      const container = { id: 'available-list', data: listState };
+    const drop = (from: ListSide, to: ListSide, previousIndex: number, currentIndex: number): void => {
+      const target = dropListOf(to);
 
-      // Simulate drag from index 0 to index 2 within available list
-      const event = {
-        previousContainer: container,
-        container,
-        previousIndex: 0,
-        currentIndex: 2,
-      } as unknown as CdkDragDrop<typeof listState>;
-
-      spectator.component.onDrop(event);
+      target.triggerEventHandler('cdkDropListDropped', {
+        previousContainer: dropListOf(from).injector.get(CdkDropList),
+        container: target.injector.get(CdkDropList),
+        previousIndex,
+        currentIndex,
+      } as DropEvent);
       spectator.detectChanges();
+    };
 
-      const newItems = spectator.component.availableList().items;
-      expect(newItems).toHaveLength(3);
-      expect(newItems[0]).toEqual(initialItems[1]);
-      expect(newItems[1]).toEqual(initialItems[2]);
-      expect(newItems[2]).toEqual(initialItems[0]);
+    it('should connect both lists to each other, so an item can be dragged across', () => {
+      const group = spectator.query(CdkDropListGroup, { read: CdkDropListGroup });
+
+      expect(group).toBeTruthy();
+      expect(dropListOf('available').injector.get(CdkDropListGroup)).toBe(group);
+      expect(dropListOf('selected').injector.get(CdkDropListGroup)).toBe(group);
+    });
+
+    it('should handle drag and drop within the same list', () => {
+      drop('available', 'available', 0, 2);
+
+      expect(namesIn('available')).toEqual(['Item 2', 'Item 3', 'Item 1']);
     });
 
     it('should handle drag and drop from available to selected list', () => {
-      const availableList = spectator.component.availableList();
-      const selectedList = spectator.component.selectedList();
+      drop('available', 'selected', 0, 0);
 
-      // Simulate drag from available to selected
-      const event = {
-        previousContainer: {
-          id: 'available-list',
-          data: availableList,
-        },
-        container: {
-          id: 'selected-list',
-          data: selectedList,
-        },
-        previousIndex: 0,
-        currentIndex: 0,
-      } as unknown as CdkDragDrop<typeof availableList>;
-
-      spectator.component.onDrop(event);
-      spectator.detectChanges();
-
-      expect(spectator.component.availableList().items).toHaveLength(2);
-      expect(spectator.component.selectedList().items).toHaveLength(1);
-      expect(spectator.component.selectedList().items[0]).toEqual(testData[0]);
+      expect(namesIn('available')).toEqual(['Item 2', 'Item 3']);
+      expect(namesIn('selected')).toEqual(['Item 1']);
     });
 
     it('should handle drag and drop from selected to available list', () => {
-      // Set initial state with one item selected
       spectator.setInput('destination', [testData[0]]);
       spectator.detectChanges();
 
-      const availableList = spectator.component.availableList();
-      const selectedList = spectator.component.selectedList();
+      drop('selected', 'available', 0, 0);
 
-      // Simulate drag from selected to available
-      const event = {
-        previousContainer: {
-          id: 'selected-list',
-          data: selectedList,
-        },
-        container: {
-          id: 'available-list',
-          data: availableList,
-        },
-        previousIndex: 0,
-        currentIndex: 0,
-      } as unknown as CdkDragDrop<typeof selectedList>;
+      expect(namesIn('available')).toEqual(['Item 1', 'Item 2', 'Item 3']);
+      expect(namesIn('selected')).toEqual([]);
+    });
 
-      spectator.component.onDrop(event);
+    it('should keep following the source input after a drag', () => {
+      drop('available', 'selected', 0, 0);
+
+      spectator.setInput('source', [testData[0], testData[1]]);
       spectator.detectChanges();
 
-      expect(spectator.component.availableList().items).toHaveLength(3);
-      expect(spectator.component.selectedList().items).toHaveLength(0);
+      expect(namesIn('available')).toEqual(['Item 2']);
     });
 
     it('should update destination after drag and drop', () => {
-      const availableList = spectator.component.availableList();
-      const selectedList = spectator.component.selectedList();
-
-      const event = {
-        previousContainer: {
-          id: 'available-list',
-          data: availableList,
-        },
-        container: {
-          id: 'selected-list',
-          data: selectedList,
-        },
-        previousIndex: 1,
-        currentIndex: 0,
-      } as unknown as CdkDragDrop<typeof availableList>;
-
-      spectator.component.onDrop(event);
-      spectator.detectChanges();
+      drop('available', 'selected', 1, 0);
 
       expect(spectator.component.destination()).toEqual([testData[1]]);
+    });
+
+    // With sorting on, the template disables CDK's sorting, so a same-list drop always reports
+    // the index it started at — announcing a reorder that neither happened nor could be seen.
+    it('should not announce a reorder when an item is dropped where it started', () => {
+      spectator.setInput('sort', true);
+      spectator.detectChanges();
+
+      drop('available', 'available', 1, 1);
+
+      expect(namesIn('available')).toEqual(['Item 1', 'Item 2', 'Item 3']);
+      expect(spectator.query('[role="status"][aria-live="polite"]')).toHaveText('');
     });
   });
 
   describe('Edge Cases', () => {
-    it('should handle empty source list', () => {
+    it('should handle empty source list', async () => {
       spectator.setInput('source', []);
       spectator.detectChanges();
 
-      expect(spectator.component.availableList().items).toHaveLength(0);
-      expect(spectator.component.canMoveAllRight()).toBe(false);
+      expect(namesIn('available')).toEqual([]);
+      expect(await (await getButton('chevron-double-right')).isDisabled()).toBe(true);
     });
 
-    it('should handle empty destination list', () => {
+    it('should handle empty destination list', async () => {
       spectator.setInput('destination', []);
       spectator.detectChanges();
 
-      expect(spectator.component.selectedList().items).toHaveLength(0);
-      expect(spectator.component.canMoveAllLeft()).toBe(false);
+      expect(namesIn('selected')).toEqual([]);
+      expect(await (await getButton('chevron-double-left')).isDisabled()).toBe(true);
     });
 
     it('should handle all items in destination', () => {
       spectator.setInput('destination', testData);
       spectator.detectChanges();
 
-      expect(spectator.component.availableList().items).toHaveLength(0);
-      expect(spectator.component.selectedList().items).toHaveLength(3);
+      expect(namesIn('available')).toEqual([]);
+      expect(namesIn('selected')).toEqual(['Item 1', 'Item 2', 'Item 3']);
     });
 
     it('should handle Enter key on item', () => {
-      const listItems = spectator.queryAll('tn-list-item');
-      const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+      pressKey('available', 0, 'Enter');
 
-      listItems[0].dispatchEvent(enterEvent);
-      spectator.detectChanges();
-
-      expect(spectator.component.availableList().selectedIndices.has(0)).toBe(true);
+      expect(selectedNamesIn('available')).toEqual(['Item 1']);
     });
 
-    it('should ignore other keys', () => {
-      const listItems = spectator.queryAll('tn-list-item');
-      const spaceEvent = new KeyboardEvent('keydown', { key: ' ' });
+    it('should ignore keys that are neither navigation nor printable', () => {
+      pressKey('available', 0, 'Escape');
 
-      listItems[0].dispatchEvent(spaceEvent);
-      spectator.detectChanges();
-
-      expect(spectator.component.availableList().selectedIndices.has(0)).toBe(false);
-    });
-  });
-
-  describe('Sorting', () => {
-    it('should sort items when sort is enabled', () => {
-      const unsortedData = [
-        { id: 3, name: 'Zebra' },
-        { id: 1, name: 'Apple' },
-        { id: 2, name: 'Banana' },
-      ];
-
-      spectator.setInput('source', unsortedData);
-      spectator.setInput('sort', true);
-      spectator.detectChanges();
-
-      const items = spectator.component.availableList().items;
-      expect(items[0].name).toBe('Apple');
-      expect(items[1].name).toBe('Banana');
-      expect(items[2].name).toBe('Zebra');
-    });
-
-    it('should not sort items when sort is disabled', () => {
-      const unsortedData = [
-        { id: 3, name: 'Zebra' },
-        { id: 1, name: 'Apple' },
-        { id: 2, name: 'Banana' },
-      ];
-
-      spectator.setInput('source', unsortedData);
-      spectator.setInput('sort', false);
-      spectator.detectChanges();
-
-      const items = spectator.component.availableList().items;
-      expect(items[0].name).toBe('Zebra');
-      expect(items[1].name).toBe('Apple');
-      expect(items[2].name).toBe('Banana');
-    });
-
-    it('should sort destination items after move when sort is enabled', async () => {
-      const unsortedData = [
-        { id: 3, name: 'Zebra' },
-        { id: 1, name: 'Apple' },
-      ];
-
-      spectator.setInput('source', unsortedData);
-      spectator.setInput('sort', true);
-      spectator.detectChanges();
-
-      // Select first item (Apple after sorting)
-      const listItems = spectator.queryAll('tn-list-item');
-      spectator.click(listItems[0]);
-
-      // Move to selected
-      const moveRightButton = await loader.getHarness(
-        TnIconButtonHarness.with({ name: 'chevron-right' }),
-      );
-      await moveRightButton.click();
-      spectator.detectChanges();
-
-      // Select second item (Zebra)
-      const availableItems = spectator.queryAll('tn-list-item');
-      spectator.click(availableItems[0]);
-
-      await moveRightButton.click();
-      spectator.detectChanges();
-
-      // Verify items are sorted in destination
-      const selectedItems = spectator.component.selectedList().items;
-      expect(selectedItems[0].name).toBe('Apple');
-      expect(selectedItems[1].name).toBe('Zebra');
+      expect(selectedNamesIn('available')).toEqual([]);
     });
   });
 
@@ -461,10 +585,8 @@ describe('DualListBoxComponent', () => {
         },
       });
 
-      const items = customSpectator.component.availableList().items;
-      expect(items).toHaveLength(2);
-
       const displayText = customSpectator.queryAll('tn-list-item label');
+      expect(displayText).toHaveLength(2);
       expect(displayText[0]).toHaveText('First');
       expect(displayText[1]).toHaveText('Second');
     });
@@ -505,32 +627,44 @@ describe('DualListBoxComponent', () => {
   });
 
   describe('Accessibility', () => {
-    it('should announce changes to screen readers', async () => {
-      const listItems = spectator.queryAll('tn-list-item');
-      spectator.click(listItems[0]);
+    it('should announce moves to screen readers and clear the announcement afterwards', async () => {
+      clickItem('available', 0);
 
-      spectator.component.moveSelectedRight();
+      // Clicked through the DOM rather than the harness: a harness click waits for the
+      // fixture to go stable, which outlives the announcement's own one-second timeout.
+      spectator.click('button[aria-label="Move selected items to the right side list"]');
       spectator.detectChanges();
 
-      // Check that ARIA message is set
-      expect(spectator.component.ariaMessage()).toContain('Moved 1 item to');
+      const liveRegion = spectator.query('[role="status"][aria-live="polite"]');
+      expect(liveRegion).toHaveText('Moved 1 item to Selected Items');
 
-      // Wait for timeout to clear message
       await new Promise((resolve) => {
         setTimeout(resolve, 1100);
       });
-      expect(spectator.component.ariaMessage()).toBe('');
+      spectator.detectChanges();
+
+      expect(liveRegion).toHaveText('');
     });
 
-    it('should have ARIA live region in template', () => {
-      const ariaRegion = spectator.query('[role="status"][aria-live="polite"]');
-      expect(ariaRegion).toBeTruthy();
-    });
-
-    it('should have proper ARIA labels on lists', () => {
+    it('should expose each list as a multi-selectable listbox', () => {
       const lists = spectator.queryAll('tn-list');
+
+      expect(lists[0].getAttribute('role')).toBe('listbox');
+      expect(lists[0].getAttribute('aria-multiselectable')).toBe('true');
       expect(lists[0].getAttribute('aria-label')).toBe('Available Items');
+      expect(lists[1].getAttribute('role')).toBe('listbox');
       expect(lists[1].getAttribute('aria-label')).toBe('Selected Items');
+    });
+
+    it('should expose the selection state of every item', () => {
+      expect(itemsIn('available').map((item) => item.getAttribute('role'))).toEqual(['option', 'option', 'option']);
+      expect(itemsIn('available').map((item) => item.getAttribute('aria-selected')))
+        .toEqual(['false', 'false', 'false']);
+
+      clickItem('available', 1);
+
+      expect(itemsIn('available').map((item) => item.getAttribute('aria-selected')))
+        .toEqual(['false', 'true', 'false']);
     });
   });
 });

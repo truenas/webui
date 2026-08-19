@@ -60,6 +60,7 @@
       [dataSource]="(dataProvider.currentPage$ | async) ?? []"
       [displayedColumns]="displayedColumns()"
       [trackBy]="trackBySmbId"
+      [fixedLayout]="true"
       [loading]="!!(dataProvider.isLoading$ | async)"
       (sortChange)="onSortChange($event)"
     >

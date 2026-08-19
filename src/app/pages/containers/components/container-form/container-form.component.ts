@@ -50,7 +50,6 @@ import {
   UpdateContainer,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
@@ -59,7 +58,9 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import {
+  advancedModeFooterAction, SidePanelFooterAction,
+} from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -69,6 +70,7 @@ import {
 } from 'app/pages/containers/components/container-wizard/select-image-dialog/select-image-dialog.component';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { isContainerActive } from 'app/pages/containers/utils/container-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -78,10 +80,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    FormActionsComponent,
     IxListComponent,
     IxListItemComponent,
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnBannerComponent,
     TnButtonComponent,
@@ -114,7 +114,8 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
 
   protected readonly InputType = InputType;
   protected readonly isLoading = signal<boolean>(false);
-  protected readonly requiredRoles = [Role.ContainerWrite];
+  /** Public because the `<tn-side-panel>` host reads it to gate its footer Save. */
+  readonly requiredRoles = [Role.ContainerWrite];
 
   protected readonly slashRootNode = [slashRootNode];
 
@@ -134,25 +135,41 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
       .filter((name) => name !== this.editingContainer?.name)),
   );
 
-  protected isAdvancedMode = false;
+  /**
+   * A signal rather than a plain field because the toggle now lives in the `<tn-side-panel>`
+   * footer: the click handler runs in the host container, which never marks this OnPush form
+   * dirty, so a plain field would flip without the advanced sections re-rendering.
+   */
+  protected readonly isAdvancedMode = signal(false);
+
+  /** `testId` pins the `data-test` value this form's in-body toggle already ships with. */
+  private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
+    testId: 'advanced-options',
+  });
+
+  /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer, before Save. */
+  get footerActions(): SidePanelFooterAction[] {
+    return this.advancedToggle();
+  }
 
   protected readonly isEditMode = signal<boolean>(false);
   protected editingContainer: Container | null = null;
 
+  /** Middleware refuses to rename a container that is not stopped (RUNNING or SUSPENDED). */
+  protected readonly isRenameBlocked = signal<boolean>(false);
+
+  protected readonly nameTooltip = computed(() => {
+    return this.isRenameBlocked()
+      ? this.translate.instant(containersHelptext.renameRequiresStoppedTooltip)
+      : this.translate.instant(containersHelptext.nameTooltip);
+  });
+
   /**
-   * Container to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
-   * carry data). Absent for Add, and unused in the legacy SlideIn host (which supplies
-   * the record via `slideInRef.getData()`).
+   * Container to edit, handed in by the `<tn-side-panel>` host (which has no `SlideInRef` to
+   * carry data). Absent for Add. Both openers pass the panel title themselves, so this form
+   * derives none of its own chrome.
    */
   readonly editContainer = input<Container | undefined>(undefined);
-  protected readonly title = computed(() => {
-    if (this.isEditMode()) {
-      return this.translate.instant('Edit Container: {name}', {
-        name: this.editingContainer?.name || '',
-      });
-    }
-    return this.translate.instant('Add Container');
-  });
 
   protected readonly hasPreferredPool = computed(() => {
     const config = this.containerConfigStore.config();
@@ -213,9 +230,7 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.editingContainer = this.slideInRef
-      ? (this.slideInRef.getData() as Container | undefined) ?? null
-      : this.editContainer() ?? null;
+    this.editingContainer = this.editContainer() ?? null;
 
     this.containerConfigStore.initialize();
 
@@ -322,6 +337,18 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   }
 
   private populateFormForEdit(container: Container): void {
+    // Middleware refuses to rename a container that is not stopped - since 26.0 that
+    // covers SUSPENDED as well as RUNNING - so don't offer a rename it would reject.
+    // `getRawValue()` still reports the disabled control, so the payload diff is unaffected.
+    const isRenameBlocked = isContainerActive(container);
+    this.isRenameBlocked.set(isRenameBlocked);
+
+    if (isRenameBlocked) {
+      this.form.controls.name.disable();
+    } else {
+      this.form.controls.name.enable();
+    }
+
     this.form.patchValue({
       name: container.name,
       description: container.description || '',
@@ -375,7 +402,7 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
     this.form.controls.disks.removeAt(index);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     if (this.isEditMode()) {
@@ -563,6 +590,4 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
       return env;
     }, {});
   }
-
-  protected readonly containersHelptext = containersHelptext;
 }

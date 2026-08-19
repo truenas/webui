@@ -41,6 +41,11 @@ module.exports = {
   },
   testPathIgnorePatterns: [
     '<rootDir>/dist/',
+    // Playwright's suite. Its specs are named `*.e2e.ts` precisely so the two
+    // runners cannot collide, but this config sets no `testMatch`, so
+    // jest-preset-angular's default sweeps the whole repository — worth being
+    // explicit rather than relying on the suffix alone.
+    '<rootDir>/e2e/',
   ],
   transformIgnorePatterns: [
     `node_modules/(?!.*(${esmPatterns.join('|')}))`

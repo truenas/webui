@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  // Fixed rather than intrinsic: the long recursive warning is wider than the rest of the form,
+  // so a content-sized dialog would grow (and re-center) the moment the checkbox reveals it.
+  max-width: 100%;
+  width: 520px;
+}
+
+.delete-message {
+  margin: 0 0 16px;
+}
+
+tn-banner {
+  display: block;
+  margin-bottom: 16px;
+}
