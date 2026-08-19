@@ -10,11 +10,13 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { ArrayLengthValidationError } from 'app/modules/forms/ix-forms/validators/array-length-validation';
 
 type SomeError = Record<string, unknown>;
 
-export const ixManualValidateError = 'ixManualValidateError';
+/** Re-exported for the validators and forms that import it from here. */
+export const ixManualValidateError = ixManualValidateErrorKey;
 
 @Component({
   selector: 'ix-errors',

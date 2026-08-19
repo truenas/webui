@@ -7,16 +7,12 @@ import {
 } from 'app/helpers/api.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
+import {
+  ixManualValidateErrorKey, manualValidateErrorKey, manualValidateErrorMsgKey,
+} from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-
-/**
- * Flag set on a control whose error came from the backend rather than from a validator. Unlike a
- * validator result it is pinned with `setErrors()` and never re-evaluates, so consumers that need
- * to tell a live validation failure from a stale server verdict key off this.
- */
-export const manualValidateErrorKey = 'manualValidateError';
 
 @Injectable({ providedIn: 'root' })
 export class FormErrorHandlerService {
@@ -165,8 +161,8 @@ export class FormErrorHandlerService {
 
     control.setErrors({
       [manualValidateErrorKey]: true,
-      manualValidateErrorMsg: errorMessage,
-      ixManualValidateError: { message: errorMessage },
+      [manualValidateErrorMsgKey]: errorMessage,
+      [ixManualValidateErrorKey]: { message: errorMessage },
     });
     control.markAsTouched();
 
@@ -174,21 +170,24 @@ export class FormErrorHandlerService {
     // Notify editable components that might contain this field
     this.notifyEditablesOfValidationError(field);
 
-    // The message is already pinned on the control and rendered inline by the field wrapper, so the
-    // element is wanted only to scroll it into view and focus it. Failing to find it is NOT a
-    // fallback case: escalating here would pop an error modal repeating a message the user can
-    // already read under the field (which is what tn-* forms did, since their controls register
-    // with neither IxFormService nor a `formControlName` attribute).
+    // The element is wanted to scroll the message into view and focus it. Not finding it means the
+    // control is in the form group but nowhere on screen (behind an `@if`, or payload-only), so the
+    // pinned message renders nowhere and the modal is the only remaining signal — keep escalating.
+    // A rendered control is found either way, tn-* included, so this no longer duplicates a message
+    // the user can read under the field.
     const element = this.findControlElement(field);
     if (!element) {
       console.warn(`Could not find DOM element for field ${field}.`);
+      this.handleErrorFallback(fieldToDisplay, errorMessage);
       return;
     }
 
     if (!this.isFocusedOnError) {
       setTimeout(() => {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        element.focus();
+        // For tn-* controls `element` is the component host, which carries no tabindex and so
+        // ignores focus() — the focusable element is the native control it wraps.
+        (element.querySelector<HTMLElement>('input, textarea, select') ?? element).focus();
         this.isFocusedOnError = true;
       });
     }

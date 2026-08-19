@@ -3,8 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
 import { TranslateService } from '@ngx-translate/core';
-import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnFormFieldHarness, TnInputHarness } from '@truenas/ui-components';
 import { throwError } from 'rxjs';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { ApiTraceFrame } from 'app/interfaces/api-error.interface';
@@ -75,6 +76,9 @@ describe('NTP server form — Force clears the unreachable-address error', () =>
     imports: [ReactiveFormsModule],
     providers: [
       ...ixFormTestingProviders(),
+      // Wired app-wide in production; needed here for `tn-form-field` to render the pinned
+      // backend message instead of the raw error key.
+      provideTnFormFieldErrors(),
       FormErrorHandlerService,
       mockProvider(ErrorHandlerService),
       { provide: SlideInRef, useValue: null },
@@ -101,7 +105,11 @@ describe('NTP server form — Force clears the unreachable-address error', () =>
     await failSave();
   });
 
-  it('pins the backend message on the address field and blocks Save', () => {
+  it('pins the backend message on the address field and blocks Save', async () => {
+    const addressField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Address' }));
+
+    expect(await addressField.getErrorMessage())
+      .toBe('Server could not be reached. Check "Force" to continue regardless.');
     expect(spectator.component.canSubmit()).toBe(false);
   });
 
