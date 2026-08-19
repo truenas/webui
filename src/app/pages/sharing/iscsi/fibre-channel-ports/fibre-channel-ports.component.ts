@@ -222,9 +222,9 @@ export class FibreChannelPortsComponent implements OnInit {
 }
 
 /**
- * Orders port names the way they read: `fc2` before `fc10`, and a host's virtual ports right after
- * the host itself. Plain string comparison gets both wrong, so every digit run is zero-padded to a
- * fixed width first.
+ * Orders port names the way they read: `fc2` before `fc10`. Plain string comparison orders
+ * digit runs lexically and gets that wrong, so every digit run is zero-padded to a fixed width
+ * first. Virtual ports stay grouped under their host either way — `/` sorts below every digit.
  */
 function portNameSortKey(name: string): string {
   return name.replace(/\d+/g, (digits) => digits.padStart(6, '0'));
