@@ -405,7 +405,7 @@ Implemented in `@truenas/ui-components` and used here directly, so these need at
 
 Also fixed in the library and adopted since, under NAS-142058, because their consumers sat in
 other feature areas: `[singleExpand]` and `[(sortColumn)]`/`[(sortDirection)]` (which between them
-deleted `restrictToSingleExpandedRow`, `reflectSortIntoTable` and the `app/modules/tn-table/utils`
+deleted `restrictToSingleExpandedRow`, `reflectSortIntoTable` and the `tn-table/temp-workarounds`
 module they lived in) and `[emptyDescription]`, which restores the second empty-state line —
 `dataProviderEmptyState` now exposes it as `description`, so every `tnTableListHost` list binds it.
 Still unadopted: `TnMenuTriggerDirective`'s `aria-haspopup`/`aria-expanded` + public `isOpen`, and
@@ -424,7 +424,7 @@ re-deriving them per page.
 
 | Piece | What it replaces |
 | --- | --- |
-| `tnTableListHost(provider, config)` (`ix-table/utils.ts`) | The `rows`/`isLoading`/`empty`/`displayedColumns`/`hiddenColumns`/`onSortChange`/`columnsChange` block every list otherwise copies, plus `perRow`/`rowTag` memoization keyed to the loaded rows |
+| `tnTableListHost(provider, config)` (`tn-table/utils.ts`) | The `rows`/`isLoading`/`empty`/`displayedColumns`/`hiddenColumns`/`onSortChange`/`columnsChange` block every list otherwise copies, plus `perRow`/`rowTag` memoization keyed to the loaded rows |
 | `ExpandOnRowClickDirective` (`ixExpandOnRowClick`) | A `viewChild(TnTableComponent)` and a `(rowClick)` handler calling `toggleRowExpansion` |
 | `<ix-table-text-cell>` (`tn-table-cells/text-cell`) | The `<span tnTestIdType="text" [tnTestId]="[…]">` markup for text, yes/no and schedule cells |
 | `translated(derive)` (`helpers/translated.helper.ts`) | A `computed` calling `TranslateService.instant()`, which would otherwise freeze on the first locale |

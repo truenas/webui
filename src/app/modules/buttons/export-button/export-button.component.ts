@@ -14,8 +14,8 @@ import { ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory
 import { PropertyPath } from 'app/interfaces/property-path.type';
 import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
+import { TableSort } from 'app/modules/tn-table/interfaces/table-sort.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';

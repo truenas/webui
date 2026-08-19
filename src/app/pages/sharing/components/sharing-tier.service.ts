@@ -1,5 +1,5 @@
 import {
-  ChangeDetectorRef, DestroyRef, Injectable, signal, inject,
+  DestroyRef, Injectable, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -12,13 +12,11 @@ import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { SharingTierInfo, ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
-import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
-import { tierColumnCssClass } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 
@@ -88,71 +86,15 @@ export class SharingTierService {
   }
 
   /**
-   * Subscribes to the tier config and unhides the `StorageTierCellComponent`
-   * column when tiering is enabled.
-   *
-   * Contract for `getColumns`/`setColumns`:
-   *   The caller owns the `columns` array (typically `this.columns` returned from
-   *   `createTable(...)`). When tiering is enabled, this method builds a new array
-   *   (via `Array.map` with a fresh column object for the tier column) and hands
-   *   it back through `setColumns`. The caller MUST persist the returned array
-   *   (e.g. `setColumns: (cols) => { this.columns = cols; }`) so subsequent reads
-   *   via `getColumns` and the ix-table input both observe the unhidden column.
-   *
-   *   A plain getter/setter is used instead of a reactive `hidden` field because
-   *   `ix-table-column-picker` drives `column.hidden` to support user-controlled
-   *   column visibility — making it reactive would break that flow. The shape
-   *   also mirrors the existing `(columnsChange)` event on
-   *   `ix-table-column-picker`, which is the codebase's convention for
-   *   external mutators of a table's columns array.
-   */
-  enableTierColumn<T>(opts: {
-    destroyRef: DestroyRef;
-    cdr: ChangeDetectorRef;
-    getColumns: () => Column<T, ColumnComponent<T>>[];
-    setColumns: (columns: Column<T, ColumnComponent<T>>[]) => void;
-  }): void {
-    this.getTierConfig().pipe(takeUntilDestroyed(opts.destroyRef)).subscribe((config) => {
-      this.tierEnabledSignal.set(config.enabled);
-      if (!config.enabled) return;
-
-      const columns = opts.getColumns();
-      const updatedColumns = columns.map((col) => (
-        col.cssClass === tierColumnCssClass ? { ...col, hidden: false } : col
-      ));
-      opts.setColumns(updatedColumns);
-      opts.cdr.markForCheck();
-    });
-  }
-
-  /**
    * Subscribes to tier rewrite job ticks and invokes `reload` whenever a job
    * progresses. Useful for share/dataset lists that show tier job progress.
+   *
+   * A tn-table list shows its tier column by putting `'tier'` in `displayedColumns` while
+   * `tierEnabled()` is set — see the NFS and SMB cards — so there is no column array to mutate
+   * here; prime the config with `getTierConfig()` and the membership follows.
    */
   wireTierJobRefresh(opts: { destroyRef: DestroyRef; reload: () => void }): void {
     this.tierJobRefreshes$().pipe(takeUntilDestroyed(opts.destroyRef)).subscribe(() => opts.reload());
-  }
-
-  /**
-   * Side-effect wiring for share list/card components: enables the tier column
-   * (via `enableTierColumn`) and reloads on tier job ticks (via
-   * `wireTierJobRefresh`). Returns nothing — use `createChangeTierAction`
-   * separately for the row action so it can be created at field-init time and
-   * referenced from the `columns = createTable([...])` initializer.
-   *
-   * Call this from `ngOnInit`, NOT a field initializer: it reads the columns
-   * array via the `getColumns` callback once the tier config arrives, and the
-   * columns array won't exist yet at field-init time if the action is in it.
-   */
-  attachTierToShareList<T>(opts: {
-    destroyRef: DestroyRef;
-    cdr: ChangeDetectorRef;
-    getColumns: () => Column<T, ColumnComponent<T>>[];
-    setColumns: (columns: Column<T, ColumnComponent<T>>[]) => void;
-    reload: () => void;
-  }): void {
-    this.enableTierColumn(opts);
-    this.wireTierJobRefresh(opts);
   }
 
   /**

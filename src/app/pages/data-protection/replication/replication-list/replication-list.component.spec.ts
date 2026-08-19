@@ -24,16 +24,16 @@ import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.inte
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import {
-  IxTableDetailsRowComponent,
-} from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import {
-  TableColumnPickerComponent,
-} from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import {
+  TableColumnPickerComponent,
+} from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import {
+  TableDetailsRowComponent,
+} from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from 'app/pages/data-protection/replication/replication-list/replication-list.component';
@@ -124,7 +124,7 @@ describe('ReplicationListComponent', () => {
     imports: [
       MockComponent(PageHeaderComponent),
       BasicSearchComponent,
-      IxTableDetailsRowComponent,
+      TableDetailsRowComponent,
       TableColumnPickerComponent,
     ],
     providers: [
@@ -279,9 +279,8 @@ describe('ReplicationListComponent', () => {
     );
   });
 
-  // The visible `Enabled` column renders as a toggle from the template, but the picker can
-  // hide it, and <ix-table-details-row> then renders it through the ix cell components — where
-  // a toggle would have no `onRowToggle`/`requiredRoles`. It has to fall back to plain yes/no.
+  // The visible `Enabled` column renders as a toggle from the template, but the picker can hide
+  // it, and <ix-table-details-row> only prints text — so it falls back to plain yes/no there.
   it('renders the hidden Enabled column as text, not a toggle, in the detail row', async () => {
     const picker = await loader.getHarness(TnSelectHarness.with({ ancestor: 'ix-table-column-picker' }));
     await picker.open();
@@ -294,6 +293,24 @@ describe('ReplicationListComponent', () => {
 
     expect(spectator.query('ix-table-details-row')).toHaveText('Enabled');
     expect(await loader.getAllHarnesses(TnSlideToggleHarness)).toHaveLength(0);
+  });
+
+  // A detail row prints text, so every column whose cell formats its value in the template has to
+  // say how to print it — otherwise the row shows a raw API code or an epoch number.
+  it('prints the hidden State and Last Run columns the way their cells render them', async () => {
+    const picker = await loader.getHarness(TnSelectHarness.with({ ancestor: 'ix-table-column-picker' }));
+    await picker.open();
+    await picker.selectOption('State');
+    await picker.selectOption('Last Run');
+    spectator.detectChanges();
+
+    await table.toggleRowExpansion(0);
+
+    // The job subscription has replaced the task's own state with its last job by now.
+    const detailsRow = spectator.query('ix-table-details-row');
+    expect(detailsRow).toHaveText('State:Completed');
+    expect(detailsRow).not.toHaveText(JobState.Success);
+    expect(detailsRow).toHaveText('Last Run:N/A');
   });
 
   it('checks if downloads encryption keys when button is pressed', async () => {

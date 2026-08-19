@@ -2,7 +2,7 @@ import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TnMenuHarness, TnMenuTesting, tnIconMarker } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 
 interface Row { id: number }

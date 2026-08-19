@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { DualListBoxSide } from 'app/modules/lists/dual-listbox/dual-listbox-side';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 
 interface TestItem {
   id: number;
