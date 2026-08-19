@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { afterNextRender, AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, HostBinding, input, OnChanges, signal, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostBinding, input, OnChanges, signal, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -12,6 +12,7 @@ import { Alert } from 'app/interfaces/alert.interface';
 import { AlertWithDuplicates, EnhancedAlert } from 'app/interfaces/smart-alert.interface';
 import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
 import { alertPanelClosed, dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
+import { getAlertSummary, hasAlertDetails } from 'app/modules/alerts/utils/alert-summary.utils';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -48,7 +49,7 @@ enum AlertLevelColor {
     RequiresRolesDirective,
   ],
 })
-export class AlertComponent implements OnChanges, AfterViewInit {
+export class AlertComponent implements OnChanges {
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private smartAlertService = inject(SmartAlertService);
@@ -57,22 +58,33 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   readonly isHaLicensed = input<boolean>();
   readonly showActions = input<boolean>(true);
 
-  constructor() {
-    // Use afterNextRender to ensure DOM is ready before measuring
-    afterNextRender(() => {
-      this.checkIfExpandable();
-    });
-  }
-
   protected readonly hasDuplicates = computed(() => this.alert().duplicateCount > 1);
 
   protected readonly duplicateCount = computed(() => this.alert().duplicateCount);
 
-  @ViewChild('alertMessage', { static: true }) alertMessage: ElementRef<HTMLElement>;
-
   protected isCollapsed = signal<boolean>(true);
-  protected isExpandable = signal<boolean>(false);
   protected showContextHelp = signal<boolean>(false);
+
+  /**
+   * Concise headline: the group summary when this row consolidates several alerts,
+   * otherwise the first sentence of the alert's own message.
+   */
+  protected readonly summary = computed(() => {
+    const groupSummary = this.enhancedAlert().groupSummary;
+    if (this.hasDuplicates() && groupSummary) {
+      return this.translate.instant(groupSummary, { count: this.duplicateCount() });
+    }
+    return getAlertSummary(this.alert().formatted);
+  });
+
+  /** Full messages revealed by "View More", one per consolidated alert. */
+  protected readonly detailMessages = computed(() => {
+    return this.alert().groupedMessages ?? [this.alert().formatted];
+  });
+
+  protected readonly isExpandable = computed(() => {
+    return this.hasDuplicates() || hasAlertDetails(this.alert().formatted);
+  });
 
   protected readonly requiredRoles = [Role.AlertListWrite];
   protected readonly closeIcon = alertIcons.close;
@@ -117,22 +129,6 @@ export class AlertComponent implements OnChanges, AfterViewInit {
 
   ngOnChanges(): void {
     this.setStyles();
-    this.checkIfExpandable();
-  }
-
-  ngAfterViewInit(): void {
-    this.checkIfExpandable();
-  }
-
-  private checkIfExpandable(): void {
-    const alertMessageElement = this.alertMessage?.nativeElement;
-    if (!alertMessageElement) {
-      return;
-    }
-    // Use setTimeout to ensure CSS (line-clamp) has been fully applied before measuring
-    setTimeout(() => {
-      this.isExpandable.set(alertMessageElement.scrollHeight > alertMessageElement.offsetHeight);
-    }, 0);
   }
 
   toggleCollapse(): void {

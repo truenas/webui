@@ -93,14 +93,34 @@
   line-height: 1.4;
 }
 
+.alert-details {
+  border-left: 2px solid var(--lines);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 4px 0;
+  padding-left: 10px;
+
+  // Rendered while collapsed too, so `aria-controls` always points at a real element.
+  &:empty {
+    display: none;
+  }
+}
+
+.alert-detail {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  opacity: 0.9;
+}
+
 .toggle-btn {
+  align-self: flex-start;
   background: transparent;
   border: none;
   color: var(--primary);
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
-  margin-left: 8px;
   padding: 0;
   text-decoration: underline;
   transition: opacity 0.2s ease;

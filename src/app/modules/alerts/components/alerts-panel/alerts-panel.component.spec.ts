@@ -10,6 +10,7 @@ import { MockComponent } from 'ng-mocks';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -196,14 +197,16 @@ describe('AlertsPanelComponent', () => {
     });
   });
 
-  // Regression for NAS-140768: when duplicates share a key, the panel must pass every duplicate
-  // id (allIds) to the rendered alert so a dismiss click acts on the whole group. The dispatch
-  // -> server-call wiring is covered in alert.effects.spec.ts and alert.component.spec.ts.
-  it('passes allIds covering every duplicate sharing the same key to the rendered alert', () => {
+  // Regression for NAS-140768: duplicates must be dismissible as a group. They are now
+  // consolidated into a single rendered alert that carries every duplicate id (allIds), so a
+  // dismiss click acts on the whole group. The dispatch -> server-call wiring is covered in
+  // alert.effects.spec.ts and alert.component.spec.ts.
+  it('renders duplicates as one alert carrying every duplicate id', () => {
     const duplicates = [
       {
         id: 'dup-a',
         key: 'duplicate-key',
+        klass: AlertClassName.PoolUpgraded,
         dismissed: false,
         datetime: { $date: 1641811015 },
         level: AlertLevel.Warning,
@@ -211,6 +214,7 @@ describe('AlertsPanelComponent', () => {
       {
         id: 'dup-b',
         key: 'duplicate-key',
+        klass: AlertClassName.PoolUpgraded,
         dismissed: false,
         datetime: { $date: 1641811020 },
         level: AlertLevel.Warning,
@@ -219,14 +223,29 @@ describe('AlertsPanelComponent', () => {
     spectator.inject(Store).dispatch(alertsLoaded({ alerts: duplicates }));
     spectator.detectChanges();
 
-    const renderedIds = alertPanel.unreadAlertComponents.map(
-      (component) => [...(alertPanel.getAlertData(component)?.allIds || [])].sort((a, b) => a.localeCompare(b)),
-    );
+    expect(alertPanel.unreadAlertComponents).toHaveLength(1);
 
-    expect(renderedIds).toEqual([
-      ['dup-a', 'dup-b'],
-      ['dup-a', 'dup-b'],
-    ]);
+    const rendered = alertPanel.getAlertData(alertPanel.unreadAlertComponents[0]);
+    expect([...(rendered?.allIds || [])].sort((a, b) => a.localeCompare(b))).toEqual(['dup-a', 'dup-b']);
+  });
+
+  it('consolidates alerts of the same class even when their messages differ', () => {
+    const perPoolAlerts = ['a', 'b', 'c'].map((pool, index) => ({
+      id: `pool-${pool}`,
+      key: `pool-${pool}-key`,
+      klass: AlertClassName.PoolUpgraded,
+      dismissed: false,
+      formatted: `Pool '${pool}' can be upgraded`,
+      datetime: { $date: 1641811015 + index },
+      level: AlertLevel.Warning,
+    })) as Alert[];
+    spectator.inject(Store).dispatch(alertsLoaded({ alerts: perPoolAlerts }));
+    spectator.detectChanges();
+
+    expect(alertPanel.unreadAlertComponents).toHaveLength(1);
+    expect(alertPanel.getAlertData(alertPanel.unreadAlertComponents[0])?.duplicateCount).toBe(3);
+    // The filter counts stay per alert instance so they still match the nav badges.
+    expect(spectator.queryAll('.filter-button .count')[0]).toHaveText('3');
   });
 
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {

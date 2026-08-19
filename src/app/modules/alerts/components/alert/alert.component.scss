@@ -57,6 +57,21 @@
   }
 }
 
+.alert-details {
+  border-left: 2px solid var(--lines);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 6px;
+  padding-left: 8px;
+}
+
+.alert-detail {
+  font-size: 0.8rem;
+  line-height: 1.3;
+  opacity: 0.9;
+}
+
 .expand-collapse-button {
   background-color: var(--alt-bg1);
   border: none;

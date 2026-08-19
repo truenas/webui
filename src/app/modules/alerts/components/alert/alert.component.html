@@ -24,11 +24,17 @@
     </div>
   }
   <h4
-    #alertMessage
     class="alert-message"
     [class.collapsed]="isCollapsed()"
-    [innerHTML]="alert().formatted"
+    [innerHTML]="summary()"
   ></h4>
+  @if (isExpandable() && !isCollapsed()) {
+    <div class="alert-details">
+      @for (message of detailMessages(); track message) {
+        <div class="alert-detail" [innerHTML]="message"></div>
+      }
+    </div>
+  }
   @if (isExpandable()) {
     <button
       type="button"

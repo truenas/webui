@@ -47,6 +47,13 @@ export interface SmartAlertEnhancement {
   category: SmartAlertCategory;
   actions: SmartAlertAction[];
 
+  /**
+   * Concise headline used when several alerts of this class are consolidated into one entry.
+   * `{count}` is substituted with the number of alerts in the group.
+   * When omitted the newest alert's own summary is shown instead.
+   */
+  groupSummary?: string;
+
   // Help and documentation
   contextualHelp?: string;
   detailedHelp?: string;
@@ -147,6 +154,7 @@ export interface SmartAlertConfig {
 export interface EnhancedAlert {
   category?: SmartAlertCategory;
   actions?: SmartAlertAction[];
+  groupSummary?: string;
   contextualHelp?: string;
   detailedHelp?: string;
   documentationUrl?: string;
@@ -157,13 +165,15 @@ export interface EnhancedAlert {
 }
 
 /**
- * Alert decorated with the count and ids of every alert sharing the same key.
+ * Alert decorated with the count, ids and messages of every alert it consolidates.
  * Dispatchers carry `allIds` so dismiss/reopen actions act on every duplicate
  * without re-querying post-reducer state.
  */
 export type AlertWithDuplicates = Alert & EnhancedAlert & {
   duplicateCount: number;
   allIds: string[];
+  /** Full messages of every alert in the group, newest first. Only set when duplicateCount > 1. */
+  groupedMessages?: string[];
 };
 
 /**

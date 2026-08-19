@@ -1,7 +1,9 @@
 import { signal } from '@angular/core';
 import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
+import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert } from 'app/interfaces/smart-alert.interface';
@@ -68,12 +70,27 @@ describe('PageAlertsComponent', () => {
     bannerMenuPath: ['credentials', 'users', 'api-keys'],
   } as unknown as Alert & EnhancedAlert;
 
+  const poolUpgradeAlerts = ['newpool', 'ggdraid', 'basicpool'].map((pool, index) => ({
+    id: `pool-upgrade-${pool}`,
+    uuid: `pool-upgrade-${pool}`,
+    key: `pool-upgrade-${pool}-key`,
+    klass: AlertClassName.PoolUpgraded,
+    level: AlertLevel.Warning,
+    formatted: `New ZFS version or feature flags are available for pool '${pool}'. Upgrading pools is a one-time `
+      + 'process that can prevent rolling the system back to an earlier TrueNAS version.',
+    dismissed: false,
+    datetime: { $date: index + 1 },
+    relatedMenuPath: ['storage'],
+    groupSummary: '{count} pools can be upgraded',
+  })) as unknown as (Alert & EnhancedAlert)[];
+
   const alertsSignal = signal([
     lockedShareAlert,
     rootLoginAlert,
     dismissedDatasetAlert,
     storageAlert,
     apiKeyAlert,
+    ...poolUpgradeAlerts,
   ]);
 
   const createComponent = createComponentFactory({
@@ -102,6 +119,15 @@ describe('PageAlertsComponent', () => {
 
   function renderedMessages(): string[] {
     return spectator.queryAll('.alert-message').map((el) => el.textContent?.trim() || '');
+  }
+
+  function bannerWith(message: string): HTMLElement {
+    const banner = spectator.queryAll('.page-alert')
+      .find((element) => element.querySelector('.alert-message')?.textContent?.includes(message));
+    if (!banner) {
+      throw new Error(`No banner showing "${message}"`);
+    }
+    return banner as HTMLElement;
   }
 
   it('shows a datasets alert on a nested dataset URL (prefix match)', async () => {
@@ -161,6 +187,53 @@ describe('PageAlertsComponent', () => {
 
     const messages = renderedMessages();
     expect(messages.some((message) => message.includes('API key has been revoked'))).toBe(true);
+  });
+
+  it('consolidates alerts of the same class into a single banner', async () => {
+    await setUrl('/storage');
+
+    const messages = renderedMessages();
+    expect(messages).toEqual(['Storage pool is degraded.', '3 pools can be upgraded']);
+  });
+
+  it('shows how many alerts a banner stands for', async () => {
+    await setUrl('/storage');
+
+    expect(bannerWith('3 pools can be upgraded').querySelector('.duplicate-count-badge')).toHaveText('3');
+  });
+
+  it('reveals every consolidated message behind Show More', async () => {
+    await setUrl('/storage');
+
+    spectator.click(bannerWith('3 pools can be upgraded').querySelector('.toggle-btn') as HTMLElement);
+
+    const details = Array.from(bannerWith('3 pools can be upgraded').querySelectorAll('.alert-detail'))
+      .map((element) => element.textContent?.trim());
+    expect(details).toHaveLength(3);
+    expect(details[0]).toContain("pool 'basicpool'");
+    expect(details[0]).toContain('rolling the system back');
+  });
+
+  it('dismisses every consolidated alert at once', async () => {
+    await setUrl('/storage');
+    const dispatchSpy = jest.spyOn(spectator.inject(Store), 'dispatch');
+
+    spectator.click(bannerWith('3 pools can be upgraded').querySelector('.dismiss-btn') as HTMLElement);
+
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: '[Alert Panel] Dismiss Pressed',
+        ids: ['pool-upgrade-newpool', 'pool-upgrade-ggdraid', 'pool-upgrade-basicpool'],
+      }),
+    );
+  });
+
+  it('shortens a long message to its first sentence', async () => {
+    await setUrl('/storage');
+
+    expect(renderedMessages()).not.toContain(
+      expect.stringContaining('rolling the system back'),
+    );
   });
 
   it('does not show a bannerMenuPath-scoped alert on parent routes', async () => {

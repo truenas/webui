@@ -6,12 +6,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent, tnIconMarker, TnTooltipDirective } from '@truenas/ui-components';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { stripQueryAndFragment } from 'app/helpers/url.helper';
-import { Alert } from 'app/interfaces/alert.interface';
-import { AlertWithDuplicates, EnhancedAlert } from 'app/interfaces/smart-alert.interface';
-import { maxAlertMessageLength } from 'app/modules/alerts/constants/alert-display.constants';
+import { AlertWithDuplicates } from 'app/interfaces/smart-alert.interface';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { dismissAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { criticalLevels } from 'app/modules/alerts/store/alert.selectors';
+import { consolidateAlerts } from 'app/modules/alerts/utils/alert-consolidation.utils';
+import { getAlertSummary, hasAlertDetails } from 'app/modules/alerts/utils/alert-summary.utils';
 import { AppState } from 'app/store';
 
 /**
@@ -20,7 +20,8 @@ import { AppState } from 'app/store';
  * Filters alerts based on:
  * - Current route path matching alert's relatedMenuPath
  * - Only shows unread alerts
- * - Grouped and styled for page-level display
+ * - Alerts of the same kind are consolidated into a single banner
+ * - Only a concise summary is shown; the full text is behind "Show More"
  */
 @Component({
   selector: 'ix-page-alerts',
@@ -46,37 +47,15 @@ export class PageAlertsComponent {
   // Get current route segments
   private currentRoute = toSignal(this.router.events, { initialValue: null });
 
-  // Track which alerts are expanded (by UUID)
+  // Track which alerts are expanded (by id of the consolidated alert)
   private expandedAlertIds = signal<Set<string>>(new Set());
 
-  // Maximum length before truncating alert message
-  private readonly maxMessageLength = maxAlertMessageLength;
-
   /**
-   * Memoized duplicate info map that only recomputes when alerts change
-   * Maps alert key -> { count, allIds } for all unread alerts system-wide
+   * Every unread alert, consolidated by kind. Consolidation happens before the route
+   * filter below so a banner always covers the alert's system-wide occurrences.
    */
-  private duplicateInfoMap = computed(() => {
-    const alerts = this.allAlerts();
-    const duplicateInfo = new Map<string, { count: number; allIds: string[] }>();
-
-    // Single pass: count all unread alerts by key
-    alerts.forEach((alert) => {
-      if (alert.dismissed) return;
-
-      const existing = duplicateInfo.get(alert.key);
-      if (existing) {
-        existing.count++;
-        existing.allIds.push(alert.id);
-      } else {
-        duplicateInfo.set(alert.key, {
-          count: 1,
-          allIds: [alert.id],
-        });
-      }
-    });
-
-    return duplicateInfo;
+  private consolidatedAlerts = computed(() => {
+    return consolidateAlerts(this.allAlerts().filter((alert) => !alert.dismissed));
   });
 
   /**
@@ -90,71 +69,33 @@ export class PageAlertsComponent {
   /**
    * Filter alerts relevant to the current page
    */
-  protected pageAlerts = computed(() => {
+  protected pageAlerts = computed<AlertWithDuplicates[]>(() => {
     // Trigger recomputation when route changes
     this.currentRoute();
 
-    const alerts = this.allAlerts();
-    const duplicateInfo = this.duplicateInfoMap();
-
-    // Parse current route into segments once
     const pathSegments = this.getPathSegments();
 
-    // Single pass: filter by route and group by key simultaneously
-    const alertsByKey = new Map<string, (Alert & EnhancedAlert)[]>();
-
-    for (const alert of alerts) {
+    return this.consolidatedAlerts().filter((alert) => {
       // Scope the banner by bannerMenuPath when provided, otherwise fall back to relatedMenuPath.
       // This lets the banner target a narrower route than the nav badge (e.g. API keys live under
       // /credentials/users/api-keys but the badge stays on the Credentials menu).
       const menuPath = alert.bannerMenuPath ?? alert.relatedMenuPath;
-
-      // Skip dismissed or alerts without a page scope
-      if (!menuPath || alert.dismissed) continue;
+      if (!menuPath) {
+        return false;
+      }
 
       // Match if current URL is at or below the alert's menu path.
       // Dataset routes use /datasets/:datasetId, so ['datasets'] must still match /datasets/tank.
-      const isMatch = menuPath.length <= pathSegments.length
+      return menuPath.length <= pathSegments.length
         && menuPath.every((segment, index) => pathSegments[index] === segment);
-
-      if (!isMatch) continue;
-
-      // Group by key
-      const group = alertsByKey.get(alert.key);
-      if (group) {
-        group.push(alert);
-      } else {
-        alertsByKey.set(alert.key, [alert]);
-      }
-    }
-
-    // For each group, keep the most recent alert and add system-wide duplicate count
-    const uniqueAlerts: AlertWithDuplicates[] = [];
-
-    for (const [key, alertGroup] of alertsByKey) {
-      // Find most recent alert using reduce
-      const mostRecent = alertGroup.reduce((latest, current) => (
-        (current.datetime?.$date || 0) > (latest.datetime?.$date || 0) ? current : latest
-      ));
-
-      // Get system-wide duplicate count
-      const info = duplicateInfo.get(key);
-
-      uniqueAlerts.push({
-        ...mostRecent,
-        duplicateCount: info?.count || 1,
-        allIds: info?.allIds || [mostRecent.id],
-      });
-    }
-
-    return uniqueAlerts;
+    });
   });
 
   /**
    * Get all page alerts sorted by severity (critical first, then warnings, then info)
    */
   protected sortedPageAlerts = computed(() => {
-    const alerts = this.pageAlerts();
+    const alerts = [...this.pageAlerts()];
 
     // Sort by severity: critical -> warning -> info
     return alerts.sort((a, b) => {
@@ -178,9 +119,9 @@ export class PageAlertsComponent {
   protected hasAlerts = computed(() => this.pageAlerts().length > 0);
 
   /**
-   * Dismiss an alert (and all its duplicates with the same key)
+   * Dismiss an alert (and every alert it consolidates)
    */
-  protected onDismiss(alert: Alert & { allIds: string[] }): void {
+  protected onDismiss(alert: AlertWithDuplicates): void {
     this.store$.dispatch(dismissAlertPressed({ ids: alert.allIds }));
   }
 
@@ -223,10 +164,31 @@ export class PageAlertsComponent {
   }
 
   /**
-   * Check if alert message is long and should be collapsible
+   * Concise headline for the banner: the group summary when several alerts were
+   * consolidated, otherwise the first sentence of the alert's own message.
    */
-  protected isLongMessage(message: string): boolean {
-    return message.length > this.maxMessageLength;
+  protected getSummary(alert: AlertWithDuplicates): string {
+    if (this.hasDuplicates(alert) && alert.groupSummary) {
+      return this.translate.instant(alert.groupSummary, { count: alert.duplicateCount });
+    }
+    return getAlertSummary(alert.formatted);
+  }
+
+  /**
+   * Messages shown when the banner is expanded, one per consolidated alert.
+   */
+  protected getDetailMessages(alert: AlertWithDuplicates): string[] {
+    return alert.groupedMessages ?? [alert.formatted];
+  }
+
+  /**
+   * Check if the banner hides anything worth expanding
+   */
+  protected hasDetails(alert: AlertWithDuplicates): boolean {
+    return this.hasDuplicates(alert)
+      || hasAlertDetails(alert.formatted)
+      || Boolean(alert.contextualHelp)
+      || Boolean(alert.documentationUrl);
   }
 
   /**
@@ -234,16 +196,6 @@ export class PageAlertsComponent {
    */
   protected isExpanded(alertId: string): boolean {
     return this.expandedAlertIds().has(alertId);
-  }
-
-  /**
-   * Get truncated message for display
-   */
-  protected getTruncatedMessage(message: string): string {
-    if (message.length <= this.maxMessageLength) {
-      return message;
-    }
-    return message.substring(0, this.maxMessageLength) + '...';
   }
 
   /**
@@ -260,38 +212,31 @@ export class PageAlertsComponent {
   }
 
   /**
-   * Check if alert has duplicate instances
+   * Check if alert consolidates more than one instance
    */
-  protected hasDuplicates(alert: { duplicateCount?: number }): boolean {
-    return (alert.duplicateCount || 0) > 1;
-  }
-
-  /**
-   * Get duplicate count for alert
-   */
-  protected getDuplicateCount(alert: { duplicateCount?: number }): number {
-    return alert.duplicateCount || 1;
+  protected hasDuplicates(alert: AlertWithDuplicates): boolean {
+    return alert.duplicateCount > 1;
   }
 
   /**
    * Get dismiss button aria-label for accessibility
    */
-  protected getDismissAriaLabel(alert: Alert & { duplicateCount?: number }): string {
+  protected getDismissAriaLabel(alert: AlertWithDuplicates): string {
     if (this.hasDuplicates(alert)) {
       return this.translate.instant('Dismiss all {count} instances', {
-        count: this.getDuplicateCount(alert),
+        count: alert.duplicateCount,
       });
     }
-    return this.translate.instant('Dismiss alert: {message}', { message: alert.formatted });
+    return this.translate.instant('Dismiss alert: {message}', { message: this.getSummary(alert) });
   }
 
   /**
    * Get dismiss button tooltip
    */
-  protected getDismissTooltip(alert: { duplicateCount?: number }): string {
+  protected getDismissTooltip(alert: AlertWithDuplicates): string {
     if (this.hasDuplicates(alert)) {
       return this.translate.instant('Dismiss all {count} system-wide instances', {
-        count: this.getDuplicateCount(alert),
+        count: alert.duplicateCount,
       });
     }
     return this.translate.instant('Dismiss');
@@ -300,9 +245,9 @@ export class PageAlertsComponent {
   /**
    * Get duplicate count badge tooltip
    */
-  protected getDuplicateTooltip(alert: { duplicateCount?: number }): string {
+  protected getDuplicateTooltip(alert: AlertWithDuplicates): string {
     return this.translate.instant('{count} system-wide instances of this alert', {
-      count: this.getDuplicateCount(alert),
+      count: alert.duplicateCount,
     });
   }
 }

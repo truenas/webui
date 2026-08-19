@@ -144,6 +144,7 @@ export class SmartAlertService {
       ...alert,
       category: enhancement.category,
       actions: boundActions,
+      groupSummary: enhancement.groupSummary,
       contextualHelp: enhancement.contextualHelp,
       detailedHelp: enhancement.detailedHelp,
       documentationUrl: enhancement.documentationUrl,
