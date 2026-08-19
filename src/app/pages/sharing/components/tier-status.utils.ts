@@ -15,6 +15,12 @@ interface TierJobStatusDescriptor {
   icon: TierJobIconInfo | null;
   themeClass: string;
   labelKey: string;
+  /**
+   * Label for the timestamp a job stopped updating, or `null` for statuses that
+   * have no end yet. Worded per status so a cancelled job reads "Cancelled: ..."
+   * rather than borrowing "Finished", which implies the migration ran to the end.
+   */
+  endTimeLabelKey: string | null;
 }
 
 /**
@@ -29,6 +35,7 @@ const tierJobStatusTable: Record<TierRewriteJobStatus, TierJobStatusDescriptor> 
     },
     themeClass: 'fn-theme-green',
     labelKey: T('Complete'),
+    endTimeLabelKey: T('Finished'),
   },
   [TierRewriteJobStatus.Running]: {
     icon: {
@@ -36,11 +43,13 @@ const tierJobStatusTable: Record<TierRewriteJobStatus, TierJobStatusDescriptor> 
     },
     themeClass: 'fn-theme-orange',
     labelKey: T('Running'),
+    endTimeLabelKey: null,
   },
   [TierRewriteJobStatus.Queued]: {
     icon: null,
     themeClass: 'fn-theme-primary',
     labelKey: T('Queued'),
+    endTimeLabelKey: null,
   },
   [TierRewriteJobStatus.Error]: {
     icon: {
@@ -48,6 +57,7 @@ const tierJobStatusTable: Record<TierRewriteJobStatus, TierJobStatusDescriptor> 
     },
     themeClass: 'fn-theme-red',
     labelKey: T('Error'),
+    endTimeLabelKey: T('Failed'),
   },
   [TierRewriteJobStatus.Cancelled]: {
     icon: {
@@ -55,6 +65,7 @@ const tierJobStatusTable: Record<TierRewriteJobStatus, TierJobStatusDescriptor> 
     },
     themeClass: 'fn-theme-grey',
     labelKey: T('Cancelled'),
+    endTimeLabelKey: T('Cancelled'),
   },
   [TierRewriteJobStatus.Stopped]: {
     icon: {
@@ -62,6 +73,7 @@ const tierJobStatusTable: Record<TierRewriteJobStatus, TierJobStatusDescriptor> 
     },
     themeClass: 'fn-theme-grey',
     labelKey: T('Stopped'),
+    endTimeLabelKey: T('Stopped'),
   },
 };
 
@@ -87,6 +99,17 @@ export function getTierJobStatusLabelKey(
   job: ZfsTierRewriteJobEntry | null,
 ): string {
   return job ? tierJobStatusTable[job.status]?.labelKey ?? '' : '';
+}
+
+/**
+ * Returns the i18n extraction key labelling when a job stopped, or `null` while
+ * it is still running or queued. Callers must run the result through
+ * TranslateService to display it.
+ */
+export function getTierJobEndTimeLabelKey(
+  job: ZfsTierRewriteJobEntry | null,
+): string | null {
+  return job ? tierJobStatusTable[job.status]?.endTimeLabelKey ?? null : null;
 }
 
 export function getTierJobStatusClass(
