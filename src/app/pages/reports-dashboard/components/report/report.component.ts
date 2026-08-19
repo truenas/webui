@@ -210,6 +210,10 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     this.themeService.activeTheme$.pipe(
+      // The subject re-emits the same theme name on every preferences write, and
+      // getColorPattern() hands back a fresh array with randomised tail colors,
+      // so without this a sidenav toggle would repaint and reshuffle the series.
+      distinctUntilChanged(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.chartColors = this.themeService.getColorPattern();

@@ -336,6 +336,22 @@ describe('ReportComponent', () => {
       expect(spectator.component.chartColors).toEqual(mockThemeColors);
     });
 
+    it('ignores theme re-emissions that carry the same theme', () => {
+      const themeService = spectator.inject(ThemeService);
+      const activeTheme$ = themeService.activeTheme$ as BehaviorSubject<string>;
+      spectator.component.ngOnInit();
+      jest.mocked(themeService.getColorPattern).mockClear();
+
+      // Every preferences write re-emits the current theme, and getColorPattern()
+      // returns a fresh array with randomised tail colors -- repainting on those
+      // would reshuffle the series on something like a sidenav toggle.
+      activeTheme$.next('ix-dark');
+      expect(themeService.getColorPattern).not.toHaveBeenCalled();
+
+      activeTheme$.next('ix-blue');
+      expect(themeService.getColorPattern).toHaveBeenCalled();
+    });
+
     it('should update timezone from store', () => {
       spectator.component.ngOnInit();
 

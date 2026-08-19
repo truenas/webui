@@ -70,7 +70,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
    * when new data arrived -- the freshly fetched range is what should be on
    * screen -- but wrong for a recolour, which must leave the zoom alone.
    */
-  render(update = false, resetDateWindow = update): void {
+  private render(update = false, resetDateWindow = update): void {
     const data = this.data()?.data;
     this.units = this.inferUnits(this.labelY());
     if (isUpsRuntimeWithData(this.report().name, data)) {
@@ -478,7 +478,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   ngAfterViewInit(): void {
-    this.render();
+    // ngOnChanges usually gets here first with data already in hand, and a second
+    // constructor call would orphan that chart along with its resize listener.
+    this.render(Boolean(this.chart));
   }
 
   /**

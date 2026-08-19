@@ -104,18 +104,15 @@ describe('LineChartComponent', () => {
   });
 
   describe('rendering', () => {
-    it('should render chart after view init', () => {
-      const renderSpy = jest.spyOn(spectator.component, 'render');
-      spectator.component.ngAfterViewInit();
-
-      expect(renderSpy).toHaveBeenCalled();
+    it('builds the chart once when data is already set before the view initializes', () => {
+      // ngOnChanges gets there first, so ngAfterViewInit must not construct a
+      // second Dygraph and orphan the first one's resize listener.
+      expect(Dygraph as unknown as jest.Mock).toHaveBeenCalledTimes(1);
     });
 
     it('should not render when no data is available', () => {
-      spectator.setInput('data', undefined);
-
       expect(() => {
-        spectator.component.render();
+        spectator.setInput('data', undefined);
       }).not.toThrow();
     });
 
