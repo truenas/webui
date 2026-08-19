@@ -62,16 +62,24 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   readonly zoomChange = output<number[]>();
 
-  render(update?: boolean): void {
+  /**
+   * @param update Redraw the existing chart instead of constructing a new one.
+   * Constructing a Dygraph clears the wrapper and re-measures its width from an
+   * empty element, which is how auto-refresh used to shrink the graph.
+   * @param resetDateWindow Drop the date window a drag-zoom left behind. Right
+   * when new data arrived -- the freshly fetched range is what should be on
+   * screen -- but wrong for a recolour, which must leave the zoom alone.
+   */
+  render(update = false, resetDateWindow = update): void {
     const data = this.data()?.data;
     this.units = this.inferUnits(this.labelY());
     if (isUpsRuntimeWithData(this.report().name, data)) {
       this.units = stringToTitleCase(determineTimeUnit(data));
     }
-    this.renderGraph(update);
+    this.renderGraph(update, resetDateWindow);
   }
 
-  private renderGraph(update?: boolean): void {
+  private renderGraph(update: boolean, resetDateWindow: boolean): void {
     if (!this.data()?.legend?.length) {
       return;
     }
@@ -114,8 +122,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         // so zooming and stepping would redraw the axes and never the series.
         file: data,
         // A drag-zoom leaves a dateWindow pinned to a range the newly fetched
-        // data no longer covers. The data we just got is the range to show.
-        dateWindow: null,
+        // data no longer covers, so a data update clears it. A recolour keeps
+        // it, since the user is still looking at the range they zoomed into.
+        ...(resetDateWindow ? { dateWindow: null } : {}),
       } as unknown as dygraphs.Options);
     } else {
       this.chart = new Dygraph(this.el().nativeElement, data, options);
@@ -455,11 +464,16 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.data) {
-      // Update the existing chart rather than building a new one. Constructing a
-      // Dygraph clears the wrapper and re-measures its width from an empty
-      // element, which is how auto-refresh used to shrink the graph. It also
-      // leaked the previous chart along with its window listeners.
+      // Update the existing chart rather than building a new one. Rebuilding
+      // also leaked the previous chart along with its window listeners.
       this.render(Boolean(this.chart));
+      return;
+    }
+
+    if (changes.chartColors) {
+      // A theme switch replaces the palette without touching the data or the
+      // container size, so nothing else would repaint the series and the grid.
+      this.render(Boolean(this.chart), false);
     }
   }
 

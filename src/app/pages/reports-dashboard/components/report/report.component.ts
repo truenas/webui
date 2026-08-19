@@ -213,6 +213,8 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.chartColors = this.themeService.getColorPattern();
+      // OnPush: without this the chart never sees the new palette.
+      this.cdr.markForCheck();
     });
 
     this.store$

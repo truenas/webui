@@ -146,6 +146,22 @@ describe('LineChartComponent', () => {
       expect(options).toMatchObject({ dateWindow: null });
       expect((options as { file: [Date, ...number[]][] }).file).toEqual([[expect.any(Date), 20, 10, 70]]);
     });
+
+    it('repaints the existing chart with the new palette when the theme changes', () => {
+      const mockDygraph = Dygraph as unknown as jest.Mock;
+      const chart = spectator.component.chart;
+      const constructorCalls = mockDygraph.mock.calls.length;
+      const newColors = ['#111111', '#222222', '#333333'];
+
+      spectator.setInput('chartColors', newColors);
+
+      const options = jest.mocked(chart.updateOptions).mock.lastCall[0];
+
+      expect(mockDygraph).toHaveBeenCalledTimes(constructorCalls);
+      expect(options).toMatchObject({ colors: newColors });
+      // A recolour must not throw away the range the user zoomed into.
+      expect(options).not.toHaveProperty('dateWindow');
+    });
   });
 
   describe('resize functionality', () => {

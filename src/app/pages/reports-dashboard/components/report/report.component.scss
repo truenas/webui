@@ -1,5 +1,14 @@
 @import 'scss-imports/variables';
 
+/*
+ * Floor for the legend column, balanced against $breakpoint-md: it only ever
+ * applies above that width, where the chart and the legend sit side by side.
+ * Narrower than this the legend table's label/value columns start wrapping,
+ * and below $breakpoint-md the legend stacks under the chart and the floor is
+ * dropped to 0 (see the media query below).
+ */
+$legend-min-width: 420px;
+
 .toolbar {
   align-items: center;
   display: flex;
@@ -49,7 +58,7 @@
     flex: 0 1 auto;
     flex-direction: column;
     max-width: 40%;
-    min-width: 420px;
+    min-width: $legend-min-width;
 
     @media (max-width: $breakpoint-md) {
       max-width: 100%;
