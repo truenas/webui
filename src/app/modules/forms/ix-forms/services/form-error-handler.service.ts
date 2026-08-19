@@ -174,20 +174,16 @@ export class FormErrorHandlerService {
     // Notify editable components that might contain this field
     this.notifyEditablesOfValidationError(field);
 
-    // Try to get element from IxFormService first, then fallback to querySelector
-    let element = this.formService.getElementByControlName(field);
-    if (!element && this.document?.querySelector) {
-      // Fallback: try to find element by formControlName attribute
-      const foundElement = this.document.querySelector(`[formControlName="${field}"]`);
-      element = foundElement instanceof HTMLElement ? foundElement : undefined;
-    }
-
+    // The message is already pinned on the control and rendered inline by the field wrapper, so the
+    // element is wanted only to scroll it into view and focus it. Failing to find it is NOT a
+    // fallback case: escalating here would pop an error modal repeating a message the user can
+    // already read under the field (which is what tn-* forms did, since their controls register
+    // with neither IxFormService nor a `formControlName` attribute).
+    const element = this.findControlElement(field);
     if (!element) {
       console.warn(`Could not find DOM element for field ${field}.`);
-      this.handleErrorFallback(fieldToDisplay, errorMessage);
       return;
     }
-
 
     if (!this.isFocusedOnError) {
       setTimeout(() => {
@@ -198,6 +194,26 @@ export class FormErrorHandlerService {
     }
   }
 
+
+  /**
+   * Locates the rendered control so the first error can be scrolled to and focused.
+   *
+   * `IxFormService` only knows ix-* controls (they register through `RegisteredControlDirective`),
+   * and `formControlName` is a property binding that leaves no attribute behind — so tn-* forms
+   * built by `<ix-form-renderer>` are found through the `data-control-name` the renderer stamps on
+   * every control instead.
+   */
+  private findControlElement(field: string): HTMLElement | undefined {
+    const registered = this.formService.getElementByControlName(field);
+    if (registered) {
+      return registered;
+    }
+    if (!this.document?.querySelector) {
+      return undefined;
+    }
+    const found = this.document.querySelector(`[formControlName="${field}"], [data-control-name="${field}"]`);
+    return found instanceof HTMLElement ? found : undefined;
+  }
 
   private notifyEditablesOfValidationError(fieldName: string): void {
     // Securely notify editable components through dedicated service (if available)

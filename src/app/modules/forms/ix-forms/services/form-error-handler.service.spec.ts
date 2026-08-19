@@ -57,6 +57,24 @@ const arrayFieldError = new ApiCallError({
   },
 });
 
+const unreachableAddressError = new ApiCallError({
+  code: JsonRpcErrorCode.CallError,
+  message: 'Validation error',
+  data: {
+    error: 11,
+    errname: ApiErrorName.Validation,
+    extra: [
+      [
+        'ntp_server_create.address',
+        'Server could not be reached. Check "Force" to continue regardless.',
+        22,
+      ],
+    ],
+    trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+    reason: 'Test reason',
+  },
+});
+
 const formGroup = new FormGroup({
   test_control_1: new FormControl(''),
   sudo_commands_no_passwd: new FormControl([]),
@@ -403,8 +421,11 @@ describe('FormErrorHandlerService', () => {
 
       spectator.service.handleValidationErrors(callError, formGroup);
 
+      // Also matches `data-control-name`: tn-* controls built by `<ix-form-renderer>` register with
+      // neither IxFormService nor a `formControlName` attribute (it is a property binding).
       // eslint-disable-next-line sonarjs/deprecation
-      expect(doc.querySelector).toHaveBeenCalledWith('[formControlName="test_control_1"]');
+      expect(doc.querySelector)
+        .toHaveBeenCalledWith('[formControlName="test_control_1"], [data-control-name="test_control_1"]');
     });
 
     it('warns when DOM element cannot be found', () => {
@@ -415,6 +436,29 @@ describe('FormErrorHandlerService', () => {
       spectator.service.handleValidationErrors(callError, formGroup);
 
       expect(console.warn).toHaveBeenCalledWith('Could not find DOM element for field test_control_1.');
+    });
+
+    it('still shows the error inline only, without an error modal, when the element is missing', () => {
+      // NAS-142225: the message is already pinned on the control and rendered under the field, so a
+      // failed element lookup (scroll/focus target) must not escalate to a modal repeating it.
+      // Reproduces a tn-* form built by `<ix-form-renderer>`, whose controls register with neither
+      // IxFormService nor a `formControlName` attribute.
+      jest.spyOn(spectator.inject(IxFormService), 'getElementByControlName').mockReturnValue(null);
+      jest.spyOn(spectator.inject(DOCUMENT), 'querySelector').mockReturnValue(null);
+      const ntpForm = new FormGroup({ address: new FormControl('192.0.2.1') });
+
+      // The ErrorHandlerService mock is built once per factory, so call counts carry over
+      // between tests in this file — clear them to assert on this call alone.
+      const mockErrorHandler = spectator.inject(ErrorHandlerService);
+      jest.clearAllMocks();
+
+      spectator.service.handleValidationErrors(unreachableAddressError, ntpForm);
+
+      expect(ntpForm.controls.address.errors).toEqual(expect.objectContaining({
+        manualValidateError: true,
+        manualValidateErrorMsg: 'Server could not be reached. Check "Force" to continue regardless.',
+      }));
+      expect(mockErrorHandler.showErrorModal).not.toHaveBeenCalled();
     });
   });
 
