@@ -30,8 +30,11 @@ export function buildPortsTableRow(
     rows.push({
       name: host.alias,
       target: indexedPorts[host.alias]?.target,
-      wwpn: indexedPorts[host.alias]?.wwpn || undefined,
-      wwpn_b: indexedPorts[host.alias]?.wwpn_b || undefined,
+      // A physical port only has an `fcport` record once it is mapped to a target, so fall back to
+      // the host's own WWPNs. Resolved here rather than in the template so the value the user sees
+      // is also the value the table searches and sorts by.
+      wwpn: indexedPorts[host.alias]?.wwpn || host.wwpn || undefined,
+      wwpn_b: indexedPorts[host.alias]?.wwpn_b || host.wwpn_b || undefined,
       aPortState: indexedStatuses[host.alias]?.A?.port_state,
       bPortState: indexedStatuses[host.alias]?.B?.port_state,
       isPhysical: true,

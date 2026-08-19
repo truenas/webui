@@ -129,4 +129,22 @@ describe('buildPortsTableRow', () => {
       },
     ]);
   });
+
+  it('falls back to the host WWPNs for a physical port that has no fcport record', () => {
+    const hosts = [
+      {
+        alias: 'fc0', npiv: 1, wwpn: 'naa.220034800d75aec4', wwpn_b: 'naa.220034800d75aec5',
+      },
+    ] as FibreChannelHost[];
+
+    const result = buildPortsTableRow(hosts, [], []);
+
+    expect(result[0]).toMatchObject({
+      name: 'fc0',
+      wwpn: 'naa.220034800d75aec4',
+      wwpn_b: 'naa.220034800d75aec5',
+    });
+    // A virtual port has no host of its own to fall back to.
+    expect(result[1]).toMatchObject({ name: 'fc0/1', wwpn: undefined, wwpn_b: undefined });
+  });
 });
