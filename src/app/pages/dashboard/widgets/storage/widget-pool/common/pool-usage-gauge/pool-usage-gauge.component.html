@@ -81,13 +81,13 @@
       <ix-widget-stale-data-notice></ix-widget-stale-data-notice>
     } @else if (!isDatasetLoading()) {
       <ix-gauge-chart
-        [colorFill]="usedPercentage() === 0 ? chartBlankColor : isLowCapacity() ? chartLowCapacityColor : chartFillColor"
-        [colorBlank]="chartBlankColor"
+        [colorFill]="gaugeFill()"
+        [colorBlank]="gaugeBlankColor()"
         [width]="size()"
         [height]="size()"
         [label]="(usedPercentage() / 100 | percent: '1.0-1') || ('Unknown' | translate)"
         [value]="usedPercentage() > 100 ? 100 : usedPercentage()"
-        [style]="isLowCapacity() ? 'color: var(--red);' : ''"
+        [style]="gaugeLabelStyle()"
       ></ix-gauge-chart>
     } @else {
       <ngx-skeleton-loader

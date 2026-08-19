@@ -1,11 +1,13 @@
 import { PercentPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { formatDuration } from 'date-fns';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap } from 'rxjs';
-import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
+import {
+  getPoolCapacityGaugeFill, getPoolCapacityGaugeLabelStyle, PoolCapacityGaugeColors,
+} from 'app/constants/pool-capacity.constant';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyWarning, VDevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -35,7 +37,7 @@ import { StorageService } from 'app/services/storage.service';
     WidgetStaleDataNoticeComponent,
   ],
 })
-export class PoolUsageGaugeComponent implements OnInit {
+export class PoolUsageGaugeComponent {
   private resources = inject(WidgetResourcesService);
   private translate = inject(TranslateService);
   private storageService = inject(StorageService);
@@ -44,9 +46,25 @@ export class PoolUsageGaugeComponent implements OnInit {
   readonly pool = input<Pool>();
   readonly size = input<number>(150);
 
-  protected chartLowCapacityColor: string;
-  protected chartFillColor: string;
-  protected chartBlankColor: string;
+  private gaugeColors = computed<PoolCapacityGaugeColors>(() => {
+    const theme = this.themeService.currentTheme();
+    return {
+      blank: theme.bg2,
+      fill: theme.primary,
+      warning: theme.orange,
+      critical: theme.red,
+    };
+  });
+
+  protected gaugeFill = computed(() => {
+    return getPoolCapacityGaugeFill(this.usedPercentage(), this.gaugeColors());
+  });
+
+  protected gaugeLabelStyle = computed(() => {
+    return getPoolCapacityGaugeLabelStyle(this.usedPercentage());
+  });
+
+  protected gaugeBlankColor = computed(() => this.gaugeColors().blank);
 
   protected poolDataState = toSignal(
     this.resources.poolUpdatesWithStaleDetection().pipe(takeUntilDestroyed()),
@@ -73,10 +91,6 @@ export class PoolUsageGaugeComponent implements OnInit {
     return this.poolStats()?.used / this.capacity() * 100;
   });
 
-  protected isLowCapacity = computed(() => {
-    return this.usedPercentage() >= poolLowCapacityPercent;
-  });
-
   protected dataTopology = computed(() => {
     if (this.pool()?.status === PoolStatus.Offline) {
       return this.translate.instant('Offline VDEVs');
@@ -94,12 +108,6 @@ export class PoolUsageGaugeComponent implements OnInit {
     const seconds = secondsToDuration((scan.end_time.$date - scan.start_time.$date) / 1000);
     return formatDuration(seconds);
   });
-
-  ngOnInit(): void {
-    this.chartBlankColor = this.themeService.currentTheme().bg2;
-    this.chartFillColor = this.themeService.currentTheme().primary;
-    this.chartLowCapacityColor = this.themeService.currentTheme().red;
-  }
 
   private parseTopologyData(): string {
     const vdevs = this.pool()?.topology?.data;
