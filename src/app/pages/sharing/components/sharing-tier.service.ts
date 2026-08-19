@@ -89,6 +89,22 @@ export class SharingTierService {
   }
 
   /**
+   * Live updates for a single rewrite job. Unlike the collection subscription
+   * above, this topic replays the job's current state on subscribe and keeps
+   * emitting until it reaches a terminal status, so consumers can track a
+   * migration they were handed a stale snapshot of.
+   *
+   * Topic format is contract'd with middleware: `zfs.tier.rewrite_job_status:<json-args>`,
+   * where <json-args> is the JSON-stringified call args. tier_job_id is server-generated
+   * and safe to embed without further escaping.
+   */
+  subscribeTierJobStatus(tierJobId: string): Observable<ZfsTierRewriteJobEntry> {
+    return this.api.subscribe(`zfs.tier.rewrite_job_status:${JSON.stringify({ tier_job_id: tierJobId })}`).pipe(
+      map((event) => event.fields),
+    );
+  }
+
+  /**
    * Subscribes to the tier config and unhides the `StorageTierCellComponent`
    * column when tiering is enabled.
    *
