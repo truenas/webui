@@ -13,6 +13,7 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import {
   getTierJobStatusClass, getTierJobStatusLabelKey, getTierLabelKey, isTierJobRunning,
 } from 'app/pages/sharing/components/tier-status.utils';
@@ -45,6 +46,7 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   protected dialogRef = inject(DialogRef<unknown, DataMigrationStatusDialogComponent>);
   private dialogService = inject(DialogService);
+  private tierService = inject(SharingTierService);
   protected data = inject<DataMigrationStatusDialogData>(DIALOG_DATA);
 
   protected job = signal<ZfsTierRewriteJobEntry>(this.data.tierJob);
@@ -141,17 +143,8 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   }
 
   private subscribeToJobUpdates(): void {
-    const tierJobId = this.data.tierJob.tier_job_id;
-
-    // Topic format is contract'd with middleware: `zfs.tier.rewrite_job_status:<json-args>`,
-    // where <json-args> is the JSON-stringified call args. tier_job_id is server-generated
-    // and safe to embed without further escaping.
-    this.api.subscribe(`zfs.tier.rewrite_job_status:${JSON.stringify({ tier_job_id: tierJobId })}`).pipe(
+    this.tierService.subscribeTierJobStatus(this.data.tierJob.tier_job_id).pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (event) => {
-        this.job.set(event.fields);
-      },
-    });
+    ).subscribe((job) => this.job.set(job));
   }
 }
