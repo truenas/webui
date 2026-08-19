@@ -1,6 +1,6 @@
 import { PercentPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, inject, input, OnInit,
+  ChangeDetectionStrategy, Component, computed, inject, input,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -8,8 +8,12 @@ import {
   TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCardHeaderDirective,
   TnTestIdDirective,
 } from '@truenas/ui-components';
-import { poolLowCapacityPercent } from 'app/constants/pool-capacity.constant';
+import {
+  getPoolCapacityGaugeFill, getPoolCapacityGaugeLabelStyle, getPoolCapacityLevel, PoolCapacityGaugeColors,
+  poolCriticalCapacityPercent, poolLowCapacityPercent,
+} from 'app/constants/pool-capacity.constant';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { PoolCapacityLevel } from 'app/enums/pool-capacity-level.enum';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { GaugeChartComponent, GaugeSegment } from 'app/modules/charts/gauge-chart/gauge-chart.component';
@@ -41,8 +45,8 @@ import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-dis
     PercentPipe,
   ],
 })
-export class PoolUsageCardComponent implements OnInit {
-  themeService = inject(ThemeService);
+export class PoolUsageCardComponent {
+  private themeService = inject(ThemeService);
   private translate = inject(TranslateService);
   private tierService = inject(SharingTierService);
 
@@ -51,20 +55,38 @@ export class PoolUsageCardComponent implements OnInit {
   protected readonly tierEnabled = this.tierService.tierEnabled;
   protected readonly reservePct = this.tierService.metadataReservePct;
 
-  chartLowCapacityColor: string;
-  chartFillColor: string;
-  chartBlankColor: string;
-
   protected readonly searchableElements = usageCardElements;
 
-  ngOnInit(): void {
-    this.chartBlankColor = this.themeService.currentTheme().bg1;
-    this.chartFillColor = this.themeService.currentTheme().primary;
-    this.chartLowCapacityColor = this.themeService.currentTheme().red;
-  }
+  private gaugeColors = computed<PoolCapacityGaugeColors>(() => {
+    const theme = this.themeService.currentTheme();
+    return {
+      blank: theme.bg1,
+      fill: theme.primary,
+      warning: theme.orange,
+      critical: theme.red,
+    };
+  });
+
+  protected gaugeFill = computed(() => {
+    return getPoolCapacityGaugeFill(this.usedPercentage(), this.gaugeColors());
+  });
+
+  protected gaugeLabelStyle = computed(() => {
+    return getPoolCapacityGaugeLabelStyle(this.usedPercentage());
+  });
+
+  protected gaugeBlankColor = computed(() => this.gaugeColors().blank);
+
+  private capacityLevel = computed(() => {
+    return getPoolCapacityLevel(this.usedPercentage());
+  });
 
   protected isLowCapacity = computed(() => {
-    return this.usedPercentage() >= poolLowCapacityPercent;
+    return this.capacityLevel() !== PoolCapacityLevel.Safe;
+  });
+
+  protected isCriticalCapacity = computed(() => {
+    return this.capacityLevel() === PoolCapacityLevel.Critical;
   });
 
   protected disks = computed(() => {
@@ -92,17 +114,25 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected iconType = computed(() => {
-    if (this.isLowCapacity()) {
-      return PoolCardIconType.Warn;
+    switch (this.capacityLevel()) {
+      case PoolCapacityLevel.Critical:
+        return PoolCardIconType.Error;
+      case PoolCapacityLevel.Warning:
+        return PoolCardIconType.Warn;
+      default:
+        return PoolCardIconType.Safe;
     }
-    return PoolCardIconType.Safe;
   });
 
   protected iconTooltip = computed(() => {
-    if (this.isLowCapacity()) {
-      return this.translate.instant('Pool is using more than {maxPct}% of available space', { maxPct: poolLowCapacityPercent });
+    switch (this.capacityLevel()) {
+      case PoolCapacityLevel.Critical:
+        return this.translate.instant('Pool is using more than {maxPct}% of available space', { maxPct: poolCriticalCapacityPercent });
+      case PoolCapacityLevel.Warning:
+        return this.translate.instant('Pool is using more than {maxPct}% of available space', { maxPct: poolLowCapacityPercent });
+      default:
+        return this.translate.instant('Everything is fine');
     }
-    return this.translate.instant('Everything is fine');
   });
 
   protected hasSpecialVdev = computed(() => {
@@ -114,7 +144,13 @@ export class PoolUsageCardComponent implements OnInit {
   });
 
   protected chartSegments = computed<GaugeSegment[] | undefined>(() => {
-    if (!this.showTierBreakdown()) {
+    // Severity wins over the tier split: GaugeChartComponent ignores colorFill
+    // whenever segments are set, so a segmented gauge would keep drawing green /
+    // primary while the header icon and the "Critical: Low Capacity" caption go
+    // red. Drop the segments once capacity leaves Safe and let the single
+    // severity-colored fill through; the tier split is still spelled out by the
+    // breakdown bars below.
+    if (!this.showTierBreakdown() || this.capacityLevel() !== PoolCapacityLevel.Safe) {
       return undefined;
     }
     const cap = this.capacity();
