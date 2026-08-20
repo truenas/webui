@@ -10,7 +10,7 @@ import { AlertWithDuplicates } from 'app/interfaces/smart-alert.interface';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { dismissAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { criticalLevels } from 'app/modules/alerts/store/alert.selectors';
-import { consolidateAlerts } from 'app/modules/alerts/utils/alert-consolidation.utils';
+import { consolidateAlerts, getAlertConsolidationKey } from 'app/modules/alerts/utils/alert-consolidation.utils';
 import { getAlertSummary, hasAlertDetails } from 'app/modules/alerts/utils/alert-summary.utils';
 import { AppState } from 'app/store';
 
@@ -19,14 +19,23 @@ import { AppState } from 'app/store';
  * change-detection pass of the page header.
  */
 export interface PageAlertView {
-  id: string;
+  /**
+   * Identifies the banner across refreshes. Not the alert id: consolidation picks the
+   * newest alert as the representative, so its id changes whenever a newer alert of the
+   * same kind arrives, which would collapse a banner the user had expanded.
+   */
+  expansionKey: string;
+  /** DOM id of the details region, for the toggle's `aria-controls`. */
+  detailsId: string;
   cssClass: string;
   icon: string;
   duplicateCount: number;
   hasDuplicates: boolean;
   duplicateTooltip: string;
   summary: string;
+  fullMessage: string;
   hasDetails: boolean;
+  /** One entry per consolidated alert. Empty for a single alert, which expands in place. */
   detailMessages: string[];
   contextualHelp: string | undefined;
   documentationUrl: string | undefined;
@@ -40,6 +49,14 @@ function getSeverityOrder(level: AlertLevel): number {
     return 0;
   }
   return level === AlertLevel.Warning ? 1 : 2;
+}
+
+/**
+ * Consolidation keys carry JSON and path separators, and an `aria-controls` IDREF cannot
+ * contain whitespace, so the key is reduced to id-safe characters.
+ */
+function toDomId(expansionKey: string): string {
+  return `alert-content-${expansionKey.replace(/[^\w-]+/g, '-')}`;
 }
 
 /**
@@ -75,8 +92,11 @@ export class PageAlertsComponent {
   // Get current route segments
   private currentRoute = toSignal(this.router.events, { initialValue: null });
 
-  // Track which alerts are expanded (by id of the consolidated alert)
-  private expandedAlertIds = signal<Set<string>>(new Set());
+  // The view model below caches translated strings, so it has to re-run on a language switch.
+  private langChange = toSignal(this.translate.onLangChange, { initialValue: null });
+
+  // Track which banners are expanded, by consolidation key
+  private expandedAlertKeys = signal<Set<string>>(new Set());
 
   /**
    * Every unread alert, consolidated by kind. Consolidation happens before the route
@@ -123,6 +143,9 @@ export class PageAlertsComponent {
    * Banners sorted by severity (critical first, then warnings, then info).
    */
   protected sortedPageAlerts = computed<PageAlertView[]>(() => {
+    // Read the lang-change signal so the cached translations below are rebuilt on a switch.
+    this.langChange();
+
     return [...this.pageAlerts()]
       .sort((a, b) => getSeverityOrder(a.level) - getSeverityOrder(b.level))
       .map((alert) => this.toView(alert));
@@ -135,9 +158,12 @@ export class PageAlertsComponent {
 
   private toView(alert: AlertWithDuplicates): PageAlertView {
     const hasDuplicates = alert.duplicateCount > 1;
+    const expansionKey = getAlertConsolidationKey(alert);
+    const summary = this.getSummary(alert);
 
     return {
-      id: alert.id,
+      expansionKey,
+      detailsId: toDomId(expansionKey),
       cssClass: this.getAlertClass(alert.level),
       icon: this.getAlertIcon(alert.level),
       duplicateCount: alert.duplicateCount,
@@ -145,17 +171,20 @@ export class PageAlertsComponent {
       duplicateTooltip: this.translate.instant('{count} system-wide instances of this alert', {
         count: alert.duplicateCount,
       }),
-      summary: this.getSummary(alert),
+      summary,
+      fullMessage: alert.formatted,
       hasDetails: hasDuplicates
         || hasAlertDetails(alert.formatted)
         || Boolean(alert.contextualHelp)
         || Boolean(alert.documentationUrl),
-      detailMessages: alert.groupedMessages ?? [alert.formatted],
+      // A single alert expands in place, so listing its message again would repeat the
+      // opening sentence already shown above.
+      detailMessages: hasDuplicates ? alert.groupedMessages ?? [alert.formatted] : [],
       contextualHelp: alert.contextualHelp,
       documentationUrl: alert.documentationUrl,
       dismissAriaLabel: hasDuplicates
         ? this.translate.instant('Dismiss all {count} instances', { count: alert.duplicateCount })
-        : this.translate.instant('Dismiss alert: {message}', { message: this.getSummary(alert) }),
+        : this.translate.instant('Dismiss alert: {message}', { message: summary }),
       dismissTooltip: hasDuplicates
         ? this.translate.instant('Dismiss all {count} system-wide instances', { count: alert.duplicateCount })
         : this.translate.instant('Dismiss'),
@@ -220,22 +249,22 @@ export class PageAlertsComponent {
   }
 
   /**
-   * Check if alert is currently expanded
+   * Check if a banner is currently expanded
    */
-  protected isExpanded(alertId: string): boolean {
-    return this.expandedAlertIds().has(alertId);
+  protected isExpanded(expansionKey: string): boolean {
+    return this.expandedAlertKeys().has(expansionKey);
   }
 
   /**
-   * Toggle expansion of alert message
+   * Toggle expansion of a banner
    */
-  protected toggleExpansion(alertId: string): void {
-    const expanded = new Set(this.expandedAlertIds());
-    if (expanded.has(alertId)) {
-      expanded.delete(alertId);
+  protected toggleExpansion(expansionKey: string): void {
+    const expanded = new Set(this.expandedAlertKeys());
+    if (expanded.has(expansionKey)) {
+      expanded.delete(expansionKey);
     } else {
-      expanded.add(alertId);
+      expanded.add(expansionKey);
     }
-    this.expandedAlertIds.set(expanded);
+    this.expandedAlertKeys.set(expanded);
   }
 }

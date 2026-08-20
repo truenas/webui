@@ -23,7 +23,7 @@
       }
     </div>
   }
-  <h4 class="alert-message" [innerHTML]="summary()"></h4>
+  <h4 class="alert-message" [innerHTML]="displayedMessage()"></h4>
   @if (isExpandable()) {
     <div class="alert-details" [attr.id]="'alert-details-' + alert().id">
       @if (!isCollapsed()) {

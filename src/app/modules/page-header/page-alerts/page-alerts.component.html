@@ -1,6 +1,7 @@
 @if (hasAlerts()) {
   <div class="page-alerts-container">
-    @for (alert of sortedPageAlerts(); track alert.id) {
+    @for (alert of sortedPageAlerts(); track alert.expansionKey) {
+      @let expanded = isExpanded(alert.expansionKey);
       <div [class]="'page-alert ' + alert.cssClass">
         <tn-icon class="alert-icon" [name]="alert.icon"></tn-icon>
         @if (alert.hasDuplicates) {
@@ -13,14 +14,18 @@
         }
         <div class="alert-content-wrapper">
           <div class="alert-content">
-            <div class="alert-message" [innerHTML]="alert.summary"></div>
+            <!-- A single alert expands in place; a group keeps its headline and lists members below. -->
+            <div
+              class="alert-message"
+              [innerHTML]="expanded && !alert.hasDuplicates ? alert.fullMessage : alert.summary"
+            ></div>
             @if (alert.hasDetails) {
               <div
                 class="alert-details"
-                [attr.id]="'alert-content-' + alert.id"
+                [attr.id]="alert.detailsId"
                 [attr.aria-live]="'polite'"
               >
-                @if (isExpanded(alert.id)) {
+                @if (expanded) {
                   @for (message of alert.detailMessages; track message) {
                     <div class="alert-detail" [innerHTML]="message"></div>
                   }
@@ -42,11 +47,11 @@
               <button
                 type="button"
                 class="toggle-btn"
-                [attr.aria-expanded]="isExpanded(alert.id)"
-                [attr.aria-controls]="'alert-content-' + alert.id"
-                (click)="toggleExpansion(alert.id)"
+                [attr.aria-expanded]="expanded"
+                [attr.aria-controls]="alert.detailsId"
+                (click)="toggleExpansion(alert.expansionKey)"
               >
-                {{ (isExpanded(alert.id) ? 'Show Less' : 'Show More') | translate }}
+                {{ (expanded ? 'Show Less' : 'Show More') | translate }}
               </button>
             }
           </div>

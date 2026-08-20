@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, HostBinding, input, OnChanges, signal, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -65,11 +66,17 @@ export class AlertComponent implements OnChanges {
   protected isCollapsed = signal<boolean>(true);
   protected showContextHelp = signal<boolean>(false);
 
+  // `summary` caches a translated string, so it has to re-run on a language switch.
+  private langChange = toSignal(this.translate.onLangChange, { initialValue: null });
+
   /**
    * Concise headline: the group summary when this row consolidates several alerts,
    * otherwise the first sentence of the alert's own message.
    */
   protected readonly summary = computed(() => {
+    // Read the lang-change signal so the translation below is redone on a switch.
+    this.langChange();
+
     const groupSummary = this.enhancedAlert().groupSummary;
     if (this.hasDuplicates() && groupSummary) {
       return this.translate.instant(groupSummary, { count: this.duplicateCount() });
@@ -77,8 +84,23 @@ export class AlertComponent implements OnChanges {
     return getAlertSummary(this.alert().formatted);
   });
 
+  /**
+   * What the message line shows. A single alert expands in place, so its full text
+   * replaces the summary rather than being repeated underneath it. A group keeps its
+   * headline and lists its members in `detailMessages`.
+   */
+  protected readonly displayedMessage = computed(() => {
+    if (this.isCollapsed() || this.hasDuplicates()) {
+      return this.summary();
+    }
+    return this.alert().formatted;
+  });
+
   /** Full messages revealed by "View More", one per consolidated alert. */
   protected readonly detailMessages = computed(() => {
+    if (!this.hasDuplicates()) {
+      return [];
+    }
     return this.alert().groupedMessages ?? [this.alert().formatted];
   });
 

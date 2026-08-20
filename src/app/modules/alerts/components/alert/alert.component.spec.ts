@@ -154,7 +154,7 @@ describe('AlertComponent', () => {
     );
   });
 
-  it('shows only the first sentence of a long message, with the full text behind View More', () => {
+  it('shows only the first sentence of a long message, expanding in place on View More', () => {
     const longMessage = 'Pool is degraded and needs attention right away. '
       + 'Replace the failed disk and run a scrub afterwards.';
     spectator.setInput('alert', { ...dummyAlert, formatted: longMessage });
@@ -166,7 +166,9 @@ describe('AlertComponent', () => {
 
     spectator.click(expandButton);
 
-    expect(spectator.query('.alert-detail')).toHaveExactText(longMessage);
+    // A single alert expands in place, rather than repeating its opening sentence below.
+    expect(alert.messageElement).toHaveExactText(longMessage);
+    expect(spectator.query('.alert-detail')).not.toExist();
     expect(spectator.query(byText('Collapse'))).toExist();
   });
 

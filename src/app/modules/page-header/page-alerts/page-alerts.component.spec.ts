@@ -3,10 +3,12 @@ import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert } from 'app/interfaces/smart-alert.interface';
+import { getAlertEnhancement } from 'app/modules/alerts/services/alert-enhancement.registry';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { PageAlertsComponent } from 'app/modules/page-header/page-alerts/page-alerts.component';
 
@@ -84,14 +86,16 @@ describe('PageAlertsComponent', () => {
     groupSummary: '{count, plural, other {# pools can be upgraded}}',
   })) as unknown as (Alert & EnhancedAlert)[];
 
-  // No groupSummary, so these must keep rendering as separate banners.
-  const degradedPoolAlerts = ['tank', 'backup'].map((pool, index) => ({
-    id: `degraded-${pool}`,
-    uuid: `degraded-${pool}`,
-    key: `degraded-${pool}-key`,
-    klass: AlertClassName.VolumeStatus,
+  // A class the registry gives no groupSummary (asserted below), so these must keep
+  // rendering as separate banners.
+  const noHeadlineClass = AlertClassName.Smartd;
+  const smartdAlerts = ['sda', 'sdb'].map((disk, index) => ({
+    id: `smartd-${disk}`,
+    uuid: `smartd-${disk}`,
+    key: `smartd-${disk}-key`,
+    klass: noHeadlineClass,
     level: AlertLevel.Warning,
-    formatted: `Pool '${pool}' state is DEGRADED.`,
+    formatted: `smartd is not running for disk ${disk}.`,
     dismissed: false,
     datetime: { $date: index + 1 },
     relatedMenuPath: ['storage'],
@@ -104,7 +108,7 @@ describe('PageAlertsComponent', () => {
     storageAlert,
     apiKeyAlert,
     ...poolUpgradeAlerts,
-    ...degradedPoolAlerts,
+    ...smartdAlerts,
   ]);
 
   const createComponent = createComponentFactory({
@@ -126,9 +130,16 @@ describe('PageAlertsComponent', () => {
     spectator.detectChanges();
   }
 
+  const initialAlerts = alertsSignal();
+
   beforeEach(() => {
     spectator = createComponent();
     router = spectator.inject(Router);
+  });
+
+  afterEach(() => {
+    // The signal is shared across tests, so anything a test pushes has to be undone.
+    alertsSignal.set(initialAlerts);
   });
 
   function renderedMessages(): string[] {
@@ -212,11 +223,14 @@ describe('PageAlertsComponent', () => {
   });
 
   it('leaves classes without a group headline as separate banners', async () => {
+    // Guards the fixture: the test only means anything while this class has no headline.
+    expect(getAlertEnhancement('', noHeadlineClass)?.groupSummary).toBeUndefined();
+
     await setUrl('/storage');
 
     const messages = renderedMessages();
-    expect(messages).toContain("Pool 'tank' state is DEGRADED.");
-    expect(messages).toContain("Pool 'backup' state is DEGRADED.");
+    expect(messages).toContain('smartd is not running for disk sda.');
+    expect(messages).toContain('smartd is not running for disk sdb.');
   });
 
   it('shows how many alerts a banner stands for', async () => {
@@ -255,6 +269,44 @@ describe('PageAlertsComponent', () => {
     await setUrl('/storage');
 
     expect(renderedMessages().some((message) => message.includes('rolling the system back'))).toBe(false);
+  });
+
+  it('re-translates cached banner strings when the language changes', async () => {
+    await setUrl('/storage');
+    const translate = spectator.inject(TranslateService);
+    const instantSpy = jest.spyOn(translate, 'instant');
+    instantSpy.mockClear();
+
+    translate.onLangChange.emit({ lang: 'de', translations: {} } as LangChangeEvent);
+    spectator.detectChanges();
+
+    // The headline is memoized in the view model, so it must be rebuilt on a switch.
+    expect(instantSpy).toHaveBeenCalledWith(
+      '{count, plural, other {# pools can be upgraded}}',
+      { count: 3 },
+    );
+  });
+
+  it('keeps a banner expanded when a newer alert joins its group', async () => {
+    await setUrl('/storage');
+    spectator.click(bannerWith('3 pools can be upgraded').querySelector('.toggle-btn') as HTMLElement);
+    expect(bannerWith('3 pools can be upgraded').querySelectorAll('.alert-detail')).toHaveLength(3);
+
+    // Consolidation picks the newest alert as the representative, so this changes the
+    // entry's id. Expansion is keyed by the consolidation key precisely so it survives.
+    alertsSignal.set([...alertsSignal(), {
+      ...poolUpgradeAlerts[0],
+      id: 'pool-upgrade-newest',
+      uuid: 'pool-upgrade-newest',
+      key: 'pool-upgrade-newest-key',
+      formatted: "New ZFS version or feature flags are available for pool 'newest'.",
+      datetime: { $date: 99 },
+    } as unknown as Alert & EnhancedAlert]);
+    spectator.detectChanges();
+
+    const banner = bannerWith('4 pools can be upgraded');
+    expect(banner.querySelector('.toggle-btn')).toHaveText('Show Less');
+    expect(banner.querySelectorAll('.alert-detail')).toHaveLength(4);
   });
 
   it('does not show a bannerMenuPath-scoped alert on parent routes', async () => {
