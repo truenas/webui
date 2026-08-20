@@ -52,7 +52,7 @@ describe('TierStatusComponent', () => {
     setup({ tier_type: DatasetTier.Performance, tier_job: runningJob });
 
     const icon = await loader.getHarness(TnIconHarness);
-    expect(await icon.getName()).toBe('sync');
+    expect(await icon.getName()).toBe('mdi-sync');
     expect(spectator.query('tn-icon.job-status-icon')).toHaveAttribute('aria-label', 'Migration: Running');
   });
 
@@ -62,7 +62,7 @@ describe('TierStatusComponent', () => {
     jobStatus$.next({ ...runningJob, status: TierRewriteJobStatus.Complete });
     spectator.detectChanges();
 
-    const icon = await loader.getHarness(TnIconHarness.with({ name: 'check-circle' }));
+    const icon = await loader.getHarness(TnIconHarness.with({ name: 'mdi-check-circle' }));
     expect(await icon.getColor()).toBe('green');
     expect(spectator.query('tn-icon.job-status-icon')).toHaveAttribute('aria-label', 'Migration: Complete');
   });
@@ -74,7 +74,7 @@ describe('TierStatusComponent', () => {
     spectator.detectChanges();
 
     const icon = await loader.getHarness(TnIconHarness);
-    expect(await icon.getName()).toBe('sync');
+    expect(await icon.getName()).toBe('mdi-sync');
   });
 
   it('subscribes only for a job that can still change', () => {
@@ -105,7 +105,7 @@ describe('TierStatusComponent', () => {
 
     expect(() => spectator.detectChanges()).not.toThrow();
     const icon = await loader.getHarness(TnIconHarness);
-    expect(await icon.getName()).toBe('sync');
+    expect(await icon.getName()).toBe('mdi-sync');
   });
 
   it('opens the migration dialog with the latest job seen', async () => {

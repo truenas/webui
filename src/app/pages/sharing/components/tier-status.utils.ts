@@ -1,12 +1,18 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { IconLibraryType } from '@truenas/ui-components';
+import { tnIconMarker } from '@truenas/ui-components';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 
 export interface TierJobIconInfo {
+  /**
+   * Library-prefixed icon name produced by `tnIconMarker`. The marker is what
+   * gets these icons into the generated sprite — a plain `{ name, library }`
+   * pair is invisible to the build-time scanner, which is how `mdi-cancel`
+   * ended up missing while the other four survived only because unrelated
+   * files happened to mark them.
+   */
   name: string;
-  library: IconLibraryType;
   color: string;
   spinning: boolean;
 }
@@ -31,7 +37,7 @@ interface TierJobStatusDescriptor {
 const tierJobStatusTable: Record<TierRewriteJobStatus, TierJobStatusDescriptor> = {
   [TierRewriteJobStatus.Complete]: {
     icon: {
-      name: 'check-circle', library: 'mdi', color: 'green', spinning: false,
+      name: tnIconMarker('check-circle', 'mdi'), color: 'green', spinning: false,
     },
     themeClass: 'fn-theme-green',
     labelKey: T('Complete'),
@@ -39,7 +45,7 @@ const tierJobStatusTable: Record<TierRewriteJobStatus, TierJobStatusDescriptor> 
   },
   [TierRewriteJobStatus.Running]: {
     icon: {
-      name: 'sync', library: 'mdi', color: 'orange', spinning: true,
+      name: tnIconMarker('sync', 'mdi'), color: 'orange', spinning: true,
     },
     themeClass: 'fn-theme-orange',
     labelKey: T('Running'),
@@ -53,7 +59,7 @@ const tierJobStatusTable: Record<TierRewriteJobStatus, TierJobStatusDescriptor> 
   },
   [TierRewriteJobStatus.Error]: {
     icon: {
-      name: 'alert-circle', library: 'mdi', color: 'red', spinning: false,
+      name: tnIconMarker('alert-circle', 'mdi'), color: 'red', spinning: false,
     },
     themeClass: 'fn-theme-red',
     labelKey: T('Error'),
@@ -61,7 +67,7 @@ const tierJobStatusTable: Record<TierRewriteJobStatus, TierJobStatusDescriptor> 
   },
   [TierRewriteJobStatus.Cancelled]: {
     icon: {
-      name: 'cancel', library: 'mdi', color: 'grey', spinning: false,
+      name: tnIconMarker('cancel', 'mdi'), color: 'grey', spinning: false,
     },
     themeClass: 'fn-theme-grey',
     labelKey: T('Cancelled'),
@@ -69,7 +75,7 @@ const tierJobStatusTable: Record<TierRewriteJobStatus, TierJobStatusDescriptor> 
   },
   [TierRewriteJobStatus.Stopped]: {
     icon: {
-      name: 'stop-circle', library: 'mdi', color: 'grey', spinning: false,
+      name: tnIconMarker('stop-circle', 'mdi'), color: 'grey', spinning: false,
     },
     themeClass: 'fn-theme-grey',
     labelKey: T('Stopped'),
