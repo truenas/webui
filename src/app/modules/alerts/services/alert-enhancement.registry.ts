@@ -947,6 +947,106 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
+    // The single SMART alert class was split into per-condition classes. Each one names a
+    // disk, so they all lead to the disk list.
+    [AlertClassName.SmartUncorrectedErrors]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('The disk reported errors it could not correct on its own. Check the disk in the list below and plan a replacement if the count keeps climbing.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.SmartFailedSelfTest]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('The disk failed its SMART self-test. Review the disk and replace it before it fails outright.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.SmartSpareBlockCount]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('The disk has almost exhausted the spare blocks it uses to retire failing sectors. Replace it.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.SmartEraseCycleCount]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('The SSD is approaching the end of its rated write endurance. Plan a replacement.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.DiskTemperatureTooHot]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('The disk is running above its rated temperature. Check chassis airflow and fan operation.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.DifFormatted]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('The disk is formatted with the Data Integrity Feature (DIF) and cannot be used by ZFS. Reformat it without DIF before adding it to a pool.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.UsbStorage]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('A USB storage device was connected. USB devices are not supported for pool data and can drop off the bus without warning.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
     [AlertClassName.Smartd]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['system', 'services'],
@@ -957,6 +1057,325 @@ export const smartAlertRegistry: SmartAlertConfig = {
         route: ['/system', 'services'],
         primary: true,
       }],
+    },
+
+    // Enclosure, sensors and chassis hardware
+    [AlertClassName.EnclosureUnhealthy]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('An enclosure element is reporting a fault. Open the enclosure view to find the failed element.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.EnclosureHealthy]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('The enclosure recovered and all of its elements are reporting healthy again.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.PowerSupply]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('A power supply is not delivering power. Check that it is seated and that its power cord is connected.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.Sensor]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('A chassis sensor is reading outside its working range. Check fans, airflow and ambient temperature.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+      ],
+    },
+
+    // NVDIMM alerts previously relied on a regex fallback in patternCategories.
+    // They are mapped explicitly here so the routing no longer depends on the alert wording.
+    [AlertClassName.Nvdimm]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('An NVDIMM is reporting a fault. NVDIMM failures put write-cached data at risk, so raise a support case.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.NvdimmEsLifetimeCritical]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('The NVDIMM energy source is nearly exhausted and may no longer be able to flush cached writes on power loss. Replace it.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.NvdimmEsLifetimeWarning]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('The NVDIMM energy source is wearing out. Plan its replacement.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.NvdimmMemoryModLifetimeCritical]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('The NVDIMM memory module is nearly at the end of its rated life. Replace it.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.NvdimmMemoryModLifetimeWarning]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('The NVDIMM memory module is wearing out. Plan its replacement.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.NvdimmInvalidFirmwareVersion]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('The NVDIMM is running a firmware version that is not supported by this release. Contact support for a firmware update.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.NvdimmRecommendedFirmwareVersion]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('A newer NVDIMM firmware version is recommended for this release.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    // Boot media wear. SATA DOMs are the boot devices on this hardware.
+    [AlertClassName.SataDomWearCritical]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'boot'],
+      contextualHelp: T('The boot SATA DOM has nearly exhausted its write endurance. Replace it before it fails.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/boot/managebootenviron/',
+      actions: [{
+        label: T('Manage Boot Environments'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('layers', 'mdi'),
+        route: bootListElements.anchorRouterLink,
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.SataDomWearWarning]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'boot'],
+      contextualHelp: T('The boot SATA DOM is wearing out. Plan its replacement.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/boot/managebootenviron/',
+      actions: [{
+        label: T('Manage Boot Environments'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('layers', 'mdi'),
+        route: bootListElements.anchorRouterLink,
+        primary: true,
+      }],
+    },
+
+    // These conditions need physical attention and have no page to send the user to, so they
+    // are categorized and given a support link but deliberately badge no menu.
+    // NOTE: IPMISEL currently falls through to the /ipmi/ pattern rule and badges Network,
+    // which is wrong — webui has had no IPMI page since the Network rework.
+    [AlertClassName.IpmiSel]: {
+      category: SmartAlertCategory.Hardware,
+      contextualHelp: T('The IPMI system event log recorded a hardware event. Review the event log from the BMC web interface.'),
+      actions: [
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.IpmiSelSpaceLeft]: {
+      category: SmartAlertCategory.Hardware,
+      contextualHelp: T('The IPMI system event log is nearly full and will stop recording new events. Clear it from the BMC web interface.'),
+      actions: [
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.MemoryErrors]: {
+      category: SmartAlertCategory.Hardware,
+      contextualHelp: T('The system reported memory errors it could not correct. Faulty memory can corrupt data — raise a support case.'),
+      actions: [
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.MemorySizeMismatch]: {
+      category: SmartAlertCategory.Hardware,
+      contextualHelp: T('The controllers of this HA pair report different amounts of memory. They should be configured identically.'),
+      actions: [
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.OldBiosVersion]: {
+      category: SmartAlertCategory.Hardware,
+      contextualHelp: T('The system is running an outdated BIOS. Contact support for the recommended version and the update procedure.'),
+      actions: [
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+          primary: true,
+        },
+      ],
     },
 
     // KMIP

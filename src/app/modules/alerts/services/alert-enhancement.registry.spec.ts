@@ -1,6 +1,6 @@
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { SmartAlertActionType } from 'app/interfaces/smart-alert.interface';
+import { SmartAlertActionType, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { getAlertEnhancement } from 'app/modules/alerts/services/alert-enhancement.registry';
 
 describe('alert-enhancement.registry route fixes (NAS-140943)', () => {
@@ -109,6 +109,75 @@ describe('alert-enhancement.registry route fixes (NAS-140943)', () => {
         expect(action?.route).toEqual(['/credentials', 'users', 'api-keys']);
       },
     );
+  });
+
+  describe('Hardware alert coverage', () => {
+    it.each([
+      AlertClassName.SmartUncorrectedErrors,
+      AlertClassName.SmartFailedSelfTest,
+      AlertClassName.SmartSpareBlockCount,
+      AlertClassName.SmartEraseCycleCount,
+      AlertClassName.DiskTemperatureTooHot,
+      AlertClassName.DifFormatted,
+      AlertClassName.UsbStorage,
+    ])('sends %s to the disk list', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.category).toBe(SmartAlertCategory.Hardware);
+      expect(enhancement?.relatedMenuPath).toEqual(['storage', 'disks']);
+      expect(enhancement?.actions?.[0]?.route).toEqual(['/storage', 'disks']);
+    });
+
+    it.each([
+      AlertClassName.EnclosureUnhealthy,
+      AlertClassName.EnclosureHealthy,
+      AlertClassName.PowerSupply,
+      AlertClassName.Sensor,
+      AlertClassName.Nvdimm,
+      AlertClassName.NvdimmEsLifetimeCritical,
+      AlertClassName.NvdimmEsLifetimeWarning,
+      AlertClassName.NvdimmMemoryModLifetimeCritical,
+      AlertClassName.NvdimmMemoryModLifetimeWarning,
+      AlertClassName.NvdimmInvalidFirmwareVersion,
+      AlertClassName.NvdimmRecommendedFirmwareVersion,
+    ])('sends %s to the enclosure view', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.category).toBe(SmartAlertCategory.Hardware);
+      expect(enhancement?.relatedMenuPath).toEqual(['system', 'viewenclosure']);
+      expect(enhancement?.actions?.[0]?.route).toEqual(['/system', 'viewenclosure']);
+    });
+
+    it.each([
+      AlertClassName.SataDomWearCritical,
+      AlertClassName.SataDomWearWarning,
+    ])('sends %s to the boot pool', (klass) => {
+      const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));
+
+      expect(enhancement?.relatedMenuPath).toEqual(['system', 'boot']);
+      expect(enhancement?.actions?.[0]?.route).toEqual(['/system', 'boot']);
+    });
+
+    // These need physical attention and have no page in webui. Badging the wrong menu is worse
+    // than badging none — IPMISEL used to land on Network via the /ipmi/ pattern rule.
+    it.each([
+      AlertClassName.IpmiSel,
+      AlertClassName.IpmiSelSpaceLeft,
+      AlertClassName.MemoryErrors,
+      AlertClassName.MemorySizeMismatch,
+      AlertClassName.OldBiosVersion,
+    ])('categorizes %s as hardware without badging a menu', (klass) => {
+      const enhancement = getAlertEnhancement(
+        '',
+        klass,
+        'IPMI system event log is 90% full',
+        buildAlert(klass),
+      );
+
+      expect(enhancement?.category).toBe(SmartAlertCategory.Hardware);
+      expect(enhancement?.relatedMenuPath).toBeUndefined();
+      expect(enhancement?.actions?.[0]?.externalUrl).toBe('https://support.ixsystems.com');
+    });
   });
 
   describe('Scrub finished/not started alerts', () => {
