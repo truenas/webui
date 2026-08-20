@@ -56,7 +56,8 @@ export class PageAlertsComponent {
 
   /**
    * Memoized duplicate info map that only recomputes when alerts change
-   * Maps alert key -> { count, allIds } for all unread alerts system-wide
+   * Maps the duplicate key (alert class + key, see `getAlertDuplicateKey`) ->
+   * { count, allIds } for all unread alerts system-wide
    */
   private duplicateInfoMap = computed(() => {
     const alerts = this.allAlerts();
@@ -180,7 +181,7 @@ export class PageAlertsComponent {
   protected hasAlerts = computed(() => this.pageAlerts().length > 0);
 
   /**
-   * Dismiss an alert (and all its duplicates with the same key)
+   * Dismiss an alert (and all its duplicates - alerts of the same class sharing the same key)
    */
   protected onDismiss(alert: Alert & { allIds: string[] }): void {
     this.store$.dispatch(dismissAlertPressed({ ids: alert.allIds }));

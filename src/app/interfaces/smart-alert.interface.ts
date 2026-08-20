@@ -52,19 +52,24 @@ export interface SmartAlertEnhancement {
   detailedHelp?: string;
   documentationUrl?: string;
 
-  // Navigation integration.
-  // Drives the nav badge (badge shows on this path and every parent path).
+  // Navigation integration. The primary feature area of the alert.
+  // Drives the nav badge (badge shows on this path and every parent path) and,
+  // unless bannerMenuPath overrides it, the page-level banner.
   relatedMenuPath?: string[];
 
-  // Restricts the page-level alert banner to routes at or below this path.
-  // Use when the banner should be scoped more narrowly than the nav badge
-  // (e.g. an alert relevant only to a sub-page that has no menu item of its own).
-  // Falls back to relatedMenuPath when omitted.
+  // Overrides relatedMenuPath *for the banner only*, restricting it to routes at or
+  // below this path. Use when the banner should be scoped more narrowly than the nav
+  // badge (e.g. an alert relevant only to a sub-page that has no menu item of its own).
+  // Falls back to relatedMenuPath when omitted, and never applies to extraMenuPaths.
   bannerMenuPath?: string[];
 
-  // Additional menu paths that should surface the badge and the banner alongside
-  // relatedMenuPath. Use for alerts that span two feature areas, e.g. ZFS tiering
-  // alerts are raised against a pool (Storage) but are acted on per-dataset (Datasets).
+  // Secondary feature areas of the alert. Each path surfaces both the badge and the
+  // banner in full, unaffected by any bannerMenuPath narrowing of the primary path.
+  // Use for alerts that span two feature areas, e.g. ZFS tiering alerts are raised
+  // against a pool (Storage) but are acted on per-dataset (Datasets).
+  // Resulting scopes: badge = relatedMenuPath + extraMenuPaths,
+  // banner = (bannerMenuPath ?? relatedMenuPath) + extraMenuPaths.
+  // See getAlertBadgeMenuPaths / getAlertBannerMenuPaths.
   extraMenuPaths?: string[][];
 
   // Visual enhancements
@@ -163,7 +168,9 @@ export interface EnhancedAlert {
 }
 
 /**
- * Alert decorated with the count and ids of every alert sharing the same key.
+ * Alert decorated with the count and ids of every alert sharing the same duplicate key,
+ * i.e. the same alert class *and* the same key (see `getAlertDuplicateKey`) - two different
+ * classes raised against the same object are not duplicates of each other.
  * Dispatchers carry `allIds` so dismiss/reopen actions act on every duplicate
  * without re-querying post-reducer state.
  */
