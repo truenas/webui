@@ -12,6 +12,8 @@ export enum AlertClassName {
 
   // Audit
   AuditBackendSetup = 'AuditBackendSetup',
+  AuditDatabaseCorrupted = 'AuditDatabaseCorrupted',
+  TrueNasVerifyServiceChangeDetection = 'TrueNASVerifyServiceChangeDetection',
   AuditServiceHealth = 'AuditServiceHealth',
   AuditSetup = 'AuditSetup',
 
@@ -29,6 +31,8 @@ export enum AlertClassName {
   IpaDomainBind = 'IPADomainBind',
   IpaLegacyConfiguration = 'IPALegacyConfiguration',
   LdapBind = 'LDAPBind',
+  DirectoryServiceBind = 'DirectoryServiceBind',
+  DirectoryServiceDnsUpdate = 'DirectoryServiceDnsUpdate',
 
   // HA
   NoCriticalFailoverInterfaceFound = 'NoCriticalFailoverInterfaceFound',
@@ -109,6 +113,15 @@ export enum AlertClassName {
   IscsiDiscoveryAuthMixed = 'ISCSIDiscoveryAuthMixed',
   IscsiDiscoveryAuthMultipleMutualChap = 'ISCSIDiscoveryAuthMultipleMutualCHAP',
   IscsiDiscoveryAuthMultipleChap = 'ISCSIDiscoveryAuthMultipleCHAP',
+  IscsiAuthSecretInvalidChar = 'ISCSIAuthSecretInvalidChar',
+  IscsiAuthSecretWhitespace = 'ISCSIAuthSecretWhitespace',
+  NfsHostListExcessive = 'NFSHostListExcessive',
+  NfsNetworkListExcessive = 'NFSNetworkListExcessive',
+  SmbAuditShareDisabled = 'SMBAuditShareDisabled',
+  SmbUserMissingHash = 'SMBUserMissingHash',
+  SmbVeeamFastClone = 'SMBVeeamFastClone',
+  FcHardwareAdded = 'FCHardwareAdded',
+  FcHardwareReplaced = 'FCHardwareReplaced',
 
   // Storage
   QuotaCritical = 'QuotaCritical',
@@ -138,6 +151,16 @@ export enum AlertClassName {
   KdumpNotReady = 'KdumpNotReady',
   SystemTesting = 'SystemTesting',
   WebUiBindAddressV2 = 'WebUiBindAddressV2',
+  CurrentlyRunningVersionDoesNotMatchProfile = 'CurrentlyRunningVersionDoesNotMatchProfile',
+  GmailConfigurationDiscarded = 'GMailConfigurationDiscarded',
+  InvalidGpuPciIds = 'InvalidGpuPciIds',
+  TimezoneNotAvailable = 'TimezoneNotAvailable',
+  AllAdminAccountsExpired = 'AllAdminAccountsExpired',
+  FipsMisconfiguration = 'FIPSMisconfiguration',
+  LocalAccountExpired = 'LocalAccountExpired',
+  LocalAccountExpiring = 'LocalAccountExpiring',
+  TncDisabledAutoUnconfigured = 'TNCDisabledAutoUnconfigured',
+  TncHeartbeatConnectionFailure = 'TNCHeartbeatConnectionFailure',
   TruecommandConnectionDisabled = 'TruecommandConnectionDisabled',
   TruecommandContainerHealth = 'TruecommandContainerHealth',
   TruecommandConnectionHealth = 'TruecommandConnectionHealth',
@@ -160,6 +183,7 @@ export enum AlertClassName {
   ScrubStarted = 'ScrubStarted',
   SnapshotFailed = 'SnapshotFailed',
   TaskLocked = 'TaskLocked',
+  CloudProviderRemoved = 'CloudProviderRemoved',
   VmwareLoginFailed = 'VMWareLoginFailed',
   VmwareSnapshotDeleteFailed = 'VMWareSnapshotDeleteFailed',
 
