@@ -15,6 +15,34 @@ import { getAlertSummary, hasAlertDetails } from 'app/modules/alerts/utils/alert
 import { AppState } from 'app/store';
 
 /**
+ * Everything a banner renders, prepared once per alert change instead of on every
+ * change-detection pass of the page header.
+ */
+export interface PageAlertView {
+  id: string;
+  cssClass: string;
+  icon: string;
+  duplicateCount: number;
+  hasDuplicates: boolean;
+  duplicateTooltip: string;
+  summary: string;
+  hasDetails: boolean;
+  detailMessages: string[];
+  contextualHelp: string | undefined;
+  documentationUrl: string | undefined;
+  dismissAriaLabel: string;
+  dismissTooltip: string;
+  allIds: string[];
+}
+
+function getSeverityOrder(level: AlertLevel): number {
+  if (criticalLevels.includes(level)) {
+    return 0;
+  }
+  return level === AlertLevel.Warning ? 1 : 2;
+}
+
+/**
  * Displays alerts relevant to the current page at the top of the page content.
  *
  * Filters alerts based on:
@@ -69,7 +97,7 @@ export class PageAlertsComponent {
   /**
    * Filter alerts relevant to the current page
    */
-  protected pageAlerts = computed<AlertWithDuplicates[]>(() => {
+  private pageAlerts = computed<AlertWithDuplicates[]>(() => {
     // Trigger recomputation when route changes
     this.currentRoute();
 
@@ -92,43 +120,71 @@ export class PageAlertsComponent {
   });
 
   /**
-   * Get all page alerts sorted by severity (critical first, then warnings, then info)
+   * Banners sorted by severity (critical first, then warnings, then info).
    */
-  protected sortedPageAlerts = computed(() => {
-    const alerts = [...this.pageAlerts()];
-
-    // Sort by severity: critical -> warning -> info
-    return alerts.sort((a, b) => {
-      const getSeverityOrder = (level: AlertLevel): number => {
-        if (criticalLevels.includes(level)) {
-          return 0; // Critical
-        }
-        if (level === AlertLevel.Warning) {
-          return 1; // Warning
-        }
-        return 2; // Info
-      };
-
-      return getSeverityOrder(a.level) - getSeverityOrder(b.level);
-    });
+  protected sortedPageAlerts = computed<PageAlertView[]>(() => {
+    return [...this.pageAlerts()]
+      .sort((a, b) => getSeverityOrder(a.level) - getSeverityOrder(b.level))
+      .map((alert) => this.toView(alert));
   });
 
   /**
    * Check if there are any page alerts to show
    */
-  protected hasAlerts = computed(() => this.pageAlerts().length > 0);
+  protected hasAlerts = computed(() => this.sortedPageAlerts().length > 0);
+
+  private toView(alert: AlertWithDuplicates): PageAlertView {
+    const hasDuplicates = alert.duplicateCount > 1;
+
+    return {
+      id: alert.id,
+      cssClass: this.getAlertClass(alert.level),
+      icon: this.getAlertIcon(alert.level),
+      duplicateCount: alert.duplicateCount,
+      hasDuplicates,
+      duplicateTooltip: this.translate.instant('{count} system-wide instances of this alert', {
+        count: alert.duplicateCount,
+      }),
+      summary: this.getSummary(alert),
+      hasDetails: hasDuplicates
+        || hasAlertDetails(alert.formatted)
+        || Boolean(alert.contextualHelp)
+        || Boolean(alert.documentationUrl),
+      detailMessages: alert.groupedMessages ?? [alert.formatted],
+      contextualHelp: alert.contextualHelp,
+      documentationUrl: alert.documentationUrl,
+      dismissAriaLabel: hasDuplicates
+        ? this.translate.instant('Dismiss all {count} instances', { count: alert.duplicateCount })
+        : this.translate.instant('Dismiss alert: {message}', { message: this.getSummary(alert) }),
+      dismissTooltip: hasDuplicates
+        ? this.translate.instant('Dismiss all {count} system-wide instances', { count: alert.duplicateCount })
+        : this.translate.instant('Dismiss'),
+      allIds: alert.allIds,
+    };
+  }
+
+  /**
+   * Concise headline for the banner: the group summary when several alerts were
+   * consolidated, otherwise the first sentence of the alert's own message.
+   */
+  private getSummary(alert: AlertWithDuplicates): string {
+    if (alert.duplicateCount > 1 && alert.groupSummary) {
+      return this.translate.instant(alert.groupSummary, { count: alert.duplicateCount });
+    }
+    return getAlertSummary(alert.formatted);
+  }
 
   /**
    * Dismiss an alert (and every alert it consolidates)
    */
-  protected onDismiss(alert: AlertWithDuplicates): void {
+  protected onDismiss(alert: PageAlertView): void {
     this.store$.dispatch(dismissAlertPressed({ ids: alert.allIds }));
   }
 
   /**
    * Get icon for alert level
    */
-  protected getAlertIcon(level: AlertLevel): string {
+  private getAlertIcon(level: AlertLevel): string {
     switch (level) {
       case AlertLevel.Critical:
       case AlertLevel.Alert:
@@ -147,7 +203,7 @@ export class PageAlertsComponent {
   /**
    * Get CSS class for alert level
    */
-  protected getAlertClass(level: AlertLevel): string {
+  private getAlertClass(level: AlertLevel): string {
     switch (level) {
       case AlertLevel.Critical:
       case AlertLevel.Alert:
@@ -161,34 +217,6 @@ export class PageAlertsComponent {
       default:
         return 'info';
     }
-  }
-
-  /**
-   * Concise headline for the banner: the group summary when several alerts were
-   * consolidated, otherwise the first sentence of the alert's own message.
-   */
-  protected getSummary(alert: AlertWithDuplicates): string {
-    if (this.hasDuplicates(alert) && alert.groupSummary) {
-      return this.translate.instant(alert.groupSummary, { count: alert.duplicateCount });
-    }
-    return getAlertSummary(alert.formatted);
-  }
-
-  /**
-   * Messages shown when the banner is expanded, one per consolidated alert.
-   */
-  protected getDetailMessages(alert: AlertWithDuplicates): string[] {
-    return alert.groupedMessages ?? [alert.formatted];
-  }
-
-  /**
-   * Check if the banner hides anything worth expanding
-   */
-  protected hasDetails(alert: AlertWithDuplicates): boolean {
-    return this.hasDuplicates(alert)
-      || hasAlertDetails(alert.formatted)
-      || Boolean(alert.contextualHelp)
-      || Boolean(alert.documentationUrl);
   }
 
   /**
@@ -209,45 +237,5 @@ export class PageAlertsComponent {
       expanded.add(alertId);
     }
     this.expandedAlertIds.set(expanded);
-  }
-
-  /**
-   * Check if alert consolidates more than one instance
-   */
-  protected hasDuplicates(alert: AlertWithDuplicates): boolean {
-    return alert.duplicateCount > 1;
-  }
-
-  /**
-   * Get dismiss button aria-label for accessibility
-   */
-  protected getDismissAriaLabel(alert: AlertWithDuplicates): string {
-    if (this.hasDuplicates(alert)) {
-      return this.translate.instant('Dismiss all {count} instances', {
-        count: alert.duplicateCount,
-      });
-    }
-    return this.translate.instant('Dismiss alert: {message}', { message: this.getSummary(alert) });
-  }
-
-  /**
-   * Get dismiss button tooltip
-   */
-  protected getDismissTooltip(alert: AlertWithDuplicates): string {
-    if (this.hasDuplicates(alert)) {
-      return this.translate.instant('Dismiss all {count} system-wide instances', {
-        count: alert.duplicateCount,
-      });
-    }
-    return this.translate.instant('Dismiss');
-  }
-
-  /**
-   * Get duplicate count badge tooltip
-   */
-  protected getDuplicateTooltip(alert: AlertWithDuplicates): string {
-    return this.translate.instant('{count} system-wide instances of this alert', {
-      count: alert.duplicateCount,
-    });
   }
 }

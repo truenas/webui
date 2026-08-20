@@ -215,6 +215,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.VolumeStatus]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('{count, plural, other {# pools are not healthy}}'),
       contextualHelp: T('Storage pool health is critical for data integrity. Investigate and resolve pool issues immediately to prevent data loss.'),
       detailedHelp: T('Common pool issues include: degraded pools (missing/failed drives), scrub errors, capacity warnings, and replication problems.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/storage/managepoolsscale/',
@@ -299,6 +300,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     ServiceMonitor: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['system', 'services'],
+      groupSummary: T('{count, plural, other {# services are not running}}'),
       contextualHelp: T('Service failures can interrupt critical functionality. Review service logs and configuration to identify the cause.'),
       actions: [
         {
@@ -575,6 +577,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ScrubPaused]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('Scrub is paused on {count, plural, other {# pools}}'),
       contextualHelp: T('Pool scrub is paused or not running. This may be due to pool being offline or scrub task being manually paused. Check pool status and scheduled scrub configuration.'),
       actions: [
         {
@@ -590,6 +593,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     ScrubNotRunning: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('Scrub is not running on {count, plural, other {# pools}}'),
       contextualHelp: T('Pool scrub is not running. This may be due to pool being offline or scrub task configuration issues. Check pool status and scheduled scrub configuration.'),
       actions: [
         {
@@ -631,6 +635,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ApplicationsStartFailed]: {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps', 'installed'],
+      groupSummary: T('{count, plural, other {# applications failed to start}}'),
       actions: [{
         label: T('Go to Applications'),
         type: SmartAlertActionType.Navigate,
@@ -643,6 +648,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ApplicationsConfigurationFailed]: {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps', 'installed'],
+      groupSummary: T('{count, plural, other {# applications could not be configured}}'),
       actions: [{
         label: T('Go to App Settings'),
         type: SmartAlertActionType.Navigate,
@@ -824,6 +830,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.BondMissingPorts]: {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['network'],
+      groupSummary: T('{count, plural, other {# bond interfaces are missing ports}}'),
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
@@ -836,6 +843,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.BondInactivePorts]: {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['network'],
+      groupSummary: T('{count, plural, other {# bond interfaces have inactive ports}}'),
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
@@ -848,6 +856,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.BondNoActivePorts]: {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['network'],
+      groupSummary: T('{count, plural, other {# bond interfaces have no active ports}}'),
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
@@ -1044,6 +1053,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.SmbPath]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['sharing', 'smb'],
+      groupSummary: T('{count, plural, other {# SMB shares have a path problem}}'),
       documentationUrl: 'https://www.truenas.com/docs/scale/shares/smb/managesmbshares/',
       actions: [{
         label: T('Go to SMB shares'),
@@ -1275,6 +1285,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.VolumeStatus]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('{count, plural, other {# pools are not healthy}}'),
       extractApiParams: () => {
         // VolumeStatus alerts only provide pool name in args.volume, not pool ID
         // Since we can't synchronously resolve pool name to ID, navigate to storage dashboard instead
@@ -1492,6 +1503,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     VMWareSnapshotDeleteFailed: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'vmware-snapshots'],
+      groupSummary: T('{count, plural, other {# VMware snapshots could not be deleted}}'),
       documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/creatingvmwaresnapshots/',
       actions: [{
         label: T('Go to VMWare Snapshots'),
@@ -1505,6 +1517,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     VMWareSnapshotCreateFailed: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'vmware-snapshots'],
+      groupSummary: T('{count, plural, other {# VMware snapshots could not be created}}'),
       documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/creatingvmwaresnapshots/',
       actions: [{
         label: T('Go to VMWare Snapshots'),

@@ -182,12 +182,20 @@ export interface EnhancedAlert {
  * Dispatchers carry `allIds` so dismiss/reopen actions act on every duplicate
  * without re-querying post-reducer state.
  */
-export type AlertWithDuplicates = Alert & EnhancedAlert & {
+export type ConsolidatedAlert<T> = T & {
+  /** Number of alerts represented by this entry. */
   duplicateCount: number;
+  /** Ids of every alert in the group, so a single dismiss clears all of them. */
   allIds: string[];
-  /** Full messages of every alert in the group, newest first. Only set when duplicateCount > 1. */
+  /**
+   * Distinct messages in the group, newest first. Only set for real groups.
+   * Identical messages are collapsed, so this can be shorter than `duplicateCount`:
+   * the count is instances, this is the messages they carry.
+   */
   groupedMessages?: string[];
 };
+
+export type AlertWithDuplicates = ConsolidatedAlert<Alert & EnhancedAlert>;
 
 /**
  * Creates an extractFragment function that extracts a specific field from an alert message.

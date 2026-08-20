@@ -24,19 +24,21 @@
     </div>
   }
   <h4 class="alert-message" [innerHTML]="summary()"></h4>
-  @if (isExpandable() && !isCollapsed()) {
-    <div class="alert-details">
-      @for (message of detailMessages(); track message) {
-        <div class="alert-detail" [innerHTML]="message"></div>
+  @if (isExpandable()) {
+    <div class="alert-details" [attr.id]="'alert-details-' + alert().id">
+      @if (!isCollapsed()) {
+        @for (message of detailMessages(); track message) {
+          <div class="alert-detail" [innerHTML]="message"></div>
+        }
       }
     </div>
-  }
-  @if (isExpandable()) {
     <button
       type="button"
       class="expand-collapse-button"
       tnTestIdType="button"
       [tnTestId]="[alert().key, 'expand']"
+      [attr.aria-expanded]="!isCollapsed()"
+      [attr.aria-controls]="'alert-details-' + alert().id"
       [class.collapsed]="isCollapsed()"
       (click)="toggleCollapse()"
     >
@@ -68,7 +70,7 @@
       </button>
       @if (showContextHelp()) {
         <div class="context-help-content">
-          <p>{{ enhanced.contextualHelp }}</p>
+          <p>{{ enhanced.contextualHelp | translate }}</p>
           @if (enhanced.documentationUrl) {
             <a
               class="action-link"

@@ -84,6 +84,19 @@ describe('PageAlertsComponent', () => {
     groupSummary: '{count, plural, other {# pools can be upgraded}}',
   })) as unknown as (Alert & EnhancedAlert)[];
 
+  // No groupSummary, so these must keep rendering as separate banners.
+  const degradedPoolAlerts = ['tank', 'backup'].map((pool, index) => ({
+    id: `degraded-${pool}`,
+    uuid: `degraded-${pool}`,
+    key: `degraded-${pool}-key`,
+    klass: AlertClassName.VolumeStatus,
+    level: AlertLevel.Warning,
+    formatted: `Pool '${pool}' state is DEGRADED.`,
+    dismissed: false,
+    datetime: { $date: index + 1 },
+    relatedMenuPath: ['storage'],
+  })) as unknown as (Alert & EnhancedAlert)[];
+
   const alertsSignal = signal([
     lockedShareAlert,
     rootLoginAlert,
@@ -91,6 +104,7 @@ describe('PageAlertsComponent', () => {
     storageAlert,
     apiKeyAlert,
     ...poolUpgradeAlerts,
+    ...degradedPoolAlerts,
   ]);
 
   const createComponent = createComponentFactory({
@@ -193,7 +207,16 @@ describe('PageAlertsComponent', () => {
     await setUrl('/storage');
 
     const messages = renderedMessages();
-    expect(messages).toEqual(['Storage pool is degraded.', '3 pools can be upgraded']);
+    expect(messages).toContain('3 pools can be upgraded');
+    expect(messages.filter((message) => message.includes('can be upgraded'))).toHaveLength(1);
+  });
+
+  it('leaves classes without a group headline as separate banners', async () => {
+    await setUrl('/storage');
+
+    const messages = renderedMessages();
+    expect(messages).toContain("Pool 'tank' state is DEGRADED.");
+    expect(messages).toContain("Pool 'backup' state is DEGRADED.");
   });
 
   it('shows how many alerts a banner stands for', async () => {

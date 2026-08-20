@@ -13,6 +13,8 @@ function makeAlert(overrides: Partial<Alert & EnhancedAlert>): Alert & EnhancedA
     formatted: 'Message',
     datetime: { $date: 1 },
     relatedMenuPath: ['storage'],
+    // Merging is opt-in: only classes whose enhancement declares a headline are folded together.
+    groupSummary: '{count, plural, other {# pools can be upgraded}}',
     ...overrides,
   } as Alert & EnhancedAlert;
 }
@@ -33,10 +35,12 @@ describe('alert consolidation utils', () => {
       expect(getAlertConsolidationKey(dataPool)).not.toBe(getAlertConsolidationKey(bootPool));
     });
 
-    it('falls back to the alert key when there is no class', () => {
-      const alert = makeAlert({ klass: undefined, key: 'some-key' });
+    it('keys off the alert key when the class declares no group headline', () => {
+      const first = makeAlert({ id: '1', key: 'pool-a', groupSummary: undefined });
+      const second = makeAlert({ id: '2', key: 'pool-b', groupSummary: undefined });
 
-      expect(getAlertConsolidationKey(alert)).toContain('some-key');
+      expect(getAlertConsolidationKey(first)).toContain('pool-a');
+      expect(getAlertConsolidationKey(first)).not.toBe(getAlertConsolidationKey(second));
     });
   });
 
@@ -96,6 +100,24 @@ describe('alert consolidation utils', () => {
 
       expect(consolidated[0].duplicateCount).toBe(1);
       expect(consolidated[0].groupedMessages).toBeUndefined();
+    });
+
+    it('does not merge different objects when the class declares no group headline', () => {
+      const noHeadline = [
+        makeAlert({ id: '1', key: 'pool-a', groupSummary: undefined }),
+        makeAlert({ id: '2', key: 'pool-b', groupSummary: undefined }),
+      ];
+
+      expect(consolidateAlerts(noHeadline)).toHaveLength(2);
+    });
+
+    it('still merges byte-identical duplicates when the class declares no group headline', () => {
+      const duplicates = [
+        makeAlert({ id: '1', key: 'pool-a', groupSummary: undefined }),
+        makeAlert({ id: '2', key: 'pool-a', groupSummary: undefined }),
+      ];
+
+      expect(consolidateAlerts(duplicates)).toHaveLength(1);
     });
 
     it('does not mix alerts of different classes', () => {

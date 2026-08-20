@@ -169,6 +169,8 @@ describe('SmartAlertService', () => {
         );
 
         expect(spectator.service.enhanceAlert(snapshotAlert).actions?.[0].fragment).toBeDefined();
+        // Assert the action survived first, so this can't pass by the action being dropped.
+        expect(navigateAction).toBeDefined();
         expect(navigateAction?.fragment).toBeUndefined();
       });
     });

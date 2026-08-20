@@ -1,31 +1,31 @@
 @if (hasAlerts()) {
   <div class="page-alerts-container">
     @for (alert of sortedPageAlerts(); track alert.id) {
-      <div [class]="'page-alert ' + getAlertClass(alert.level)">
-        <tn-icon class="alert-icon" [name]="getAlertIcon(alert.level)"></tn-icon>
-        @if (hasDuplicates(alert)) {
+      <div [class]="'page-alert ' + alert.cssClass">
+        <tn-icon class="alert-icon" [name]="alert.icon"></tn-icon>
+        @if (alert.hasDuplicates) {
           <span
             class="duplicate-count-badge"
-            [tnTooltip]="getDuplicateTooltip(alert)"
+            [tnTooltip]="alert.duplicateTooltip"
           >
             {{ alert.duplicateCount }}
           </span>
         }
         <div class="alert-content-wrapper">
           <div class="alert-content">
-            <div class="alert-message" [innerHTML]="getSummary(alert)"></div>
-            @if (hasDetails(alert)) {
+            <div class="alert-message" [innerHTML]="alert.summary"></div>
+            @if (alert.hasDetails) {
               <div
                 class="alert-details"
                 [attr.id]="'alert-content-' + alert.id"
                 [attr.aria-live]="'polite'"
               >
                 @if (isExpanded(alert.id)) {
-                  @for (message of getDetailMessages(alert); track message) {
+                  @for (message of alert.detailMessages; track message) {
                     <div class="alert-detail" [innerHTML]="message"></div>
                   }
                   @if (alert.contextualHelp) {
-                    <div class="alert-help">{{ alert.contextualHelp }}</div>
+                    <div class="alert-help">{{ alert.contextualHelp | translate }}</div>
                   }
                   @if (alert.documentationUrl) {
                     <a
@@ -55,8 +55,8 @@
         <button
           type="button"
           class="dismiss-btn"
-          [attr.aria-label]="getDismissAriaLabel(alert)"
-          [tnTooltip]="getDismissTooltip(alert)"
+          [attr.aria-label]="alert.dismissAriaLabel"
+          [tnTooltip]="alert.dismissTooltip"
           (click)="onDismiss(alert)"
         >
           <tn-icon name="clear" library="material" [attr.aria-hidden]="true"></tn-icon>

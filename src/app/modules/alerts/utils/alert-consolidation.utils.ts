@@ -1,33 +1,29 @@
 import { uniq } from 'lodash-es';
 import { Alert } from 'app/interfaces/alert.interface';
-import { EnhancedAlert } from 'app/interfaces/smart-alert.interface';
-
-export type ConsolidatedAlert<T> = T & {
-  /** Number of alerts represented by this entry. */
-  duplicateCount: number;
-  /** Ids of every alert in the group, so a single dismiss clears all of them. */
-  allIds: string[];
-  /**
-   * Distinct messages in the group, newest first. Only set for real groups.
-   * Duplicates are collapsed, so this can be shorter than `duplicateCount`:
-   * the count is instances, this is the messages they carry.
-   */
-  groupedMessages?: string[];
-};
+import { ConsolidatedAlert, EnhancedAlert } from 'app/interfaces/smart-alert.interface';
 
 /**
  * Alerts consolidate when they report the same kind of problem, even about different
  * objects - one banner for four pools that need upgrading instead of four banners.
  *
+ * Merging is opt-in: only classes whose enhancement declares a `groupSummary` are folded
+ * together, because that headline is the only honest thing to title a merged row with.
+ * Without one the row would show the newest alert's own text - naming one object while
+ * standing for several, and dismissing all of them. Those classes keep the old behaviour
+ * of merging byte-identical duplicates only, and a per-object class added to the registry
+ * later cannot inherit merging by accident.
+ *
  * The level and the page the alert points at are part of the key so that alert classes
  * with conditional enhancements (boot pool vs data pool capacity, for example) are not
  * folded into a single entry that would link to the wrong page.
- *
- * `klass` is the grouping unit; `key` is only a fallback for alerts that arrive without one.
  */
 export function getAlertConsolidationKey(alert: Alert & EnhancedAlert): string {
+  if (!alert.groupSummary) {
+    return `key|${alert.key}`;
+  }
+
   const menuPath = alert.bannerMenuPath ?? alert.relatedMenuPath ?? [];
-  return [alert.klass || alert.key, alert.level, menuPath.join('/')].join('|');
+  return ['class', alert.klass, alert.level, menuPath.join('/')].join('|');
 }
 
 /**
