@@ -164,12 +164,14 @@ describe('AlertsPanelComponent', () => {
     expect(unreadAlertComponents[0].alert).toEqual({
       ...unreadAlerts[1],
       duplicateCount: 1,
+      objectCount: 1,
       allIds: [unreadAlerts[1].id],
       category: SmartAlertCategory.System,
     });
     expect(unreadAlertComponents[1].alert).toEqual({
       ...unreadAlerts[0],
       duplicateCount: 1,
+      objectCount: 1,
       allIds: [unreadAlerts[0].id],
       category: SmartAlertCategory.System,
     });
@@ -186,12 +188,14 @@ describe('AlertsPanelComponent', () => {
     expect(dismissedAlertComponents[0].alert).toEqual({
       ...dismissedAlerts[0],
       duplicateCount: 1,
+      objectCount: 1,
       allIds: [dismissedAlerts[0].id],
       category: SmartAlertCategory.System,
     });
     expect(dismissedAlertComponents[1].alert).toEqual({
       ...dismissedAlerts[1],
       duplicateCount: 1,
+      objectCount: 1,
       allIds: [dismissedAlerts[1].id],
       category: SmartAlertCategory.System,
     });

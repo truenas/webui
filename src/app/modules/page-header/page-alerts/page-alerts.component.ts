@@ -27,12 +27,13 @@ export interface PageAlertView {
    * same kind arrives, which would collapse a banner the user had expanded.
    */
   expansionKey: string;
-  /** DOM id of the region the toggle controls, for its `aria-controls`. */
-  expandableId: string;
   cssClass: string;
   icon: string;
   duplicateCount: number;
+  /** More than one alert instance, which is what the count badge reports. */
   hasDuplicates: boolean;
+  /** More than one object, which is what decides the headline and the detail list. */
+  hasMultipleObjects: boolean;
   duplicateTooltip: string;
   summary: string;
   fullMessage: string;
@@ -53,19 +54,6 @@ function getSeverityOrder(level: AlertLevel): number {
     return 0;
   }
   return level === AlertLevel.Warning ? 1 : 2;
-}
-
-/**
- * Consolidation keys carry JSON and path separators, and an `aria-controls` IDREF cannot
- * contain whitespace. Replacing the unsafe runs would be lossy - `tank/foo` and `tank.foo`
- * would collapse onto the same id - so the key is hashed instead.
- */
-function toDomId(expansionKey: string): string {
-  let hash = 5381;
-  for (let index = 0; index < expansionKey.length; index++) {
-    hash = ((hash << 5) + hash + expansionKey.charCodeAt(index)) >>> 0;
-  }
-  return `alert-content-${hash.toString(36)}`;
 }
 
 /**
@@ -167,23 +155,22 @@ export class PageAlertsComponent {
 
   private toView(alert: AlertWithDuplicates): PageAlertView {
     const hasDuplicates = alert.duplicateCount > 1;
-    const expansionKey = getAlertConsolidationKey(alert);
     const summary = getConsolidatedSummary(alert, this.translate);
     const detailMessages = getConsolidatedDetailMessages(alert);
 
     return {
-      expansionKey,
-      expandableId: toDomId(expansionKey),
+      expansionKey: getAlertConsolidationKey(alert),
       cssClass: this.getAlertClass(alert.level),
       icon: this.getAlertIcon(alert.level),
       duplicateCount: alert.duplicateCount,
       hasDuplicates,
+      hasMultipleObjects: alert.objectCount > 1,
       duplicateTooltip: this.translate.instant('{count} system-wide instances of this alert', {
         count: alert.duplicateCount,
       }),
       summary,
       fullMessage: alert.formatted,
-      hasDetails: hasDuplicates
+      hasDetails: detailMessages.length > 0
         || hasAlertDetails(alert.formatted)
         || Boolean(alert.contextualHelp)
         || Boolean(alert.documentationUrl),

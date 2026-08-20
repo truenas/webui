@@ -62,14 +62,18 @@ export class AlertComponent implements OnChanges {
   readonly isHaLicensed = input<boolean>();
   readonly showActions = input<boolean>(true);
 
+  /** More than one alert instance, which is what the count badge and Dismiss All report. */
   protected readonly hasDuplicates = computed(() => this.alert().duplicateCount > 1);
+
+  /** More than one object, which is what decides the headline and the detail list. */
+  protected readonly hasMultipleObjects = computed(() => this.alert().objectCount > 1);
 
   protected readonly duplicateCount = computed(() => this.alert().duplicateCount);
 
   protected isCollapsed = signal<boolean>(true);
   protected showContextHelp = signal<boolean>(false);
 
-  // `summary` caches a translated string, so it has to re-run on a language switch.
+  // The computeds below cache translated strings, so they have to re-run on a language switch.
   private langChange = toSignal(this.translate.onLangChange, { initialValue: null });
 
   /**
@@ -92,7 +96,7 @@ export class AlertComponent implements OnChanges {
    * headline and lists its members in `detailMessages`.
    */
   protected readonly displayedMessage = computed(() => {
-    if (this.isCollapsed() || this.hasDuplicates()) {
+    if (this.isCollapsed() || this.hasMultipleObjects()) {
       return this.summary();
     }
     return this.alert().formatted;
@@ -105,7 +109,7 @@ export class AlertComponent implements OnChanges {
   protected readonly expandableId = computed(() => `alert-expandable-${this.alert().id}`);
 
   protected readonly isExpandable = computed(() => {
-    return this.hasDuplicates() || hasAlertDetails(this.alert().formatted);
+    return this.hasMultipleObjects() || hasAlertDetails(this.alert().formatted);
   });
 
   protected readonly requiredRoles = [Role.AlertListWrite];
@@ -123,15 +127,17 @@ export class AlertComponent implements OnChanges {
   }
 
   readonly levelLabel = computed(() => {
+    this.langChange();
     const levelLabel = alertLevelLabels.get(this.alert().level) || this.alert().level;
     return this.translate.instant(levelLabel);
   });
 
   readonly enhancedAlert = computed<Alert & EnhancedAlert>(() => {
-    return this.smartAlertService.enhanceAlert(this.alert(), { isConsolidated: this.hasDuplicates() });
+    return this.smartAlertService.enhanceAlert(this.alert(), { isConsolidated: this.hasMultipleObjects() });
   });
 
   protected readonly dismissButtonText = computed(() => {
+    this.langChange();
     if (this.hasDuplicates()) {
       return this.translate.instant('Dismiss All ({count})', { count: this.duplicateCount() });
     }
@@ -139,6 +145,7 @@ export class AlertComponent implements OnChanges {
   });
 
   protected readonly dismissTooltip = computed(() => {
+    this.langChange();
     if (this.hasDuplicates()) {
       return this.translate.instant('Dismiss all {count} instances', { count: this.duplicateCount() });
     }
@@ -146,6 +153,7 @@ export class AlertComponent implements OnChanges {
   });
 
   protected readonly duplicateCountTooltip = computed(() => {
+    this.langChange();
     return this.translate.instant('{count} instances of this alert', { count: this.duplicateCount() });
   });
 

@@ -31,6 +31,7 @@ const dummyAlert = {
   klass: AlertClassName.ApiKeyRevoked,
   dismissed: false,
   duplicateCount: 1,
+  objectCount: 1,
   allIds: ['79'],
 } as unknown as AlertWithDuplicates;
 
@@ -195,6 +196,7 @@ describe('AlertComponent', () => {
     spectator.setInput('alert', {
       ...dummyAlert,
       duplicateCount: 2,
+      objectCount: 2,
       allIds: ['79', '80'],
       groupedMessages: ['API key "one" was revoked', 'API key "two" was revoked'],
     } as AlertWithDuplicates);
@@ -221,6 +223,7 @@ describe('AlertComponent', () => {
     spectator.setInput('alert', {
       ...cloudBackup,
       duplicateCount: 2,
+      objectCount: 2,
       allIds: ['79', '80'],
     } as AlertWithDuplicates);
 
@@ -233,6 +236,7 @@ describe('AlertComponent', () => {
     spectator.setInput('alert', {
       ...dummyAlert,
       duplicateCount: 2,
+      objectCount: 2,
       allIds: ['79', '80'],
     } as AlertWithDuplicates);
 

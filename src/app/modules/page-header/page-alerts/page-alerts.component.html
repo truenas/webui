@@ -2,11 +2,14 @@
   <div class="page-alerts-container">
     @for (alert of sortedPageAlerts(); track alert.expansionKey) {
       @let expanded = isExpanded(alert.expansionKey);
+      <!-- The id only has to be unique within this list, which $index gives without a hash. -->
+      @let expandableId = 'alert-content-' + $index;
       <div [class]="'page-alert ' + alert.cssClass">
         <tn-icon class="alert-icon" [name]="alert.icon"></tn-icon>
         @if (alert.hasDuplicates) {
           <span
             class="duplicate-count-badge"
+            [attr.aria-label]="alert.duplicateTooltip"
             [tnTooltip]="alert.duplicateTooltip"
           >
             {{ alert.duplicateCount }}
@@ -20,12 +23,12 @@
             -->
             <div
               class="alert-expandable"
-              [attr.id]="alert.expandableId"
+              [attr.id]="expandableId"
               [attr.aria-live]="'polite'"
             >
               <div
                 class="alert-message"
-                [innerHTML]="expanded && !alert.hasDuplicates ? alert.fullMessage : alert.summary"
+                [innerHTML]="expanded && !alert.hasMultipleObjects ? alert.fullMessage : alert.summary"
               ></div>
               @if (expanded && alert.hasExpandedContent) {
                 <div class="alert-details">
@@ -53,7 +56,7 @@
                 type="button"
                 class="toggle-btn"
                 [attr.aria-expanded]="expanded"
-                [attr.aria-controls]="alert.expandableId"
+                [attr.aria-controls]="expandableId"
                 (click)="toggleExpansion(alert.expansionKey)"
               >
                 {{ (expanded ? 'Show Less' : 'Show More') | translate }}

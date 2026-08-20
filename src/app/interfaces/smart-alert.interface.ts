@@ -185,6 +185,13 @@ export interface EnhancedAlert {
 export type ConsolidatedAlert<T> = T & {
   /** Number of alerts represented by this entry. */
   duplicateCount: number;
+  /**
+   * Number of distinct objects the entry covers, i.e. alerts with distinct keys.
+   * Lower than `duplicateCount` when one object reported the same problem more than once -
+   * an HA appliance raises the same alert from both controllers. Group headlines are
+   * phrased in terms of objects ("{count} pools"), so they count this, not instances.
+   */
+  objectCount: number;
   /** Ids of every alert in the group, so a single dismiss clears all of them. */
   allIds: string[];
   /**

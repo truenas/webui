@@ -16,6 +16,7 @@
       @if (hasDuplicates()) {
         <span
           class="duplicate-count-badge"
+          [attr.aria-label]="duplicateCountTooltip()"
           [tnTooltip]="duplicateCountTooltip()"
         >
           {{ duplicateCount() }}

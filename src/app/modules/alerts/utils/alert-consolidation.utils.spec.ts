@@ -2,7 +2,9 @@ import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert } from 'app/interfaces/smart-alert.interface';
-import { consolidateAlerts, getAlertConsolidationKey } from 'app/modules/alerts/utils/alert-consolidation.utils';
+import {
+  consolidateAlerts, getAlertConsolidationKey, getConsolidatedDetailMessages, getConsolidatedSummary,
+} from 'app/modules/alerts/utils/alert-consolidation.utils';
 
 function makeAlert(overrides: Partial<Alert & EnhancedAlert>): Alert & EnhancedAlert {
   return {
@@ -120,6 +122,23 @@ describe('alert consolidation utils', () => {
       expect(consolidateAlerts(duplicates)).toHaveLength(1);
     });
 
+    // An HA appliance raises the same alert from both controllers: same key, different id.
+    const oneObjectTwice = [
+      makeAlert({
+        id: 'a', key: 'pool-a', node: 'Controller A', formatted: "Pool 'a' is degraded",
+      }),
+      makeAlert({
+        id: 'b', key: 'pool-a', node: 'Controller B', formatted: "Pool 'a' is degraded",
+      }),
+    ];
+
+    it('counts instances and objects separately', () => {
+      const [consolidated] = consolidateAlerts(oneObjectTwice);
+
+      expect(consolidated.duplicateCount).toBe(2);
+      expect(consolidated.objectCount).toBe(1);
+    });
+
     it('does not mix alerts of different classes', () => {
       const mixed = [
         makeAlert({ id: '1', klass: AlertClassName.PoolUpgraded }),
@@ -127,6 +146,34 @@ describe('alert consolidation utils', () => {
       ];
 
       expect(consolidateAlerts(mixed)).toHaveLength(2);
+    });
+  });
+
+  describe('getConsolidatedSummary', () => {
+    const translate = { instant: jest.fn((key: string, params: { count: number }) => `${params.count} pools`) };
+
+    beforeEach(() => translate.instant.mockClear());
+
+    it('counts objects, not instances, so one object reported twice is not "2 pools"', () => {
+      const [consolidated] = consolidateAlerts([
+        makeAlert({ id: 'a', key: 'pool-a', formatted: "Pool 'a' is degraded" }),
+        makeAlert({ id: 'b', key: 'pool-a', formatted: "Pool 'a' is degraded" }),
+      ]);
+
+      const summary = getConsolidatedSummary(consolidated, translate as never);
+
+      expect(translate.instant).not.toHaveBeenCalled();
+      expect(summary).toBe("Pool 'a' is degraded");
+      expect(getConsolidatedDetailMessages(consolidated)).toEqual([]);
+    });
+
+    it('uses the group headline once the entry covers several objects', () => {
+      const [consolidated] = consolidateAlerts([
+        makeAlert({ id: 'a', key: 'pool-a', formatted: "Pool 'a' is degraded" }),
+        makeAlert({ id: 'b', key: 'pool-b', formatted: "Pool 'b' is degraded" }),
+      ]);
+
+      expect(getConsolidatedSummary(consolidated, translate as never)).toBe('2 pools');
     });
   });
 });

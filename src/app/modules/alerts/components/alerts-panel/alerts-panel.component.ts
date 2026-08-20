@@ -83,6 +83,10 @@ export class AlertsPanelComponent implements OnInit {
   protected readonly cancelIcon = tnIconMarker('close-circle', 'mdi');
   protected readonly bellIcon = tnIconMarker('bell-outline', 'mdi');
 
+  // The button-label computeds below cache translated strings, so they have to re-run
+  // on a language switch.
+  private langChange = toSignal(this.translate.onLangChange, { initialValue: null });
+
   // Severity filter
   protected severityFilter = signal<'all' | 'critical' | 'warning' | 'info' | 'dismissed'>('all');
 
@@ -218,6 +222,7 @@ export class AlertsPanelComponent implements OnInit {
    * Get text for "Dismiss All" button based on current filter
    */
   protected dismissAllButtonText = computed(() => {
+    this.langChange();
     const filter = this.severityFilter();
     switch (filter) {
       case 'critical':
@@ -235,6 +240,7 @@ export class AlertsPanelComponent implements OnInit {
    * Get text for "Re-Open All" button based on current filter
    */
   protected reopenAllButtonText = computed(() => {
+    this.langChange();
     const filter = this.severityFilter();
     switch (filter) {
       case 'critical':

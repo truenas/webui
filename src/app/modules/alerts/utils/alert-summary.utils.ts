@@ -10,13 +10,6 @@ export const maxAlertSummaryLength = 120;
  */
 const minAlertSummaryLength = 40;
 
-/**
- * A sentence terminator, ignoring the dot that closes a single-letter token so
- * abbreviations ("e.g.", "U.S.") don't cut the summary short. Digits are deliberately
- * not excluded: a period after one almost always ends a sentence ("...for disk sda1.").
- */
-const sentenceEnd = /(?<!\b[A-Za-z])[.!?](?=\s|$)/g;
-
 const htmlTag = /<[^>]*>/g;
 const whitespace = /\s+/g;
 
@@ -38,6 +31,10 @@ function truncateAtWordBoundary(text: string, maxLength: number): string {
 /**
  * Reduces an alert message to a single concise line: its first sentence, or a
  * word-boundary truncation when even that is too long.
+ *
+ * A sentence terminator ignores the dot that closes a single-letter token, so
+ * abbreviations ("e.g.", "U.S.") don't cut the summary short. Digits are deliberately
+ * not excluded: a period after one almost always ends a sentence ("...for disk sda1.").
  */
 export function getAlertSummary(message: string): string {
   const text = stripAlertMarkup(message);
@@ -45,8 +42,11 @@ export function getAlertSummary(message: string): string {
     return '';
   }
 
+  // Built per call: a module-scoped /g regex carries `lastIndex` between calls, and the
+  // `break` below would leave it pointing mid-string for whoever scans next.
+  const sentenceEnd = /(?<!\b[A-Za-z])[.!?](?=\s|$)/g;
+
   let summary = text;
-  sentenceEnd.lastIndex = 0;
   let match = sentenceEnd.exec(text);
   while (match) {
     const sentenceLength = match.index + 1;

@@ -52,6 +52,7 @@ export function consolidateAlerts<T extends Alert & EnhancedAlert>(alerts: T[]):
     return {
       ...representative,
       duplicateCount: group.length,
+      objectCount: new Set(group.map((alert) => alert.key)).size,
       allIds: group.map((alert) => alert.id),
       // Left out for single alerts so consumers can fall back to the alert's own message.
       // `uniq`: alerts of one class about the same object repeat their text verbatim, and
@@ -68,20 +69,22 @@ export function consolidateAlerts<T extends Alert & EnhancedAlert>(alerts: T[]):
  * Shared by the page banners and the alerts dropdown so the two cannot drift apart.
  */
 export function getConsolidatedSummary(alert: AlertWithDuplicates, translate: TranslateService): string {
-  if (alert.duplicateCount > 1 && alert.groupSummary) {
-    return translate.instant(alert.groupSummary, { count: alert.duplicateCount });
+  // Counted in objects, not instances: the headlines read "{count} pools", and one pool
+  // reporting twice (both HA controllers) is still one pool.
+  if (alert.objectCount > 1 && alert.groupSummary) {
+    return translate.instant(alert.groupSummary, { count: alert.objectCount });
   }
   return getAlertSummary(alert.formatted);
 }
 
 /**
- * Messages listed under the headline, one per consolidated alert.
+ * Messages listed under the headline, one per object the entry covers.
  *
- * Empty for a single alert: it expands in place, so listing its message here would repeat
- * the opening sentence already shown as the headline.
+ * Empty when the entry covers a single object: it expands in place, so listing its message
+ * here would repeat the opening sentence already shown as the headline.
  */
 export function getConsolidatedDetailMessages(alert: AlertWithDuplicates): string[] {
-  if (alert.duplicateCount <= 1) {
+  if (alert.objectCount <= 1) {
     return [];
   }
   return alert.groupedMessages ?? [alert.formatted];
