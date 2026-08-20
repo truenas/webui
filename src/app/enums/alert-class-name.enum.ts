@@ -115,6 +115,8 @@ export enum AlertClassName {
   PoolUsbDisks = 'PoolUSBDisks',
   QuotaWarning = 'QuotaWarning',
   ScrubPaused = 'ScrubPaused',
+  TierSpecialVdevWarning = 'TierSpecialVdevWarning',
+  TierSpecialVdevCritical = 'TierSpecialVdevCritical',
   SnapshotTotalCount = 'SnapshotTotalCount',
   SnapshotCount = 'SnapshotCount',
 
@@ -155,6 +157,8 @@ export enum AlertClassName {
   ScrubStarted = 'ScrubStarted',
   SnapshotFailed = 'SnapshotFailed',
   TaskLocked = 'TaskLocked',
+  TierJobError = 'TierJobError',
+  TierJobComplete = 'TierJobComplete',
   VmwareLoginFailed = 'VMWareLoginFailed',
   VmwareSnapshotDeleteFailed = 'VMWareSnapshotDeleteFailed',
 

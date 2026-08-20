@@ -62,6 +62,11 @@ export interface SmartAlertEnhancement {
   // Falls back to relatedMenuPath when omitted.
   bannerMenuPath?: string[];
 
+  // Additional menu paths that should surface the badge and the banner alongside
+  // relatedMenuPath. Use for alerts that span two feature areas, e.g. ZFS tiering
+  // alerts are raised against a pool (Storage) but are acted on per-dataset (Datasets).
+  extraMenuPaths?: string[][];
+
   // Visual enhancements
   customIcon?: string;
   severityScore?: number; // 0-100 for prioritization
@@ -152,6 +157,7 @@ export interface EnhancedAlert {
   documentationUrl?: string;
   relatedMenuPath?: string[];
   bannerMenuPath?: string[];
+  extraMenuPaths?: string[][];
   customIcon?: string;
   severityScore?: number;
 }
