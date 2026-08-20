@@ -1,5 +1,9 @@
 @import 'mixins/tier-status';
 
+:host {
+  @include tier-dialog-size;
+}
+
 // Tighten the title's line box and center its items so the small status pill
 // lines up with the large title text (the default MDC title line-height is much
 // taller than the glyphs, which left the pill sitting high).

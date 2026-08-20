@@ -1,7 +1,7 @@
+@import 'mixins/tier-status';
+
 :host {
-  display: block;
-  min-width: min(360px, 100%);
-  max-width: min(420px, 90vw);
+  @include tier-dialog-size;
 }
 
 .dataset-name {
@@ -34,7 +34,9 @@
 
 .tier-change {
   display: flex;
-  justify-content: center;
+  // Left-aligned like every other row in the body (Dataset, the checkbox, the
+  // rewrite-size note) - centering left the chips floating mid-dialog.
+  justify-content: flex-start;
   align-items: flex-start;
   gap: 12px;
   margin-bottom: 16px;
