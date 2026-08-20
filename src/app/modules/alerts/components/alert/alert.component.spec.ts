@@ -190,6 +190,28 @@ describe('AlertComponent', () => {
     expect(details).toEqual(['API key "one" was revoked', 'API key "two" was revoked']);
   });
 
+  it('drops object-scoped actions on a consolidated alert', () => {
+    const cloudBackup = {
+      ...dummyAlert,
+      klass: AlertClassName.CloudBackupTaskFailed,
+      formatted: 'Cloud Backup Task "Nightly" failed.',
+      args: [{ id: 7, name: 'Nightly' }],
+    } as unknown as AlertWithDuplicates;
+
+    spectator.setInput('alert', cloudBackup);
+    expect(spectator.query(byText('Rerun Cloud Backup'))).toExist();
+
+    spectator.setInput('alert', {
+      ...cloudBackup,
+      duplicateCount: 2,
+      allIds: ['79', '80'],
+    } as AlertWithDuplicates);
+
+    // Rerunning would only cover the newest task in the group.
+    expect(spectator.query(byText('Rerun Cloud Backup'))).not.toExist();
+    expect(spectator.query(byText('View Cloud Backup'))).toExist();
+  });
+
   it('dismisses every consolidated alert at once', () => {
     spectator.setInput('alert', {
       ...dummyAlert,

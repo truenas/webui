@@ -11,10 +11,11 @@ export const maxAlertSummaryLength = 120;
 const minAlertSummaryLength = 40;
 
 /**
- * A sentence terminator that is not part of a version number ("25.04.") or an
- * initialism ("U.S."), so those don't cut the summary short.
+ * A sentence terminator, ignoring the dot that closes a single-letter token so
+ * abbreviations ("e.g.", "U.S.") don't cut the summary short. Digits are deliberately
+ * not excluded: a period after one almost always ends a sentence ("...for disk sda1.").
  */
-const sentenceEnd = /(?<![A-Z0-9])[.!?](?=\s|$)/g;
+const sentenceEnd = /(?<!\b[A-Za-z])[.!?](?=\s|$)/g;
 
 const htmlTag = /<[^>]*>/g;
 const whitespace = /\s+/g;
@@ -65,7 +66,9 @@ export function getAlertSummary(message: string): string {
 
 /**
  * True when the summary leaves something out, i.e. the full message is worth expanding.
+ * Compared against the message with only its whitespace normalized, so stripped markup
+ * counts as hidden detail rather than being dropped with no way to get it back.
  */
 export function hasAlertDetails(message: string): boolean {
-  return getAlertSummary(message) !== stripAlertMarkup(message);
+  return getAlertSummary(message) !== (message || '').replace(whitespace, ' ').trim();
 }

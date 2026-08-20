@@ -7,7 +7,11 @@ export type ConsolidatedAlert<T> = T & {
   duplicateCount: number;
   /** Ids of every alert in the group, so a single dismiss clears all of them. */
   allIds: string[];
-  /** Full messages of every alert in the group, newest first. Only set for real groups. */
+  /**
+   * Distinct messages in the group, newest first. Only set for real groups.
+   * Duplicates are collapsed, so this can be shorter than `duplicateCount`:
+   * the count is instances, this is the messages they carry.
+   */
   groupedMessages?: string[];
 };
 
@@ -52,6 +56,8 @@ export function consolidateAlerts<T extends Alert & EnhancedAlert>(alerts: T[]):
       duplicateCount: group.length,
       allIds: group.map((alert) => alert.id),
       // Left out for single alerts so consumers can fall back to the alert's own message.
+      // `uniq`: alerts of one class about the same object repeat their text verbatim, and
+      // listing the same line N times says nothing. The badge still reports N instances.
       ...(group.length > 1 ? { groupedMessages: uniq(newestFirst.map((alert) => alert.formatted)) } : {}),
     };
   });

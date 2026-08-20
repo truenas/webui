@@ -23,11 +23,7 @@
       }
     </div>
   }
-  <h4
-    class="alert-message"
-    [class.collapsed]="isCollapsed()"
-    [innerHTML]="summary()"
-  ></h4>
+  <h4 class="alert-message" [innerHTML]="summary()"></h4>
   @if (isExpandable() && !isCollapsed()) {
     <div class="alert-details">
       @for (message of detailMessages(); track message) {

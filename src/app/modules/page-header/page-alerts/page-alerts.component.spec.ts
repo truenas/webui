@@ -81,7 +81,7 @@ describe('PageAlertsComponent', () => {
     dismissed: false,
     datetime: { $date: index + 1 },
     relatedMenuPath: ['storage'],
-    groupSummary: '{count} pools can be upgraded',
+    groupSummary: '{count, plural, other {# pools can be upgraded}}',
   })) as unknown as (Alert & EnhancedAlert)[];
 
   const alertsSignal = signal([
@@ -231,9 +231,7 @@ describe('PageAlertsComponent', () => {
   it('shortens a long message to its first sentence', async () => {
     await setUrl('/storage');
 
-    expect(renderedMessages()).not.toContain(
-      expect.stringContaining('rolling the system back'),
-    );
+    expect(renderedMessages().some((message) => message.includes('rolling the system back'))).toBe(false);
   });
 
   it('does not show a bannerMenuPath-scoped alert on parent routes', async () => {

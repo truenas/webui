@@ -43,13 +43,26 @@ export interface SmartAlertAction {
   handler?: () => void;
 }
 
+/**
+ * Context that changes how an alert is enhanced.
+ */
+export interface EnhanceAlertOptions {
+  /**
+   * The alert stands for several alerts of the same class about different objects.
+   * Actions scoped to a single object - task reruns, routes and highlights resolved from
+   * one alert's args - are dropped, because they would silently cover one member only.
+   */
+  isConsolidated?: boolean;
+}
+
 export interface SmartAlertEnhancement {
   category: SmartAlertCategory;
   actions: SmartAlertAction[];
 
   /**
    * Concise headline used when several alerts of this class are consolidated into one entry.
-   * `{count}` is substituted with the number of alerts in the group.
+   * An ICU plural over `count`, so locales with more than one plural form can translate it -
+   * only the `other` form is written here, since the headline never renders below 2.
    * When omitted the newest alert's own summary is shown instead.
    */
   groupSummary?: string;

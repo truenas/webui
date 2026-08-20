@@ -15,6 +15,21 @@ describe('alert summary utils', () => {
       expect(getAlertSummary('CPU is on fire')).toBe('CPU is on fire');
     });
 
+    it('ends a sentence after a device name that ends in a digit', () => {
+      const message = 'SMART error (Currently unreadable sectors) detected on host truenas for disk sda1. '
+        + 'Replace the disk as soon as possible.';
+
+      expect(getAlertSummary(message))
+        .toBe('SMART error (Currently unreadable sectors) detected on host truenas for disk sda1.');
+    });
+
+    it('does not cut a sentence on an abbreviation', () => {
+      const message = 'The pool holds datasets shared over SMB, NFS, e.g. the media share, '
+        + 'and every one of them is currently unavailable.';
+
+      expect(getAlertSummary(message)).toBe(message);
+    });
+
     it('does not cut a sentence on a version number', () => {
       expect(getAlertSummary('An update to TrueNAS 25.04.1 is available for this system'))
         .toBe('An update to TrueNAS 25.04.1 is available for this system');
@@ -51,6 +66,14 @@ describe('alert summary utils', () => {
 
     it('is false when the summary is the whole message', () => {
       expect(hasAlertDetails('CPU is on fire')).toBe(false);
+    });
+
+    it('is true for a short message whose markup the summary drops', () => {
+      expect(hasAlertDetails('<b>Pool</b> is degraded')).toBe(true);
+    });
+
+    it('is not triggered by whitespace alone', () => {
+      expect(hasAlertDetails('Pool  is\n degraded')).toBe(false);
     });
   });
 

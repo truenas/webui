@@ -106,7 +106,7 @@ export class AlertComponent implements OnChanges {
   });
 
   readonly enhancedAlert = computed<Alert & EnhancedAlert>(() => {
-    return this.smartAlertService.enhanceAlert(this.alert());
+    return this.smartAlertService.enhanceAlert(this.alert(), { isConsolidated: this.hasDuplicates() });
   });
 
   protected readonly dismissButtonText = computed(() => {

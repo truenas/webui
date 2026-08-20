@@ -147,6 +147,31 @@ describe('SmartAlertService', () => {
         { queryParams: undefined },
       );
     });
+
+    describe('consolidated entries', () => {
+      it('keeps object-scoped actions when the alert stands for itself', () => {
+        const enhanced = spectator.service.enhanceAlert(cloudBackupAlert);
+
+        expect(enhanced.actions?.map((action) => action.label)).toContain('Rerun Cloud Backup');
+      });
+
+      it('drops task reruns, which would only act on the newest alert in the group', () => {
+        const enhanced = spectator.service.enhanceAlert(cloudBackupAlert, { isConsolidated: true });
+
+        expect(enhanced.actions?.map((action) => action.label)).not.toContain('Rerun Cloud Backup');
+        expect(enhanced.actions?.map((action) => action.label)).toContain('View Cloud Backup');
+      });
+
+      it('drops the highlight fragment, which would single out one alert\'s object', () => {
+        const enhanced = spectator.service.enhanceAlert(snapshotAlert, { isConsolidated: true });
+        const navigateAction = enhanced.actions?.find(
+          (action) => action.type === SmartAlertActionType.Navigate,
+        );
+
+        expect(spectator.service.enhanceAlert(snapshotAlert).actions?.[0].fragment).toBeDefined();
+        expect(navigateAction?.fragment).toBeUndefined();
+      });
+    });
   });
 
   describe('handleRunTask', () => {
