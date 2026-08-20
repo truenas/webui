@@ -172,6 +172,21 @@ describe('AlertComponent', () => {
     expect(spectator.query(byText('Collapse'))).toExist();
   });
 
+  it('points the toggle at the region that actually changes', () => {
+    const longMessage = 'Pool is degraded and needs attention right away. '
+      + 'Replace the failed disk and run a scrub afterwards.';
+    spectator.setInput('alert', { ...dummyAlert, formatted: longMessage });
+    spectator.click(spectator.query(byText('View More'))!);
+
+    const toggle = spectator.query(byText('Collapse'))!;
+    const controlled = spectator.query(`#${toggle.getAttribute('aria-controls')}`);
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    // A single alert expands in place, so the revealed text lives in the message line.
+    expect(controlled).toHaveDescendant('.alert-message');
+    expect(controlled!.textContent).toContain('Replace the failed disk');
+  });
+
   it('does not offer View More when the message is already short', () => {
     expect(spectator.query(byText('View More'))).not.toExist();
   });

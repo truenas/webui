@@ -248,6 +248,34 @@ describe('AlertsPanelComponent', () => {
     expect(spectator.queryAll('.filter-button .count')[0]).toHaveText('3');
   });
 
+  it('keeps the same row when a newer alert joins its group', () => {
+    const poolAlert = {
+      id: 'pool-a',
+      key: 'pool-a-key',
+      klass: AlertClassName.PoolUpgraded,
+      dismissed: false,
+      formatted: "Pool 'a' can be upgraded",
+      datetime: { $date: 1641811015 },
+      level: AlertLevel.Warning,
+    } as Alert;
+    spectator.inject(Store).dispatch(alertsLoaded({ alerts: [poolAlert] }));
+    spectator.detectChanges();
+    const before = alertPanel.unreadAlertComponents[0];
+
+    // Consolidation makes the newer alert the representative, changing the entry's id.
+    // Rows track the consolidation key so Angular reuses the component instead of
+    // rebuilding it and resetting whether the user had expanded it.
+    spectator.inject(Store).dispatch(alertsLoaded({
+      alerts: [poolAlert, {
+        ...poolAlert, id: 'pool-b', key: 'pool-b-key', datetime: { $date: 1641811020 },
+      }],
+    }));
+    spectator.detectChanges();
+
+    expect(alertPanel.unreadAlertComponents).toHaveLength(1);
+    expect(alertPanel.unreadAlertComponents[0]).toBe(before);
+  });
+
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {
     spectator.click(alertPanel.dismissAllButton!);
 

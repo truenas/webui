@@ -1,6 +1,8 @@
+import { TranslateService } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import { Alert } from 'app/interfaces/alert.interface';
-import { ConsolidatedAlert, EnhancedAlert } from 'app/interfaces/smart-alert.interface';
+import { AlertWithDuplicates, ConsolidatedAlert, EnhancedAlert } from 'app/interfaces/smart-alert.interface';
+import { getAlertSummary } from 'app/modules/alerts/utils/alert-summary.utils';
 
 /**
  * Alerts consolidate when they report the same kind of problem, even about different
@@ -57,4 +59,30 @@ export function consolidateAlerts<T extends Alert & EnhancedAlert>(alerts: T[]):
       ...(group.length > 1 ? { groupedMessages: uniq(newestFirst.map((alert) => alert.formatted)) } : {}),
     };
   });
+}
+
+/**
+ * Headline for a consolidated entry: the class's group summary when it stands for several
+ * alerts, otherwise the first sentence of the alert's own message.
+ *
+ * Shared by the page banners and the alerts dropdown so the two cannot drift apart.
+ */
+export function getConsolidatedSummary(alert: AlertWithDuplicates, translate: TranslateService): string {
+  if (alert.duplicateCount > 1 && alert.groupSummary) {
+    return translate.instant(alert.groupSummary, { count: alert.duplicateCount });
+  }
+  return getAlertSummary(alert.formatted);
+}
+
+/**
+ * Messages listed under the headline, one per consolidated alert.
+ *
+ * Empty for a single alert: it expands in place, so listing its message here would repeat
+ * the opening sentence already shown as the headline.
+ */
+export function getConsolidatedDetailMessages(alert: AlertWithDuplicates): string[] {
+  if (alert.duplicateCount <= 1) {
+    return [];
+  }
+  return alert.groupedMessages ?? [alert.formatted];
 }

@@ -23,22 +23,28 @@
       }
     </div>
   }
-  <h4 class="alert-message" [innerHTML]="displayedMessage()"></h4>
-  @if (isExpandable()) {
-    <div class="alert-details" [attr.id]="'alert-details-' + alert().id">
-      @if (!isCollapsed()) {
+  <!--
+    The whole expandable region, not just the details block: a single alert expands in
+    place, so the text the toggle reveals is the message line itself.
+  -->
+  <div class="alert-expandable" [attr.id]="expandableId()">
+    <h4 class="alert-message" [innerHTML]="displayedMessage()"></h4>
+    @if (!isCollapsed() && detailMessages().length) {
+      <div class="alert-details">
         @for (message of detailMessages(); track message) {
           <div class="alert-detail" [innerHTML]="message"></div>
         }
-      }
-    </div>
+      </div>
+    }
+  </div>
+  @if (isExpandable()) {
     <button
       type="button"
       class="expand-collapse-button"
       tnTestIdType="button"
       [tnTestId]="[alert().key, 'expand']"
       [attr.aria-expanded]="!isCollapsed()"
-      [attr.aria-controls]="'alert-details-' + alert().id"
+      [attr.aria-controls]="expandableId()"
       [class.collapsed]="isCollapsed()"
       (click)="toggleCollapse()"
     >

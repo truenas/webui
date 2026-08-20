@@ -101,6 +101,20 @@ describe('PageAlertsComponent', () => {
     relatedMenuPath: ['storage'],
   })) as unknown as (Alert & EnhancedAlert)[];
 
+  // Single alert, long enough to be expandable, on the storage page.
+  const longStorageAlert = {
+    id: 'long-storage',
+    uuid: 'long-storage',
+    key: 'long-storage-key',
+    klass: AlertClassName.Smartd,
+    level: AlertLevel.Warning,
+    formatted: 'Storage pool scrub found errors that need attention. '
+      + 'Replace the failing disk and start a new scrub once it is done.',
+    dismissed: false,
+    datetime: { $date: 1 },
+    relatedMenuPath: ['storage'],
+  } as unknown as Alert & EnhancedAlert;
+
   const alertsSignal = signal([
     lockedShareAlert,
     rootLoginAlert,
@@ -109,6 +123,7 @@ describe('PageAlertsComponent', () => {
     apiKeyAlert,
     ...poolUpgradeAlerts,
     ...smartdAlerts,
+    longStorageAlert,
   ]);
 
   const createComponent = createComponentFactory({
@@ -307,6 +322,33 @@ describe('PageAlertsComponent', () => {
     const banner = bannerWith('4 pools can be upgraded');
     expect(banner.querySelector('.toggle-btn')).toHaveText('Show Less');
     expect(banner.querySelectorAll('.alert-detail')).toHaveLength(4);
+  });
+
+  it('points the toggle at the region that actually changes', async () => {
+    await setUrl('/storage');
+    const banner = bannerWith('Storage pool scrub found errors that need attention.');
+    spectator.click(banner.querySelector('.toggle-btn') as HTMLElement);
+
+    const toggle = bannerWith('Storage pool scrub found errors').querySelector('.toggle-btn')!;
+    const controlled = spectator.query(`#${toggle.getAttribute('aria-controls')}`);
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    // A single alert expands in place, so the revealed text lives in the message line.
+    expect(controlled).toHaveDescendant('.alert-message');
+    expect(controlled!.textContent).toContain('Replace the failing disk');
+  });
+
+  it('gives banners whose keys differ only by a separator distinct region ids', async () => {
+    alertsSignal.set([
+      { ...longStorageAlert, id: 'a', key: 'key|["tank/foo"]' },
+      { ...longStorageAlert, id: 'b', key: 'key|["tank.foo"]' },
+    ] as unknown as (Alert & EnhancedAlert)[]);
+    await setUrl('/storage');
+
+    const ids = spectator.queryAll('.toggle-btn').map((button) => button.getAttribute('aria-controls'));
+
+    expect(ids).toHaveLength(2);
+    expect(ids[0]).not.toBe(ids[1]);
   });
 
   it('does not show a bannerMenuPath-scoped alert on parent routes', async () => {

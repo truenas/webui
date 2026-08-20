@@ -58,11 +58,6 @@
   gap: 6px;
   margin-bottom: 6px;
   padding-left: 8px;
-
-  // Rendered while collapsed too, so `aria-controls` always points at a real element.
-  &:empty {
-    display: none;
-  }
 }
 
 .alert-detail {

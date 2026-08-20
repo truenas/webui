@@ -10,8 +10,10 @@ import { AlertWithDuplicates } from 'app/interfaces/smart-alert.interface';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { dismissAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { criticalLevels } from 'app/modules/alerts/store/alert.selectors';
-import { consolidateAlerts, getAlertConsolidationKey } from 'app/modules/alerts/utils/alert-consolidation.utils';
-import { getAlertSummary, hasAlertDetails } from 'app/modules/alerts/utils/alert-summary.utils';
+import {
+  consolidateAlerts, getAlertConsolidationKey, getConsolidatedDetailMessages, getConsolidatedSummary,
+} from 'app/modules/alerts/utils/alert-consolidation.utils';
+import { hasAlertDetails } from 'app/modules/alerts/utils/alert-summary.utils';
 import { AppState } from 'app/store';
 
 /**
@@ -25,8 +27,8 @@ export interface PageAlertView {
    * same kind arrives, which would collapse a banner the user had expanded.
    */
   expansionKey: string;
-  /** DOM id of the details region, for the toggle's `aria-controls`. */
-  detailsId: string;
+  /** DOM id of the region the toggle controls, for its `aria-controls`. */
+  expandableId: string;
   cssClass: string;
   icon: string;
   duplicateCount: number;
@@ -35,6 +37,8 @@ export interface PageAlertView {
   summary: string;
   fullMessage: string;
   hasDetails: boolean;
+  /** Whether expanding renders anything below the message line. */
+  hasExpandedContent: boolean;
   /** One entry per consolidated alert. Empty for a single alert, which expands in place. */
   detailMessages: string[];
   contextualHelp: string | undefined;
@@ -53,10 +57,15 @@ function getSeverityOrder(level: AlertLevel): number {
 
 /**
  * Consolidation keys carry JSON and path separators, and an `aria-controls` IDREF cannot
- * contain whitespace, so the key is reduced to id-safe characters.
+ * contain whitespace. Replacing the unsafe runs would be lossy - `tank/foo` and `tank.foo`
+ * would collapse onto the same id - so the key is hashed instead.
  */
 function toDomId(expansionKey: string): string {
-  return `alert-content-${expansionKey.replace(/[^\w-]+/g, '-')}`;
+  let hash = 5381;
+  for (let index = 0; index < expansionKey.length; index++) {
+    hash = ((hash << 5) + hash + expansionKey.charCodeAt(index)) >>> 0;
+  }
+  return `alert-content-${hash.toString(36)}`;
 }
 
 /**
@@ -159,11 +168,12 @@ export class PageAlertsComponent {
   private toView(alert: AlertWithDuplicates): PageAlertView {
     const hasDuplicates = alert.duplicateCount > 1;
     const expansionKey = getAlertConsolidationKey(alert);
-    const summary = this.getSummary(alert);
+    const summary = getConsolidatedSummary(alert, this.translate);
+    const detailMessages = getConsolidatedDetailMessages(alert);
 
     return {
       expansionKey,
-      detailsId: toDomId(expansionKey),
+      expandableId: toDomId(expansionKey),
       cssClass: this.getAlertClass(alert.level),
       icon: this.getAlertIcon(alert.level),
       duplicateCount: alert.duplicateCount,
@@ -177,9 +187,10 @@ export class PageAlertsComponent {
         || hasAlertDetails(alert.formatted)
         || Boolean(alert.contextualHelp)
         || Boolean(alert.documentationUrl),
-      // A single alert expands in place, so listing its message again would repeat the
-      // opening sentence already shown above.
-      detailMessages: hasDuplicates ? alert.groupedMessages ?? [alert.formatted] : [],
+      hasExpandedContent: detailMessages.length > 0
+        || Boolean(alert.contextualHelp)
+        || Boolean(alert.documentationUrl),
+      detailMessages,
       contextualHelp: alert.contextualHelp,
       documentationUrl: alert.documentationUrl,
       dismissAriaLabel: hasDuplicates
@@ -190,17 +201,6 @@ export class PageAlertsComponent {
         : this.translate.instant('Dismiss'),
       allIds: alert.allIds,
     };
-  }
-
-  /**
-   * Concise headline for the banner: the group summary when several alerts were
-   * consolidated, otherwise the first sentence of the alert's own message.
-   */
-  private getSummary(alert: AlertWithDuplicates): string {
-    if (alert.duplicateCount > 1 && alert.groupSummary) {
-      return this.translate.instant(alert.groupSummary, { count: alert.duplicateCount });
-    }
-    return getAlertSummary(alert.formatted);
   }
 
   /**

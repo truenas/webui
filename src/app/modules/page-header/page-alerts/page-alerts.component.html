@@ -14,18 +14,21 @@
         }
         <div class="alert-content-wrapper">
           <div class="alert-content">
-            <!-- A single alert expands in place; a group keeps its headline and lists members below. -->
+            <!--
+              The whole expandable region, not just the details block: a single alert
+              expands in place, so the text the toggle reveals is the message line itself.
+            -->
             <div
-              class="alert-message"
-              [innerHTML]="expanded && !alert.hasDuplicates ? alert.fullMessage : alert.summary"
-            ></div>
-            @if (alert.hasDetails) {
+              class="alert-expandable"
+              [attr.id]="alert.expandableId"
+              [attr.aria-live]="'polite'"
+            >
               <div
-                class="alert-details"
-                [attr.id]="alert.detailsId"
-                [attr.aria-live]="'polite'"
-              >
-                @if (expanded) {
+                class="alert-message"
+                [innerHTML]="expanded && !alert.hasDuplicates ? alert.fullMessage : alert.summary"
+              ></div>
+              @if (expanded && alert.hasExpandedContent) {
+                <div class="alert-details">
                   @for (message of alert.detailMessages; track message) {
                     <div class="alert-detail" [innerHTML]="message"></div>
                   }
@@ -42,13 +45,15 @@
                       {{ 'Learn More' | translate }}
                     </a>
                   }
-                }
-              </div>
+                </div>
+              }
+            </div>
+            @if (alert.hasDetails) {
               <button
                 type="button"
                 class="toggle-btn"
                 [attr.aria-expanded]="expanded"
-                [attr.aria-controls]="alert.detailsId"
+                [attr.aria-controls]="alert.expandableId"
                 (click)="toggleExpansion(alert.expansionKey)"
               >
                 {{ (expanded ? 'Show Less' : 'Show More') | translate }}

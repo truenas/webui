@@ -13,7 +13,10 @@ import { Alert } from 'app/interfaces/alert.interface';
 import { AlertWithDuplicates, EnhancedAlert } from 'app/interfaces/smart-alert.interface';
 import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
 import { alertPanelClosed, dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
-import { getAlertSummary, hasAlertDetails } from 'app/modules/alerts/utils/alert-summary.utils';
+import {
+  getConsolidatedDetailMessages, getConsolidatedSummary,
+} from 'app/modules/alerts/utils/alert-consolidation.utils';
+import { hasAlertDetails } from 'app/modules/alerts/utils/alert-summary.utils';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -77,11 +80,10 @@ export class AlertComponent implements OnChanges {
     // Read the lang-change signal so the translation below is redone on a switch.
     this.langChange();
 
-    const groupSummary = this.enhancedAlert().groupSummary;
-    if (this.hasDuplicates() && groupSummary) {
-      return this.translate.instant(groupSummary, { count: this.duplicateCount() });
-    }
-    return getAlertSummary(this.alert().formatted);
+    return getConsolidatedSummary(
+      { ...this.alert(), groupSummary: this.enhancedAlert().groupSummary },
+      this.translate,
+    );
   });
 
   /**
@@ -97,12 +99,10 @@ export class AlertComponent implements OnChanges {
   });
 
   /** Full messages revealed by "View More", one per consolidated alert. */
-  protected readonly detailMessages = computed(() => {
-    if (!this.hasDuplicates()) {
-      return [];
-    }
-    return this.alert().groupedMessages ?? [this.alert().formatted];
-  });
+  protected readonly detailMessages = computed(() => getConsolidatedDetailMessages(this.alert()));
+
+  /** DOM id of the region the toggle controls, for its `aria-controls`. */
+  protected readonly expandableId = computed(() => `alert-expandable-${this.alert().id}`);
 
   protected readonly isExpandable = computed(() => {
     return this.hasDuplicates() || hasAlertDetails(this.alert().formatted);

@@ -132,7 +132,7 @@
           <span class="category-count">{{ getCategoryCount(alerts) }}</span>
         </div>
         <div class="alert-list">
-          @for (alert of alerts; track alert.id; let last = $last) {
+          @for (alert of alerts; track trackAlert(alert); let last = $last) {
             <div
               class="alert"
               role="listitem"
@@ -167,7 +167,7 @@
           <span class="category-count">{{ getCategoryCount(alerts) }}</span>
         </div>
         <div class="alert-list">
-          @for (alert of alerts; track alert.id; let last = $last) {
+          @for (alert of alerts; track trackAlert(alert); let last = $last) {
             <div
               class="alert"
               role="listitem"

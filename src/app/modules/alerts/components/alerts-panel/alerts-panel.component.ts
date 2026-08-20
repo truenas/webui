@@ -30,7 +30,7 @@ import {
   selectDismissedAlerts,
   selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
-import { consolidateAlerts } from 'app/modules/alerts/utils/alert-consolidation.utils';
+import { consolidateAlerts, getAlertConsolidationKey } from 'app/modules/alerts/utils/alert-consolidation.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
@@ -166,6 +166,15 @@ export class AlertsPanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkHaStatus();
+  }
+
+  /**
+   * Identifies a row across refreshes. Not the alert id: consolidation picks the newest
+   * alert as the representative, so a newer group member would change it and Angular would
+   * rebuild the `ix-alert`, resetting whether the user had expanded it.
+   */
+  protected trackAlert(alert: AlertWithDuplicates): string {
+    return getAlertConsolidationKey(alert);
   }
 
   /** Number of alerts a category holds, counting every alert a consolidated entry stands for. */
