@@ -170,6 +170,20 @@ interface BaseFieldDefinition<T extends object> {
    */
   readonly?: boolean;
   /**
+   * Sibling fields whose pinned backend error this field retires when its value
+   * changes. A backend validation failure is pinned with `setErrors()` and — unlike
+   * a validator result — never re-evaluates, so an error the user is meant to answer
+   * from a DIFFERENT field would keep Save disabled forever. Name that escape hatch's
+   * target here: on every change of this field the listed controls are re-validated,
+   * which replaces the stale server verdict with their real validation state (a field
+   * that is genuinely empty-but-required goes back to saying `required`). Client-side
+   * validators are untouched.
+   *
+   * Example: the NTP form's `force` ("add this server even though it could not be
+   * reached") declares `clearsServerErrorsFor: ['address']`.
+   */
+  clearsServerErrorsFor?: (keyof T & string)[];
+  /**
    * Initial control value. Defaults per type when omitted:
    * input/textarea → '', checkbox → false, select/combobox → null
    * (multi-select → []), chips → [].

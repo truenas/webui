@@ -57,6 +57,24 @@ const arrayFieldError = new ApiCallError({
   },
 });
 
+const unreachableAddressError = new ApiCallError({
+  code: JsonRpcErrorCode.CallError,
+  message: 'Validation error',
+  data: {
+    error: 11,
+    errname: ApiErrorName.Validation,
+    extra: [
+      [
+        'ntp_server_create.address',
+        'Server could not be reached. Check "Force" to continue regardless.',
+        22,
+      ],
+    ],
+    trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+    reason: 'Test reason',
+  },
+});
+
 const formGroup = new FormGroup({
   test_control_1: new FormControl(''),
   sudo_commands_no_passwd: new FormControl([]),
@@ -75,6 +93,8 @@ describe('FormErrorHandlerService', () => {
   const elementMock = {
     scrollIntoView: jest.fn() as HTMLElement['scrollIntoView'],
     focus: jest.fn() as HTMLElement['focus'],
+    // The service looks for a native control inside the element first; an ix-* host wraps none.
+    querySelector: jest.fn((): HTMLElement | null => null) as unknown as HTMLElement['querySelector'],
   } as HTMLElement;
 
   const createService = createServiceFactory({
@@ -181,6 +201,21 @@ describe('FormErrorHandlerService', () => {
 
       expect(elementMock.scrollIntoView).toHaveBeenCalledWith(expect.objectContaining({ block: 'center' }));
       expect(elementMock.focus).toHaveBeenCalled();
+    }));
+
+    it('focuses the native control inside a tn-* component host', fakeAsync(() => {
+      // `data-control-name` sits on the tn-* component host, which carries no tabindex and so
+      // ignores focus() — the focusable element is the native control it wraps.
+      const innerInput = { focus: jest.fn() } as unknown as HTMLElement;
+      // `Once`: jest is configured to clear calls between tests, not implementations.
+      (elementMock.querySelector as jest.Mock).mockReturnValueOnce(innerInput);
+
+      spectator.service.handleValidationErrors(callError, formGroup);
+      tick();
+
+      expect(elementMock.scrollIntoView).toHaveBeenCalled();
+      expect(innerInput.focus).toHaveBeenCalled();
+      expect(elementMock.focus).not.toHaveBeenCalled();
     }));
 
     it('notifies EditableComponents through secure service', () => {
@@ -403,8 +438,11 @@ describe('FormErrorHandlerService', () => {
 
       spectator.service.handleValidationErrors(callError, formGroup);
 
+      // Also matches `data-control-name`: tn-* controls built by `<ix-form-renderer>` register with
+      // neither IxFormService nor a `formControlName` attribute (it is a property binding).
       // eslint-disable-next-line sonarjs/deprecation
-      expect(doc.querySelector).toHaveBeenCalledWith('[formControlName="test_control_1"]');
+      expect(doc.querySelector)
+        .toHaveBeenCalledWith('[formControlName="test_control_1"], [data-control-name="test_control_1"]');
     });
 
     it('warns when DOM element cannot be found', () => {
@@ -415,6 +453,50 @@ describe('FormErrorHandlerService', () => {
       spectator.service.handleValidationErrors(callError, formGroup);
 
       expect(console.warn).toHaveBeenCalledWith('Could not find DOM element for field test_control_1.');
+    });
+
+    it('shows a rendered tn-* control inline only, without duplicating it in an error modal', () => {
+      // NAS-142225: a tn-* form built by `<ix-form-renderer>` registers with neither IxFormService
+      // nor a `formControlName` attribute, so its controls used to look unrendered and every
+      // message the user could already read under the field was repeated in a modal. They are found
+      // through `data-control-name` now, which keeps the report inline.
+      jest.spyOn(spectator.inject(IxFormService), 'getElementByControlName').mockReturnValue(null);
+      jest.spyOn(spectator.inject(DOCUMENT), 'querySelector').mockReturnValue(document.createElement('input'));
+      const ntpForm = new FormGroup({ address: new FormControl('192.0.2.1') });
+
+      // The ErrorHandlerService mock is built once per factory, so call counts carry over
+      // between tests in this file — clear them to assert on this call alone.
+      const mockErrorHandler = spectator.inject(ErrorHandlerService);
+      jest.clearAllMocks();
+
+      spectator.service.handleValidationErrors(unreachableAddressError, ntpForm);
+
+      expect(ntpForm.controls.address.errors).toEqual(expect.objectContaining({
+        manualValidateError: true,
+        manualValidateErrorMsg: 'Server could not be reached. Check "Force" to continue regardless.',
+      }));
+      expect(mockErrorHandler.showErrorModal).not.toHaveBeenCalled();
+    });
+
+    it('still escalates to a modal for a control that is nowhere in the DOM', () => {
+      // A control in the form group but not rendered (behind an `@if`, or payload-only) has nowhere
+      // to show its pinned message, so the modal is the only signal the user gets.
+      jest.spyOn(spectator.inject(IxFormService), 'getElementByControlName').mockReturnValue(null);
+      jest.spyOn(spectator.inject(DOCUMENT), 'querySelector').mockReturnValue(null);
+      const ntpForm = new FormGroup({ address: new FormControl('192.0.2.1') });
+
+      const mockErrorHandler = spectator.inject(ErrorHandlerService);
+      jest.clearAllMocks();
+
+      spectator.service.handleValidationErrors(unreachableAddressError, ntpForm);
+
+      expect(mockErrorHandler.showErrorModal).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringContaining(
+            'address: Server could not be reached. Check "Force" to continue regardless.',
+          ),
+        }),
+      );
     });
   });
 

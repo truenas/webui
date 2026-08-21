@@ -7,6 +7,9 @@ import {
 } from 'app/helpers/api.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
+import {
+  ixManualValidateErrorKey, manualValidateErrorKey, manualValidateErrorMsgKey,
+} from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -157,9 +160,9 @@ export class FormErrorHandlerService {
     }
 
     control.setErrors({
-      manualValidateError: true,
-      manualValidateErrorMsg: errorMessage,
-      ixManualValidateError: { message: errorMessage },
+      [manualValidateErrorKey]: true,
+      [manualValidateErrorMsgKey]: errorMessage,
+      [ixManualValidateErrorKey]: { message: errorMessage },
     });
     control.markAsTouched();
 
@@ -167,30 +170,49 @@ export class FormErrorHandlerService {
     // Notify editable components that might contain this field
     this.notifyEditablesOfValidationError(field);
 
-    // Try to get element from IxFormService first, then fallback to querySelector
-    let element = this.formService.getElementByControlName(field);
-    if (!element && this.document?.querySelector) {
-      // Fallback: try to find element by formControlName attribute
-      const foundElement = this.document.querySelector(`[formControlName="${field}"]`);
-      element = foundElement instanceof HTMLElement ? foundElement : undefined;
-    }
-
+    // The element is wanted to scroll the message into view and focus it. Not finding it means the
+    // control is in the form group but nowhere on screen (behind an `@if`, or payload-only), so the
+    // pinned message renders nowhere and the modal is the only remaining signal — keep escalating.
+    // A rendered control is found either way, tn-* included, so this no longer duplicates a message
+    // the user can read under the field.
+    const element = this.findControlElement(field);
     if (!element) {
       console.warn(`Could not find DOM element for field ${field}.`);
       this.handleErrorFallback(fieldToDisplay, errorMessage);
       return;
     }
 
-
     if (!this.isFocusedOnError) {
       setTimeout(() => {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        element.focus();
+        // For tn-* controls `element` is the component host, which carries no tabindex and so
+        // ignores focus() — the focusable element is the native control it wraps.
+        (element.querySelector<HTMLElement>('input, textarea, select') ?? element).focus();
         this.isFocusedOnError = true;
       });
     }
   }
 
+
+  /**
+   * Locates the rendered control so the first error can be scrolled to and focused.
+   *
+   * `IxFormService` only knows ix-* controls (they register through `RegisteredControlDirective`),
+   * and `formControlName` is a property binding that leaves no attribute behind — so tn-* forms
+   * built by `<ix-form-renderer>` are found through the `data-control-name` the renderer stamps on
+   * every control instead.
+   */
+  private findControlElement(field: string): HTMLElement | undefined {
+    const registered = this.formService.getElementByControlName(field);
+    if (registered) {
+      return registered;
+    }
+    if (!this.document?.querySelector) {
+      return undefined;
+    }
+    const found = this.document.querySelector(`[formControlName="${field}"], [data-control-name="${field}"]`);
+    return found instanceof HTMLElement ? found : undefined;
+  }
 
   private notifyEditablesOfValidationError(fieldName: string): void {
     // Securely notify editable components through dedicated service (if available)

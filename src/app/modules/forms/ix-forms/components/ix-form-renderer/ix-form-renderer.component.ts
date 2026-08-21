@@ -19,6 +19,7 @@ import { IxFormComponent } from 'app/modules/forms/ix-forms/components/ix-form/i
 import {
   FormDefinition, FormFieldDefinition, FormFieldType, FormSectionDefinition, InputFieldDefinition,
 } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
+import { manualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -211,6 +212,7 @@ implements OnInit, SidePanelHostForm {
     this.resolvedEditMode.set(this.isEditMode());
 
     this.setupConditionalState();
+    this.setupServerErrorClearing(sections);
 
     if (definition.loadData) {
       this.runLoadData(definition.loadData);
@@ -300,6 +302,50 @@ implements OnInit, SidePanelHostForm {
     }
     if (!isEqual(this.sectionVisible(), sectionVisibility)) {
       this.sectionVisible.set(sectionVisibility);
+    }
+  }
+
+  /**
+   * Wires `clearsServerErrorsFor`: when the declaring field changes, the sibling controls it names
+   * re-run their validators, which drops the backend verdict pinned on them by
+   * `FormErrorHandlerService` (`setErrors()` never re-evaluates on its own) and restores their real
+   * validation state. Only pinned controls are touched, so a live client-side error is left alone.
+   *
+   * A subscription rather than a validator on the declaring field: Angular treats validators as
+   * pure and re-runs them on `patchValue`/`setValidators`/a group revalidation, none of which are
+   * user edits.
+   */
+  private setupServerErrorClearing(sections: FormSectionDefinition<T>[]): void {
+    const clearingFields = sections
+      .flatMap((section) => section.fields)
+      .filter((field) => field.clearsServerErrorsFor?.length);
+
+    for (const field of clearingFields) {
+      const trigger = this.form.controls[field.name];
+      if (!trigger) {
+        continue;
+      }
+      const targets = field.clearsServerErrorsFor ?? [];
+      if (isDevMode()) {
+        const unknownTargets = targets.filter((target) => !this.form.controls[target]);
+        if (unknownTargets.length > 0) {
+          console.warn(
+            `[ix-form-renderer] Field "${field.name}" declares clearsServerErrorsFor `
+            + `${unknownTargets.join(', ')}, which the form has no control for. `
+            + 'Nothing will be cleared — check the field names.',
+          );
+        }
+      }
+      trigger.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+        for (const target of targets) {
+          const control = this.form.controls[target];
+          // Emitting is what refreshes `<ix-form>`'s status signal, and so the host's Save; it
+          // can't re-enter this handler, which listens on the trigger control alone.
+          if (control?.errors?.[manualValidateErrorKey]) {
+            control.updateValueAndValidity();
+          }
+        }
+      });
     }
   }
 

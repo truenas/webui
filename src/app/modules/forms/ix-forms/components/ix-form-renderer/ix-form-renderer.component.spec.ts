@@ -1,6 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { AsyncValidatorFn, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AsyncValidatorFn, FormGroup, ReactiveFormsModule, Validators,
+} from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
@@ -13,6 +15,9 @@ import { Role } from 'app/enums/role.enum';
 import { FormSubmitEvent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
 import { IxFormRendererComponent } from 'app/modules/forms/ix-forms/components/ix-form-renderer/ix-form-renderer.component';
+import {
+  ixManualValidateErrorKey, manualValidateErrorKey, manualValidateErrorMsgKey,
+} from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { greaterThanFg } from 'app/modules/forms/ix-forms/validators/validators';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -620,6 +625,84 @@ describe('IxFormRendererComponent', () => {
       const name = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
       expect(await name.isReadonly()).toBe(true);
       expect(await name.isDisabled()).toBe(false);
+    });
+  });
+
+  describe('clearsServerErrorsFor', () => {
+    const clearingDefinition = {
+      title: asTranslated('Server Error Clearing'),
+      fields: [
+        {
+          name: 'name', type: 'input', label: asTranslated('Name'), required: true,
+        },
+        { name: 'notes', type: 'textarea', label: asTranslated('Notes') },
+        {
+          name: 'enabled',
+          type: 'checkbox',
+          label: asTranslated('Enabled'),
+          clearsServerErrorsFor: ['name'],
+        },
+      ],
+      submit: submitHandler,
+    } as unknown as FormDefinition<SampleForm>;
+
+    /** The renderer owns its form group internally; the spec needs it to stage and read errors. */
+    const formOf = (): FormGroup => (spectator.component as unknown as { form: FormGroup }).form;
+
+    /** How `FormErrorHandlerService` pins a backend verdict: `setErrors`, so it never re-evaluates. */
+    const pinServerError = (): void => {
+      formOf().controls.name.setErrors({
+        [manualValidateErrorKey]: true,
+        [manualValidateErrorMsgKey]: 'Server could not be reached.',
+        [ixManualValidateErrorKey]: { message: 'Server could not be reached.' },
+      });
+      formOf().controls.name.markAsTouched();
+      spectator.detectChanges();
+    };
+
+    /** Fills the required field, so only the pinned error is holding Save shut. */
+    const fillName = async (): Promise<void> => {
+      await (await loader.getHarness(TnInputHarness.with({ name: 'name' }))).setValue('Test');
+    };
+
+    beforeEach(() => {
+      spectator = createComponent({ props: { definition: clearingDefinition } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('retires the pinned error on the named field, re-enabling Save', async () => {
+      await fillName();
+      pinServerError();
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }))).check();
+      spectator.detectChanges();
+
+      expect(formOf().controls.name.errors).toBeNull();
+      expect(spectator.component.canSubmit()).toBe(true);
+    });
+
+    it('restores the real validation state instead of blanket-clearing errors', async () => {
+      // `name` is left empty-but-required, which the pinned server error masks.
+      pinServerError();
+
+      await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }))).check();
+      spectator.detectChanges();
+
+      expect(formOf().controls.name.errors).toEqual({ required: true });
+      expect(spectator.component.canSubmit()).toBe(false);
+    });
+
+    it('leaves the pinned error alone when an unrelated field changes', async () => {
+      await fillName();
+      pinServerError();
+
+      await (await loader.getHarness(TnInputHarness.with({ name: 'notes' }))).setValue('typing');
+      spectator.detectChanges();
+
+      expect(formOf().controls.name.errors)
+        .toEqual(expect.objectContaining({ [manualValidateErrorKey]: true }));
+      expect(spectator.component.canSubmit()).toBe(false);
     });
   });
 
