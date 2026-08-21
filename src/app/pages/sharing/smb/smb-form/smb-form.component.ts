@@ -19,6 +19,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
+  TnBannerComponent,
   TnCheckboxComponent,
   TnChipInputComponent,
   TnDialog,
@@ -60,10 +61,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -102,18 +100,16 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnChipInputComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
-    IxInputComponent,
     IxErrorsComponent,
     TnTestIdDirective,
     TranslateModule,
     AsyncPipe,
-    WarningComponent,
+    TnBannerComponent,
     SmbUsersWarningComponent,
     SmbExtensionsWarningComponent,
   ],
 })
 export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterViewInit {
-  formatter = inject(IxFormatterService);
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private tnDialog = inject(TnDialog);
@@ -156,9 +152,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
 
   protected showLegacyWarning = signal(false);
   protected showExtensionsWarning = signal(false);
-  protected legacyWarningMessage = this.translate.instant(
-    'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.',
-  );
 
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 

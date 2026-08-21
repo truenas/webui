@@ -85,7 +85,7 @@ describe('SmbUsersWarningComponent', () => {
     let warning = spectator.query('.smb-users-warning');
     expect(warning).toBeTruthy();
 
-    const ignoreOption = spectator.queryAll('ul li')[2].querySelector('span');
+    const ignoreOption = spectator.queryAll('ul li')[2].querySelector('a');
     ignoreOption?.click();
     spectator.detectChanges();
 

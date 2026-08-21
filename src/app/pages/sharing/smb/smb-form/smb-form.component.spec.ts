@@ -6,6 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
+  TnBannerComponent,
+  TnBannerHarness,
   TnCheckboxHarness,
   TnChipInputHarness,
   TnDialog,
@@ -13,7 +15,7 @@ import {
   TnInputHarness,
   TnSelectHarness,
 } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, ngMocks } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
@@ -36,9 +38,6 @@ import {
 } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { WarningHarness } from 'app/modules/forms/ix-forms/components/warning/warning.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -54,6 +53,10 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { SmbFormComponent } from './smb-form.component';
+
+// `MockComponent(SmbUsersWarningComponent)` deep-mocks that child's import graph, which now
+// includes `tn-banner` — and that mock leaks onto the banner this form renders itself.
+ngMocks.globalKeep(TnBannerComponent);
 
 describe('SmbFormComponent', () => {
   const existingShare = {
@@ -130,7 +133,6 @@ describe('SmbFormComponent', () => {
     component: SmbFormComponent,
     imports: [
       ReactiveFormsModule,
-      WarningComponent,
       MockComponent(SmbUsersWarningComponent),
     ],
     providers: [
@@ -258,7 +260,7 @@ describe('SmbFormComponent', () => {
     });
 
     it('shows a warning when opening Legacy Share for editing', async () => {
-      const warning = await loader.getHarness(WarningHarness);
+      const warning = await loader.getHarness(TnBannerHarness);
       expect(await warning.getText()).toContain(
         'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.',
       );
@@ -374,7 +376,7 @@ describe('SmbFormComponent', () => {
     it('creates time machine share', async () => {
       await selectPurpose('Time Machine Share');
       await applyCommonValues();
-      const timeMachineQuota = await loader.getHarness(IxInputHarness.with({ label: 'Time Machine Quota' }));
+      const timeMachineQuota = await getTnInput('timemachine_quota');
       await timeMachineQuota.setValue('10G');
       await (await getTnInput('vuid')).setValue('08e00781-18ac-4c6c-bfeb-9c1c504ea0d7');
       await (await getTnCheckbox('auto_snapshot')).check();

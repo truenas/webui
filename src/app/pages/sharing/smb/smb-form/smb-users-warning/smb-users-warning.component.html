@@ -1,31 +1,63 @@
 @if (!hasSmbUsers()) {
-  <div class="smb-users-warning">
-    <p class="title">
-      <tn-icon name="alert" library="mdi"></tn-icon>
+  <tn-banner class="smb-users-warning" type="warning">
+    <!--
+      tn-banner only renders its own icon alongside [heading]/[message], and that structured
+      layout can't hold the list of actions below — so the default slot re-creates the icon +
+      content row the library would have drawn.
+    -->
+    <tn-icon
+      class="warning-icon"
+      name="alert"
+      library="mdi"
+      size="md"
+      aria-hidden="true"
+    ></tn-icon>
 
-      <span>
-        {{ "Looks like you don't have any users who'll be able to access this share." | translate}}
-      </span>
-    </p>
+    <div>
+      <p class="title">
+        {{ "Looks like you don't have any users who'll be able to access this share." | translate }}
+      </p>
 
-    <p>{{ 'You can:' | translate }}</p>
+      <p>{{ 'You can:' | translate }}</p>
 
-    <ul>
-      <li>
-        <a ixTest="go-to-users-page" (click)="closeForm(['/credentials', 'users'])">
-          {{ 'Create a new user' | translate }}
-        </a>
-      </li>
-      <li>
-        <a ixTest="go-to-directory-services-page" (click)="closeForm(['/credentials', 'directory-services'])">
-          {{ 'Configure Directory Services' | translate }}
-        </a>
-      </li>
-      <li>
-        <span (click)="hasSmbUsers.set(true)">
-          {{ 'Ignore the error and add users later.' | translate }}
-        </span>
-      </li>
-    </ul>
-  </div>
+      <ul>
+        <li>
+          <a
+            role="button"
+            tabindex="0"
+            tnTestIdType="link"
+            [tnTestId]="'go-to-users-page'"
+            (click)="closeForm(['/credentials', 'users'])"
+            (keydown.enter)="closeForm(['/credentials', 'users'])"
+          >
+            {{ 'Create a new user' | translate }}
+          </a>
+        </li>
+        <li>
+          <a
+            role="button"
+            tabindex="0"
+            tnTestIdType="link"
+            [tnTestId]="'go-to-directory-services-page'"
+            (click)="closeForm(['/credentials', 'directory-services'])"
+            (keydown.enter)="closeForm(['/credentials', 'directory-services'])"
+          >
+            {{ 'Configure Directory Services' | translate }}
+          </a>
+        </li>
+        <li>
+          <a
+            role="button"
+            tabindex="0"
+            tnTestIdType="link"
+            [tnTestId]="'ignore-smb-users-warning'"
+            (click)="hasSmbUsers.set(true)"
+            (keydown.enter)="hasSmbUsers.set(true)"
+          >
+            {{ 'Ignore the error and add users later.' | translate }}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </tn-banner>
 }

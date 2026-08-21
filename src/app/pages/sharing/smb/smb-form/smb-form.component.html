@@ -38,7 +38,13 @@
     </tn-form-field>
 
     @if (showLegacyWarning()) {
-      <ix-warning [message]="legacyWarningMessage"></ix-warning>
+      <tn-banner
+        type="warning"
+        [message]="
+          'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.'
+            | translate
+        "
+      ></tn-banner>
     }
 
     @if (showExtensionsWarning()) {
@@ -225,13 +231,16 @@
           (form.controls.timemachine_quota.enabled && form.value.timemachine && form.controls.timemachine.enabled) ||
           (form.controls.timemachine_quota.enabled && !form.controls.timemachine.enabled)
         ) {
-          <ix-input
-            formControlName="timemachine_quota"
+          <tn-form-field
             [label]="helptextSharingSmb.timemachineQuotaLabel | translate"
             [tooltip]="helptextSharingSmb.timemachineQuotaTooltip | translate"
-            [format]="formatter.memorySizeFormatting"
-            [parse]="formatter.memorySizeParsing"
-          ></ix-input>
+          >
+            <tn-input
+              testId="timemachine-quota"
+              formControlName="timemachine_quota"
+              [inputType]="InputType.Size"
+            ></tn-input>
+          </tn-form-field>
         }
 
         @if (form.controls.afp.enabled) {

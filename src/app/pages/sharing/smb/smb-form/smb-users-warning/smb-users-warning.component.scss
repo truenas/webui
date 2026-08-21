@@ -1,23 +1,23 @@
 .smb-users-warning {
-  border-bottom: 1px solid var(--lines);
-  padding: 0 10px 3px;
+  display: block;
+  margin-bottom: 16px;
+
+  // Same expression tn-banner uses for its own warning icon, so the projected one
+  // matches the banner's left border in both themes.
+  .warning-icon {
+    color: var(--tn-warning, #f59e0b);
+    margin-top: 2px;
+  }
 
   .title {
-    align-items: center;
-    display: flex;
-    gap: 12px;
+    margin-top: 0;
   }
 
   ul {
+    margin-bottom: 0;
     padding: 0 15px;
 
     li a {
-      color: var(--primary);
-      cursor: pointer;
-      text-decoration: underline;
-    }
-
-    li span {
       color: var(--primary);
       cursor: pointer;
       text-decoration: underline;
