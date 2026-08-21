@@ -85,3 +85,9 @@
   font-size: 13px;
   color: var(--orange);
 }
+
+// Sits directly above the dialog actions, so the user reads it before Apply.
+.cancellation-warning {
+  display: block;
+  margin-top: 16px;
+}

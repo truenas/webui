@@ -81,6 +81,15 @@
       }
     }
   </form>
+
+  <tn-banner
+    class="cancellation-warning"
+    type="warning"
+    [heading]="'Tier change cannot be cancelled once started' | translate"
+    [message]="form.value.moveExistingData
+      ? ('Data migration can be cancelled while it runs, but the dataset stays on the new tier.' | translate)
+      : ''"
+  ></tn-banner>
 </div>
 
 <div tnDialogAction align="end">

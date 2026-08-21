@@ -135,7 +135,9 @@ export class DataMigrationStatusDialogComponent implements OnInit {
 
   protected onCancel(): void {
     this.dialogService.confirm({
-      message: this.translate.instant('Are you sure you want to cancel this data migration? Data already transferred will remain at its destination.'),
+      message: this.translate.instant(
+        'Are you sure you want to cancel this data migration? The storage tier change has already been applied and is not reverted by cancelling. Data already transferred will remain at its destination.',
+      ),
       buttonText: this.translate.instant('Stop migration'),
       buttonColor: 'warn',
     }).pipe(

@@ -157,6 +157,17 @@ describe('DataMigrationStatusDialogComponent', () => {
       );
       expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     });
+
+    it('warns in the confirmation that the tier change itself is not reverted', async () => {
+      build({ ...baseJob, stats: { ...baseStats } });
+
+      const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
+      await cancelButton.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
+        message: expect.stringContaining('The storage tier change has already been applied and is not reverted by cancelling.'),
+      }));
+    });
   });
 
   describe('live job updates', () => {
