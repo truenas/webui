@@ -9,7 +9,9 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { stripQueryAndFragment } from 'app/helpers/url.helper';
 import { Alert } from 'app/interfaces/alert.interface';
-import { EnhancedAlert, SmartAlertAction, SmartAlertActionType, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
+import {
+  EnhanceAlertOptions, EnhancedAlert, SmartAlertAction, SmartAlertActionType, SmartAlertCategory,
+} from 'app/interfaces/smart-alert.interface';
 import { isRoutePlaceholder, routePlaceholders } from 'app/modules/alerts/constants/route-placeholders.const';
 import { criticalLevels } from 'app/modules/alerts/store/alert.selectors';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -47,7 +49,8 @@ export class SmartAlertService {
   /**
    * Enhances a basic alert with smart actions, contextual help, and metadata
    */
-  enhanceAlert(alert: Alert): Alert & EnhancedAlert {
+  enhanceAlert(alert: Alert, options: EnhanceAlertOptions = {}): Alert & EnhancedAlert {
+    const isConsolidated = Boolean(options.isConsolidated);
     const enhancement = getAlertEnhancement(
       alert.source,
       alert.klass,
@@ -69,6 +72,11 @@ export class SmartAlertService {
     // Filter out navigation actions that would navigate to the current page
     const currentUrl = stripQueryAndFragment(this.router.url);
     const filteredActions = enhancement.actions?.filter((action) => {
+      // A consolidated entry stands for several objects, so a task rerun resolved from one
+      // alert's args would silently act on that one alert only.
+      if (isConsolidated && action.type === SmartAlertActionType.RunTask) {
+        return false;
+      }
       if (action.type === SmartAlertActionType.Navigate && action.route) {
         const targetUrl = '/' + action.route.join('/');
         return targetUrl !== currentUrl;
@@ -84,11 +92,18 @@ export class SmartAlertService {
     });
 
     // Bind handlers to actions and inject extracted fragment/apiParams
-    const boundActions = filteredActions?.map((action) => {
+    const boundActions = filteredActions?.map((action): SmartAlertAction | null => {
       let enhancedAction = { ...action };
 
-      // Inject extracted fragment for navigation actions
-      if (action.type === SmartAlertActionType.Navigate && extractedFragment && !action.fragment) {
+      // A route resolved from one alert's args points at that alert's object, so it is
+      // wrong for an entry that stands for several of them.
+      if (isConsolidated && action.type === SmartAlertActionType.Navigate && action.route?.some(isRoutePlaceholder)) {
+        return null;
+      }
+
+      // Inject extracted fragment for navigation actions. Skipped for consolidated entries:
+      // the highlight would single out the representative alert's object.
+      if (action.type === SmartAlertActionType.Navigate && extractedFragment && !action.fragment && !isConsolidated) {
         enhancedAction = { ...enhancedAction, fragment: extractedFragment };
       }
 
@@ -138,12 +153,13 @@ export class SmartAlertService {
         ...enhancedAction,
         handler: this.createActionHandler(enhancedAction, alert),
       };
-    });
+    }).filter((action): action is SmartAlertAction => action !== null);
 
     return {
       ...alert,
       category: enhancement.category,
       actions: boundActions,
+      groupSummary: enhancement.groupSummary,
       contextualHelp: enhancement.contextualHelp,
       detailedHelp: enhancement.detailedHelp,
       documentationUrl: enhancement.documentationUrl,
