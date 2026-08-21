@@ -100,10 +100,33 @@ export class DataMigrationStatusDialogComponent implements OnInit {
     return new Date(job.stats.update_time * 1000);
   });
 
-  protected progressPercent = computed(() => {
+  /**
+   * Progress is measured in items, not bytes. `count_bytes` is the byte count
+   * the job has *claimed*, not written — it reaches `total_bytes` as soon as
+   * the job has enumerated the dataset, and can even exceed it, so a byte-based
+   * bar reads 100% on a job that has rewritten nothing.
+   *
+   * Items *processed*, not items succeeded: `failures` is a counter disjoint
+   * from `success` (the Failures card reports it separately), so a job that
+   * ends having failed an item would otherwise stall the bar short of full
+   * next to a terminal status badge. A failed item is finished work either way.
+   */
+  protected progressFraction = computed(() => {
     const stats = this.job()?.stats;
-    if (!stats || stats.total_bytes <= 0) return 0;
-    return Math.round((stats.count_bytes / stats.total_bytes) * 100);
+    if (!stats || stats.total_items <= 0) return 0;
+    return Math.min(1, Math.max(0, (stats.success + stats.failures) / stats.total_items));
+  });
+
+  protected progressPercent = computed(() => Math.round(this.progressFraction() * 100));
+
+  /**
+   * A single-item job has no expressible middle: `success` is 0 until the one
+   * file lands, then 1. Rather than pin the bar at 0% for the whole rewrite,
+   * show motion without a false number while it runs.
+   */
+  protected hasIndeterminateProgress = computed(() => {
+    const stats = this.job()?.stats;
+    return this.isRunning() && (!stats || stats.total_items <= 1);
   });
 
   /**
@@ -116,15 +139,22 @@ export class DataMigrationStatusDialogComponent implements OnInit {
   protected estimatedCompletion = computed<Date | null>(() => {
     const job = this.job();
     const start = this.startTime();
-    if (!start || !job?.stats || job.stats.count_bytes <= 0 || job.stats.total_bytes <= 0) {
+    if (!start || !job?.stats) {
       return null;
     }
-    const fractionDone = job.stats.count_bytes / job.stats.total_bytes;
-    if (fractionDone < DataMigrationStatusDialogComponent.minFractionForEta) {
+    const fractionDone = this.progressFraction();
+    // At >=100% there is nothing left to estimate, and extrapolating from a
+    // fraction of 1 just returns the elapsed time — which is how the ETA used
+    // to render as the start time itself.
+    if (fractionDone < DataMigrationStatusDialogComponent.minFractionForEta || fractionDone >= 1) {
       return null;
     }
     const now = job.stats.update_time * 1000;
     const elapsed = now - start.getTime();
+    // The first status tick can land in the same second the job started.
+    if (elapsed <= 0) {
+      return null;
+    }
     const estimatedTotal = elapsed / fractionDone;
     return new Date(start.getTime() + estimatedTotal);
   });
@@ -135,7 +165,9 @@ export class DataMigrationStatusDialogComponent implements OnInit {
 
   protected onCancel(): void {
     this.dialogService.confirm({
-      message: this.translate.instant('Are you sure you want to cancel this data migration? Data already transferred will remain at its destination.'),
+      message: this.translate.instant(
+        'Are you sure you want to cancel this data migration? The storage tier change has already been applied and is not reverted by cancelling. Data already transferred will remain at its destination.',
+      ),
       buttonText: this.translate.instant('Stop migration'),
       buttonColor: 'warn',
     }).pipe(

@@ -2,7 +2,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import { TnBannerHarness, TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import {
   EMPTY, Observable, catchError, of, throwError,
 } from 'rxjs';
@@ -250,6 +250,24 @@ describe('ChangeTierDialogComponent — apply', () => {
     await spectator.fixture.whenStable();
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('warns that the tier change is irreversible, and that only the migration can be cancelled', async () => {
+    const banner = await loader.getHarness(TnBannerHarness);
+
+    expect(await banner.getText()).toContain('Tier change cannot be cancelled once started');
+    expect(await banner.getText())
+      .toContain('Data migration can be cancelled while it runs, but the dataset stays on the new tier.');
+  });
+
+  it('drops the migration half of the warning when existing data is not moved', async () => {
+    const moveExistingData = await loader.getHarness(TnCheckboxHarness.with({ label: 'Move existing data' }));
+    await moveExistingData.uncheck();
+
+    const banner = await loader.getHarness(TnBannerHarness);
+
+    expect(await banner.getText()).toContain('Tier change cannot be cancelled once started');
+    expect(await banner.getText()).not.toContain('Data migration can be cancelled');
   });
 
   it('sends the new tier with move_existing_data from the checkbox and closes on apply', async () => {
