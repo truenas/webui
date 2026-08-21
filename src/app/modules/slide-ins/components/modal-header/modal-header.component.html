@@ -1,41 +1,43 @@
-<div
-  class="ix-slidein-title-bar"
-  [class.has-many-components]="(componentsSize$ | async) > 1"
->
-  @if ((componentsSize$ | async) > 1 && !disableClose()) {
+<header class="ix-slidein-title-bar">
+  @if (isStacked() && !disableClose()) {
     <tn-icon-button
+      id="ix-close-icon"
       name="chevron-left"
       library="mdi"
-      id="ix-close-icon"
-      tnTooltipPosition="left"
+      size="sm"
+      tooltipPosition="left"
       [testId]="['close-slide-in']"
-      [tnTooltip]="tooltip()"
-      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title() }"
-      (click)="close()"
+      [tooltip]="'Go back to the previous form' | translate"
+      [ariaLabel]="'Close {formType} Form' | translate: { formType: title() }"
+      (onClick)="close()"
     ></tn-icon-button>
   }
-  <h3 class="ix-form-title" [class.title-left-margin]="(componentsSize$ | async) === 1">
-    {{ title() ? (title() | translate) : '' }}
-    @if (requiredRoles().length && !(hasRequiredRoles | async)) {
-      <ix-readonly-badge></ix-readonly-badge>
-    }
-  </h3>
-  @if ((componentsSize$ | async) <= 1 && !disableClose()) {
+
+  <h2 class="ix-form-title">{{ title() ? (title() | translate) : '' }}</h2>
+
+  @if (showReadOnlyBadge()) {
+    <ix-readonly-badge></ix-readonly-badge>
+  }
+
+  @if (!isStacked() && !disableClose()) {
     <tn-icon-button
+      id="ix-close-icon"
       name="close"
       library="mdi"
-      class="icon-margin-right"
-      id="ix-close-icon"
-      tnTooltipPosition="left"
+      size="sm"
+      tooltipPosition="left"
       [testId]="['close-slide-in']"
-      [tnTooltip]="tooltip()"
-      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title() }"
-      (click)="close()"
-      (keydown.enter)="close()"
+      [tooltip]="'Close the form' | translate"
+      [ariaLabel]="'Close {formType} Form' | translate: { formType: title() }"
+      (onClick)="close()"
     ></tn-icon-button>
   }
-</div>
+</header>
 
 @if (loading()) {
-  <mat-progress-bar mode="indeterminate" class="progress-bar"></mat-progress-bar>
+  <tn-progress-bar
+    class="progress-bar"
+    mode="indeterminate"
+    [ariaLabel]="'Loading' | translate"
+  ></tn-progress-bar>
 }

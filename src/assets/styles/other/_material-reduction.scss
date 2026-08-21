@@ -1040,7 +1040,7 @@ body:has(.tn-side-panel__overlay--open) {
   }
 
   // The slide-in container's own height also bakes in the 48px topbar offset
-  // (`calc(100dvh - 48px - 75px)`), so it stops short of the bottom. Pin it top-to-bottom (the
+  // (`calc(100dvh - 48px - var(--slide-in-header-height))`), so it stops short of the bottom. Pin it top-to-bottom (the
   // container is `position: fixed`) so the box is exactly the viewport height regardless of its
   // `padding-top`/box-sizing, and the form footer reaches the bottom edge.
   ix-slide-in-container {

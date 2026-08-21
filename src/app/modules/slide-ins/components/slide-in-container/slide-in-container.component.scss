@@ -1,13 +1,18 @@
 @import 'scss-imports/variables';
 
 :host {
+  // Height of the `ix-modal-header` the hosted form renders. The header is absolutely positioned
+  // over this box, so the container reserves exactly that much `padding-top`. Matches
+  // `.tn-side-panel__header` (16px padding + a 32px icon-button row) so both hosts line up.
+  --slide-in-header-height: 64px;
+
   background-color: var(--bg2);
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3); // default cdk-overlay backdrop background
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 48px - 75px); // Fallback for browsers without dvh support
-  height: calc(100dvh - 48px - 75px);
-  padding-top: 75px;
+  height: calc(100vh - 48px - var(--slide-in-header-height)); // Fallback for browsers without dvh support
+  height: calc(100dvh - 48px - var(--slide-in-header-height));
+  padding-top: var(--slide-in-header-height);
   position: fixed;
   right: 0;
   transform: translateX(100%);

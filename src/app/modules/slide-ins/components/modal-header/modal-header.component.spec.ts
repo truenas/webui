@@ -3,22 +3,20 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconButtonHarness } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { Role } from 'app/enums/role.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 
-describe('ModalHeader2Component', () => {
+describe('ModalHeaderComponent', () => {
   let spectator: Spectator<ModalHeaderComponent>;
   let loader: HarnessLoader;
   const openSlideInsCounter = signal(1);
   const createComponent = createComponentFactory({
     component: ModalHeaderComponent,
-    declarations: [
-      MockComponent(CloudSyncWizardComponent),
-    ],
     providers: [
       mockAuth(),
       mockProvider(SlideInRef, {
@@ -26,39 +24,63 @@ describe('ModalHeader2Component', () => {
         getData: jest.fn((): undefined => undefined),
         swap: jest.fn(),
       }),
+      mockProvider(SlideIn, {
+        openSlideIns: openSlideInsCounter,
+      }),
     ],
   });
 
-  describe('Testing with one open slide-in', () => {
+  describe('with one open slide-in', () => {
     beforeEach(() => {
+      openSlideInsCounter.set(1);
       spectator = createComponent({
         props: {
           title: 'Add Cloudsync Task',
           loading: false,
         },
-        providers: [
-          mockProvider(SlideIn, {
-            openSlideIns: openSlideInsCounter,
-          }),
-        ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('shows proper title', () => {
-      const title = spectator.query('.ix-form-title')!;
-      expect(title.textContent).toBe(' Add Cloudsync Task ');
+      // No `TnSidePanelHarness` equivalent for the legacy header, so the title is read off the DOM.
+      expect(spectator.query('.ix-form-title')!.textContent!.trim()).toBe('Add Cloudsync Task');
     });
 
     it('shows a working close button when only 1 component is in the queue', async () => {
       const closeButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'close' }));
       await closeButton.click();
+
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: undefined });
-      expect(await closeButton.getName()).toBe('close');
+    });
+
+    it('gives the close button an accessible name naming the form', () => {
+      expect(spectator.query('tn-icon-button button')).toHaveAttribute(
+        'aria-label',
+        'Close Add Cloudsync Task Form',
+      );
+    });
+
+    it('does not show a progress bar when not loading', () => {
+      expect(spectator.query('[role="progressbar"]')).toBeNull();
+    });
+
+    it('shows an indeterminate progress bar while loading', () => {
+      spectator.setInput('loading', true);
+
+      const progressBar = spectator.query('[role="progressbar"]')!;
+      expect(progressBar).toHaveClass('tn-progress-bar-indeterminate');
+      expect(progressBar).toHaveAttribute('aria-label', 'Loading');
+    });
+
+    it('does not show the readonly badge when the user has the required roles', () => {
+      spectator.setInput('requiredRoles', [Role.FullAdmin]);
+
+      expect(spectator.query('ix-readonly-badge')).toBeNull();
     });
   });
 
-  describe('Testing with >1 open slide-ins', () => {
+  describe('with >1 open slide-ins', () => {
     beforeEach(() => {
       openSlideInsCounter.set(2);
       spectator = createComponent({
@@ -66,20 +88,38 @@ describe('ModalHeader2Component', () => {
           title: 'Add Cloudsync Task',
           loading: false,
         },
-        providers: [
-          mockProvider(SlideIn, {
-            openSlideIns: openSlideInsCounter,
-          }),
-        ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
+
     it('shows a working back button when more than 1 component is in the queue', async () => {
-      spectator.detectChanges();
       const backButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'chevron-left' }));
       await backButton.click();
+
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: undefined });
-      expect(await backButton.getName()).toBe('chevron-left');
+    });
+
+    it('does not render the dismiss button alongside the back button', async () => {
+      expect(await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'close' }))).toHaveLength(0);
+    });
+  });
+
+  describe('without the required roles', () => {
+    beforeEach(() => {
+      openSlideInsCounter.set(1);
+      spectator = createComponent({
+        props: {
+          title: 'Add Cloudsync Task',
+          requiredRoles: [Role.FullAdmin],
+        },
+        providers: [
+          mockProvider(AuthService, { hasRole: () => of(false) }),
+        ],
+      });
+    });
+
+    it('shows the readonly badge', () => {
+      expect(spectator.query('ix-readonly-badge')).not.toBeNull();
     });
   });
 });
