@@ -38,7 +38,7 @@ import {
 } from '@truenas/ui-components';
 import failOnConsole from 'jest-fail-on-console';
 import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
-import { MockComponent, MockProvider, ngMocks } from 'ng-mocks';
+import { MockProvider, ngMocks } from 'ng-mocks';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import {
   Observable,
@@ -87,9 +87,6 @@ import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import {
-  ModalHeaderComponent,
-} from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -172,7 +169,6 @@ defineGlobalsInjections({
     IxRadioGroupComponent,
     IxSelectComponent,
     IxFieldsetComponent,
-    ModalHeaderComponent,
     IxFormSectionComponent,
     IxButtonGroupComponent,
     IxExplorerComponent,
@@ -218,9 +214,6 @@ defineGlobalsInjections({
     }),
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
-  ],
-  declarations: [
-    MockComponent(ModalHeaderComponent),
   ],
   providers: [
     provideHttpClient(),

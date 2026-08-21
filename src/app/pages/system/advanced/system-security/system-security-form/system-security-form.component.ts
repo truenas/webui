@@ -36,7 +36,6 @@ import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interfac
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -109,7 +108,6 @@ interface MissingStigRequirement {
   styleUrls: ['./system-security-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -186,11 +184,7 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
   readonly canSubmit = this.trackCanSubmit(this.loadingStigRequirements);
 
   ngOnInit(): void {
-    const config$ = this.slideInRef
-      ? of(this.slideInRef.getData() as SystemSecurityConfig)
-      : this.api.call('system.security.config');
-
-    config$.pipe(
+    this.api.call('system.security.config').pipe(
       take(1),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {

@@ -20,7 +20,6 @@ import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.inte
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -63,15 +62,9 @@ const existingTask: ReplicationTask = {
 
 describe('ReplicationWizardComponent', () => {
   let spectator: Spectator<ReplicationWizardComponent>;
+  let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
   let nextButton: TnButtonHarness | null;
-  const slideInRef: SlideInRef<ReplicationTask, unknown> = {
-    close: jest.fn(),
-    swap: jest.fn(),
-    getData: jest.fn(() => ({} as ReplicationTask)),
-    requireConfirmationWhen: jest.fn(),
-  };
-
   const createComponent = createComponentFactory({
     component: ReplicationWizardComponent,
     imports: [
@@ -94,7 +87,6 @@ describe('ReplicationWizardComponent', () => {
         mockCall('pool.snapshot.create'),
         mockCall('replication.create', existingTask),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(SnackbarService),
       mockProvider(LocaleService),
     ],
@@ -102,6 +94,7 @@ describe('ReplicationWizardComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
+    closedSpy = jest.spyOn(spectator.component.closed, 'emit');
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     await updateStepHarnesses();
   });
@@ -209,7 +202,7 @@ describe('ReplicationWizardComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task created.');
-    expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+    expect(closedSpy).toHaveBeenCalled();
   });
 
   it('uses custom source snapshot lifetime for periodic snapshot tasks', async () => {

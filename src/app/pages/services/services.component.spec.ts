@@ -23,7 +23,6 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -71,9 +70,6 @@ describe('ServicesComponent', () => {
         mockCall('ftp.config', {} as FtpConfig),
       ]),
       mockProvider(DialogService),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
@@ -135,6 +131,5 @@ describe('ServicesComponent', () => {
       ServiceFtpComponent,
       { title: 'FTP', wide: true },
     );
-    expect(spectator.inject(SlideIn).open).not.toHaveBeenCalled();
   });
 });

@@ -183,10 +183,6 @@ describe('UserFormComponent', () => {
       spectator = createComponent();
     });
 
-    it('does not render an in-form header (the panel host renders its own)', () => {
-      expect(spectator.query('ix-modal-header')).toBeNull();
-    });
-
     it('does not render an in-form Save action (the panel footer owns it)', () => {
       expect(spectator.query('ix-form-actions')).toBeNull();
     });

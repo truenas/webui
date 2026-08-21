@@ -26,7 +26,7 @@ describe('TierConfigFormComponent', () => {
   } as ZfsTierConfig;
 
   // pools-dashboard opens this form through FormSidePanelService, which is its only host: no
-  // SlideInRef, no in-form Save, submission driven by the panel footer calling `submit()`.
+  // No in-form Save: submission is driven by the panel footer calling `submit()`.
   const createComponent = createComponentFactory({
     component: TierConfigFormComponent,
     imports: [ReactiveFormsModule],

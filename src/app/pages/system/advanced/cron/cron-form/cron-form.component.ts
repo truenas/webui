@@ -19,7 +19,6 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -30,7 +29,6 @@ import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row
   templateUrl: './cron-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -88,17 +86,11 @@ export class CronFormComponent extends SidePanelForm implements OnInit {
 
   private editingCron: Cronjob | undefined;
 
-  /**
-   * Row to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
-   * carry data). Absent for Add, and unused in the legacy SlideIn host (which
-   * supplies the row via `slideInRef.getData()`).
-   */
+  /** Row to edit, supplied by the `<tn-side-panel>` host. Absent for Add. */
   readonly editCronjob = input<CronjobRow | undefined>(undefined);
 
   ngOnInit(): void {
-    this.editingCron = this.slideInRef
-      ? this.slideInRef.getData() as Cronjob | undefined
-      : this.editCronjob();
+    this.editingCron = this.editCronjob();
     if (this.editingCron) {
       this.form.patchValue({
         ...this.editingCron,

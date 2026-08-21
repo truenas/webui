@@ -46,7 +46,7 @@ import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { CloudSyncTask, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { newOption, SelectOption } from 'app/interfaces/option.interface';
@@ -69,7 +69,6 @@ import {
   SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -131,8 +130,6 @@ export class CloudSyncFormComponent implements OnInit {
   // {@link taskToEdit} and close happens through {@link closed}.
   // Public (not private): the cloudsync wizard steps `slideInRef.swap(CloudSyncFormComponent)`, which
   // requires this form to structurally satisfy `ComponentInSlideIn` (a public `slideInRef`). Optional
-  // because the form is also hosted in a `<tn-side-panel>` (no SlideInRef) when opened via FormSidePanelService.
-  slideInRef = inject<SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask>>(SlideInRef, { optional: true });
   private authService = inject(AuthService);
   private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
@@ -334,7 +331,7 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.editingTask = this.slideInRef?.getData() ?? this.taskToEdit();
+    this.editingTask = this.taskToEdit();
 
     if (!this.editingTask && this.form.controls.direction.value === Direction.Pull) {
       this.form.controls.snapshot.disable();
@@ -852,25 +849,17 @@ export class CloudSyncFormComponent implements OnInit {
   };
 
   onSwitchToWizard(): void {
-    if (this.slideInRef) {
-      this.slideInRef.swap?.(CloudSyncWizardComponent, { wide: true });
-    } else {
-      // Panel host: swap back to the wizard in place (footerless — the stepper owns its buttons).
-      this.formPanel.swap(CloudSyncWizardComponent as unknown as Type<SidePanelForm>, {
-        title: this.translate.instant('Cloud Sync Task Wizard'),
-        wide: true,
-        footerless: true,
-      });
-    }
+    // Swap back to the wizard in place (footerless — the stepper owns its buttons).
+    this.formPanel.swap(CloudSyncWizardComponent as unknown as Type<SidePanelForm>, {
+      title: this.translate.instant('Cloud Sync Task Wizard'),
+      wide: true,
+      footerless: true,
+    });
   }
 
   goToManageCredentials(): void {
     this.router.navigate(['/', 'credentials', 'backup-credentials']);
-    if (this.slideInRef) {
-      this.slideInRef.close({ response: undefined });
-    } else {
-      this.closed.emit(false);
-    }
+    this.closed.emit(false);
   }
 
   private getInitialData(): void {

@@ -1,10 +1,9 @@
 import {
-  computed, Directive, effect, inject, output, OutputRef, signal, Signal,
+  computed, Directive, effect, output, OutputRef, signal, Signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl } from '@angular/forms';
 import { Observable, of, startWith } from 'rxjs';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
 /**
@@ -40,9 +39,8 @@ export interface SidePanelHostForm<R = boolean> extends SidePanelHostCloseable<R
 }
 
 /**
- * Base class for any form that can be hosted either in a legacy SlideIn (via {@link SlideInRef})
- * or in a `<tn-side-panel>` (via the {@link closed} output and host-driven `submit()` /
- * `hasUnsavedChanges()` calls).
+ * Base class for any form hosted in a `<tn-side-panel>` (via the {@link closed} output and
+ * host-driven `submit()` / `hasUnsavedChanges()` calls).
  *
  * Centralizes the unsaved-changes confirmation and close plumbing that is otherwise
  * duplicated across every side-panel form. Subclasses provide the {@link form} and
@@ -60,13 +58,9 @@ export interface SidePanelHostForm<R = boolean> extends SidePanelHostCloseable<R
  */
 @Directive()
 export abstract class SidePanelForm<R = boolean> implements SidePanelHostForm<R> {
-  /** Present when opened via legacy SlideIn host. Absent when hosted in `<tn-side-panel>`. */
-  readonly slideInRef = inject<SlideInRef<unknown, boolean>>(SlideInRef, { optional: true });
-
   /**
    * Emitted when the form should close. The success payload is `R` (defaults to `true` when
    * saved / `false` when cancelled); forms with a richer `R` emit the created record on save.
-   * Only for `<tn-side-panel>` hosts.
    */
   readonly closed = output<R>();
 
@@ -129,8 +123,6 @@ export abstract class SidePanelForm<R = boolean> implements SidePanelHostForm<R>
   protected abstract onSubmit(): void;
 
   constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => of(this.hasUnsavedChanges()));
-
     // Drive the submit latch off the edges of busy rather than pre-setting it in submit():
     //  - rising edge while a submit is pending: the save really kicked off async work, so latch it;
     //  - falling edge: that busy period ended, so clear the latch.
@@ -177,20 +169,15 @@ export abstract class SidePanelForm<R = boolean> implements SidePanelHostForm<R>
   }
 
   /**
-   * Closes through whichever host opened the form, handing back the full `R` payload. Use from
-   * forms whose `R` is richer than `boolean` (e.g. a picker's "Add New" that returns the created
-   * record) so the legacy SlideIn host is honored too — not just the `<tn-side-panel>` output.
+   * Closes the panel, handing back the full `R` payload. Use from forms whose `R` is richer than
+   * `boolean` (e.g. a picker's "Add New" that returns the created record).
    *
    * Under `FormSidePanelService` only a TRUTHY payload resolves as a save — anything falsy is a
    * cancel, which is how {@link close}`(false)` reports "closed without saving". See
    * `FormSidePanelService.open`, which documents the rule and owns the coercion.
    */
   protected closeWith(payload: R): void {
-    if (this.slideInRef) {
-      this.slideInRef.close({ response: payload as unknown as boolean });
-    } else {
-      this.closed.emit(payload);
-    }
+    this.closed.emit(payload);
   }
 
   /**

@@ -20,7 +20,6 @@ import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { SidenavService } from 'app/modules/layout/sidenav.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { FocusService } from 'app/services/focus.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -46,7 +45,6 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   private globalSearchSectionsProvider = inject(GlobalSearchSectionsProvider);
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
-  private slideIn = inject(SlideIn);
   private dialogService = inject(DialogService);
   private focusService = inject(FocusService);
   private document = inject<Document>(DOCUMENT);
@@ -151,7 +149,6 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   closeAllBackdrops(): void {
-    this.slideIn.closeAll();
     this.sidenavService.closeSecondaryMenu();
     this.dialogService.closeAllDialogs();
   }

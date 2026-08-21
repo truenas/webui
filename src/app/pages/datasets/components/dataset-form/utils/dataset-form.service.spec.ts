@@ -6,7 +6,6 @@ import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 
@@ -19,7 +18,6 @@ describe('DatasetFormService', () => {
         mockCall('pool.dataset.query', [dataset]),
       ]),
       mockProvider(DialogService),
-      mockProvider(SlideIn),
     ],
   });
 

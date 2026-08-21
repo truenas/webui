@@ -7,12 +7,10 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnStepComponent, TnStepperComponent } from '@truenas/ui-components';
 import {
   BehaviorSubject, Observable, merge,
-  of,
 } from 'rxjs';
 import { cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
@@ -37,7 +35,6 @@ export class CloudSyncWizardComponent {
   // Optional: present only in the legacy SlideIn host. Absent when hosted in the `<tn-side-panel>`
   // form panel (opened via FormSidePanelService with `footerless: true` — the stepper owns its own
   // Next/Save buttons), where close happens through {@link closed}.
-  slideInRef = inject<SlideInRef<undefined, CloudSyncTask>>(SlideInRef, { optional: true });
   private api = inject(ApiService);
   private snackbarService = inject(SnackbarService);
   private cdr = inject(ChangeDetectorRef);
@@ -58,15 +55,6 @@ export class CloudSyncWizardComponent {
   isProviderLoading$ = new BehaviorSubject(false);
   mergedLoading$: Observable<boolean> = merge(this.isLoading$, this.isProviderLoading$);
   existingCredential: CloudSyncCredential | undefined;
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => of(this.hasUnsavedChanges()));
-  }
-
-  /** Host hook (`<tn-side-panel>` closeGuard) — dirty across either step. */
-  hasUnsavedChanges(): boolean {
-    return Boolean(this.whatAndWhen()?.form?.dirty || this.cloudSyncProvider()?.isDirty());
-  }
 
   /** Whether the form is currently submitting; the host shows a progress bar while true. */
   isBusy(): boolean {
@@ -99,14 +87,10 @@ export class CloudSyncWizardComponent {
     this.createTask(payload).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (response) => {
+      next: () => {
         this.snackbarService.success(this.translate.instant('Task created'));
         this.isLoading$.next(false);
-        if (this.slideInRef) {
-          this.slideInRef.close({ response });
-        } else {
-          this.closed.emit(true);
-        }
+        this.closed.emit(true);
 
         this.cdr.markForCheck();
       },

@@ -9,7 +9,6 @@ import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
@@ -21,13 +20,6 @@ describe('CloudSyncWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness | null;
   let nextButton: TnButtonHarness | null;
-  const slideInRef: SlideInRef<unknown, unknown> = {
-    close: jest.fn(),
-    swap: jest.fn(),
-    getData: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-  };
-
   const createComponent = createComponentFactory({
     component: CloudSyncWizardComponent,
     imports: [
@@ -35,7 +27,6 @@ describe('CloudSyncWizardComponent', () => {
       StorjProviderFormComponent,
     ],
     providers: [
-      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
       mockApi([
         mockCall('cloudsync.create'),

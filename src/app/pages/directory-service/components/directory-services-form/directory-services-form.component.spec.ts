@@ -15,10 +15,8 @@ import {
 import { MockComponents, ngMocks } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
-import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ActiveDirectoryConfigComponent } from 'app/pages/directory-service/components/directory-services-form/active-directory-config/active-directory-config.component';
 import { CredentialConfigComponent } from 'app/pages/directory-service/components/directory-services-form/credential-config/credential-config.component';
 import { IpaConfigComponent } from 'app/pages/directory-service/components/directory-services-form/ipa-config/ipa-config.component';
@@ -35,14 +33,8 @@ ngMocks.globalKeep(TnCheckboxComponent, true);
 
 describe('DirectoryServicesConfigFormComponent', () => {
   let spectator: Spectator<DirectoryServicesFormComponent>;
+  let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
-
-  const mockSlideInRef = {
-    getData: () => null as DirectoryServicesConfig,
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(() => of(false)),
-    swap: jest.fn(),
-  };
 
   const createComponent = createComponentFactory({
     component: DirectoryServicesFormComponent,
@@ -58,7 +50,6 @@ describe('DirectoryServicesConfigFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(SlideInRef, mockSlideInRef),
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
       }),
@@ -76,6 +67,7 @@ describe('DirectoryServicesConfigFormComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    closedSpy = jest.spyOn(spectator.component.closed, 'emit');
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
@@ -179,7 +171,7 @@ describe('DirectoryServicesConfigFormComponent', () => {
       });
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(mockSlideInRef.close).toHaveBeenCalledWith({ response: true });
+      expect(closedSpy).toHaveBeenCalled();
     });
 
     it('should not call API when confirmation is cancelled', () => {

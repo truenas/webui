@@ -13,7 +13,7 @@ import {
   TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  finalize, Observable, of, startWith, Subscription,
+  finalize, of, startWith, Subscription,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
@@ -30,7 +30,6 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import {
   SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -92,7 +91,6 @@ export class AlertServiceComponent implements OnInit {
   // Optional: present only in the legacy SlideIn host. Absent when hosted in the
   // `<tn-side-panel>` form panel, where data arrives via {@link alertServiceToEdit}
   // and close happens through {@link closed}.
-  private slideInRef = inject<SlideInRef<AlertService | undefined, boolean>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
   /** The record being edited, supplied by the `<tn-side-panel>` host (null = create). */
@@ -166,7 +164,17 @@ export class AlertServiceComponent implements OnInit {
     this.ixForm()?.submit();
   }
 
-  /** Host hook (`<tn-side-panel>` closeGuard) — combined dirty across both forms (see {@link dirtyPredicate}). */
+  /**
+   * Host hook (`<tn-side-panel>` closeGuard). Combined dirty: both the top-level `commonForm` and
+   * the dynamic `alertServiceForm` child (rendered into a `ViewContainerRef`, so its dirty state is
+   * invisible to `commonForm`). Also stays true once the user has changed `type` at least once,
+   * since rerendering the child resets its dirty flag while the parent's edit clearly hasn't been
+   * undone.
+   *
+   * `alertServiceForm` is set synchronously in `ngOnInit` via `renderAlertServiceForm()`, and the
+   * host only calls this when the user attempts to close — necessarily after `ngOnInit` — so the
+   * optional chain is defensive, not load-bearing.
+   */
   hasUnsavedChanges(): boolean {
     return Boolean(this.commonForm.dirty || this.alertServiceForm?.form.dirty || this.hadTypeChange);
   }
@@ -192,24 +200,8 @@ export class AlertServiceComponent implements OnInit {
   // default — false positive on dirty-confirm vs. silently losing edits.
   private hadTypeChange = false;
 
-  // Combined dirty: both the top-level commonForm and the dynamic
-  // alertServiceForm child (rendered into a ViewContainerRef, so its dirty
-  // state is invisible to commonForm). Also stays true once the user has
-  // changed `type` at least once, since rerendering the child resets its
-  // dirty flag while the parent's edit clearly hasn't been undone.
-  //
-  // `alertServiceForm` is set synchronously in `ngOnInit` via
-  // `renderAlertServiceForm()`. The slide-in framework only invokes this
-  // predicate when the user attempts to close, which is necessarily after
-  // ngOnInit — so the optional chain here is defensive, not load-bearing.
-  protected dirtyPredicate = (): Observable<boolean> => {
-    return of(Boolean(
-      this.commonForm.dirty || this.alertServiceForm?.form.dirty || this.hadTypeChange,
-    ));
-  };
-
   ngOnInit(): void {
-    this.existingAlertService = this.slideInRef?.getData() ?? this.alertServiceToEdit();
+    this.existingAlertService = this.alertServiceToEdit();
     if (this.existingAlertService) {
       this.setAlertServiceForEdit(this.existingAlertService);
     } else {

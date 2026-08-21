@@ -22,7 +22,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -54,7 +53,6 @@ export class VmwareSnapshotFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   // Optional: present only in the legacy SlideIn host. Absent when hosted in the
   // `<tn-side-panel>` form panel, where data arrives via {@link snapshotToEdit}.
-  private slideInRef = inject<SlideInRef<VmwareSnapshot | undefined, boolean>>(SlideInRef, { optional: true });
 
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
   readonly snapshotToEdit = input<VmwareSnapshot | undefined>(undefined);
@@ -129,7 +127,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.editingSnapshot = this.slideInRef?.getData() ?? this.snapshotToEdit();
+    this.editingSnapshot = this.snapshotToEdit();
 
     this.form.controls.datastore.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: string) => {
       const fileSystemValue = this.datastoreList?.find((datastore) => datastore.name === value)?.filesystems[0];

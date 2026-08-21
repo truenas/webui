@@ -29,7 +29,6 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
@@ -65,7 +64,6 @@ export class ReplicationWizardComponent {
   // Optional: present only in the legacy SlideIn host. Absent when hosted in the `<tn-side-panel>`
   // form panel (opened via FormSidePanelService with `footerless: true` — the stepper owns its own
   // Next/Save buttons), where close happens through {@link closed}.
-  slideInRef = inject<SlideInRef<undefined, ReplicationTask | undefined>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
   protected whatAndWhere = viewChild.required(ReplicationWhatAndWhereComponent);
@@ -84,15 +82,6 @@ export class ReplicationWizardComponent {
   createdSnapshots: ZfsSnapshot[] = [];
   createdSnapshotTasks: PeriodicSnapshotTask[] = [];
   createdReplication: ReplicationTask | undefined;
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => of(this.hasUnsavedChanges()));
-  }
-
-  /** Host hook (`<tn-side-panel>` closeGuard) — dirty across either step. */
-  hasUnsavedChanges(): boolean {
-    return Boolean(this.whatAndWhere()?.form?.dirty || this.when()?.form?.dirty);
-  }
 
   /** Whether the form is currently submitting; the host shows a progress bar while true. */
   isBusy(): boolean {
@@ -171,12 +160,8 @@ export class ReplicationWizardComponent {
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (createdReplication) => {
-        if (this.slideInRef) {
-          this.slideInRef.close({ response: createdReplication });
-        } else {
-          this.closed.emit(true);
-        }
+      next: () => {
+        this.closed.emit(true);
       },
       error: (err: unknown) => {
         this.handleError(err);

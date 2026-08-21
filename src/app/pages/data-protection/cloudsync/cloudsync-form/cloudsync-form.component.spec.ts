@@ -2,7 +2,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -21,7 +20,6 @@ import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
@@ -135,13 +133,7 @@ describe('CloudSyncFormComponent', () => {
 
   let loader: HarnessLoader;
   let spectator: Spectator<CloudSyncFormComponent>;
-  const getData = jest.fn(() => existingTask);
-  const slideInRef: SlideInRef<CloudSyncTaskUi | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-    swap: jest.fn(),
-  };
+  let closedSpy: jest.SpyInstance;
   const createComponent = createComponentFactory({
     component: CloudSyncFormComponent,
     imports: [
@@ -200,24 +192,27 @@ describe('CloudSyncFormComponent', () => {
       ]),
       ...ixFormTestingProviders(),
       mockProvider(FilesystemService),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
   describe('adds a new cloudsync', () => {
     beforeEach(() => {
       spectator = createComponent();
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('adds a new cloudsync task when new form is saved', async () => {
+    it('adds a new cloudsync task when new form is saved', () => {
       spectator.component.form.patchValue({
         description: 'New Cloud Sync Task',
         credentials: 1,
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
         attributes: { folder: '/' },
@@ -245,20 +240,14 @@ describe('CloudSyncFormComponent', () => {
         transfer_mode: TransferMode.Copy,
         transfers: 4,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+      expect(closedSpy).toHaveBeenCalled();
     });
   });
 
   describe('edits a new cloudsync', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData,
-          }),
-        ],
-      });
+      spectator = createComponent({ props: { taskToEdit: existingTask } });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -288,7 +277,7 @@ describe('CloudSyncFormComponent', () => {
       });
     });
 
-    it('saves updated cloudsync task when form opened for edit is saved', async () => {
+    it('saves updated cloudsync task when form opened for edit is saved', () => {
       // TODO: Rewrite to interact with controls instead of setting form directly.
       spectator.component.form.patchValue({
         description: 'Edited description',
@@ -299,8 +288,11 @@ describe('CloudSyncFormComponent', () => {
         bwlimit: ['9:00', '12:30, 2048'],
       });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
         attributes: { folder: mntPath },
@@ -331,7 +323,7 @@ describe('CloudSyncFormComponent', () => {
         transfer_mode: TransferMode.Copy,
         transfers: 10,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+      expect(closedSpy).toHaveBeenCalled();
     });
 
     it('checks payload when use invalid s3 credentials', async () => {
@@ -376,21 +368,19 @@ describe('CloudSyncFormComponent', () => {
     });
   });
 
-  describe('side panel host (no SlideInRef)', () => {
+  describe('host-driven submit', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          { provide: SlideInRef, useValue: null },
-        ],
         props: {
           taskToEdit: existingTask,
         },
       });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('emits closed and updates when saved via the host submit() entry point', () => {
-      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
       spectator.component.submit();
 
@@ -402,11 +392,8 @@ describe('CloudSyncFormComponent', () => {
   describe('doesnt load buckets when user doesnt has roles', () => {
     beforeEach(() => {
       spectator = createComponent({
+        props: { taskToEdit: existingTask2 },
         providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: jest.fn(() => existingTask2),
-          }),
           mockProvider(CloudCredentialService, {
             getProviders: jest.fn(() => {
               return of([{
@@ -448,6 +435,7 @@ describe('CloudSyncFormComponent', () => {
                   },
                 ],
               }]);
+              closedSpy = jest.spyOn(spectator.component.closed, 'emit');
             }),
             getCloudSyncCredentials: jest.fn(() => {
               return of([

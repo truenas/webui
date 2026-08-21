@@ -26,7 +26,6 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { StorageService } from 'app/services/storage.service';
@@ -61,7 +60,6 @@ export class SnapshotTaskFormComponent implements OnInit {
   protected storageService = inject(StorageService);
   // Optional: present only in the legacy SlideIn host. Absent when hosted in the
   // `<tn-side-panel>` form panel, where data arrives via {@link taskToEdit}.
-  private slideInRef = inject<SlideInRef<PeriodicSnapshotTask | undefined, boolean>>(SlideInRef, { optional: true });
 
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
   readonly taskToEdit = input<PeriodicSnapshotTask | undefined>(undefined);
@@ -155,7 +153,7 @@ export class SnapshotTaskFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.editingTask = this.slideInRef?.getData() ?? this.taskToEdit();
+    this.editingTask = this.taskToEdit();
 
     if (this.editingTask) {
       this.setTaskForEdit(this.editingTask);

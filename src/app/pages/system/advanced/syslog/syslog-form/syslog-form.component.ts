@@ -23,7 +23,6 @@ import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/
 import { AdvancedConfigUpdate, SyslogServer } from 'app/interfaces/advanced-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { translateOptions } from 'app/modules/translate/translate.helper';
@@ -38,7 +37,6 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   styleUrls: ['./syslog-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,

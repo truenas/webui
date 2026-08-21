@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -12,9 +12,6 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { UserService } from 'app/services/user.service';
@@ -22,6 +19,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 
 describe('CronFormComponent', () => {
   let spectator: Spectator<CronFormComponent>;
+  let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
   let form: IxFormHarness;
 
@@ -39,13 +37,6 @@ describe('CronFormComponent', () => {
     command: 'ls -la',
     user: 'root',
   } as Cronjob;
-
-  const getData = jest.fn(() => existingCronJob);
-  const componentRef: SlideInRef<Cronjob | undefined, unknown> = {
-    close: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-    requireConfirmationWhen: jest.fn(),
-  };
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -76,9 +67,6 @@ describe('CronFormComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
           { username: 'root' },
@@ -87,7 +75,6 @@ describe('CronFormComponent', () => {
         getUserByName: (username: string) => of({ username } as User),
         getUserByNameCached: (username: string) => of({ username } as User),
       }),
-      mockProvider(SlideInRef, componentRef),
       mockAuth(),
     ],
   });
@@ -95,6 +82,7 @@ describe('CronFormComponent', () => {
   describe('adds new cron job', () => {
     beforeEach(async () => {
       spectator = createComponent();
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
     });
@@ -110,8 +98,11 @@ describe('CronFormComponent', () => {
         Schedule: '0 0 * * *',
       });
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.create', [{
         command: 'rm -rf /',
@@ -128,17 +119,14 @@ describe('CronFormComponent', () => {
         stdout: true,
         user: 'root',
       }]);
-      expect(componentRef.close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalled();
     });
   });
 
   describe('edits cron job', () => {
     beforeEach(async () => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...componentRef, getData }),
-        ],
-      });
+      spectator = createComponent({ props: { editCronjob: existingCronJob } });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
     });
@@ -164,8 +152,11 @@ describe('CronFormComponent', () => {
         Schedule: '* */2 * * 0-4',
       });
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.update', [234, {
         command: 'ls -la',
@@ -182,7 +173,7 @@ describe('CronFormComponent', () => {
         stdout: true,
         user: 'root',
       }]);
-      expect(componentRef.close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalled();
     });
   });
 });

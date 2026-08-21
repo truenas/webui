@@ -17,7 +17,6 @@ import {
 import { LocaleService } from 'app/modules/language/locale.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
@@ -100,10 +99,6 @@ describe('AccessCardComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(FormErrorHandlerService),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      }),
       mockProvider(SystemGeneralService),
       mockAuth(),
     ],

@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -11,7 +10,6 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { MatchDatastoresWithDatasets, VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot-form.component';
 
@@ -25,13 +23,8 @@ describe('VmwareSnapshotFormComponent', () => {
     username: 'root',
   } as VmwareSnapshot;
 
-  const slideInRef: SlideInRef<VmwareSnapshot | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   let spectator: Spectator<VmwareSnapshotFormComponent>;
+  let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
@@ -75,7 +68,6 @@ describe('VmwareSnapshotFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -89,6 +81,7 @@ describe('VmwareSnapshotFormComponent', () => {
   describe('creates a new vm snapshot', () => {
     beforeEach(() => {
       spectator = createComponent();
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -109,8 +102,11 @@ describe('VmwareSnapshotFormComponent', () => {
       await (await getSelect('datastore')).selectOption('ds01');
       expect(await (await getSelect('filesystem')).getDisplayText()).toBe('fs01');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vmware.create', [{
         hostname: '192.168.30.4',
@@ -119,17 +115,14 @@ describe('VmwareSnapshotFormComponent', () => {
         filesystem: 'fs01',
         datastore: 'ds01',
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalled();
     });
   });
 
   describe('edits vm snapshot', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ ...existingSnapshot }) }),
-        ],
-      });
+      spectator = createComponent({ props: { snapshotToEdit: { ...existingSnapshot } } });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -145,8 +138,11 @@ describe('VmwareSnapshotFormComponent', () => {
       await (await getSelect('datastore')).selectOption('ds01');
       await (await getSelect('filesystem')).selectOption('fs02');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -164,25 +160,23 @@ describe('VmwareSnapshotFormComponent', () => {
           datastore: 'ds01',
         },
       ]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalled();
     });
   });
 
-  describe('side panel host (no SlideInRef)', () => {
+  describe('host-driven submit', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          { provide: SlideInRef, useValue: null },
-        ],
         props: {
           snapshotToEdit: { ...existingSnapshot },
         },
       });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('emits closed and updates when saved via the host submit() entry point', async () => {
-      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
       // Select matching datastore/filesystem so no mismatch confirm is needed.
       await (await getSelect('datastore')).selectOption('ds01');
