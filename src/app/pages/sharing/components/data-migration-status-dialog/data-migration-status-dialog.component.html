@@ -33,10 +33,14 @@
   </div>
 
   @if (job().stats; as stats) {
-    <tn-progress-bar
-      mode="determinate"
-      [value]="progressPercent()"
-    />
+    @if (hasIndeterminateProgress()) {
+      <tn-progress-bar mode="indeterminate" />
+    } @else {
+      <tn-progress-bar
+        mode="determinate"
+        [value]="progressPercent()"
+      />
+    }
 
     <div class="stats-cards">
       <div class="stat-card">
