@@ -137,7 +137,7 @@ describe('UserPasswordCardComponent', () => {
 
     const tooltips = spectator.queryAll(TnTooltipDirective);
     const tooltip = tooltips.find(
-      (tip) => String(tip.message) === 'Generating a one-time password requires the user to have TrueNAS access roles.',
+      (tip) => String(tip.message()) === 'Generating a one-time password requires the user to have TrueNAS access roles.',
     );
     expect(tooltip).toBeTruthy();
   });

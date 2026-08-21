@@ -8,7 +8,6 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
   TnAutocompleteComponent,
-  TnButtonComponent,
   TnCheckboxComponent,
   TnFormFieldComponent,
   TnFormSectionComponent,
@@ -21,10 +20,8 @@ import {
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ThemeService } from 'app/modules/theme/theme.service';
@@ -42,7 +39,6 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   templateUrl: './preferences-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -50,8 +46,6 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
     TnSelectComponent,
     TnInputComponent,
     TnAutocompleteComponent,
-    FormActionsComponent,
-    TnButtonComponent,
     TranslateModule,
   ],
 })

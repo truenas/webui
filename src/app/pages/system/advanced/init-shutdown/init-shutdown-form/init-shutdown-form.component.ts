@@ -5,25 +5,21 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType,
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { Observable, of, Subscription } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen, initShutdownScriptWhenLabels } from 'app/enums/init-shutdown-script-when.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextInitShutdown } from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -34,7 +30,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
   templateUrl: './init-shutdown-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -42,9 +37,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TnSelectComponent,
     IxExplorerComponent,
     TnCheckboxComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
     AsyncPipe,
     ExplorerCreateDatasetComponent,
@@ -105,11 +97,7 @@ export class InitShutdownFormComponent extends SidePanelForm implements OnInit {
 
   private editingScript: InitShutdownScript | undefined;
 
-  /**
-   * Row to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
-   * carry data). Absent for Add, and unused in the legacy SlideIn host (which
-   * supplies the row via `slideInRef.getData()`).
-   */
+  /** Row to edit, supplied by the `<tn-side-panel>` host. Absent for Add. */
   readonly editScript = input<InitShutdownScript | undefined>(undefined);
 
   constructor() {
@@ -120,9 +108,7 @@ export class InitShutdownFormComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.editingScript = this.slideInRef
-      ? this.slideInRef.getData() as InitShutdownScript | undefined
-      : this.editScript();
+    this.editingScript = this.editScript();
 
     this.subscriptions.push(
       this.form.controls.command.enabledWhile(this.isCommand$),

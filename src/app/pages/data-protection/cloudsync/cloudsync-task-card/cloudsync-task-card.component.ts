@@ -39,7 +39,6 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { convertStringToId } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   TableActionsCellComponent,
@@ -92,7 +91,6 @@ export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi>
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private taskService = inject(TaskService);
   private snackbar = inject(SnackbarService);

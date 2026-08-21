@@ -10,7 +10,6 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { StaticRouteDeleteDialog } from 'app/pages/system/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRoutesCardComponent } from 'app/pages/system/network/components/static-routes-card/static-routes-card.component';
@@ -25,12 +24,6 @@ const staticRoutes = Array.from({ length: 10 }).map((val, index) => ({
 describe('StaticRoutesCardComponent', () => {
   let spectator: Spectator<StaticRoutesCardComponent>;
   let loader: HarnessLoader;
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const createComponent = createComponentFactory({
     component: StaticRoutesCardComponent,
@@ -48,7 +41,6 @@ describe('StaticRoutesCardComponent', () => {
       mockProvider(FormSidePanelService, {
         openForm: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
           closed: of(true),
