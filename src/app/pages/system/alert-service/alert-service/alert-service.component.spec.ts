@@ -172,7 +172,7 @@ describe('AlertServiceComponent', () => {
         },
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
     it('disables Save while a Send Test Alert call is in flight', async () => {
@@ -284,7 +284,7 @@ describe('AlertServiceComponent', () => {
         },
       ]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 });

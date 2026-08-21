@@ -119,7 +119,7 @@ describe('CronFormComponent', () => {
         stdout: true,
         user: 'root',
       }]);
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 
@@ -173,7 +173,7 @@ describe('CronFormComponent', () => {
         stdout: true,
         user: 'root',
       }]);
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 });

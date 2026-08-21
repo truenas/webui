@@ -152,7 +152,7 @@ describe('SnapshotTaskComponent', () => {
           month: '*',
         },
       }]);
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 
@@ -207,7 +207,7 @@ describe('SnapshotTaskComponent', () => {
           },
         },
       ]);
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
     it('includes fixate_removal_date as false when no snapshots are affected', async () => {

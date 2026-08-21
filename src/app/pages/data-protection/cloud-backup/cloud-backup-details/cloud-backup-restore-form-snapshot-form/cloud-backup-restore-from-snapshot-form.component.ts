@@ -58,15 +58,11 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);
   private dialogService = inject(DialogService);
-  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
-  // `<tn-side-panel>` form panel, where data arrives via {@link restoreData}.
-
   private destroyRef = inject(DestroyRef);
 
   /**
    * The backup + snapshot to restore, supplied by the `<tn-side-panel>` host (via
-   * {@link FormSidePanelService} `inputs`). The legacy SlideIn host passes the same shape through
-   * `slideInRef.getData()`; {@link ngOnInit} resolves from whichever host is present.
+   * {@link FormSidePanelService} `inputs`), read in {@link ngOnInit}.
    */
   readonly restoreData = input<{ backup: CloudBackup; snapshot: CloudBackupSnapshot } | undefined>(undefined);
 
@@ -141,8 +137,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Resolve from whichever host opened the form: the legacy SlideIn (`getData()`) or the
-    // `<tn-side-panel>` (the `restoreData` input, set before this hook runs).
+    // The `<tn-side-panel>` host sets `restoreData` before this hook runs.
     this.data = this.restoreData();
 
     this.form.patchValue({

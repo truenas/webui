@@ -32,9 +32,6 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
   ],
 })
 export class CloudSyncWizardComponent {
-  // Optional: present only in the legacy SlideIn host. Absent when hosted in the `<tn-side-panel>`
-  // form panel (opened via FormSidePanelService with `footerless: true` — the stepper owns its own
-  // Next/Save buttons), where close happens through {@link closed}.
   private api = inject(ApiService);
   private snackbarService = inject(SnackbarService);
   private cdr = inject(ChangeDetectorRef);

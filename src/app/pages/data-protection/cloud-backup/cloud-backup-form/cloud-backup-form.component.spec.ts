@@ -213,7 +213,7 @@ describe('CloudBackupFormComponent', () => {
         absolute_paths: false,
         transfer_setting: CloudsyncTransferSetting.Default,
       }]);
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(existingTask);
     });
 
     it('adds a new cloud backup task when new form is saved', async () => {
@@ -268,7 +268,7 @@ describe('CloudBackupFormComponent', () => {
         absolute_paths: true,
         transfer_setting: CloudsyncTransferSetting.FastStorage,
       }]);
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(existingTask);
     });
   });
 
@@ -342,7 +342,7 @@ describe('CloudBackupFormComponent', () => {
         snapshot: false,
         transfer_setting: CloudsyncTransferSetting.Performance,
       }]);
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(existingTask);
     });
   });
 

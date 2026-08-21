@@ -225,7 +225,7 @@ describe('ReplicationFormComponent', () => {
         auto: true,
         sudo: false,
       }]);
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
     it('shows eligible snapshots message', fakeAsync(() => {
@@ -280,7 +280,7 @@ describe('ReplicationFormComponent', () => {
           sudo: false,
         },
       ]);
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 

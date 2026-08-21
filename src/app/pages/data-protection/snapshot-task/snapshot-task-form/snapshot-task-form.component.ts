@@ -58,9 +58,6 @@ export class SnapshotTaskFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private taskService = inject(TaskService);
   protected storageService = inject(StorageService);
-  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
-  // `<tn-side-panel>` form panel, where data arrives via {@link taskToEdit}.
-
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
   readonly taskToEdit = input<PeriodicSnapshotTask | undefined>(undefined);
 

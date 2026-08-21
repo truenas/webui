@@ -164,7 +164,8 @@ describe('StorageSettingsFormComponent', () => {
     spectator.component.submit();
     spectator.detectChanges();
 
-    expect(closedSpy).toHaveBeenCalled();
+    // No changes: `false` reads as a cancel, so the opener does not reload.
+    expect(closedSpy).toHaveBeenCalledWith(false);
     expect(api.call).not.toHaveBeenCalledWith('pool.resilver.update', expect.anything());
     expect(api.job).not.toHaveBeenCalledWith('systemdataset.update', expect.anything());
   });

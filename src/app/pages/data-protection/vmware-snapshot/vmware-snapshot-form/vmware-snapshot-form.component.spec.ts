@@ -115,7 +115,7 @@ describe('VmwareSnapshotFormComponent', () => {
         filesystem: 'fs01',
         datastore: 'ds01',
       }]);
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 
@@ -160,7 +160,7 @@ describe('VmwareSnapshotFormComponent', () => {
           datastore: 'ds01',
         },
       ]);
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 

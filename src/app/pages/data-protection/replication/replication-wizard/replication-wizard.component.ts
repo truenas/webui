@@ -61,9 +61,6 @@ export class ReplicationWizardComponent {
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
   private authService = inject(AuthService);
-  // Optional: present only in the legacy SlideIn host. Absent when hosted in the `<tn-side-panel>`
-  // form panel (opened via FormSidePanelService with `footerless: true` — the stepper owns its own
-  // Next/Save buttons), where close happens through {@link closed}.
   private destroyRef = inject(DestroyRef);
 
   protected whatAndWhere = viewChild.required(ReplicationWhatAndWhereComponent);

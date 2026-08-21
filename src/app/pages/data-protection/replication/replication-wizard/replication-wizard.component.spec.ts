@@ -218,7 +218,7 @@ describe('ReplicationWizardComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task created.');
-    expect(closedSpy).toHaveBeenCalled();
+    expect(closedSpy).toHaveBeenCalledWith(true);
   });
 
   it('uses custom source snapshot lifetime for periodic snapshot tasks', async () => {

@@ -80,8 +80,6 @@ export class CloudBackupFormComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);
   private cloudCredentialService = inject(CloudCredentialService);
-  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
-  // `<tn-side-panel>` form panel, where data arrives via {@link backupToEdit}.
   private destroyRef = inject(DestroyRef);
 
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */

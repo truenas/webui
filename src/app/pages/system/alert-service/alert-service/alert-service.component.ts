@@ -88,9 +88,6 @@ export class AlertServiceComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
-  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
-  // `<tn-side-panel>` form panel, where data arrives via {@link alertServiceToEdit}
-  // and close happens through {@link closed}.
   private destroyRef = inject(DestroyRef);
 
   /** The record being edited, supplied by the `<tn-side-panel>` host (null = create). */

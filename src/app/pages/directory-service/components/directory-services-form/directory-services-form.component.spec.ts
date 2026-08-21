@@ -171,7 +171,7 @@ describe('DirectoryServicesConfigFormComponent', () => {
       });
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
     it('should not call API when confirmation is cancelled', () => {

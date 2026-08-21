@@ -79,7 +79,7 @@ export class DirectoryServicesFormComponent extends SidePanelForm implements OnI
   private validationService = inject(DirectoryServiceValidationService);
   private destroyRef = inject(DestroyRef);
 
-  /** Existing config to edit; supplied by the `<tn-side-panel>` host (or legacy SlideIn `getData`). */
+  /** Existing config to edit; supplied by the `<tn-side-panel>` host. */
   readonly existingConfig = input<DirectoryServicesConfig | undefined>(undefined);
 
   protected readonly previousConfig = signal<DirectoryServicesConfig | null>(null);

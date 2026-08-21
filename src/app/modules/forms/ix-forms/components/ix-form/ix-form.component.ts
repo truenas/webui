@@ -204,6 +204,18 @@ export class IxFormComponent<
   /** Initial snapshot for forms that do their own async setup/patching. */
   readonly initialFormSnapshot = input<Partial<T> | null>(null);
 
+  /*
+   * NOT RENDERED. `<ix-modal-header>` was the sole consumer of the three title inputs (through
+   * {@link resolvedTitle}) and of `requiredRoles` (which gated the in-body Save); both went with
+   * the legacy SlideIn host in NAS-141472. The `<tn-side-panel>` host takes its title from
+   * `FormSidePanelService.open({ title })` and gates its footer Save on the PAGE component's
+   * `requiredRoles`, neither of which comes from here.
+   *
+   * Kept rather than deleted because ~30 templates still bind them and this input surface is
+   * frozen (see the class docblock) — removing four inputs wants the same team review adding one
+   * would. Do not build on them; drop them and their bindings in one pass when that review happens.
+   */
+
   /** Explicit title; overrides addTitle/editTitle. */
   readonly title = input<string>('');
 
@@ -321,7 +333,12 @@ export class IxFormComponent<
     return this.editData() != null || this.snapshot() != null;
   });
 
-  /** Explicit title wins, else addTitle/editTitle by mode. */
+  /**
+   * Explicit title wins, else addTitle/editTitle by mode.
+   *
+   * NOT RENDERED — read only by specs since `<ix-modal-header>` was removed. See the note on
+   * {@link title}.
+   */
   readonly resolvedTitle = computed(() => {
     return this.title() || (this.isEdit() ? this.editTitle() : this.addTitle());
   });

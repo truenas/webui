@@ -95,7 +95,8 @@ describe('AllowedAddressesComponent', () => {
     spectator.detectChanges();
 
     expect(api.call).not.toHaveBeenCalledWith('system.general.update');
-    expect(closedSpy).toHaveBeenCalled();
+    // `false` is what FormSidePanelService reads as a cancel, so the opener does not reload.
+    expect(closedSpy).toHaveBeenCalledWith(false);
   });
 
   describe('warnings', () => {
@@ -177,7 +178,7 @@ describe('AllowedAddressesComponent', () => {
 
       spectator.detectChanges();
 
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
     it('should handle form validation and submission correctly', async () => {
@@ -213,7 +214,7 @@ describe('AllowedAddressesComponent', () => {
         { ui_allowlist: ['5.5.5.5'] },
       ]);
       expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
     it('should handle restart cancellation gracefully', async () => {
@@ -231,7 +232,7 @@ describe('AllowedAddressesComponent', () => {
 
       // Even if restart is cancelled, the form should still close successfully
       expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
-      expect(closedSpy).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 });

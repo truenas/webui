@@ -51,9 +51,6 @@ export class VmwareSnapshotFormComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   protected dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);
-  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
-  // `<tn-side-panel>` form panel, where data arrives via {@link snapshotToEdit}.
-
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
   readonly snapshotToEdit = input<VmwareSnapshot | undefined>(undefined);
 
