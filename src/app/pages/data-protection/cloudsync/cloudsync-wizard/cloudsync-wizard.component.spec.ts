@@ -60,6 +60,22 @@ describe('CloudSyncWizardComponent', () => {
     await updateStepHarnesses();
   }
 
+  // The wizard reaches `FormSidePanelContainerComponent` through
+  // `as unknown as Type<SidePanelForm>`, so the compiler cannot check that it still satisfies the
+  // host contract. The container's closeGuard calls `hasUnsavedChanges()` un-chained — losing the
+  // method is a TypeError on close, not a build error, so pin it here.
+  describe('host contract', () => {
+    it('reports no unsaved changes while both steps are pristine', () => {
+      expect(spectator.component.hasUnsavedChanges()).toBe(false);
+    });
+
+    it('reports unsaved changes once a step is dirty', () => {
+      spectator.component.cloudSyncProvider().form.markAsDirty();
+
+      expect(spectator.component.hasUnsavedChanges()).toBe(true);
+    });
+  });
+
   it('creates objects when wizard is submitted', async () => {
     expect(await form!.getValues()).toEqual({});
 

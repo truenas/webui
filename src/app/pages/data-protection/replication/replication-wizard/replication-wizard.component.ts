@@ -83,6 +83,11 @@ export class ReplicationWizardComponent {
   createdSnapshotTasks: PeriodicSnapshotTask[] = [];
   createdReplication: ReplicationTask | undefined;
 
+  /** Host hook (`<tn-side-panel>` closeGuard) — dirty across either step. */
+  hasUnsavedChanges(): boolean {
+    return Boolean(this.whatAndWhere()?.form?.dirty || this.when()?.form?.dirty);
+  }
+
   /** Whether the form is currently submitting; the host shows a progress bar while true. */
   isBusy(): boolean {
     return this.isLoading;

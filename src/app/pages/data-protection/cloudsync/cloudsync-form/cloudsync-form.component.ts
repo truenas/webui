@@ -121,11 +121,6 @@ export class CloudSyncFormComponent implements OnInit {
   protected tnDialog = inject(TnDialog);
   private filesystemService = inject(FilesystemService);
   protected cloudCredentialService = inject(CloudCredentialService);
-  // Optional: present only in the legacy SlideIn host (incl. the wizard `swap`).
-  // Absent when hosted in the `<tn-side-panel>` form panel, where data arrives via
-  // {@link taskToEdit} and close happens through {@link closed}.
-  // Public (not private): the cloudsync wizard steps `slideInRef.swap(CloudSyncFormComponent)`, which
-  // requires this form to structurally satisfy `ComponentInSlideIn` (a public `slideInRef`). Optional
   private authService = inject(AuthService);
   private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);

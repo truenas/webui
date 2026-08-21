@@ -56,6 +56,11 @@ export class CloudSyncWizardComponent {
   mergedLoading$: Observable<boolean> = merge(this.isLoading$, this.isProviderLoading$);
   existingCredential: CloudSyncCredential | undefined;
 
+  /** Host hook (`<tn-side-panel>` closeGuard) — dirty across either step. */
+  hasUnsavedChanges(): boolean {
+    return Boolean(this.whatAndWhen()?.form?.dirty || this.cloudSyncProvider()?.isDirty());
+  }
+
   /** Whether the form is currently submitting; the host shows a progress bar while true. */
   isBusy(): boolean {
     return this.isLoading$.value || this.isProviderLoading$.value;
