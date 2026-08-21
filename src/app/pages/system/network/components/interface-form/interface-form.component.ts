@@ -133,7 +133,6 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
 
     // Bridge fields
     bridge_members: [[] as string[]],
-    stp: [true],
     enable_learning: [true],
 
     // Lag fields
