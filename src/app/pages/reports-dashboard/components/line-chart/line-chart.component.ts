@@ -62,16 +62,24 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   readonly zoomChange = output<number[]>();
 
-  render(update?: boolean): void {
+  /**
+   * @param update Redraw the existing chart instead of constructing a new one.
+   * Constructing a Dygraph clears the wrapper and re-measures its width from an
+   * empty element, which is how auto-refresh used to shrink the graph.
+   * @param resetDateWindow Drop the date window a drag-zoom left behind. Right
+   * when new data arrived -- the freshly fetched range is what should be on
+   * screen -- but wrong for a recolour, which must leave the zoom alone.
+   */
+  private render(update = false, resetDateWindow = update): void {
     const data = this.data()?.data;
     this.units = this.inferUnits(this.labelY());
     if (isUpsRuntimeWithData(this.report().name, data)) {
       this.units = stringToTitleCase(determineTimeUnit(data));
     }
-    this.renderGraph(update);
+    this.renderGraph(update, resetDateWindow);
   }
 
-  private renderGraph(update?: boolean): void {
+  private renderGraph(update: boolean, resetDateWindow: boolean): void {
     if (!this.data()?.legend?.length) {
       return;
     }
@@ -108,7 +116,16 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     } as unknown as dygraphs.Options;
 
     if (update) {
-      this.chart.updateOptions(options);
+      this.chart.updateOptions({
+        ...options,
+        // Without `file` the chart keeps plotting whatever it was built with,
+        // so zooming and stepping would redraw the axes and never the series.
+        file: data,
+        // A drag-zoom leaves a dateWindow pinned to a range the newly fetched
+        // data no longer covers, so a data update clears it. A recolour keeps
+        // it, since the user is still looking at the range they zoomed into.
+        ...(resetDateWindow ? { dateWindow: null } : {}),
+      } as unknown as dygraphs.Options);
     } else {
       this.chart = new Dygraph(this.el().nativeElement, data, options);
     }
@@ -447,25 +464,31 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.data) {
-      this.render();
+      // Update the existing chart rather than building a new one. Rebuilding
+      // also leaked the previous chart along with its window listeners.
+      this.render(Boolean(this.chart));
+      return;
+    }
 
-      if (this.chart) {
-        this.render(true);
-      } else {
-        this.render();// make an update method?
-      }
+    if (changes.chartColors) {
+      // A theme switch replaces the palette without touching the data or the
+      // container size, so nothing else would repaint the series and the grid.
+      this.render(Boolean(this.chart), false);
     }
   }
 
   ngAfterViewInit(): void {
-    this.render();
+    // ngOnChanges usually gets here first with data already in hand, and a second
+    // constructor call would orphan that chart along with its resize listener.
+    this.render(Boolean(this.chart));
   }
 
+  /**
+   * Re-measures the container and redraws. Needed when the container changes
+   * width without a window resize -- Dygraph only watches the window itself.
+   */
   resize(): void {
-    if (this.chart) {
-      // Simple resize - parent component handles width calculation
-      this.chart.resize();
-    }
+    this.chart?.resize();
   }
 
   ngOnDestroy(): void {
