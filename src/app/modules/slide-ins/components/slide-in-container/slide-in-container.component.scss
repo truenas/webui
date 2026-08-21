@@ -2,9 +2,13 @@
 
 :host {
   // Height of the `ix-modal-header` the hosted form renders. The header is absolutely positioned
-  // over this box, so the container reserves exactly that much `padding-top`. Matches
-  // `.tn-side-panel__header` (16px padding + a 32px icon-button row) so both hosts line up.
-  --slide-in-header-height: 64px;
+  // over this box, so whatever the header actually measures has to be reserved here as
+  // `padding-top` — under-reserve and the header lands on top of the form's first field.
+  // 64px is `.tn-side-panel__header`'s own height (16px padding x2 + a 32px `size="sm"` icon-button
+  // row), which both hosts therefore share. The `max()` covers the one way the header can outgrow
+  // that: its title is rem-based (1.25rem/1.5, see `modal-header.component.scss`), so above a 16px
+  // root font size the title's line box, not the icon button, sets the height.
+  --slide-in-header-height: max(64px, calc(1.25rem * 1.5 + 32px));
 
   background-color: var(--bg2);
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3); // default cdk-overlay backdrop background
@@ -51,7 +55,9 @@ body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
-  padding: 0 20px 40px;
+  // 24px matches `.tn-side-panel__content`'s inline padding, so a form's fields sit at the same
+  // inset — and line up with the same header title — under either host.
+  padding: 0 24px 40px;
   width: 100%;
 
   @media (max-width: $breakpoint-sm) {

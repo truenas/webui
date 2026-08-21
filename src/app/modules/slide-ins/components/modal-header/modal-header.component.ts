@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconButtonComponent, TnProgressBarComponent } from '@truenas/ui-components';
+import { TnIconButtonComponent, TnProgressBarComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { switchMap, take } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -24,6 +24,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
   imports: [
     TnIconButtonComponent,
     TnProgressBarComponent,
+    TnTooltipDirective,
     ReadOnlyComponent,
     TranslateModule,
   ],
@@ -63,7 +64,7 @@ export class ModalHeaderComponent {
     return this.requiredRoles().length > 0 && !this.hasRequiredRoles();
   });
 
-  close(): void {
+  protected close(): void {
     this.slideInRef.close({ response: undefined });
   }
 }

@@ -2,8 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconButtonHarness } from '@truenas/ui-components';
+import {
+  TnIconButtonComponent, TnIconButtonHarness, TnProgressBarComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -19,14 +22,8 @@ describe('ModalHeaderComponent', () => {
     component: ModalHeaderComponent,
     providers: [
       mockAuth(),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        getData: jest.fn((): undefined => undefined),
-        swap: jest.fn(),
-      }),
-      mockProvider(SlideIn, {
-        openSlideIns: openSlideInsCounter,
-      }),
+      mockProvider(SlideInRef, { close: jest.fn() }),
+      mockProvider(SlideIn, { openSlideIns: openSlideInsCounter }),
     ],
   });
 
@@ -43,8 +40,9 @@ describe('ModalHeaderComponent', () => {
     });
 
     it('shows proper title', () => {
-      // No `TnSidePanelHarness` equivalent for the legacy header, so the title is read off the DOM.
-      expect(spectator.query('.ix-form-title')!.textContent!.trim()).toBe('Add Cloudsync Task');
+      // The title bar is plain markup, not a tn-* component, so there is no harness for it.
+      // Pinned to `h2` so a silent heading-level regression fails here.
+      expect(spectator.query('h2.ix-form-title')!.textContent!.trim()).toBe('Add Cloudsync Task');
     });
 
     it('shows a working close button when only 1 component is in the queue', async () => {
@@ -54,23 +52,35 @@ describe('ModalHeaderComponent', () => {
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: undefined });
     });
 
-    it('gives the close button an accessible name naming the form', () => {
-      expect(spectator.query('tn-icon-button button')).toHaveAttribute(
-        'aria-label',
-        'Close Add Cloudsync Task Form',
-      );
+    it('does not render the back button when nothing is underneath', async () => {
+      expect(await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'chevron-left' }))).toHaveLength(0);
+    });
+
+    it('names the close control after the form and explains what it does', () => {
+      // White-box reads of signal inputs: TnIconButtonHarness exposes no getAriaLabel()/getTooltip().
+      const closeButton = spectator.query(TnIconButtonComponent)!;
+
+      expect(closeButton.ariaLabel()).toBe('Close Add Cloudsync Task Form');
+      expect(closeButton.tooltip()).toBe('Close the form');
+    });
+
+    it('does not render a close control when close is disabled', async () => {
+      spectator.setInput('disableClose', true);
+
+      expect(await loader.getAllHarnesses(TnIconButtonHarness)).toHaveLength(0);
     });
 
     it('does not show a progress bar when not loading', () => {
-      expect(spectator.query('[role="progressbar"]')).toBeNull();
+      expect(spectator.query(TnProgressBarComponent)).toBeNull();
     });
 
     it('shows an indeterminate progress bar while loading', () => {
       spectator.setInput('loading', true);
 
-      const progressBar = spectator.query('[role="progressbar"]')!;
-      expect(progressBar).toHaveClass('tn-progress-bar-indeterminate');
-      expect(progressBar).toHaveAttribute('aria-label', 'Loading');
+      // White-box read: the library ships no TnProgressBarHarness in 0.4.11.
+      const progressBar = spectator.query(TnProgressBarComponent)!;
+      expect(progressBar.mode()).toBe('indeterminate');
+      expect(progressBar.ariaLabel()).toBe('Loading');
     });
 
     it('does not show the readonly badge when the user has the required roles', () => {
@@ -102,24 +112,30 @@ describe('ModalHeaderComponent', () => {
     it('does not render the dismiss button alongside the back button', async () => {
       expect(await loader.getAllHarnesses(TnIconButtonHarness.with({ name: 'close' }))).toHaveLength(0);
     });
+
+    it('explains that the back button returns to the previous form', () => {
+      expect(spectator.query(TnIconButtonComponent)!.tooltip()).toBe('Go back to the previous form');
+    });
   });
 
   describe('without the required roles', () => {
     beforeEach(() => {
       openSlideInsCounter.set(1);
       spectator = createComponent({
-        props: {
-          title: 'Add Cloudsync Task',
-          requiredRoles: [Role.FullAdmin],
-        },
-        providers: [
-          mockProvider(AuthService, { hasRole: () => of(false) }),
-        ],
+        props: { title: 'Add Cloudsync Task' },
       });
+      // `MockAuthService.hasRole` is a hardcoded `of(true)`; override the spy so the argument the
+      // component passes stays assertable.
+      const authService = spectator.inject(AuthService) as unknown as MockAuthService;
+      authService.hasRole.mockReturnValue(of(false));
+      spectator.setInput('requiredRoles', [Role.FullAdmin]);
     });
 
-    it('shows the readonly badge', () => {
+    it('shows the readonly badge, checking the roles the form declared', () => {
+      const authService = spectator.inject(AuthService) as unknown as MockAuthService;
+
       expect(spectator.query('ix-readonly-badge')).not.toBeNull();
+      expect(authService.hasRole).toHaveBeenCalledWith([Role.FullAdmin]);
     });
   });
 });

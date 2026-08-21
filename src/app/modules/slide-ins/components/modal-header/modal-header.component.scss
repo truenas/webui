@@ -7,21 +7,25 @@
   top: 0;
   width: 100%;
 
+  // On small screens the container drops its reserved `padding-top` and the bar scrolls with the
+  // form instead, so it sits in flow and full-bleeds back across `.slide-in-wrapper`'s inline
+  // padding (24px a side — keep these in step with it).
   @media (max-width: $breakpoint-sm) {
     background-color: var(--bg2);
     left: auto;
-    margin: 0 -20px;
+    margin: 0 -24px;
     position: sticky;
     top: 0;
-    width: calc(100% + 40px);
+    width: calc(100% + 48px);
     z-index: 10;
   }
 }
 
 // Mirrors `.tn-side-panel__header` from @truenas/ui-components (16px/24px padding, 16px gap,
 // single-line ellipsized title, 1px bottom rule) so a form opened through the legacy SlideIn and
-// one hosted in a `tn-side-panel` read as the same surface. The height is the contract
-// `ix-slide-in-container` reserves with `padding-top` — see `--slide-in-header-height` there.
+// one hosted in a `tn-side-panel` read as the same surface. `--slide-in-header-height` is only a
+// floor here; `ix-slide-in-container` declares the authoritative value and reserves it as
+// `padding-top`, so change it there, not here.
 .ix-slidein-title-bar {
   align-items: center;
   background-color: var(--bg2);

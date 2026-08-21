@@ -1,4 +1,7 @@
-<header class="ix-slidein-title-bar">
+<!-- Deliberately a `div`, not a `header`: a `header` outside article/aside/main/nav/section maps to
+     role="banner", and this renders inside the container's role="dialog" — which does not scope it
+     out. It would become the page's only banner landmark whenever a slide-in is open. -->
+<div class="ix-slidein-title-bar">
   @if (isStacked() && !disableClose()) {
     <tn-icon-button
       id="ix-close-icon"
@@ -13,7 +16,13 @@
     ></tn-icon-button>
   }
 
-  <h2 class="ix-form-title">{{ title() ? (title() | translate) : '' }}</h2>
+  <!-- The title truncates to protect the height the container reserves for this bar, so the full
+       text is offered on hover/focus. Screen readers read the heading in full either way. -->
+  <h2
+    class="ix-form-title"
+    tnTooltipPosition="below"
+    [tnTooltip]="title() ? (title() | translate) : ''"
+  >{{ title() ? (title() | translate) : '' }}</h2>
 
   @if (showReadOnlyBadge()) {
     <ix-readonly-badge></ix-readonly-badge>
@@ -32,7 +41,7 @@
       (onClick)="close()"
     ></tn-icon-button>
   }
-</header>
+</div>
 
 @if (loading()) {
   <tn-progress-bar
