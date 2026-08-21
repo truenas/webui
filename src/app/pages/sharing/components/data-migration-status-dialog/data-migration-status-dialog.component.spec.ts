@@ -92,11 +92,18 @@ describe('DataMigrationStatusDialogComponent', () => {
       expect(spectator.component.progressPercent()).toBe(0);
     });
 
-    it('clamps a byte count that overshoots its total', () => {
+    it('clamps an item count that overshoots its total', () => {
+      build({ ...baseJob, stats: { ...baseStats, success: 12, total_items: 10 } });
+
+      expect(spectator.component.progressPercent()).toBe(100);
+    });
+
+    it('counts failed items as processed, so a terminal job reaches 100%', () => {
       build({
         ...baseJob,
+        status: TierRewriteJobStatus.Complete,
         stats: {
-          ...baseStats, count_bytes: 20_000_000, total_bytes: 10_000_000, success: 12, total_items: 10,
+          ...baseStats, total_items: 10, success: 9, failures: 1,
         },
       });
 
@@ -106,7 +113,7 @@ describe('DataMigrationStatusDialogComponent', () => {
     it('runs the bar indeterminate while a single-item job is in flight', () => {
       build({ ...baseJob, stats: { ...baseStats, total_items: 1, success: 0 } });
 
-      expect(spectator.component.hasIndeterminateProgress()).toBe(true);
+      expect(spectator.query('tn-progress-bar')).toHaveAttribute('mode', 'indeterminate');
     });
 
     it('settles a single-item job back to a determinate bar once it ends', () => {
@@ -116,7 +123,7 @@ describe('DataMigrationStatusDialogComponent', () => {
         stats: { ...baseStats, total_items: 1, success: 1 },
       });
 
-      expect(spectator.component.hasIndeterminateProgress()).toBe(false);
+      expect(spectator.query('tn-progress-bar')).toHaveAttribute('mode', 'determinate');
       expect(spectator.component.progressPercent()).toBe(100);
     });
   });

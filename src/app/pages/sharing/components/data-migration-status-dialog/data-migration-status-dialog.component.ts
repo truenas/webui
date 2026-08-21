@@ -104,13 +104,17 @@ export class DataMigrationStatusDialogComponent implements OnInit {
    * Progress is measured in items, not bytes. `count_bytes` is the byte count
    * the job has *claimed*, not written — it reaches `total_bytes` as soon as
    * the job has enumerated the dataset, and can even exceed it, so a byte-based
-   * bar reads 100% on a job that has rewritten nothing. `success`/`total_items`
-   * is bounded, monotonic, and is what the Items Completed card already shows.
+   * bar reads 100% on a job that has rewritten nothing.
+   *
+   * Items *processed*, not items succeeded: `failures` is a counter disjoint
+   * from `success` (the Failures card reports it separately), so a job that
+   * ends having failed an item would otherwise stall the bar short of full
+   * next to a terminal status badge. A failed item is finished work either way.
    */
   protected progressFraction = computed(() => {
     const stats = this.job()?.stats;
     if (!stats || stats.total_items <= 0) return 0;
-    return Math.min(1, Math.max(0, stats.success / stats.total_items));
+    return Math.min(1, Math.max(0, (stats.success + stats.failures) / stats.total_items));
   });
 
   protected progressPercent = computed(() => Math.round(this.progressFraction() * 100));
