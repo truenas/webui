@@ -3,16 +3,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import {
-  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-} from '@truenas/ui-components';
+import { TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
 import {
   switchMap, tap,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
@@ -37,9 +33,6 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
     TnFormFieldComponent,
     TnInputComponent,
     WarningComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
     TnFormSectionComponent,
   ],

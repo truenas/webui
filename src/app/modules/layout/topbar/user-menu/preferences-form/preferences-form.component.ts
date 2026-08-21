@@ -8,7 +8,6 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
   TnAutocompleteComponent,
-  TnButtonComponent,
   TnCheckboxComponent,
   TnFormFieldComponent,
   TnFormSectionComponent,
@@ -21,7 +20,6 @@ import {
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -48,8 +46,6 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
     TnSelectComponent,
     TnInputComponent,
     TnAutocompleteComponent,
-    FormActionsComponent,
-    TnButtonComponent,
     TranslateModule,
   ],
 })

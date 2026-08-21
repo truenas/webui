@@ -11,7 +11,6 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
-  TnButtonComponent,
   TnCheckboxComponent,
   TnChipInputComponent,
   TnDialog,
@@ -34,7 +33,6 @@ import {
   filter, map, pairwise, startWith, switchMap, tap,
 } from 'rxjs/operators';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -100,7 +98,6 @@ type FormValue = CloudSyncFormComponent['form']['value'];
     TnSelectComponent,
     TnCheckboxComponent,
     TnChipInputComponent,
-    TnButtonComponent,
     TransferModeExplanationComponent,
     IxExplorerComponent,
     TnTestIdDirective,
@@ -108,7 +105,6 @@ type FormValue = CloudSyncFormComponent['form']['value'];
     TnTooltipDirective,
     CloudCredentialsSelectComponent,
     SchedulerComponent,
-    RequiresRolesDirective,
     TranslateModule,
   ],
 })

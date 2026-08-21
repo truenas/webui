@@ -14,8 +14,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType,
-  TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
   TnProgressBarComponent, TnSelectComponent, TnSlideToggleComponent,
 } from '@truenas/ui-components';
 import {
@@ -23,7 +22,6 @@ import {
 } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
@@ -115,8 +113,6 @@ interface MissingStigRequirement {
     TnInputComponent,
     TnSelectComponent,
     TnProgressBarComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
     AsyncPipe,
   ],

@@ -4,14 +4,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
-} from '@truenas/ui-components';
+import { TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent } from '@truenas/ui-components';
 import {
   finalize, forkJoin, map, Observable, of, take,
 } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -21,7 +18,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -48,9 +44,6 @@ export interface StorageSettingsData {
     TnFormFieldComponent,
     TnSelectComponent,
     TnCheckboxComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
     AsyncPipe,
     WarningComponent,
