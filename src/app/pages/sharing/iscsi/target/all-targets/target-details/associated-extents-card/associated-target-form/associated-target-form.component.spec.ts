@@ -10,8 +10,7 @@ import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-error
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
-import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AssociatedTargetFormComponent } from './associated-target-form.component';
 
@@ -30,11 +29,11 @@ describe('AssociatedTargetFormComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       mockAuth(),
-      ...ixFormTestingProviders(),
       provideTnFormFieldErrors(),
       mockApi([
         mockCall('iscsi.targetextent.create', { id: 7 } as IscsiTargetExtent),
       ]),
+      mockProvider(FormErrorHandlerService),
       mockProvider(DialogRef),
       {
         provide: DIALOG_DATA,
@@ -71,7 +70,6 @@ describe('AssociatedTargetFormComponent', () => {
       { lunid: 0, extent: 1, target: 1 },
     ]);
     expect(spyClose).toHaveBeenCalledWith({ id: 7 });
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Extent associated with target');
   });
 
   it('keeps Associate disabled until the required Extent is picked', async () => {

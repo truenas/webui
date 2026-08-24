@@ -1,17 +1,6 @@
 <tn-dialog-shell testId="associated-target-form" [title]="('Associate' | translate) + ' ' + data.target.name">
-  <!--
-    Hosted in a dialog, so `SlideInRef` is absent: `<ix-form>` renders neither the modal header
-    nor its own Save row, and hands the created record back through `closed` for the dialog to
-    close with. The dialog's own action slot owns Cancel/Associate, driven by the form's public
-    `canSubmit()`/`submit()`.
-  -->
-  <ix-form
-    [formGroup]="form"
-    [isEditMode]="false"
-    [requiredRoles]="requiredRoles"
-    [submitHandler]="handleSubmit"
-    (closed)="dialogRef.close($event)"
-  >
+
+  <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
     <tn-form-section>
       <tn-form-field [label]="'LUN ID' | translate" [tooltip]="tooltips.lunid | translate">
         <tn-input
@@ -31,7 +20,7 @@
         ></tn-select>
       </tn-form-field>
     </tn-form-section>
-  </ix-form>
+  </form>
 
   <ix-form-actions tnDialogAction class="form-actions">
     <tn-button
@@ -41,22 +30,13 @@
       (onClick)="dialogRef.close(false)"
     ></tn-button>
 
-    @if (formRef(); as ixForm) {
-      <!--
-        `ix-form` renders its own "Saving…" indicator only in the SlideIn arm of its template,
-        which this dialog host never reaches — so drive the in-flight feedback from the same
-        public signal here, replacing the LoaderService overlay this form used before.
-      -->
-      <tn-button
-        *ixRequiresRoles="requiredRoles"
-        color="primary"
-        testId="associate-target"
-        aria-live="polite"
-        [label]="ixForm.isSubmitting() ? ('Saving…' | translate) : ('Associate' | translate)"
-        [disabled]="!ixForm.canSubmit()"
-        [attr.aria-busy]="ixForm.isSubmitting() || null"
-        (onClick)="ixForm.submit()"
-      ></tn-button>
-    }
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      testId="associate-target"
+      [label]="'Associate' | translate"
+      [disabled]="form.invalid || isLoading()"
+      (onClick)="onSubmit()"
+    ></tn-button>
   </ix-form-actions>
 </tn-dialog-shell>
