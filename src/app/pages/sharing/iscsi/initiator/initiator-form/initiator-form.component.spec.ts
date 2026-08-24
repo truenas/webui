@@ -6,12 +6,14 @@ import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/sp
 import {
   TnButtonHarness, TnCheckboxHarness, TnIconButtonHarness, TnInputHarness,
 } from '@truenas/ui-components';
+import { firstValueFrom, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InitiatorFormComponent } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.component';
 
@@ -42,6 +44,9 @@ describe('InitiatorFormComponent', () => {
         mockCall('iscsi.initiator.update'),
       ]),
       mockProvider(DialogService),
+      mockProvider(UnsavedChangesService, {
+        showConfirmDialog: jest.fn(() => of(true)),
+      }),
     ],
   });
 
@@ -152,6 +157,66 @@ describe('InitiatorFormComponent', () => {
     await button.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'sharing', 'iscsi', 'initiators']);
+  });
+
+  it('leaves the page without a prompt when nothing was changed', async () => {
+    spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
+
+    await expect(firstValueFrom(spectator.component.canDeactivate())).resolves.toBe(true);
+    expect(spectator.inject(UnsavedChangesService).showConfirmDialog).not.toHaveBeenCalled();
+  });
+
+  it('asks to confirm leaving the page when the description was changed', async () => {
+    spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
+
+    await (await getTnInput('comment')).setValue('new_comment');
+
+    await expect(firstValueFrom(spectator.component.canDeactivate())).resolves.toBe(true);
+    expect(spectator.inject(UnsavedChangesService).showConfirmDialog).toHaveBeenCalled();
+  });
+
+  it('asks to confirm leaving the page when the allowed initiators were changed', async () => {
+    spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
+
+    await (await getTnInput('new_initiator')).setValue('new_initiator_1');
+    await (await loader.getHarness(TnIconButtonHarness.with({ name: 'plus' }))).click();
+
+    await expect(firstValueFrom(spectator.component.canDeactivate())).resolves.toBe(true);
+    expect(spectator.inject(UnsavedChangesService).showConfirmDialog).toHaveBeenCalled();
+  });
+
+  it('does not ask about text left sitting in the Add IQN field', async () => {
+    spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
+
+    await (await getTnInput('new_initiator')).setValue('not_added_yet');
+
+    await expect(firstValueFrom(spectator.component.canDeactivate())).resolves.toBe(true);
+    expect(spectator.inject(UnsavedChangesService).showConfirmDialog).not.toHaveBeenCalled();
+  });
+
+  it('stays on the page when the unsaved changes prompt is declined', async () => {
+    spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
+    spectator.inject(UnsavedChangesService).showConfirmDialog = jest.fn(() => of(false));
+
+    await (await getTnInput('comment')).setValue('new_comment');
+
+    await expect(firstValueFrom(spectator.component.canDeactivate())).resolves.toBe(false);
+  });
+
+  it('stops asking to confirm once the changes are saved', async () => {
+    spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
+
+    await (await getTnInput('comment')).setValue('new_comment');
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Save' }))).click();
+
+    await expect(firstValueFrom(spectator.component.canDeactivate())).resolves.toBe(true);
+    expect(spectator.inject(UnsavedChangesService).showConfirmDialog).not.toHaveBeenCalled();
   });
 
   it('loads connected initiators when Refresh button is pressed', async () => {
