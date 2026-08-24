@@ -100,6 +100,8 @@ comment instead.
 |---|---|
 | R1.2 | Stories are independent tests with API-provisioned preconditions, not one chain |
 | R2.2 | Disk inventory — see "What the suite needs" above |
+| R2.7 | Provisioning is the pipeline's job; the suite is handed a reachable host and asserts nothing about how it came to exist |
+| R2.8 | The appliance boots fully configured — credentials set, no first-boot wizard, no EULA |
 | R2.9 | The appliance's certificate is self-signed; tolerate it without hiding real failures |
 | R2.10 | Reading webui's own config is allowed in-tree, confined to one module, and opt-in |
 | R2.11 | Two target profiles differing in exactly one thing: the UI base URL |
@@ -123,7 +125,9 @@ comment instead.
 | R8.2 | At most one retry per test |
 | R8.3 | No fixed sleeps — wait on observable conditions |
 | R8.4 | Quarantine policy for persistently flaky tests |
+| R9.2 | One command runs the suite against a developer's own appliance |
 | T3 | Middleware client is `@truenas/api-client` (3.x; T3.1 covered the curated-subset problem that version removed) |
 | T5 | Authentication via a setup project plus `storageState` |
 | T10 | Configuration through target profiles, resolved in one module |
+| D1 | PR gating — deferred; needs CI and a measured flake rate first |
 | D2 | Parallel execution by sharding across appliances — deferred |

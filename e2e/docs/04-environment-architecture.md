@@ -1,11 +1,10 @@
 # TrueNAS WebUI E2E — Environment Architecture
 
 **Status:** Draft for review, 2026-08-08
-**Phase:** Supplement to phase 2 (appliance side of [`02-technology.md`](./02-technology.md))
-**Prerequisites:** [`01-requirements.md`](./01-requirements.md),
-[`02-technology.md`](./02-technology.md), [`03-plan-and-status.md`](./03-plan-and-status.md)
+**Prerequisite:** [`status.md`](./status.md)
 
-`02-technology.md` decided how to drive a browser and how to talk to middleware.
+The suite's own decisions — how to drive a browser, how to talk to middleware —
+are settled and live in `status.md` and `e2e/CLAUDE.md`.
 It assumed an appliance was simply *there*. This document is about where that
 appliance comes from, what shape it is in, and what happens to it during a run.
 
@@ -216,7 +215,7 @@ throughput is `max(restore, test)`, so reaching test-speed requires:
 > **appliances per shard = 1 + ⌈restore ÷ test⌉**
 
 Figures below use the **measured** ~20s journey duration
-(`03-plan-and-status.md`) rather than a guess. Global tests will be slower — by
+(`status.md`) rather than a guess. Global tests will be slower — by
 how much is **Q1** — and slower tests need *fewer* appliances, so these are
 pessimistic, which is the right direction for a budget ask.
 
@@ -273,7 +272,7 @@ never comes from raising Playwright's `workers`.
 and system settings are global to an appliance — two workers against one box
 interfere by construction (**R3.4**). That reasoning does not change; the unit
 of parallelism just has to be the appliance. This is **D2**
-(`01-requirements.md:426`), promoted from deferred to load-bearing.
+(D2 in `status.md`), promoted from deferred to load-bearing.
 
 **Blocked on Q5.** §0.2 records one VM per run as affordable. **E2** needs
 `1 + ⌈restore ÷ test⌉` per shard — between 2 and 12 depending on the primitive
