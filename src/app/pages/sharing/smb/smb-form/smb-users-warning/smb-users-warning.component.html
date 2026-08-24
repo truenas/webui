@@ -1,9 +1,11 @@
 @if (!hasSmbUsers()) {
   <tn-banner class="smb-users-warning" type="warning">
     <!--
-      tn-banner only renders its own icon alongside [heading]/[message], and that structured
-      layout can't hold the list of actions below — so the default slot re-creates the icon +
-      content row the library would have drawn.
+      tn-banner's structured layout ([heading]/[message] + the tnBannerAction row) can't
+      hold this content: the actions row is a non-wrapping flex row, and three action
+      labels this long overflow the 480px form panel. So the default slot re-creates the
+      icon + content row the library would have drawn — the icon colour comes from the
+      same --tn-warning token the library's own banner icon uses, bridged below.
     -->
     <tn-icon
       class="warning-icon"
@@ -29,6 +31,7 @@
             [tnTestId]="'go-to-users-page'"
             (click)="closeForm(['/credentials', 'users'])"
             (keydown.enter)="closeForm(['/credentials', 'users'])"
+            (keydown.space)="closeForm(['/credentials', 'users']); $event.preventDefault()"
           >
             {{ 'Create a new user' | translate }}
           </a>
@@ -41,6 +44,7 @@
             [tnTestId]="'go-to-directory-services-page'"
             (click)="closeForm(['/credentials', 'directory-services'])"
             (keydown.enter)="closeForm(['/credentials', 'directory-services'])"
+            (keydown.space)="closeForm(['/credentials', 'directory-services']); $event.preventDefault()"
           >
             {{ 'Configure Directory Services' | translate }}
           </a>
@@ -53,6 +57,7 @@
             [tnTestId]="'ignore-smb-users-warning'"
             (click)="hasSmbUsers.set(true)"
             (keydown.enter)="hasSmbUsers.set(true)"
+            (keydown.space)="hasSmbUsers.set(true); $event.preventDefault()"
           >
             {{ 'Ignore the error and add users later.' | translate }}
           </a>

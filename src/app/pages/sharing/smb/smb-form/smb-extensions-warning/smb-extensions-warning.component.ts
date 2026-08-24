@@ -8,6 +8,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-smb-extensions-warning',
+  styleUrls: ['./smb-extensions-warning.component.scss'],
   templateUrl: './smb-extensions-warning.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

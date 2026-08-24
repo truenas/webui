@@ -1,0 +1,6 @@
+// tn-banner's own host carries no display, and the flex child of the form section
+// is this component's host — so the banner needs blockifying to stretch to the
+// form width instead of shrink-wrapping its content.
+tn-banner {
+  display: block;
+}

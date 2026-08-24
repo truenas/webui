@@ -17,7 +17,7 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
-import { GiB } from 'app/constants/bytes.constant';
+import { GiB, MiB } from 'app/constants/bytes.constant';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -547,6 +547,46 @@ describe('SmbFormComponent', () => {
             hostsallow: ['192.168.1.0/24', '10.0.0.1'],
             hostsdeny: ['172.16.0.0/16'],
           }),
+        }),
+      ]);
+    });
+  });
+
+  describe('Time Machine quota', () => {
+    it('reads a unitless quota as MiB', async () => {
+      await setupTest();
+      jest.spyOn(console, 'warn').mockImplementation();
+
+      await selectPurpose('Time Machine Share');
+      await applyCommonValues();
+      await (await getTnInput('timemachine_quota')).setValue('10');
+
+      clickSave();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          options: expect.objectContaining({ timemachine_quota: 10 * MiB }),
+        }),
+      ]);
+    });
+
+    it('re-submits an existing quota unchanged when the field is not edited', async () => {
+      // 1500 MiB displays as the rounded "1.46 GiB": the exact byte count must survive
+      // an untouched edit rather than being rewritten from what the field shows.
+      await setupTest({
+        purpose: SmbSharePurpose.TimeMachineShare,
+        options: { timemachine_quota: 1500 * MiB },
+      });
+      jest.spyOn(console, 'warn').mockImplementation();
+
+      expect(await (await getTnInput('timemachine_quota')).getValue()).toBe('1.46 GiB');
+
+      clickSave();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.update', [
+        1,
+        expect.objectContaining({
+          options: expect.objectContaining({ timemachine_quota: 1500 * MiB }),
         }),
       ]);
     });
