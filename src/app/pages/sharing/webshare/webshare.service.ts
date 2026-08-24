@@ -5,10 +5,10 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, of, forkJoin,
+  Observable, defer, of, forkJoin,
 } from 'rxjs';
 import {
-  defaultIfEmpty, switchMap, take, map, catchError, shareReplay, startWith, tap,
+  defaultIfEmpty, switchMap, take, map, catchError, shareReplay, tap,
 } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -157,20 +157,15 @@ export class WebShareService {
   /**
    * Observable that checks if there are any local users configured with WebShare access.
    * Returns true if at least one local user has webshare=true, false otherwise.
-   * Re-queries on `user.query` collection events so creating, editing or deleting a
-   * user updates the "No WebShare users" notice without a page refresh.
+   * Deliberately uncached: every subscription issues a fresh query, so each screen
+   * showing the "No WebShare users" notice re-checks when it opens instead of
+   * replaying a session-long cached value.
    */
-  readonly hasWebshareUsers$ = this.api.subscribe('user.query').pipe(
-    startWith(null),
-    switchMap(() => this.api.call('user.query', [[['webshare', '=', true], ['local', '=', true]]]).pipe(
-      map((users) => users.length > 0),
-      // Inner catch: a failed query degrades to `false` without killing the event stream.
-      catchError(() => of(false)),
-    )),
-    // Outer catch: an error from the `user.query` subscription itself must also
-    // degrade to `false` instead of propagating into consumers.
+  readonly hasWebshareUsers$ = defer(() => {
+    return this.api.call('user.query', [[['webshare', '=', true], ['local', '=', true]]]);
+  }).pipe(
+    map((users) => users.length > 0),
     catchError(() => of(false)),
-    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   /**
