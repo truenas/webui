@@ -8,7 +8,7 @@ import {
   Observable, of, forkJoin,
 } from 'rxjs';
 import {
-  defaultIfEmpty, switchMap, take, map, catchError, shareReplay, tap,
+  defaultIfEmpty, switchMap, take, map, catchError, shareReplay, startWith, tap,
 } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -157,10 +157,15 @@ export class WebShareService {
   /**
    * Observable that checks if there are any local users configured with WebShare access.
    * Returns true if at least one local user has webshare=true, false otherwise.
+   * Re-queries on `user.query` collection events so creating, editing or deleting a
+   * user updates the "No WebShare users" notice without a page refresh.
    */
-  readonly hasWebshareUsers$ = this.api.call('user.query', [[['webshare', '=', true], ['local', '=', true]]]).pipe(
-    map((users) => users.length > 0),
-    catchError(() => of(false)),
+  readonly hasWebshareUsers$ = this.api.subscribe('user.query').pipe(
+    startWith(null),
+    switchMap(() => this.api.call('user.query', [[['webshare', '=', true], ['local', '=', true]]]).pipe(
+      map((users) => users.length > 0),
+      catchError(() => of(false)),
+    )),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

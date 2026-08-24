@@ -3,13 +3,16 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Service } from 'app/interfaces/service.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { User } from 'app/interfaces/user.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -222,6 +225,29 @@ describe('WebShareService', () => {
     it('should return empty array for empty input', () => {
       const result = spectator.service.transformToTableRows([]);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('hasWebshareUsers$', () => {
+    it('re-queries webshare users when a user.query collection event arrives', () => {
+      const api = spectator.inject(MockApiService);
+      api.mockCall('user.query', []);
+
+      const emissions: boolean[] = [];
+      const subscription = spectator.service.hasWebshareUsers$.subscribe((value) => emissions.push(value));
+
+      expect(api.call).toHaveBeenCalledWith('user.query', [[['webshare', '=', true], ['local', '=', true]]]);
+
+      api.mockCall('user.query', [{ id: 1, username: 'bob', webshare: true } as User]);
+      api.emitSubscribeEvent({
+        id: 'test-id-1',
+        msg: CollectionChangeType.Added,
+        collection: 'user.query',
+        fields: null,
+      });
+
+      expect(emissions).toEqual([false, true]);
+      subscription.unsubscribe();
     });
   });
 });
