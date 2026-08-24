@@ -123,24 +123,18 @@
             }
           </ix-explorer>
 
-          <!--
-            Kept as ix-input (re-verified against @truenas/ui-components 0.4.11): tn-input
-            [inputType]="InputType.Size" reformats on BLUR and writes the reformatted string
-            back through its own parser, so 2049 KiB (2098176) is redisplayed as "2 MiB" and
-            the control drops to 2097152 — the extent API needs the exact byte count. Typing
-            and [sizeRound]="2" both round-trip correctly; it is only the blur re-parse that
-            loses precision. ix-input formats for display without re-parsing, so it survives.
-            Drop this once the library stops re-parsing its own formatted output.
-          -->
-          <ix-input
-            formControlName="filesize"
+          <tn-form-field
             [label]="helptext.extent.filesizeLabel | translate"
             [tooltip]="helptext.extent.filesizeTooltip | translate"
-            [placeholder]="helptext.extent.filesizeLabel | translate"
             [required]="true"
-            [parse]="formatter.memorySizeParsing"
-            [format]="formatter.memorySizeFormatting"
-          ></ix-input>
+          >
+            <tn-input
+              formControlName="filesize"
+              [inputType]="InputType.Size"
+              [required]="true"
+              [placeholder]="helptext.extent.filesizeLabel | translate"
+            ></tn-input>
+          </tn-form-field>
         }
 
         @if (!isNew) {

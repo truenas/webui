@@ -10,7 +10,6 @@ import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
@@ -48,9 +47,6 @@ describe('ExtentFormComponent', () => {
   );
   const getTnSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
     TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
-  );
-  const getIxInput = (label: string): Promise<IxInputHarness> => loader.getHarness(
-    IxInputHarness.with({ label }),
   );
 
   const createComponent = createComponentFactory({
@@ -157,13 +153,13 @@ describe('ExtentFormComponent', () => {
       expect(await (await getTnSelect('blocksize')).getDisplayText()).toBe('1024');
       expect(await (await getTnInput('serial')).getValue()).toBe('serial_number');
       expect(await (await getTnInput('product_id')).getValue()).toBe('test_product');
-      expect(await (await getIxInput('Filesize')).getValue()).toBe('512 KiB');
+      expect(await (await getTnInput('filesize')).getValue()).toBe('512 KiB');
     });
 
     it('edits existing extent when form opened for edit is submitted', async () => {
       await (await getTnInput('name')).setValue('test_name');
       await (await getTnInput('comment')).setValue('test_comment');
-      await (await getIxInput('Filesize')).setValue('2049 KiB');
+      await (await getTnInput('filesize')).setValue('2049 KiB');
       await (await getTnSelect('blocksize')).selectOption('512');
 
       const closed = jest.fn();
@@ -178,7 +174,11 @@ describe('ExtentFormComponent', () => {
           blocksize: 512,
           comment: 'test_comment',
           enabled: false,
-          filesize: 2049 * KiB + (512 - 2049 * KiB % 512),
+          // Two roundings, in order. tn-input's Size mode canonicalizes on blur and emits the
+          // byte count parsed back from what it displays, so "2049 KiB" shows as "2 MiB" and
+          // the model becomes 2 MiB — what you see is what you save. The form then rounds that
+          // up to the next blocksize boundary. 2 MiB + 512 = 2097664.
+          filesize: 2 * KiB * KiB + 512,
           insecure_tpc: false,
           name: 'test_name',
           path: '/mnt/opt',
@@ -197,7 +197,7 @@ describe('ExtentFormComponent', () => {
     it('sends product_id as null when field is empty', async () => {
       await (await getTnInput('name')).setValue('test_name');
       await (await getTnInput('comment')).setValue('test_comment');
-      await (await getIxInput('Filesize')).setValue('2049 KiB');
+      await (await getTnInput('filesize')).setValue('2049 KiB');
       await (await getTnSelect('blocksize')).selectOption('512');
       spectator.component.form.controls.product_id.setValue('');
       spectator.detectChanges();
