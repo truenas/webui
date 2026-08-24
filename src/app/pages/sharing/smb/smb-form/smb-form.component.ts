@@ -20,6 +20,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
   TnBannerComponent,
+  TnFormErrorsComponent,
   TnCheckboxComponent,
   TnChipInputComponent,
   TnDialog,
@@ -54,7 +55,6 @@ import {
 } from 'app/interfaces/smb-share.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -100,7 +100,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnChipInputComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
-    IxErrorsComponent,
+    TnFormErrorsComponent,
     TnTestIdDirective,
     TranslateModule,
     AsyncPipe,

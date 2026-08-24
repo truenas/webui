@@ -7,17 +7,11 @@
   }
 }
 
+// Lays the fields of one entry out side by side. The vertical rhythm between rows,
+// and the padding inside the entry card, are the tn-form-list-item's.
 .entry-row {
   column-gap: 10px;
   display: flex;
-  padding-left: 10px;
-  padding-right: 10px;
-
-  // Space the SID / Who / Permission+Type rows within an entry — without this the
-  // tn-form-field rows butt together (the migrated controls dropped the ix-* row margins).
-  &:not(:last-child) {
-    margin-bottom: 12px;
-  }
 
   > * {
     flex: 1;

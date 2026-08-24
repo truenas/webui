@@ -90,8 +90,8 @@ describe('SmbFormComponent', () => {
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
-  /** Every validation message the form's `ix-errors` are currently rendering, joined. */
-  const getErrorText = (): string => spectator.queryAll('ix-errors .form-error')
+  /** Every validation message the form's `tn-form-errors` are currently rendering, joined. */
+  const getErrorText = (): string => spectator.queryAll('tn-form-errors .tn-form-errors')
     .map((element) => element.textContent?.trim() ?? '')
     .filter(Boolean)
     .join('\n');

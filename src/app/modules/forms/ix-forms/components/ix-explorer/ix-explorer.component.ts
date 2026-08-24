@@ -6,7 +6,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ControlValueAccessor, FormControl, NgControl, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatHint } from '@angular/material/form-field';
 import {
   FilePickerCallbacks,
   FilePickerCreateAction,
@@ -40,7 +39,6 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   imports: [
     IxLabelComponent,
     IxErrorsComponent,
-    MatHint,
     ReactiveFormsModule,
     TestOverrideDirective,
     TnFilePickerComponent,

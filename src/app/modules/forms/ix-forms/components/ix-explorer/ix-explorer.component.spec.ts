@@ -174,7 +174,7 @@ describe('IxExplorerComponent', () => {
       spectator.setHostInput('hint', 'Please select a directory starting with an A');
       spectator.detectComponentChanges();
 
-      expect(spectator.query('mat-hint'))
+      expect(spectator.query('.hint'))
         .toHaveExactText('Please select a directory starting with an A');
     });
 

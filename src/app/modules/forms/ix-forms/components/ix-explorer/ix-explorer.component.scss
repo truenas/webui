@@ -24,3 +24,11 @@
   font-size: 12px;
   margin-top: 2px;
 }
+
+// Matches `tn-form-field`'s own hint, so an explorer's hint reads like the hints
+// on the fields around it. Was a `mat-hint`, the last Angular Material in here.
+.hint {
+  color: var(--fg2);
+  font-size: 12px;
+  margin-top: 2px;
+}
