@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
-import { firstValueFrom, of } from 'rxjs';
+import { firstValueFrom, of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
@@ -249,6 +249,54 @@ describe('WebShareService', () => {
       expect(emissions).toEqual([false, true]);
       subscription.unsubscribe();
     });
+  });
+});
+
+describe('WebShareService - user.query subscription error', () => {
+  let spectator: SpectatorService<WebShareService>;
+
+  const createService = createServiceFactory({
+    service: WebShareService,
+    providers: [
+      mockProvider(ApiService, {
+        subscribe: jest.fn(() => throwError(() => new Error('subscription failed'))),
+        call: jest.fn(() => of([])),
+      }),
+      mockProvider(SnackbarService),
+      mockProvider(TranslateService),
+      mockProvider(LicenseService),
+      mockProvider(FormSidePanelService),
+      mockProvider(TruenasConnectService, {
+        config: signal(mockConfiguredTncConfig),
+      }),
+      mockStoreWithRunningService,
+      {
+        provide: WINDOW,
+        useValue: {
+          location: {
+            protocol: 'https:',
+            hostname: 'mynas.truenas.direct',
+          },
+          open: jest.fn(),
+        },
+      },
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createService();
+  });
+
+  it('emits false instead of erroring when the user.query subscription errors', () => {
+    const emissions: boolean[] = [];
+    let streamError: unknown;
+    spectator.service.hasWebshareUsers$.subscribe({
+      next: (value) => emissions.push(value),
+      error: (error: unknown) => streamError = error,
+    });
+
+    expect(streamError).toBeUndefined();
+    expect(emissions.at(-1)).toBe(false);
   });
 });
 

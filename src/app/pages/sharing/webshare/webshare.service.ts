@@ -164,8 +164,12 @@ export class WebShareService {
     startWith(null),
     switchMap(() => this.api.call('user.query', [[['webshare', '=', true], ['local', '=', true]]]).pipe(
       map((users) => users.length > 0),
+      // Inner catch: a failed query degrades to `false` without killing the event stream.
       catchError(() => of(false)),
     )),
+    // Outer catch: an error from the `user.query` subscription itself must also
+    // degrade to `false` instead of propagating into consumers.
+    catchError(() => of(false)),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
