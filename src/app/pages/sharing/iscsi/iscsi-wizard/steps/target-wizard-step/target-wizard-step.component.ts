@@ -3,14 +3,16 @@ import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
-import { Observable, of, switchMap } from 'rxjs';
+import {
+  TnFormFieldComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
+} from '@truenas/ui-components';
+import { of, switchMap } from 'rxjs';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption, Option } from 'app/interfaces/option.interface';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -25,12 +27,15 @@ import { LicenseService } from 'app/services/license.service';
     ReactiveFormsModule,
     TranslateModule,
     TnFormFieldComponent,
+    TnRadioGroupComponent,
+    TnRadioComponent,
     TnSelectComponent,
-    IxRadioGroupComponent,
     AsyncPipe,
   ],
 })
 export class TargetWizardStepComponent {
+  protected readonly tnSelectLabels = tnSelectLabels;
+
   private iscsiService = inject(IscsiService);
   private translate = inject(TranslateService);
   private license = inject(LicenseService);
@@ -53,10 +58,11 @@ export class TargetWizardStepComponent {
     ])),
   );
 
-  readonly modeOptions$: Observable<Option<IscsiTargetMode>[]> = of([
+  // Plain array: projected <tn-radio> options need no observable.
+  protected readonly modeOptions: Option<IscsiTargetMode>[] = [
     { label: this.translate.instant('iSCSI'), value: IscsiTargetMode.Iscsi },
     { label: this.translate.instant('Fibre Channel'), value: IscsiTargetMode.Fc },
-  ]);
+  ];
 
   readonly hasFibreChannel = toSignal(this.license.hasFibreChannel$);
 

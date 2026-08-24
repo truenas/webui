@@ -1,13 +1,16 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, OnInit,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { map, of } from 'rxjs';
+import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
+import { map } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
+import { optionTestIdByKebabLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { configurePortControlsForMode } from 'app/pages/sharing/iscsi/fibre-channel-ports/helpers/port-mode-control.helper';
 
@@ -16,12 +19,16 @@ import { configurePortControlsForMode } from 'app/pages/sharing/iscsi/fibre-chan
   templateUrl: './fc-port-item-controls.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
-    IxSelectComponent,
+    TnFormFieldComponent,
+    TnSelectComponent,
     TranslateModule,
   ],
 })
 export class FcPortItemControlsComponent implements OnInit {
+  protected readonly tnSelectLabels = tnSelectLabels;
+
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
@@ -33,22 +40,32 @@ export class FcPortItemControlsComponent implements OnInit {
     host_id: FormControl<number | null>;
   }>>();
 
+  /** Row position in the parent's fcPorts array; scopes this row's test ids and DOM ids. */
+  readonly index = input.required<number>();
+
   readonly isEdit = input(false);
   readonly currentPort = input<string | null>(null);
   readonly usedPhysicalPorts = input.required<string[]>();
   readonly availablePorts = input.required<string[]>();
 
   // Local mode control (not part of parent form)
-  modeControl = this.fb.control<'existing' | 'new'>('existing');
+  protected modeControl = this.fb.control<'existing' | 'new'>('existing');
 
-  // Mode options for dropdown
-  readonly modeOptions$ = of([
+  // Mode options for dropdown. A plain array: tn-select takes a synchronous [options].
+  protected readonly modeOptions = [
     { label: this.translate.instant('Use existing port'), value: 'existing' },
     { label: this.translate.instant('Create new virtual port'), value: 'new' },
-  ] as Option[]);
+  ] as Option[];
 
-  // Data sources (computed signal converted to observable for ix-select compatibility)
-  readonly existingPortOptions = computed(() => {
+  /**
+   * Port labels ('fc0/1') carry a letter→digit boundary that the library's kebab does not split
+   * but lodash — and therefore the legacy `[ixTest]` — did. Keying off the kebab-cased label keeps
+   * `option-…-fc-0-1` and, for the host select, keeps the id off `host.id`, a per-appliance DB row
+   * id that no test could rely on.
+   */
+  protected readonly portOptionTestIdKey = optionTestIdByKebabLabel;
+
+  protected readonly existingPortOptions = computed(() => {
     const availablePorts = this.availablePorts();
     const usedPhysicalPorts = this.usedPhysicalPorts();
     const currentPort = this.currentPort();
@@ -69,9 +86,7 @@ export class FcPortItemControlsComponent implements OnInit {
     return options;
   });
 
-  readonly existingPortOptions$ = toObservable(this.existingPortOptions);
-
-  readonly creatingPortOptions$ = this.api.call('fc.fc_host.query').pipe(
+  protected readonly creatingPortOptions$ = this.api.call('fc.fc_host.query').pipe(
     map((hosts) => hosts.map((host) => ({
       label: `${host.alias}/${host.npiv + 1}`,
       value: host.id,
@@ -91,6 +106,12 @@ export class FcPortItemControlsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Configure for the initial mode explicitly. The parent builds the fcPorts group without
+    // validators and this component owns them, so leaving it to `valueChanges` below would leave
+    // the default 'existing' mode unvalidated until the user touched the select — previously
+    // papered over by `ix-select` echoing its initial value back through `ngModelChange`.
+    configurePortControlsForMode(this.modeControl.value, this.form().controls);
+
     // Handle mode switching with helper
     this.modeControl.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),

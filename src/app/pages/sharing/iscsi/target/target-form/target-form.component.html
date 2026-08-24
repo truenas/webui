@@ -25,6 +25,7 @@
         >
           <ix-fc-port-item-controls
             [form]="form.controls.fcPorts.at(i)"
+            [index]="i"
             [isEdit]="!isNew"
             [currentPort]="currentPorts()[i]"
             [usedPhysicalPorts]="usedPhysicalPortsByIndex()[i]"
@@ -66,11 +67,22 @@
         </tn-form-field>
 
         @if (hasFibreChannel()) {
-          <ix-radio-group
-            formControlName="mode"
-            [label]="'Mode' | translate"
-            [options]="modeOptions$"
-          ></ix-radio-group>
+          <!--
+            The control is bound ONCE on the group — binding it to each standalone `tn-radio`
+            leaves the deselected option rendering stale — and the options are projected rather
+            than passed as `[options]` so the per-option test ids survive.
+          -->
+          <tn-form-field [label]="'Mode' | translate">
+            <tn-radio-group formControlName="mode">
+              @for (option of modeOptions; track option.value) {
+                <tn-radio
+                  [label]="option.label"
+                  [value]="option.value"
+                  [testId]="['radio-button', 'mode', option.label]"
+                ></tn-radio>
+              }
+            </tn-radio-group>
+          </tn-form-field>
         }
 
         <ix-list
@@ -130,6 +142,8 @@
                   <tn-select
                     formControlName="portal"
                     [options]="(portals$ | async) ?? []"
+                    [placeholder]="tnSelectLabels.placeholder | translate"
+                    [noOptionsLabel]="tnSelectLabels.noOptions | translate"
                   ></tn-select>
                 </tn-form-field>
 
@@ -141,6 +155,8 @@
                     formControlName="initiator"
                     [allowEmpty]="true"
                     [options]="(initiators$ | async) ?? []"
+                    [placeholder]="tnSelectLabels.placeholder | translate"
+                    [noOptionsLabel]="tnSelectLabels.noOptions | translate"
                   ></tn-select>
                 </tn-form-field>
 
@@ -151,6 +167,8 @@
                   <tn-select
                     formControlName="authmethod"
                     [options]="(authmethods$ | translateOptions | async) ?? []"
+                    [placeholder]="tnSelectLabels.placeholder | translate"
+                    [noOptionsLabel]="tnSelectLabels.noOptions | translate"
                   ></tn-select>
                 </tn-form-field>
 
@@ -162,6 +180,8 @@
                     formControlName="auth"
                     [allowEmpty]="true"
                     [options]="(auths$ | async) ?? []"
+                    [placeholder]="tnSelectLabels.placeholder | translate"
+                    [noOptionsLabel]="tnSelectLabels.noOptions | translate"
                   ></tn-select>
                 </tn-form-field>
               </ix-list-item>

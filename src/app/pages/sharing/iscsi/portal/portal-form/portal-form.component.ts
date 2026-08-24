@@ -19,6 +19,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -42,6 +43,8 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class PortalFormComponent extends IxFormHostForm implements OnInit {
+  protected readonly tnSelectLabels = tnSelectLabels;
+
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   protected api = inject(ApiService);

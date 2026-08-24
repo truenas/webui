@@ -56,6 +56,8 @@
           <tn-select
             formControlName="rpm"
             [options]="(rpms$ | async) ?? []"
+            [placeholder]="tnSelectLabels.placeholder | translate"
+            [noOptionsLabel]="tnSelectLabels.noOptions | translate"
           ></tn-select>
         </tn-form-field>
 
@@ -78,6 +80,8 @@
           <tn-select
             formControlName="type"
             [options]="(types$ | translateOptions | async) ?? []"
+            [placeholder]="tnSelectLabels.placeholder | translate"
+            [noOptionsLabel]="tnSelectLabels.noOptions | translate"
           ></tn-select>
         </tn-form-field>
 
@@ -90,6 +94,8 @@
             <tn-select
               formControlName="disk"
               [options]="(disks$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
 
@@ -118,10 +124,13 @@
           </ix-explorer>
 
           <!--
-            Kept as ix-input: tn-input [inputType]="InputType.Size" reformats on blur
-            (e.g. 2049 KiB → 2 MiB) and re-parses, losing the exact byte value the
-            extent API requires. ix-input's memory-size parse/format round-trips the
-            exact byte count.
+            Kept as ix-input (re-verified against @truenas/ui-components 0.4.11): tn-input
+            [inputType]="InputType.Size" reformats on BLUR and writes the reformatted string
+            back through its own parser, so 2049 KiB (2098176) is redisplayed as "2 MiB" and
+            the control drops to 2097152 — the extent API needs the exact byte count. Typing
+            and [sizeRound]="2" both round-trip correctly; it is only the blur re-parse that
+            loses precision. ix-input formats for display without re-parsing, so it survives.
+            Drop this once the library stops re-parsing its own formatted output.
           -->
           <ix-input
             formControlName="filesize"
@@ -164,6 +173,8 @@
           <tn-select
             formControlName="blocksize"
             [options]="(blocksizes$ | async) ?? []"
+            [placeholder]="tnSelectLabels.placeholder | translate"
+            [noOptionsLabel]="tnSelectLabels.noOptions | translate"
           ></tn-select>
         </tn-form-field>
 

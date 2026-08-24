@@ -33,6 +33,8 @@
             <tn-select
               [formControlName]="i"
               [options]="(listenOptions$ | async) ?? []"
+              [placeholder]="tnSelectLabels.placeholder | translate"
+              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
         </ix-list-item>
