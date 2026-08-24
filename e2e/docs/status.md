@@ -60,9 +60,19 @@ argued from a number that does not exist.
    stories worth taking next. Deleting things through the UI is blocked: no
    per-row test id on `tn-table`, so no list-driven journey can be automated
    compliantly. Fixing that once unblocks every future one.
-2. **CI.** Only `yarn e2e:typecheck` runs today, in the lint job. Running the
-   suite needs runners that can reach the appliance network and a provisioning
-   step — see `NAS-e2e-environment-architecture` for that design.
+2. **CI.** `.github/workflows/e2e.yml` runs the suite against one appliance on
+   a same-repo pull request: claim, run, release. Deliberately smaller than the
+   design in `04-environment-architecture.md`, which shards across appliances
+   and reverts a snapshot between tests — both need `ixnode` verbs that do not
+   exist. Proving the reduced shape first tests the parts nobody has exercised
+   (runner-to-appliance networking, the claim/release contract, teardown after a
+   failure) without waiting on anything.
+
+   Not published: traces, videos and screenshots. Artifacts on a public
+   repository are world-readable and a trace records the appliance password as
+   typed. The fix is a credential worthless once published — unique per claim,
+   appliance destroyed at release — which is a property of the `ixnode`
+   contract, so JUnit XML is all that leaves the runner until it holds.
 3. **Observability.** No WebSocket capture, no middleware log collection, no
    version recording in reports. These are what make a 3am failure diagnosable
    by someone who did not write the test.

@@ -8,26 +8,34 @@
 # that contract changes is a one-file change.
 #
 # ─────────────────────────────────────────────────────────────────────────────
-# DRAFT. The verbs below are PROPOSED, not agreed.
+# The interface, in two halves.
 #
-# `ixnode` today installs TrueNAS from an ISO. The team has agreed in principle
-# to add snapshot and revert (Q2, 2026-08-10), but their exact shape is still to
-# be settled. Everything here is a placeholder written to make the ask concrete:
-# four verbs, no baseline vocabulary, no knowledge of what a baseline means.
-#
-# Assumed interface:
+# WORKS TODAY — `ixnode` installs TrueNAS from an ISO and hands back a machine:
 #
 #   ixnode claim   --baseline <name> --json   -> {"domain","host","username","password"}
 #   ixnode release <domain>
-#   ixnode snapshot <domain> --name <snap> [--memory]
-#   ixnode revert  <domain> --snapshot <snap>
 #
-# See e2e/docs/04-environment-architecture.md — E1, E5, E12.
+# PROPOSED, not agreed — what the snapshot restore design needs (E1, E5):
+#
+#   ixnode snapshot <domain> --name <snap> [--memory]
+#   ixnode revert   <domain> --snapshot <snap>
+#
+# The CI workflow deliberately uses only the first half, so the pipeline can be
+# brought up and proven while the second half is still being discussed.
+#
+# One property the workflow cannot assert and this contract needs: the password
+# `claim` returns must be unique to that claim, and `release` must destroy the
+# appliance rather than return it to a pool. Test artifacts on a public
+# repository are world-readable, and a browser trace records the password as
+# typed — so it has to be worthless the moment the run ends.
 # ─────────────────────────────────────────────────────────────────────────────
 set -euo pipefail
 
 # Override to point at a real binary, or at a stub while the verbs are pending.
 IXNODE="${IXNODE:-ixnode}"
+
+# Where `claim` records the domain, so `release` can find it without the caller.
+claimedDomainFile="appliance-domain"
 
 die() { echo "appliance.sh: $*" >&2; exit 1; }
 
@@ -41,6 +49,17 @@ claim() {
   local json
   json=$("$IXNODE" claim --baseline "$baseline" --json) \
     || die "claim failed for baseline '$baseline'"
+
+  # Record the domain before anything else can fail.
+  #
+  # Between claiming an appliance and the caller having somewhere durable to put
+  # the domain, a crash, a cancellation or a malformed field leaks the appliance
+  # — and a leaked appliance starves the next run, which is the failure this
+  # whole arrangement exists to prevent. `release` falls back to this file, so
+  # the window is one line wide instead of a whole workflow step.
+  if [ -n "${RUNNER_TEMP:-}" ]; then
+    jq -r '.domain // empty' <<<"$json" > "${RUNNER_TEMP}/${claimedDomainFile}" 2>/dev/null || true
+  fi
 
   local domain host username password
   domain=$(jq -re '.domain' <<<"$json")   || die "claim response has no .domain"
@@ -67,8 +86,22 @@ EOF
 # failure with one of its own.
 release() {
   local domain="${1:-}"
+
+  # Fall back to what `claim` recorded. The caller usually passes `$TN_DOMAIN`,
+  # but that is only set once the workflow has written the claim output into the
+  # environment — and the whole point of releasing unconditionally is to cover
+  # the paths where that did not happen.
+  if [ -z "$domain" ] && [ -n "${RUNNER_TEMP:-}" ] && [ -f "${RUNNER_TEMP}/${claimedDomainFile}" ]; then
+    domain=$(cat "${RUNNER_TEMP}/${claimedDomainFile}")
+    [ -n "$domain" ] && echo "appliance.sh: releasing '$domain' recorded at claim time" >&2
+  fi
+
   [ -n "$domain" ] || { echo "appliance.sh: no domain to release, skipping" >&2; return 0; }
+
   "$IXNODE" release "$domain" || echo "appliance.sh: release of '$domain' failed" >&2
+
+  [ -n "${RUNNER_TEMP:-}" ] && rm -f "${RUNNER_TEMP}/${claimedDomainFile}"
+  return 0
 }
 
 # Snapshot a domain. `--memory` captures RAM alongside the disks, which is what

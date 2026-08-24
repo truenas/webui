@@ -3,6 +3,13 @@
 **Status:** Draft for review, 2026-08-08
 **Prerequisite:** [`status.md`](./status.md)
 
+> **What is actually running.** `.github/workflows/e2e.yml` implements a reduced
+> shape of this design: one appliance, claimed and released per run, no
+> sharding and no snapshot restore. Everything below that depends on the
+> proposed `ixnode` verbs is unimplemented. That is deliberate — the reduced
+> pipeline exercises the parts of E12 nobody has tested, and the rest is layered
+> on when the verbs land and Q0b can be measured.
+
 The suite's own decisions — how to drive a browser, how to talk to middleware —
 are settled and live in `status.md` and `e2e/CLAUDE.md`.
 It assumed an appliance was simply *there*. This document is about where that

@@ -1,6 +1,13 @@
 # Build the appliance baselines the e2e suite reverts to.
 #
-# DRAFT — see e2e/docs/04-environment-architecture.md (E5) and e2e/ci/appliance.sh.
+# PARKED. Nothing here can run yet: it needs the `snapshot` verb, which `ixnode`
+# does not have, and `e2e/ci/build-baseline.ts`, which does not exist. Kept
+# because it is the concrete shape of the ask, not because it is ready.
+#
+# Dispatch-only and guarded, so it cannot fire by accident. The pipeline being
+# brought up first is `e2e.yml`, which uses only the verbs that exist today.
+#
+# See e2e/docs/04-environment-architecture.md (E5) and e2e/ci/appliance.sh.
 #
 # This is deliberately a separate workflow rather than a step in the test run.
 # Building a baseline costs a full ISO install (~210s, Q0a); reverting to one

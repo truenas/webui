@@ -1,23 +1,28 @@
 # TrueNAS WebUI end-to-end suite.
 #
-# DRAFT — see e2e/docs/04-environment-architecture.md (E12) for the design, and
-# e2e/ci/appliance.sh for the `ixnode` verbs this depends on, which are proposed
-# but not yet agreed. This workflow will not do anything useful until they exist.
+# Deliberately smaller than the design in `e2e/docs/04-environment-architecture.md`.
+# That design shards across appliances and reverts a VM snapshot between tests,
+# and both need `ixnode` verbs that do not exist yet. This runs the shape that
+# works with `ixnode` as it is today — claim one appliance, run the suite on it,
+# release it — so the parts nobody has exercised get exercised: the runner
+# reaching the appliance network, the claim/release contract, credentials
+# arriving as environment variables, and teardown releasing after a failure.
+#
+# Sharding and snapshot restore are layered on once the verbs land, with a
+# measured reason. See E1, E2 and E12 in the design.
 #
 # ─── The `pull_request` trigger is same-repo only, and must stay that way ────
 #
-# `truenas/webui` is a PUBLIC repository and these jobs run on SELF-HOSTED
-# runners on the lab network with hypervisor access. An unguarded
-# `pull_request` trigger lets anyone on the internet open a fork PR and execute
-# code on that machine — GitHub's own guidance is not to pair self-hosted
-# runners with public repositories for this reason.
+# `truenas/webui` is a PUBLIC repository and this job runs on a SELF-HOSTED
+# runner on the lab network with hypervisor access. An unguarded `pull_request`
+# trigger lets anyone on the internet open a fork PR and execute code on that
+# machine — GitHub's own guidance is not to pair self-hosted runners with public
+# repositories for this reason.
 #
-# The guard is the `if:` on every job below: the head repository must be this
+# The guard is the `if:` on the job below: the head repository must be this
 # repository, so a fork PR queues nothing. Never use `pull_request_target` with
-# a checkout of PR code, which would defeat it.
-#
-# The `e2e-lab` environment is the second line: configure it with required
-# reviewers so a human approves before a run touches the lab.
+# a checkout of PR code, which would defeat it. Configure the `e2e-lab`
+# environment with required reviewers as a second line.
 # ─────────────────────────────────────────────────────────────────────────────
 
 name: E2E
@@ -32,69 +37,35 @@ on:
       - 'e2e/**'
       - 'playwright.config.ts'
       - '.github/workflows/e2e.yml'
-      - '.github/workflows/e2e-baselines.yml'
   workflow_dispatch:
     inputs:
-      baseline:
-        description: Baseline to claim appliances at
-        type: string
-        default: fresh-install
-      shards:
-        description: Number of shards (one appliance each)
-        type: string
-        default: '4'
       grep:
         description: Optional Playwright --grep filter
         type: string
         default: ''
 
-# Least privilege: this workflow reads code and uploads artifacts. It has no
-# reason to write to the repository.
+# Reads code, uploads artifacts. No reason to write to the repository.
 permissions:
   contents: read
 
-# The lab is a single shared resource. Two runs against it would destroy each
-# other's pools — §0.1. Queue rather than cancel: a run that is halfway through
-# holds appliances, and cancelling it mid-test leaks them.
+# The lab is one shared resource: two runs would destroy each other's pools.
+# Queue rather than cancel — a cancelled run holds an appliance and leaks it.
 concurrency:
   group: e2e-lab
   cancel-in-progress: false
 
 jobs:
-  # Shard count is an input, so the matrix has to be built at runtime.
-  plan:
-    # Fork PRs stop here — see the header. Every job carries this because a job
-    # without it is the hole.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, linux]
-    outputs:
-      shards: ${{ steps.plan.outputs.shards }}
-      total: ${{ steps.plan.outputs.total }}
-    steps:
-      - id: plan
-        env:
-          TOTAL: ${{ inputs.shards || '4' }}
-        run: |
-          set -euo pipefail
-          # E13 recommends starting at 8; 4 is the default here because the
-          # Global tier is small today. Raise it when measurement justifies.
-          echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
-          echo "shards=$(seq -s, 1 "$TOTAL" | sed 's/[^,]*/"&"/g;s/^/[/;s/$/]/')" >> "$GITHUB_OUTPUT"
-
   e2e:
-    needs: plan
+    # Fork PRs stop here. See the header.
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    # Labels identify runners on the libvirt host, in the lab segment (Q7).
     runs-on: [self-hosted, linux, truenas-lab]
-    # Gate for secrets, and the hook for required reviewers if PR gating is
-    # added later.
+    # Gate for secrets, and the hook for required reviewers.
     environment: e2e-lab
-    strategy:
-      # One shard failing must not cancel its siblings — they hold appliances,
-      # and a cancelled job leaks them.
-      fail-fast: false
-      matrix:
-        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    # Bounded because this holds the appliance, the runner and the concurrency
+    # group at once. Without it the job inherits GitHub's 360-minute default and
+    # a hang blocks the lab for six hours.
+    timeout-minutes: 90
+
     steps:
       - uses: actions/checkout@v4
 
@@ -111,101 +82,55 @@ jobs:
         run: yarn playwright install --with-deps chromium
 
       - name: Claim an appliance
-        id: claim
-        env:
-          BASELINE: ${{ inputs.baseline || 'fresh-install' }}
         run: |
           set -euo pipefail
-          ./e2e/ci/appliance.sh claim "$BASELINE" > "$RUNNER_TEMP/appliance.env"
+          ./e2e/ci/appliance.sh claim fresh-install > "$RUNNER_TEMP/appliance.env"
           # The appliance password comes from ixnode, not from GitHub secrets, so
           # nothing masks it automatically. Register it before it can reach a log.
           echo "::add-mask::$(sed -n 's/^TN_PASSWORD=//p' "$RUNNER_TEMP/appliance.env")"
           cat "$RUNNER_TEMP/appliance.env" >> "$GITHUB_ENV"
           rm -f "$RUNNER_TEMP/appliance.env"
 
-      - name: Run shard ${{ matrix.shard }}
+      - name: Run the suite
         env:
           CI: 'true'
-          # Blob reports merge across shards; the human-readable HTML report is
-          # produced once, by the `report` job.
-          PW_ARGS: >-
-            --shard=${{ matrix.shard }}/${{ needs.plan.outputs.total }}
-            --reporter=blob
-        run: yarn playwright test $PW_ARGS ${{ inputs.grep && format('--grep "{0}"', inputs.grep) || '' }}
+          # Passed as an environment variable, never interpolated into the shell
+          # line: `${{ inputs.grep }}` there would be executed as code, on a
+          # runner with hypervisor access.
+          TN_GREP: ${{ inputs.grep }}
+        run: |
+          set -euo pipefail
+          if [ -n "${TN_GREP:-}" ]; then
+            yarn playwright test --grep "$TN_GREP"
+          else
+            yarn playwright test
+          fi
 
-      # R7.2 — must happen while the appliance still exists.
+      # Must happen while the appliance still exists.
       - name: Collect middleware logs
         if: always()
-        run: ./e2e/ci/appliance.sh collect-logs "$TN_HOST" "test-results/appliance-logs"
+        run: ./e2e/ci/appliance.sh collect-logs "${TN_HOST:-}" "test-results/appliance-logs"
 
-      # Artifacts on a PUBLIC repository are downloadable by anyone, and a
-      # Playwright trace records action parameters verbatim — including the
-      # appliance password typed by `signIn`. Blob reports embed the same
-      # attachments, so neither path is safe to publish as things stand.
+      # Safe to publish: test names and failure messages, no attachments.
       #
-      # The real fix is a credential that is worthless once published: ixnode
-      # issuing a unique password per claim, and the appliance destroyed rather
-      # than reused at release. That is a property of the ixnode contract, not
-      # something this file can assert, so until it holds the upload is opt-in
-      # and off. Failures are diagnosed from the job log meanwhile.
-      #
-      # Set the repository variable E2E_PUBLISH_ARTIFACTS to 'true' only once
-      # the above is true, or on a private fork.
-      - name: Upload shard artifacts
-        if: always() && vars.E2E_PUBLISH_ARTIFACTS == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: e2e-shard-${{ matrix.shard }}
-          path: |
-            blob-report/
-            test-results/
-          retention-days: 14
-
-      # Always safe to publish: test names and failure messages, no attachments.
+      # Traces, videos and screenshots are NOT uploaded. Artifacts on a public
+      # repository are downloadable by anyone, and a Playwright trace records
+      # action parameters verbatim — including the appliance password `signIn`
+      # types. The fix is a credential worthless once published: a unique
+      # password per ixnode claim, and the appliance destroyed rather than
+      # reused at release. Until that holds, diagnose from the job log.
       - name: Upload JUnit results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-shard-${{ matrix.shard }}-junit
+          name: e2e-junit
           path: test-results/junit.xml
           if-no-files-found: ignore
           retention-days: 14
 
       # Unconditional: an appliance left claimed is one the next run cannot use.
+      # Reads the domain from the file `claim` wrote, so a failure between the
+      # claim and `$GITHUB_ENV` being populated still releases.
       - name: Release the appliance
         if: always()
         run: ./e2e/ci/appliance.sh release "${TN_DOMAIN:-}"
-
-  report:
-    needs: e2e
-    if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-    runs-on: [self-hosted, linux]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-      - run: |
-          corepack enable
-          yarn install --immutable
-
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: e2e-shard-*
-          path: all-shards
-          merge-multiple: true
-
-      # Only reachable when the shards published blob reports — see the note on
-      # the upload step above.
-      - name: Merge shard reports
-        if: vars.E2E_PUBLISH_ARTIFACTS == 'true'
-        run: yarn playwright merge-reports --reporter=html,junit ./all-shards/blob-report
-
-      - uses: actions/upload-artifact@v4
-        if: vars.E2E_PUBLISH_ARTIFACTS == 'true'
-        with:
-          name: e2e-report
-          path: |
-            playwright-report/
-            results.xml
-          retention-days: 30
