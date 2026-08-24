@@ -4,32 +4,35 @@
 # e2e/ci/appliance.sh for the `ixnode` verbs this depends on, which are proposed
 # but not yet agreed. This workflow will not do anything useful until they exist.
 #
-# ─── Why there is no `pull_request` trigger ──────────────────────────────────
+# ─── The `pull_request` trigger is same-repo only, and must stay that way ────
 #
 # `truenas/webui` is a PUBLIC repository and these jobs run on SELF-HOSTED
-# runners that sit on the lab network with hypervisor access. A workflow
-# reachable from a fork pull request would let anyone on the internet execute
-# code on that machine. GitHub's own guidance is not to pair self-hosted runners
-# with public repositories for exactly this reason.
+# runners on the lab network with hypervisor access. An unguarded
+# `pull_request` trigger lets anyone on the internet open a fork PR and execute
+# code on that machine — GitHub's own guidance is not to pair self-hosted
+# runners with public repositories for this reason.
 #
-# So: no `pull_request`, and no `pull_request_target` with a checkout of PR
-# code — ever. If PR gating is wanted later (D1), the shape is same-repo
-# branches only, plus the `e2e-lab` environment below configured with required
-# reviewers so a human approves before untrusted code runs.
+# The guard is the `if:` on every job below: the head repository must be this
+# repository, so a fork PR queues nothing. Never use `pull_request_target` with
+# a checkout of PR code, which would defeat it.
+#
+# The `e2e-lab` environment is the second line: configure it with required
+# reviewers so a human approves before a run touches the lab.
 # ─────────────────────────────────────────────────────────────────────────────
 
 name: E2E
 
 on:
-  schedule:
-    # Nightly, after the image build has settled.
-    - cron: '0 3 * * *'
-  push:
-    branches: [master]
+  # Nightly, once this is trusted. Commented out while the pipeline is being
+  # brought up, so the only runs are ones somebody asked for.
+  # schedule:
+  #   - cron: '0 3 * * *'
+  pull_request:
     paths:
       - 'e2e/**'
       - 'playwright.config.ts'
       - '.github/workflows/e2e.yml'
+      - '.github/workflows/e2e-baselines.yml'
   workflow_dispatch:
     inputs:
       baseline:
@@ -60,7 +63,10 @@ concurrency:
 jobs:
   # Shard count is an input, so the matrix has to be built at runtime.
   plan:
-    runs-on: ubuntu-latest
+    # Fork PRs stop here — see the header. Every job carries this because a job
+    # without it is the hole.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux]
     outputs:
       shards: ${{ steps.plan.outputs.shards }}
       total: ${{ steps.plan.outputs.total }}
@@ -77,6 +83,7 @@ jobs:
 
   e2e:
     needs: plan
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     # Labels identify runners on the libvirt host, in the lab segment (Q7).
     runs-on: [self-hosted, linux, truenas-lab]
     # Gate for secrets, and the hook for required reviewers if PR gating is
@@ -131,14 +138,37 @@ jobs:
         if: always()
         run: ./e2e/ci/appliance.sh collect-logs "$TN_HOST" "test-results/appliance-logs"
 
+      # Artifacts on a PUBLIC repository are downloadable by anyone, and a
+      # Playwright trace records action parameters verbatim — including the
+      # appliance password typed by `signIn`. Blob reports embed the same
+      # attachments, so neither path is safe to publish as things stand.
+      #
+      # The real fix is a credential that is worthless once published: ixnode
+      # issuing a unique password per claim, and the appliance destroyed rather
+      # than reused at release. That is a property of the ixnode contract, not
+      # something this file can assert, so until it holds the upload is opt-in
+      # and off. Failures are diagnosed from the job log meanwhile.
+      #
+      # Set the repository variable E2E_PUBLISH_ARTIFACTS to 'true' only once
+      # the above is true, or on a private fork.
       - name: Upload shard artifacts
-        if: always()
+        if: always() && vars.E2E_PUBLISH_ARTIFACTS == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: e2e-shard-${{ matrix.shard }}
           path: |
             blob-report/
             test-results/
+          retention-days: 14
+
+      # Always safe to publish: test names and failure messages, no attachments.
+      - name: Upload JUnit results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-shard-${{ matrix.shard }}-junit
+          path: test-results/junit.xml
+          if-no-files-found: ignore
           retention-days: 14
 
       # Unconditional: an appliance left claimed is one the next run cannot use.
@@ -148,8 +178,8 @@ jobs:
 
   report:
     needs: e2e
-    if: always()
-    runs-on: ubuntu-latest
+    if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: [self-hosted, linux]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -165,10 +195,14 @@ jobs:
           path: all-shards
           merge-multiple: true
 
+      # Only reachable when the shards published blob reports — see the note on
+      # the upload step above.
       - name: Merge shard reports
+        if: vars.E2E_PUBLISH_ARTIFACTS == 'true'
         run: yarn playwright merge-reports --reporter=html,junit ./all-shards/blob-report
 
       - uses: actions/upload-artifact@v4
+        if: vars.E2E_PUBLISH_ARTIFACTS == 'true'
         with:
           name: e2e-report
           path: |

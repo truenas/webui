@@ -16,9 +16,11 @@
 name: E2E baselines
 
 on:
-  schedule:
-    # Weekly. Also run it by hand after an image change worth testing against.
-    - cron: '0 1 * * 0'
+  # Weekly, once this is trusted. Commented out while the pipeline is being
+  # brought up — building a baseline claims a lab appliance for an ISO install,
+  # which is not something to have happening unattended yet.
+  # schedule:
+  #   - cron: '0 1 * * 0'
   workflow_dispatch:
     inputs:
       baseline:
@@ -40,10 +42,16 @@ jobs:
   build:
     runs-on: [self-hosted, linux, truenas-lab]
     environment: e2e-lab
+    # Dispatch-only today, but the guard belongs here too: it is the thing that
+    # stops a fork PR reaching the lab if a trigger is ever added above.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     strategy:
       fail-fast: false
       matrix:
-        baseline: ${{ inputs.baseline == 'all' && fromJSON('["fresh-install","single-pool"]') || fromJSON(format('["{0}"]', inputs.baseline)) }}
+        # `inputs` is empty on any trigger other than dispatch, so the default
+        # has to be applied inside the expression: without it the fallback
+        # branch renders `[""]` and the job builds a baseline with no name.
+        baseline: ${{ (inputs.baseline || 'all') == 'all' && fromJSON('["fresh-install","single-pool"]') || fromJSON(format('["{0}"]', inputs.baseline)) }}
     steps:
       - uses: actions/checkout@v4
 
