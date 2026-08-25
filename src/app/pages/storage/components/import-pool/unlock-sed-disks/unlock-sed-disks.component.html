@@ -69,7 +69,6 @@
       <tn-button
         class="add-exception-button"
         icon="mdi-plus"
-        type="button"
         [testId]="'add-exception'"
         [disabled]="availableDiskCountForException() <= 0"
         [label]="'Add Disk Exception' | translate"
@@ -79,7 +78,6 @@
 
     <ix-form-actions>
       <tn-button
-        type="button"
         [testId]="'skip'"
         [label]="'Skip' | translate"
         (onClick)="onSkip()"

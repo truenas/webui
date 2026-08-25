@@ -60,7 +60,6 @@
 
       <div class="generate-key-row">
         <tn-button
-          type="button"
           [testId]="'generate-key-host'"
           [label]="'Generate Key' | translate"
           [disabled]="!hasNqn || isGeneratingHostKey()"
@@ -78,7 +77,6 @@
 
       <div class="generate-key-row">
         <tn-button
-          type="button"
           [testId]="'generate-key-ctrl'"
           [label]="'Generate Key' | translate"
           [disabled]="isGeneratingTrueNasKey()"

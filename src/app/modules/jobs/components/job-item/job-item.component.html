@@ -96,7 +96,6 @@
 @if (job().state === JobState.Running && job().abortable) {
   <tn-icon-button
     class="job-button-abort"
-    type="button"
     name="stop-circle"
     library="mdi"
     [class.job-icon-abort]="true"
@@ -108,7 +107,6 @@
 
 @if (job().state === JobState.Waiting) {
   <tn-icon-button
-    type="button"
     name="clock-outline"
     library="mdi"
     [class.job-icon-waiting]="true"
@@ -119,7 +117,6 @@
 
 @if (job().state === JobState.Failed) {
   <tn-icon-button
-    type="button"
     name="close-circle"
     library="mdi"
     tnTooltipPosition="left"
@@ -132,7 +129,6 @@
 
 @if (job().state === JobState.Success) {
   <tn-icon-button
-    type="button"
     name="check-circle"
     library="mdi"
     [class.job-icon-success]="true"
