@@ -490,7 +490,7 @@ describe('WebShareCardComponent - WebShare service not running', () => {
 
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
-    imports: [IxTablePagerShowMoreComponent,
+    imports: [TablePagerShowMoreComponent,
     ],
     providers: [
       mockAuth(),
