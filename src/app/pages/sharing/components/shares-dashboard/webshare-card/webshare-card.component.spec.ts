@@ -22,12 +22,12 @@ import { User } from 'app/interfaces/user.interface';
 import { WebShare, WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import {
-  IxTablePagerShowMoreComponent,
-} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  TablePagerShowMoreComponent,
+} from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
@@ -86,7 +86,7 @@ describe('WebShareCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
-    imports: [IxTablePagerShowMoreComponent,
+    imports: [TablePagerShowMoreComponent,
     ],
     providers: [
       mockAuth(),
@@ -303,7 +303,7 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
 
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
-    imports: [IxTablePagerShowMoreComponent,
+    imports: [TablePagerShowMoreComponent,
     ],
     providers: [
       mockAuth(),
@@ -406,7 +406,7 @@ describe('WebShareCardComponent - No WebShare users configured', () => {
 
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
-    imports: [IxTablePagerShowMoreComponent,
+    imports: [TablePagerShowMoreComponent,
     ],
     providers: [
       mockAuth(),
@@ -490,7 +490,7 @@ describe('WebShareCardComponent - WebShare service not running', () => {
 
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
-    imports: [IxTablePagerShowMoreComponent,
+    imports: [TablePagerShowMoreComponent,
     ],
     providers: [
       mockAuth(),
@@ -583,7 +583,7 @@ describe('WebShareCardComponent - TrueNAS Connect not configured but service run
 
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
-    imports: [IxTablePagerShowMoreComponent,
+    imports: [TablePagerShowMoreComponent,
     ],
     providers: [
       mockAuth(),

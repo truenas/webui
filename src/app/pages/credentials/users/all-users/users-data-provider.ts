@@ -6,7 +6,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { ApiCallResponseType } from 'app/interfaces/api/api-call-directory.interface';
 import { QueryFilters, QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
+import { ApiDataProvider } from 'app/modules/tn-table/classes/api-data-provider/api-data-provider';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 export class UsersDataProvider extends ApiDataProvider<'user.query'> {
