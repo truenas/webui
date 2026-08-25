@@ -29,6 +29,7 @@ import {
   selectDismissedAlerts,
   selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
+import { getAlertDuplicateKey } from 'app/modules/alerts/utils/alert-duplicate-key.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
@@ -167,13 +168,14 @@ export class AlertsPanelComponent implements OnInit {
   ): (T & { duplicateCount: number; allIds: string[] })[] {
     const idsByKey = new Map<string, string[]>();
     const idsForAlert = alerts.map((alert) => {
-      const existing = idsByKey.get(alert.key);
+      const duplicateKey = getAlertDuplicateKey(alert);
+      const existing = idsByKey.get(duplicateKey);
       if (existing) {
         existing.push(alert.id);
         return existing;
       }
       const ids = [alert.id];
-      idsByKey.set(alert.key, ids);
+      idsByKey.set(duplicateKey, ids);
       return ids;
     });
 
