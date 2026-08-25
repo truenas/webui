@@ -4,7 +4,7 @@ import {
 import { toObservable } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, of, forkJoin,
+  Observable, defer, of, forkJoin,
 } from 'rxjs';
 import {
   switchMap, take, map, catchError, shareReplay, tap,
@@ -126,11 +126,15 @@ export class WebShareService {
   /**
    * Observable that checks if there are any local users configured with WebShare access.
    * Returns true if at least one local user has webshare=true, false otherwise.
+   * Deliberately uncached: every subscription issues a fresh query, so each screen
+   * showing the "No WebShare users" notice re-checks when it opens instead of
+   * replaying a session-long cached value.
    */
-  readonly hasWebshareUsers$ = this.api.call('user.query', [[['webshare', '=', true], ['local', '=', true]]]).pipe(
+  readonly hasWebshareUsers$ = defer(() => {
+    return this.api.call('user.query', [[['webshare', '=', true], ['local', '=', true]]]);
+  }).pipe(
     map((users) => users.length > 0),
     catchError(() => of(false)),
-    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   /**
