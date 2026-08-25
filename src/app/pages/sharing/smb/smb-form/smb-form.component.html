@@ -237,12 +237,9 @@
           >
             <!--
               `sizeDefaultUnit` is the library default too, but it is spelled out here
-              the way the other Size fields in the repo do: it is the MiB assumption a
-              unitless entry relies on, and it should not silently follow a library
-              default change. Unlike ix-input's memory-size parse, tn-input re-parses
-              its canonicalized display on blur, so an edited quota is stored at the
-              precision the field shows (2 decimals) rather than to the exact byte —
-              acceptable for a Time Machine quota, which is a soft cap.
+              the way the other Size fields do: it is the MiB assumption a unitless
+              entry relies on, and it should not silently follow a library default
+              change.
             -->
             <tn-input
               testId="timemachine-quota"

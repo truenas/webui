@@ -575,15 +575,42 @@ describe('SmbFormComponent', () => {
     });
 
     it('re-submits an existing quota unchanged when the field is not edited', async () => {
-      // 1500 MiB displays as the rounded "1.46 GiB": the exact byte count must survive
-      // an untouched edit rather than being rewritten from what the field shows.
+      // A stored quota is shown in a unit that states it exactly — '1500 MiB', not the
+      // natural-unit '1.46 GiB', which denotes ~5 MB less than the share actually has.
+      // So an untouched resubmit sends back the byte count that was read.
       await setupTest({
         purpose: SmbSharePurpose.TimeMachineShare,
         options: { timemachine_quota: 1500 * MiB },
       });
       jest.spyOn(console, 'warn').mockImplementation();
 
-      expect(await (await getTnInput('timemachine_quota')).getValue()).toBe('1.46 GiB');
+      expect(await (await getTnInput('timemachine_quota')).getValue()).toBe('1500 MiB');
+
+      clickSave();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.update', [
+        1,
+        expect.objectContaining({
+          options: expect.objectContaining({ timemachine_quota: 1500 * MiB }),
+        }),
+      ]);
+    });
+
+    it('submits an edited quota as the exact byte count that was typed', async () => {
+      // An edited quota is submitted as the exact bytes the typed text denotes, and
+      // the text left on screen still denotes them: '1500M' tidies to '1500 MiB', not
+      // to a '1.46 GiB' that would mean 1_567_663_063 — ~5 MB short of what is saved.
+      await setupTest({
+        purpose: SmbSharePurpose.TimeMachineShare,
+        options: { timemachine_quota: 10 * GiB },
+      });
+      jest.spyOn(console, 'warn').mockImplementation();
+
+      const quota = await getTnInput('timemachine_quota');
+      await quota.setValue('1500M');
+      await quota.blur();
+
+      expect(await quota.getValue()).toBe('1500 MiB');
 
       clickSave();
 
@@ -1769,8 +1796,17 @@ describe('SmbFormComponent', () => {
   });
 
   describe('server-side validation errors', () => {
-    /** Exactly what FormErrorHandlerService leaves on a control when the API rejects a save. */
-    function rejectNameFromServer(message: string): void {
+    /**
+     * Exactly what FormErrorHandlerService leaves on a control when the API rejects a
+     * save. The name is filled in first because that is the only way the API ever sees
+     * one: a share whose name is empty never gets submitted. It also matters for the
+     * dismissal — closing the message re-runs the control's own validators rather than
+     * asserting VALID on their behalf, so a name that is still `required` stays in error.
+     */
+    async function rejectNameFromServer(message: string): Promise<void> {
+      spectator.component.form.controls.name.setValue('ds222');
+      await spectator.fixture.whenStable();
+
       spectator.component.form.controls.name.setErrors({
         manualValidateError: true,
         manualValidateErrorMsg: message,
@@ -1785,7 +1821,7 @@ describe('SmbFormComponent', () => {
     });
 
     it('shows the message the server sent under the field it belongs to', async () => {
-      rejectNameFromServer('Share name is already in use');
+      await rejectNameFromServer('Share name is already in use');
 
       const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
 
@@ -1795,7 +1831,7 @@ describe('SmbFormComponent', () => {
     it('lets the user close it, since no edit to the form will clear it', async () => {
       // The legacy ix-errors gave every manual error a close icon; the migrated
       // tn-form-field gets the same from the app-wide dismissible-errors provider.
-      rejectNameFromServer('Share name is already in use');
+      await rejectNameFromServer('Share name is already in use');
 
       const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
       expect(await nameField.isErrorDismissible()).toBe(true);
