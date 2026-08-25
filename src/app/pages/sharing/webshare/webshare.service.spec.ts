@@ -1,11 +1,13 @@
 import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { firstValueFrom, of } from 'rxjs';
+import { firstValueFrom, of, throwError } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { User } from 'app/interfaces/user.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -202,6 +204,39 @@ describe('WebShareService', () => {
     it('should return empty array for empty input', () => {
       const result = spectator.service.transformToTableRows([]);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('hasWebshareUsers$', () => {
+    it('re-runs the query on every subscription so each screen re-checks on open', () => {
+      const api = spectator.inject(MockApiService);
+      api.mockCall('user.query', []);
+
+      let firstResult: boolean | undefined;
+      spectator.service.hasWebshareUsers$.subscribe((value) => firstResult = value);
+      expect(firstResult).toBe(false);
+      expect(api.call).toHaveBeenCalledWith('user.query', [[['webshare', '=', true], ['local', '=', true]]]);
+
+      api.mockCall('user.query', [{ id: 1, username: 'bob', webshare: true } as User]);
+
+      let secondResult: boolean | undefined;
+      spectator.service.hasWebshareUsers$.subscribe((value) => secondResult = value);
+      expect(secondResult).toBe(true);
+    });
+
+    it('emits false instead of erroring when the query fails', () => {
+      const api = spectator.inject(MockApiService);
+      jest.spyOn(api, 'call').mockReturnValue(throwError(() => new Error('query failed')));
+
+      let result: boolean | undefined;
+      let streamError: unknown;
+      spectator.service.hasWebshareUsers$.subscribe({
+        next: (value) => result = value,
+        error: (error: unknown) => streamError = error,
+      });
+
+      expect(streamError).toBeUndefined();
+      expect(result).toBe(false);
     });
   });
 });
