@@ -63,7 +63,11 @@ describe('CloudSyncWhatAndWhenComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const pathExplorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Directory/Files' }));
+    // The explorer sits inside a `tn-form-field` that owns its label, so it is located by control
+    // name rather than by label text. `Direction.Pull` (the default) enables `path_destination`.
+    const pathExplorer = await loader.getHarness(
+      IxExplorerHarness.with({ selector: '[formControlName="path_destination"]' }),
+    );
     await pathExplorer.setValue('/mnt/gphotos');
 
     const descriptionInput = await loader.getHarness(

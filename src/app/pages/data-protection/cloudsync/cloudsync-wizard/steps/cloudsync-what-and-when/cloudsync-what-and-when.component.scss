@@ -8,7 +8,9 @@
   display: flex;
   gap: 8px;
 
-  ix-explorer {
+  // Each explorer is an `<ix-explorer>` projected into a `<tn-form-field>`, so the field is the
+  // flex child that carries the width.
+  tn-form-field {
     width: 50%;
 
     @media(max-width: $breakpoint-sm) {

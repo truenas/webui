@@ -2,6 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+// <ix-form>'s Save button is still a `<button mat-button>` (owned by the shared ix-form, not this
+// ticket), so it is driven with the Material harness.
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
@@ -20,7 +22,6 @@ import {
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -146,6 +147,11 @@ describe('CloudBackupFormComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  // The explorers render inside a `tn-form-field` that owns their label, so they are located by
+  // control name rather than through `IxFormHarness`'s label index.
+  const getExplorer = (name: string): Promise<IxExplorerHarness> => loader.getHarness(
+    IxExplorerHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   describe('adds a new cloud backup', () => {
     beforeEach(() => {
@@ -181,12 +187,9 @@ describe('CloudBackupFormComponent', () => {
     it('adds a new cloud backup task and creates a new bucket', async () => {
       await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="credentials"]' }))).selectOption('Storj (Storj)');
 
-      const ixForm = await loader.getHarness(IxFormHarness);
-      await ixForm.fillForm({
-        'Source Path': '/mnt/my pool 2',
-        'Cache Path': '/mnt/path',
-        Folder: '/',
-      });
+      await (await getExplorer('path')).setValue('/mnt/my pool 2');
+      await (await getExplorer('cache_path')).setValue('/mnt/path');
+      await (await getExplorer('folder')).setValue('/');
 
       await (await getInput('description')).setValue('Cloud Backup Task With New Bucket');
       await (await getInput('password')).setValue('qwerty');
@@ -230,11 +233,8 @@ describe('CloudBackupFormComponent', () => {
     it('adds a new cloud backup task when new form is saved', async () => {
       await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="credentials"]' }))).selectOption('Storj (Storj)');
 
-      const ixForm = await loader.getHarness(IxFormHarness);
-      await ixForm.fillForm({
-        'Source Path': '/mnt/my pool 2',
-        Folder: '/',
-      });
+      await (await getExplorer('path')).setValue('/mnt/my pool 2');
+      await (await getExplorer('folder')).setValue('/');
 
       await (await getInput('description')).setValue('New Cloud Backup Task');
       await (await getInput('password')).setValue('qwerty');
@@ -304,15 +304,11 @@ describe('CloudBackupFormComponent', () => {
       expect(await (await getCheckbox('snapshot')).isChecked()).toBe(false);
       expect(await (await getSelect('transfer_setting')).getDisplayText()).toBe('Performance');
 
-      const sourcePath = await loader.getHarness(IxExplorerHarness.with({ label: 'Source Path' }));
-      expect(await sourcePath.getValue()).toBe('/mnt/my pool');
+      expect(await (await getExplorer('path')).getValue()).toBe('/mnt/my pool');
     });
 
     it('saves updated cloud backup task when form opened for edit is saved', async () => {
-      const ixForm = await loader.getHarness(IxFormHarness);
-      await ixForm.fillForm({
-        'Source Path': '/mnt/path1',
-      });
+      await (await getExplorer('path')).setValue('/mnt/path1');
 
       await (await getInput('description')).setValue('Edited description');
       await (await getInput('password')).setValue('qwerty123');
