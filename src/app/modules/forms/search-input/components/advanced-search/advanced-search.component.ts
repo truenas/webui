@@ -14,7 +14,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { format } from 'date-fns';
-import { FilterPreset, QueryFilters } from 'app/interfaces/query-api.interface';
+import { FilterPreset, QueryFilter, QueryFilters } from 'app/interfaces/query-api.interface';
 import { FilterPresetsComponent } from 'app/modules/forms/search-input/components/filter-presets/filter-presets.component';
 import { AdvancedSearchAutocompleteService } from 'app/modules/forms/search-input/services/advanced-search-autocomplete.service';
 import { QueryParserService } from 'app/modules/forms/search-input/services/query-parser/query-parser.service';
@@ -282,26 +282,32 @@ export class AdvancedSearchComponent<T> implements OnInit {
     this.selectedPresetLabels.set(activeLabels);
   }
 
+  /**
+   * Two `property = value` conditions on the same property can never both hold, so a repeated
+   * `=` is treated as the user replacing the earlier value — the behavior the filter-preset
+   * toggles rely on (e.g. picking "Show Built-in Users" after "Hide Built-in Users").
+   *
+   * Every other comparator stacks legitimately and is left untouched:
+   * `Event != "AUTHENTICATION" AND Event != "CLOSE"` excludes both events, and
+   * `Timestamp > "..." AND Timestamp < "..."` is a range. Collapsing those by property name
+   * silently dropped all but the last condition (NAS-142222).
+   */
   private mergeConflictingFilters(filters: QueryFilters<T>): QueryFilters<T> {
-    const mergedFilters: QueryFilters<T> = [];
-    const propertyMap = new Map<string, { filter: QueryFilters<T>[number]; index: number }>();
+    const lastEqualityIndexes = new Map<string, number>();
 
     filters.forEach((filter, index) => {
-      if (Array.isArray(filter) && filter.length === 3) {
-        const [property] = filter;
-        const propertyKey = String(property);
-        propertyMap.set(propertyKey, { filter, index });
-      } else {
-        mergedFilters.push(filter);
+      if (this.isEqualityCondition(filter)) {
+        lastEqualityIndexes.set(String(filter[0]), index);
       }
     });
 
-    const standardFilters = Array.from(propertyMap.values())
-      .sort((a, b) => a.index - b.index)
-      .map(({ filter }) => filter);
+    return filters.filter((filter, index) => {
+      return !this.isEqualityCondition(filter) || lastEqualityIndexes.get(String(filter[0])) === index;
+    }) as QueryFilters<T>;
+  }
 
-    mergedFilters.push(...(standardFilters as QueryFilters<T>));
-    return mergedFilters;
+  private isEqualityCondition(filter: QueryFilters<T>[number]): filter is QueryFilter<T> {
+    return Array.isArray(filter) && filter.length === 3 && filter[1] === '=';
   }
 
   private normalize(value: string): string {
