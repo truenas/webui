@@ -5,4 +5,15 @@
 .linechart-wrapper {
   height: 200px;
   max-height: 200px;
+
+  /*
+   * Dygraph stamps an explicit pixel width on the elements it creates in here,
+   * and that width is whatever the container measured last. `overflow: hidden`
+   * keeps a stale-wide chart from painting outside the card, but the width still
+   * counts towards this element's max-content size, so an ancestor sized by its
+   * contents would grow to fit it. Size containment cuts that off: the chart is
+   * told how wide to be, it never tells the layout.
+   */
+  contain: inline-size;
+  overflow: hidden;
 }

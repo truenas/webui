@@ -147,7 +147,7 @@ describe('ReportComponent', () => {
       // Fast-forward past the 100ms debounce and the setTimeout in resizeChart
       jest.advanceTimersByTime(200);
 
-      expect(mockLineChart.render).toHaveBeenCalledWith(true);
+      expect(mockLineChart.resize).toHaveBeenCalled();
     });
 
     it('should not resize chart before component is ready', () => {
@@ -159,7 +159,7 @@ describe('ReportComponent', () => {
       // Fast-forward past the 100ms debounce and the setTimeout in resizeChart
       jest.advanceTimersByTime(200);
 
-      expect(mockLineChart.render).not.toHaveBeenCalled();
+      expect(mockLineChart.resize).not.toHaveBeenCalled();
     });
 
     it('should resize chart when menu state changes', () => {
@@ -170,7 +170,7 @@ describe('ReportComponent', () => {
       // Fast-forward timers to trigger the setTimeout in resizeChart
       jest.runAllTimers();
 
-      expect(mockLineChart.render).toHaveBeenCalledWith(true);
+      expect(mockLineChart.resize).toHaveBeenCalled();
     });
 
     it('should handle resize when line chart is not available', () => {
@@ -334,6 +334,22 @@ describe('ReportComponent', () => {
       spectator.component.ngOnInit();
 
       expect(spectator.component.chartColors).toEqual(mockThemeColors);
+    });
+
+    it('ignores theme re-emissions that carry the same theme', () => {
+      const themeService = spectator.inject(ThemeService);
+      const activeTheme$ = themeService.activeTheme$ as BehaviorSubject<string>;
+      spectator.component.ngOnInit();
+      jest.mocked(themeService.getColorPattern).mockClear();
+
+      // Every preferences write re-emits the current theme, and getColorPattern()
+      // returns a fresh array with randomised tail colors -- repainting on those
+      // would reshuffle the series on something like a sidenav toggle.
+      activeTheme$.next('ix-dark');
+      expect(themeService.getColorPattern).not.toHaveBeenCalled();
+
+      activeTheme$.next('ix-blue');
+      expect(themeService.getColorPattern).toHaveBeenCalled();
     });
 
     it('should update timezone from store', () => {

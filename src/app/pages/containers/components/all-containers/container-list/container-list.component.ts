@@ -157,10 +157,15 @@ export class ContainerListComponent {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    // tn-table cycles asc → desc → unsorted, but the containers list is always sorted. Treat the
-    // unsorted step as ascending on the same column so the indicator stays on the clicked column
-    // (asc → desc → asc) instead of visibly jumping back to Name. Unknown columns fall back to Name.
-    const active = this.isSortField(event.column) ? event.column : ContainerSortField.Name;
+    // tn-table cycles asc → desc → cleared, and since 0.5.0 the cleared step reports
+    // { column: '', direction: '' } without naming the column that was cleared. The containers
+    // list is always sorted, so treat that step as ascending on the store's current sort column —
+    // the cycle stays on the clicked column (asc → desc → asc) instead of visibly jumping back to
+    // Name. The route-provided store outlives this component, so it is the source of truth even
+    // right after the list is recreated.
+    const active = this.isSortField(event.column)
+      ? event.column
+      : this.containersStore.sort().active;
     const direction = event.direction === 'desc' ? SortDirection.Desc : SortDirection.Asc;
     this.containersStore.setSort({ active, direction });
   }

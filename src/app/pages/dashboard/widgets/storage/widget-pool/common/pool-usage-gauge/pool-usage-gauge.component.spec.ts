@@ -71,6 +71,7 @@ describe('PoolUsageGaugeComponent', () => {
         currentTheme: jest.fn(() => ({
           bg1: 'bg1',
           primary: 'primary',
+          orange: 'orange',
           red: 'red',
         })),
       }),
@@ -127,11 +128,11 @@ describe('PoolUsageGaugeComponent', () => {
     expect(spectator.query('ix-gauge-chart')).toBeTruthy();
   });
 
-  it('shows chart', () => {
+  it('shows chart in warning color when usage is between 80% and 90%', () => {
     expect(spectator.query(GaugeChartComponent)!.label).toBe('80.2%');
     const value = spectator.query(GaugeChartComponent)!.value;
     expect(value).toBeCloseTo(80, 0);
-    expect(spectator.query(GaugeChartComponent)!.colorFill).toBe('red');
+    expect(spectator.query(GaugeChartComponent)!.colorFill).toBe('orange');
   });
 
   it('should display skeleton loader when pool is loading', () => {

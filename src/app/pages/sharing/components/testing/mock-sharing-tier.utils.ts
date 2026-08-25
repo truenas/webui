@@ -14,11 +14,19 @@ interface TierRow {
 interface MockOpts {
   enabled?: boolean;
   jobUpdates$?: Observable<ZfsTierRewriteJobEntry>;
+  /**
+   * Per-job status stream returned by `subscribeTierJobStatus`. Kept separate
+   * from `jobUpdates$` on purpose: that one drives list reloads, this one drives
+   * the live badge, and sharing a fixture between them would let a spec assert
+   * one behaviour while silently exercising both.
+   */
+  jobStatus$?: Observable<ZfsTierRewriteJobEntry>;
 }
 
 export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof mockProvider> {
   const enabled = opts.enabled ?? false;
   const jobUpdates$ = opts.jobUpdates$ ?? of();
+  const jobStatus$ = opts.jobStatus$ ?? of();
 
   const buildAction = <T extends TierRow>(actionOpts: { reload: () => void }): IconActionConfig<T> => ({
     iconName: tnIconMarker('swap-horizontal', 'mdi'),
@@ -31,6 +39,7 @@ export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof m
     tierEnabled: signal(enabled).asReadonly(),
     getTierConfig: () => of({ enabled }),
     subscribeTierJobUpdates: () => jobUpdates$,
+    subscribeTierJobStatus: jest.fn(() => jobStatus$),
     tierJobRefreshes$: () => jobUpdates$,
     openChangeTierDialog: jest.fn(() => of(true)),
     openChangeTierDialogForDataset: jest.fn(() => of(true)),

@@ -12,6 +12,8 @@ import { maxAlertMessageLength } from 'app/modules/alerts/constants/alert-displa
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { dismissAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { criticalLevels } from 'app/modules/alerts/store/alert.selectors';
+import { getAlertDuplicateKey } from 'app/modules/alerts/utils/alert-duplicate-key.utils';
+import { getAlertBannerMenuPaths, isRouteUnderMenuPath } from 'app/modules/alerts/utils/alert-menu-path.utils';
 import { AppState } from 'app/store';
 
 /**
@@ -54,7 +56,8 @@ export class PageAlertsComponent {
 
   /**
    * Memoized duplicate info map that only recomputes when alerts change
-   * Maps alert key -> { count, allIds } for all unread alerts system-wide
+   * Maps the duplicate key (alert class + key, see `getAlertDuplicateKey`) ->
+   * { count, allIds } for all unread alerts system-wide
    */
   private duplicateInfoMap = computed(() => {
     const alerts = this.allAlerts();
@@ -64,12 +67,13 @@ export class PageAlertsComponent {
     alerts.forEach((alert) => {
       if (alert.dismissed) return;
 
-      const existing = duplicateInfo.get(alert.key);
+      const duplicateKey = getAlertDuplicateKey(alert);
+      const existing = duplicateInfo.get(duplicateKey);
       if (existing) {
         existing.count++;
         existing.allIds.push(alert.id);
       } else {
-        duplicateInfo.set(alert.key, {
+        duplicateInfo.set(duplicateKey, {
           count: 1,
           allIds: [alert.id],
         });
@@ -104,27 +108,26 @@ export class PageAlertsComponent {
     const alertsByKey = new Map<string, (Alert & EnhancedAlert)[]>();
 
     for (const alert of alerts) {
-      // Scope the banner by bannerMenuPath when provided, otherwise fall back to relatedMenuPath.
-      // This lets the banner target a narrower route than the nav badge (e.g. API keys live under
-      // /credentials/users/api-keys but the badge stays on the Credentials menu).
-      const menuPath = alert.bannerMenuPath ?? alert.relatedMenuPath;
+      // Scope the banner by bannerMenuPath when provided, otherwise fall back to relatedMenuPath,
+      // plus any extraMenuPaths. This lets the banner target a narrower route than the nav badge
+      // (e.g. API keys live under /credentials/users/api-keys but the badge stays on the
+      // Credentials menu), or a wider one for alerts that span two feature areas.
+      const menuPaths = getAlertBannerMenuPaths(alert);
 
       // Skip dismissed or alerts without a page scope
-      if (!menuPath || alert.dismissed) continue;
+      if (!menuPaths.length || alert.dismissed) continue;
 
-      // Match if current URL is at or below the alert's menu path.
-      // Dataset routes use /datasets/:datasetId, so ['datasets'] must still match /datasets/tank.
-      const isMatch = menuPath.length <= pathSegments.length
-        && menuPath.every((segment, index) => pathSegments[index] === segment);
+      const isMatch = menuPaths.some((menuPath) => isRouteUnderMenuPath(menuPath, pathSegments));
 
       if (!isMatch) continue;
 
-      // Group by key
-      const group = alertsByKey.get(alert.key);
+      // Group by class + key
+      const duplicateKey = getAlertDuplicateKey(alert);
+      const group = alertsByKey.get(duplicateKey);
       if (group) {
         group.push(alert);
       } else {
-        alertsByKey.set(alert.key, [alert]);
+        alertsByKey.set(duplicateKey, [alert]);
       }
     }
 
@@ -178,7 +181,7 @@ export class PageAlertsComponent {
   protected hasAlerts = computed(() => this.pageAlerts().length > 0);
 
   /**
-   * Dismiss an alert (and all its duplicates with the same key)
+   * Dismiss an alert (and all its duplicates - alerts of the same class sharing the same key)
    */
   protected onDismiss(alert: Alert & { allIds: string[] }): void {
     this.store$.dispatch(dismissAlertPressed({ ids: alert.allIds }));

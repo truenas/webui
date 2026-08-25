@@ -210,9 +210,15 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     this.themeService.activeTheme$.pipe(
+      // The subject re-emits the same theme name on every preferences write, and
+      // getColorPattern() hands back a fresh array with randomised tail colors,
+      // so without this a sidenav toggle would repaint and reshuffle the series.
+      distinctUntilChanged(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.chartColors = this.themeService.getColorPattern();
+      // OnPush: without this the chart never sees the new palette.
+      this.cdr.markForCheck();
     });
 
     this.store$
@@ -567,8 +573,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
 
     // Wait a tick to ensure DOM is updated
     setTimeout(() => {
-      // Force chart to fit its container
-      this.lineChart().render(true); // Force re-render with update=true
+      this.lineChart().resize();
     }, 0);
   }
 }

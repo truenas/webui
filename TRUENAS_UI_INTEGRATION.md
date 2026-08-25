@@ -393,8 +393,13 @@ the epic's follow-up list.
 ### Adopted from the library
 
 Implemented in `@truenas/ui-components` and used here directly, so these need at least
-0.4.9 (they landed after `0.3.26`, the version this work started against); the app pins
-`~0.4.11`.
+the since-superseded `~0.4.9` pin (they landed after `0.3.26`, the version this work
+started against). The pin has moved on to `~0.5.1`, which adds `TnCardAction.tooltip`
+(shown while a card action is disabled) and nullish-tolerant `[tnTooltip]` bindings —
+and carries tn-table 0.5.0's breaking change: clearing a sort now emits
+`{ column: '', direction: '' }` instead of naming the column that was cleared, so an
+always-sorted list must fall back to its own sort state (`container-list.component.ts`
+reads its store's active column for this; no other sort consumer was affected).
 
 | Library addition | What it replaced here |
 | --- | --- |

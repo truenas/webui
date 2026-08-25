@@ -3862,15 +3862,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/mcp@npm:latest":
-  version: 0.0.56
-  resolution: "@playwright/mcp@npm:0.0.56"
+"@playwright/test@npm:~1.56.0":
+  version: 1.56.1
+  resolution: "@playwright/test@npm:1.56.1"
   dependencies:
-    playwright: "npm:1.58.0-alpha-2026-01-16"
-    playwright-core: "npm:1.58.0-alpha-2026-01-16"
+    playwright: "npm:1.56.1"
   bin:
-    mcp-server-playwright: cli.js
-  checksum: 10/f69cf0d7408c78f605d0c1515c2aa9db7c8c213e3bbb590ff284556d5d6e2c3325e4f7285198d3b7c694eece5292f63dad2c271ec906f6d5e31464e967ee89d7
+    playwright: cli.js
+  checksum: 10/9933fa9f8eb9e775e792421b99c984c310b92092e65de57508ae1951a2589d87bbb5f1c4114bfdf7f69c15c0a3acb3f31259e143fa597aa28e97f4b223e37637
   languageName: node
   linkType: hard
 
@@ -4515,6 +4514,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@truenas/api-client@npm:~1.0.3":
+  version: 1.0.6
+  resolution: "@truenas/api-client@npm:1.0.6"
+  peerDependencies:
+    rxjs: ^7.8.0
+  checksum: 10/3c23c725cd759303d2892043d4c9a91b9c8c91b25b01c234e4d842fa66aa44947db1643d4a28bbcc23b2d5ff1a281cee3d5486e537db5a1c9f94ccc38c438012
+  languageName: node
+  linkType: hard
+
 "@truenas/common-typescript@github:truenas/tn-common-typescript#master":
   version: 1.0.0
   resolution: "@truenas/common-typescript@https://github.com/truenas/tn-common-typescript.git#commit=c1d4ea151b72550552864e1f430f1d532e7ace18"
@@ -4543,9 +4551,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/ui-components@npm:~0.4.11":
-  version: 0.4.11
-  resolution: "@truenas/ui-components@npm:0.4.11"
+"@truenas/ui-components@npm:~0.5.3":
+  version: 0.5.3
+  resolution: "@truenas/ui-components@npm:0.5.3"
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
     "@mdi/svg": "npm:~7.4.47"
@@ -4566,7 +4574,7 @@ __metadata:
     "@mdi/js": ^7.4.47
   bin:
     truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/c41d103fb2e1309c40e014bf04bd96b177a97d429c9cbfcb741e48b4b231fc9eeaa974dc2c534f17c3d316df8e433ea66d97a13b7344e1aec88a41cc3f9b3627
+  checksum: 10/b5eea3874c3c1cad65c0027a406177287393f8a6f3673cd77aad59d6103ea08740d0ceea7b385d1d61e34005f124f5c74b739a1d64e201f3017cc9794f75666e
   languageName: node
   linkType: hard
 
@@ -13932,27 +13940,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.58.0-alpha-2026-01-16":
-  version: 1.58.0-alpha-2026-01-16
-  resolution: "playwright-core@npm:1.58.0-alpha-2026-01-16"
+"playwright-core@npm:1.56.1":
+  version: 1.56.1
+  resolution: "playwright-core@npm:1.56.1"
   bin:
     playwright-core: cli.js
-  checksum: 10/a70cfcecba1ec3f8f4a8032474489da376e0684d16202db39a713ffafddef5135981ea96936fc5c6074c3b82b245f7cfd8bbd520d8b69b1130c2e4f59b46dd0b
+  checksum: 10/df785eb3b3a8392b10dcde5f768e09b7fe459a7b06ed81180da69e048f2154b761f86d79572c2b62037a1f18a44e4ace72f5b6547f4f473b4ab13ab1d94007d2
   languageName: node
   linkType: hard
 
-"playwright@npm:1.58.0-alpha-2026-01-16":
-  version: 1.58.0-alpha-2026-01-16
-  resolution: "playwright@npm:1.58.0-alpha-2026-01-16"
+"playwright@npm:1.56.1":
+  version: 1.56.1
+  resolution: "playwright@npm:1.56.1"
   dependencies:
     fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.58.0-alpha-2026-01-16"
+    playwright-core: "npm:1.56.1"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 10/6433499ec7b022ea3608e480afaaca853d8548ae69743ab7594ed9d8eb8a3588d3988f222d9b1333425818f62d45efa8b7298918da85993ad4fe104f56f55b2a
+  checksum: 10/f1743f93b26f1d497257771428d93f3c9ed2d75b00d935f0cd1556ff2dc61d47f2df8b381d752fbd2c47082b685f0ffe4cc4b7ba440d7b4ba3a08572aec58fba
   languageName: node
   linkType: hard
 
@@ -16096,13 +16104,14 @@ __metadata:
     "@ngrx/store-devtools": "npm:~21.0.1"
     "@ngx-translate/core": "npm:~15.0.0"
     "@ngx-translate/http-loader": "npm:~8.0.0"
-    "@playwright/mcp": "npm:latest"
+    "@playwright/test": "npm:~1.56.0"
     "@popperjs/core": "npm:^2.9.3"
     "@shopify/eslint-plugin": "npm:~50.0.0"
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
+    "@truenas/api-client": "npm:~1.0.3"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
-    "@truenas/ui-components": "npm:~0.4.11"
+    "@truenas/ui-components": "npm:~0.5.3"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"
