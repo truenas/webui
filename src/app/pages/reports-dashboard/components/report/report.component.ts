@@ -209,11 +209,17 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
       },
     });
 
+    // The store selector already dedupes, so the palette is only rebuilt on a real
+    // theme change. That matters because getColorPattern() hands back a fresh array
+    // with randomised tail colors -- repainting on a re-emission (every preferences
+    // write) would reshuffle the series on something like a sidenav toggle.
     this.store$.select(selectTheme).pipe(
       filter(Boolean),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.chartColors = this.themeService.getColorPattern();
+      // OnPush: without this the chart never sees the new palette.
+      this.cdr.markForCheck();
     });
 
     this.store$
@@ -568,8 +574,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
 
     // Wait a tick to ensure DOM is updated
     setTimeout(() => {
-      // Force chart to fit its container
-      this.lineChart().render(true); // Force re-render with update=true
+      this.lineChart().resize();
     }, 0);
   }
 }
