@@ -13,7 +13,6 @@ import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { DiskSizeSelectsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/disk-size-selects/disk-size-selects.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
@@ -48,8 +47,6 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
   private formBuilder = inject(FormBuilder);
   private store = inject(PoolManagerStore);
   private destroyRef = inject(DestroyRef);
-
-  protected readonly tnSelectLabels = tnSelectLabels;
 
   readonly type = input.required<VDevType>();
   readonly layout = input.required<CreateVdevLayout.Draid1 | CreateVdevLayout.Draid2 | CreateVdevLayout.Draid3>();

@@ -18,7 +18,6 @@ import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -60,8 +59,6 @@ export class ImportPoolComponent extends SidePanelForm implements OnInit {
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
   private destroyRef = inject(DestroyRef);
-
-  protected readonly tnSelectLabels = tnSelectLabels;
 
   protected readonly requiredRoles = [Role.PoolWrite];
 

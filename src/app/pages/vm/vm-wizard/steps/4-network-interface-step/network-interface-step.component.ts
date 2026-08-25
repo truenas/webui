@@ -21,7 +21,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -70,7 +69,6 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   readonly completed = stepCompletedSignal(this.form);
 
   readonly helptext = helptextVmWizard;
-  protected readonly tnSelectLabels = tnSelectLabels;
   readonly nicTypeOptions$ = of(mapToOptions(vmNicTypeLabels, this.translate));
   readonly nicAttachOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(nicChoicesToOptions());
 

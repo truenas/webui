@@ -24,7 +24,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -60,8 +59,6 @@ export class UnlockSedDisksComponent {
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
-
-  protected readonly tnSelectLabels = tnSelectLabels;
 
   readonly lockedDisks = input.required<LockedSedDisk[]>();
   readonly globalSedPassword = input<string>('');

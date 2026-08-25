@@ -56,8 +56,6 @@
           [options]="(userOptions$ | async) ?? []"
           [allowCustomValue]="true"
           [loading]="usersLoading()"
-          [loadingText]="'Loading...' | translate"
-          [noResultsText]="'No results found' | translate"
           (searchChange)="userSearch$.next($event)"
         ></tn-autocomplete>
       </tn-form-field>
@@ -73,8 +71,6 @@
           [options]="(groupOptions$ | async) ?? []"
           [allowCustomValue]="true"
           [loading]="groupsLoading()"
-          [loadingText]="'Loading...' | translate"
-          [noResultsText]="'No results found' | translate"
           (searchChange)="groupSearch$.next($event)"
         ></tn-autocomplete>
       </tn-form-field>
@@ -90,8 +86,6 @@
           [options]="(userOptions$ | async) ?? []"
           [allowCustomValue]="true"
           [loading]="usersLoading()"
-          [loadingText]="'Loading...' | translate"
-          [noResultsText]="'No results found' | translate"
           (searchChange)="userSearch$.next($event)"
         ></tn-autocomplete>
       </tn-form-field>
@@ -107,8 +101,6 @@
           [options]="(groupOptions$ | async) ?? []"
           [allowCustomValue]="true"
           [loading]="groupsLoading()"
-          [loadingText]="'Loading...' | translate"
-          [noResultsText]="'No results found' | translate"
           (searchChange)="groupSearch$.next($event)"
         ></tn-autocomplete>
       </tn-form-field>
