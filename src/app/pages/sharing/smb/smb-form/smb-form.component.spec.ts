@@ -18,7 +18,10 @@ import {
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
 import { GiB, MiB } from 'app/constants/bytes.constant';
-import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
+import {
+  provideTnFormFieldDismissibleErrors,
+  provideTnFormFieldErrors,
+} from 'app/core/providers/tn-form-field-errors.provider';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -192,6 +195,7 @@ describe('SmbFormComponent', () => {
         handleValidationErrors: jest.fn(),
       }),
       provideTnFormFieldErrors(),
+      provideTnFormFieldDismissibleErrors(),
     ],
   });
 
@@ -1761,6 +1765,58 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('grace_period')).setValue('15552001');
 
       expect(spectator.component.canSubmit()).toBe(false);
+    });
+  });
+
+  describe('server-side validation errors', () => {
+    /** Exactly what FormErrorHandlerService leaves on a control when the API rejects a save. */
+    function rejectNameFromServer(message: string): void {
+      spectator.component.form.controls.name.setErrors({
+        manualValidateError: true,
+        manualValidateErrorMsg: message,
+        ixManualValidateError: { message },
+      });
+      spectator.component.form.controls.name.markAsTouched();
+      spectator.detectChanges();
+    }
+
+    beforeEach(async () => {
+      await setupTest();
+    });
+
+    it('shows the message the server sent under the field it belongs to', async () => {
+      rejectNameFromServer('Share name is already in use');
+
+      const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
+
+      expect(await nameField.getErrorMessage()).toBe('Share name is already in use');
+    });
+
+    it('lets the user close it, since no edit to the form will clear it', async () => {
+      // The legacy ix-errors gave every manual error a close icon; the migrated
+      // tn-form-field gets the same from the app-wide dismissible-errors provider.
+      rejectNameFromServer('Share name is already in use');
+
+      const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
+      expect(await nameField.isErrorDismissible()).toBe(true);
+
+      await nameField.dismissError();
+      spectator.detectChanges();
+
+      expect(await nameField.hasError()).toBe(false);
+      // All three sibling keys go together — leave one and the message returns.
+      expect(spectator.component.form.controls.name.errors).toBeNull();
+    });
+
+    it('leaves an ordinary validation error unclosable', async () => {
+      spectator.component.form.controls.name.setValue('');
+      spectator.component.form.controls.name.markAsTouched();
+      spectator.detectChanges();
+
+      const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
+
+      expect(await nameField.hasError()).toBe(true);
+      expect(await nameField.isErrorDismissible()).toBe(false);
     });
   });
 });
