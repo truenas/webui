@@ -12,6 +12,7 @@ import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert, SmartAlertAction, SmartAlertActionType, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { isRoutePlaceholder, routePlaceholders } from 'app/modules/alerts/constants/route-placeholders.const';
 import { criticalLevels } from 'app/modules/alerts/store/alert.selectors';
+import { getAlertBadgeMenuPaths } from 'app/modules/alerts/utils/alert-menu-path.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
@@ -149,6 +150,7 @@ export class SmartAlertService {
       documentationUrl: enhancement.documentationUrl,
       relatedMenuPath: enhancement.relatedMenuPath,
       bannerMenuPath: enhancement.bannerMenuPath,
+      extraMenuPaths: enhancement.extraMenuPaths,
       customIcon: enhancement.customIcon,
       severityScore: enhancement.severityScore,
     };
@@ -396,6 +398,9 @@ export class SmartAlertService {
    * Example: alert with path ['data-protection', 'cloud-backup']
    * increments counts for both 'data-protection' and 'data-protection.cloud-backup'
    *
+   * Alerts that declare `extraMenuPaths` are counted under those paths too, so an
+   * alert spanning two feature areas badges both (e.g. tiering: Storage + Datasets).
+   *
    * Counts all alert instances to match what users see in the alert panel.
    * For example, if there are 2 instances of the same alert, it counts as 2.
    */
@@ -406,10 +411,10 @@ export class SmartAlertService {
 
     // Count all alert instances by path
     alerts
-      .filter((alert) => !alert.dismissed && alert.relatedMenuPath)
+      .filter((alert) => !alert.dismissed)
       .forEach((alert) => {
-        const menuPath = alert.relatedMenuPath;
-        if (!menuPath) return;
+        const menuPaths = getAlertBadgeMenuPaths(alert);
+        if (!menuPaths.length) return;
 
         const isCritical = criticalLevels.includes(alert.level);
         const isWarning = [AlertLevel.Warning].includes(alert.level);
@@ -419,21 +424,27 @@ export class SmartAlertService {
         // Example: ['data-protection', 'cloud-backup'] creates entries for:
         // - 'data-protection'
         // - 'data-protection.cloud-backup'
-        for (let i = 1; i <= menuPath.length; i++) {
-          const pathSegments = menuPath.slice(0, i);
-          const path = pathSegments.join('.');
-          const current = counts.get(path) || { critical: 0, warning: 0, info: 0 };
+        const countedPaths = new Set<string>();
+        menuPaths.forEach((menuPath) => {
+          for (let i = 1; i <= menuPath.length; i++) {
+            const path = menuPath.slice(0, i).join('.');
+            // A path shared by two of the alert's menu paths must only be counted once.
+            if (countedPaths.has(path)) continue;
+            countedPaths.add(path);
 
-          if (isCritical) {
-            current.critical++;
-          } else if (isWarning) {
-            current.warning++;
-          } else if (isInfo) {
-            current.info++;
+            const current = counts.get(path) || { critical: 0, warning: 0, info: 0 };
+
+            if (isCritical) {
+              current.critical++;
+            } else if (isWarning) {
+              current.warning++;
+            } else if (isInfo) {
+              current.info++;
+            }
+
+            counts.set(path, current);
           }
-
-          counts.set(path, current);
-        }
+        });
       });
 
     return counts;
