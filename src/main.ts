@@ -43,8 +43,10 @@ import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
 import { provideTnAutocompleteLabels } from 'app/core/providers/tn-autocomplete-labels.provider';
 import { provideTnCalendarIntl } from 'app/core/providers/tn-calendar-intl.provider';
+import { provideTnDialogLabels } from 'app/core/providers/tn-dialog-labels.provider';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { provideTnSelectLabels } from 'app/core/providers/tn-select-labels.provider';
+import { provideTnTableLabels } from 'app/core/providers/tn-table-labels.provider';
 import { provideTnTablePagerLabels } from 'app/core/providers/tn-table-pager-labels.provider';
 import { chunkReloadKey, handleChunkLoadError } from 'app/helpers/handle-chunk-load-error';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
@@ -144,6 +146,8 @@ bootstrapApplication(AppComponent, {
     provideTnCalendarIntl(),
     provideTnSelectLabels(),
     provideTnAutocompleteLabels(),
+    provideTnDialogLabels(),
+    provideTnTableLabels(),
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();
