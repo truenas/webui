@@ -1,13 +1,13 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Signal, Type,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit,
   signal, viewChild, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl } from '@angular/forms';
+import { AbstractControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
-import { debounceTime, startWith, switchMap } from 'rxjs/operators';
+import { debounceTime, switchMap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
@@ -19,12 +19,13 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import {
   SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   GeneralSectionComponent,
@@ -45,7 +46,6 @@ import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
@@ -57,6 +57,8 @@ import { ReplicationService } from 'app/services/replication.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService],
   imports: [
+    ReactiveFormsModule,
+    IxFormComponent,
     GeneralSectionComponent,
     TransportSectionComponent,
     SourceSectionComponent,
@@ -65,14 +67,13 @@ import { ReplicationService } from 'app/services/replication.service';
     TranslateModule,
   ],
 })
-export class ReplicationFormComponent extends SidePanelForm implements OnInit {
+export class ReplicationFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
   private errorParser = inject(ErrorParserService);
+  private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private dialog = inject(DialogService);
-  private snackbar = inject(SnackbarService);
   private datasetService = inject(DatasetService);
   private replicationService = inject(ReplicationService);
   private keychainCredentials = inject(KeychainCredentialService);
@@ -89,7 +90,8 @@ export class ReplicationFormComponent extends SidePanelForm implements OnInit {
   protected readonly targetSection = viewChild.required(TargetSectionComponent);
   protected readonly scheduleSection = viewChild.required(ScheduleSectionComponent);
 
-  protected isLoading = signal(false);
+  /** True while the eligible-snapshot count is in flight — surfaced through {@link isBusy}. */
+  private readonly isCountingSnapshots = signal(false);
 
   protected existingReplication: ReplicationTask | undefined;
 
@@ -103,33 +105,31 @@ export class ReplicationFormComponent extends SidePanelForm implements OnInit {
 
   readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
-  // The form aggregates five child sections instead of a single form group, so the base's
-  // `form` slot is satisfied with a placeholder and the dirty/validity hooks below override
-  // the base's single-form behaviour with section-aware logic.
-  protected readonly form = new FormControl();
-
-  private readonly isFormValidSignal = signal(false);
+  /**
+   * The one group `<ix-form>` drives its lifecycle off. The fields live in five child sections that
+   * each own a group, so this starts empty and {@link registerSectionForms} adopts them as its
+   * children — validity, dirtiness and the unsaved-changes guard then roll up for free instead of
+   * being re-aggregated by hand.
+   */
+  protected readonly form = new FormGroup<Record<string, AbstractControl>>({});
 
   /**
-   * Whether the form may be submitted right now; the `<tn-side-panel>` host reads this to
-   * enable/disable its Save action. Driven by {@link trackSectionValidity} aggregating every
-   * section's validity (sections live in child components, hence the signal indirection).
+   * Whether the panel should show its progress bar: the wrapper's own submit/load state, plus the
+   * eligible-snapshot count this form runs on its own. The count deliberately does NOT gate Save
+   * (which `externalLoading` would), since it re-runs on every source-dataset edit.
    */
-  readonly canSubmit: Signal<boolean> = this.isFormValidSignal.asReadonly();
-
-  /** Whether the form is currently submitting; the host shows a progress bar while true. */
   override isBusy(): boolean {
-    return this.isLoading();
+    return this.isCountingSnapshots() || super.isBusy();
   }
 
   ngOnInit(): void {
     this.existingReplication = this.replicationToEdit();
 
+    this.registerSectionForms();
     this.countSnapshotsOnChanges();
     this.updateExplorersOnChanges();
     this.updateExplorers();
     this.listenForSudoEnabled();
-    this.trackSectionValidity();
 
     if (this.existingReplication) {
       this.setForEdit();
@@ -186,67 +186,40 @@ export class ReplicationFormComponent extends SidePanelForm implements OnInit {
     return this.sourceSection().form.controls.schema_or_regex.value === SnapshotNamingOption.NameRegex;
   }
 
-  get isFormValid(): boolean {
-    return this.sections.every((section) => section.form.valid);
-  }
-
-  /** Host hook: confirm before discarding edits when any section is dirty. */
-  override hasUnsavedChanges(): boolean {
-    return this.sections.some((section) => section.form.dirty);
-  }
-
-  private trackSectionValidity(): void {
-    merge(
-      ...this.sections.map((section) => section.form.statusChanges),
-    )
-      .pipe(
-        startWith(null),
-        debounceTime(0),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => this.isFormValidSignal.set(this.isFormValid));
+  private registerSectionForms(): void {
+    const names = ['general', 'transport', 'source', 'target', 'schedule'];
+    this.sections.forEach((section, index) => {
+      this.form.addControl(names[index], section.form);
+    });
   }
 
   setForEdit(): void {
     this.cdr.markForCheck();
   }
 
-  protected override onSubmit(): void {
-    if (!this.isFormValid) {
-      return;
-    }
-
+  protected handleSubmit = (): SubmitResult => {
     const payload = this.getPayload();
+    const isNew = this.isNew;
 
-    const operation$ = this.existingReplication
-      ? this.api.call('replication.update', [this.existingReplication.id, payload])
-      : this.api.call('replication.create', [payload]);
-
-    this.isLoading.set(true);
-    operation$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(
-        {
-          next: () => {
-            this.snackbar.success(
-              this.isNew
-                ? this.translate.instant('Replication task created.')
-                : this.translate.instant('Replication task saved.'),
-            );
-            this.isLoading.set(false);
-            this.close(true);
-          },
-          error: (error: unknown) => {
-            this.isLoading.set(false);
-            this.errorHandler.showErrorModal(error);
-          },
-        },
-      );
-  }
+    return {
+      request$: this.existingReplication
+        ? this.api.call('replication.update', [this.existingReplication.id, payload])
+        : this.api.call('replication.create', [payload]),
+      successMessage: isNew
+        ? this.translate.instant('Replication task created.')
+        : this.translate.instant('Replication task saved.'),
+      // The section groups, not the aggregate, carry the API field names, so hand the handler all
+      // five — otherwise every validation error would fall back to a modal.
+      onError: (error: unknown) => {
+        this.formErrorHandler.handleValidationErrors(error, this.sections.map((section) => section.form));
+        return true;
+      },
+    };
+  };
 
   onSwitchToWizard(): void {
     // Swap back to the wizard in place (footerless — the stepper owns its buttons).
-    this.formPanel.swap(ReplicationWizardComponent as unknown as Type<SidePanelForm>, {
+    this.formPanel.swap(ReplicationWizardComponent, {
       title: this.translate.instant('Replication Task Wizard'),
       wide: true,
       footerless: true,
@@ -303,7 +276,7 @@ export class ReplicationFormComponent extends SidePanelForm implements OnInit {
       payload.naming_schema = formValues.also_include_naming_schema;
     }
 
-    this.isLoading.set(true);
+    this.isCountingSnapshots.set(true);
 
     this.authService.hasRole(this.requiredRoles).pipe(
       switchMap((hasRole) => {
@@ -324,7 +297,8 @@ export class ReplicationFormComponent extends SidePanelForm implements OnInit {
             dataset: String(formValues.source_datasets),
           },
         );
-        this.isLoading.set(false);
+        this.isCountingSnapshots.set(false);
+        this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.isEligibleSnapshotsMessageRed = true;
@@ -334,7 +308,8 @@ export class ReplicationFormComponent extends SidePanelForm implements OnInit {
           this.eligibleSnapshotsMessage = `${this.eligibleSnapshotsMessage} ${firstError}`;
         }
 
-        this.isLoading.set(false);
+        this.isCountingSnapshots.set(false);
+        this.cdr.markForCheck();
       },
     });
   }

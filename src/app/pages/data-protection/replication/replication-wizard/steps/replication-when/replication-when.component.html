@@ -5,15 +5,17 @@
       [tooltip]="helptext.scheduleMethodTooltip | translate"
       [required]="true"
     >
-      @for (option of (scheduleMethodOptions$ | async) ?? []; track option.value) {
-        <tn-radio
-          name="schedule_method"
-          formControlName="schedule_method"
-          [value]="option.value"
-          [label]="option.label"
-          [testId]="['schedule-method', option.label]"
-        ></tn-radio>
-      }
+      <tn-radio-group formControlName="schedule_method" [required]="true">
+        @for (option of (scheduleMethodOptions$ | async) ?? []; track option.value) {
+          <!-- `radio-button` in the base is absorbed by composeTestId's idempotent guard, keeping the
+               legacy `radio-button-*` option ids that `<ix-radio-group>` produced. -->
+          <tn-radio
+            [value]="option.value"
+            [label]="option.label"
+            [testId]="['radio-button', 'schedule-method', option.label]"
+          ></tn-radio>
+        }
+      </tn-radio-group>
     </tn-form-field>
     @if (form.controls.schedule_picker.enabled) {
       <ix-scheduler
@@ -62,15 +64,15 @@
       [tooltip]="helptext.retentionPolicyTooltip | translate"
       [required]="true"
     >
-      @for (option of (retentionPolicyOptions$ | async) ?? []; track option.value) {
-        <tn-radio
-          name="retention_policy"
-          formControlName="retention_policy"
-          [value]="option.value"
-          [label]="option.label"
-          [testId]="['retention-policy', option.label]"
-        ></tn-radio>
-      }
+      <tn-radio-group formControlName="retention_policy" [required]="true">
+        @for (option of (retentionPolicyOptions$ | async) ?? []; track option.value) {
+          <tn-radio
+            [value]="option.value"
+            [label]="option.label"
+            [testId]="['radio-button', 'retention-policy', option.label]"
+          ></tn-radio>
+        }
+      </tn-radio-group>
     </tn-form-field>
     <div class="lifetime">
       @if (form.controls.lifetime_value.enabled) {

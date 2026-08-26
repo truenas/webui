@@ -3,12 +3,6 @@
 
 @include tn-form-fieldsets-columns();
 
-.form-actions {
-  display: flex;
-  gap: 8px;
-  margin: 8px 10px;
-}
-
 .eligible-snapshots {
   font-size: 13px;
   margin-bottom: 15px;

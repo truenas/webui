@@ -304,6 +304,12 @@ describe('SourceSectionComponent', () => {
       });
       expect(Object.keys(payload)).not.toContain('naming_schema');
     });
+
+    it('keeps the legacy radio-group test ids', () => {
+      expect(spectator.query('[data-test="radio-group-schema-or-regex"]')).toExist();
+      expect(spectator.query('[data-test="radio-button-schema-or-regex-matching-naming-schema"]')).toExist();
+      expect(spectator.query('[data-test="radio-button-schema-or-regex-matching-regular-expression"]')).toExist();
+    });
   });
 
   describe('Replicate Specific Snapshots', () => {
