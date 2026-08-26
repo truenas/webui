@@ -98,6 +98,12 @@ describe('DataMigrationStatusDialogComponent', () => {
       expect(spectator.component.progressPercent()).toBe(100);
     });
 
+    it('floors the percentage, so a nearly-done job does not read 100 while it runs', () => {
+      build({ ...baseJob, stats: { ...baseStats, success: 999, total_items: 1000 } });
+
+      expect(spectator.component.progressPercent()).toBe(99);
+    });
+
     it('counts failed items as processed, so a terminal job reaches 100%', () => {
       build({
         ...baseJob,
@@ -172,9 +178,7 @@ describe('DataMigrationStatusDialogComponent', () => {
     it('suppresses ETA once every item is done, instead of extrapolating to the start time', () => {
       build({
         ...baseJob,
-        stats: {
-          ...baseStats, success: 10, total_items: 10, update_time: 1000,
-        },
+        stats: { ...baseStats, success: 10, total_items: 10 },
       });
 
       expect(spectator.component.estimatedCompletion()).toBeNull();

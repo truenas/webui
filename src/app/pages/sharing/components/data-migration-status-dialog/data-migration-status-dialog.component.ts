@@ -117,7 +117,13 @@ export class DataMigrationStatusDialogComponent implements OnInit {
     return Math.min(1, Math.max(0, (stats.success + stats.failures) / stats.total_items));
   });
 
-  protected progressPercent = computed(() => Math.round(this.progressFraction() * 100));
+  /**
+   * Floor, not round: at 999 of 1000 items `Math.round` reads 100 while the job
+   * is still running and still showing an ETA, so the bar would claim to be
+   * done ahead of every other element on screen. `progressFraction` is clamped,
+   * so flooring can only reach 100 when the job genuinely is.
+   */
+  protected progressPercent = computed(() => Math.floor(this.progressFraction() * 100));
 
   /**
    * A single-item job has no expressible middle: `success` is 0 until the one
@@ -126,7 +132,7 @@ export class DataMigrationStatusDialogComponent implements OnInit {
    */
   protected hasIndeterminateProgress = computed(() => {
     const stats = this.job()?.stats;
-    return this.isRunning() && (!stats || stats.total_items <= 1);
+    return !!stats && this.isRunning() && stats.total_items <= 1;
   });
 
   /**
