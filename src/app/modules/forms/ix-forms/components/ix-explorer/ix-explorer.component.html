@@ -1,4 +1,4 @@
-@if (label() || tooltip()) {
+@if (!hasFieldChrome && (label() || tooltip())) {
   <ix-label
     [label]="label()"
     [tooltip]="tooltip()"
@@ -31,11 +31,9 @@
   </div>
 }
 
-@let control = controlDirective.control;
-@if (control) {
-  <ix-errors [control]="control" [label]="label()"></ix-errors>
-}
-
-@if (hint(); as hintText) {
-  <div class="hint">{{ hintText }}</div>
+@if (!hasFieldChrome) {
+  @let control = controlDirective.control;
+  @if (control) {
+    <ix-errors [control]="control" [label]="label()"></ix-errors>
+  }
 }

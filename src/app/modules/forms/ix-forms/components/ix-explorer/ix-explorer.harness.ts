@@ -4,13 +4,17 @@ import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-f
 import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 
 export interface IxExplorerHarnessFilters extends BaseHarnessFilters {
-  label: string;
+  /**
+   * Optional: an explorer projected into a `<tn-form-field>` renders no label of its own, so those
+   * are located by the inherited `selector` filter instead (e.g. `[formControlName="path"]`).
+   */
+  label?: string;
 }
 
 export class IxExplorerHarness extends ComponentHarness implements IxFormControlHarness {
   static readonly hostSelector = 'ix-explorer';
 
-  static with(options: IxExplorerHarnessFilters): HarnessPredicate<IxExplorerHarness> {
+  static with(options: IxExplorerHarnessFilters = {}): HarnessPredicate<IxExplorerHarness> {
     return new HarnessPredicate(IxExplorerHarness, options)
       .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
