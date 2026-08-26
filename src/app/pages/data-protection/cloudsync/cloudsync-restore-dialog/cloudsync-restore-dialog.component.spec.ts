@@ -52,7 +52,11 @@ describe('CloudSyncRestoreDialogComponent', () => {
     const transferModeSelect = await loader.getHarness(TnSelectHarness);
     await transferModeSelect.selectOption(/SYNC/);
 
-    const pathExplorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Directory/Files' }));
+    // The explorer sits inside a `tn-form-field` that owns its label, so it is located by control
+    // name rather than by label text.
+    const pathExplorer = await loader.getHarness(
+      IxExplorerHarness.with({ selector: '[formControlName="path"]' }),
+    );
     await pathExplorer.setValue('/mnt/dir');
 
     const save = await loader.getHarness(TnButtonHarness.with({ label: 'Restore' }));

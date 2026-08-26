@@ -28,15 +28,18 @@
     </tn-form-field>
 
     @if (isExcludePathsSelected) {
-      <ix-explorer
-        formControlName="excludedPaths"
-        [required]="true"
-        [tooltip]="helptext.tooltips.excludedPaths | translate"
+      <tn-form-field
         [label]="'Excluded Paths' | translate"
-        [nodeProvider]="snapshotNodeProvider"
-        [rootNodes]="data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
-        [multiple]="true"
-      ></ix-explorer>
+        [tooltip]="helptext.tooltips.excludedPaths | translate"
+        [required]="true"
+      >
+        <ix-explorer
+          formControlName="excludedPaths"
+          [nodeProvider]="snapshotNodeProvider"
+          [rootNodes]="data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
+          [multiple]="true"
+        ></ix-explorer>
+      </tn-form-field>
     }
 
     @if (isExcludeByPatternSelected) {
@@ -55,37 +58,46 @@
     }
 
     @if (isIncludeFromSubfolderSelected) {
-      <ix-explorer
-        formControlName="subFolder"
-        [required]="true"
+      <tn-form-field
         [label]="'Subfolder' | translate"
-        [nodeProvider]="snapshotNodeProvider"
-        [rootNodes]="data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
         [tooltip]="helptext.tooltips.subFolder | translate"
-      ></ix-explorer>
+        [required]="true"
+      >
+        <ix-explorer
+          formControlName="subFolder"
+          [nodeProvider]="snapshotNodeProvider"
+          [rootNodes]="data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
+        ></ix-explorer>
+      </tn-form-field>
     }
 
     @if (isIncludeFromSubfolderSelected) {
-      <ix-explorer
-        formControlName="includedPaths"
-        [rootNodes]="includedPathsRootNodes()"
+      <tn-form-field
         [label]="'Included Paths' | translate"
-        [nodeProvider]="snapshotNodeProvider"
         [tooltip]="helptext.tooltips.includedPaths | translate"
-        [multiple]="true"
-      ></ix-explorer>
+      >
+        <ix-explorer
+          formControlName="includedPaths"
+          [rootNodes]="includedPathsRootNodes()"
+          [nodeProvider]="snapshotNodeProvider"
+          [multiple]="true"
+        ></ix-explorer>
+      </tn-form-field>
     }
   </tn-form-section>
 
   <tn-form-section [heading]="'Local' | translate">
-    <ix-explorer
-      formControlName="target"
-      [required]="true"
+    <tn-form-field
       [label]="'Target' | translate"
-      [nodeProvider]="fileNodeProvider"
       [tooltip]="helptext.tooltips.target | translate"
+      [required]="true"
     >
-      <ix-explorer-create-dataset></ix-explorer-create-dataset>
-    </ix-explorer>
+      <ix-explorer
+        formControlName="target"
+        [nodeProvider]="fileNodeProvider"
+      >
+        <ix-explorer-create-dataset></ix-explorer-create-dataset>
+      </ix-explorer>
+    </tn-form-field>
   </tn-form-section>
 </ix-form>
