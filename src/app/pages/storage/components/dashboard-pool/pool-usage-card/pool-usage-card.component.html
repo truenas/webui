@@ -22,20 +22,25 @@
       <div>
         <ix-gauge-chart
           class="gauge"
-          [colorFill]="usedPercentage() === 0 ? chartBlankColor : isLowCapacity() ? chartLowCapacityColor : chartFillColor"
-          [colorBlank]="chartBlankColor"
+          [colorFill]="gaugeFill()"
+          [colorBlank]="gaugeBlankColor()"
           [segments]="chartSegments()"
           [sublabel]="showTierBreakdown() ? ('Used' | translate) : ''"
           [width]="150"
           [height]="150"
           [label]="(usedPercentage() / 100 | percent: '1.0-1') || ''"
           [value]="usedPercentage() > 100 ? 100 : usedPercentage()"
-          [style]="isLowCapacity() ? 'color: var(--red);' : ''"
+          [style]="gaugeLabelStyle()"
         ></ix-gauge-chart>
         @if (isLowCapacity()) {
-          <div class="warning-container">
+          <div class="warning-container" [class.critical]="isCriticalCapacity()">
             <span>
-              <b>{{ 'Warning' | translate }}:</b> {{ 'Low Capacity' | translate }}
+              @if (isCriticalCapacity()) {
+                <b>{{ 'Critical' | translate }}:</b>
+              } @else {
+                <b>{{ 'Warning' | translate }}:</b>
+              }
+              {{ 'Low Capacity' | translate }}
             </span>
           </div>
         }

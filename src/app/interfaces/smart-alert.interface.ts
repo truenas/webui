@@ -43,24 +43,54 @@ export interface SmartAlertAction {
   handler?: () => void;
 }
 
+/**
+ * Context that changes how an alert is enhanced.
+ */
+export interface EnhanceAlertOptions {
+  /**
+   * The alert stands for several alerts of the same class about different objects.
+   * Actions scoped to a single object - task reruns, routes and highlights resolved from
+   * one alert's args - are dropped, because they would silently cover one member only.
+   */
+  isConsolidated?: boolean;
+}
+
 export interface SmartAlertEnhancement {
   category: SmartAlertCategory;
   actions: SmartAlertAction[];
+
+  /**
+   * Concise headline used when several alerts of this class are consolidated into one entry.
+   * An ICU plural over `count`, so locales with more than one plural form can translate it -
+   * only the `other` form is written here, since the headline never renders below 2.
+   * When omitted the newest alert's own summary is shown instead.
+   */
+  groupSummary?: string;
 
   // Help and documentation
   contextualHelp?: string;
   detailedHelp?: string;
   documentationUrl?: string;
 
-  // Navigation integration.
-  // Drives the nav badge (badge shows on this path and every parent path).
+  // Navigation integration. The primary feature area of the alert.
+  // Drives the nav badge (badge shows on this path and every parent path) and,
+  // unless bannerMenuPath overrides it, the page-level banner.
   relatedMenuPath?: string[];
 
-  // Restricts the page-level alert banner to routes at or below this path.
-  // Use when the banner should be scoped more narrowly than the nav badge
-  // (e.g. an alert relevant only to a sub-page that has no menu item of its own).
-  // Falls back to relatedMenuPath when omitted.
+  // Overrides relatedMenuPath *for the banner only*, restricting it to routes at or
+  // below this path. Use when the banner should be scoped more narrowly than the nav
+  // badge (e.g. an alert relevant only to a sub-page that has no menu item of its own).
+  // Falls back to relatedMenuPath when omitted, and never applies to extraMenuPaths.
   bannerMenuPath?: string[];
+
+  // Secondary feature areas of the alert. Each path surfaces both the badge and the
+  // banner in full, unaffected by any bannerMenuPath narrowing of the primary path.
+  // Use for alerts that span two feature areas, e.g. ZFS tiering alerts are raised
+  // against a pool (Storage) but are acted on per-dataset (Datasets).
+  // Resulting scopes: badge = relatedMenuPath + extraMenuPaths,
+  // banner = (bannerMenuPath ?? relatedMenuPath) + extraMenuPaths.
+  // See getAlertBadgeMenuPaths / getAlertBannerMenuPaths.
+  extraMenuPaths?: string[][];
 
   // Visual enhancements
   customIcon?: string;
@@ -147,24 +177,46 @@ export interface SmartAlertConfig {
 export interface EnhancedAlert {
   category?: SmartAlertCategory;
   actions?: SmartAlertAction[];
+  groupSummary?: string;
   contextualHelp?: string;
   detailedHelp?: string;
   documentationUrl?: string;
   relatedMenuPath?: string[];
   bannerMenuPath?: string[];
+  extraMenuPaths?: string[][];
   customIcon?: string;
   severityScore?: number;
 }
 
 /**
- * Alert decorated with the count and ids of every alert sharing the same key.
+ * Alert decorated with the count, ids and messages of every alert it consolidates.
+ * Alerts only ever consolidate within one alert class: middleware derives `alert.key`
+ * from the alert arguments alone, so two different classes raised against the same object
+ * share a key (see `getAlertDuplicateKey`) without being duplicates of each other.
  * Dispatchers carry `allIds` so dismiss/reopen actions act on every duplicate
  * without re-querying post-reducer state.
  */
-export type AlertWithDuplicates = Alert & EnhancedAlert & {
+export type ConsolidatedAlert<T> = T & {
+  /** Number of alerts represented by this entry. */
   duplicateCount: number;
+  /**
+   * Number of distinct objects the entry covers, i.e. alerts with distinct keys.
+   * Lower than `duplicateCount` when one object reported the same problem more than once -
+   * an HA appliance raises the same alert from both controllers. Group headlines are
+   * phrased in terms of objects ("{count} pools"), so they count this, not instances.
+   */
+  objectCount: number;
+  /** Ids of every alert in the group, so a single dismiss clears all of them. */
   allIds: string[];
+  /**
+   * Distinct messages in the group, newest first. Only set for real groups.
+   * Identical messages are collapsed, so this can be shorter than `duplicateCount`:
+   * the count is instances, this is the messages they carry.
+   */
+  groupedMessages?: string[];
 };
+
+export type AlertWithDuplicates = ConsolidatedAlert<Alert & EnhancedAlert>;
 
 /**
  * Creates an extractFragment function that extracts a specific field from an alert message.

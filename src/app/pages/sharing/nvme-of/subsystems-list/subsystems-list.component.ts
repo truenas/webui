@@ -10,8 +10,8 @@ import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
-import { dataProviderLoading, dataProviderRows, toUniqueRowTag } from 'app/modules/ix-table/utils';
+import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
+import { dataProviderLoading, dataProviderRows, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems-list/subsystem-name-cell/subsystem-name-cell.component';
 
 @Component({

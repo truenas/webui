@@ -183,6 +183,15 @@
   }
 }
 
+// Matches the header icon and the gauge: orange for a warning, red once critical.
+.warning-container {
+  color: var(--orange);
+
+  &.critical {
+    color: var(--red);
+  }
+}
+
 .link {
   color: var(--primary);
   cursor: pointer;

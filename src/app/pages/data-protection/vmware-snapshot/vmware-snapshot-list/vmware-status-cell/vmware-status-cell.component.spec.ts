@@ -26,7 +26,7 @@ describe('VmwareStatusCellComponent', () => {
   function tooltip(): string {
     // Read the tooltip through the directive rather than the component's own
     // protected signal — the directive is what the user actually sees.
-    return String(spectator.query(TnTooltipDirective)!.message);
+    return String(spectator.query(TnTooltipDirective)!.message());
   }
 
   beforeEach(() => {

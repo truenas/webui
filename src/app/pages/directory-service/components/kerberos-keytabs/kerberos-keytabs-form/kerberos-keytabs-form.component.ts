@@ -56,7 +56,7 @@ export class KerberosKeytabsFormComponent extends SidePanelForm implements OnIni
   readonly helptext = helptextKerberosKeytabs;
 
   ngOnInit(): void {
-    const row = (this.slideInRef?.getData() as KerberosKeytab | undefined) ?? this.editingRow();
+    const row = this.editingRow();
     this.editingKerberosKeytab = row;
 
     if (row) {

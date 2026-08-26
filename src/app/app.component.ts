@@ -9,7 +9,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { PingService } from 'app/modules/websocket/ping.service';
 import { WebSocketDebugPanelComponent } from 'app/modules/websocket-debug-panel/websocket-debug-panel.component';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
@@ -29,7 +28,6 @@ export class AppComponent implements OnInit {
   private layoutService = inject(LayoutService);
   private dialog = inject(DialogService);
   private window = inject<Window>(WINDOW);
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private pingService = inject(PingService);
   private destroyRef = inject(DestroyRef);
@@ -68,7 +66,6 @@ export class AppComponent implements OnInit {
     this.router.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       // save currenturl
       if (event instanceof NavigationEnd) {
-        this.slideIn.closeAll();
         this.formPanel.closeAll();
         const navigation = this.router.currentNavigation();
         if (this.isAuthenticated && !isSigninUrl(event.url) && !navigation?.extras?.skipLocationChange) {

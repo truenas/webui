@@ -4,7 +4,7 @@ import { ControllerType } from 'app/enums/controller-type.enum';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
-import { QueryFiltersAndOptionsApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/query-filters-and-options-data-provider';
+import { QueryFiltersAndOptionsApiDataProvider } from 'app/modules/tn-table/classes/api-data-provider/query-filters-and-options-data-provider';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<'audit.query'> {

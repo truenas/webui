@@ -13,3 +13,21 @@
   &.fn-theme-primary { color: var(--primary); }
   &.fn-theme-grey { color: var(--fg2); }
 }
+
+// Shared sizing for the two tiering dialogs (Change Storage Tier, Data
+// Migration). They are reached from the same flow — Change opens the migration
+// dialog — so a shared width keeps the box from resizing between them.
+//
+// The min-width also holds the Data Migration dialog steady while it loads:
+// without it the dialog is sized by its content, so it starts narrow around the
+// "Gathering statistics..." placeholder and jumps wider once the three stat
+// cards arrive.
+// An explicit `width` rather than a min/max pair: the CDK dialog panel is
+// shrink-to-fit, so a percentage min-width resolves against a box that is itself
+// sized by this content and collapses to nothing. A fixed width also means the
+// dialog cannot resize at all as its content arrives.
+@mixin tier-dialog-size {
+  display: block;
+  max-width: 100%;
+  width: min(640px, 90vw);
+}

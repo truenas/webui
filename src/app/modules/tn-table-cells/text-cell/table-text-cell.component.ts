@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
+import { TableCellTestIdSuffix } from 'app/modules/tn-table/interfaces/table-column.interface';
 
 /**
  * The test-id suffix the legacy `[ixTest]` directive resolved for each kind of
@@ -7,8 +8,12 @@ import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
  * text but tagged it differently, and `ix-cell-yes-no` tagged a translated
  * Yes/No the same way again — so the caller picks the shape rather than the
  * component guessing it from the value.
+ *
+ * A subset of {@link TableCellTestIdSuffix}, which is the same list across every
+ * cell kind: a column declares the suffix from there so a details row tags a
+ * hidden column's value the way this cell tags a visible one.
  */
-export type TextCellTestIdSuffix = 'row-text' | 'row-yesno' | 'row-schedule';
+export type TextCellTestIdSuffix = Extract<TableCellTestIdSuffix, 'row-text' | 'row-yesno' | 'row-schedule'>;
 
 /**
  * tn-table replacement for the ix-table `textColumn` / `yesNoColumn` /

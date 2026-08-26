@@ -22,8 +22,9 @@
     [emptyMessage]="emptyService.titleForType(emptyType())"
     [emptyDescription]="emptyService.descriptionForType(emptyType())"
     [emptyIcon]="emptyService.iconForType(emptyType())"
+    (sortChange)="onSortChange($event)"
   >
-    <ng-container [tnColumnDef]="'name'">
+    <ng-container [tnColumnDef]="'name'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Port' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <span
@@ -33,37 +34,37 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'target'">
+    <ng-container [tnColumnDef]="'target'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Target' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
           [tnTestId]="[('Target' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ row.target?.iscsi_target_name || '-' }}</span>
+        >{{ targetLabel(row) }}</span>
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'wwpn'">
+    <ng-container [tnColumnDef]="'wwpn'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'WWPN' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
           [tnTestId]="[('WWPN' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ resolveWwpn(row, 'wwpn') }}</span>
+        >{{ wwpnLabel(row, 'wwpn') }}</span>
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'wwpn_b'">
+    <ng-container [tnColumnDef]="'wwpn_b'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'WWPN (B)' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
           [tnTestId]="[('WWPN (B)' | translate), uniqueRowTag(row), 'row-text']"
-        >{{ resolveWwpn(row, 'wwpn_b') }}</span>
+        >{{ wwpnLabel(row, 'wwpn_b') }}</span>
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'state'">
+    <ng-container [tnColumnDef]="'state'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'State' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <span

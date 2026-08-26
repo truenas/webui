@@ -68,9 +68,10 @@ describe('PoolUsageCardComponent', () => {
           getItem: jest.fn(),
           setItem: jest.fn(),
         },
-        matchMedia: () => ({
+        matchMedia: jest.fn().mockReturnValue({
           matches: false,
           addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
         }),
       }),
     ],
@@ -136,6 +137,27 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query('.warning-container')).toHaveText('Warning: Low Capacity');
     expect(spectator.query(GaugeChartComponent)!.label).toBe('81%');
     expect(spectator.query(GaugeChartComponent)!.value).toBeCloseTo(81, 0);
+    expect(spectator.query(GaugeChartComponent)!.colorFill).toBe('#E68D37');
+  });
+
+  it('renders component values when usage is above 90%', () => {
+    spectator.setInput('poolState', {
+      healthy: true,
+      name: 'bingo',
+      status: 'ONLINE',
+      used: 2199792913690,
+      available: 109989645684,
+
+      topology: {
+        data: [{
+          disk: 'sda',
+          type: TopologyItemType.Disk,
+        }],
+      },
+    } as Pool);
+
+    expect(spectator.query('.warning-container')).toHaveText('Critical: Low Capacity');
+    expect(spectator.query(GaugeChartComponent)!.label).toBe('95.2%');
     expect(spectator.query(GaugeChartComponent)!.colorFill).toBe('#CE2929');
   });
 
@@ -160,6 +182,24 @@ describe('PoolUsageCardComponent', () => {
 
     expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Warn);
     expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool is using more than 80% of available space');
+
+    spectator.setInput('poolState', {
+      healthy: true,
+      name: 'bingo',
+      status: 'ONLINE',
+      used: 2199792913690,
+      available: 109989645684,
+
+      topology: {
+        data: [{
+          disk: 'sda',
+          type: TopologyItemType.Disk,
+        }],
+      },
+    } as Pool);
+
+    expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Error);
+    expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool is using more than 90% of available space');
   });
 
   it('should pre-select disks when user click "View Disk Reports" link', () => {
@@ -213,7 +253,6 @@ describe('PoolUsageCardComponent', () => {
       },
     } as Pool);
 
-    spectator.component.ngOnInit();
     spectator.detectChanges();
 
     expect(spectator.query('.list-caption')).not.toExist();
@@ -234,6 +273,41 @@ describe('PoolUsageCardComponent', () => {
     expect(regularStatItems).toHaveLength(2);
     expect(regularStatItems[0]).toHaveText('3.15 GiB Used');
     expect(regularStatItems[1]).toHaveText('2.34 GiB Available');
+
+    expect(spectator.query(GaugeChartComponent)!.segments).toHaveLength(2);
+  });
+
+  it('drops the gauge tier segments so the gauge matches the severity when capacity is low', () => {
+    tierEnabled.set(true);
+    metadataReservePct.set(0);
+
+    spectator.setInput('poolState', {
+      healthy: true,
+      name: 'bingo',
+      status: 'ONLINE',
+      used: 2199792913690,
+      available: 109989645684,
+      special_class_used: 536870912,
+      special_class_available: 0,
+      special_class_usable: 536870912,
+      topology: {
+        data: [{
+          disk: 'sda',
+          type: TopologyItemType.Disk,
+        }],
+        special: [{
+          disk: 'nvme0',
+          type: TopologyItemType.Disk,
+        }],
+      },
+    } as Pool);
+
+    spectator.detectChanges();
+
+    expect(spectator.query('.warning-container')).toHaveText('Critical: Low Capacity');
+    expect(spectator.query('.tier-breakdown')).toExist();
+    expect(spectator.query(GaugeChartComponent)!.segments).toBeUndefined();
+    expect(spectator.query(GaugeChartComponent)!.colorFill).toBe('#CE2929');
   });
 
   it('shows used eating into the reserve when usage crosses the threshold', () => {
@@ -263,7 +337,6 @@ describe('PoolUsageCardComponent', () => {
       },
     } as Pool);
 
-    spectator.component.ngOnInit();
     spectator.detectChanges();
 
     // Reserve zone is a fixed-width striped overlay (25% of usable). The Used bar
