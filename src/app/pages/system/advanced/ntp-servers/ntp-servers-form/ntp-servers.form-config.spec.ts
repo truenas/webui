@@ -14,7 +14,6 @@ import { FormSubmitEvent } from 'app/modules/forms/ix-forms/components/ix-form/i
 import { IxFormRendererComponent } from 'app/modules/forms/ix-forms/components/ix-form-renderer/ix-form-renderer.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getNtpServersFormConfig } from 'app/pages/system/advanced/ntp-servers/ntp-servers-form/ntp-servers.form-config';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -81,7 +80,6 @@ describe('NTP server form — Force clears the unreachable-address error', () =>
       provideTnFormFieldErrors(),
       FormErrorHandlerService,
       mockProvider(ErrorHandlerService),
-      { provide: SlideInRef, useValue: null },
       mockAuth(),
     ],
   });
