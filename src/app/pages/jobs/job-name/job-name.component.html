@@ -22,6 +22,7 @@
           mode="indeterminate"
           [diameter]="22"
           [tnTooltip]="job().progress.description"
+          [ariaLabel]="job().progress.description || ('Running' | translate)"
         ></tn-spinner>
       }
       @case (JobState.Waiting) {

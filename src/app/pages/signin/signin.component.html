@@ -6,7 +6,6 @@
           class="session-progress"
           [value]="0"
           [mode]="'indeterminate'"
-          [ariaLabel]="'Connecting' | translate"
         ></tn-progress-bar>
         <ix-disconnected-message></ix-disconnected-message>
       </tn-card>
@@ -17,7 +16,6 @@
               class="session-progress"
               [value]="0"
               [mode]="hasLoadingIndicator() ? 'indeterminate' : 'determinate'"
-              [ariaLabel]="'Loading' | translate"
             ></tn-progress-bar>
             <div class="logo-wrapper">
               <tn-icon name="tn-truenas-logo" class="logo" [fullSize]="true"></tn-icon>
@@ -30,7 +28,6 @@
               class="session-progress"
               [value]="0"
               [mode]="hasLoadingIndicator() ? 'indeterminate' : 'determinate'"
-              [ariaLabel]="'Loading' | translate"
             ></tn-progress-bar>
             <div>
               <div class="logo-wrapper">

@@ -44,6 +44,7 @@ import { defaultLanguage } from 'app/constants/languages.constant';
 import { provideTnAutocompleteLabels } from 'app/core/providers/tn-autocomplete-labels.provider';
 import { provideTnCalendarIntl } from 'app/core/providers/tn-calendar-intl.provider';
 import { provideTnDialogLabels } from 'app/core/providers/tn-dialog-labels.provider';
+import { provideTnFallbackLabels } from 'app/core/providers/tn-fallback-labels.provider';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { provideTnSelectLabels } from 'app/core/providers/tn-select-labels.provider';
 import { provideTnTableLabels } from 'app/core/providers/tn-table-labels.provider';
@@ -148,6 +149,7 @@ bootstrapApplication(AppComponent, {
     provideTnAutocompleteLabels(),
     provideTnDialogLabels(),
     provideTnTableLabels(),
+    provideTnFallbackLabels(),
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();
