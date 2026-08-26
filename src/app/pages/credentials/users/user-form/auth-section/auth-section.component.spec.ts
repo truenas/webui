@@ -218,11 +218,8 @@ describe('AuthSectionComponent', () => {
       // an inline help icon; collect the tooltips those wrappers expose.
       const fields = await loader.getAllHarnesses(TnFormFieldHarness);
       const tooltips = await Promise.all(fields.map((field) => field.getTooltip()));
-      // The harness reads rendered text, so the `<br>`/`<b>`/`<i>` markup in the helptext is gone by
-      // the time it comes back — compare against the same strings with their tags taken out.
-      const asRendered = (text: string): string => text.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
-      expect(tooltips).toContain(asRendered(helptextUsers.oneTimePasswordTooltip));
-      expect(tooltips).toContain(asRendered(helptextUsers.disablePasswordTooltip));
+      expect(tooltips).toContain(helptextUsers.oneTimePasswordTooltip);
+      expect(tooltips).toContain(helptextUsers.disablePasswordTooltip);
     });
 
     // TODO: Expand on test case for Generate Temporary One-Time Password.
