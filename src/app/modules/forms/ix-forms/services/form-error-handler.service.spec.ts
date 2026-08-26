@@ -353,6 +353,53 @@ describe('FormErrorHandlerService', () => {
       expect(server.controls.address.errors).toBeNull();
     });
 
+    // A verdict can flag several fields at once. Answering one must not wipe the messages for the
+    // ones the user has not reached yet — those verdicts still stand.
+    const twoFieldError = new ApiCallError({
+      code: JsonRpcErrorCode.CallError,
+      message: 'Validation error',
+      data: {
+        error: 11,
+        errname: ApiErrorName.Validation,
+        extra: [
+          ['ntp_server_create.address', 'Server could not be reached.', 22],
+          ['ntp_server_create.description', 'Description is already taken.', 22],
+        ],
+        trace: { class: 'ValidationErrors', formatted: '', frames: [] as ApiTraceFrame[] },
+        reason: 'Test reason',
+      },
+    });
+
+    const buildTwoFieldForm = (): FormGroup<{ address: string; description: string; force: boolean }> => new FormGroup({
+      address: new FormControl('192.0.2.1'),
+      description: new FormControl('Primary'),
+      force: new FormControl(false),
+    });
+
+    it('keeps the other fields of a multi-field verdict pinned while one of them is answered', () => {
+      const form = buildTwoFieldForm();
+      spectator.service.handleValidationErrors(twoFieldError, form);
+      expect(form.controls.address.errors).toEqual(expect.objectContaining({ manualValidateError: true }));
+      expect(form.controls.description.errors).toEqual(expect.objectContaining({ manualValidateError: true }));
+
+      form.controls.address.setValue('192.0.2.2');
+
+      expect(form.controls.address.errors).toBeNull();
+      expect(form.controls.description.errors).toEqual(expect.objectContaining({ manualValidateError: true }));
+      expect(form.valid).toBe(false);
+    });
+
+    it('retires the still-pinned fields once the edit lands outside the flagged set', () => {
+      const form = buildTwoFieldForm();
+      spectator.service.handleValidationErrors(twoFieldError, form);
+      form.controls.address.setValue('192.0.2.2');
+
+      form.controls.force.setValue(true);
+
+      expect(form.controls.description.errors).toBeNull();
+      expect(form.valid).toBe(true);
+    });
+
     it('re-pins the verdict when the next save is rejected again', () => {
       const form = buildNtpForm();
       spectator.service.handleValidationErrors(unreachableAddressError, form);

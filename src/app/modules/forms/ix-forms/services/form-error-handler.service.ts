@@ -1,6 +1,6 @@
 import { Injectable, DOCUMENT, inject } from '@angular/core';
 import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
-import { take } from 'rxjs';
+import { merge } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { JobExceptionType } from 'app/enums/response-error-type.enum';
 import {
@@ -24,6 +24,8 @@ export class FormErrorHandlerService {
 
   private isFocusedOnError = false;
   private unhandledErrors: { field: string; message: string }[] = [];
+  /** Controls pinned by the verdict currently being handled — see {@link retirePinnedErrorsOnNextEdit}. */
+  private pinnedControls: AbstractControl[] = [];
 
   /**
    * @param error
@@ -82,6 +84,7 @@ export class FormErrorHandlerService {
     originalError: unknown,
   ): void {
     this.isFocusedOnError = false;
+    this.pinnedControls = [];
 
     // Add type guard for safer type casting
     if (!this.isApiErrorDetailsWithExtra(error)) {
@@ -116,6 +119,7 @@ export class FormErrorHandlerService {
               field: mappedFieldName, // Use mapped field name for control lookup
               errorMessage,
             });
+            this.retirePinnedErrorsOnNextEdit();
           });
           return;
         }
@@ -127,6 +131,8 @@ export class FormErrorHandlerService {
         errorMessage,
       });
     }
+
+    this.retirePinnedErrorsOnNextEdit();
 
     // Check if any errors couldn't be handled inline and need fallback
     this.checkForFallbackErrors(originalError);
@@ -166,7 +172,7 @@ export class FormErrorHandlerService {
       [ixManualValidateErrorKey]: { message: errorMessage },
     });
     control.markAsTouched();
-    this.retirePinnedErrorOnNextEdit(control);
+    this.pinnedControls.push(control);
 
     // Notify editable components that might contain this field
     this.notifyEditablesOfValidationError(field);
@@ -202,22 +208,43 @@ export class FormErrorHandlerService {
    * would stay pinned forever, leaving Save disabled with no way out but re-editing the flagged
    * field.
    *
-   * So the pin retires itself: each verdict describes one submitted payload, and the next edit
-   * anywhere in the form moves the payload on. Re-running the control's validators is what retires
-   * it — the pinned set is replaced by the control's real validation state, so a field that is
-   * genuinely empty-but-required goes back to saying `required` rather than falling silently valid.
-   * If the verdict still stands, the next save pins it again.
+   * So the pin retires itself: a verdict describes one submitted payload, and an edit elsewhere in
+   * the form moves the payload on. Re-running the controls' validators is what retires them — the
+   * pinned set is replaced by each control's real validation state, so a field that is genuinely
+   * empty-but-required goes back to saying `required` rather than falling silently valid. If the
+   * verdict still stands, the next save pins it again.
    *
-   * One-shot, and unsubscribed before the clearing so `updateValueAndValidity()` can emit normally:
-   * that emission is what refreshes `<ix-form>`'s status signal, and so the host's Save button.
+   * A verdict can flag several fields at once, and then only edits OUTSIDE the flagged set count:
+   * answering one of them must not wipe the messages for the others the user has not reached yet.
+   * `valueChanges` doesn't say which control moved, but Angular has already dropped that control's
+   * own pin by the time this runs — so a flagged control that lost its pin IS the edited one, and
+   * the rest stay pinned and keep listening.
+   *
+   * Unsubscribed before the clearing so `updateValueAndValidity()` can emit normally: that emission
+   * is what refreshes `<ix-form>`'s status signal, and so the host's Save button.
    */
-  private retirePinnedErrorOnNextEdit(control: AbstractControl): void {
+  private retirePinnedErrorsOnNextEdit(): void {
+    const pinned = this.pinnedControls;
+    this.pinnedControls = [];
+    if (!pinned.length) {
+      return;
+    }
+
     // `root` rather than `parent`, so an edit in any sibling group of a nested form counts too.
-    const subscription = control.root.valueChanges.pipe(take(1)).subscribe(() => {
-      subscription.unsubscribe();
-      if (control.errors?.[manualValidateErrorKey]) {
-        control.updateValueAndValidity();
+    const roots = Array.from(new Set(pinned.map((control) => control.root)));
+    let remaining = pinned;
+    const subscription = merge(...roots.map((root) => root.valueChanges)).subscribe(() => {
+      const stillPinned = remaining.filter((control) => control.errors?.[manualValidateErrorKey]);
+      if (stillPinned.length < remaining.length) {
+        // The edit landed on one of the flagged fields; the others remain unanswered.
+        remaining = stillPinned;
+        if (remaining.length) {
+          return;
+        }
       }
+
+      subscription.unsubscribe();
+      remaining.forEach((control) => control.updateValueAndValidity());
     });
   }
 

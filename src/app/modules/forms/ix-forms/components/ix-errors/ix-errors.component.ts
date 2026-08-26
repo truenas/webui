@@ -15,9 +15,6 @@ import { ArrayLengthValidationError } from 'app/modules/forms/ix-forms/validator
 
 type SomeError = Record<string, unknown>;
 
-/** Re-exported for the validators and forms that import it from here. */
-export const ixManualValidateError = ixManualValidateErrorKey;
-
 @Component({
   selector: 'ix-errors',
   templateUrl: './ix-errors.component.html',
@@ -39,7 +36,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
   readonly control = input.required<AbstractControl>();
   readonly label = input<string>();
 
-  readonly ixManualValidateError = ixManualValidateError;
+  readonly ixManualValidateError = ixManualValidateErrorKey;
 
   private statusChangeSubscription: Subscription;
   messages: string[] = [];
@@ -160,7 +157,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
 
   private handleErrors(options: { skipMarkAsTouched?: boolean } = {}): void {
     const newErrors: (string | null)[] = Object.keys(this.control().errors || []).map((error) => {
-      if (error === ixManualValidateError) {
+      if (error === ixManualValidateErrorKey) {
         return null;
       }
       const message = (this.control().errors?.[error] as SomeError)?.message as string;
@@ -265,7 +262,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
   removeManualError(): void {
     const errors = this.control().errors;
     if (errors) {
-      delete errors[ixManualValidateError];
+      delete errors[ixManualValidateErrorKey];
       delete errors.manualValidateError;
       delete errors.manualValidateErrorMsg;
     }
@@ -281,7 +278,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
   private announceErrors(): void {
     const messages = [...this.messages];
     const manualError = (
-      this.control().errors?.[ixManualValidateError] as { message: string } | undefined
+      this.control().errors?.[ixManualValidateErrorKey] as { message: string } | undefined
     )?.message;
     if (manualError) {
       messages.push(manualError);

@@ -32,10 +32,10 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -486,7 +486,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.snapshotsText = '';
           const errorMessage = this.errorParser.getFirstErrorMessage(error);
           if (errorMessage) {
-            this.form.controls.source_datasets.setErrors({ [ixManualValidateError]: { message: errorMessage } });
+            this.form.controls.source_datasets.setErrors({ [ixManualValidateErrorKey]: { message: errorMessage } });
           }
           this.cdr.markForCheck();
         },
