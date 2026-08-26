@@ -43,9 +43,29 @@ export interface SmartAlertAction {
   handler?: () => void;
 }
 
+/**
+ * Context that changes how an alert is enhanced.
+ */
+export interface EnhanceAlertOptions {
+  /**
+   * The alert stands for several alerts of the same class about different objects.
+   * Actions scoped to a single object - task reruns, routes and highlights resolved from
+   * one alert's args - are dropped, because they would silently cover one member only.
+   */
+  isConsolidated?: boolean;
+}
+
 export interface SmartAlertEnhancement {
   category: SmartAlertCategory;
   actions: SmartAlertAction[];
+
+  /**
+   * Concise headline used when several alerts of this class are consolidated into one entry.
+   * An ICU plural over `count`, so locales with more than one plural form can translate it -
+   * only the `other` form is written here, since the headline never renders below 2.
+   * When omitted the newest alert's own summary is shown instead.
+   */
+  groupSummary?: string;
 
   // Help and documentation
   contextualHelp?: string;
@@ -157,6 +177,7 @@ export interface SmartAlertConfig {
 export interface EnhancedAlert {
   category?: SmartAlertCategory;
   actions?: SmartAlertAction[];
+  groupSummary?: string;
   contextualHelp?: string;
   detailedHelp?: string;
   documentationUrl?: string;
@@ -168,16 +189,34 @@ export interface EnhancedAlert {
 }
 
 /**
- * Alert decorated with the count and ids of every alert sharing the same duplicate key,
- * i.e. the same alert class *and* the same key (see `getAlertDuplicateKey`) - two different
- * classes raised against the same object are not duplicates of each other.
+ * Alert decorated with the count, ids and messages of every alert it consolidates.
+ * Alerts only ever consolidate within one alert class: middleware derives `alert.key`
+ * from the alert arguments alone, so two different classes raised against the same object
+ * share a key (see `getAlertDuplicateKey`) without being duplicates of each other.
  * Dispatchers carry `allIds` so dismiss/reopen actions act on every duplicate
  * without re-querying post-reducer state.
  */
-export type AlertWithDuplicates = Alert & EnhancedAlert & {
+export type ConsolidatedAlert<T> = T & {
+  /** Number of alerts represented by this entry. */
   duplicateCount: number;
+  /**
+   * Number of distinct objects the entry covers, i.e. alerts with distinct keys.
+   * Lower than `duplicateCount` when one object reported the same problem more than once -
+   * an HA appliance raises the same alert from both controllers. Group headlines are
+   * phrased in terms of objects ("{count} pools"), so they count this, not instances.
+   */
+  objectCount: number;
+  /** Ids of every alert in the group, so a single dismiss clears all of them. */
   allIds: string[];
+  /**
+   * Distinct messages in the group, newest first. Only set for real groups.
+   * Identical messages are collapsed, so this can be shorter than `duplicateCount`:
+   * the count is instances, this is the messages they carry.
+   */
+  groupedMessages?: string[];
 };
+
+export type AlertWithDuplicates = ConsolidatedAlert<Alert & EnhancedAlert>;
 
 /**
  * Creates an extractFragment function that extracts a specific field from an alert message.

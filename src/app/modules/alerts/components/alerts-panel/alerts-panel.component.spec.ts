@@ -164,12 +164,14 @@ describe('AlertsPanelComponent', () => {
     expect(unreadAlertComponents[0].alert).toEqual({
       ...unreadAlerts[1],
       duplicateCount: 1,
+      objectCount: 1,
       allIds: [unreadAlerts[1].id],
       category: SmartAlertCategory.System,
     });
     expect(unreadAlertComponents[1].alert).toEqual({
       ...unreadAlerts[0],
       duplicateCount: 1,
+      objectCount: 1,
       allIds: [unreadAlerts[0].id],
       category: SmartAlertCategory.System,
     });
@@ -186,25 +188,29 @@ describe('AlertsPanelComponent', () => {
     expect(dismissedAlertComponents[0].alert).toEqual({
       ...dismissedAlerts[0],
       duplicateCount: 1,
+      objectCount: 1,
       allIds: [dismissedAlerts[0].id],
       category: SmartAlertCategory.System,
     });
     expect(dismissedAlertComponents[1].alert).toEqual({
       ...dismissedAlerts[1],
       duplicateCount: 1,
+      objectCount: 1,
       allIds: [dismissedAlerts[1].id],
       category: SmartAlertCategory.System,
     });
   });
 
-  // Regression for NAS-140768: when duplicates share a key, the panel must pass every duplicate
-  // id (allIds) to the rendered alert so a dismiss click acts on the whole group. The dispatch
-  // -> server-call wiring is covered in alert.effects.spec.ts and alert.component.spec.ts.
-  it('passes allIds covering every duplicate sharing the same key to the rendered alert', () => {
+  // Regression for NAS-140768: duplicates must be dismissible as a group. They are now
+  // consolidated into a single rendered alert that carries every duplicate id (allIds), so a
+  // dismiss click acts on the whole group. The dispatch -> server-call wiring is covered in
+  // alert.effects.spec.ts and alert.component.spec.ts.
+  it('renders duplicates as one alert carrying every duplicate id', () => {
     const duplicates = [
       {
         id: 'dup-a',
         key: 'duplicate-key',
+        klass: AlertClassName.PoolUpgraded,
         dismissed: false,
         datetime: { $date: 1641811015 },
         level: AlertLevel.Warning,
@@ -212,6 +218,7 @@ describe('AlertsPanelComponent', () => {
       {
         id: 'dup-b',
         key: 'duplicate-key',
+        klass: AlertClassName.PoolUpgraded,
         dismissed: false,
         datetime: { $date: 1641811020 },
         level: AlertLevel.Warning,
@@ -220,14 +227,57 @@ describe('AlertsPanelComponent', () => {
     spectator.inject(Store).dispatch(alertsLoaded({ alerts: duplicates }));
     spectator.detectChanges();
 
-    const renderedIds = alertPanel.unreadAlertComponents.map(
-      (component) => [...(alertPanel.getAlertData(component)?.allIds || [])].sort((a, b) => a.localeCompare(b)),
-    );
+    expect(alertPanel.unreadAlertComponents).toHaveLength(1);
 
-    expect(renderedIds).toEqual([
-      ['dup-a', 'dup-b'],
-      ['dup-a', 'dup-b'],
-    ]);
+    const rendered = alertPanel.getAlertData(alertPanel.unreadAlertComponents[0]);
+    expect([...(rendered?.allIds || [])].sort((a, b) => a.localeCompare(b))).toEqual(['dup-a', 'dup-b']);
+  });
+
+  it('consolidates alerts of the same class even when their messages differ', () => {
+    const perPoolAlerts = ['a', 'b', 'c'].map((pool, index) => ({
+      id: `pool-${pool}`,
+      key: `pool-${pool}-key`,
+      klass: AlertClassName.PoolUpgraded,
+      dismissed: false,
+      formatted: `Pool '${pool}' can be upgraded`,
+      datetime: { $date: 1641811015 + index },
+      level: AlertLevel.Warning,
+    })) as Alert[];
+    spectator.inject(Store).dispatch(alertsLoaded({ alerts: perPoolAlerts }));
+    spectator.detectChanges();
+
+    expect(alertPanel.unreadAlertComponents).toHaveLength(1);
+    expect(alertPanel.getAlertData(alertPanel.unreadAlertComponents[0])?.duplicateCount).toBe(3);
+    // The filter counts stay per alert instance so they still match the nav badges.
+    expect(spectator.queryAll('.filter-button .count')[0]).toHaveText('3');
+  });
+
+  it('keeps the same row when a newer alert joins its group', () => {
+    const poolAlert = {
+      id: 'pool-a',
+      key: 'pool-a-key',
+      klass: AlertClassName.PoolUpgraded,
+      dismissed: false,
+      formatted: "Pool 'a' can be upgraded",
+      datetime: { $date: 1641811015 },
+      level: AlertLevel.Warning,
+    } as Alert;
+    spectator.inject(Store).dispatch(alertsLoaded({ alerts: [poolAlert] }));
+    spectator.detectChanges();
+    const before = alertPanel.unreadAlertComponents[0];
+
+    // Consolidation makes the newer alert the representative, changing the entry's id.
+    // Rows track the consolidation key so Angular reuses the component instead of
+    // rebuilding it and resetting whether the user had expanded it.
+    spectator.inject(Store).dispatch(alertsLoaded({
+      alerts: [poolAlert, {
+        ...poolAlert, id: 'pool-b', key: 'pool-b-key', datetime: { $date: 1641811020 },
+      }],
+    }));
+    spectator.detectChanges();
+
+    expect(alertPanel.unreadAlertComponents).toHaveLength(1);
+    expect(alertPanel.unreadAlertComponents[0]).toBe(before);
   });
 
   // Regression for NAS-142267: middleware builds `key` from the alert arguments alone, so
