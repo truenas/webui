@@ -8,6 +8,7 @@ import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+import { TnBannerComponent } from '@truenas/ui-components';
 import { forkJoin, tap } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -40,6 +41,7 @@ export interface ChangeTierDialogData {
     ReactiveFormsModule,
     IxCheckboxComponent,
     TestDirective,
+    TnBannerComponent,
   ],
 })
 export class ChangeTierDialogComponent implements OnInit {

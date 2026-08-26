@@ -69,12 +69,11 @@ mat-progress-bar {
   gap: 16px;
 }
 
+// Not a card any more - the stats read as plain columns aligned with the rest
+// of the dialog body, so the box went with the padding.
 .stat-card {
   flex: 1;
   min-width: 120px;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
 
   .stat-label {
     font-size: 12px;
