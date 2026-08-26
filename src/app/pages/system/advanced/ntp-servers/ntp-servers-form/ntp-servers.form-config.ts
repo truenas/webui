@@ -60,15 +60,7 @@ export function getNtpServersFormConfig(
           validators: [Validators.max(17)],
         },
         {
-          name: 'force',
-          type: 'checkbox',
-          label: helptext.force.label,
-          tooltip: helptext.force.tooltip,
-          // `force` means "add this server even though it could not be reached", so toggling it has
-          // to retire the unreachability verdict the backend pinned on `address` — which arrives
-          // via `setErrors()` and never re-evaluates on its own, leaving Save disabled forever and
-          // the escape hatch unusable (NAS-142225).
-          clearsServerErrorsFor: ['address'],
+          name: 'force', type: 'checkbox', label: helptext.force.label, tooltip: helptext.force.tooltip,
         },
       ],
     }],

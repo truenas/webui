@@ -48,8 +48,8 @@ describe('getNtpServersFormConfig', () => {
 /**
  * NAS-142225. Drives the reported path end to end: the backend rejects an unreachable address, the
  * message is pinned on `address`, and ticking `Force` must free Save. Uses the REAL
- * `FormErrorHandlerService` (overriding the mock from `ixFormTestingProviders`) so the pinning is
- * genuine rather than staged.
+ * `FormErrorHandlerService` (overriding the mock from `ixFormTestingProviders`) so both the pinning
+ * and its self-retiring on the next edit are genuine rather than staged.
  */
 describe('NTP server form — Force clears the unreachable-address error', () => {
   const unreachable = new ApiCallError({
@@ -122,9 +122,9 @@ describe('NTP server form — Force clears the unreachable-address error', () =>
       .toBe('192.0.2.1');
   });
 
-  it('still blocks Save on a live client-side error when Force is checked', async () => {
-    // Force retires the backend's verdict and nothing else: real validators keep their say, so a
-    // Max Poll above the allowed 17 must still hold Save shut.
+  it('still blocks Save on a live client-side error', async () => {
+    // Retiring the backend's verdict frees nothing else: real validators keep their say, so a Max
+    // Poll above the allowed 17 must still hold Save shut.
     await (await loader.getHarness(TnInputHarness.with({ name: 'maxpoll' }))).setValue('99');
     await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Force' }))).check();
     spectator.detectChanges();
@@ -132,11 +132,12 @@ describe('NTP server form — Force clears the unreachable-address error', () =>
     expect(spectator.component.canSubmit()).toBe(false);
   });
 
-  it('leaves other forms alone — the checkbox only clears a pinned backend error', async () => {
-    // Ticking an unrelated checkbox must NOT free Save; only `force` carries the clearing.
+  it('retires the verdict on any edit, not just Force', async () => {
+    // The pin describes one submitted payload, so any edit moves the payload on. `Force` is not
+    // special-cased anywhere — it is simply the field the user reaches for on this form.
     await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Burst' }))).check();
     spectator.detectChanges();
 
-    expect(spectator.component.canSubmit()).toBe(false);
+    expect(spectator.component.canSubmit()).toBe(true);
   });
 });

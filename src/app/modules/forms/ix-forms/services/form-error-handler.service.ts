@@ -1,5 +1,6 @@
 import { Injectable, DOCUMENT, inject } from '@angular/core';
 import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
+import { take } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { JobExceptionType } from 'app/enums/response-error-type.enum';
 import {
@@ -165,7 +166,7 @@ export class FormErrorHandlerService {
       [ixManualValidateErrorKey]: { message: errorMessage },
     });
     control.markAsTouched();
-
+    this.retirePinnedErrorOnNextEdit(control);
 
     // Notify editable components that might contain this field
     this.notifyEditablesOfValidationError(field);
@@ -193,6 +194,32 @@ export class FormErrorHandlerService {
     }
   }
 
+
+  /**
+   * A backend verdict is pinned with `setErrors()`, so — unlike a validator result — it never
+   * re-evaluates. Angular drops it when THAT control changes, but an error the user is meant to
+   * answer from a DIFFERENT field (ticking `Force` for an NTP address the server could not reach)
+   * would stay pinned forever, leaving Save disabled with no way out but re-editing the flagged
+   * field.
+   *
+   * So the pin retires itself: each verdict describes one submitted payload, and the next edit
+   * anywhere in the form moves the payload on. Re-running the control's validators is what retires
+   * it — the pinned set is replaced by the control's real validation state, so a field that is
+   * genuinely empty-but-required goes back to saying `required` rather than falling silently valid.
+   * If the verdict still stands, the next save pins it again.
+   *
+   * One-shot, and unsubscribed before the clearing so `updateValueAndValidity()` can emit normally:
+   * that emission is what refreshes `<ix-form>`'s status signal, and so the host's Save button.
+   */
+  private retirePinnedErrorOnNextEdit(control: AbstractControl): void {
+    // `root` rather than `parent`, so an edit in any sibling group of a nested form counts too.
+    const subscription = control.root.valueChanges.pipe(take(1)).subscribe(() => {
+      subscription.unsubscribe();
+      if (control.errors?.[manualValidateErrorKey]) {
+        control.updateValueAndValidity();
+      }
+    });
+  }
 
   /**
    * Locates the rendered control so the first error can be scrolled to and focused.

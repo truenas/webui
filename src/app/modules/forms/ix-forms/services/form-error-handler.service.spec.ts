@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { fakeAsync, tick } from '@angular/core/testing';
+import { Validators } from '@angular/forms';
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
@@ -278,6 +279,89 @@ describe('FormErrorHandlerService', () => {
       });
       expect(nestedFormGroup.controls.audit.controls.watch_list.touched).toBe(true);
       expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('self-retiring pinned errors', () => {
+    // NAS-142225. A backend verdict is pinned with `setErrors()` and never re-evaluates, so an
+    // error the user is meant to answer from a DIFFERENT field would hold Save shut forever.
+    const buildNtpForm = (): FormGroup<{ address: string; force: boolean }> => new FormGroup({
+      address: new FormControl('192.0.2.1', [Validators.required]),
+      force: new FormControl(false),
+    });
+
+    it('retires the pinned error on the next edit anywhere in the form', () => {
+      const form = buildNtpForm();
+      spectator.service.handleValidationErrors(unreachableAddressError, form);
+      expect(form.controls.address.errors).toEqual(expect.objectContaining({ manualValidateError: true }));
+      expect(form.valid).toBe(false);
+
+      form.controls.force.setValue(true);
+
+      expect(form.controls.address.errors).toBeNull();
+      expect(form.valid).toBe(true);
+    });
+
+    it('restores the real validation state instead of blanket-clearing errors', () => {
+      const form = buildNtpForm();
+      form.controls.address.setValue('');
+      spectator.service.handleValidationErrors(unreachableAddressError, form);
+
+      form.controls.force.setValue(true);
+
+      // The pinned verdict was masking a genuinely empty required field, which must say so again.
+      expect(form.controls.address.errors).toEqual({ required: true });
+      expect(form.valid).toBe(false);
+    });
+
+    it('leaves a live client-side error on a sibling alone', () => {
+      const form = new FormGroup({
+        address: new FormControl('192.0.2.1', [Validators.required]),
+        force: new FormControl(false),
+        maxpoll: new FormControl(99, [Validators.max(17)]),
+      });
+      spectator.service.handleValidationErrors(unreachableAddressError, form);
+
+      form.controls.force.setValue(true);
+
+      expect(form.controls.address.errors).toBeNull();
+      expect(form.controls.maxpoll.errors).toEqual(expect.objectContaining({ max: expect.anything() }));
+      expect(form.valid).toBe(false);
+    });
+
+    it('retires an error pinned on a nested control from an edit in a sibling group', () => {
+      // The subscription listens on the control's root, so any edge of the form counts.
+      const nestedError = new ApiCallError({
+        code: JsonRpcErrorCode.CallError,
+        message: 'Validation error',
+        data: {
+          error: 11,
+          errname: ApiErrorName.Validation,
+          extra: [['ntp_server_create.server.address', 'Server could not be reached.', 22]],
+          trace: { class: 'ValidationErrors', formatted: '', frames: [] as ApiTraceFrame[] },
+          reason: 'Test reason',
+        },
+      });
+      const server = new FormGroup({ address: new FormControl('192.0.2.1') });
+      const options = new FormGroup({ force: new FormControl(false) });
+      const form = new FormGroup({ server, options });
+      spectator.service.handleValidationErrors(nestedError, form);
+      expect(server.controls.address.errors).toEqual(expect.objectContaining({ manualValidateError: true }));
+
+      options.controls.force.setValue(true);
+
+      expect(server.controls.address.errors).toBeNull();
+    });
+
+    it('re-pins the verdict when the next save is rejected again', () => {
+      const form = buildNtpForm();
+      spectator.service.handleValidationErrors(unreachableAddressError, form);
+      form.controls.force.setValue(true);
+      expect(form.controls.address.errors).toBeNull();
+
+      spectator.service.handleValidationErrors(unreachableAddressError, form);
+
+      expect(form.controls.address.errors).toEqual(expect.objectContaining({ manualValidateError: true }));
     });
   });
 
