@@ -5,8 +5,8 @@ import { MiB } from 'app/constants/bytes.constant';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
 
 describe('FileValidatorService', () => {
@@ -56,7 +56,7 @@ describe('FileValidatorService', () => {
 
     const control = new FormControl([file1]);
     expect(maxSizeValidatorFn(control)).toEqual({
-      [ixManualValidateError]: {
+      [ixManualValidateErrorKey]: {
         message: 'Maximum file size is limited to 10 MiB.',
       },
     });

@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { fakeAsync, tick } from '@angular/core/testing';
+import { Validators } from '@angular/forms';
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
@@ -57,6 +58,24 @@ const arrayFieldError = new ApiCallError({
   },
 });
 
+const unreachableAddressError = new ApiCallError({
+  code: JsonRpcErrorCode.CallError,
+  message: 'Validation error',
+  data: {
+    error: 11,
+    errname: ApiErrorName.Validation,
+    extra: [
+      [
+        'ntp_server_create.address',
+        'Server could not be reached. Check "Force" to continue regardless.',
+        22,
+      ],
+    ],
+    trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+    reason: 'Test reason',
+  },
+});
+
 const formGroup = new FormGroup({
   test_control_1: new FormControl(''),
   sudo_commands_no_passwd: new FormControl([]),
@@ -75,6 +94,8 @@ describe('FormErrorHandlerService', () => {
   const elementMock = {
     scrollIntoView: jest.fn() as HTMLElement['scrollIntoView'],
     focus: jest.fn() as HTMLElement['focus'],
+    // The service looks for a native control inside the element first; an ix-* host wraps none.
+    querySelector: jest.fn((): HTMLElement | null => null) as unknown as HTMLElement['querySelector'],
   } as HTMLElement;
 
   const createService = createServiceFactory({
@@ -183,6 +204,21 @@ describe('FormErrorHandlerService', () => {
       expect(elementMock.focus).toHaveBeenCalled();
     }));
 
+    it('focuses the native control inside a tn-* component host', fakeAsync(() => {
+      // `data-control-name` sits on the tn-* component host, which carries no tabindex and so
+      // ignores focus() — the focusable element is the native control it wraps.
+      const innerInput = { focus: jest.fn() } as unknown as HTMLElement;
+      // `Once`: jest is configured to clear calls between tests, not implementations.
+      (elementMock.querySelector as jest.Mock).mockReturnValueOnce(innerInput);
+
+      spectator.service.handleValidationErrors(callError, formGroup);
+      tick();
+
+      expect(elementMock.scrollIntoView).toHaveBeenCalled();
+      expect(innerInput.focus).toHaveBeenCalled();
+      expect(elementMock.focus).not.toHaveBeenCalled();
+    }));
+
     it('notifies EditableComponents through secure service', () => {
       spectator.service.handleValidationErrors(callError, formGroup);
 
@@ -204,6 +240,130 @@ describe('FormErrorHandlerService', () => {
         manualValidateError: true,
         manualValidateErrorMsg: 'Command not allowed',
       });
+    });
+  });
+
+  describe('self-retiring pinned errors', () => {
+    // NAS-142225. A backend verdict is pinned with `setErrors()` and never re-evaluates, so an
+    // error the user is meant to answer from a DIFFERENT field would hold Save shut forever.
+    const buildNtpForm = (): FormGroup<{ address: string; force: boolean }> => new FormGroup({
+      address: new FormControl('192.0.2.1', [Validators.required]),
+      force: new FormControl(false),
+    });
+
+    it('retires the pinned error on the next edit anywhere in the form', () => {
+      const form = buildNtpForm();
+      spectator.service.handleValidationErrors(unreachableAddressError, form);
+      expect(form.controls.address.errors).toEqual(expect.objectContaining({ manualValidateError: true }));
+      expect(form.valid).toBe(false);
+
+      form.controls.force.setValue(true);
+
+      expect(form.controls.address.errors).toBeNull();
+      expect(form.valid).toBe(true);
+    });
+
+    it('restores the real validation state instead of blanket-clearing errors', () => {
+      const form = buildNtpForm();
+      form.controls.address.setValue('');
+      spectator.service.handleValidationErrors(unreachableAddressError, form);
+
+      form.controls.force.setValue(true);
+
+      // The pinned verdict was masking a genuinely empty required field, which must say so again.
+      expect(form.controls.address.errors).toEqual({ required: true });
+      expect(form.valid).toBe(false);
+    });
+
+    it('leaves a live client-side error on a sibling alone', () => {
+      const form = new FormGroup({
+        address: new FormControl('192.0.2.1', [Validators.required]),
+        force: new FormControl(false),
+        maxpoll: new FormControl(99, [Validators.max(17)]),
+      });
+      spectator.service.handleValidationErrors(unreachableAddressError, form);
+
+      form.controls.force.setValue(true);
+
+      expect(form.controls.address.errors).toBeNull();
+      expect(form.controls.maxpoll.errors).toEqual(expect.objectContaining({ max: expect.anything() }));
+      expect(form.valid).toBe(false);
+    });
+
+    it('retires an error pinned on a nested control from an edit in a sibling group', () => {
+      // The subscription listens on the control's root rather than its parent, so an edit anywhere
+      // in the form counts — including a group the flagged control does not itself live in.
+      const server = new FormGroup({ address: new FormControl('192.0.2.1') });
+      const options = new FormGroup({ force: new FormControl(false) });
+      // Both groups belong to one form, so `root` is the shared parent; they are handed over
+      // separately because the leaf lookup resolves against each group it is given.
+      const form = new FormGroup({ server, options });
+      expect(server.controls.address.root).toBe(form);
+
+      spectator.service.handleValidationErrors(unreachableAddressError, [server, options]);
+      expect(server.controls.address.errors).toEqual(expect.objectContaining({ manualValidateError: true }));
+
+      options.controls.force.setValue(true);
+
+      expect(server.controls.address.errors).toBeNull();
+    });
+
+    // A verdict can flag several fields at once. Answering one must not wipe the messages for the
+    // ones the user has not reached yet — those verdicts still stand.
+    const twoFieldError = new ApiCallError({
+      code: JsonRpcErrorCode.CallError,
+      message: 'Validation error',
+      data: {
+        error: 11,
+        errname: ApiErrorName.Validation,
+        extra: [
+          ['ntp_server_create.address', 'Server could not be reached.', 22],
+          ['ntp_server_create.description', 'Description is already taken.', 22],
+        ],
+        trace: { class: 'ValidationErrors', formatted: '', frames: [] as ApiTraceFrame[] },
+        reason: 'Test reason',
+      },
+    });
+
+    const buildTwoFieldForm = (): FormGroup<{ address: string; description: string; force: boolean }> => new FormGroup({
+      address: new FormControl('192.0.2.1'),
+      description: new FormControl('Primary'),
+      force: new FormControl(false),
+    });
+
+    it('keeps the other fields of a multi-field verdict pinned while one of them is answered', () => {
+      const form = buildTwoFieldForm();
+      spectator.service.handleValidationErrors(twoFieldError, form);
+      expect(form.controls.address.errors).toEqual(expect.objectContaining({ manualValidateError: true }));
+      expect(form.controls.description.errors).toEqual(expect.objectContaining({ manualValidateError: true }));
+
+      form.controls.address.setValue('192.0.2.2');
+
+      expect(form.controls.address.errors).toBeNull();
+      expect(form.controls.description.errors).toEqual(expect.objectContaining({ manualValidateError: true }));
+      expect(form.valid).toBe(false);
+    });
+
+    it('retires the still-pinned fields once the edit lands outside the flagged set', () => {
+      const form = buildTwoFieldForm();
+      spectator.service.handleValidationErrors(twoFieldError, form);
+      form.controls.address.setValue('192.0.2.2');
+
+      form.controls.force.setValue(true);
+
+      expect(form.controls.description.errors).toBeNull();
+      expect(form.valid).toBe(true);
+    });
+
+    it('re-pins the verdict when the next save is rejected again', () => {
+      const form = buildNtpForm();
+      spectator.service.handleValidationErrors(unreachableAddressError, form);
+      form.controls.force.setValue(true);
+      expect(form.controls.address.errors).toBeNull();
+
+      spectator.service.handleValidationErrors(unreachableAddressError, form);
+
+      expect(form.controls.address.errors).toEqual(expect.objectContaining({ manualValidateError: true }));
     });
   });
 
@@ -364,8 +524,11 @@ describe('FormErrorHandlerService', () => {
 
       spectator.service.handleValidationErrors(callError, formGroup);
 
+      // Also matches `data-control-name`: tn-* controls built by `<ix-form-renderer>` register with
+      // neither IxFormService nor a `formControlName` attribute (it is a property binding).
       // eslint-disable-next-line sonarjs/deprecation
-      expect(doc.querySelector).toHaveBeenCalledWith('[formControlName="test_control_1"]');
+      expect(doc.querySelector)
+        .toHaveBeenCalledWith('[formControlName="test_control_1"], [data-control-name="test_control_1"]');
     });
 
     it('warns when DOM element cannot be found', () => {
@@ -376,6 +539,50 @@ describe('FormErrorHandlerService', () => {
       spectator.service.handleValidationErrors(callError, formGroup);
 
       expect(console.warn).toHaveBeenCalledWith('Could not find DOM element for field test_control_1.');
+    });
+
+    it('shows a rendered tn-* control inline only, without duplicating it in an error modal', () => {
+      // NAS-142225: a tn-* form built by `<ix-form-renderer>` registers with neither IxFormService
+      // nor a `formControlName` attribute, so its controls used to look unrendered and every
+      // message the user could already read under the field was repeated in a modal. They are found
+      // through `data-control-name` now, which keeps the report inline.
+      jest.spyOn(spectator.inject(IxFormService), 'getElementByControlName').mockReturnValue(null);
+      jest.spyOn(spectator.inject(DOCUMENT), 'querySelector').mockReturnValue(document.createElement('input'));
+      const ntpForm = new FormGroup({ address: new FormControl('192.0.2.1') });
+
+      // The ErrorHandlerService mock is built once per factory, so call counts carry over
+      // between tests in this file — clear them to assert on this call alone.
+      const mockErrorHandler = spectator.inject(ErrorHandlerService);
+      jest.clearAllMocks();
+
+      spectator.service.handleValidationErrors(unreachableAddressError, ntpForm);
+
+      expect(ntpForm.controls.address.errors).toEqual(expect.objectContaining({
+        manualValidateError: true,
+        manualValidateErrorMsg: 'Server could not be reached. Check "Force" to continue regardless.',
+      }));
+      expect(mockErrorHandler.showErrorModal).not.toHaveBeenCalled();
+    });
+
+    it('still escalates to a modal for a control that is nowhere in the DOM', () => {
+      // A control in the form group but not rendered (behind an `@if`, or payload-only) has nowhere
+      // to show its pinned message, so the modal is the only signal the user gets.
+      jest.spyOn(spectator.inject(IxFormService), 'getElementByControlName').mockReturnValue(null);
+      jest.spyOn(spectator.inject(DOCUMENT), 'querySelector').mockReturnValue(null);
+      const ntpForm = new FormGroup({ address: new FormControl('192.0.2.1') });
+
+      const mockErrorHandler = spectator.inject(ErrorHandlerService);
+      jest.clearAllMocks();
+
+      spectator.service.handleValidationErrors(unreachableAddressError, ntpForm);
+
+      expect(mockErrorHandler.showErrorModal).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringContaining(
+            'address: Server could not be reached. Check "Force" to continue regardless.',
+          ),
+        }),
+      );
     });
   });
 
