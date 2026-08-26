@@ -16,6 +16,7 @@
       @if (hasDuplicates()) {
         <span
           class="duplicate-count-badge"
+          [attr.aria-label]="duplicateCountTooltip()"
           [tnTooltip]="duplicateCountTooltip()"
         >
           {{ duplicateCount() }}
@@ -23,18 +24,28 @@
       }
     </div>
   }
-  <h4
-    #alertMessage
-    class="alert-message"
-    [class.collapsed]="isCollapsed()"
-    [innerHTML]="alert().formatted"
-  ></h4>
+  <!--
+    The whole expandable region, not just the details block: a single alert expands in
+    place, so the text the toggle reveals is the message line itself.
+  -->
+  <div class="alert-expandable" [attr.id]="expandableId()">
+    <h4 class="alert-message" [innerHTML]="displayedMessage()"></h4>
+    @if (!isCollapsed() && detailMessages().length) {
+      <div class="alert-details">
+        @for (message of detailMessages(); track message) {
+          <div class="alert-detail" [innerHTML]="message"></div>
+        }
+      </div>
+    }
+  </div>
   @if (isExpandable()) {
     <button
       type="button"
       class="expand-collapse-button"
       tnTestIdType="button"
       [tnTestId]="[alert().key, 'expand']"
+      [attr.aria-expanded]="!isCollapsed()"
+      [attr.aria-controls]="expandableId()"
       [class.collapsed]="isCollapsed()"
       (click)="toggleCollapse()"
     >
@@ -66,7 +77,7 @@
       </button>
       @if (showContextHelp()) {
         <div class="context-help-content">
-          <p>{{ enhanced.contextualHelp }}</p>
+          <p>{{ enhanced.contextualHelp | translate }}</p>
           @if (enhanced.documentationUrl) {
             <a
               class="action-link"

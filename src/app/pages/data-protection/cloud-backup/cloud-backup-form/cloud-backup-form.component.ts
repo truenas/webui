@@ -43,7 +43,6 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -81,9 +80,6 @@ export class CloudBackupFormComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);
   private cloudCredentialService = inject(CloudCredentialService);
-  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
-  // `<tn-side-panel>` form panel, where data arrives via {@link backupToEdit}.
-  private slideInRef = inject<SlideInRef<CloudBackup | undefined, CloudBackup>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
@@ -186,7 +182,7 @@ export class CloudBackupFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.editingTask = this.slideInRef?.getData() ?? this.backupToEdit();
+    this.editingTask = this.backupToEdit();
 
     this.setFileNodeProvider();
     this.setDirectoriesNodeProvider();

@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnFormSectionComponent, TnStepperComponent } from '@truenas/ui-components';
-import { catchError, EMPTY, of } from 'rxjs';
+import { catchError, EMPTY } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { newOption } from 'app/interfaces/option.interface';
@@ -16,7 +16,6 @@ import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-se
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -39,9 +38,6 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
 export class CloudSyncProviderComponent implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
-  // Optional: the wizard is hosted in the `<tn-side-panel>` form panel (no SlideInRef); the wizard's
-  // own closeGuard covers unsaved changes there, and "Advanced Options" swaps via {@link formPanel}.
-  private slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef, { optional: true });
   private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);
   private dialogService = inject(DialogService);
@@ -65,12 +61,6 @@ export class CloudSyncProviderComponent implements OnInit {
   private existingCredential: CloudSyncCredential;
 
   readonly helptext = helptext;
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
 
   get areActionsDisabled(): boolean {
     return this.isLoading || this.form.invalid || !this.form.controls.exist_credential.value;

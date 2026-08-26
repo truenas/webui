@@ -2,9 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-// <ix-form>'s Save button is still a `<button mat-button>` (owned by the shared ix-form, not this
-// ticket), so it is driven with the Material harness.
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
   TnBannerHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness, TnSpriteLoaderService,
@@ -22,9 +19,6 @@ import {
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CloudBackupFormComponent,
@@ -87,13 +81,7 @@ describe('CloudBackupFormComponent', () => {
 
   let loader: HarnessLoader;
   let spectator: Spectator<CloudBackupFormComponent>;
-  const getData = jest.fn(() => existingTask);
-  const slideInRef: SlideInRef<CloudBackup | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-    swap: jest.fn(),
-  };
+  let closedSpy: jest.SpyInstance;
   const createComponent = createComponentFactory({
     component: CloudBackupFormComponent,
     imports: [
@@ -117,17 +105,12 @@ describe('CloudBackupFormComponent', () => {
       ...ixFormTestingProviders(),
       // ix-cloud-credentials-select's "Add new" directive opens a SlideIn and reads its result;
       // override the bare SlideIn mock from ixFormTestingProviders() to supply `open`.
-      mockProvider(SlideIn, {
-        openSlideIns: jest.fn(() => 1),
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(CloudCredentialService, {
         getCloudSyncCredentials: jest.fn(() => of([googlePhotosCreds, storjCreds])),
         getProviders: jest.fn(() => of([storjProvider, googlePhotosProvider])),
         getBuckets: jest.fn(() => of([{ Name: 'bucket1', Path: 'path_to_bucket1', Enabled: true }])),
       }),
       mockProvider(FilesystemService),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(TnSpriteLoaderService, {
         ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
         getIconUrl: jest.fn(),
@@ -156,6 +139,7 @@ describe('CloudBackupFormComponent', () => {
   describe('adds a new cloud backup', () => {
     beforeEach(() => {
       spectator = createComponent();
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -198,8 +182,11 @@ describe('CloudBackupFormComponent', () => {
       await (await getSelect('bucket')).selectOption('Add new');
       await (await getInput('bucket_input')).setValue('brand-new-bucket');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.create', [{
         args: '',
@@ -227,7 +214,7 @@ describe('CloudBackupFormComponent', () => {
         absolute_paths: false,
         transfer_setting: CloudsyncTransferSetting.Default,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+      expect(closedSpy).toHaveBeenCalledWith(existingTask);
     });
 
     it('adds a new cloud backup task when new form is saved', async () => {
@@ -247,8 +234,11 @@ describe('CloudBackupFormComponent', () => {
       await (await loader.getHarness(TnChipInputHarness.with({ selector: '[formControlName="exclude"]' }))).addChip('/test');
       await (await getSelect('transfer_setting')).selectOption('Fast Storage');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
         args: '',
@@ -276,20 +266,14 @@ describe('CloudBackupFormComponent', () => {
         absolute_paths: true,
         transfer_setting: CloudsyncTransferSetting.FastStorage,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+      expect(closedSpy).toHaveBeenCalledWith(existingTask);
     });
   });
 
   describe('edits an existing cloud backup', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData,
-          }),
-        ],
-      });
+      spectator = createComponent({ props: { backupToEdit: existingTask } });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -318,8 +302,11 @@ describe('CloudBackupFormComponent', () => {
       expect(await useAbsolutePathsControl.isDisabled()).toBe(true);
       expect(await useAbsolutePathsControl.isChecked()).toBe(true);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloud_backup.update', [1, {
         args: '',
@@ -349,25 +336,23 @@ describe('CloudBackupFormComponent', () => {
         snapshot: false,
         transfer_setting: CloudsyncTransferSetting.Performance,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+      expect(closedSpy).toHaveBeenCalledWith(existingTask);
     });
   });
 
-  describe('side panel host (no SlideInRef)', () => {
+  describe('host-driven submit', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          { provide: SlideInRef, useValue: null },
-        ],
         props: {
           backupToEdit: existingTask,
         },
       });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('emits the saved record through closed when saved via the host submit() entry point', async () => {
-      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
       await (await getSelect('bucket')).selectOption('bucket1');
 

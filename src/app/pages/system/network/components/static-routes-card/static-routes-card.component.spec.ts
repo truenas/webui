@@ -6,12 +6,11 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import {
-  IxTablePagerShowMoreComponent,
-} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import {
+  TablePagerShowMoreComponent,
+} from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { StaticRouteDeleteDialog } from 'app/pages/system/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRoutesCardComponent } from 'app/pages/system/network/components/static-routes-card/static-routes-card.component';
 
@@ -26,16 +25,10 @@ describe('StaticRoutesCardComponent', () => {
   let spectator: Spectator<StaticRoutesCardComponent>;
   let loader: HarnessLoader;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: StaticRoutesCardComponent,
     imports: [
-      IxTablePagerShowMoreComponent,
+      TablePagerShowMoreComponent,
     ],
     providers: [
       mockApi([
@@ -48,7 +41,6 @@ describe('StaticRoutesCardComponent', () => {
       mockProvider(FormSidePanelService, {
         openForm: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
           closed: of(true),

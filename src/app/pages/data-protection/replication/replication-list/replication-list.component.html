@@ -94,7 +94,7 @@
       <ng-template tnHeaderCellDef>{{ titles().sourceDataset }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-table-text-cell
-          [value]="row.source_datasets"
+          [value]="sourceDatasets(row)"
           [title]="titles().sourceDataset"
           [uniqueRowTag]="uniqueRowTag(row)"
         ></ix-table-text-cell>
@@ -186,7 +186,11 @@
     </ng-container>
 
     <ng-template let-task tnDetailRowDef>
-      <ix-table-details-row [hiddenColumns]="list.hiddenColumns()" [row]="task">
+      <ix-table-details-row
+        [hiddenColumns]="list.hiddenColumns()"
+        [row]="task"
+        [uniqueRowTag]="uniqueRowTag(task)"
+      >
         <div class="table-details-row-actions">
           @if (!task.job || task.job.state !== jobState.Running) {
             <tn-button

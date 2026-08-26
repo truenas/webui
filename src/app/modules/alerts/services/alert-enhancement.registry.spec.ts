@@ -1,6 +1,6 @@
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { SmartAlertActionType } from 'app/interfaces/smart-alert.interface';
+import { SmartAlertActionType, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { getAlertEnhancement } from 'app/modules/alerts/services/alert-enhancement.registry';
 
 describe('alert-enhancement.registry route fixes (NAS-140943)', () => {
@@ -109,6 +109,50 @@ describe('alert-enhancement.registry route fixes (NAS-140943)', () => {
         expect(action?.route).toEqual(['/credentials', 'users', 'api-keys']);
       },
     );
+  });
+
+  describe('ZFS tiering alerts (NAS-142267)', () => {
+    it.each([
+      AlertClassName.TierSpecialVdevWarning,
+      AlertClassName.TierSpecialVdevCritical,
+    ])('badges both Storage and Datasets for %s', (klass) => {
+      const enhancement = getAlertEnhancement(
+        '',
+        klass,
+        'Pool hddpool: special allocation class usage exceeds 70%.',
+        buildAlert(klass),
+      );
+
+      expect(enhancement?.category).toBe(SmartAlertCategory.Storage);
+      expect(enhancement?.relatedMenuPath).toEqual(['storage']);
+      expect(enhancement?.extraMenuPaths).toEqual([['datasets']]);
+      expect(enhancement?.actions?.map((action) => action.route)).toEqual([['/storage'], ['/datasets']]);
+    });
+
+    it('badges Datasets for a failed tier migration job', () => {
+      const enhancement = getAlertEnhancement(
+        '',
+        AlertClassName.TierJobError,
+        'Tier migration job tank/data@uuid encountered an error: boom',
+        buildAlert(AlertClassName.TierJobError),
+      );
+
+      expect(enhancement?.category).toBe(SmartAlertCategory.Tasks);
+      expect(enhancement?.relatedMenuPath).toEqual(['datasets']);
+    });
+
+    it('does not badge any menu for a completed tier migration job', () => {
+      const enhancement = getAlertEnhancement(
+        '',
+        AlertClassName.TierJobComplete,
+        'Tier migration job tank/data@uuid completed successfully.',
+        buildAlert(AlertClassName.TierJobComplete),
+      );
+
+      expect(enhancement?.category).toBe(SmartAlertCategory.Tasks);
+      expect(enhancement?.relatedMenuPath).toBeUndefined();
+      expect(enhancement?.extraMenuPaths).toBeUndefined();
+    });
   });
 
   describe('Scrub finished/not started alerts', () => {

@@ -21,7 +21,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -33,12 +32,6 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
   const data = {
     backup: { id: 1, path: '/mnt/dozer', absolute_paths: true } as CloudBackup,
     snapshot: { id: 1 } as unknown as CloudBackupSnapshot,
-  };
-
-  const slideInRef: SlideInRef<{ backup: CloudBackup; snapshot: CloudBackupSnapshot } | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => data),
   };
 
   const createComponent = createComponentFactory({
@@ -61,7 +54,6 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
           { name: 'file.txt', path: '/file.txt', type: CloudBackupSnapshotDirectoryFileType.File },
         ] as CloudBackupSnapshotDirectoryListing[]),
       ]),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(FilesystemService),
       ...ixFormTestingProviders(),
     ],
@@ -75,7 +67,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
 
   describe('handles form', () => {
     beforeEach(() => {
-      spectator = createComponent();
+      spectator = createComponent({ props: { restoreData: data } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -211,7 +203,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
 
   describe('snapshot node provider', () => {
     beforeEach(() => {
-      spectator = createComponent();
+      spectator = createComponent({ props: { restoreData: data } });
     });
 
     it('lists both directories and files from a snapshot directory', async () => {
@@ -236,7 +228,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
 
   describe('includedPathsRootNodes signal', () => {
     beforeEach(() => {
-      spectator = createComponent();
+      spectator = createComponent({ props: { restoreData: data } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -279,12 +271,9 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
     });
   });
 
-  describe('side panel host (no SlideInRef)', () => {
+  describe('host-driven submit', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          { provide: SlideInRef, useValue: null },
-        ],
         props: {
           restoreData: data,
         },

@@ -164,7 +164,7 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   });
 
   /**
-   * Container to edit, handed in by the `<tn-side-panel>` host (which has no `SlideInRef` to
+   * Container to edit, handed in by the `<tn-side-panel>` host (which has no data channel to
    * carry data). Absent for Add. Both openers pass the panel title themselves, so this form
    * derives none of its own chrome.
    */

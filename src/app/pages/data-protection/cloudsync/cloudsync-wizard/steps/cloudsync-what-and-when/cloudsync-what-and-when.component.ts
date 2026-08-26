@@ -47,7 +47,6 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -84,9 +83,6 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
 export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
-  // Optional: the wizard is hosted in the `<tn-side-panel>` form panel (no SlideInRef); "Advanced
-  // Options" swaps via {@link formPanel} there.
-  private slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef, { optional: true });
   private formPanel = inject(FormSidePanelService);
   private dialog = inject(DialogService);
   private formBuilder = inject(FormBuilder);

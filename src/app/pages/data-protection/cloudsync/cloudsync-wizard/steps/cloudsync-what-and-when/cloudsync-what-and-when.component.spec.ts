@@ -11,8 +11,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { googlePhotosCreds, googlePhotosProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
@@ -22,13 +20,6 @@ import { DatasetService } from 'app/services/dataset/dataset.service';
 describe('CloudSyncWhatAndWhenComponent', () => {
   let spectator: Spectator<CloudSyncWhatAndWhenComponent>;
   let loader: HarnessLoader;
-  const slideInRef: SlideInRef<unknown, unknown> = {
-    close: jest.fn(),
-    swap: jest.fn(),
-    getData: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-  };
-
   const createComponent = createComponentFactory({
     component: CloudSyncWhatAndWhenComponent,
     imports: [
@@ -37,7 +28,6 @@ describe('CloudSyncWhatAndWhenComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(FormSidePanelService),
       mockAuth(),
       mockApi([
@@ -46,7 +36,6 @@ describe('CloudSyncWhatAndWhenComponent', () => {
         mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
         mockCall('cloudsync.providers', [googlePhotosProvider]),
       ]),
-      mockProvider(SlideIn),
       mockProvider(DatasetService),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({

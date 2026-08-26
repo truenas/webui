@@ -30,7 +30,7 @@ their own tickets and migrating them piecemeal will cause conflicts:
 | Concern | Owning ticket | What to do in a feature-area migration |
 |---|---|---|
 | `ix-forms` internals (`ix-input`, `ix-select`, `ix-fieldset`, `ix-chips`, `ix-checkbox`) | NAS-141028 | **Leave as-is.** Keep using `ix-*` form controls. |
-| `ix-table` and its sub-components | NAS-141029 | **Leave as-is.** |
+| `ix-table` and its sub-components | NAS-141029 | **Gone.** `app/modules/ix-table` was deleted; use `tn-table` + `app/modules/tn-table`. |
 | `DialogService` / dialog components | NAS-141022 | Keep calling `DialogService`. |
 | `SnackbarService` | NAS-141027 | Keep calling `SnackbarService`. |
 | SlideIn system / `modal-header` | NAS-141030 | Use the **dual-host recipe** below — do not delete `SlideIn`. |
@@ -44,11 +44,18 @@ declarative actions, and `tn-icon` (already migrated — always `tn-icon`, never
 > **active feature-area tickets**, the `ix-forms`, `ix-table`, and `SlideIn` rows in the
 > table above are **superseded** — migrate them in-place alongside the Material work:
 >
-> - **`ix-table` → `tn-table`.** Use `*tnColumnDef` + `<ng-template tnHeaderCellDef>` /
->   `<ng-template tnCellDef let-row>`. Reuse `TableActionsCellComponent` /
->   `TableToggleCellComponent` from `app/modules/tn-table-cells/`. `[expandable]="true"` +
->   `*tnDetailRowDef` for detail rows. No column-selector equivalent. Reference: `cron-list`,
->   `map-user-group-ids-dialog`.
+> - **`ix-table` → `tn-table`. DONE (NAS-141029): `app/modules/ix-table` no longer exists.**
+>   Tables use `[tnColumnDef]` + `<ng-template tnHeaderCellDef>` / `<ng-template tnCellDef
+>   let-row>`, with the cell components in `app/modules/tn-table-cells/`
+>   (`TableTextCellComponent`, `TableActionsCellComponent`, `TableToggleCellComponent`,
+>   `TableRelativeDateCellComponent`, `TaskStateCellComponent`). `[expandable]="true"` +
+>   `<ng-template tnDetailRowDef>` for detail rows, with `<ix-table-details-row>` printing the
+>   columns the picker has hidden. Everything around the table — data providers, `createTable`,
+>   `column()`/`actionsColumn()`, `toDisplayedColumns`, `mapTnSortToTableSort`,
+>   `tnTableListHost`, `<ix-table-column-picker>`, `<ix-table-pager-show-more>` — now lives in
+>   `app/modules/tn-table/`. The pager itself, `<tn-table-pager>`, comes from
+>   `@truenas/ui-components`.
+>   Reference: `cron-list`, `portal-list`, `jobs-list`.
 > - **`ix-*` form controls → `tn-form` primitives.** `ix-fieldset` → `<tn-form-section
 >   [heading]>` (there is **no `tn-fieldset`**). Wrap each control in `<tn-form-field [label]
 >   [tooltip] [required]>` containing `tn-input` / `tn-checkbox` / `tn-select`. `tn-input
@@ -189,7 +196,7 @@ read-only views) unless a feature-ticket explicitly carries `ix-*` work.
 
 | Angular Material | @truenas/ui-components | Notes |
 |---|---|---|
-| `<mat-table>` etc. | `<tn-table>` *(non-form)* or `<ix-table>` *(NAS-141029 owns)* | See **Recipe 6**. `tn-table` is intentionally smaller surface than `ix-table` — verify every input/output against d.ts. ⚠ `.tn-table__*` classes are NOT public; any `::ng-deep` into them requires a `// TEMP` marker + library follow-up. |
+| `<mat-table>` etc. | `<tn-table>` | See **Recipe 6**. `tn-table` is intentionally smaller surface than `ix-table` — verify every input/output against d.ts. ⚠ `.tn-table__*` classes are NOT public; any `::ng-deep` into them requires a `// TEMP` marker + library follow-up. |
 | `[matSort]` / `[mat-sort-header]` | `[sortable]` on `*tnColumnDef` + `(sortChange)` | Built into `tn-table`'s column-def directive. |
 | `[matColumnDef]` | `*tnColumnDef` | Structural directive on `<ng-container>` with `<ng-template tnHeader>` / `<ng-template tnCell>`. |
 | `<mat-paginator>` | `<tn-table-pager>` | `TnTablePagerComponent`/`TnTablePagerHarness`. Use `TN_TABLE_PAGER_LABELS` provider for i18n (replacement for `MatPaginatorIntl`); default labels in `TN_TABLE_PAGER_DEFAULT_LABELS`. |
@@ -587,7 +594,7 @@ closes, focus must return to the trigger element. Escape must close the panel. T
 silently regress. Verify each migrated panel on first use; if any of the three is missing,
 file a library bug rather than papering over it with imperative focus calls.
 
-## Recipe 6 — Table (`ix-table` / `mat-table` → `tn-table`)
+## Recipe 6 — Table (`mat-table` → `tn-table`)
 
 `tn-table` is intentionally a smaller surface than `ix-table` — verify every input/output
 you use against `node_modules/@truenas/ui-components/types/truenas-ui-components.d.ts`.

@@ -1,21 +1,17 @@
 /**
  * Authentication token helper (R4.1, R4.4).
  *
- * webui's `scripts/playwright-helpers/generate-token.ts` does something similar,
- * but hardcodes `http://localhost:${port}` as the base URL — incompatible with
- * the `shipped` profile. That alone is why we own this. (An earlier version of
- * this comment also cited R2.10 against shelling out to it; R2.10 has since been
- * revised to permit in-tree coupling, so that reason no longer applies.)
+ * webui's `scripts/playwright-helpers/generate-token.ts` does something similar
+ * but hardcodes `http://localhost:${port}` as the base URL, which the `shipped`
+ * profile cannot use. That is why the suite owns this one.
  *
- * We differ from it in one deliberate way. webui asks for a `reconnect_token`
- * via `login_options`, but that field only exists from API v26.0.0 onward
- * (`AuthCommonOptions` changed in v26). `auth.generate_token` was introduced in
- * v25.10.0 and has never changed, so it works across every version the client
- * supports — and it takes an explicit TTL rather than leaving us with whatever
- * the server's default happens to be (R4.3).
+ * Uses `auth.generate_token`, not the `reconnect_token` webui asks for via
+ * `login_options`: that field only exists from v26.0.0, while
+ * `auth.generate_token` works across every version the client supports and
+ * takes an explicit TTL rather than the server's default (R4.3).
  */
-import { TrueNasEndpoint, type TrueNasApiClient } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
+import type { E2eApiClient } from '../api/client';
 
 /**
  * Token lifetime. Comfortably longer than the ≤45 minute suite budget (R8.1)
@@ -34,16 +30,15 @@ const callTimeoutMs = 15_000;
  * nothing on a short-lived token against a disposable VM.
  */
 export async function generateAuthToken(
-  client: TrueNasApiClient,
+  client: E2eApiClient,
   ttlSeconds: number = tokenTtlSeconds,
 ): Promise<string> {
-  // Addressed via the enum, not the raw string: `ApiCallDirectory` is keyed by
-  // `TrueNasEndpoint` members, and TypeScript treats string enum members
-  // nominally — the literal 'auth.generate_token' is not assignable to them.
+  // `generateToken` is the client's own wrapper over `auth.generate_token`,
+  // added in 2.0. It takes the TTL and the two booleans and fills in the
+  // attributes argument itself, so this is the same call with less to get wrong
+  // than the hand-assembled parameter tuple it replaces.
   const token = await firstValueFrom(
-    client.api
-      .call(TrueNasEndpoint.GenerateToken, [ttlSeconds, {}, false, false])
-      .pipe(timeout(callTimeoutMs)),
+    client.api.generateToken(ttlSeconds, false, false).pipe(timeout(callTimeoutMs)),
   );
 
   if (typeof token !== 'string' || token.length === 0) {

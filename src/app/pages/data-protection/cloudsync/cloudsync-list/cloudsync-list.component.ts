@@ -33,17 +33,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import {
-  scheduleColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
-import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -53,9 +42,16 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { column } from 'app/modules/tn-table/column-configs';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { TableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
+import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/tn-table/utils';
+import { TableRelativeDateCellComponent,
+  formatRelativeDateValue } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
 import {
-  TableRelativeDateCellComponent,
-} from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+  formatTaskStateValue, TaskStateCellComponent,
+} from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -63,9 +59,6 @@ import { cloudSyncListElements } from 'app/pages/data-protection/cloudsync/cloud
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { CloudSyncDataTransformer } from 'app/pages/data-protection/cloudsync/utils/cloudsync-data-transformer';
-import {
-  TaskStateCellComponent,
-} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
@@ -89,7 +82,7 @@ import { AppState } from 'app/store';
     TnCellDefDirective,
     TnDetailRowDefDirective,
     TnTablePagerComponent,
-    IxTableDetailsRowComponent,
+    TableDetailsRowComponent,
     TableRelativeDateCellComponent,
     TableTextCellComponent,
     TaskStateCellComponent,
@@ -98,6 +91,10 @@ import { AppState } from 'app/store';
     FlattenEmptyMessagePipe,
     TranslateModule,
   ],
+  // Provided so the column model can inject and call it directly: a details row prints the
+  // schedule description the cell shows rather than a raw schedule object. Imported too, because
+  // the template also pipes through it.
+  providers: [ScheduleDescriptionPipe],
 })
 export class CloudSyncListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
@@ -112,6 +109,7 @@ export class CloudSyncListComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
   private destroyRef = inject(DestroyRef);
+  private scheduleDescription = inject(ScheduleDescriptionPipe);
 
   protected readonly searchableElements = cloudSyncListElements;
   protected readonly EmptyType = EmptyType;
@@ -158,32 +156,32 @@ export class CloudSyncListComponent implements OnInit {
 
   protected readonly list = tnTableListHost<CloudSyncTaskUi>(this.dataProvider, {
     columns: () => createTable<CloudSyncTaskUi>([
-      textColumn({
+      column({
         title: this.titles().description,
         propertyName: 'description',
       }),
-      textColumn({
+      column({
         title: this.titles().credential,
         columnName: 'credential',
         hidden: true,
         getValue: (task) => task.credentials.name,
       }),
-      textColumn({
+      column({
         title: this.titles().direction,
         propertyName: 'direction',
         hidden: true,
       }),
-      textColumn({
+      column({
         title: this.titles().transferMode,
         propertyName: 'transfer_mode',
         hidden: true,
       }),
-      textColumn({
+      column({
         title: this.titles().path,
         propertyName: 'path',
         hidden: true,
       }),
-      textColumn({
+      column({
         title: this.titles().schedule,
         propertyName: 'schedule',
         hidden: true,
@@ -193,43 +191,52 @@ export class CloudSyncListComponent implements OnInit {
       // relative phrase ("in 3 days") and a formatted date all sort meaninglessly, so each names
       // the sort key `CloudSyncDataTransformer` derives for it. Spelled out, because a column's
       // `getValue` is otherwise what it sorts by.
-      scheduleColumn({
+      column({
         title: this.titles().frequency,
         getValue: (task) => task.schedule,
+        // The table shows this through <ix-table-text-cell>; a details row prints it, under the
+        // id that cell resolves.
+        formatValue: (task) => this.scheduleDescription.transform(task.schedule),
+        testIdSuffix: 'row-schedule',
         propertyName: 'frequency_sort_key',
         sortBy: (task) => task.frequency_sort_key,
       }),
-      textColumn({
+      column({
         title: this.titles().nextRun,
         hidden: true,
         getValue: (task: CloudSyncTaskUi) => this.getNextRun(task),
         propertyName: 'next_run_sort_key',
         sortBy: (task) => task.next_run_sort_key,
       }),
-      relativeDateColumn({
+      column({
         title: this.titles().lastRun,
         hidden: true,
         getValue: (task) => task.job?.time_finished?.$date,
+        // The table shows this through <ix-table-relative-date-cell>; a details row prints it,
+        // under the id that cell resolves.
+        formatValue: (task) => formatRelativeDateValue(task.job?.time_finished?.$date, this.translate),
+        testIdSuffix: 'row-relative-date',
         propertyName: 'last_run_sort_key',
         sortBy: (task) => task.last_run_sort_key,
       }),
-      stateButtonColumn({
+      column({
         title: this.titles().state,
         columnName: 'state',
         getValue: (row) => row.state.state,
-        getJob: (row) => row.job,
-        cssClass: 'state-button',
+        // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it,
+        // under the suffix that pill resolves.
+        formatValue: (row) => formatTaskStateValue(row.state.state, this.translate),
+        testIdSuffix: 'row-state',
       }),
-      yesNoColumn({
+      column({
         title: this.titles().enabled,
         propertyName: 'enabled',
+        // The table shows this as Yes/No in the template; a details row prints it, under the id
+        // that cell resolves.
+        formatValue: (task) => this.translate.instant(task.enabled ? 'Yes' : 'No'),
+        testIdSuffix: 'row-yesno',
       }),
-    ], {
-      // Still needed: <ix-table-details-row> renders the hidden columns through the
-      // ix cell components, which read `uniqueRowTag`/`ariaLabels` off the column.
-      uniqueRowTag: (row) => 'cloudsync-task-' + row.description,
-      ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
-    }),
+    ]),
   });
 
   protected readonly trackByTaskId = (_index: number, row: CloudSyncTaskUi): number => row.id;

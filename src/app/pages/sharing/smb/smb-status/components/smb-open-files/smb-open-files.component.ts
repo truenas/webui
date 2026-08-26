@@ -12,11 +12,11 @@ import { of, switchMap } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { column } from 'app/modules/tn-table/column-configs';
 import {
   createTable, dataProviderLoading, dataProviderRows, toDisplayedColumns, toUniqueRowTag,
-} from 'app/modules/ix-table/utils';
+} from 'app/modules/tn-table/utils';
 
 @Component({
   selector: 'ix-smb-open-files',
@@ -54,25 +54,22 @@ export class SmbOpenFilesComponent implements OnChanges {
   );
 
   protected readonly columns = signal(createTable<SmbOpenInfo>([
-    textColumn({
+    column({
       title: this.translate.instant('Server'),
       propertyName: 'server_id',
       getValue: (row) => {
         return Object.values(row.server_id).join(':');
       },
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Username'),
       propertyName: 'uid',
       getValue: (row) => {
         return `${row.username} (${row.uid})`;
       },
     }),
-    textColumn({ title: this.translate.instant('Opened at'), propertyName: 'opened_at' }),
-  ], {
-    uniqueRowTag: (row) => `smb-open-file-${row.username}-${row.uid}`,
-    ariaLabels: (row) => [row.username, this.translate.instant('SMB Open File')],
-  }));
+    column({ title: this.translate.instant('Opened at'), propertyName: 'opened_at' }),
+  ]));
 
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
 

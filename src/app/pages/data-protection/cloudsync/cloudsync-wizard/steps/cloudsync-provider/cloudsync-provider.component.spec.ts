@@ -9,9 +9,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { GooglePhotosProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-photos-provider-form/google-photos-provider-form.component';
 import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
@@ -24,13 +21,6 @@ import { DatasetService } from 'app/services/dataset/dataset.service';
 describe('CloudSyncProviderComponent', () => {
   let spectator: Spectator<CloudSyncProviderComponent>;
   let loader: HarnessLoader;
-  const slideInRef = {
-    next: jest.fn(),
-    swap: jest.fn(),
-    getData: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-  };
-
   const loading = {
     emit: jest.fn(),
   };
@@ -49,7 +39,6 @@ describe('CloudSyncProviderComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockProvider(SlideInRef, slideInRef),
       mockApi([
         mockCall('cloudsync.providers', [storjProvider, googlePhotosProvider]),
         mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
@@ -60,9 +49,6 @@ describe('CloudSyncProviderComponent', () => {
       mockProvider(CloudCredentialService, {
         getCloudSyncCredentials: jest.fn(() => of([googlePhotosCreds])),
         getProviders: jest.fn(() => of([storjProvider, googlePhotosProvider])),
-      }),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DatasetService),
       mockProvider(TnDialog, {

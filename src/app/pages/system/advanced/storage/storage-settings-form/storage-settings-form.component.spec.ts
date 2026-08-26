@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -17,7 +17,6 @@ import { Service } from 'app/interfaces/service.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { WarningHarness } from 'app/modules/forms/ix-forms/components/warning/warning.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
@@ -25,6 +24,7 @@ import { selectServices } from 'app/store/services/services.selectors';
 
 describe('StorageSettingsFormComponent', () => {
   let spectator: Spectator<StorageSettingsFormComponent>;
+  let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
   let api: MockApiService;
 
@@ -67,16 +67,13 @@ describe('StorageSettingsFormComponent', () => {
         ],
       }),
       mockProvider(LocaleService),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      }),
       mockAuth(),
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent();
+    closedSpy = jest.spyOn(spectator.component.closed, 'emit');
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(MockApiService);
   });
@@ -89,8 +86,11 @@ describe('StorageSettingsFormComponent', () => {
   it('updates system dataset and refreshes settings when system dataset pool is changed', async () => {
     await (await getSelect('systemDatasetPool')).selectOption('new-pool');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+    spectator.component.submit();
+
+    spectator.detectChanges();
 
     expect(api.job).toHaveBeenCalledWith('systemdataset.update', [{
       pool: 'new-pool',
@@ -110,8 +110,11 @@ describe('StorageSettingsFormComponent', () => {
     await (await getSelect('begin')).selectOption('19:00:00');
     await (await getSelect('end')).selectOption('22:00:00');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+    spectator.component.submit();
+
+    spectator.detectChanges();
 
     expect(api.call).toHaveBeenCalledWith('pool.resilver.update', [{
       enabled: true,
@@ -134,8 +137,11 @@ describe('StorageSettingsFormComponent', () => {
     await (await getSelect('begin')).selectOption('19:00:00');
     await (await getSelect('end')).selectOption('22:00:00');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+    spectator.component.submit();
+
+    spectator.detectChanges();
 
     expect(api.job).toHaveBeenCalledWith('systemdataset.update', [{
       pool: 'new-pool',
@@ -153,13 +159,13 @@ describe('StorageSettingsFormComponent', () => {
     expect(await warning.getText()).toBe(helptextSystemAdvanced.storageSettings.smbRebootWarning);
   });
 
-  it('closes the form with no requests if no changes were made', async () => {
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+  it('closes the form with no requests if no changes were made', () => {
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+    spectator.component.submit();
+    spectator.detectChanges();
 
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-      response: false,
-    });
+    // No changes: `false` reads as a cancel, so the opener does not reload.
+    expect(closedSpy).toHaveBeenCalledWith(false);
     expect(api.call).not.toHaveBeenCalledWith('pool.resilver.update', expect.anything());
     expect(api.job).not.toHaveBeenCalledWith('systemdataset.update', expect.anything());
   });

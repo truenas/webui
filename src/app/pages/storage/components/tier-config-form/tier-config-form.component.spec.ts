@@ -25,8 +25,8 @@ describe('TierConfigFormComponent', () => {
     special_class_metadata_reserve_pct: 25,
   } as ZfsTierConfig;
 
-  // pools-dashboard opens this form through FormSidePanelService, which is its only host: no
-  // SlideInRef, no in-form Save, submission driven by the panel footer calling `submit()`.
+  // pools-dashboard opens this form through FormSidePanelService, its only host: there is no
+  // in-form Save, so submission is driven by the panel footer calling `submit()`.
   const createComponent = createComponentFactory({
     component: TierConfigFormComponent,
     imports: [ReactiveFormsModule],
