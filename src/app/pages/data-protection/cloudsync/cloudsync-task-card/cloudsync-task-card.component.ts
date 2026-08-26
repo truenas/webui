@@ -36,7 +36,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
@@ -92,7 +91,6 @@ export class CloudSyncTaskCardComponent extends JobTaskCardBase<CloudSyncTaskUi>
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
-  private slideIn = inject(SlideIn);
   private formPanel = inject(FormSidePanelService);
   private taskService = inject(TaskService);
   private snackbar = inject(SnackbarService);

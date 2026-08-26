@@ -10,7 +10,6 @@ import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FailoverFormComponent } from 'app/pages/system/advanced/failover/failover-form/failover-form.component';
@@ -45,10 +44,6 @@ describe('FailoverFormComponent', () => {
         mockCall('failover.sync_to_peer'),
         mockCall('failover.sync_from_peer'),
       ]),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      }),
       mockProvider(SnackbarService),
       mockProvider(WebSocketStatusService, {
         isConnected$: of(true),
@@ -70,8 +65,11 @@ describe('FailoverFormComponent', () => {
   it('updates failover settings when form is submitted', async () => {
     await (await getInput('timeout')).setValue('20');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+    spectator.component.submit();
+
+    spectator.detectChanges();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('failover.update', [{
       disabled: false,

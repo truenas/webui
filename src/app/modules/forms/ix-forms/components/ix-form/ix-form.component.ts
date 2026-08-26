@@ -16,20 +16,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormArray, FormControlStatus, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
-import {
-  defer, forkJoin, map, Observable, of, startWith, take, timer,
-} from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { forkJoin, map, Observable, startWith, take, timer } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 /**
@@ -169,9 +160,8 @@ export interface IxFormLoadState {
  * fields therefore can't inherit the container across the projection boundary: hand it the group as
  * an input and let it bind `[formGroup]` in its own template.
  *
- * Hosts either way: inside a legacy slide-in (injects `SlideInRef`, closed directly
- * through it) or host-less inside a `<tn-side-panel>` (`SlideInRef` is `{ optional: true }`
- * and absent — the {@link closed} output drives the panel to close and reload). Tests use
+ * Hosted inside a `<tn-side-panel>`: the host owns the header and the footer Save, and the
+ * {@link closed} output drives the panel to close and reload. Tests use
  * `ixFormTestingProviders()`.
  *
  * Input surface is FROZEN: no new top-level inputs without team review — keep
@@ -187,13 +177,7 @@ export interface IxFormLoadState {
   templateUrl: './ix-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
-    TranslateModule,
   ],
 })
 export class IxFormComponent<
@@ -219,6 +203,18 @@ export class IxFormComponent<
 
   /** Initial snapshot for forms that do their own async setup/patching. */
   readonly initialFormSnapshot = input<Partial<T> | null>(null);
+
+  /*
+   * NOT RENDERED. `<ix-modal-header>` was the sole consumer of the three title inputs (through
+   * {@link resolvedTitle}) and of `requiredRoles` (which gated the in-body Save); both went with
+   * the legacy SlideIn host in NAS-141472. The `<tn-side-panel>` host takes its title from
+   * `FormSidePanelService.open({ title })` and gates its footer Save on the PAGE component's
+   * `requiredRoles`, neither of which comes from here.
+   *
+   * Kept rather than deleted because ~30 templates still bind them and this input surface is
+   * frozen (see the class docblock) — removing four inputs wants the same team review adding one
+   * would. Do not build on them; drop them and their bindings in one pass when that review happens.
+   */
 
   /** Explicit title; overrides addTitle/editTitle. */
   readonly title = input<string>('');
@@ -248,9 +244,6 @@ export class IxFormComponent<
   /** Edit-mode override; inference treats any non-null editData (incl. `{}`) as edit. */
   readonly isEditMode = input<boolean | null>(null);
 
-  /** Keep Save disabled (and ignore Enter) while pristine. */
-  readonly requireDirty = input(false);
-
   /** Skip the success snackbar (config-builder forms); still closes + onSuccess. */
   readonly suppressSuccessSnackbar = input(false);
 
@@ -259,12 +252,6 @@ export class IxFormComponent<
    * signal/computed/input — a plain getter won't re-evaluate under OnPush.
    */
   readonly extraDisabled = input<boolean>(false);
-
-  /**
-   * Override the dirty-confirmation check (default: formGroup.dirty). Return
-   * `of(false)` to never prompt; re-invoked on each check.
-   */
-  readonly dirtyPredicate = input<(() => Observable<boolean>) | null>(null);
 
   // Wired once by a wrapping `IxFormHostForm`; absent (null) under every other host.
   private readonly loadStateSource = signal<Signal<IxFormLoadState> | null>(null);
@@ -292,10 +279,8 @@ export class IxFormComponent<
   private readonly isExtraDisabled = computed(() => this.extraDisabled() || (this.loadState()?.failed ?? false));
 
   /**
-   * Emitted on a successful submit when hosted OUTSIDE a SlideIn (i.e. inside a
-   * `<tn-side-panel>`, where {@link slideInRef} is absent). The host listens to
-   * close its panel and reload. In SlideIn mode this never fires — the slide-in
-   * is closed directly via {@link slideInRef}.
+   * Emitted on a successful submit. The `<tn-side-panel>` host listens to close its panel
+   * and reload.
    *
    * Carries the payload from the submit's {@link SubmitResult.closeWith}, so a host whose opener
    * needs the saved record can forward it straight through; without a `closeWith` it is a bare
@@ -312,13 +297,11 @@ export class IxFormComponent<
   private readonly formStatus = signal<FormControlStatus>('INVALID');
 
   /**
-   * True while the form may be submitted; drives a host-owned Save button (the `<tn-side-panel>`
-   * footer). Mirrors {@link isSaveDisabled} — which gates the in-body SlideIn Save — so both hosts
-   * enable Save under the same condition. Blocks only on `INVALID`, not `PENDING`: an edit form
-   * runs its async validators (e.g. name/path uniqueness) against unchanged, already-valid data on
-   * open, and gating on `=== 'VALID'` would leave Save disabled through that pending window (the
-   * "Save disabled until I change something" on WebShare Edit). `form.invalid` is false while
-   * PENDING, so the SlideIn Save stayed enabled there — match it.
+   * True while the form may be submitted; drives the host-owned Save button (the `<tn-side-panel>`
+   * footer). Blocks only on `INVALID`, not `PENDING`: an edit form runs its async validators (e.g.
+   * name/path uniqueness) against unchanged, already-valid data on open, and gating on
+   * `=== 'VALID'` would leave Save disabled through that pending window (the "Save disabled until I
+   * change something" on WebShare Edit).
    */
   readonly canSubmit = computed(
     () => this.formStatus() !== 'INVALID' && !this.isLoading() && !this.isExtraDisabled(),
@@ -332,10 +315,6 @@ export class IxFormComponent<
   // Dev-only: ensures the nested-group changedValues warning fires at most once.
   private warnedNestedChangedValues = false;
 
-  // Optional: present when hosted in a legacy SlideIn (the `<ix-modal-header>`
-  // and in-form Save are gated on it). Absent inside a `<tn-side-panel>`, where
-  // the host owns the header + Save and close happens via {@link closed}.
-  protected slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef, { optional: true });
   private minSubmitFeedbackMs = inject(ixFormMinSubmitFeedbackMs);
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
@@ -354,7 +333,12 @@ export class IxFormComponent<
     return this.editData() != null || this.snapshot() != null;
   });
 
-  /** Explicit title wins, else addTitle/editTitle by mode. */
+  /**
+   * Explicit title wins, else addTitle/editTitle by mode.
+   *
+   * NOT RENDERED — read only by specs since `<ix-modal-header>` was removed. See the note on
+   * {@link title}.
+   */
   readonly resolvedTitle = computed(() => {
     return this.title() || (this.isEdit() ? this.editTitle() : this.addTitle());
   });
@@ -368,7 +352,6 @@ export class IxFormComponent<
     const form = this.formGroup();
     return form.invalid
       || this.isLoading()
-      || (this.requireDirty() && form.pristine)
       || this.isExtraDisabled();
   }
 
@@ -388,13 +371,6 @@ export class IxFormComponent<
       startWith(this.formGroup().status),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((status) => this.formStatus.set(status));
-
-    // `defer` keeps the read lazy and picks up a dirtyPredicate set after init.
-    // No-op without a SlideIn host — the side-panel host guards discards itself.
-    this.slideInRef?.requireConfirmationWhen(() => defer(() => {
-      const predicate = this.dirtyPredicate();
-      return predicate ? predicate() : of(this.formGroup().dirty);
-    }));
 
     // onCancel fires on every non-success destroy path.
     this.destroyRef.onDestroy(() => {
@@ -450,13 +426,12 @@ export class IxFormComponent<
 
     this.isSubmitting.set(true);
     let handledSuccess = false;
-    // In a `<tn-side-panel>` host, pair the request with a minimum-duration timer so a fast save
-    // still shows the panel's progress bar / dim overlay long enough to register. `forkJoin` waits
-    // for BOTH to complete, so success is handled at `max(request duration, min)`; a request error
-    // rejects `forkJoin` immediately, so failures are never artificially delayed. The legacy SlideIn
-    // host renders its own inline chrome (no host loader to hold), so it keeps the un-delayed path —
-    // as does a `0` min (specs asserting a synchronous close opt out that way).
-    const holdForFeedback = !this.slideInRef && this.minSubmitFeedbackMs > 0;
+    // Pair the request with a minimum-duration timer so a fast save still shows the panel's
+    // progress bar / dim overlay long enough to register. `forkJoin` waits for BOTH to complete, so
+    // success is handled at `max(request duration, min)`; a request error rejects `forkJoin`
+    // immediately, so failures are never artificially delayed. A `0` min opts out (specs asserting a
+    // synchronous close rely on that).
+    const holdForFeedback = this.minSubmitFeedbackMs > 0;
     const submit$ = holdForFeedback
       ? forkJoin([request$.pipe(take(1)), timer(this.minSubmitFeedbackMs)]).pipe(map(([result]) => result))
       : request$.pipe(take(1));
@@ -500,35 +475,14 @@ export class IxFormComponent<
   }
 
   /**
-   * Closes through whichever host opened the form, handing back whatever `closeWith` shaped.
-   * SlideIn host: closes the slide-in with it (coercing `undefined`→`true` so a void-endpoint
-   * success isn't read as a cancel), defaulting to the raw request result. Side-panel host: emits
-   * it through {@link closed}, defaulting to `true` — with no `closeWith` there is nothing typed
-   * to forward, and the host reloads from its own source anyway.
+   * Closes the panel, handing back whatever `closeWith` shaped, defaulting to `true` — with no
+   * `closeWith` there is nothing typed to forward, and the host reloads from its own source anyway.
    */
   private finishClose(result: TResult, closeWith?: (result: TResult) => R): void {
-    if (!this.slideInRef) {
-      // `SubmitResult` makes `closeWith` mandatory unless `R` admits `boolean`, so reaching this
-      // branch without one means `R` is (or includes) `boolean` and `true` is a valid payload.
-      // The cast only exists because TS can't narrow `R` from the absent property.
-      this.closed.emit(closeWith ? closeWith(result) : (true as R & boolean));
-      return;
-    }
-
-    const payload = closeWith ? closeWith(result) : result;
-    if (payload === undefined) {
-      if (isDevMode()) {
-        console.warn(
-          '[ix-form] submitHandler close payload resolved to undefined (request$ emitted undefined '
-          + 'and closeWith is absent or also returned undefined); slide-in will close with `true` so '
-          + 'upstream listeners don\'t observe a cancel. Provide a closeWith that returns a defined '
-          + 'value in SubmitResult to silence this warning.',
-        );
-      }
-      this.slideInRef.close({ response: true });
-    } else {
-      this.slideInRef.close({ response: payload });
-    }
+    // `SubmitResult` makes `closeWith` mandatory unless `R` admits `boolean`, so reaching this
+    // without one means `R` is (or includes) `boolean` and `true` is a valid payload. The cast only
+    // exists because TS can't narrow `R` from the absent property.
+    this.closed.emit(closeWith ? closeWith(result) : (true as R & boolean));
   }
 
   private getChangedValues(current: T): Partial<T> {

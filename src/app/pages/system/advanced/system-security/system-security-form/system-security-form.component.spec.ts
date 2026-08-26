@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator, SpectatorFactory } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnInputHarness, TnSlideToggleHarness } from '@truenas/ui-components';
+import { TnInputHarness, TnSlideToggleHarness } from '@truenas/ui-components';
 import { catchError, EMPTY, Observable, of, throwError } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
@@ -21,7 +21,6 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -169,9 +168,11 @@ describe('SystemSecurityFormComponent', () => {
     await input.setValue(String(value));
   };
 
-  const getSaveButton = (): Promise<TnButtonHarness> => loader.getHarness(
-    TnButtonHarness.with({ label: 'Save' }),
-  );
+  // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+  const saveForm = (): void => {
+    spectator.component.submit();
+    spectator.detectChanges();
+  };
 
   const createComponent = createComponentFactory({
     component: SystemSecurityFormComponent,
@@ -189,11 +190,6 @@ describe('SystemSecurityFormComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(SystemGeneralService),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        getData: jest.fn(() => fakeSystemSecurityConfig),
-        requireConfirmationWhen: jest.fn(),
-      }),
       mockProvider(ErrorHandlerService, {
         withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),
       }),
@@ -220,26 +216,13 @@ describe('SystemSecurityFormComponent', () => {
       jest.spyOn(mockAuthService, 'clearAuthToken').mockImplementation();
     });
 
-    it('sets up form dirty confirmation', () => {
-      const slideInRef = spectator.inject(SlideInRef);
-      const requireConfirmationSpy = jest.spyOn(slideInRef, 'requireConfirmationWhen');
-
-      expect(requireConfirmationSpy).toHaveBeenCalled();
-
-      // Get the callback function that was passed
-      const confirmationCallback = requireConfirmationSpy.mock.calls[0][0];
-
-      // Test when form is pristine
+    // `hasUnsavedChanges()` is what the `<tn-side-panel>` host's closeGuard calls.
+    it('reports unsaved changes only once the form is dirty', () => {
       spectator.component.form.markAsPristine();
-      confirmationCallback().subscribe((result) => {
-        expect(result).toBe(false);
-      });
+      expect(spectator.component.hasUnsavedChanges()).toBe(false);
 
-      // Test when form is dirty
       spectator.component.form.markAsDirty();
-      confirmationCallback().subscribe((result) => {
-        expect(result).toBe(true);
-      });
+      expect(spectator.component.hasUnsavedChanges()).toBe(true);
     });
 
     it('saves full system security config when Save is clicked', async () => {
@@ -254,8 +237,7 @@ describe('SystemSecurityFormComponent', () => {
         PasswordComplexityRuleset.Lower,
       ]);
 
-      const saveButton = await getSaveButton();
-      await saveButton.click();
+      saveForm();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
@@ -278,14 +260,13 @@ describe('SystemSecurityFormComponent', () => {
 
       await setToggle('enable_fips', true);
 
-      const saveButton = await getSaveButton();
-      await saveButton.click();
+      saveForm();
 
       expect(store$.dispatch).toHaveBeenCalledWith(refreshRebootInfo());
       expect(spectator.inject(RebootInfoDialogSuppressionService).unsuppress).toHaveBeenCalled();
     });
 
-    it('handles null password_complexity_ruleset when saving', async () => {
+    it('handles null password_complexity_ruleset when saving', () => {
       // Set form values with null complexity ruleset
       spectator.component.form.patchValue({
         enable_fips: true,
@@ -297,8 +278,7 @@ describe('SystemSecurityFormComponent', () => {
         password_complexity_ruleset: null,
       });
 
-      const saveButton = await getSaveButton();
-      await saveButton.click();
+      saveForm();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
@@ -311,7 +291,7 @@ describe('SystemSecurityFormComponent', () => {
       }]);
     });
 
-    it('handles undefined password_complexity_ruleset when saving', async () => {
+    it('handles undefined password_complexity_ruleset when saving', () => {
       // Set form values with undefined complexity ruleset
       spectator.component.form.patchValue({
         enable_fips: true,
@@ -323,8 +303,7 @@ describe('SystemSecurityFormComponent', () => {
         password_complexity_ruleset: undefined,
       });
 
-      const saveButton = await getSaveButton();
-      await saveButton.click();
+      saveForm();
 
       // undefined should be passed as is
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
@@ -347,8 +326,7 @@ describe('SystemSecurityFormComponent', () => {
       await setInput('password_history_length', 4);
       spectator.component.form.controls.password_complexity_ruleset.setValue([]);
 
-      const saveButton = await getSaveButton();
-      await saveButton.click();
+      saveForm();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
@@ -472,8 +450,7 @@ describe('SystemSecurityFormComponent', () => {
     it('clears auth token when STIG is enabled', async () => {
       await setToggle('enable_gpos_stig', true);
 
-      const saveButton = await getSaveButton();
-      await saveButton.click();
+      saveForm();
 
       expect(spectator.inject(MockAuthService).clearAuthToken).toHaveBeenCalled();
     });
@@ -491,8 +468,7 @@ describe('SystemSecurityFormComponent', () => {
       spectator.component.form.controls.password_complexity_ruleset.updateValueAndValidity();
 
       // Form should be invalid due to STIG validation
-      const saveButton = await getSaveButton();
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('allows editing password settings when STIG is disabled', async () => {
@@ -507,8 +483,7 @@ describe('SystemSecurityFormComponent', () => {
       spectator.component.form.controls.password_complexity_ruleset.setValue([PasswordComplexityRuleset.Upper]);
 
       // Form should be valid since STIG validation is not active
-      const saveButton = await getSaveButton();
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
     });
   });
 
@@ -713,8 +688,9 @@ describe('SystemSecurityFormComponent', () => {
       // Enable STIG mode
       await setStigToggle(true);
 
-      const saveButton = await warningLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+      warningSpectator.component.submit();
+      warningSpectator.detectChanges();
 
       expect(dialogSpy).toHaveBeenCalledWith({
         title: 'STIG Mode Warning',
@@ -734,8 +710,9 @@ describe('SystemSecurityFormComponent', () => {
       // Enable STIG mode
       await setStigToggle(true);
 
-      const saveButton = await warningLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+      warningSpectator.component.submit();
+      warningSpectator.detectChanges();
 
       expect(dialogSpy).not.toHaveBeenCalled();
       expect(apiService.job).toHaveBeenCalledWith('system.security.update', expect.any(Array));
@@ -752,8 +729,9 @@ describe('SystemSecurityFormComponent', () => {
       // Enable STIG mode
       await setStigToggle(true);
 
-      const saveButton = await warningLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+      warningSpectator.component.submit();
+      warningSpectator.detectChanges();
 
       expect(apiService.job).not.toHaveBeenCalled(); // Save should not proceed
     });
@@ -769,8 +747,9 @@ describe('SystemSecurityFormComponent', () => {
       // Enable STIG mode
       await setStigToggle(true);
 
-      const saveButton = await warningLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+      warningSpectator.component.submit();
+      warningSpectator.detectChanges();
 
       expect(apiService.job).toHaveBeenCalledWith('system.security.update', [expect.objectContaining({
         enable_gpos_stig: true,
@@ -829,8 +808,9 @@ describe('SystemSecurityFormComponent', () => {
       // Enable STIG mode
       await setStigToggle(true);
 
-      const saveButton = await warningLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+      warningSpectator.component.submit();
+      warningSpectator.detectChanges();
 
       // Verify error modal was shown with the error
       expect(showErrorModalSpy).toHaveBeenCalledWith(error);
@@ -839,10 +819,12 @@ describe('SystemSecurityFormComponent', () => {
     }));
 
     it('does not check users when disabling STIG', async () => {
-      // Mock the component to have STIG enabled initially
-      jest.spyOn(warningSpectator.inject(SlideInRef), 'getData').mockReturnValue({
-        ...fakeSystemSecurityConfig,
-        enable_gpos_stig: true,
+      // The form loads its config from the API, so seed STIG as already enabled there.
+      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+        if (method === 'system.security.config') {
+          return of({ ...fakeSystemSecurityConfig, enable_gpos_stig: true });
+        }
+        return of(null);
       });
 
       // Re-initialize component with STIG enabled
@@ -861,8 +843,9 @@ describe('SystemSecurityFormComponent', () => {
       // Disable STIG mode
       await setStigToggle(false);
 
-      const saveButton = await warningLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+      warningSpectator.component.submit();
+      warningSpectator.detectChanges();
 
       // Should not call user.query when disabling STIG
       expect(apiCallSpy).not.toHaveBeenCalledWith('user.query', expect.any(Array));
@@ -892,11 +875,6 @@ describe('SystemSecurityFormComponent', () => {
       component: SystemSecurityFormComponent,
       imports: [ReactiveFormsModule],
       providers: [
-        mockProvider(SlideInRef, {
-          close: jest.fn(),
-          getData: jest.fn(() => fakeSystemSecurityConfig),
-          requireConfirmationWhen: jest.fn(),
-        }),
         mockProvider(ErrorHandlerService, {
           withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),
         }),
@@ -976,8 +954,7 @@ describe('SystemSecurityFormComponent', () => {
       expect(hintElement?.textContent).toContain('Optional requirements to enable STIG mode:');
       expect(hintElement?.textContent).toContain('All users must have 2FA enabled and setup.');
 
-      const saveButton = await validationLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(validationSpectator.component.canSubmit()).toBe(false);
     });
 
     it('shows no validation errors when all requirements are satisfied', async () => {
@@ -1024,9 +1001,8 @@ describe('SystemSecurityFormComponent', () => {
       const warningsHint = hintElements.find((el) => el.textContent?.includes('Optional requirements to enable STIG mode:'));
       expect(warningsHint).toBeFalsy();
 
-      // The Save button should be enabled
-      const saveButton = await validationLoader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(false);
+      // The host-owned Save should be enabled
+      expect(validationSpectator.component.canSubmit()).toBe(true);
     });
 
     it('removes stigRequirementsNotMet error when requirements become satisfied', async () => {
@@ -1139,11 +1115,6 @@ describe('SystemSecurityFormComponent', () => {
       component: SystemSecurityFormComponent,
       imports: [ReactiveFormsModule],
       providers: [
-        mockProvider(SlideInRef, {
-          close: jest.fn(),
-          getData: jest.fn(() => fakeSystemSecurityConfig),
-          requireConfirmationWhen: jest.fn(),
-        }),
         mockProvider(FormSidePanelService, {
           open: jest.fn(() => SlideInResult.empty()),
           openForm: jest.fn(() => SlideInResult.empty()),

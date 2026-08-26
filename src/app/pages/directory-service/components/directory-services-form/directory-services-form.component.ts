@@ -79,7 +79,7 @@ export class DirectoryServicesFormComponent extends SidePanelForm implements OnI
   private validationService = inject(DirectoryServiceValidationService);
   private destroyRef = inject(DestroyRef);
 
-  /** Existing config to edit; supplied by the `<tn-side-panel>` host (or legacy SlideIn `getData`). */
+  /** Existing config to edit; supplied by the `<tn-side-panel>` host. */
   readonly existingConfig = input<DirectoryServicesConfig | undefined>(undefined);
 
   protected readonly previousConfig = signal<DirectoryServicesConfig | null>(null);
@@ -144,9 +144,8 @@ export class DirectoryServicesFormComponent extends SidePanelForm implements OnI
   ]);
 
   ngOnInit(): void {
-    // Data arrives via the legacy SlideIn (`getData`) or the side-panel host (`existingConfig` input).
-    // The base constructor wires the unsaved-changes confirmation via `hasUnsavedChanges()`.
-    const data = (this.slideInRef?.getData() as DirectoryServicesConfig | undefined) ?? this.existingConfig();
+    // Data arrives from the side-panel host via the `existingConfig` input.
+    const data = this.existingConfig();
     if (data) {
       this.previousConfig.set(data);
     }

@@ -7,7 +7,6 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 
@@ -25,12 +24,6 @@ describe('KerberosRealmsFormComponent', () => {
     primary_kdc: 'primary_kdc',
   } as KerberosRealm;
 
-  const slideInRef: SlideInRef<KerberosRealm | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: KerberosRealmsFormComponent,
     imports: [
@@ -42,7 +35,6 @@ describe('KerberosRealmsFormComponent', () => {
         mockCall('kerberos.realm.update'),
       ]),
       mockProvider(FormErrorHandlerService),
-      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -86,11 +78,7 @@ describe('KerberosRealmsFormComponent', () => {
 
   describe('editing a kerberos realm', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => editingRealm) }),
-        ],
-      });
+      spectator = createComponent({ props: { editingRow: editingRealm } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
     });

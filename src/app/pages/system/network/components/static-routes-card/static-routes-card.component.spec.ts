@@ -7,7 +7,6 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   TablePagerShowMoreComponent,
@@ -26,12 +25,6 @@ describe('StaticRoutesCardComponent', () => {
   let spectator: Spectator<StaticRoutesCardComponent>;
   let loader: HarnessLoader;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: StaticRoutesCardComponent,
     imports: [
@@ -48,7 +41,6 @@ describe('StaticRoutesCardComponent', () => {
       mockProvider(FormSidePanelService, {
         openForm: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
           closed: of(true),
