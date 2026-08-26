@@ -36,11 +36,11 @@ const target = loadTargetConfig();
  *                            scheme and every profile uses a real appliance
  *                            => unconditional
  *
- * Scoping this to `ignoreHttpsErrors` was a bug: in `branch` mode the browser
- * needs no leniency but the API client still does, and the symptom was a 30
- * second WebSocket timeout rather than a certificate error — made worse by
- * version discovery silently falling back to `FALLBACK_VERSION` when its
- * `fetch` hit the same certificate.
+ * Do not scope this to `ignoreHttpsErrors`: in `branch` mode the browser needs
+ * no leniency but the API client still does, and the symptom is a 30 second
+ * WebSocket timeout rather than a certificate error — version discovery falls
+ * back to `FALLBACK_VERSION` when its `fetch` hits the same certificate, so
+ * nothing names the cause.
  *
  * ## Why it is process-wide, which is worse than it should be
  *
@@ -49,8 +49,7 @@ const target = loadTargetConfig();
  * process, including ones added later by someone who never reads this comment.
  * Scoping it to the one connection that needs it would be strictly better.
  *
- * There is no seam for that today, verified against `@truenas/api-client@1.0.6`
- * (what `~1.0.3` in `package.json` currently resolves to):
+ * There is no seam for that, verified against `@truenas/api-client@3.0.2`:
  * `CreateClientOptions` takes `uuid`, `hostnames`, `enabled`, `systemName` and
  * `logger` — no `WebSocketCtor`, no dispatcher, no TLS options — and the socket
  * is built internally from an rxjs `WebSocketSubjectConfig` the caller never
@@ -153,10 +152,8 @@ export default defineConfig({
   /**
    * R8.2 — one retry absorbs environmental noise in CI; it does not hide flakes.
    *
-   * Off locally, matching `forbidOnly` below. Retrying while iterating on a test
-   * only doubles the wait to learn the same thing, which is why `e2e/CLAUDE.md`
-   * used to tell developers to pass `--retries=0` by hand — a default that has
-   * to be argued away in documentation is the wrong default.
+   * Off locally, matching `forbidOnly` below: retrying while iterating on a
+   * test only doubles the wait to learn the same thing.
    */
   retries: isCi ? 1 : 0,
 
@@ -164,11 +161,21 @@ export default defineConfig({
   forbidOnly: isCi,
 
   /**
-   * Generous per-test timeout. TrueNAS operations are job-based and genuinely
-   * slow — pool creation takes minutes (R8.3). Per-operation waits stay tight;
-   * this ceiling only catches genuinely hung tests.
+   * Per-test ceiling, covering the hooks — Playwright counts `beforeEach` and
+   * `afterEach` against the same budget, and `fresh-install` cleans up in both.
+   *
+   * Sized for the expected slow path, not the worst one. One pool export per
+   * hook plus the journey's own pool creation is about 17 minutes, so 20 leaves
+   * the fixture timeouts spendable and lets them report what a failure costs
+   * rather than being cut short by Playwright's own message.
+   *
+   * It deliberately does not cover every fixture timing out at once. `cleanUp`
+   * runs all four steps even after one throws, so that case is nearer 29
+   * minutes — but it means the appliance is unreachable and the run is lost
+   * whatever this number is, and covering it would put a single retried test
+   * past R8.1's 45 minutes for the whole suite.
    */
-  timeout: 10 * 60_000,
+  timeout: 20 * 60_000,
   expect: { timeout: 15_000 },
 
   reporter: [

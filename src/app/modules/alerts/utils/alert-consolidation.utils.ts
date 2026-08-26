@@ -2,6 +2,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertWithDuplicates, ConsolidatedAlert, EnhancedAlert } from 'app/interfaces/smart-alert.interface';
+import { getAlertDuplicateKey } from 'app/modules/alerts/utils/alert-duplicate-key.utils';
+import { getAlertBannerMenuPaths } from 'app/modules/alerts/utils/alert-menu-path.utils';
 import { getAlertSummary } from 'app/modules/alerts/utils/alert-summary.utils';
 
 /**
@@ -15,17 +17,19 @@ import { getAlertSummary } from 'app/modules/alerts/utils/alert-summary.utils';
  * of merging byte-identical duplicates only, and a per-object class added to the registry
  * later cannot inherit merging by accident.
  *
- * The level and the page the alert points at are part of the key so that alert classes
+ * The level and the pages the alert points at are part of the key so that alert classes
  * with conditional enhancements (boot pool vs data pool capacity, for example) are not
  * folded into a single entry that would link to the wrong page.
  */
 export function getAlertConsolidationKey(alert: Alert & EnhancedAlert): string {
   if (!alert.groupSummary) {
-    return `key|${alert.key}`;
+    // Qualified by class, not `alert.key` alone: middleware derives the key from the alert
+    // arguments, so two classes raised against the same object share it (see the util).
+    return `key|${getAlertDuplicateKey(alert)}`;
   }
 
-  const menuPath = alert.bannerMenuPath ?? alert.relatedMenuPath ?? [];
-  return ['class', alert.klass, alert.level, menuPath.join('/')].join('|');
+  const menuPaths = getAlertBannerMenuPaths(alert).map((path) => path.join('/'));
+  return ['class', alert.klass, alert.level, menuPaths.join(',')].join('|');
 }
 
 /**

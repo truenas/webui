@@ -82,20 +82,37 @@ describe('DataMigrationStatusDialogComponent', () => {
     });
   });
 
-  describe('startTime / finishedTime / ETA', () => {
+  describe('startTime / endTime / ETA', () => {
     it('computes startTime from stats.start_time', () => {
       build({ ...baseJob, stats: { ...baseStats } });
       expect(spectator.component.startTime()).toEqual(new Date(1000 * 1000));
     });
 
-    it('returns finishedTime when status is Complete', () => {
-      build({ ...baseJob, status: TierRewriteJobStatus.Complete, stats: { ...baseStats } });
-      expect(spectator.component.finishedTime()).toEqual(new Date(1100 * 1000));
+    it.each([
+      [TierRewriteJobStatus.Complete, 'Finished'],
+      [TierRewriteJobStatus.Cancelled, 'Cancelled'],
+      [TierRewriteJobStatus.Stopped, 'Stopped'],
+      [TierRewriteJobStatus.Error, 'Failed'],
+    ])('shows when the job ended for status %s', (status, label) => {
+      build({ ...baseJob, status, stats: { ...baseStats } });
+
+      expect(spectator.component.endTime()).toEqual(new Date(1100 * 1000));
+      expect(spectator.query('.time-info')).toHaveText(`${label}: `);
     });
 
-    it('returns null finishedTime when still running', () => {
-      build({ ...baseJob, status: TierRewriteJobStatus.Running, stats: { ...baseStats } });
-      expect(spectator.component.finishedTime()).toBeNull();
+    it.each([
+      TierRewriteJobStatus.Running,
+      TierRewriteJobStatus.Queued,
+    ])('returns null endTime for status %s', (status) => {
+      build({ ...baseJob, status, stats: { ...baseStats } });
+
+      expect(spectator.component.endTime()).toBeNull();
+      expect(spectator.component.endTimeLabel()).toBeNull();
+    });
+
+    it('returns null endTime when an ended job never reported stats', () => {
+      build({ ...baseJob, status: TierRewriteJobStatus.Cancelled });
+      expect(spectator.component.endTime()).toBeNull();
     });
 
     it('suppresses ETA below the 1% fraction threshold', () => {
@@ -154,7 +171,21 @@ describe('DataMigrationStatusDialogComponent', () => {
       } as ApiEvent<ZfsTierRewriteJobEntry>);
       spectator.detectChanges();
 
-      expect(spectator.component.finishedTime()).toEqual(new Date(1100 * 1000));
+      expect(spectator.component.endTime()).toEqual(new Date(1100 * 1000));
+    });
+
+    it('shows the cancelled timestamp when the job is cancelled while the dialog is open', () => {
+      build({ ...baseJob, stats: { ...baseStats } });
+
+      updates$.next({
+        msg: 'changed',
+        collection: 'zfs.tier.rewrite_job_status',
+        id: 'job-1',
+        fields: { ...baseJob, status: TierRewriteJobStatus.Cancelled, stats: { ...baseStats } },
+      } as ApiEvent<ZfsTierRewriteJobEntry>);
+      spectator.detectChanges();
+
+      expect(spectator.query('.time-info')).toHaveText('Cancelled: ');
     });
   });
 });

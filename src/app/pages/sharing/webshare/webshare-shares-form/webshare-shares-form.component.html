@@ -27,6 +27,11 @@
       ></tn-input>
     </tn-form-field>
 
+    <!--
+      The tooltip explaining why the home-share checkbox is disabled has to hang off a
+      wrapper: a disabled control emits no pointer events of its own, so the directive would
+      never see a hover if it sat on the checkbox.
+    -->
     <div
       class="home-share-checkbox-wrapper"
       [tnTooltip]="disabledHomeShareTooltip()"

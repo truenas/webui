@@ -13,6 +13,7 @@ import { criticalLevels } from 'app/modules/alerts/store/alert.selectors';
 import {
   consolidateAlerts, getAlertConsolidationKey, getConsolidatedDetailMessages, getConsolidatedSummary,
 } from 'app/modules/alerts/utils/alert-consolidation.utils';
+import { getAlertBannerMenuPaths, isRouteUnderMenuPath } from 'app/modules/alerts/utils/alert-menu-path.utils';
 import { hasAlertDetails } from 'app/modules/alerts/utils/alert-summary.utils';
 import { AppState } from 'app/store';
 
@@ -121,18 +122,16 @@ export class PageAlertsComponent {
     const pathSegments = this.getPathSegments();
 
     return this.consolidatedAlerts().filter((alert) => {
-      // Scope the banner by bannerMenuPath when provided, otherwise fall back to relatedMenuPath.
-      // This lets the banner target a narrower route than the nav badge (e.g. API keys live under
-      // /credentials/users/api-keys but the badge stays on the Credentials menu).
-      const menuPath = alert.bannerMenuPath ?? alert.relatedMenuPath;
-      if (!menuPath) {
+      // Scope the banner by bannerMenuPath when provided, otherwise fall back to relatedMenuPath,
+      // plus any extraMenuPaths. This lets the banner target a narrower route than the nav badge
+      // (e.g. API keys live under /credentials/users/api-keys but the badge stays on the
+      // Credentials menu), or a wider one for alerts that span two feature areas.
+      const menuPaths = getAlertBannerMenuPaths(alert);
+      if (!menuPaths.length) {
         return false;
       }
 
-      // Match if current URL is at or below the alert's menu path.
-      // Dataset routes use /datasets/:datasetId, so ['datasets'] must still match /datasets/tank.
-      return menuPath.length <= pathSegments.length
-        && menuPath.every((segment, index) => pathSegments[index] === segment);
+      return menuPaths.some((menuPath) => isRouteUnderMenuPath(menuPath, pathSegments));
     });
   });
 

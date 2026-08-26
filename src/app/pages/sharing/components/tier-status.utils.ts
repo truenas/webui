@@ -1,12 +1,18 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { IconLibraryType } from '@truenas/ui-components';
+import { tnIconMarker } from '@truenas/ui-components';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 
 export interface TierJobIconInfo {
+  /**
+   * Library-prefixed icon name produced by `tnIconMarker`. The marker is what
+   * gets these icons into the generated sprite — a plain `{ name, library }`
+   * pair is invisible to the build-time scanner, which is how `mdi-cancel`
+   * ended up missing while the other four survived only because unrelated
+   * files happened to mark them.
+   */
   name: string;
-  library: IconLibraryType;
   color: string;
   spinning: boolean;
 }
@@ -15,6 +21,12 @@ interface TierJobStatusDescriptor {
   icon: TierJobIconInfo | null;
   themeClass: string;
   labelKey: string;
+  /**
+   * Label for the timestamp a job stopped updating, or `null` for statuses that
+   * have no end yet. Worded per status so a cancelled job reads "Cancelled: ..."
+   * rather than borrowing "Finished", which implies the migration ran to the end.
+   */
+  endTimeLabelKey: string | null;
 }
 
 /**
@@ -25,43 +37,49 @@ interface TierJobStatusDescriptor {
 const tierJobStatusTable: Record<TierRewriteJobStatus, TierJobStatusDescriptor> = {
   [TierRewriteJobStatus.Complete]: {
     icon: {
-      name: 'check-circle', library: 'mdi', color: 'green', spinning: false,
+      name: tnIconMarker('check-circle', 'mdi'), color: 'green', spinning: false,
     },
     themeClass: 'fn-theme-green',
     labelKey: T('Complete'),
+    endTimeLabelKey: T('Finished'),
   },
   [TierRewriteJobStatus.Running]: {
     icon: {
-      name: 'sync', library: 'mdi', color: 'orange', spinning: true,
+      name: tnIconMarker('sync', 'mdi'), color: 'orange', spinning: true,
     },
     themeClass: 'fn-theme-orange',
     labelKey: T('Running'),
+    endTimeLabelKey: null,
   },
   [TierRewriteJobStatus.Queued]: {
     icon: null,
     themeClass: 'fn-theme-primary',
     labelKey: T('Queued'),
+    endTimeLabelKey: null,
   },
   [TierRewriteJobStatus.Error]: {
     icon: {
-      name: 'alert-circle', library: 'mdi', color: 'red', spinning: false,
+      name: tnIconMarker('alert-circle', 'mdi'), color: 'red', spinning: false,
     },
     themeClass: 'fn-theme-red',
     labelKey: T('Error'),
+    endTimeLabelKey: T('Failed'),
   },
   [TierRewriteJobStatus.Cancelled]: {
     icon: {
-      name: 'cancel', library: 'mdi', color: 'grey', spinning: false,
+      name: tnIconMarker('cancel', 'mdi'), color: 'grey', spinning: false,
     },
     themeClass: 'fn-theme-grey',
     labelKey: T('Cancelled'),
+    endTimeLabelKey: T('Cancelled'),
   },
   [TierRewriteJobStatus.Stopped]: {
     icon: {
-      name: 'stop-circle', library: 'mdi', color: 'grey', spinning: false,
+      name: tnIconMarker('stop-circle', 'mdi'), color: 'grey', spinning: false,
     },
     themeClass: 'fn-theme-grey',
     labelKey: T('Stopped'),
+    endTimeLabelKey: T('Stopped'),
   },
 };
 
@@ -87,6 +105,17 @@ export function getTierJobStatusLabelKey(
   job: ZfsTierRewriteJobEntry | null,
 ): string {
   return job ? tierJobStatusTable[job.status]?.labelKey ?? '' : '';
+}
+
+/**
+ * Returns the i18n extraction key labelling when a job stopped, or `null` while
+ * it is still running or queued. Callers must run the result through
+ * TranslateService to display it.
+ */
+export function getTierJobEndTimeLabelKey(
+  job: ZfsTierRewriteJobEntry | null,
+): string | null {
+  return job ? tierJobStatusTable[job.status]?.endTimeLabelKey ?? null : null;
 }
 
 export function getTierJobStatusClass(
