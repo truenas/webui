@@ -215,6 +215,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.VolumeStatus]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('{count, plural, other {# pools are not healthy}}'),
       contextualHelp: T('Storage pool health is critical for data integrity. Investigate and resolve pool issues immediately to prevent data loss.'),
       detailedHelp: T('Common pool issues include: degraded pools (missing/failed drives), scrub errors, capacity warnings, and replication problems.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/storage/managepoolsscale/',
@@ -299,6 +300,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     ServiceMonitor: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['system', 'services'],
+      groupSummary: T('{count, plural, other {# services are not running}}'),
       contextualHelp: T('Service failures can interrupt critical functionality. Review service logs and configuration to identify the cause.'),
       actions: [
         {
@@ -364,6 +366,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     ScrubTaskFailed: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('{count, plural, other {Scrub failed on # pools}}'),
       contextualHelp: T('Scrub failures may indicate disk errors or pool corruption. Investigate pool health and scheduled scrub tasks immediately.'),
       actions: [
         {
@@ -426,6 +429,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.CloudBackupTaskFailed]: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'cloud-backup'],
+      groupSummary: T('{count, plural, other {# cloud backup tasks failed}}'),
       contextualHelp: T('Cloud backup failures may be caused by network connectivity issues, insufficient cloud storage space, invalid credentials, or expired authentication tokens.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/truecloud/truecloudtasks/',
       actions: [
@@ -467,6 +471,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.CloudSyncTaskFailed]: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'cloudsync'],
+      groupSummary: T('{count, plural, other {# cloud sync tasks failed}}'),
       contextualHelp: T('Cloud sync failures may be due to network issues, credential problems, or cloud provider limitations.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/cloudsynctasks/',
       actions: [
@@ -495,6 +500,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ReplicationFailed]: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'replication'],
+      groupSummary: T('{count, plural, other {# replication tasks failed}}'),
       contextualHelp: T('Replication failures can cause backup gaps. Check network connectivity and destination system health.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/replication/',
       actions: [
@@ -520,6 +526,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.RsyncFailed]: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'rsync'],
+      groupSummary: T('{count, plural, other {# rsync tasks failed}}'),
       contextualHelp: T('Rsync task failures may be due to connectivity issues, permission problems, or incorrect paths.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/rsynctasksscale/',
       actions: [
@@ -549,6 +556,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.SnapshotFailed]: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'snapshot'],
+      groupSummary: T('{count, plural, other {# snapshot tasks failed}}'),
       contextualHelp: T('Snapshot failures may indicate storage issues or misconfigured retention policies. Snapshot tasks run automatically on schedule and cannot be manually triggered.'),
       actions: [
         {
@@ -569,6 +577,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ScrubPaused]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('Scrub is paused on {count, plural, other {# pools}}'),
       contextualHelp: T('Pool scrub is paused or not running. This may be due to pool being offline or scrub task being manually paused. Check pool status and scheduled scrub configuration.'),
       actions: [
         {
@@ -584,6 +593,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     ScrubNotRunning: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('Scrub is not running on {count, plural, other {# pools}}'),
       contextualHelp: T('Pool scrub is not running. This may be due to pool being offline or scrub task configuration issues. Check pool status and scheduled scrub configuration.'),
       actions: [
         {
@@ -612,6 +622,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.AppUpdate]: {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps', 'installed'],
+      groupSummary: T('{count, plural, other {Updates are available for # applications}}'),
       actions: [{
         label: T('Go to Applications'),
         type: SmartAlertActionType.Navigate,
@@ -624,6 +635,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ApplicationsStartFailed]: {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps', 'installed'],
+      groupSummary: T('{count, plural, other {# applications failed to start}}'),
       actions: [{
         label: T('Go to Applications'),
         type: SmartAlertActionType.Navigate,
@@ -636,6 +648,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ApplicationsConfigurationFailed]: {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps', 'installed'],
+      groupSummary: T('{count, plural, other {# applications could not be configured}}'),
       actions: [{
         label: T('Go to App Settings'),
         type: SmartAlertActionType.Navigate,
@@ -649,6 +662,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.CertificateExpired]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'certificates'],
+      groupSummary: T('{count, plural, other {# certificates have expired}}'),
       actions: [{
         label: T('Go to Certificates'),
         type: SmartAlertActionType.Navigate,
@@ -661,6 +675,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.CertificateIsExpiring]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'certificates'],
+      groupSummary: T('{count, plural, other {# certificates are expiring}}'),
       actions: [{
         label: T('Go to Certificates'),
         type: SmartAlertActionType.Navigate,
@@ -673,6 +688,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.CertificateIsExpiringSoon]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'certificates'],
+      groupSummary: T('{count, plural, other {# certificates are expiring soon}}'),
       actions: [{
         label: T('Go to Certificates'),
         type: SmartAlertActionType.Navigate,
@@ -685,6 +701,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.CertificateParsingFailed]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'certificates'],
+      groupSummary: T('{count, plural, other {# certificates could not be parsed}}'),
       actions: [{
         label: T('Go to Certificates'),
         type: SmartAlertActionType.Navigate,
@@ -697,6 +714,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.CertificateRevoked]: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'certificates'],
+      groupSummary: T('{count, plural, other {# certificates have been revoked}}'),
       actions: [{
         label: T('Go to Certificates'),
         type: SmartAlertActionType.Navigate,
@@ -812,6 +830,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.BondMissingPorts]: {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['network'],
+      groupSummary: T('{count, plural, other {# bond interfaces are missing ports}}'),
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
@@ -824,6 +843,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.BondInactivePorts]: {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['network'],
+      groupSummary: T('{count, plural, other {# bond interfaces have inactive ports}}'),
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
@@ -836,6 +856,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.BondNoActivePorts]: {
       category: SmartAlertCategory.Network,
       relatedMenuPath: ['network'],
+      groupSummary: T('{count, plural, other {# bond interfaces have no active ports}}'),
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
@@ -937,6 +958,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.Smart]: {
       category: SmartAlertCategory.Hardware,
       relatedMenuPath: ['storage', 'disks'],
+      groupSummary: T('{count, plural, other {SMART reported problems on # disks}}'),
       documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
       actions: [{
         label: T('Go to Disks'),
@@ -1031,6 +1053,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.SmbPath]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['sharing', 'smb'],
+      groupSummary: T('{count, plural, other {# SMB shares have a path problem}}'),
       documentationUrl: 'https://www.truenas.com/docs/scale/shares/smb/managesmbshares/',
       actions: [{
         label: T('Go to SMB shares'),
@@ -1058,6 +1081,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ShareLocked]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets'],
+      groupSummary: T('{count, plural, other {# shares are unavailable because their dataset is locked}}'),
       actions: [{
         label: T('Go to Datasets'),
         type: SmartAlertActionType.Navigate,
@@ -1070,6 +1094,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.QuotaCritical]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets'],
+      groupSummary: T('{count, plural, other {# datasets have exceeded their quota}}'),
       documentationUrl: 'https://www.truenas.com/docs/scale/datasets/managequotas/',
       actions: [{
         label: T('Go to Datasets'),
@@ -1083,6 +1108,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.QuotaWarning]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets'],
+      groupSummary: T('{count, plural, other {# datasets are approaching their quota}}'),
       documentationUrl: 'https://www.truenas.com/docs/scale/datasets/managequotas/',
       actions: [{
         label: T('Go to Datasets'),
@@ -1096,6 +1122,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.EncryptedDataset]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets'],
+      groupSummary: T('{count, plural, other {# datasets are locked}}'),
       actions: [{
         label: T('Go to Datasets'),
         type: SmartAlertActionType.Navigate,
@@ -1108,6 +1135,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     TaskLocked: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets'],
+      groupSummary: T('{count, plural, other {# tasks are skipped because their dataset is locked}}'),
       actions: [{
         label: T('Go to Datasets'),
         type: SmartAlertActionType.Navigate,
@@ -1121,6 +1149,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     PoolUpgraded: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('{count, plural, other {A new ZFS version or feature flags are available for # pools}}'),
       actions: [{
         label: T('Go to Storage'),
         type: SmartAlertActionType.Navigate,
@@ -1159,6 +1188,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         // Regular data pool capacity - direct to Storage
         category: SmartAlertCategory.Storage,
         relatedMenuPath: ['storage'],
+        groupSummary: T('{count, plural, other {# pools are critically low on free space}}'),
         contextualHelp: T('Storage pool capacity is critically high. Consider expanding capacity or cleaning up old data.'),
         actions: [{
           label: T('Go to Storage'),
@@ -1199,6 +1229,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         // Regular data pool capacity - direct to Storage
         category: SmartAlertCategory.Storage,
         relatedMenuPath: ['storage'],
+        groupSummary: T('{count, plural, other {# pools are running low on free space}}'),
         contextualHelp: T('Storage pool capacity is high. Monitor usage and consider expanding capacity.'),
         actions: [{
           label: T('Go to Storage'),
@@ -1239,6 +1270,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         // Regular data pool capacity - direct to Storage
         category: SmartAlertCategory.Storage,
         relatedMenuPath: ['storage'],
+        groupSummary: T('{count, plural, other {# pools are filling up}}'),
         contextualHelp: T('Storage pool usage is increasing. Monitor capacity trends.'),
         actions: [{
           label: T('Go to Storage'),
@@ -1253,6 +1285,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.VolumeStatus]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('{count, plural, other {# pools are not healthy}}'),
       extractApiParams: () => {
         // VolumeStatus alerts only provide pool name in args.volume, not pool ID
         // Since we can't synchronously resolve pool name to ID, navigate to storage dashboard instead
@@ -1270,6 +1303,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.PoolUsbDisks]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('{count, plural, other {# pools have USB disks}}'),
       actions: [{
         label: T('Go to Storage'),
         type: SmartAlertActionType.Navigate,
@@ -1295,6 +1329,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.SnapshotCount]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['datasets', 'snapshots'],
+      groupSummary: T('{count, plural, other {# datasets have too many snapshots}}'),
       actions: [{
         label: T('Go to Snapshots'),
         type: SmartAlertActionType.Navigate,
@@ -1308,6 +1343,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     ApiKeyRevoked: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials'],
+      groupSummary: T('{count, plural, other {# API keys have been revoked}}'),
       bannerMenuPath: ['credentials', 'users', 'api-keys'],
       actions: [{
         label: T('Go to API keys'),
@@ -1414,6 +1450,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ReplicationSuccess]: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'replication'],
+      groupSummary: T('{count, plural, other {# replication tasks succeeded}}'),
       actions: [{
         label: T('Go to Data Protection'),
         type: SmartAlertActionType.Navigate,
@@ -1426,6 +1463,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ScrubFinished]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('{count, plural, other {Scrub finished on # pools}}'),
       actions: [{
         label: T('View Storage'),
         type: SmartAlertActionType.Navigate,
@@ -1438,6 +1476,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     [AlertClassName.ScrubNotStarted]: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      groupSummary: T('{count, plural, other {Scrub did not start on # pools}}'),
       actions: [{
         label: T('View Storage'),
         type: SmartAlertActionType.Navigate,
@@ -1464,6 +1503,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     VMWareSnapshotDeleteFailed: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'vmware-snapshots'],
+      groupSummary: T('{count, plural, other {# VMware snapshots could not be deleted}}'),
       documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/creatingvmwaresnapshots/',
       actions: [{
         label: T('Go to VMWare Snapshots'),
@@ -1477,6 +1517,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     VMWareSnapshotCreateFailed: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'vmware-snapshots'],
+      groupSummary: T('{count, plural, other {# VMware snapshots could not be created}}'),
       documentationUrl: 'https://www.truenas.com/docs/scale/dataprotection/creatingvmwaresnapshots/',
       actions: [{
         label: T('Go to VMWare Snapshots'),

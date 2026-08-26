@@ -96,21 +96,21 @@
     </div>
   }
 
-  @if (shouldShowUnread() && !enhancedUnreadAlerts()?.length) {
+  @if (shouldShowUnread() && !unreadAlerts()?.length) {
     <div class="no-alerts">
       <tn-icon class="icon" name="bell-outline" library="mdi"></tn-icon>
       <h3 class="title">{{ 'No alerts' | translate }}</h3>
     </div>
   }
 
-  @if (shouldShowDismissed() && !enhancedDismissedAlerts()?.length) {
+  @if (shouldShowDismissed() && !dismissedAlerts()?.length) {
     <div class="no-alerts">
       <tn-icon class="icon" name="bell-outline" library="mdi"></tn-icon>
       <h3 class="title">{{ 'No dismissed alerts' | translate }}</h3>
     </div>
   }
 
-  @if (shouldShowUnread() && enhancedUnreadAlerts()?.length) {
+  @if (shouldShowUnread() && unreadAlerts()?.length) {
     <!-- Grouped by category view -->
     @for (entry of getCategoryEntries(groupedUnreadAlerts()); track entry[0]) {
       @let category = entry[0];
@@ -119,10 +119,10 @@
         <div class="category-header">
           <tn-icon [name]="getCategoryIcon(category)"></tn-icon>
           <h4>{{ getCategoryLabel(category) | translate }}</h4>
-          <span class="category-count">{{ alerts.length }}</span>
+          <span class="category-count">{{ getCategoryCount(alerts) }}</span>
         </div>
         <div class="alert-list">
-          @for (alert of alerts; track alert.id; let last = $last) {
+          @for (alert of alerts; track trackAlert(alert); let last = $last) {
             <div
               class="alert"
               role="listitem"
@@ -144,7 +144,7 @@
     </button>
   }
 
-  @if (shouldShowDismissed() && enhancedDismissedAlerts()?.length) {
+  @if (shouldShowDismissed() && dismissedAlerts()?.length) {
     <!-- Grouped by category view for dismissed alerts -->
     @for (entry of getCategoryEntries(groupedDismissedAlerts()); track entry[0]) {
       @let category = entry[0];
@@ -153,10 +153,10 @@
         <div class="category-header">
           <tn-icon [name]="getCategoryIcon(category)"></tn-icon>
           <h4>{{ getCategoryLabel(category) | translate }}</h4>
-          <span class="category-count">{{ alerts.length }}</span>
+          <span class="category-count">{{ getCategoryCount(alerts) }}</span>
         </div>
         <div class="alert-list">
-          @for (alert of alerts; track alert.id; let last = $last) {
+          @for (alert of alerts; track trackAlert(alert); let last = $last) {
             <div
               class="alert"
               role="listitem"

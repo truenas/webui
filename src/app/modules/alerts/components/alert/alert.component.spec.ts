@@ -1,7 +1,3 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { By } from '@angular/platform-browser';
 import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
@@ -11,7 +7,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
-import { Alert } from 'app/interfaces/alert.interface';
+import { AlertWithDuplicates } from 'app/interfaces/smart-alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertPageObject } from 'app/modules/alerts/components/alert/alert.page-object';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
@@ -32,13 +28,14 @@ const dummyAlert = {
   formatted: 'CPU is on fire',
   klass: AlertClassName.ApiKeyRevoked,
   dismissed: false,
+  duplicateCount: 1,
+  objectCount: 1,
   allIds: ['79'],
-} as Alert & { allIds: string[] };
+} as unknown as AlertWithDuplicates;
 
 describe('AlertComponent', () => {
   let spectator: Spectator<AlertComponent>;
   let alert: AlertPageObject;
-  let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
     component: AlertComponent,
@@ -78,7 +75,6 @@ describe('AlertComponent', () => {
     });
 
     alert = new AlertPageObject(spectator);
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows alert level', () => {
@@ -126,12 +122,7 @@ describe('AlertComponent', () => {
   });
 
   it('reopens a dismissed alert when Re-open link is pressed', () => {
-    const dismissedAlert = {
-      ...dummyAlert,
-      dismissed: true,
-    } as Alert;
-
-    spectator.setInput('alert', dismissedAlert);
+    spectator.setInput('alert', { ...dummyAlert, dismissed: true });
 
     const store$ = spectator.inject(Store);
     const dispatchSpy = jest.spyOn(store$, 'dispatch');
@@ -146,28 +137,101 @@ describe('AlertComponent', () => {
     );
   });
 
-  it('shows expand/collapse button when alert message is too long', async () => {
-    const longMessage = 'This is a very long alert message '.repeat(10);
-    spectator.setInput('alert', { ...dummyAlert, formatted: longMessage } as Alert);
+  it('shows only the first sentence of a long message, expanding in place on View More', () => {
+    const longMessage = 'Pool is degraded and needs attention right away. '
+      + 'Replace the failed disk and run a scrub afterwards.';
+    spectator.setInput('alert', { ...dummyAlert, formatted: longMessage });
 
-    const alertMessageElement = spectator.debugElement.query(By.css('.alert-message')).nativeElement as HTMLElement;
-    jest.spyOn(alertMessageElement, 'scrollHeight', 'get').mockReturnValue(300);
-    jest.spyOn(alertMessageElement, 'offsetHeight', 'get').mockReturnValue(100);
+    expect(alert.messageElement).toHaveExactText('Pool is degraded and needs attention right away.');
 
-    spectator.component.ngAfterViewInit();
-
-    // Wait for setTimeout to complete
-    await new Promise((resolve) => {
-      setTimeout(resolve, 0);
-    });
-    spectator.detectChanges();
-
-    const expandButton = await loader.getHarness(MatButtonHarness.with({ text: 'View More' }));
+    const expandButton = spectator.query(byText('View More'))!;
     expect(expandButton).toExist();
 
-    await expandButton.click();
+    spectator.click(expandButton);
 
-    const collapseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Collapse' }));
-    expect(collapseButton).toExist();
+    // A single alert expands in place, rather than repeating its opening sentence below.
+    expect(alert.messageElement).toHaveExactText(longMessage);
+    expect(spectator.query('.alert-detail')).not.toExist();
+    expect(spectator.query(byText('Collapse'))).toExist();
+  });
+
+  it('points the toggle at the region that actually changes', () => {
+    const longMessage = 'Pool is degraded and needs attention right away. '
+      + 'Replace the failed disk and run a scrub afterwards.';
+    spectator.setInput('alert', { ...dummyAlert, formatted: longMessage });
+    spectator.click(spectator.query(byText('View More'))!);
+
+    const toggle = spectator.query('.expand-collapse-button')!;
+    const controlled = spectator.query(`#${toggle.getAttribute('aria-controls')}`);
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    // A single alert expands in place, so the revealed text lives in the message line.
+    expect(controlled).toHaveDescendant('.alert-message');
+    expect(controlled!.textContent).toContain('Replace the failed disk');
+  });
+
+  it('does not offer View More when the message is already short', () => {
+    expect(spectator.query(byText('View More'))).not.toExist();
+  });
+
+  it('shows a group summary and every message when several alerts are consolidated', () => {
+    spectator.setInput('alert', {
+      ...dummyAlert,
+      duplicateCount: 2,
+      objectCount: 2,
+      allIds: ['79', '80'],
+      groupedMessages: ['API key "one" was revoked', 'API key "two" was revoked'],
+    } as AlertWithDuplicates);
+
+    expect(alert.messageElement).toHaveExactText('2 API keys have been revoked');
+
+    spectator.click(spectator.query(byText('View More'))!);
+
+    const details = spectator.queryAll('.alert-detail').map((element) => element.textContent?.trim());
+    expect(details).toEqual(['API key "one" was revoked', 'API key "two" was revoked']);
+  });
+
+  it('drops object-scoped actions on a consolidated alert', () => {
+    const cloudBackup = {
+      ...dummyAlert,
+      klass: AlertClassName.CloudBackupTaskFailed,
+      formatted: 'Cloud Backup Task "Nightly" failed.',
+      args: [{ id: 7, name: 'Nightly' }],
+    } as unknown as AlertWithDuplicates;
+
+    spectator.setInput('alert', cloudBackup);
+    expect(spectator.query(byText('Rerun Cloud Backup'))).toExist();
+
+    spectator.setInput('alert', {
+      ...cloudBackup,
+      duplicateCount: 2,
+      objectCount: 2,
+      allIds: ['79', '80'],
+    } as AlertWithDuplicates);
+
+    // Rerunning would only cover the newest task in the group.
+    expect(spectator.query(byText('Rerun Cloud Backup'))).not.toExist();
+    expect(spectator.query(byText('View Cloud Backup'))).toExist();
+  });
+
+  it('dismisses every consolidated alert at once', () => {
+    spectator.setInput('alert', {
+      ...dummyAlert,
+      duplicateCount: 2,
+      objectCount: 2,
+      allIds: ['79', '80'],
+    } as AlertWithDuplicates);
+
+    const store$ = spectator.inject(Store);
+    const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
+    spectator.click(spectator.query(byText('Dismiss All (2)'))!);
+
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: '[Alert Panel] Dismiss Pressed',
+        ids: ['79', '80'],
+      }),
+    );
   });
 });
