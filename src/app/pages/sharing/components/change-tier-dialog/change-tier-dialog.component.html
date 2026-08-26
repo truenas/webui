@@ -83,11 +83,11 @@
   </form>
 
   <tn-banner
-    class="cancellation-warning"
+    class="tier-warning"
     type="warning"
-    [heading]="'Tier change cannot be cancelled once started' | translate"
+    [heading]="'Changing the tier takes effect immediately' | translate"
     [message]="form.value.moveExistingData
-      ? ('Data migration can be cancelled while it runs, but the dataset stays on the new tier.' | translate)
+      ? ('Data migration can be cancelled while it runs, but cancelling does not undo the tier change: the dataset stays on the new tier.' | translate)
       : ''"
   ></tn-banner>
 </div>
