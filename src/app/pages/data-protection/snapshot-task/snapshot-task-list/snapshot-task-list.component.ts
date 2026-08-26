@@ -30,18 +30,6 @@ import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.in
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import {
-  scheduleColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
-import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import {
-  IxTableDetailsRowComponent,
-} from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
@@ -49,14 +37,20 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { column } from 'app/modules/tn-table/column-configs';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import {
-  TableRelativeDateCellComponent,
-} from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+  TableDetailsRowComponent,
+} from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
+import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/tn-table/utils';
+import { TableRelativeDateCellComponent,
+  formatRelativeDateValue } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import {
+  formatTaskStateValue, TaskStateCellComponent,
+} from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
-import {
-  TaskStateCellComponent,
-} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { snapshotTaskListElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -68,7 +62,10 @@ import { TaskService } from 'app/services/task.service';
   selector: 'ix-snapshot-task-list',
   styleUrls: ['./snapshot-task-list.component.scss'],
   templateUrl: './snapshot-task-list.component.html',
-  providers: [TaskService, StorageService],
+  // Provided so the column model can inject and call it directly: a details row prints the
+  // schedule description the cell shows rather than a raw schedule object. Imported too, because
+  // the template also pipes through it.
+  providers: [TaskService, StorageService, ScheduleDescriptionPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
@@ -85,7 +82,7 @@ import { TaskService } from 'app/services/task.service';
     TnCellDefDirective,
     TnDetailRowDefDirective,
     TnTablePagerComponent,
-    IxTableDetailsRowComponent,
+    TableDetailsRowComponent,
     TableRelativeDateCellComponent,
     TableTextCellComponent,
     TaskStateCellComponent,
@@ -106,6 +103,7 @@ export class SnapshotTaskListComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
   private route = inject(ActivatedRoute);
   private loader = inject(LoaderService);
+  private scheduleDescription = inject(ScheduleDescriptionPipe);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = snapshotTaskListElements;
@@ -149,75 +147,86 @@ export class SnapshotTaskListComponent implements OnInit {
 
   protected readonly list = tnTableListHost<PeriodicSnapshotTaskUi>(this.dataProvider, {
     columns: () => createTable<PeriodicSnapshotTaskUi>([
-      textColumn({
+      column({
         title: this.titles().poolDataset,
         propertyName: 'dataset',
       }),
-      textColumn({
+      column({
         title: this.titles().recursive,
         getValue: (row) => (row.recursive ? this.translate.instant('Yes') : this.translate.instant('No')),
         propertyName: 'recursive',
       }),
-      textColumn({
+      column({
         title: this.titles().namingSchema,
         propertyName: 'naming_schema',
       }),
-      textColumn({
+      column({
         title: this.titles().when,
         propertyName: 'when',
         getValue: (row) => this.activeHours(row),
       }),
-      scheduleColumn({
+      column({
         title: this.titles().frequency,
         columnName: 'frequency',
         getValue: (row) => row.schedule,
+        // The table shows this through <ix-table-text-cell>; a details row prints it, under the
+        // id that cell resolves.
+        formatValue: (row) => this.scheduleDescription.transform(row.schedule),
+        testIdSuffix: 'row-schedule',
       }),
-      relativeDateColumn({
+      column({
         hidden: true,
         title: this.titles().nextRun,
         columnName: 'next-run',
         getValue: (task) => this.getNextRun(task),
+        // The table shows this through <ix-table-relative-date-cell>; a details row prints it,
+        // under the id that cell resolves.
+        formatValue: (task) => formatRelativeDateValue(this.getNextRun(task), this.translate),
+        testIdSuffix: 'row-relative-date',
       }),
-      relativeDateColumn({
+      column({
         title: this.titles().lastRun,
         columnName: 'last-run',
         hidden: true,
         getValue: (row) => row.state?.datetime?.$date,
+        // The table shows this through <ix-table-relative-date-cell>; a details row prints it,
+        // under the id that cell resolves.
+        formatValue: (row) => formatRelativeDateValue(row.state?.datetime?.$date, this.translate),
+        testIdSuffix: 'row-relative-date',
       }),
-      textColumn({
+      column({
         title: this.titles().keepSnapshotFor,
         getValue: (row) => this.getLifetime(row),
         propertyName: 'lifetime_unit',
         hidden: true,
       }),
-      textColumn({
+      column({
         title: this.titles().legacy,
         hidden: true,
         getValue: (row) => (row.legacy ? this.translate.instant('Yes') : this.translate.instant('No')),
         propertyName: 'legacy',
       }),
-      textColumn({
+      column({
         title: this.titles().vmwareSync,
         hidden: true,
         getValue: (row) => (row.vmware_sync ? this.translate.instant('Yes') : this.translate.instant('No')),
         propertyName: 'vmware_sync',
       }),
-      textColumn({
+      column({
         title: this.titles().enabled,
         propertyName: 'enabled',
         getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
       }),
-      stateButtonColumn({
+      column({
         title: this.titles().state,
         columnName: 'state',
         getValue: (row) => row.state.state,
+        // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it,
+        // under the suffix that pill resolves.
+        formatValue: (row) => formatTaskStateValue(row.state.state, this.translate),
+        testIdSuffix: 'row-state',
       }),
-    ], {
-      // Still needed: <ix-table-details-row> renders the hidden columns through the
-      // ix cell components, which read `uniqueRowTag`/`ariaLabels` off the column.
-      uniqueRowTag: (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,
-      ariaLabels: (row) => [row.dataset, this.translate.instant('Snapshot Task')],
-    }),
+    ]),
   });
 
   protected readonly trackByTaskId = (_index: number, row: PeriodicSnapshotTaskUi): number => row.id;

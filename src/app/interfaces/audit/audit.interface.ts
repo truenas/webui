@@ -4,7 +4,7 @@ import { MiddlewareAuditEntry } from 'app/interfaces/audit/middleware-audit-entr
 import { SmbAuditEntry } from 'app/interfaces/audit/smb-audit-entry.interface';
 import { SudoAuditEntry } from 'app/interfaces/audit/sudo-audit-entry.interface';
 import { SystemAuditEntry } from 'app/interfaces/audit/system-audit-entry.interface';
-import { ApiQueryParams } from 'app/modules/ix-table/classes/api-data-provider/query-params';
+import { ApiQueryParams } from 'app/modules/tn-table/classes/api-data-provider/query-params';
 
 export interface AuditQueryParams extends ApiQueryParams<AuditEntry> {
   services?: AuditService[];

@@ -12,7 +12,7 @@ import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';

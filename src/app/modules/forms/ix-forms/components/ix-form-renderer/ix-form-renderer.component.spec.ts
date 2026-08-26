@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { AsyncValidatorFn, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
   TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
@@ -10,12 +9,11 @@ import {
 import { of, Subject, throwError } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
-import { FormSubmitEvent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { FormSubmitEvent, SubmitResult, IxFormComponent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
 import { IxFormRendererComponent } from 'app/modules/forms/ix-forms/components/ix-form-renderer/ix-form-renderer.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { greaterThanFg } from 'app/modules/forms/ix-forms/validators/validators';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -75,19 +73,12 @@ describe('IxFormRendererComponent', () => {
     submit: submitHandler,
   };
 
-  const slideInRef: SlideInRef<unknown, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: IxFormRendererComponent<SampleForm>,
     imports: [ReactiveFormsModule],
     providers: [
       ...ixFormTestingProviders(),
       mockProvider(ErrorHandlerService),
-      { provide: SlideInRef, useValue: slideInRef },
       mockAuth(),
     ],
   });
@@ -128,11 +119,6 @@ describe('IxFormRendererComponent', () => {
       expect(await enabled.isChecked()).toBe(true);
     });
 
-    it('shows the modal title for create mode', () => {
-      expect(spectator.query('ix-modal-header')).toBeTruthy();
-      expect(spectator.fixture.nativeElement).toHaveText('Add Sample');
-    });
-
     it('shows the required indicator on a required field, inferred from the validator', async () => {
       const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
       const flavorField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Flavor' }));
@@ -169,10 +155,8 @@ describe('IxFormRendererComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('keeps Save disabled while a required field is empty', async () => {
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-
-      expect(await saveButton.isDisabled()).toBe(true);
+    it('keeps Save disabled while a required field is empty', () => {
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('enforces form-level validators from the definition', async () => {
@@ -180,8 +164,7 @@ describe('IxFormRendererComponent', () => {
       await (await loader.getHarness(TnInputHarness.with({ name: 'min' }))).setValue('8');
       await (await loader.getHarness(TnInputHarness.with({ name: 'max' }))).setValue('4');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('calls the definition submit handler with the form values', async () => {
@@ -190,8 +173,11 @@ describe('IxFormRendererComponent', () => {
       await (await loader.getHarness(TnInputHarness.with({ name: 'max' }))).setValue('9');
       await (await loader.getHarness(TnSelectHarness)).selectOption('Chocolate');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted renderer: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(submitHandler).toHaveBeenCalledTimes(1);
       const event = submitHandler.mock.calls[0][0];
@@ -261,7 +247,7 @@ describe('IxFormRendererComponent', () => {
       const min = await loader.getHarness(TnInputHarness.with({ name: 'min' }));
       const enabled = await loader.getHarness(TnCheckboxHarness.with({ label: 'Enabled' }));
 
-      expect(spectator.fixture.nativeElement).toHaveText('Edit Sample');
+      expect(spectator.query(IxFormComponent)!.resolvedTitle()).toBe('Edit Sample');
       expect(await name.getValue()).toBe('existing');
       expect(await min.getNumericValue()).toBe(2);
       expect(await enabled.isChecked()).toBe(false);
@@ -292,8 +278,11 @@ describe('IxFormRendererComponent', () => {
       const autocomplete = await loader.getHarness(TnAutocompleteHarness);
       await autocomplete.selectOption('Chocolate');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted renderer: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(submitHandler.mock.calls[0][0].allValues).toMatchObject({ name: 'chocolate' });
     });
@@ -320,8 +309,11 @@ describe('IxFormRendererComponent', () => {
 
       expect(await chips.getChips()).toEqual(['ls', 'cat']);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted renderer: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(submitHandler.mock.calls[0][0].allValues).toMatchObject({ name: ['ls', 'cat'] });
     });
@@ -354,8 +346,11 @@ describe('IxFormRendererComponent', () => {
 
       expect(await chips.getChips()).toEqual(['Chocolate']);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted renderer: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(submitHandler.mock.calls[0][0].allValues).toMatchObject({ flavor: ['chocolate'] });
     });
@@ -377,8 +372,7 @@ describe('IxFormRendererComponent', () => {
 
       await (await loader.getHarness(TnInputHarness.with({ name: 'name' }))).setValue('taken');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
   });
 
@@ -415,7 +409,7 @@ describe('IxFormRendererComponent', () => {
 
       const name = await loader.getHarness(TnInputHarness.with({ name: 'name' }));
       expect(await name.getValue()).toBe('loaded-value');
-      expect(spectator.fixture.nativeElement).toHaveText('Edit Config');
+      expect(spectator.query(IxFormComponent)!.resolvedTitle()).toBe('Edit Config');
     });
 
     it('warns in dev mode when both loadData and editData are provided', () => {
@@ -554,8 +548,7 @@ describe('IxFormRendererComponent', () => {
 
       expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'name' }))).toBeNull();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(spectator.component.canSubmit()).toBe(true);
     });
   });
 
@@ -595,7 +588,8 @@ describe('IxFormRendererComponent', () => {
 
       expect(await loader.getHarnessOrNull(TnInputHarness.with({ name: 'name' }))).toBeNull();
 
-      await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
+      spectator.component.submit();
+      spectator.detectChanges();
 
       // changedValues omits the disabled control, so the stale value can't reach a
       // "send only what changed" payload; allValues (getRawValue) still carries it.

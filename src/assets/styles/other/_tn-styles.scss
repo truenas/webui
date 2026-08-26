@@ -951,18 +951,6 @@ tn-dialog-shell tn-form-field {
   padding: 8px 0;
 }
 
-// Same intent for forms hosted in the legacy SlideIn (`ix-slide-in-container`).
-// A dual-host form (SlideIn + `<tn-side-panel>`) must NOT carry an unconditional
-// field margin: `<tn-side-panel>` already spaces fields via tn-form-field's
-// reserved subscript area, so a flat margin double-spaces the side-panel. Scoped
-// to the SlideIn host, which has no such rhythm and renders fields flush, so
-// restore the original ix-* spacing (margin: 12px 0; padding: 8px 0) there only.
-ix-slide-in-container tn-form-field {
-  display: block;
-  margin: 12px 0;
-  padding: 8px 0;
-}
-
 // `ix-dynamic-form` hard-codes `margin: 12px 0; padding: 8px 0` on its
 // `tn-form-field` children for the slide-in/dialog rhythm. In the
 // `<tn-side-panel>` host that double-spaces (the panel already spaces fields via

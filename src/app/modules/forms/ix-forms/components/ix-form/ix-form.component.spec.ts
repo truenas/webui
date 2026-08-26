@@ -6,11 +6,9 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import {
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
 import {
-  concat, EMPTY, firstValueFrom, NEVER, Observable, of, throwError,
+  concat, EMPTY, NEVER, of, throwError,
 } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
@@ -19,7 +17,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import {
@@ -81,13 +78,12 @@ describe('IxFormComponent', () => {
         <ix-fieldset>
           <ix-input formControlName="name" [label]="'Name'" />
         </ix-fieldset>
-        <button ixExtraActions mat-button type="button">Advanced Options</button>
       </ix-form>
     `,
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'ix-auto-title-host',
-    imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent, MatButton],
+    imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
   })
   class AutoTitleHostComponent {
     ixForm = viewChild.required(IxFormComponent);
@@ -108,18 +104,11 @@ describe('IxFormComponent', () => {
 
   // Shared across describe blocks; reset per test (see beforeEach) so call
   // counts don't leak between tests.
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: TestHostComponent,
     imports: [ReactiveFormsModule],
     providers: [
       ...ixFormTestingProviders(),
-      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -138,17 +127,13 @@ describe('IxFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('renders the save button', async () => {
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(saveButton).toBeTruthy();
-    });
-
     it('calls submitHandler with all values when no editData is provided', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({ Name: 'New', Description: 'Desc' });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       expect(submitHandlerSpy).toHaveBeenCalledWith({
         isEdit: false,
@@ -157,15 +142,17 @@ describe('IxFormComponent', () => {
       });
     });
 
-    it('shows snackbar and closes slide-in on success', async () => {
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+    it('shows snackbar and closes the panel on success', () => {
+      const ixFormRef = spectator.component.ixForm();
+      const closedSpy = jest.spyOn(ixFormRef.closed, 'emit');
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Saved!');
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
-    it('passes the API result to onSuccess callback', async () => {
+    it('passes the API result to onSuccess callback', () => {
       const onSuccessSpy = jest.fn();
       const apiResult = { id: 42, name: 'Created' };
       submitHandlerSpy.mockReturnValue({
@@ -177,13 +164,14 @@ describe('IxFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       expect(onSuccessSpy).toHaveBeenCalledWith(apiResult);
     });
 
-    it('re-enables the save button when observable completes without emitting', async () => {
+    it('re-enables the save button when observable completes without emitting', () => {
       submitHandlerSpy.mockReturnValue({
         request$: EMPTY,
         successMessage: 'Saved!' as TranslatedString,
@@ -192,16 +180,18 @@ describe('IxFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      const closedSpy = jest.spyOn(ixFormRef.closed, 'emit');
+      ixFormRef.submit();
+      spectator.detectChanges();
       spectator.detectChanges();
 
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(ixFormRef.canSubmit()).toBe(true);
       expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
-      expect(slideInRef.close).not.toHaveBeenCalled();
+      expect(closedSpy).not.toHaveBeenCalled();
     });
 
-    it('uses closeWith to transform the slide-in close payload', async () => {
+    it('uses closeWith to transform the close payload', () => {
       const apiResult = { id: 42 };
       const closeWithSpy = jest.fn(() => ({ navigateTo: '/items/42' }));
       submitHandlerSpy.mockReturnValue({
@@ -213,11 +203,13 @@ describe('IxFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      const closedSpy = jest.spyOn(ixFormRef.closed, 'emit');
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       expect(closeWithSpy).toHaveBeenCalledWith(apiResult);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: { navigateTo: '/items/42' } });
+      expect(closedSpy).toHaveBeenCalledWith({ navigateTo: '/items/42' });
     });
   });
 
@@ -239,8 +231,9 @@ describe('IxFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({ Description: 'New desc' });
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       expect(submitHandlerSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -250,57 +243,62 @@ describe('IxFormComponent', () => {
       );
     });
 
-    it('provides empty changedValues when nothing changed', async () => {
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+    it('provides empty changedValues when nothing changed', () => {
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       expect(submitHandlerSpy).toHaveBeenCalledWith(
         expect.objectContaining({ changedValues: {} }),
       );
     });
 
-    it('does not flag disabled controls as changed when their value is unchanged', async () => {
+    it('does not flag disabled controls as changed when their value is unchanged', () => {
       // Snapshot is captured via getRawValue(), so disabling a control after
       // the snapshot was captured should not produce an entry in changedValues.
       spectator.component.form.controls.description.disable();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       expect(submitHandlerSpy).toHaveBeenCalledWith(
         expect.objectContaining({ changedValues: {} }),
       );
     });
 
-    it('silently omits a control removed after the snapshot from changedValues', async () => {
+    it('silently omits a control removed after the snapshot from changedValues', () => {
       // Removed key is gone from getRawValue(), so the diff can't report it
       // even though it was in the snapshot (getChangedValues iterates current keys).
       (spectator.component.form as unknown as FormGroup).removeControl('description');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       const event = submitHandlerSpy.mock.calls[0][0];
       expect(event.changedValues).not.toHaveProperty('description');
       expect(event.changedValues).toEqual({});
     });
 
-    it('always flags a control added after the snapshot as changed', async () => {
+    it('always flags a control added after the snapshot as changed', () => {
       // Absent from the snapshot, so it appears in the diff despite being untouched.
       (spectator.component.form as unknown as FormGroup).addControl('extra', new FormControl('untouched'));
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       expect(submitHandlerSpy.mock.calls[0][0].changedValues).toEqual({ extra: 'untouched' });
     });
 
-    it('excludes disabled controls from changedValues', async () => {
+    it('excludes disabled controls from changedValues', () => {
       spectator.component.form.controls.name.setValue('changed');
       spectator.component.form.controls.name.disable();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       expect(submitHandlerSpy.mock.calls[0][0].changedValues).not.toHaveProperty('name');
     });
@@ -318,7 +316,7 @@ describe('IxFormComponent', () => {
         );
       };
 
-      it('dev-warns once when a submit reading changedValues has a nested FormGroup', async () => {
+      it('dev-warns once when a submit reading changedValues has a nested FormGroup', () => {
         const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
         submitHandlerSpy.mockImplementation((event) => {
           expect(event.changedValues).toBeDefined();
@@ -326,9 +324,11 @@ describe('IxFormComponent', () => {
         });
         addNestedControl();
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-        await saveButton.click();
-        await saveButton.click();
+        const ixFormRef = spectator.component.ixForm();
+        ixFormRef.submit();
+        spectator.detectChanges();
+        ixFormRef.submit();
+        spectator.detectChanges();
 
         const nestedWarnings = countNestedWarnings(warnSpy);
         expect(nestedWarnings).toHaveLength(1);
@@ -336,12 +336,13 @@ describe('IxFormComponent', () => {
         warnSpy.mockRestore();
       });
 
-      it('stays quiet when the submit builds its payload from allValues', async () => {
+      it('stays quiet when the submit builds its payload from allValues', () => {
         const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
         addNestedControl();
 
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-        await saveButton.click();
+        const ixFormRef = spectator.component.ixForm();
+        ixFormRef.submit();
+        spectator.detectChanges();
 
         // `changedValues` is never read, so the advisory — which only matters to a handler that
         // relies on the diff — has nothing to warn about.
@@ -352,89 +353,19 @@ describe('IxFormComponent', () => {
   });
 
   describe('dirty confirmation', () => {
-    // Pull the factory passed to slideInRef.requireConfirmationWhen so tests
-    // can subscribe to it directly and assert what it emits.
-    const getConfirmationFactory = (): () => Observable<boolean> => {
-      const mock = slideInRef.requireConfirmationWhen as jest.Mock;
-      const lastCall = mock.mock.calls.at(-1);
-      if (!lastCall) {
-        throw new Error('requireConfirmationWhen was not called');
-      }
-      return lastCall[0] as () => Observable<boolean>;
-    };
+    // `hasUnsavedChanges()` is what the `<tn-side-panel>` host's closeGuard calls to decide
+    // whether to prompt before discarding.
+    it('reports no unsaved changes while the form is pristine', () => {
+      spectator = createComponent();
 
-    it('registers dirty confirmation with SlideInRef', () => {
-      createComponent();
-      expect(slideInRef.requireConfirmationWhen).toHaveBeenCalled();
+      expect(spectator.component.ixForm().hasUnsavedChanges()).toBe(false);
     });
 
-    it('default predicate emits false when the form is pristine', async () => {
-      createComponent();
-      await expect(firstValueFrom(getConfirmationFactory()())).resolves.toBe(false);
-    });
-
-    it('default predicate emits true once the form is dirty', async () => {
+    it('reports unsaved changes once the form is dirty', () => {
       spectator = createComponent();
       spectator.component.form.markAsDirty();
-      await expect(firstValueFrom(getConfirmationFactory()())).resolves.toBe(true);
-    });
 
-    describe('dirtyPredicate override', () => {
-      @Component({
-        template: `
-          <ix-form
-            [formGroup]="form"
-            [title]="'Predicate'"
-            [requiredRoles]="[role]"
-            [dirtyPredicate]="predicate"
-            [submitHandler]="handleSubmit"
-          >
-            <ix-fieldset>
-              <ix-input formControlName="name" [label]="'Name'" />
-            </ix-fieldset>
-          </ix-form>
-        `,
-        standalone: true,
-        changeDetection: ChangeDetectionStrategy.OnPush,
-        selector: 'ix-predicate-host',
-        imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
-      })
-      class PredicateHostComponent {
-        ixForm = viewChild.required(IxFormComponent);
-        role = Role.FullAdmin;
-        hasChanges = signal(false);
-        predicate = (): Observable<boolean> => of(this.hasChanges());
-
-        private fb = inject(FormBuilder);
-
-        form = this.fb.group({ name: [''] });
-
-        handleSubmit = (): SubmitResult => ({
-          request$: of(undefined),
-          successMessage: 'Saved!' as TranslatedString,
-        });
-      }
-
-      const createPredicateComponent = createComponentFactory({
-        component: PredicateHostComponent,
-        imports: [ReactiveFormsModule],
-        providers: [
-          ...ixFormTestingProviders(),
-          mockProvider(SlideInRef, slideInRef),
-          mockAuth(),
-        ],
-      });
-
-      it('uses the override and ignores formGroup.dirty', async () => {
-        const predicateSpectator = createPredicateComponent();
-        // Form is dirty, but predicate returns false — override must win.
-        predicateSpectator.component.form.markAsDirty();
-        await expect(firstValueFrom(getConfirmationFactory()())).resolves.toBe(false);
-
-        // Flipping the external signal flips the result without touching form.
-        predicateSpectator.component.hasChanges.set(true);
-        await expect(firstValueFrom(getConfirmationFactory()())).resolves.toBe(true);
-      });
+      expect(spectator.component.ixForm().hasUnsavedChanges()).toBe(true);
     });
   });
 
@@ -442,7 +373,7 @@ describe('IxFormComponent', () => {
     // The save button is disabled while loading/invalid, so we can't click it —
     // pressing Enter in an input still fires the form's `submit` event, so
     // exercise that path directly via the <form> element.
-    it('does not call submitHandler when submit fires while loading', async () => {
+    it('does not call submitHandler when submit fires while loading', () => {
       // Start an in-flight submit (NEVER never emits/completes) — the wrapper
       // sets its internal loading state, which should block subsequent submits.
       submitHandlerSpy.mockReturnValueOnce({
@@ -452,8 +383,9 @@ describe('IxFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
       expect(submitHandlerSpy).toHaveBeenCalledTimes(1);
 
       // Second submit via Enter (button is disabled while loading, so we can't
@@ -469,83 +401,6 @@ describe('IxFormComponent', () => {
       spectator.dispatchFakeEvent(spectator.query('form')!, 'submit');
 
       expect(submitHandlerSpy).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('requireDirty', () => {
-    @Component({
-      template: `
-        <ix-form
-          [formGroup]="form"
-          [title]="'Dirty Required'"
-          [requireDirty]="true"
-          [requiredRoles]="[role]"
-          [submitHandler]="handleSubmit"
-        >
-          <ix-fieldset>
-            <ix-input formControlName="name" [label]="'Name'" />
-          </ix-fieldset>
-        </ix-form>
-      `,
-      standalone: true,
-      changeDetection: ChangeDetectionStrategy.OnPush,
-      selector: 'ix-require-dirty-host',
-      imports: [ReactiveFormsModule, IxFormComponent, IxInputComponent, IxFieldsetComponent],
-    })
-    class RequireDirtyHostComponent {
-      ixForm = viewChild.required(IxFormComponent);
-      role = Role.FullAdmin;
-
-      private fb = inject(FormBuilder);
-
-      form = this.fb.group({ name: [''] });
-
-      handleSubmit = (event: FormSubmitEvent): SubmitResult<unknown> => submitHandlerSpy(event);
-    }
-
-    const createRequireDirtyComponent = createComponentFactory({
-      component: RequireDirtyHostComponent,
-      imports: [ReactiveFormsModule],
-      providers: [
-        ...ixFormTestingProviders(),
-        mockProvider(SlideInRef, slideInRef),
-        mockAuth(),
-      ],
-    });
-
-    it('disables Save while pristine and enables it once dirty', async () => {
-      const requireDirtySpectator = createRequireDirtyComponent();
-      const requireDirtyLoader = TestbedHarnessEnvironment.loader(requireDirtySpectator.fixture);
-      const saveButton = await requireDirtyLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-
-      expect(await saveButton.isDisabled()).toBe(true);
-
-      const form = await requireDirtyLoader.getHarness(IxFormHarness);
-      await form.fillForm({ Name: 'Edited' });
-
-      expect(await saveButton.isDisabled()).toBe(false);
-    });
-
-    it('ignores Enter-key submit while pristine', () => {
-      const requireDirtySpectator = createRequireDirtyComponent();
-
-      // ngSubmit fires on Enter even when the disabled button blocks click —
-      // the component-side guard must mirror the disabled state.
-      requireDirtySpectator.dispatchFakeEvent(requireDirtySpectator.query('form')!, 'submit');
-
-      expect(submitHandlerSpy).not.toHaveBeenCalled();
-    });
-
-    it('allows submit once the form has been edited', async () => {
-      const requireDirtySpectator = createRequireDirtyComponent();
-      const requireDirtyLoader = TestbedHarnessEnvironment.loader(requireDirtySpectator.fixture);
-      const form = await requireDirtyLoader.getHarness(IxFormHarness);
-      await form.fillForm({ Name: 'Edited' });
-
-      const saveButton = await requireDirtyLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      expect(submitHandlerSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -586,22 +441,20 @@ describe('IxFormComponent', () => {
       imports: [ReactiveFormsModule],
       providers: [
         ...ixFormTestingProviders(),
-        mockProvider(SlideInRef, slideInRef),
         mockAuth(),
       ],
     });
 
-    it('disables Save when extraDisabled is true and re-enables when it flips', async () => {
+    it('disables Save when extraDisabled is true and re-enables when it flips', () => {
       const extraSpectator = createExtraDisabledComponent();
-      const extraLoader = TestbedHarnessEnvironment.loader(extraSpectator.fixture);
-      const saveButton = await extraLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      const ixFormRef = extraSpectator.component.ixForm();
 
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(ixFormRef.canSubmit()).toBe(false);
 
       extraSpectator.component.extraDisabled.set(false);
       extraSpectator.detectChanges();
 
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(ixFormRef.canSubmit()).toBe(true);
     });
 
     it('ignores Enter-key submit while extraDisabled is true', () => {
@@ -672,7 +525,6 @@ describe('IxFormComponent', () => {
       imports: [ReactiveFormsModule],
       providers: [
         ...ixFormTestingProviders(),
-        mockProvider(SlideInRef, slideInRef),
         mockAuth(),
       ],
     });
@@ -692,8 +544,9 @@ describe('IxFormComponent', () => {
       const form = await transformLoader.getHarness(IxFormHarness);
       await form.fillForm({ Name: 'Edited' });
 
-      const saveButton = await transformLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = transformSpectator.component.ixForm();
+      ixFormRef.submit();
+      transformSpectator.detectChanges();
 
       expect(submitHandlerSpy).toHaveBeenCalledWith(
         expect.objectContaining({ changedValues: { name: 'Edited' } }),
@@ -738,7 +591,6 @@ describe('IxFormComponent', () => {
       imports: [ReactiveFormsModule],
       providers: [
         ...ixFormTestingProviders(),
-        mockProvider(SlideInRef, slideInRef),
         mockAuth(),
       ],
     });
@@ -752,13 +604,13 @@ describe('IxFormComponent', () => {
       expect(onCancelFn).toHaveBeenCalledTimes(1);
     });
 
-    it('does NOT fire when the component is destroyed after a successful submit', async () => {
+    it('does NOT fire when the component is destroyed after a successful submit', () => {
       const cancelSpectator = createCancelComponent();
       const onCancelFn = cancelSpectator.component.onCancel;
-      const cancelLoader = TestbedHarnessEnvironment.loader(cancelSpectator.fixture);
 
-      const saveButton = await cancelLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = cancelSpectator.component.ixForm();
+      ixFormRef.submit();
+      cancelSpectator.detectChanges();
 
       cancelSpectator.fixture.destroy();
 
@@ -802,12 +654,11 @@ describe('IxFormComponent', () => {
       imports: [ReactiveFormsModule],
       providers: [
         ...ixFormTestingProviders(),
-        mockProvider(SlideInRef, slideInRef),
         mockAuth(),
       ],
     });
 
-    it('skips the snackbar but still closes the slide-in on success', async () => {
+    it('skips the snackbar but still closes the slide-in on success', () => {
       const apiResult = { id: 1 };
       submitHandlerSpy.mockReturnValue({
         request$: of(apiResult),
@@ -815,16 +666,17 @@ describe('IxFormComponent', () => {
       });
 
       const suppressSpectator = createSuppressComponent();
-      const suppressLoader = TestbedHarnessEnvironment.loader(suppressSpectator.fixture);
 
-      const saveButton = await suppressLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = suppressSpectator.component.ixForm();
+      const closedSpy = jest.spyOn(ixFormRef.closed, 'emit');
+      ixFormRef.submit();
+      suppressSpectator.detectChanges();
 
       expect(suppressSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: apiResult });
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
-    it('still invokes onSuccess when the snackbar is suppressed', async () => {
+    it('still invokes onSuccess when the snackbar is suppressed', () => {
       const onSuccessSpy = jest.fn();
       const apiResult = { id: 1 };
       submitHandlerSpy.mockReturnValue({
@@ -834,10 +686,10 @@ describe('IxFormComponent', () => {
       });
 
       const suppressSpectator = createSuppressComponent();
-      const suppressLoader = TestbedHarnessEnvironment.loader(suppressSpectator.fixture);
 
-      const saveButton = await suppressLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = suppressSpectator.component.ixForm();
+      ixFormRef.submit();
+      suppressSpectator.detectChanges();
 
       expect(onSuccessSpy).toHaveBeenCalledWith(apiResult);
       expect(suppressSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
@@ -845,7 +697,7 @@ describe('IxFormComponent', () => {
   });
 
   describe('error handling', () => {
-    it('handles errors from submitHandler request', async () => {
+    it('handles errors from submitHandler request', () => {
       const error = new Error('Validation failed');
       submitHandlerSpy.mockReturnValue({
         request$: throwError(() => error),
@@ -855,16 +707,17 @@ describe('IxFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       // Save button re-enables after the error path runs.
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(ixFormRef.canSubmit()).toBe(true);
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
         .toHaveBeenCalledWith(error, spectator.component.form);
     });
 
-    it('skips default error handling when onError returns true', async () => {
+    it('skips default error handling when onError returns true', () => {
       const error = new Error('Custom handled');
       const onErrorSpy = jest.fn(() => true);
       submitHandlerSpy.mockReturnValue({
@@ -876,14 +729,15 @@ describe('IxFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       expect(onErrorSpy).toHaveBeenCalledWith(error);
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).not.toHaveBeenCalled();
     });
 
-    it('falls back to default error handling when onError returns false', async () => {
+    it('falls back to default error handling when onError returns false', () => {
       const error = new Error('Not handled');
       const onErrorSpy = jest.fn(() => false);
       submitHandlerSpy.mockReturnValue({
@@ -895,15 +749,16 @@ describe('IxFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       expect(onErrorSpy).toHaveBeenCalledWith(error);
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
         .toHaveBeenCalledWith(error, spectator.component.form);
     });
 
-    it('does not fire success lifecycle if request errors after emitting', async () => {
+    it('does not fire success lifecycle if request errors after emitting', () => {
       const error = new Error('After emit');
       const onSuccessSpy = jest.fn();
       submitHandlerSpy.mockReturnValue({
@@ -915,8 +770,9 @@ describe('IxFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      const ixFormRef = spectator.component.ixForm();
+      ixFormRef.submit();
+      spectator.detectChanges();
 
       // next should settle the subscription, error afterwards should be ignored
       expect(onSuccessSpy).toHaveBeenCalledTimes(1);
@@ -925,13 +781,12 @@ describe('IxFormComponent', () => {
     });
   });
 
-  describe('auto title and extra actions', () => {
+  describe('auto title', () => {
     const createAutoTitleComponent = createComponentFactory({
       component: AutoTitleHostComponent,
       imports: [ReactiveFormsModule],
       providers: [
         ...ixFormTestingProviders(),
-        mockProvider(SlideInRef, slideInRef),
         mockAuth(),
       ],
     });
@@ -948,13 +803,6 @@ describe('IxFormComponent', () => {
       autoTitleSpectator.detectChanges();
       const ixForm = autoTitleSpectator.component.ixForm();
       expect(ixForm.resolvedTitle()).toBe('Edit Group');
-    });
-
-    it('renders extra action buttons via ixExtraActions slot', () => {
-      const autoTitleSpectator = createAutoTitleComponent();
-      const extraButton = autoTitleSpectator.query('button[ixExtraActions]');
-      expect(extraButton).toBeTruthy();
-      expect(extraButton).toHaveText('Advanced Options');
     });
 
     it('prefers explicit title over addTitle/editTitle', () => {
@@ -1003,14 +851,12 @@ describe('IxFormComponent', () => {
       imports: [ReactiveFormsModule],
       providers: [
         ...ixFormTestingProviders(),
-        mockProvider(SlideInRef, slideInRef),
         mockAuth(),
       ],
     });
 
-    it('reflects externalLoading in isLoading and disables save', async () => {
+    it('reflects externalLoading in isLoading and disables save', () => {
       const externalSpectator = createExternalLoadingComponent();
-      const loader2 = TestbedHarnessEnvironment.loader(externalSpectator.fixture);
 
       const ixForm = externalSpectator.component.ixForm();
       expect(ixForm.isLoading()).toBe(false);
@@ -1020,14 +866,14 @@ describe('IxFormComponent', () => {
 
       expect(ixForm.isLoading()).toBe(true);
 
-      const saveButton = await loader2.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
+      const ixFormRef = externalSpectator.component.ixForm();
+      expect(ixFormRef.canSubmit()).toBe(false);
 
       externalSpectator.component.externalLoading.set(false);
       externalSpectator.detectChanges();
 
       expect(ixForm.isLoading()).toBe(false);
-      expect(await saveButton.isDisabled()).toBe(false);
+      expect(ixFormRef.canSubmit()).toBe(true);
     });
   });
 
@@ -1073,7 +919,6 @@ describe('IxFormComponent', () => {
       imports: [ReactiveFormsModule],
       providers: [
         ...ixFormTestingProviders(),
-        mockProvider(SlideInRef, slideInRef),
         mockAuth(),
       ],
     });
@@ -1128,7 +973,6 @@ describe('IxFormComponent', () => {
       imports: [ReactiveFormsModule],
       providers: [
         ...ixFormTestingProviders(),
-        mockProvider(SlideInRef, slideInRef),
         mockAuth(),
       ],
     });
@@ -1185,9 +1029,8 @@ describe('IxFormComponent', () => {
   });
 
   describe('minimum submit feedback (side-panel host)', () => {
-    // No SlideInRef provided → the form is hosted in a `<tn-side-panel>`, where success is held for
-    // a minimum duration so the host's progress bar / dim overlay stay visible long enough to see.
-    // The `tick()`s below step across this boundary.
+    // Success is held for a minimum duration so the host's progress bar / dim overlay stay visible
+    // long enough to see. The `tick()`s below step across this boundary.
     const createSidePanelComponent = createComponentFactory({
       component: TestHostComponent,
       imports: [ReactiveFormsModule],
@@ -1195,10 +1038,6 @@ describe('IxFormComponent', () => {
         // This block asserts the delay itself, so keep the real duration that
         // `ixFormTestingProviders()` zeroes for every other spec.
         ...ixFormTestingProviders({ realSubmitFeedback: true }),
-        // Force the `<tn-side-panel>` host: `null` is exactly what `inject(SlideInRef,
-        // {optional: true})` sees when nothing provides one, and stating it here keeps the block
-        // independent of whatever the surrounding suite happens to provide.
-        { provide: SlideInRef, useValue: null },
         mockAuth(),
       ],
     });

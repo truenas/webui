@@ -114,9 +114,8 @@ implements OnInit, SidePanelHostForm {
   readonly isEditMode = input<boolean | null>(null);
 
   /**
-   * Emitted on a successful submit when hosted in a `<tn-side-panel>` (forwarded
-   * from the inner `<ix-form>`). Never fires in legacy SlideIn mode — there the
-   * inner `<ix-form>` closes the slide-in directly.
+   * Emitted on a successful submit, forwarded from the inner `<ix-form>`; the
+   * `<tn-side-panel>` host listens to close and reload.
    */
   readonly closed = output<boolean>();
 

@@ -17,8 +17,6 @@ import { ChartFormValue, App, ChartSchemaNodeConf } from 'app/interfaces/app.int
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
@@ -279,12 +277,6 @@ describe('AppWizardComponent', () => {
     },
   } as App;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: AppWizardComponent,
     imports: [
@@ -297,7 +289,6 @@ describe('AppWizardComponent', () => {
     ],
     providers: [
       provideTnFormFieldErrors(),
-      mockProvider(SlideIn),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of({}),
@@ -327,7 +318,6 @@ describe('AppWizardComponent', () => {
       mockProvider(DockerStore, {
         selectedPool$: of('pool set'),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(Router),
       mockAuth(),
     ],

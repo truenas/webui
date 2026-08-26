@@ -12,7 +12,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
@@ -43,12 +42,6 @@ describe('CloudBackupSnapshotsComponent', () => {
   let loader: HarnessLoader;
   let table: TnTableHarness;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: CloudBackupSnapshotsComponent,
     providers: [
@@ -63,7 +56,6 @@ describe('CloudBackupSnapshotsComponent', () => {
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(SlideInRef, slideInRef),
       provideMockStore({
         selectors: [
           {

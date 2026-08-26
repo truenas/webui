@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { afterNextRender, AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, HostBinding, input, OnChanges, signal, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostBinding, input, OnChanges, signal, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -12,6 +13,10 @@ import { Alert } from 'app/interfaces/alert.interface';
 import { AlertWithDuplicates, EnhancedAlert } from 'app/interfaces/smart-alert.interface';
 import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
 import { alertPanelClosed, dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
+import {
+  getConsolidatedDetailMessages, getConsolidatedSummary,
+} from 'app/modules/alerts/utils/alert-consolidation.utils';
+import { hasAlertDetails } from 'app/modules/alerts/utils/alert-summary.utils';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -48,7 +53,7 @@ enum AlertLevelColor {
     RequiresRolesDirective,
   ],
 })
-export class AlertComponent implements OnChanges, AfterViewInit {
+export class AlertComponent implements OnChanges {
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private smartAlertService = inject(SmartAlertService);
@@ -57,22 +62,55 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   readonly isHaLicensed = input<boolean>();
   readonly showActions = input<boolean>(true);
 
-  constructor() {
-    // Use afterNextRender to ensure DOM is ready before measuring
-    afterNextRender(() => {
-      this.checkIfExpandable();
-    });
-  }
-
+  /** More than one alert instance, which is what the count badge and Dismiss All report. */
   protected readonly hasDuplicates = computed(() => this.alert().duplicateCount > 1);
+
+  /** More than one object, which is what decides the headline and the detail list. */
+  protected readonly hasMultipleObjects = computed(() => this.alert().objectCount > 1);
 
   protected readonly duplicateCount = computed(() => this.alert().duplicateCount);
 
-  @ViewChild('alertMessage', { static: true }) alertMessage: ElementRef<HTMLElement>;
-
   protected isCollapsed = signal<boolean>(true);
-  protected isExpandable = signal<boolean>(false);
   protected showContextHelp = signal<boolean>(false);
+
+  // The computeds below cache translated strings, so they have to re-run on a language switch.
+  private langChange = toSignal(this.translate.onLangChange, { initialValue: null });
+
+  /**
+   * Concise headline: the group summary when this row consolidates several alerts,
+   * otherwise the first sentence of the alert's own message.
+   */
+  protected readonly summary = computed(() => {
+    // Read the lang-change signal so the translation below is redone on a switch.
+    this.langChange();
+
+    return getConsolidatedSummary(
+      { ...this.alert(), groupSummary: this.enhancedAlert().groupSummary },
+      this.translate,
+    );
+  });
+
+  /**
+   * What the message line shows. A single alert expands in place, so its full text
+   * replaces the summary rather than being repeated underneath it. A group keeps its
+   * headline and lists its members in `detailMessages`.
+   */
+  protected readonly displayedMessage = computed(() => {
+    if (this.isCollapsed() || this.hasMultipleObjects()) {
+      return this.summary();
+    }
+    return this.alert().formatted;
+  });
+
+  /** Full messages revealed by "View More", one per consolidated alert. */
+  protected readonly detailMessages = computed(() => getConsolidatedDetailMessages(this.alert()));
+
+  /** DOM id of the region the toggle controls, for its `aria-controls`. */
+  protected readonly expandableId = computed(() => `alert-expandable-${this.alert().id}`);
+
+  protected readonly isExpandable = computed(() => {
+    return this.hasMultipleObjects() || hasAlertDetails(this.alert().formatted);
+  });
 
   protected readonly requiredRoles = [Role.AlertListWrite];
   protected readonly closeIcon = alertIcons.close;
@@ -89,15 +127,17 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   }
 
   readonly levelLabel = computed(() => {
+    this.langChange();
     const levelLabel = alertLevelLabels.get(this.alert().level) || this.alert().level;
     return this.translate.instant(levelLabel);
   });
 
   readonly enhancedAlert = computed<Alert & EnhancedAlert>(() => {
-    return this.smartAlertService.enhanceAlert(this.alert());
+    return this.smartAlertService.enhanceAlert(this.alert(), { isConsolidated: this.hasMultipleObjects() });
   });
 
   protected readonly dismissButtonText = computed(() => {
+    this.langChange();
     if (this.hasDuplicates()) {
       return this.translate.instant('Dismiss All ({count})', { count: this.duplicateCount() });
     }
@@ -105,6 +145,7 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   });
 
   protected readonly dismissTooltip = computed(() => {
+    this.langChange();
     if (this.hasDuplicates()) {
       return this.translate.instant('Dismiss all {count} instances', { count: this.duplicateCount() });
     }
@@ -112,27 +153,12 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   });
 
   protected readonly duplicateCountTooltip = computed(() => {
+    this.langChange();
     return this.translate.instant('{count} instances of this alert', { count: this.duplicateCount() });
   });
 
   ngOnChanges(): void {
     this.setStyles();
-    this.checkIfExpandable();
-  }
-
-  ngAfterViewInit(): void {
-    this.checkIfExpandable();
-  }
-
-  private checkIfExpandable(): void {
-    const alertMessageElement = this.alertMessage?.nativeElement;
-    if (!alertMessageElement) {
-      return;
-    }
-    // Use setTimeout to ensure CSS (line-clamp) has been fully applied before measuring
-    setTimeout(() => {
-      this.isExpandable.set(alertMessageElement.scrollHeight > alertMessageElement.offsetHeight);
-    }, 0);
   }
 
   toggleCollapse(): void {

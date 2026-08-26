@@ -3,7 +3,7 @@ import { AuditService } from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 

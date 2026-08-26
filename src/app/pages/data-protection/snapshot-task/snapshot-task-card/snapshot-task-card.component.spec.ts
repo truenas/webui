@@ -18,7 +18,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.component';
@@ -70,12 +69,6 @@ describe('SnapshotTaskCardComponent', () => {
     } as PeriodicSnapshotTask,
   ];
 
-  const slideInRef: SlideInRef<PeriodicSnapshotTask | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: SnapshotTaskCardComponent,
     providers: [
@@ -106,7 +99,6 @@ describe('SnapshotTaskCardComponent', () => {
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
           closed: of(true),

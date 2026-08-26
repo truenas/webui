@@ -28,14 +28,14 @@ describe('DatasetRolesCellComponent', () => {
     await setupTest({ name: 'root/dataset' } as DatasetDetails, true);
 
     expect(await ixIcon.getName()).toBe('tn-truenas-logo-mark');
-    expect(spectator.query(TnTooltipDirective)!.message).toBe('This dataset is used by the system');
+    expect(spectator.query(TnTooltipDirective)!.message()).toBe('This dataset is used by the system');
   });
 
   it('shows "Applications" icon and tooltip when dataset has name `ix-apps`', async () => {
     await setupTest({ name: 'root/ix-apps' } as DatasetDetails, false);
 
     expect(await ixIcon.getName()).toBe('apps');
-    expect(spectator.query(TnTooltipDirective)!.message).toBe(
+    expect(spectator.query(TnTooltipDirective)!.message()).toBe(
       'This dataset is used to store apps config and other container related data',
     );
   });
@@ -44,21 +44,21 @@ describe('DatasetRolesCellComponent', () => {
     await setupTest({ name: 'root', apps: [{ name: 'app1', path: '' }, { name: 'app1', path: '' }, { name: 'app2', path: '' }] } as DatasetDetails, false);
 
     expect(await ixIcon.getName()).toBe('apps');
-    expect(spectator.query(TnTooltipDirective)!.message).toBe('This dataset is used by: app1, app2');
+    expect(spectator.query(TnTooltipDirective)!.message()).toBe('This dataset is used by: app1, app2');
   });
 
   it('shows "VM" icon and tooltip when dataset has vms', async () => {
     await setupTest({ name: 'root', vms: [{ name: 'vm1', path: '' }, { name: 'vm1', path: '' }, { name: 'vm2', path: '' }] } as DatasetDetails, false);
 
     expect(await ixIcon.getName()).toBe('mdi-laptop');
-    expect(spectator.query(TnTooltipDirective)!.message).toBe('This dataset is used by: vm1, vm2');
+    expect(spectator.query(TnTooltipDirective)!.message()).toBe('This dataset is used by: vm1, vm2');
   });
 
   it('shows "Container" icon and tooltip when dataset has containers', async () => {
     await setupTest({ name: 'root', containers: [{ name: 'container1', path: '' }, { name: 'container1', path: '' }, { name: 'container2', path: '' }] } as DatasetDetails, false);
 
     expect(await ixIcon.getName()).toBe('mdi-package-variant-closed');
-    expect(spectator.query(TnTooltipDirective)!.message).toBe('This dataset is used by: container1, container2');
+    expect(spectator.query(TnTooltipDirective)!.message()).toBe('This dataset is used by: container1, container2');
   });
 
   it('shows "Share" icon when dataset or children has shares', async () => {

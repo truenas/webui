@@ -2,8 +2,8 @@ import { Location } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { AuditService } from 'app/enums/audit.enum';
 import { AdvancedSearchQuery, BasicSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
-import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
-import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
+import { TablePagination } from 'app/modules/tn-table/interfaces/table-pagination.interface';
+import { TableSort } from 'app/modules/tn-table/interfaces/table-sort.interface';
 
 export interface UrlOptions<T> {
   sorting?: TableSort<T>;

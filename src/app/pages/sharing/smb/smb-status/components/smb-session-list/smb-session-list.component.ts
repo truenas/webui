@@ -13,12 +13,12 @@ import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbSession } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { column } from 'app/modules/tn-table/column-configs';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
-} from 'app/modules/ix-table/utils';
+} from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -67,28 +67,25 @@ export class SmbSessionListComponent implements OnInit {
   sessions: SmbSession[] = [];
 
   protected readonly columns = signal(createTable<SmbSession>([
-    textColumn({ title: this.translate.instant('Session ID'), propertyName: 'session_id' }),
-    textColumn({ title: this.translate.instant('Hostname'), propertyName: 'hostname' }),
-    textColumn({ title: this.translate.instant('Remote machine'), propertyName: 'remote_machine' }),
-    textColumn({ title: this.translate.instant('Username'), propertyName: 'username' }),
-    textColumn({ title: this.translate.instant('Groupname'), propertyName: 'groupname' }),
-    textColumn({ title: this.translate.instant('UID'), propertyName: 'uid' }),
-    textColumn({ title: this.translate.instant('GID'), propertyName: 'gid' }),
-    textColumn({ title: this.translate.instant('Session dialect'), propertyName: 'session_dialect' }),
-    textColumn({
+    column({ title: this.translate.instant('Session ID'), propertyName: 'session_id' }),
+    column({ title: this.translate.instant('Hostname'), propertyName: 'hostname' }),
+    column({ title: this.translate.instant('Remote machine'), propertyName: 'remote_machine' }),
+    column({ title: this.translate.instant('Username'), propertyName: 'username' }),
+    column({ title: this.translate.instant('Groupname'), propertyName: 'groupname' }),
+    column({ title: this.translate.instant('UID'), propertyName: 'uid' }),
+    column({ title: this.translate.instant('GID'), propertyName: 'gid' }),
+    column({ title: this.translate.instant('Session dialect'), propertyName: 'session_dialect' }),
+    column({
       title: this.translate.instant('Encryption'),
       propertyName: 'encryption',
       getValue: (row) => row.encryption.cipher,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Signing'),
       propertyName: 'signing',
       getValue: (row) => row.signing.cipher,
     }),
-  ], {
-    uniqueRowTag: (row) => 'smb-session-' + row.session_id,
-    ariaLabels: (row) => [row.hostname, this.translate.instant('SMB Session')],
-  }));
+  ]));
 
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
 
