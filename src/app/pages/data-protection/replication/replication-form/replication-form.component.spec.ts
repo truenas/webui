@@ -189,6 +189,13 @@ describe('ReplicationFormComponent', () => {
       tick();
     }));
 
+    // The section groups are module-level and shared by every test here, so anything a test
+    // dirties or invalidates has to be put back even when that test fails part way through.
+    afterEach(() => {
+      sourceForm.controls.name_regex.markAsPristine();
+      targetForm.controls.target_dataset.setErrors(null);
+    });
+
     it('shows form sections', () => {
       expect(spectator.query(GeneralSectionComponent)).toExist();
       expect(spectator.query(TransportSectionComponent)).toExist();
@@ -237,8 +244,6 @@ describe('ReplicationFormComponent', () => {
 
       sourceForm.controls.name_regex.markAsDirty();
       expect(spectator.component.hasUnsavedChanges()).toBe(true);
-
-      sourceForm.controls.name_regex.markAsPristine();
     });
 
     it('rolls section validity up into the host Save gate', () => {
@@ -246,8 +251,6 @@ describe('ReplicationFormComponent', () => {
 
       targetForm.controls.target_dataset.setErrors({ required: true });
       expect(spectator.component.canSubmit()).toBe(false);
-
-      targetForm.controls.target_dataset.setErrors(null);
     });
 
     it('shows eligible snapshots message', fakeAsync(() => {

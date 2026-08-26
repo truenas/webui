@@ -187,10 +187,14 @@ export class ReplicationFormComponent extends IxFormHostForm implements OnInit {
   }
 
   private registerSectionForms(): void {
-    const names = ['general', 'transport', 'source', 'target', 'schedule'];
-    this.sections.forEach((section, index) => {
-      this.form.addControl(names[index], section.form);
-    });
+    const registrations = [
+      ['general', this.generalSection()],
+      ['transport', this.transportSection()],
+      ['source', this.sourceSection()],
+      ['target', this.targetSection()],
+      ['schedule', this.scheduleSection()],
+    ] as const;
+    registrations.forEach(([name, section]) => this.form.addControl(name, section.form));
   }
 
   setForEdit(): void {
