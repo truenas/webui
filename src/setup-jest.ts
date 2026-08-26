@@ -307,11 +307,15 @@ Range.prototype.getClientRects = () => ({
 // eslint-disable-next-line no-restricted-globals
 Object.defineProperty(window.URL, 'createObjectURL', { value: () => '' });
 
+// jsdom's own `performance` is replaced rather than extended, so anything this stub omits
+// is missing entirely: `@truenas/ui-components` reads `performance.now()` to time its
+// transition fallbacks, and without it every spec rendering a side panel or dialog throws.
 Object.defineProperty(global, 'performance', {
   writable: true,
   value: {
     mark: () => {},
     measure: () => {},
+    now: () => Date.now(),
   },
 });
 

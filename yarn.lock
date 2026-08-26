@@ -4551,9 +4551,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/ui-components@npm:~0.5.1":
-  version: 0.5.1
-  resolution: "@truenas/ui-components@npm:0.5.1"
+"@truenas/ui-components@npm:~0.7.0":
+  version: 0.7.0
+  resolution: "@truenas/ui-components@npm:0.7.0"
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
     "@mdi/svg": "npm:~7.4.47"
@@ -4574,7 +4574,7 @@ __metadata:
     "@mdi/js": ^7.4.47
   bin:
     truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/21008c23bd8901f1a17ce04f3d8ef07476f79fbe9a3221d5eacc16c8d749fe37b4f87ddef39d86bc624d41e3f2d01d3307360498d260c573cb330d0be10258dd
+  checksum: 10/6e06bac9090e8ac4e0ffb5091e152c6703a23b0c94627c5b5b73041162646351979dec25b3ded9d5282a3f35b731018f8b09cd621676c69e92b940594ce1fc49
   languageName: node
   linkType: hard
 
@@ -16111,7 +16111,7 @@ __metadata:
     "@stylistic/eslint-plugin": "npm:~2.9.0"
     "@truenas/api-client": "npm:~1.0.3"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
-    "@truenas/ui-components": "npm:~0.5.1"
+    "@truenas/ui-components": "npm:~0.7.0"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"

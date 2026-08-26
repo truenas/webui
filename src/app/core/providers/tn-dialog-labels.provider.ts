@@ -1,9 +1,9 @@
 import { Provider } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { TN_DIALOG_LABELS, type TnDialogLabels } from '@truenas/ui-components';
+import { TN_DIALOG_CHROME_LABELS, type TnDialogChromeLabels } from '@truenas/ui-components';
 import { translated } from 'app/helpers/translated.helper';
 
-const labelKeys: Record<keyof TnDialogLabels, string> = {
+const labelKeys: Record<keyof TnDialogChromeLabels, string> = {
   close: T('Close dialog'),
   enterFullscreen: T('Enter fullscreen'),
   exitFullscreen: T('Exit fullscreen'),
@@ -18,8 +18,8 @@ const labelKeys: Record<keyof TnDialogLabels, string> = {
  */
 export function provideTnDialogLabels(): Provider {
   return {
-    provide: TN_DIALOG_LABELS,
-    useFactory: () => translated<TnDialogLabels>((translate) => ({
+    provide: TN_DIALOG_CHROME_LABELS,
+    useFactory: () => translated<TnDialogChromeLabels>((translate) => ({
       close: translate.instant(labelKeys.close),
       enterFullscreen: translate.instant(labelKeys.enterFullscreen),
       exitFullscreen: translate.instant(labelKeys.exitFullscreen),
