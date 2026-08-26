@@ -44,7 +44,6 @@ import { regexValidator } from 'app/modules/forms/ix-forms/validators/regex-vali
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -91,9 +90,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   private cdr = inject(ChangeDetectorRef);
   private errorParser = inject(ErrorParserService);
   private errorHandler = inject(ErrorHandlerService);
-  // Optional: the wizard is hosted in the `<tn-side-panel>` form panel (no SlideInRef); "Advanced
-  // Options" swaps via {@link formPanel} there.
-  slideInRef = inject<SlideInRef<ReplicationTask, ReplicationTask>>(SlideInRef, { optional: true });
   private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
@@ -205,12 +201,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     return this.form.value.source_datasets_from === DatasetSource.Local
       ? helptextReplicationWizard.nameSchemaOrRegexPush
       : helptextReplicationWizard.nameSchemaOrRegexPull;
-  }
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
   }
 
   ngOnInit(): void {

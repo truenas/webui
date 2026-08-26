@@ -1,0 +1,16 @@
+@if (hiddenColumns().length) {
+  <dl class="table-hidden-columns">
+    @for (column of hiddenColumns(); track column) {
+      <div>
+        <dt>{{ column.title ? (column.title | translate) : '' }}:</dt>
+        <dd
+          tnTestIdType="text"
+          [tnTestId]="[column.title, uniqueRowTag(), column.testIdSuffix ?? 'row-text']"
+        >{{ value(column) }}</dd>
+      </div>
+    }
+    <tn-divider></tn-divider>
+  </dl>
+}
+
+<ng-content></ng-content>

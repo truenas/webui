@@ -24,7 +24,6 @@ import {
   SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -94,16 +93,6 @@ export class ReplicationFormComponent extends SidePanelForm implements OnInit {
 
   protected existingReplication: ReplicationTask | undefined;
 
-  /**
-   * The inherited {@link SidePanelForm.slideInRef} is typed `<unknown, boolean>`, but this form's
-   * legacy SlideIn host carries `ReplicationTask` data/response and swaps to/from the wizard. Read
-   * it through the concrete generics here so `getData()` and the wizard `swap` type-check. Null when
-   * hosted in a `<tn-side-panel>` (opened via FormSidePanelService).
-   */
-  private get typedSlideInRef(): SlideInRef<ReplicationTask | undefined, ReplicationTask> | null {
-    return this.slideInRef as unknown as SlideInRef<ReplicationTask | undefined, ReplicationTask> | null;
-  }
-
   sourceNodeProvider: TreeNodeProvider;
   targetNodeProvider: TreeNodeProvider;
 
@@ -134,7 +123,7 @@ export class ReplicationFormComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.existingReplication = this.typedSlideInRef?.getData() ?? this.replicationToEdit();
+    this.existingReplication = this.replicationToEdit();
 
     this.countSnapshotsOnChanges();
     this.updateExplorersOnChanges();
@@ -256,16 +245,12 @@ export class ReplicationFormComponent extends SidePanelForm implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    if (this.typedSlideInRef) {
-      this.typedSlideInRef.swap?.(ReplicationWizardComponent, { wide: true });
-    } else {
-      // Panel host: swap back to the wizard in place (footerless — the stepper owns its buttons).
-      this.formPanel.swap(ReplicationWizardComponent as unknown as Type<SidePanelForm>, {
-        title: this.translate.instant('Replication Task Wizard'),
-        wide: true,
-        footerless: true,
-      });
-    }
+    // Swap back to the wizard in place (footerless — the stepper owns its buttons).
+    this.formPanel.swap(ReplicationWizardComponent as unknown as Type<SidePanelForm>, {
+      title: this.translate.instant('Replication Task Wizard'),
+      wide: true,
+      footerless: true,
+    });
   }
 
   private getPayload(): ReplicationCreate {

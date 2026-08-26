@@ -397,26 +397,4 @@
       }
     </tn-form-section>
   </div>
-
-  <!-- Inline extra actions only in the legacy SlideIn host. In the `<tn-side-panel>` host these are
-       rendered in the panel footer instead (see `footerActions`), so gate them to avoid duplicates. -->
-  @if (slideInRef) {
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      ixExtraActions
-      testId="dry-run"
-      [label]="helptext.dryRunButton | translate"
-      [disabled]="form.invalid || isLoading() || ixForm.isSubmitting()"
-      (onClick)="onDryRun()"
-    ></tn-button>
-    @if (isNew) {
-      <tn-button
-        ixExtraActions
-        testId="switch-to-wizard"
-        [label]="'Switch To Wizard' | translate"
-        [disabled]="ixForm.isSubmitting()"
-        (onClick)="onSwitchToWizard()"
-      ></tn-button>
-    }
-  }
 </ix-form>

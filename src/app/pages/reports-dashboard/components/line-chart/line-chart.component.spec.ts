@@ -104,19 +104,60 @@ describe('LineChartComponent', () => {
   });
 
   describe('rendering', () => {
-    it('should render chart after view init', () => {
-      const renderSpy = jest.spyOn(spectator.component, 'render');
-      spectator.component.ngAfterViewInit();
-
-      expect(renderSpy).toHaveBeenCalled();
+    it('builds the chart once when data is already set before the view initializes', () => {
+      // ngOnChanges gets there first, so ngAfterViewInit must not construct a
+      // second Dygraph and orphan the first one's resize listener.
+      expect(Dygraph as unknown as jest.Mock).toHaveBeenCalledTimes(1);
     });
 
     it('should not render when no data is available', () => {
-      spectator.setInput('data', undefined);
-
       expect(() => {
-        spectator.component.render();
+        spectator.setInput('data', undefined);
       }).not.toThrow();
+    });
+
+    it('updates the existing chart instead of building a new one when data refreshes', () => {
+      const mockDygraph = Dygraph as unknown as jest.Mock;
+      const chart = spectator.component.chart;
+      const constructorCalls = mockDygraph.mock.calls.length;
+
+      spectator.setInput('data', {
+        ...mockReportingData,
+        data: [[Date.now() / 1000, 20, 10, 70]],
+      } as ReportingData);
+
+      expect(spectator.component.chart).toBe(chart);
+      expect(mockDygraph).toHaveBeenCalledTimes(constructorCalls);
+      expect(chart.updateOptions).toHaveBeenCalled();
+    });
+
+    it('passes the refreshed data and clears any drag-zoom window on update', () => {
+      const timestamp = 1755000000;
+      spectator.setInput('data', {
+        ...mockReportingData,
+        data: [[timestamp, 20, 10, 70]],
+      } as ReportingData);
+
+      const options = jest.mocked(spectator.component.chart.updateOptions).mock.lastCall[0];
+
+      expect(options).toMatchObject({ dateWindow: null });
+      expect((options as { file: [Date, ...number[]][] }).file).toEqual([[expect.any(Date), 20, 10, 70]]);
+    });
+
+    it('repaints the existing chart with the new palette when the theme changes', () => {
+      const mockDygraph = Dygraph as unknown as jest.Mock;
+      const chart = spectator.component.chart;
+      const constructorCalls = mockDygraph.mock.calls.length;
+      const newColors = ['#111111', '#222222', '#333333'];
+
+      spectator.setInput('chartColors', newColors);
+
+      const options = jest.mocked(chart.updateOptions).mock.lastCall[0];
+
+      expect(mockDygraph).toHaveBeenCalledTimes(constructorCalls);
+      expect(options).toMatchObject({ colors: newColors });
+      // A recolour must not throw away the range the user zoomed into.
+      expect(options).not.toHaveProperty('dateWindow');
     });
   });
 

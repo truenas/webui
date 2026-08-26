@@ -3,9 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TreeModule } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
-} from '@truenas/ui-components';
+import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -15,9 +13,6 @@ import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -38,9 +33,6 @@ describe('InitShutdownFormComponent', () => {
         mockCall('initshutdownscript.create'),
         mockCall('initshutdownscript.update'),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(SystemGeneralService),
       mockProvider(FilesystemService, {
@@ -49,11 +41,6 @@ describe('InitShutdownFormComponent', () => {
             return of([]);
           };
         }),
-      }),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        getData: jest.fn((): undefined => undefined),
-        requireConfirmationWhen: jest.fn(),
       }),
       mockAuth(),
     ],
@@ -85,8 +72,11 @@ describe('InitShutdownFormComponent', () => {
       await (await getSelect('when')).selectOption('Pre Init');
       await (await getInput('timeout')).setValue('60');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(api.call).toHaveBeenCalledWith('initshutdownscript.create', [{
         command: 'rf -rf /',
@@ -106,8 +96,11 @@ describe('InitShutdownFormComponent', () => {
       const explorer = await loader.getHarness(IxExplorerHarness);
       await explorer.setValue('/mnt/new.sh');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(api.call).toHaveBeenCalledWith('initshutdownscript.create', [{
         comment: 'New 2',
@@ -123,21 +116,17 @@ describe('InitShutdownFormComponent', () => {
   describe('editing existing init/shutdown script', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            close: jest.fn(),
-            requireConfirmationWhen: jest.fn(),
-            getData: jest.fn(() => ({
-              id: 13,
-              comment: 'Existing script',
-              enabled: true,
-              type: InitShutdownScriptType.Script,
-              script: '/mnt/existing.sh',
-              when: InitShutdownScriptWhen.PostInit,
-              timeout: 45,
-            } as InitShutdownScript)),
-          }),
-        ],
+        props: {
+          editScript: {
+            id: 13,
+            comment: 'Existing script',
+            enabled: true,
+            type: InitShutdownScriptType.Script,
+            script: '/mnt/existing.sh',
+            when: InitShutdownScriptWhen.PostInit,
+            timeout: 45,
+          } as InitShutdownScript,
+        },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(MockApiService);
@@ -159,8 +148,11 @@ describe('InitShutdownFormComponent', () => {
       await (await getSelect('type')).selectOption('Command');
       await (await getInput('command')).setValue('ls -la');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(api.call).toHaveBeenCalledWith('initshutdownscript.update', [
         13,

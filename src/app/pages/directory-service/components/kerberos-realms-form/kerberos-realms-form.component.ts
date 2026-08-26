@@ -59,7 +59,7 @@ export class KerberosRealmsFormComponent extends SidePanelForm implements OnInit
   };
 
   ngOnInit(): void {
-    this.editingRealm = (this.slideInRef?.getData() as KerberosRealm | undefined) ?? this.editingRow();
+    this.editingRealm = this.editingRow();
 
     if (this.editingRealm) {
       this.form.patchValue(this.editingRealm);

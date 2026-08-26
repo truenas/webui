@@ -4,15 +4,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import {
-  TnButtonHarness, TnCheckboxHarness, TnSelectHarness,
-} from '@truenas/ui-components';
+import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -72,10 +69,6 @@ describe('SyslogFormComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideInRef, {
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(),
-      }),
       mockAuth(),
     ],
   });
@@ -98,8 +91,11 @@ describe('SyslogFormComponent', () => {
     await (await getSelect('sysloglevel')).selectOption('Info');
     await (await getCheckbox('syslog_audit')).check();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+    spectator.component.submit();
+
+    spectator.detectChanges();
 
     expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
       {
@@ -117,7 +113,7 @@ describe('SyslogFormComponent', () => {
     ]);
   });
 
-  it('filters out servers without host on save', async () => {
+  it('filters out servers without host on save', () => {
     // Directly add an empty server to the form array
     spectator.component.syslogServersArray.push(spectator.inject(FormBuilder).group({
       host: [''],
@@ -126,8 +122,9 @@ describe('SyslogFormComponent', () => {
     }));
 
     // Submit with an empty second server
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+    spectator.component.submit();
+    spectator.detectChanges();
 
     // Should only save servers with hosts
     expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
@@ -143,7 +140,7 @@ describe('SyslogFormComponent', () => {
     ]);
   });
 
-  it('handles TLS certificate as integer', async () => {
+  it('handles TLS certificate as integer', () => {
     // Add a server with TLS and certificate
     spectator.component.addServer();
     spectator.component.syslogServersArray.at(1).patchValue({
@@ -153,8 +150,9 @@ describe('SyslogFormComponent', () => {
     });
 
     // Submit the form
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+    spectator.component.submit();
+    spectator.detectChanges();
 
     // Should keep certificate as integer
     expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
@@ -226,14 +224,15 @@ describe('SyslogFormComponent', () => {
     expect(newServerGroup.controls.tls_certificate.hasError('required')).toBe(false);
   });
 
-  it('allows configuration with no syslog servers', async () => {
+  it('allows configuration with no syslog servers', () => {
     // Remove the existing server
     spectator.component.removeServer(0);
     expectArrayLength(spectator.component.syslogServersArray, 0);
 
     // Save with no servers
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+    spectator.component.submit();
+    spectator.detectChanges();
 
     expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
       expect.objectContaining({

@@ -130,7 +130,11 @@
     </ng-container>
 
     <ng-template let-disk tnDetailRowDef>
-      <ix-table-details-row [hiddenColumns]="hiddenColumns()" [row]="disk">
+      <ix-table-details-row
+        [hiddenColumns]="hiddenColumns()"
+        [row]="disk"
+        [uniqueRowTag]="detailsRowTag(disk)"
+      >
         <div class="table-details-row-actions">
           <tn-button
             icon="mdi-pencil"
