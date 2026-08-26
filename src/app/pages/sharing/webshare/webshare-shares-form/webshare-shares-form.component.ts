@@ -40,7 +40,6 @@ export interface WebShareFormData {
 @Component({
   selector: 'ix-webshare-shares-form',
   templateUrl: './webshare-shares-form.component.html',
-  styleUrls: ['./webshare-shares-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,

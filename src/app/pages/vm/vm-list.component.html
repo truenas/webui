@@ -204,7 +204,11 @@
     </ng-container>
 
     <ng-template let-vm tnDetailRowDef>
-      <ix-table-details-row [hiddenColumns]="hiddenColumns()" [row]="vm">
+      <ix-table-details-row
+        [hiddenColumns]="hiddenColumns()"
+        [row]="vm"
+        [uniqueRowTag]="uniqueRowTag(vm)"
+      >
         <ix-vm-details-row [vm]="vm"></ix-vm-details-row>
       </ix-table-details-row>
     </ng-template>

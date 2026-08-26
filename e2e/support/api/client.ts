@@ -6,9 +6,49 @@
  * the API — preconditions (R3.1), teardown (R3.2), artifact collection (R7.2) —
  * goes through a client obtained here.
  */
-import { createTrueNasClient, type AuthResponse, type TrueNasApiClient } from '@truenas/api-client';
+import {
+  createTrueNasClient, SUPPORTED_API_VERSIONS,
+  type ApiDirectoryV27_0_0, type AuthResponse, type TrueNasApiClient,
+} from '@truenas/api-client';
 import { filter, firstValueFrom, take, timeout } from 'rxjs';
 import type { TargetConfig } from '../config';
+
+/**
+ * The API surface the suite is written against.
+ *
+ * Unparameterised, the client defaults to v25.10.0, whose curated directory is
+ * missing most of what the fixtures call.
+ *
+ * Raising this needs both ceilings to allow it: the appliance has to advertise
+ * the version and `@truenas/api-client` has to implement it
+ * (`MAX_SUPPORTED_VERSION`, `CLIENT_BY_VERSION_KEY`). Name a surface the client
+ * cannot select and its methods compile, then fail at runtime as unknown.
+ *
+ * Everything else here derives from this one line — the client type below, and
+ * the response shapes fixtures ask for with
+ * `CallResponse<E2eApiDirectory, 'some.method'>`, which is how they name a shape
+ * the package declares without exporting.
+ */
+export type E2eApiDirectory = ApiDirectoryV27_0_0;
+
+/** A connected client typed against {@link E2eApiDirectory}. */
+export type E2eApiClient = TrueNasApiClient<E2eApiDirectory>;
+
+/**
+ * The same version again, for the runtime check below.
+ *
+ * The package maps no directory to its version, so this cannot be derived from
+ * {@link E2eApiDirectory} — change one and you must change the other, or the
+ * check inverts: warning on every correctly-negotiated run and going quiet on
+ * the fallback it exists to catch.
+ *
+ * `satisfies` at least holds the label to a version the package supports, so a
+ * typo or a version ahead of the client fails to compile.
+ */
+const expectedApiVersion = {
+  year: 27,
+  label: 'v27.0.0' satisfies (typeof SUPPORTED_API_VERSIONS)[number],
+} as const;
 
 /** Log context only — the client uses it for correlation, not identity. */
 const clientUuid = 'webui-e2e';
@@ -39,8 +79,8 @@ const loginTimeoutMs = 30_000;
  * authenticated session — which includes outcomes the client itself does not
  * treat as errors, such as a two-factor challenge.
  */
-export async function connectAndLogin(config: TargetConfig): Promise<TrueNasApiClient> {
-  const client = await createTrueNasClient({
+export async function connectAndLogin(config: TargetConfig): Promise<E2eApiClient> {
+  const client = await createTrueNasClient<E2eApiDirectory>({
     uuid: clientUuid,
     hostnames: [config.middlewareHost],
     enabled: true,
@@ -72,19 +112,15 @@ export async function connectAndLogin(config: TargetConfig): Promise<TrueNasApiC
     );
   }
 
-  // Deliberately outside the try. The client only *throws* on `AUTH_ERR`;
-  // `OTP_REQUIRED`, `EXPIRED` and `REDIRECT` all resolve normally with the
-  // session still unauthenticated, so treating a non-throwing emission as
-  // success hands back a client that looks connected and then fails on its first
-  // real call — up to a minute later, as an authorization error naming neither
-  // the account nor the reason.
+  // Outside the try deliberately: raised in it, this would be caught and
+  // re-wrapped by the handler for transport failures, and the socket closed
+  // twice.
   //
-  // Raising it here rather than in the block above keeps the message intact:
-  // inside the try it would be caught and re-wrapped by the handler that exists
-  // for transport failures, and the socket would be closed twice.
-  //
-  // Compared as a string because the package declares `AuthResponseType` but
-  // does not export it — only the `AuthResponse` interface referencing it.
+  // The client only *throws* on `AUTH_ERR`. `OTP_REQUIRED`, `EXPIRED` and
+  // `REDIRECT` all resolve normally with the session still unauthenticated, so
+  // treating a non-throwing emission as success returns a client that looks
+  // connected and fails on its first real call — a minute later, as an
+  // authorization error naming neither the account nor the reason.
   const outcome = String(auth.response_type);
 
   if (outcome !== 'SUCCESS') {
@@ -99,6 +135,23 @@ export async function connectAndLogin(config: TargetConfig): Promise<TrueNasApiC
     );
   }
 
+  // The only check that the negotiated surface is the one the types assume.
+  // A rejected certificate makes version discovery's `fetch` fail, get
+  // classified as a network error, and fall back to the oldest supported API —
+  // whose directory is missing most of what the fixtures call. Continuing from
+  // there buys a run that dies later on unknown methods with nothing naming the
+  // cause, so this fails here instead.
+  if (client.version.year !== expectedApiVersion.year) {
+    client.close();
+    throw new Error(
+      `Connected to middleware at ${config.middlewareHost} on API `
+      + `${client.version.version}, but the suite is typed against `
+      + `${expectedApiVersion.label}. Version discovery falls back to the oldest supported API `
+      + 'when it cannot reach /api/versions, so check for a certificate or network problem '
+      + 'before assuming the appliance is old.',
+    );
+  }
+
   return client;
 }
 
@@ -110,7 +163,7 @@ export async function connectAndLogin(config: TargetConfig): Promise<TrueNasApiC
  */
 export async function withClient<T>(
   config: TargetConfig,
-  work: (client: TrueNasApiClient) => Promise<T>,
+  work: (client: E2eApiClient) => Promise<T>,
 ): Promise<T> {
   const client = await connectAndLogin(config);
   try {

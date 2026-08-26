@@ -201,14 +201,14 @@ describe('IxSelectComponent', () => {
 
       const tooltips = spectator.queryAll(TnTooltipDirective);
       expect(tooltips).toHaveLength(1);
-      expect(tooltips[0].disabled).toBe(false);
+      expect(tooltips[0].disabled()).toBe(false);
 
       await select.close();
       spectator.detectChanges();
 
       // Once the panel closes the hover tooltip must be disabled so its overlay
       // is torn down instead of reflowing to the viewport origin (0,0).
-      expect(tooltips[0].disabled).toBe(true);
+      expect(tooltips[0].disabled()).toBe(true);
     });
   });
 

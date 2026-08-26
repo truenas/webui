@@ -75,14 +75,13 @@ describe('NfsFormComponent', () => {
     await description.setValue(value);
   };
 
-  // The four user/group autocompletes in Access-fieldset DOM order.
-  const getAutocomplete = async (
+  // The four user/group autocompletes, addressed by the control they are bound to rather
+  // than by DOM order, so reordering the Access fieldset can't silently swap them.
+  const getAutocomplete = (
     field: 'maproot_user' | 'maproot_group' | 'mapall_user' | 'mapall_group',
-  ): Promise<TnAutocompleteHarness> => {
-    const index = ['maproot_user', 'maproot_group', 'mapall_user', 'mapall_group'].indexOf(field);
-    const autocompletes = await loader.getAllHarnesses(TnAutocompleteHarness);
-    return autocompletes[index];
-  };
+  ): Promise<TnAutocompleteHarness> => loader.getHarness(
+    TnAutocompleteHarness.with({ selector: `[formControlName="${field}"]` }),
+  );
 
   const typeCustomValue = async (harness: TnAutocompleteHarness, value: string): Promise<void> => {
     await harness.setInputValue(value);

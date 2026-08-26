@@ -55,7 +55,7 @@ export interface FormSidePanelOptions {
 
 /**
  * Opens a {@link SidePanelHostForm} in a `tn-side-panel`, imperatively — the form's host-agnostic
- * "side-panel" mode (no {@link SlideInRef}; exposes `closed` / `canSubmit` / `submit`).
+ * exposing `closed` / `canSubmit` / `submit`.
  *
  * This is the go-forward replacement for declaring a `<tn-side-panel>` in every card/page that
  * hosts a config form: callers just `open(FormComponent)` and the chrome (header, close button,
@@ -230,7 +230,7 @@ export class FormSidePanelService {
   /**
    * Replaces the hosted component in the TOP open panel in place — the panel chrome (header, backdrop,
    * focus trap, the {@link SlideInResult} listeners) stays, only the projected content swaps. This is
-   * the panel equivalent of the legacy `SlideInRef.swap`, used for wizard ⇄ advanced-form switches.
+   * used for wizard ⇄ advanced-form switches.
    *
    * The new component's `closed` is re-wired automatically: the container re-emits `formAttached`
    * when the portal re-attaches, and {@link open}'s subscription wires each attached form's close.

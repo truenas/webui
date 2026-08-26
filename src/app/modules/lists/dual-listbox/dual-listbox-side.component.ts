@@ -19,8 +19,8 @@ import {
   TnListItemComponent, tnIconMarker,
 } from '@truenas/ui-components';
 import { translated } from 'app/helpers/translated.helper';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { DualListBoxSide, ListType, SelectionModifiers } from 'app/modules/lists/dual-listbox/dual-listbox-side';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 
 /** How long a type-ahead buffer stays alive between keystrokes. */
 const typeAheadResetTimeout = 800;

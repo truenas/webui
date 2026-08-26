@@ -174,7 +174,6 @@ export class UserFormComponent extends SidePanelForm<User> implements OnInit {
   }
 
   constructor() {
-    // Base registers the legacy SlideIn dirty-confirmation guard using hasUnsavedChanges().
     super();
     this.setupUsernameUpdate();
   }

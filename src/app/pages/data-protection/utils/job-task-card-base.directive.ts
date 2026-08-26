@@ -8,10 +8,10 @@ import { type TnSortEvent } from '@truenas/ui-components';
 import { Observable, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
-import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
 import { JobSlice } from 'app/modules/jobs/store/job.selectors';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
+import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { TaskCardJobRepainter, type TaskWithJob } from 'app/pages/data-protection/utils/task-card-job-repainter';
 
 /**

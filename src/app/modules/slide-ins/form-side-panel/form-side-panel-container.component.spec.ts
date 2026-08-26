@@ -30,7 +30,6 @@ import {
   SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
@@ -518,8 +517,6 @@ describe('FormSidePanelContainerComponent footer Save with a real <ix-form>', ()
         mockAuth(),
         // The hold is the point of this suite; everywhere else it is zeroed.
         ...ixFormTestingProviders({ realSubmitFeedback: true }),
-        // No SlideInRef → `<ix-form>` takes the side-panel path, which is the one that holds.
-        { provide: SlideInRef, useValue: null },
         {
           provide: UnsavedChangesService,
           useValue: { showConfirmDialog: jest.fn(() => of(true)) },

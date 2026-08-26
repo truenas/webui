@@ -52,7 +52,7 @@ describe('InterfaceStatusIconComponent', () => {
     it('shows sent and received rate in icon tooltip', () => {
       const tooltip = spectator.query(TnTooltipDirective)!;
 
-      expect(tooltip.message).toBe('Received: 240 Mb/s Sent: 800 kb/s');
+      expect(tooltip.message()).toBe('Received: 240 Mb/s Sent: 800 kb/s');
     });
 
     it('updates state icon depending on traffic', async () => {
