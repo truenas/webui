@@ -72,9 +72,9 @@ describe('TargetFormComponent', () => {
   );
 
   // `IxFormHarness` indexes ix-* controls only, so the migrated radio group is driven directly.
-  // Addressed through `TnFormControlHarness` rather than `TnRadioGroupHarness.with(...)`:
-  // `RadioGroupHarnessFilters` offers only `ariaLabel`/`testId`, and inside a `tn-form-field` the
-  // group takes its name via `aria-labelledby` and writes no `aria-label` to match on.
+  // Filtered by ancestor rather than by name: `RadioGroupHarnessFilters` offers only
+  // `ariaLabel`/`testId`, and inside a `tn-form-field` the group takes its name via
+  // `aria-labelledby` and writes no `aria-label` to match on. There is exactly one such group here.
   const getModeGroup = (): Promise<TnRadioGroupHarness> => loader.getHarness(
     TnRadioGroupHarness.with({ ancestor: 'tn-form-field' }),
   );

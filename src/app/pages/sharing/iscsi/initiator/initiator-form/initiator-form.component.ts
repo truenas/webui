@@ -3,7 +3,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
   TnCardAction,
@@ -19,6 +19,7 @@ import { Observable, of } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { translated } from 'app/helpers/translated.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -65,7 +66,6 @@ export class InitiatorFormComponent implements OnInit, CanComponentDeactivate {
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
-  private translate = inject(TranslateService);
   private authService = inject(AuthService);
   private unsavedChangesService = inject(UnsavedChangesService);
   private fb = inject(FormBuilder);
@@ -123,24 +123,33 @@ export class InitiatorFormComponent implements OnInit, CanComponentDeactivate {
   );
 
   /**
-   * Card footer actions. Returning `undefined` for Save is what gates it on the write role —
-   * the declarative config has no structural-directive hook, so this replaces `*ixRequiresRoles`
-   * and hides the button for a read-only user exactly as before.
+   * Card footer actions. Returning `undefined` for Save is what gates it on the write role: the
+   * declarative config has no structural-directive hook, so this replaces `*ixRequiresRoles` —
+   * but not like for like. `*ixRequiresRoles` rendered the button inside
+   * `MissingAccessWrapperComponent`, which kept Save visible-but-disabled with a tooltip saying
+   * why; a read-only user now gets a footer with only Cancel and no explanation. The trade is
+   * deliberate, and `group-members.component.ts` makes the same one.
+   *
+   * `translated()`, not `computed()`: these read `translate.instant()`, which resolves against
+   * whatever catalog is loaded when the signal is first read. Language changes are live here
+   * (`LanguageService.setLanguage()` calls `translate.use()` with no reload), so a plain
+   * `computed` would leave the footer in the previous language — `secondaryAction` has no other
+   * dependency at all and would never recompute.
    */
-  protected readonly primaryAction = computed<TnCardAction | undefined>(() => {
+  protected readonly primaryAction = translated<TnCardAction | undefined>((translate) => {
     if (!this.hasInitiatorWrite()) {
       return undefined;
     }
     return {
-      label: this.translate.instant('Save'),
+      label: translate.instant('Save'),
       handler: () => this.onSubmit(),
       disabled: this.isFormLoading() || this.formStatus() === 'INVALID',
       testId: 'save',
     };
   });
 
-  protected readonly secondaryAction = computed<TnCardAction>(() => ({
-    label: this.translate.instant('Cancel'),
+  protected readonly secondaryAction = translated<TnCardAction>((translate) => ({
+    label: translate.instant('Cancel'),
     handler: () => this.onCancel(),
     testId: 'cancel',
   }));

@@ -9,7 +9,13 @@
       mode="indeterminate"
     ></tn-progress-bar>
   }
-  <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <!--
+    No `(submit)`: Save lives in the card footer, which is outside this form, so nothing here
+    submits it deliberately. Keeping the handler would leave implicit submission (Enter in a
+    text field) as a second, unguarded path into `onSubmit()` — one that ignores the role,
+    loading and validity checks `primaryAction()` applies.
+  -->
+  <form class="ix-form-container" [formGroup]="form">
     <div class="card-content">
       <div class="header-container">
         <tn-form-field>

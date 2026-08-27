@@ -159,6 +159,18 @@ describe('InitiatorFormComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'sharing', 'iscsi', 'initiators']);
   });
 
+  it('does not save on implicit form submission, since Save lives outside the form', async () => {
+    spectator.setRouteParam('pk', '1');
+    spectator.detectChanges();
+
+    // What pressing Enter in a text field does: with "Allow All" on there is one text field left
+    // and no submit button, which is exactly the shape the HTML spec submits implicitly.
+    await (await getTnCheckbox('all')).check();
+    spectator.query('form')!.dispatchEvent(new Event('submit'));
+
+    expect(api.call).not.toHaveBeenCalledWith('iscsi.initiator.update', expect.anything());
+  });
+
   it('leaves the page without a prompt when nothing was changed', async () => {
     spectator.setRouteParam('pk', '1');
     spectator.detectChanges();
