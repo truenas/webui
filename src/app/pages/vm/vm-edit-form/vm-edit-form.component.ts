@@ -27,7 +27,6 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -80,7 +79,6 @@ export class VmEditFormComponent extends IxFormHostForm implements OnInit {
   readonly requiredRoles = [Role.VmWrite];
 
   protected readonly InputType = InputType;
-  protected readonly tnSelectLabels = tnSelectLabels;
 
   protected showCpuModelField = true;
 

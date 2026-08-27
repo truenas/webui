@@ -213,7 +213,7 @@ describe('InitiatorFormComponent', () => {
   it('stays on the page when the unsaved changes prompt is declined', async () => {
     spectator.setRouteParam('pk', '1');
     spectator.detectChanges();
-    spectator.inject(UnsavedChangesService).showConfirmDialog = jest.fn(() => of(false));
+    jest.spyOn(spectator.inject(UnsavedChangesService), 'showConfirmDialog').mockReturnValue(of(false));
 
     await (await getTnInput('comment')).setValue('new_comment');
 

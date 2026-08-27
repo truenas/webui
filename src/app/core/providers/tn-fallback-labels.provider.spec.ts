@@ -42,7 +42,7 @@ describe('provideTnFallbackLabels', () => {
   it('exposes a translated value for every TnFallbackLabels key', () => {
     expect(setup()()).toEqual({
       spinner: 'Loading-en',
-      brandedSpinner: 'Loading...-en',
+      brandedSpinner: 'Loading-en',
       progressBar: 'Progress-en',
       particleProgressBar: 'Progress-en',
       dialog: 'Dialog-en',

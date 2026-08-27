@@ -18,21 +18,18 @@
   <tn-button
     tnStepperPrevious
     color="secondary"
-    type="button"
     [testId]="'back-dedup'"
     [label]="'Back' | translate"
   ></tn-button>
   <tn-button
     tnStepperNext
     color="primary"
-    type="button"
     [testId]="'next-dedup'"
     [label]="'Next' | translate"
   ></tn-button>
 
   <tn-button
     color="warn"
-    type="button"
     [testId]="'reset-fields-in-dedup-step'"
     [label]="'Reset Step' | translate"
     (onClick)="resetStep()"
@@ -40,7 +37,6 @@
 
   <tn-button
     color="secondary"
-    type="button"
     [testId]="'save-and-go-to-review-dedup'"
     [label]="'Save And Go To Review' | translate"
     (onClick)="goToReviewStep()"

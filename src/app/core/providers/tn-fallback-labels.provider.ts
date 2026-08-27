@@ -5,7 +5,9 @@ import { translated } from 'app/helpers/translated.helper';
 
 const labelKeys: Record<keyof TnFallbackLabels, string> = {
   spinner: T('Loading'),
-  brandedSpinner: T('Loading...'),
+  /** The library's own default differs here ('Loading...') only to preserve what already-shipped
+   * branded spinners announce; webui has no such history to keep. */
+  brandedSpinner: T('Loading'),
   progressBar: T('Progress'),
   particleProgressBar: T('Progress'),
   dialog: T('Dialog'),
@@ -14,13 +16,16 @@ const labelKeys: Record<keyof TnFallbackLabels, string> = {
 };
 
 /**
- * Accessible names the library's unnamed surfaces fall back to — a spinner, a progress bar, a
- * dialog or panel with no title. Without this the library uses its own English literals, which
- * never reach webui's `TranslateService`, and warns in dev mode on every unnamed instance.
+ * Names every spinner, progress bar and modal surface that has nothing more specific to say.
  *
- * These names are deliberately generic and say only what the role already says. They are the floor,
- * not the goal: an `[ariaLabel]` on a particular instance still wins, and is what to reach for
- * whenever the name can say *what* is loading or *what* just opened.
+ * The library's own fallbacks are English literals, so before this each unnamed one either
+ * announced "Loading" whatever the language or carried its own `[ariaLabel]="'Loading' | translate"`
+ * — the same string repeated across a dozen templates. Providing the bundle once covers all seven,
+ * and, per the token's contract, stands the library's dev-mode naming warning down: an app-wide
+ * fallback is a decision, not a forgotten label.
+ *
+ * A component that can say WHAT is loading or open still binds `[ariaLabel]` (or, for a dialog and
+ * a side panel, `[title]`) itself, and that wins over this.
  */
 export function provideTnFallbackLabels(): Provider {
   return {

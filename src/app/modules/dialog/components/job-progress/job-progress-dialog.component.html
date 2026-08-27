@@ -36,6 +36,7 @@
           class="job-progress job-running"
           [value]="progressTotalPercent"
           [mode]="progressTotalPercent ? 'determinate' : 'indeterminate'"
+          [ariaLabel]="'Progress of {job}' | translate: { job: job.description || job.method }"
         ></tn-progress-bar>
       </div>
     }
@@ -45,6 +46,7 @@
         <tn-progress-bar
           class="job-progress job-ended"
           [mode]="'indeterminate'"
+          [ariaLabel]="'Progress of {job}' | translate: { job: job.description || job.method }"
         ></tn-progress-bar>
       </div>
     }

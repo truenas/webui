@@ -27,7 +27,6 @@
          button still announces the check running), and goes away on the next dataset change. -->
     @if (canRetryVmCheck()) {
       <tn-button
-        type="button"
         variant="outline"
         testId="retry-vm-check"
         [label]="helptext.retryVmCheck | translate"
