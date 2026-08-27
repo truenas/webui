@@ -1,5 +1,5 @@
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { format } from 'date-fns';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -150,7 +150,7 @@ describe('ReportComponent', () => {
         setTimeout(() => resolve(), 150);
       });
 
-      expect(mockLineChart.render).toHaveBeenCalledWith(true);
+      expect(mockLineChart.resize).toHaveBeenCalled();
     });
 
     it('should not resize chart before component is ready', async () => {
@@ -166,7 +166,7 @@ describe('ReportComponent', () => {
         setTimeout(() => resolve(), 150);
       });
 
-      expect(mockLineChart.render).not.toHaveBeenCalled();
+      expect(mockLineChart.resize).not.toHaveBeenCalled();
     });
 
     it('should resize chart when menu state changes', () => {
@@ -186,7 +186,7 @@ describe('ReportComponent', () => {
       // Fast-forward timers to trigger the setTimeout in resizeChart
       jest.runAllTimers();
 
-      expect(mockLineChart.render).toHaveBeenCalledWith(true);
+      expect(mockLineChart.resize).toHaveBeenCalled();
 
       jest.useRealTimers();
     });
@@ -353,6 +353,24 @@ describe('ReportComponent', () => {
       spectator.component.ngOnInit();
 
       expect(spectator.component.chartColors).toEqual(mockThemeColors);
+    });
+
+    it('ignores theme re-emissions that carry the same theme', () => {
+      const themeService = spectator.inject(ThemeService);
+      const store$ = spectator.inject(MockStore);
+      spectator.component.ngOnInit();
+      jest.mocked(themeService.getColorPattern).mockClear();
+
+      // Every preferences write re-emits the state, and getColorPattern() returns a
+      // fresh array with randomised tail colors -- repainting on those would
+      // reshuffle the series on something like a sidenav toggle.
+      store$.overrideSelector(selectTheme, 'ix-dark');
+      store$.refreshState();
+      expect(themeService.getColorPattern).not.toHaveBeenCalled();
+
+      store$.overrideSelector(selectTheme, 'ix-blue');
+      store$.refreshState();
+      expect(themeService.getColorPattern).toHaveBeenCalled();
     });
 
     it('should update timezone from store', () => {
