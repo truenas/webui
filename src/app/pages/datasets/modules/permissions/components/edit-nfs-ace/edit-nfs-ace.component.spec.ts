@@ -82,7 +82,9 @@ describe('EditNfsAceComponent', () => {
     const allowRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Allow' }));
     expect(await allowRadio.isChecked()).toBe(true);
 
-    const advancedPermsRadio = await loader.getHarness(TnRadioHarness.with({ testId: 'radio-button-permission-type-advanced' }));
+    const advancedPermsRadio = await loader.getHarness(
+      TnRadioHarness.with({ testId: 'radio-button-permission-type-advanced' }),
+    );
     expect(await advancedPermsRadio.isChecked()).toBe(true);
 
     expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Read Data' }))).isChecked()).toBe(true);
@@ -91,7 +93,9 @@ describe('EditNfsAceComponent', () => {
     expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Read ACL' }))).isChecked()).toBe(true);
     expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Write Data' }))).isChecked()).toBe(false);
 
-    const advancedFlagsRadio = await loader.getHarness(TnRadioHarness.with({ testId: 'radio-button-flags-type-advanced' }));
+    const advancedFlagsRadio = await loader.getHarness(
+      TnRadioHarness.with({ testId: 'radio-button-flags-type-advanced' }),
+    );
     expect(await advancedFlagsRadio.isChecked()).toBe(true);
 
     expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'File Inherit' }))).isChecked()).toBe(true);

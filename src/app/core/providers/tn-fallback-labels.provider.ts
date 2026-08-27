@@ -5,7 +5,9 @@ import { translated } from 'app/helpers/translated.helper';
 
 const labelKeys: Record<keyof TnFallbackLabels, string> = {
   spinner: T('Loading'),
-  brandedSpinner: T('Loading...'),
+  /** The library's own default differs here ('Loading...') only to preserve what already-shipped
+   * branded spinners announce; webui has no such history to keep. */
+  brandedSpinner: T('Loading'),
   progressBar: T('Progress'),
   particleProgressBar: T('Progress'),
   dialog: T('Dialog'),
@@ -14,18 +16,16 @@ const labelKeys: Record<keyof TnFallbackLabels, string> = {
 };
 
 /**
- * Translates the generic accessible names the library falls back to when a spinner, progress bar,
- * dialog, side panel or drawer is rendered without an `ariaLabel` of its own.
+ * Names every spinner, progress bar and modal surface that has nothing more specific to say.
  *
- * The library ships those fallbacks in English, and the only other route to them was an identical
- * `[ariaLabel]="'Loading' | translate"` on each of the app's ~20 spinners and ~25 progress bars —
- * the copy-on-every-instance shape `TN_TABLE_PAGER_LABELS` and `TN_CALENDAR_INTL` already exist to
- * remove. Wiring the bundle once here names all of them, in whatever language the app is in.
+ * The library's own fallbacks are English literals, so before this each unnamed one either
+ * announced "Loading" whatever the language or carried its own `[ariaLabel]="'Loading' | translate"`
+ * — the same string repeated across a dozen templates. Providing the bundle once covers all seven,
+ * and, per the token's contract, stands the library's dev-mode naming warning down: an app-wide
+ * fallback is a decision, not a forgotten label.
  *
- * A per-instance `ariaLabel` still wins, and is still the right answer wherever the name can say
- * WHAT is loading ('Loading logs') rather than merely that something is. Providing the bundle also
- * stands down the library's dev-mode "unnamed component" warning for these components, which is
- * the intended reading: the app has answered the question the warning asks.
+ * A component that can say WHAT is loading or open still binds `[ariaLabel]` (or, for a dialog and
+ * a side panel, `[title]`) itself, and that wins over this.
  */
 export function provideTnFallbackLabels(): Provider {
   return {

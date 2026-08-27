@@ -17,21 +17,18 @@
   <tn-button
     tnStepperPrevious
     color="secondary"
-    type="button"
     [testId]="'back-log'"
     [label]="'Back' | translate"
   ></tn-button>
   <tn-button
     tnStepperNext
     color="primary"
-    type="button"
     [testId]="'next-log'"
     [label]="'Next' | translate"
   ></tn-button>
 
   <tn-button
     color="warn"
-    type="button"
     [testId]="'reset-fields-in-log-step'"
     [label]="'Reset Step' | translate"
     (onClick)="resetStep()"
@@ -39,7 +36,6 @@
 
   <tn-button
     color="secondary"
-    type="button"
     [testId]="'save-and-go-to-review-log'"
     [label]="'Save And Go To Review' | translate"
     (onClick)="goToReviewStep()"

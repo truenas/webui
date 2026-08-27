@@ -110,7 +110,6 @@
         [disabled]="form.invalid || isLoading()"
       ></tn-button>
       <tn-button
-        type="button"
         testId="cancel"
         [label]="'Cancel' | translate"
         [routerLink]="['/datasets', datasetId]"
@@ -120,7 +119,6 @@
         @if (canSetAcl) {
           <tn-button
             class="set-acl-button"
-            type="button"
             testId="set-acl"
             [label]="'Set ACL' | translate"
             (onClick)="onSetAclPressed()"

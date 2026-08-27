@@ -44,7 +44,7 @@ describe('provideTnFallbackLabels', () => {
 
     expect(labels).toEqual({
       spinner: 'Loading-en',
-      brandedSpinner: 'Loading...-en',
+      brandedSpinner: 'Loading-en',
       progressBar: 'Progress-en',
       particleProgressBar: 'Progress-en',
       dialog: 'Dialog-en',

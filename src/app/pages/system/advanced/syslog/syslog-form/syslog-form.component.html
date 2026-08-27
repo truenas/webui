@@ -44,7 +44,6 @@
 
           @if (canRemoveServer) {
             <tn-button
-              type="button"
               color="warn"
               [testId]="['remove-server', i + 1]"
               [ariaLabel]="('Remove Syslog Server' | translate) + ' ' + (i + 1)"
@@ -58,7 +57,6 @@
 
     @if (canAddServer) {
       <tn-button
-        type="button"
         class="add-server-button"
         testId="add-server"
         [ariaLabel]="'Add another syslog server' | translate"

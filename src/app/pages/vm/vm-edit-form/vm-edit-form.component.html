@@ -29,8 +29,6 @@
       <tn-select
         formControlName="time"
         [options]="(timeOptions$ | async) ?? []"
-        [placeholder]="tnSelectLabels.placeholder | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -42,8 +40,6 @@
       <tn-select
         formControlName="bootloader"
         [options]="(bootloaderOptions$ | async) ?? []"
-        [placeholder]="tnSelectLabels.placeholder | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -128,8 +124,6 @@
       <tn-select
         formControlName="cpu_mode"
         [options]="(cpuModeOptions$ | async) ?? []"
-        [placeholder]="tnSelectLabels.placeholder | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -139,8 +133,6 @@
           formControlName="cpu_model"
           [options]="(cpuModelOptions$ | async) ?? []"
           [allowEmpty]="true"
-          [placeholder]="tnSelectLabels.placeholder | translate"
-          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
     }
@@ -194,8 +186,6 @@
         formControlName="gpus"
         [multiple]="true"
         [options]="(gpuOptions$ | async) ?? []"
-        [placeholder]="tnSelectLabels.placeholder | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
   </tn-form-section>

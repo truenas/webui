@@ -9,14 +9,14 @@
 
     @case (DockerStatus.Initializing) {
       <div class="status-wrapper">
-        <tn-spinner [diameter]="20"></tn-spinner>
+        <tn-spinner [diameter]="20" [ariaLabel]="status | mapValue: dockerStatusLabels | translate"></tn-spinner>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }
 
     @case (DockerStatus.Stopping) {
       <div class="status-wrapper">
-        <tn-spinner [diameter]="20"></tn-spinner>
+        <tn-spinner [diameter]="20" [ariaLabel]="status | mapValue: dockerStatusLabels | translate"></tn-spinner>
         <span>{{ status | mapValue: dockerStatusLabels | translate }}</span>
       </div>
     }
