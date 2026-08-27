@@ -6,7 +6,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnFormListHarness, TnInputHarness } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -220,6 +220,25 @@ describe('AllowedAddressesComponent', () => {
         { ui_allowlist: ['5.5.5.5'] },
       ]);
       expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
+    });
+
+    it('still reports success and closes when the UI restart itself fails', async () => {
+      const systemGeneralService = spectator.inject(SystemGeneralService);
+      // `handleUiServiceRestart` reports the failure itself and catches into EMPTY, so the
+      // composed request completes WITHOUT emitting. The allowlist was still saved, so the form
+      // must not be left open with nothing on screen saying so.
+      (systemGeneralService.handleUiServiceRestart as jest.Mock) = jest.fn(() => EMPTY);
+
+      await (await getAddressInput()).setValue('7.7.7.7');
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
+
+      expect(api.call).toHaveBeenCalledWith('system.general.update', [
+        { ui_allowlist: ['7.7.7.7'] },
+      ]);
       expect(closedSpy).toHaveBeenCalledWith(true);
     });
 

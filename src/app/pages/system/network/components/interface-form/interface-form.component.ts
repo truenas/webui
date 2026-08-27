@@ -27,6 +27,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextInterfacesForm } from 'app/helptext/network/interfaces/interfaces-form';
+import { ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import {
   NetworkInterface,
   NetworkInterfaceCreate,
@@ -289,7 +290,9 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
     this.form.controls.aliases.removeAt(index);
   }
 
-  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
+  protected handleSubmit = (
+    event: FormSubmitEvent,
+  ): SubmitResult<boolean, ApiCallResponse<'interface.network_config_to_be_removed'>> => {
     const params = this.prepareSubmitParams();
     const existingInterface = this.existingInterface;
 
@@ -308,8 +311,7 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
       successMessage: event.isEdit
         ? this.translate.instant('Network interface updated')
         : this.translate.instant('Network interface created'),
-      onSuccess: (result) => {
-        const configToRemove = result as Record<string, unknown> | null;
+      onSuccess: (configToRemove) => {
         if (configToRemove && Object.keys(configToRemove).length > 0) {
           this.tnDialog.open(DefaultGatewayDialog, {
             width: '600px',

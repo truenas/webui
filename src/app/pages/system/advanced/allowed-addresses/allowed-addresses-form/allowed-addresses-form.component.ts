@@ -6,7 +6,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
-import { of, switchMap, tap } from 'rxjs';
+import { defaultIfEmpty, of, switchMap, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -94,6 +94,11 @@ export class AllowedAddressesFormComponent extends IxFormHostForm implements OnI
         ? this.api.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(
             tap(() => this.store$.dispatch(generalConfigUpdated())),
             switchMap(() => this.systemGeneralService.handleUiServiceRestart()),
+            // `handleUiServiceRestart` reports a failed `system.general.ui_restart` itself and
+            // catches into EMPTY, which would complete this chain without emitting — no success
+            // message and, worse, no close, leaving the panel open over an allowlist that WAS
+            // saved. The restart is a follow-up action, not part of the save.
+            defaultIfEmpty(true),
           )
         : of(undefined),
       successMessage: () => (isDirty ? this.translate.instant('Allowed addresses have been updated') : null),
