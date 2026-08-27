@@ -5,6 +5,7 @@ import { MockComponent } from 'ng-mocks';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -204,6 +205,39 @@ describe('AlertsPanelComponent', () => {
       ['dup-a', 'dup-b'],
       ['dup-a', 'dup-b'],
     ]);
+  });
+
+  // Regression for NAS-142267: middleware builds `key` from the alert arguments alone, so
+  // TierSpecialVdevWarning and TierSpecialVdevCritical for the same pool share a key. They are
+  // separate alerts and must not be counted as duplicates of one another (nor dismissed together).
+  it('does not treat different alert classes sharing a key as duplicates', () => {
+    const sameKeyAlerts = [
+      {
+        id: 'tier-warning',
+        klass: AlertClassName.TierSpecialVdevWarning,
+        key: '"hddpool"',
+        dismissed: false,
+        datetime: { $date: 1641811015 },
+        level: AlertLevel.Warning,
+      },
+      {
+        id: 'tier-critical',
+        klass: AlertClassName.TierSpecialVdevCritical,
+        key: '"hddpool"',
+        dismissed: false,
+        datetime: { $date: 1641811020 },
+        level: AlertLevel.Critical,
+      },
+    ] as Alert[];
+    spectator.inject(Store).dispatch(alertsLoaded({ alerts: sameKeyAlerts }));
+    spectator.detectChanges();
+
+    const rendered = alertPanel.unreadAlertComponents.map(
+      (component) => alertPanel.getAlertData(component),
+    );
+
+    expect(rendered.map((alert) => alert?.allIds)).toEqual([['tier-critical'], ['tier-warning']]);
+    expect(rendered.map((alert) => alert?.duplicateCount)).toEqual([1, 1]);
   });
 
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {
