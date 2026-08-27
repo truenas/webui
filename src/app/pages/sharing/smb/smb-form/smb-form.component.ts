@@ -88,6 +88,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 @Component({
   selector: 'ix-smb-form',
   templateUrl: './smb-form.component.html',
+  styleUrls: ['./smb-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,

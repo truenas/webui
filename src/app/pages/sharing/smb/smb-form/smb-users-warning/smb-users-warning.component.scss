@@ -2,12 +2,9 @@
   display: block;
   margin-bottom: 16px;
 
-  // The banner's own left border and icon colour key off --tn-warning, and webui hasn't
-  // wired the global --tn-* bridge yet — without this the library falls back to a fixed
-  // hex that ignores the theme. Mapping it here themes the library's border and the
-  // projected icon below from one source. Mirrors dataset-management.component.scss.
-  --tn-warning: var(--orange);
-
+  // --tn-warning is bridged onto the theme once on the smb-form host, which this
+  // component always renders inside; reading it here keeps the projected icon the same
+  // colour as the border and icon the library draws from it.
   .warning-icon {
     color: var(--tn-warning);
     margin-top: 2px;

@@ -41,6 +41,9 @@ import {
 } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import {
+  ixManualValidateErrorKey, manualValidateErrorKey, manualValidateErrorMsgKey,
+} from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -1808,9 +1811,9 @@ describe('SmbFormComponent', () => {
       await spectator.fixture.whenStable();
 
       spectator.component.form.controls.name.setErrors({
-        manualValidateError: true,
-        manualValidateErrorMsg: message,
-        ixManualValidateError: { message },
+        [manualValidateErrorKey]: true,
+        [manualValidateErrorMsgKey]: message,
+        [ixManualValidateErrorKey]: { message },
       });
       spectator.component.form.controls.name.markAsTouched();
       spectator.detectChanges();

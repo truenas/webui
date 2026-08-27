@@ -13,9 +13,13 @@ import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store'
  * strips markup out of that: an `aria-label` is announced verbatim, so `<i>` and `<br>` in it
  * would be read out. The visible tooltip still renders them — only the name is plain — so an
  * assertion against the raw helptext compares the wrong one of the two.
+ *
+ * Parsed rather than regex-stripped, mirroring the library's own `plainTextMessage()`: the
+ * document `DOMParser` builds is inert, and it decodes entities as well as dropping tags, so
+ * the expectation matches what a screen reader actually hears.
  */
 function asAccessibleName(helpText: string): string {
-  return helpText.replace(/<[^>]+>/g, '');
+  return new DOMParser().parseFromString(helpText, 'text/html').body.textContent ?? '';
 }
 
 describe('AuthSectionComponent', () => {
