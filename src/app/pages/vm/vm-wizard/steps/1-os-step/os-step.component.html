@@ -8,8 +8,6 @@
       <tn-select
         formControlName="os"
         [options]="(osOptions$ | async) ?? []"
-        [placeholder]="tnSelectLabels.placeholder | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -48,8 +46,6 @@
       <tn-select
         formControlName="time"
         [options]="(timeOptions$ | async) ?? []"
-        [placeholder]="tnSelectLabels.placeholder | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -61,8 +57,6 @@
       <tn-select
         formControlName="bootloader"
         [options]="(bootloaderOptions$ | async) ?? []"
-        [placeholder]="tnSelectLabels.placeholder | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -114,8 +108,6 @@
         <tn-select
           formControlName="vnc_bind"
           [options]="(bindOptions$ | async) ?? []"
-          [placeholder]="tnSelectLabels.placeholder | translate"
-          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
 

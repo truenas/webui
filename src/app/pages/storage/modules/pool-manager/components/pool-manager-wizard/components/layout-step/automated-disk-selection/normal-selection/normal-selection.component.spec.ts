@@ -8,7 +8,6 @@ import { TiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import {
   DiskSizeSelectsComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/disk-size-selects/disk-size-selects.component';
@@ -245,8 +244,8 @@ describe('NormalSelectionComponent', () => {
 
     startOver$.next();
 
-    expect(await widthSelect.getDisplayText()).toBe(tnSelectLabels.placeholder);
-    expect(await vdevsSelect.getDisplayText()).toBe(tnSelectLabels.placeholder);
+    expect(await widthSelect.getDisplayText()).toBe('Select an option');
+    expect(await vdevsSelect.getDisplayText()).toBe('Select an option');
   });
 
   it('calls store.openManualSelectionDialog when button clicked', async () => {

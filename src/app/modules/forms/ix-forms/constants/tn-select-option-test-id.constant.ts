@@ -13,8 +13,8 @@ import { kebabCase } from 'lodash-es';
  * key; pin one only if the default would be wrong or if you want the derivation stated in the
  * template.
  *
- * Kept here, alongside `tn-select-labels.constant.ts`, so the reasoning is pinned in one place
- * instead of being re-derived per component. Pass one straight through:
+ * Kept here so the reasoning is pinned in one place instead of being re-derived per component.
+ * Pass one straight through:
  * `[optionTestIdKey]="optionTestIdByLabel"`.
  *
  * A select whose id has to come from somewhere other than the label — a lookup keyed by the

@@ -11,8 +11,6 @@
         [formControl]="layoutControl"
         [options]="(vdevLayoutOptions$ | translateOptions | async) ?? []"
         [optionTestIdKey]="layoutOptionTestIdKey"
-        [placeholder]="tnSelectLabels.placeholder | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
   </div>

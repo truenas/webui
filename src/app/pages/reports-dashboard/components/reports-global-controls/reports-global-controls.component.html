@@ -6,7 +6,6 @@
         testId="devices"
         [ariaLabel]="'Devices' | translate"
         [placeholder]="'Devices' | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         [options]="diskDevices()"
         [multiple]="true"
       ></tn-select>
@@ -16,7 +15,6 @@
         testId="metrics"
         [ariaLabel]="'Metrics' | translate"
         [placeholder]="'Metrics' | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         [options]="diskMetrics()"
         [multiple]="true"
       ></tn-select>
@@ -33,8 +31,6 @@
       formControlName="tab"
       testId="category"
       [ariaLabel]="'Category' | translate"
-      [placeholder]="tnSelectLabels.placeholder | translate"
-      [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       [options]="tabOptions()"
       [ixUiSearch]="searchableElements.elements.selectReporting"
     ></tn-select>

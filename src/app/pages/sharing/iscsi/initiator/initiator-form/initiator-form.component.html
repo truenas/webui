@@ -48,7 +48,6 @@
         ></ix-dual-listbox>
 
         <tn-button
-          type="button"
           variant="filled"
           color="default"
           class="refresh-button"
@@ -77,7 +76,6 @@
         [disabled]="isFormLoading() || form.invalid"
       ></tn-button>
       <tn-button
-        type="button"
         [testId]="'cancel'"
         [label]="'Cancel' | translate"
         (onClick)="onCancel()"

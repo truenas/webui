@@ -95,14 +95,12 @@
   <tn-button
     tnStepperPrevious
     color="secondary"
-    type="button"
     [testId]="'back-review'"
     [label]="'Back' | translate"
   ></tn-button>
 
   @if (hasVdevs) {
     <tn-button
-      type="button"
       [testId]="'inspect-vdevs'"
       [label]="'Inspect VDEVs' | translate"
       (onClick)="onInspectVdevsPressed()"
@@ -112,7 +110,6 @@
   @if (showStartOver) {
     <tn-button
       color="warn"
-      type="button"
       [testId]="'start-over'"
       [label]="'Start Over' | translate"
       (onClick)="startOver()"
@@ -122,7 +119,6 @@
   <tn-button
     *ixRequiresRoles="[Role.PoolWrite]"
     color="primary"
-    type="button"
     [testId]="'create-pool'"
     [label]="isAddingVdevs() ? ('Update Pool' | translate) : ('Create Pool' | translate)"
     [disabled]="isCreateDisabled"
