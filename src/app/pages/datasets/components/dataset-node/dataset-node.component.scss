@@ -59,6 +59,13 @@
     // margin: 0 0 0 -10px;
     // padding: 0 0 0 10px;
     z-index: 1;
+
+    // The name cell is pinned (`position: sticky` above), so the value columns scroll
+    // underneath it — it has to paint over them, not tie with them on z-index and lose on
+    // source order. Its gradient is what hides them.
+    &:first-child {
+      z-index: 2;
+    }
   }
 
   // The shared tree styles give `.name` `text-overflow: ellipsis`, but they also make it an
