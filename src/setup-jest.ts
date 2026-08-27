@@ -45,6 +45,7 @@ import {
   Observable,
 } from 'rxjs';
 import { defaultLanguage } from 'app/constants/languages.constant';
+import { provideTnFallbackLabels } from 'app/core/providers/tn-fallback-labels.provider';
 import { EmptyApiService } from 'app/core/testing/utils/empty-api.service';
 import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -238,6 +239,12 @@ defineGlobalsInjections({
       provide: TN_TEST_ATTR,
       useValue: 'data-test',
     },
+    // Mirror production (main.ts) again: the app answers the library's "this spinner has no
+    // accessible name" question once, app-wide, with a translated fallback bundle. Without the
+    // same provider here every spec that renders an unnamed tn-spinner or tn-progress-bar hits
+    // the library's dev-mode warning and fails `failOnConsole` — a warning the app has already
+    // answered, so specs would be reporting a problem production does not have.
+    provideTnFallbackLabels(),
     {
       provide: WINDOW,
       // eslint-disable-next-line no-restricted-globals
@@ -310,11 +317,18 @@ Range.prototype.getClientRects = () => ({
 // eslint-disable-next-line no-restricted-globals
 Object.defineProperty(window.URL, 'createObjectURL', { value: () => '' });
 
+// jsdom's `performance` is replaced wholesale so the profiling calls some dependencies make are
+// no-ops. `now` has to survive that replacement: `@truenas/ui-components` times the focus capture
+// of an opening surface (side panel, dialog, drawer, menu) off `performance.now()`, so a stub
+// without it throws `performance.now is not a function` out of every spec that opens one.
+const performanceNow = global.performance?.now?.bind(global.performance) ?? (() => Date.now());
+
 Object.defineProperty(global, 'performance', {
   writable: true,
   value: {
     mark: () => {},
     measure: () => {},
+    now: performanceNow,
   },
 });
 

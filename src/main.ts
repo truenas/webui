@@ -42,6 +42,7 @@ import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
 import { provideTnCalendarIntl } from 'app/core/providers/tn-calendar-intl.provider';
+import { provideTnFallbackLabels } from 'app/core/providers/tn-fallback-labels.provider';
 import {
   provideTnFormFieldDismissibleErrors,
   provideTnFormFieldErrors,
@@ -144,6 +145,7 @@ bootstrapApplication(AppComponent, {
     provideTnFormFieldErrors(),
     provideTnFormFieldDismissibleErrors(),
     provideTnCalendarIntl(),
+    provideTnFallbackLabels(),
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();
