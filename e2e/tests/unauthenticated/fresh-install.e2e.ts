@@ -22,7 +22,7 @@
  * duplicated coverage is the price of keeping the premise honest; the two tests
  * share one identity (`testAdmin`) so it is visibly the same account.
  */
-import type { TrueNasApiClient } from '@truenas/api-client';
+import { firstValueFrom, timeout } from 'rxjs';
 import {
   ensurePoolAbsent, ensureSmbServiceStopped, ensureSmbShareAbsent, findGroupAclGrants,
   requireUnusedDisks,
@@ -31,8 +31,9 @@ import { ensureUserAbsent, testAdmin } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
 import { createRaidz2Pool, createSmbDataset, createSmbShare } from '../../flows/storage';
 import { createTrueNasAdminUser } from '../../flows/users';
-import { callUntyped } from '../../support/api/untyped';
+import type { E2eApiClient } from '../../support/api/client';
 import { expect, test } from '../../support/fixtures';
+import { readTimeoutMs } from '../../support/timeouts';
 
 /**
  * Nine disks in a single RAIDZ2 vdev: seven data, two parity, surviving any two
@@ -49,6 +50,19 @@ const datasetPath = `/mnt/${pool.name}/${dataset}`;
 const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 
 /**
+ * Per-call bound inside the service-state poll below.
+ *
+ * Deliberately a fraction of the poll's own 60s budget: equal to it, the call
+ * could only ever expire as the poll did, which bounds nothing. Playwright also
+ * awaits the generator *outside* its try/catch, so a rejection aborts the poll
+ * rather than failing one attempt — hence the catch in the generator too.
+ */
+const serviceStateCallTimeoutMs = 10_000;
+
+/** How long the SMB service gets to reach RUNNING after the start dialog. */
+const serviceStartTimeoutMs = 60_000;
+
+/**
  * Restores the fresh-instance premise the story depends on.
  *
  * Order matters: the service is stopped before its share is removed, and the
@@ -62,15 +76,8 @@ const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
  * so a `user.delete` that kept failing would wedge the suite: `afterEach` would
  * leak the pool, and the retry's `beforeEach` would throw at the same first call
  * and never reach the export either.
- *
- * (An earlier revision moved the user deletion to the front, reasoning that
- * `pool.export` restarts services and leaves the socket unreliable for whatever
- * runs next. That was wrong twice over. `ensurePoolAbsent` only returns once
- * `waitUntil` has had a query answered, so the socket is demonstrably working by
- * then — and putting the user first meant a failure there aborted cleanup before
- * the pool, inverting exactly the priority above.)
  */
-async function cleanUp(api: TrueNasApiClient): Promise<void> {
+async function cleanUp(api: E2eApiClient): Promise<void> {
   const steps: [string, () => Promise<unknown>][] = [
     ['stop the SMB service', () => ensureSmbServiceStopped(api)],
     ['remove the SMB share', () => ensureSmbShareAbsent(api, share)],
@@ -142,10 +149,8 @@ test('an admin sets up a fresh instance: user, pool, dataset, SMB share', async 
   // whether the appliance is genuinely in the intended state, which is a
   // different question from whether the screens said so.
   await test.step('confirm the appliance is actually serving', async () => {
-    const shares = await callUntyped<{ name: string; path: string; enabled: boolean }[]>(
-      api,
-      'sharing.smb.query',
-      [[['name', '=', share]]],
+    const shares = await firstValueFrom(
+      api.api.query('sharing.smb.query', [['name', '=', share]]).pipe(timeout(readTimeoutMs)),
     );
 
     expect(shares).toHaveLength(1);
@@ -159,17 +164,56 @@ test('an admin sets up a fresh instance: user, pool, dataset, SMB share', async 
     // Polled rather than sampled once: starting a service is a job, so it
     // completes after the dialog closes. Sampling immediately races it and
     // reports STOPPED on a service that is seconds from running (R8.3).
-    await expect.poll(
-      async () => {
-        const [cifs] = await callUntyped<{ state: string }[]>(
-          api,
-          'service.query',
-          [[['service', '=', 'cifs']]],
+    // Recorded so a persistent query fault reaches the failure message. Without
+    // it the only output is "SMB never started", which points at the wrong
+    // subsystem when the real problem is that every query is rejecting.
+    let lastPollError: unknown;
+
+    const readServiceState = async (): Promise<string | undefined> => {
+      // Caught, not just bounded. Playwright awaits this generator outside its
+      // own try/catch, so a rejection aborts the poll rather than failing one
+      // attempt. Starting the SMB service restarts it, which makes a rejected
+      // query an ordinary step on the way to RUNNING.
+      try {
+        const [cifs] = await firstValueFrom(
+          api.api
+            .query('service.query', [['service', '=', 'cifs']])
+            .pipe(timeout(serviceStateCallTimeoutMs)),
         );
+        lastPollError = undefined;
         return cifs?.state;
-      },
-      { timeout: 60_000, message: 'SMB service never reached RUNNING after the start dialog' },
-    ).toBe('RUNNING');
+      } catch (error) {
+        lastPollError = error;
+        return undefined;
+      }
+    };
+
+    try {
+      await expect.poll(readServiceState, {
+        timeout: serviceStartTimeoutMs,
+        message: 'SMB service never reached RUNNING after the start dialog',
+      }).toBe('RUNNING');
+    } catch (pollFailure) {
+      // `expect.poll` throws on its deadline, so this is the only path where the
+      // recorded error can still be reported.
+      if (!lastPollError) {
+        throw pollFailure;
+      }
+
+      const detail = lastPollError instanceof Error
+        ? lastPollError.message
+        : String(lastPollError);
+
+      const reported = pollFailure instanceof Error
+        ? pollFailure.message
+        : String(pollFailure);
+
+      throw new Error(
+        `${reported}\n\nThe last service.query also failed, which may be the `
+        + `real cause: ${detail}`,
+        { cause: lastPollError },
+      );
+    }
   });
 
   // The share is only useful if the admin who made it can actually read and

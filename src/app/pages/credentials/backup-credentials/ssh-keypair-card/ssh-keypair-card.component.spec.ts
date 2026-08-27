@@ -9,11 +9,11 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import {
-  IxTablePagerShowMoreComponent,
-} from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import {
+  TablePagerShowMoreComponent,
+} from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SshKeypairCardComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
@@ -55,7 +55,7 @@ describe('SshKeypairCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SshKeypairCardComponent,
     imports: [
-      IxTablePagerShowMoreComponent,
+      TablePagerShowMoreComponent,
     ],
     providers: [
       mockApi([

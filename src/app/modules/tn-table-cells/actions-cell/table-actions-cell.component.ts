@@ -11,7 +11,7 @@ import {
 } from '@truenas/ui-components';
 import { Subscription } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { stopRowActivationKeys } from 'app/modules/tn-table-cells/stop-row-activation-keys';
 
 /**

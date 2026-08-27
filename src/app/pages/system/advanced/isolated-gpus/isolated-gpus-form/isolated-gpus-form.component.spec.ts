@@ -3,14 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IsolatedGpusFormComponent } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -97,7 +96,6 @@ describe('IsolatedGpusFormComponent', () => {
       mockProvider(IsolatedGpuValidatorService, {
         validateGpu: () => of(null),
       }),
-      mockProvider(SlideInRef, { close: jest.fn(), requireConfirmationWhen: jest.fn() }),
       mockAuth(),
     ],
   });
@@ -119,8 +117,11 @@ describe('IsolatedGpusFormComponent', () => {
     await select.selectOption('Intel Corporation HD Graphics 510 [0000:00:02.0]');
     await select.selectOption('Fake HD Graphics [0000:00:01.0]');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+    spectator.component.submit();
+
+    spectator.detectChanges();
 
     expect(api.call).toHaveBeenCalledWith('system.advanced.update_gpu_pci_ids', [['0000:00:01.0']]);
   });

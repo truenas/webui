@@ -31,7 +31,6 @@ import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -67,9 +66,6 @@ export class RsyncTaskFormComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);
   private validatorsService = inject(IxValidatorsService);
-  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
-  // `<tn-side-panel>` form panel, where data arrives via {@link taskToEdit}.
-  private slideInRef = inject<SlideInRef<RsyncTask | undefined, boolean>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
@@ -179,7 +175,7 @@ export class RsyncTaskFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.editingTask = this.slideInRef?.getData() ?? this.taskToEdit();
+    this.editingTask = this.taskToEdit();
 
     if (this.editingTask) {
       this.setTaskForEdit(this.editingTask);

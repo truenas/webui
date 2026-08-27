@@ -59,7 +59,6 @@ export interface NfsFormData {
 @Component({
   selector: 'ix-nfs-form',
   templateUrl: './nfs-form.component.html',
-  styleUrls: ['./nfs-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,

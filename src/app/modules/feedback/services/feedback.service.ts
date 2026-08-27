@@ -109,15 +109,12 @@ export class FeedbackService {
         allowTaint: true,
         useCORS: true,
         imageTimeout: 0,
+        // CDK overlays (dialogs, menus, tooltips) are transient chrome, not page content.
+        // `tn-side-panel` portals to `document.body` outside the CDK overlay container, so an
+        // open side panel is still captured.
         ignoreElements: (element) => {
-          if (element.classList.contains('cdk-overlay-pane')) {
-            return !element.classList.contains('slide-in-panel');
-          }
-          if (element.classList.contains('cdk-overlay-backdrop')) {
-            return !element.classList.contains('custom-slide-in-backdrop')
-              && !element.classList.contains('custom-slide-in-nobackdrop');
-          }
-          return false;
+          return element.classList.contains('cdk-overlay-pane')
+            || element.classList.contains('cdk-overlay-backdrop');
         },
         onclone: (_doc, element) => {
           this.sanitizeUnsupportedCssColors(element);

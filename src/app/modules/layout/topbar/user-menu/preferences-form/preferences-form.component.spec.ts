@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnAutocompleteHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
@@ -14,7 +14,6 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { PreferencesFormComponent } from 'app/modules/layout/topbar/user-menu/preferences-form/preferences-form.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import {
@@ -26,11 +25,6 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
 describe('PreferencesFormComponent', () => {
   let spectator: Spectator<PreferencesFormComponent>;
   let loader: HarnessLoader;
-  const slideInRef: SlideInRef<unknown, unknown> = {
-    close: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-    requireConfirmationWhen: jest.fn(),
-  };
   const createComponent = createComponentFactory({
     component: PreferencesFormComponent,
     imports: [
@@ -52,7 +46,6 @@ describe('PreferencesFormComponent', () => {
           value: { timezone: 'America/New_York' },
         }],
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(ThemeService, {
         allThemes: [
           { name: 'ix-dark', label: 'Dark', bg2: '#282828' },
@@ -98,6 +91,8 @@ describe('PreferencesFormComponent', () => {
   const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
     TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  let closedSpy: jest.Mock;
+
   const hasSelect = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
     TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
   )).length > 0;
@@ -105,6 +100,8 @@ describe('PreferencesFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    closedSpy = jest.fn();
+    spectator.component.closed.subscribe(closedSpy);
   });
 
   it('shows current preferences values', async () => {
@@ -149,8 +146,8 @@ describe('PreferencesFormComponent', () => {
     await (await getSelect('date_format')).selectOption('October 16, 2021');
     await (await getSelect('time_format')).selectOption('04:22:14 PM');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+    spectator.component.submit();
 
     expect(store$.dispatch).toHaveBeenCalledWith(lifetimeTokenUpdated({ lifetime: 120 }));
     expect(store$.dispatch).toHaveBeenCalledWith(guiFormSubmitted({
@@ -166,7 +163,7 @@ describe('PreferencesFormComponent', () => {
     }));
     expect(spectator.inject(ThemeService).updateThemeInLocalStorage).toHaveBeenCalled();
     expect(spectator.inject(LanguageService).setLanguage).toHaveBeenCalledWith('fr');
-    expect(slideInRef.close).toHaveBeenCalled();
+    expect(closedSpy).toHaveBeenCalledWith(true);
   });
 
   it('shows Light Theme and Dark Theme dropdowns when Sync Theme With OS is checked', async () => {
@@ -189,8 +186,8 @@ describe('PreferencesFormComponent', () => {
 
     jest.clearAllMocks();
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+    spectator.component.submit();
 
     expect(store$.dispatch).not.toHaveBeenCalledWith(
       expect.objectContaining({ type: themeChangedInGuiForm.type }),
@@ -206,8 +203,8 @@ describe('PreferencesFormComponent', () => {
     await (await getSelect('lightTheme')).selectOption('Blue');
     await (await getSelect('darkTheme')).selectOption('Dracula');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+    spectator.component.submit();
 
     expect(store$.dispatch).toHaveBeenCalledWith(guiFormSubmitted({
       theme: 'ix-dark',

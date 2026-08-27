@@ -33,42 +33,54 @@
     </div>
     <div class="cloudsync">
       @if (form.controls.path_destination.enabled) {
-        <ix-explorer
-          formControlName="path_destination"
+        <tn-form-field
           [label]="helptext.pathLabel | translate"
           [tooltip]="helptext.pathTooltip | translate"
           [required]="true"
-          [nodeProvider]="fileNodeProvider"
-        ></ix-explorer>
+        >
+          <ix-explorer
+            formControlName="path_destination"
+            [nodeProvider]="fileNodeProvider"
+          ></ix-explorer>
+        </tn-form-field>
       }
       @if (form.controls.path_source.enabled) {
-        <ix-explorer
-          formControlName="path_source"
+        <tn-form-field
           [label]="helptext.pathLabel | translate"
           [tooltip]="helptext.pathTooltip | translate"
           [required]="true"
-          [multiple]="true"
-          [nodeProvider]="fileNodeProvider"
-        ></ix-explorer>
+        >
+          <ix-explorer
+            formControlName="path_source"
+            [multiple]="true"
+            [nodeProvider]="fileNodeProvider"
+          ></ix-explorer>
+        </tn-form-field>
       }
       @if (form.controls.folder_destination.enabled) {
-        <ix-explorer
-          formControlName="folder_destination"
-          [rootNodes]="[slashRootNode]"
+        <tn-form-field
           [label]="helptext.folderLabel | translate"
           [tooltip]="helptext.folderTooltip | translate"
-          [nodeProvider]="bucketNodeProvider"
-        ></ix-explorer>
+        >
+          <ix-explorer
+            formControlName="folder_destination"
+            [rootNodes]="[slashRootNode]"
+            [nodeProvider]="bucketNodeProvider"
+          ></ix-explorer>
+        </tn-form-field>
       }
       @if (form.controls.folder_source.enabled) {
-        <ix-explorer
-          formControlName="folder_source"
-          [rootNodes]="[slashRootNode]"
+        <tn-form-field
           [label]="helptext.folderLabel | translate"
           [tooltip]="helptext.folderTooltip | translate"
-          [multiple]="true"
-          [nodeProvider]="bucketNodeProvider"
-        ></ix-explorer>
+        >
+          <ix-explorer
+            formControlName="folder_source"
+            [rootNodes]="[slashRootNode]"
+            [multiple]="true"
+            [nodeProvider]="bucketNodeProvider"
+          ></ix-explorer>
+        </tn-form-field>
       }
     </div>
     @if (form.controls.description.enabled) {

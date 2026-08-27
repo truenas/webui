@@ -14,7 +14,7 @@ import { CollectionChangeType } from 'app/enums/api.enum';
 import { containerStatusLabels } from 'app/enums/container.enum';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { Container, ContainerMetrics } from 'app/interfaces/container.interface';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 

@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
@@ -16,7 +15,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { StorageService } from 'app/services/storage.service';
@@ -49,19 +47,13 @@ describe('SnapshotTaskComponent', () => {
     vmware_sync: false,
   } as PeriodicSnapshotTask;
 
-  const slideInRef: SlideInRef<PeriodicSnapshotTask | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   let spectator: Spectator<SnapshotTaskFormComponent>;
+  let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
 
-  // Shared by both hosts. A factory (not a shared array) so each host gets its own `jest.fn()`s —
-  // `ixFormTestingProviders()` and the service mocks must be fresh per TestBed to avoid call counts
-  // leaking between tests. The legacy SlideIn host adds SlideInRef; the `<tn-side-panel>` host forces
-  // it null, so the form's optional `inject(SlideInRef)` resolves null → side-panel mode.
+  // A factory (not a shared array) so each TestBed gets its own `jest.fn()`s —
+  // `ixFormTestingProviders()` and the service mocks must be fresh to avoid call counts
+  // leaking between tests.
   const baseProviders = (): unknown[] => [
     mockAuth(),
     mockProvider(LocaleService, {
@@ -104,7 +96,6 @@ describe('SnapshotTaskComponent', () => {
     ],
     providers: [
       ...baseProviders(),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -125,6 +116,7 @@ describe('SnapshotTaskComponent', () => {
   describe('adds a new snapshot task', () => {
     beforeEach(() => {
       spectator = createComponent();
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -137,8 +129,11 @@ describe('SnapshotTaskComponent', () => {
       await (await getCheckbox('allow_empty')).uncheck();
       await (await getCheckbox('enabled')).check();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
         allow_empty: false,
@@ -157,17 +152,14 @@ describe('SnapshotTaskComponent', () => {
           month: '*',
         },
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 
   describe('edits snapshot task', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ ...existingTask, id: 1 }) }),
-        ],
-      });
+      spectator = createComponent({ props: { taskToEdit: { ...existingTask, id: 1 } } });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -188,8 +180,11 @@ describe('SnapshotTaskComponent', () => {
       await (await getCheckbox('recursive')).uncheck();
       await (await getCheckbox('enabled')).uncheck();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.update', [
         1,
@@ -212,7 +207,7 @@ describe('SnapshotTaskComponent', () => {
           },
         },
       ]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
     it('includes fixate_removal_date as false when no snapshots are affected', async () => {
@@ -220,8 +215,11 @@ describe('SnapshotTaskComponent', () => {
 
       await (await getCheckbox('allow_empty')).uncheck();
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(apiService.call).toHaveBeenCalledWith('pool.snapshottask.update', [
         1,
@@ -281,7 +279,7 @@ describe('SnapshotTaskComponent', () => {
   });
 
   describe('when hosted in a side panel', () => {
-    // SlideInRef forced null (the form's optional inject then resolves null → side-panel mode); data
+    // Data
     // arrives via the `taskToEdit` input and the form closes through its `closed` output. Defined in
     // this describe so its TestBed override is scoped here and doesn't disable the SlideIn host above.
     const createPanelComponent = createComponentFactory({
@@ -291,7 +289,6 @@ describe('SnapshotTaskComponent', () => {
       ],
       providers: [
         ...baseProviders(),
-        { provide: SlideInRef, useValue: null },
       ],
     });
 
@@ -301,7 +298,7 @@ describe('SnapshotTaskComponent', () => {
       });
       panelSpectator.detectChanges();
 
-      const closedSpy = jest.fn();
+      closedSpy = jest.fn();
       panelSpectator.component.closed.subscribe(closedSpy);
 
       // The container footer's Save calls submit() directly (no in-form Save button in panel mode).

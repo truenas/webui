@@ -4,6 +4,9 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { TN_FORM_FIELD_ERRORS, type TnFormFieldErrorResolver } from '@truenas/ui-components';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
+import {
+  ixManualValidateErrorKey, manualValidateErrorKey, manualValidateErrorMsgKey,
+} from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 
 type ErrorDetail = Record<string, unknown>;
 
@@ -13,16 +16,13 @@ function detail(errors: ValidationErrors, key: string): ErrorDetail {
 }
 
 /**
- * Error keys set by `FormErrorHandlerService` for a server-side validation
- * failure. The active key is the boolean `manualValidateError`, but the
- * human-readable text lives in the sibling keys — so the resolver must read
- * across them rather than off the active key's value.
+ * The active key for a server-side validation failure is the boolean
+ * `manualValidateError`, but the human-readable text lives in its sibling
+ * keys — so the resolver must read across the set rather than off the active
+ * key's value.
  */
-const manualValidateError = 'manualValidateError';
-const manualValidateErrorMsg = 'manualValidateErrorMsg';
-const ixManualValidateError = 'ixManualValidateError';
 const manualValidateKeys = new Set<string>([
-  manualValidateError, manualValidateErrorMsg, ixManualValidateError,
+  manualValidateErrorKey, manualValidateErrorMsgKey, ixManualValidateErrorKey,
 ]);
 
 /**
@@ -34,11 +34,11 @@ function manualValidationMessage(errors: ValidationErrors | null | undefined): s
   if (!errors) {
     return null;
   }
-  const fromObject = (errors[ixManualValidateError] as { message?: unknown } | undefined)?.message;
+  const fromObject = (errors[ixManualValidateErrorKey] as { message?: unknown } | undefined)?.message;
   if (typeof fromObject === 'string' && fromObject.trim()) {
     return fromObject;
   }
-  const fromMsg = errors[manualValidateErrorMsg];
+  const fromMsg = errors[manualValidateErrorMsgKey];
   if (typeof fromMsg === 'string' && fromMsg.trim()) {
     return fromMsg;
   }

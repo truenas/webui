@@ -54,6 +54,19 @@ cdk-virtual-scroll-viewport {
   height: 100%;
   width: 100%;
 
+  /*
+   * The CDK ships the content wrapper as `position: absolute; left: 0` with no
+   * width, so it is shrink-to-fit: it grows past the viewport whenever a report
+   * card wants more room, and the viewport then scrolls sideways. Pinning it to
+   * the viewport makes every card's width -- and every percentage inside one --
+   * resolve against the screen instead of against its own contents.
+   */
+  &::ng-deep {
+    .cdk-virtual-scroll-content-wrapper {
+      width: 100%;
+    }
+  }
+
   @media(max-width: $breakpoint-sm) {
     height: 100vh; // Fallback for browsers without dvh support
     height: 100dvh;
@@ -61,7 +74,6 @@ cdk-virtual-scroll-viewport {
     &::ng-deep {
       .cdk-virtual-scroll-content-wrapper {
         padding-bottom: 100px;
-        width: 100%;
       }
     }
   }

@@ -5,6 +5,7 @@ import 'zone.js/testing';
 import { HighContrastModeDetector } from '@angular/cdk/a11y';
 import { APP_BASE_HREF } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -80,22 +81,29 @@ import {
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import {
-  ModalHeaderComponent,
-} from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+/**
+ * Nothing renders this. It exists so the global `declarations` array is non-empty and holds an
+ * ng-mocks mock: ng-mocks only patches `TestBed.configureTestingModule` to tolerate
+ * re-configuration when a mock declaration is present, and specs that nest a
+ * `createComponentFactory` inside a describe whose outer `beforeEach` already created a component
+ * rely on that tolerance. `ix-modal-header`'s global mock used to supply it; this replaces it.
+ */
+/* eslint-disable @angular-eslint/prefer-standalone, @angular-eslint/prefer-on-push-component-change-detection,
+   angular-file-naming/component-filename-suffix -- a declarations-array anchor, never rendered. */
+@Component({ selector: 'ix-global-declarations-anchor', template: '', standalone: false })
+class GlobalDeclarationsAnchorComponent {}
+/* eslint-enable @angular-eslint/prefer-standalone, @angular-eslint/prefer-on-push-component-change-detection,
+   angular-file-naming/component-filename-suffix */
 
 setupZoneTestEnv();
 
@@ -174,7 +182,6 @@ defineGlobalsInjections({
     IxRadioGroupComponent,
     IxSelectComponent,
     IxFieldsetComponent,
-    ModalHeaderComponent,
     IxFormSectionComponent,
     IxButtonGroupComponent,
     IxExplorerComponent,
@@ -194,11 +201,7 @@ defineGlobalsInjections({
     RouterModule.forRoot([]),
     UiSearchDirective,
     RequiresRolesDirective,
-    IxTableComponent,
     TnTablePagerComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
     TestDirective,
     TestOverrideDirective,
     WithLoadingStateDirective,
@@ -222,7 +225,7 @@ defineGlobalsInjections({
     EffectsModule.forRoot([]),
   ],
   declarations: [
-    MockComponent(ModalHeaderComponent),
+    MockComponent(GlobalDeclarationsAnchorComponent),
   ],
   providers: [
     provideHttpClient(),

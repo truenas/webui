@@ -10,10 +10,12 @@
     margin-top: 0;
   }
 
-  // In migrated tn-* forms the explorer sits inside a `<tn-form-section>` whose flex-gap already
-  // spaces it; the legacy margin/padding then stacks on top of that gap and leaves a large empty
-  // band. Drop it there so the explorer lines up with the surrounding tn-form-field rows.
-  :host-context(tn-form-section) & {
+  // In migrated tn-* forms the explorer sits inside a `<tn-form-section>` (whose flex-gap already
+  // spaces it) and/or inside a `<tn-form-field>` (which owns the row's label/error chrome and its
+  // own spacing). The legacy margin/padding then stacks on top and leaves a large empty band —
+  // drop it there so the explorer lines up with the surrounding tn-form-field rows.
+  :host-context(tn-form-section) &,
+  :host-context(tn-form-field) & {
     margin: 0;
     padding: 0;
   }

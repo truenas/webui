@@ -17,15 +17,13 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
-import { NetworkInterface, PhysicalNetworkInterface } from 'app/interfaces/network-interface.interface';
+import { PhysicalNetworkInterface } from 'app/interfaces/network-interface.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   TableActionsCellComponent,
@@ -64,12 +62,6 @@ describe('NetworkComponent', () => {
       },
     ],
   } as PhysicalNetworkInterface;
-
-  const slideInRef: SlideInRef<NetworkInterface | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => existingInterface),
-  };
 
   let isTestingChanges = false;
   let wasEditMade = false;
@@ -136,10 +128,6 @@ describe('NetworkComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-      }),
-      mockProvider(SlideInRef, slideInRef),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.success(true)),
       }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.success(true)),

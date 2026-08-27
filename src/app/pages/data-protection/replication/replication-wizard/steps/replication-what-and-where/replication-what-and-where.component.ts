@@ -32,10 +32,10 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -44,7 +44,6 @@ import { regexValidator } from 'app/modules/forms/ix-forms/validators/regex-vali
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -91,9 +90,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   private cdr = inject(ChangeDetectorRef);
   private errorParser = inject(ErrorParserService);
   private errorHandler = inject(ErrorHandlerService);
-  // Optional: the wizard is hosted in the `<tn-side-panel>` form panel (no SlideInRef); "Advanced
-  // Options" swaps via {@link formPanel} there.
-  slideInRef = inject<SlideInRef<ReplicationTask, ReplicationTask>>(SlideInRef, { optional: true });
   private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
@@ -205,12 +201,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     return this.form.value.source_datasets_from === DatasetSource.Local
       ? helptextReplicationWizard.nameSchemaOrRegexPush
       : helptextReplicationWizard.nameSchemaOrRegexPull;
-  }
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
   }
 
   ngOnInit(): void {
@@ -496,7 +486,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.snapshotsText = '';
           const errorMessage = this.errorParser.getFirstErrorMessage(error);
           if (errorMessage) {
-            this.form.controls.source_datasets.setErrors({ [ixManualValidateError]: { message: errorMessage } });
+            this.form.controls.source_datasets.setErrors({ [ixManualValidateErrorKey]: { message: errorMessage } });
           }
           this.cdr.markForCheck();
         },

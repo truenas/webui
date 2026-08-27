@@ -10,7 +10,7 @@ describe('TableTextCellComponent', () => {
   });
 
   const cell = (): HTMLElement => spectator.query('span')!;
-  const tooltip = (): string => String(spectator.query(TnTooltipDirective)!.message);
+  const tooltip = (): string => String(spectator.query(TnTooltipDirective)!.message());
 
   it('renders the value', () => {
     spectator = createComponent({
