@@ -220,7 +220,11 @@ $scrollbar-offset: 20px;
         .name {
           align-items: center;
           display: inline-flex;
-          max-width: calc(100vw - 80vw);
+          // A fixed cap, not the old `calc(100vw - 80vw)` (= 20vw): that grew the name with
+          // the screen, so one long name took 512px of the row at 2560px. Past the cap the
+          // name ellipsizes and the tree scrolls horizontally; the full name is in the row
+          // tooltip.
+          max-width: $tree-name-max-width;
           overflow: hidden;
           padding-right: 15px;
           text-overflow: ellipsis;

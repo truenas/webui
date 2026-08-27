@@ -53,6 +53,16 @@
       display: inline-flex;
       gap: 6px;
       padding-right: 15px;
+
+      // The shared tree styles cap and clip `.name`, but ellipsis needs a block container
+      // and this one is a flex box (it also holds the descendant-warning icon), so put the
+      // truncation on the text itself. Without this a capped name is cut mid-glyph.
+      > span {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
 
     .descendant-warning-icon {

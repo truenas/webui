@@ -58,6 +58,15 @@
     z-index: 1;
   }
 
+  // The shared tree styles give `.name` `text-overflow: ellipsis`, but they also make it an
+  // inline-flex box, and ellipsis only applies to a block container's own inline content —
+  // so a truncated dataset name was clipped mid-glyph. A dataset name is plain text, so it
+  // can be a block; `align-self` keeps it centred in the stretched cell.
+  .cell-name .name {
+    align-self: center;
+    display: block;
+  }
+
   .cell-used span,
   .cell-available span {
     white-space: nowrap;
