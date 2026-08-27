@@ -4,10 +4,11 @@
 $table-min-width: 620px;
 $table-width: 700px;
 $card-width-slim: 356px;
-// How wide a tree row's name (dataset, vdev) may get before it ellipsizes. Past this the
-// row keeps its full width and the tree scrolls horizontally, rather than the name being
-// squeezed to whatever is left over.
-$tree-name-max-width: 360px;
+// Floor for a tree row's name column (dataset, vdev). The column takes whatever width the
+// row has spare, so a name that fits is shown in full; it only ellipsizes once it is longer
+// than that. When the row can't even give it this much, the column keeps the floor and the
+// tree scrolls horizontally instead of squeezing the name away.
+$tree-name-min-width: 360px;
 $gap: 8px;
 $breakpoint-min-mobile: 320px;
 

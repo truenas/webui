@@ -139,7 +139,7 @@ $scrollbar-offset: 20px;
     color: var(--fg2);
     display: grid;
     grid-gap: 8px;
-    grid-template-columns: auto 125px 125px 125px 40px;
+    grid-template-columns: minmax($tree-name-min-width, 1fr) 125px 125px 125px 40px;
     min-height: 40px;
     min-width: fit-content;
     min-width: 100%;
@@ -152,7 +152,7 @@ $scrollbar-offset: 20px;
     }
 
     @media (min-width: $breakpoint-singlecolumn) {
-      grid-template-columns: auto 125px 125px 125px;
+      grid-template-columns: minmax($tree-name-min-width, 1fr) 125px 125px 125px;
     }
 
     > div {
@@ -210,6 +210,9 @@ $scrollbar-offset: 20px;
         align-items: stretch;
         font-weight: bold;
         margin: 0;
+        // Both let the name shrink to its grid track instead of pushing past it; the track
+        // (see $tree-name-min-width) is what decides how wide a name may get.
+        min-width: 0;
         padding: 0;
 
         .icon-container {
@@ -220,11 +223,7 @@ $scrollbar-offset: 20px;
         .name {
           align-items: center;
           display: inline-flex;
-          // A fixed cap, not the old `calc(100vw - 80vw)` (= 20vw): that grew the name with
-          // the screen, so one long name took 512px of the row at 2560px. Past the cap the
-          // name ellipsizes and the tree scrolls horizontally; the full name is in the row
-          // tooltip.
-          max-width: $tree-name-max-width;
+          min-width: 0;
           overflow: hidden;
           padding-right: 15px;
           text-overflow: ellipsis;
