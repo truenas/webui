@@ -8,6 +8,16 @@ import { helptextUsers } from 'app/helptext/account/user-form';
 import { AuthSectionComponent } from 'app/pages/credentials/users/user-form/auth-section/auth-section.component';
 import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
+/**
+ * `TnFormFieldHarness.getTooltip()` reads the help button's `aria-label`, and the library
+ * strips markup out of that: an `aria-label` is announced verbatim, so `<i>` and `<br>` in it
+ * would be read out. The visible tooltip still renders them — only the name is plain — so an
+ * assertion against the raw helptext compares the wrong one of the two.
+ */
+function asAccessibleName(helpText: string): string {
+  return helpText.replace(/<[^>]+>/g, '');
+}
+
 describe('AuthSectionComponent', () => {
   let spectator: Spectator<AuthSectionComponent>;
   let loader: HarnessLoader;
@@ -218,8 +228,8 @@ describe('AuthSectionComponent', () => {
       // an inline help icon; collect the tooltips those wrappers expose.
       const fields = await loader.getAllHarnesses(TnFormFieldHarness);
       const tooltips = await Promise.all(fields.map((field) => field.getTooltip()));
-      expect(tooltips).toContain(helptextUsers.oneTimePasswordTooltip);
-      expect(tooltips).toContain(helptextUsers.disablePasswordTooltip);
+      expect(tooltips).toContain(asAccessibleName(helptextUsers.oneTimePasswordTooltip));
+      expect(tooltips).toContain(asAccessibleName(helptextUsers.disablePasswordTooltip));
     });
 
     // TODO: Expand on test case for Generate Temporary One-Time Password.
