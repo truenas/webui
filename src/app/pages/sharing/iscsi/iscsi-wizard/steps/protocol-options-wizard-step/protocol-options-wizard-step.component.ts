@@ -14,7 +14,6 @@ import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import {
   FcMpioInfoBannerComponent,
@@ -44,8 +43,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class ProtocolOptionsWizardStepComponent implements OnInit {
-  protected readonly tnSelectLabels = tnSelectLabels;
-
   private iscsiService = inject(IscsiService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);

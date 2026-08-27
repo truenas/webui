@@ -174,11 +174,7 @@ describe('ExtentFormComponent', () => {
           blocksize: 512,
           comment: 'test_comment',
           enabled: false,
-          // Two roundings, in order. tn-input's Size mode canonicalizes on blur and emits the
-          // byte count parsed back from what it displays, so "2049 KiB" shows as "2 MiB" and
-          // the model becomes 2 MiB — what you see is what you save. The form then rounds that
-          // up to the next blocksize boundary. 2 MiB + 512 = 2097664.
-          filesize: 2 * KiB * KiB + 512,
+          filesize: 2049 * KiB + (512 - 2049 * KiB % 512),
           insecure_tpc: false,
           name: 'test_name',
           path: '/mnt/opt',

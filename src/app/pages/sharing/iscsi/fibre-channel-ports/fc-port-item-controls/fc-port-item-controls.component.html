@@ -11,8 +11,6 @@
     [testId]="['port-mode', index()]"
     [formControl]="modeControl"
     [options]="modeOptions"
-    [placeholder]="tnSelectLabels.placeholder | translate"
-    [noOptionsLabel]="tnSelectLabels.noOptions | translate"
   ></tn-select>
 </tn-form-field>
 
@@ -27,8 +25,6 @@
       [formControl]="form().controls.host_id"
       [options]="(creatingPortOptions$ | async) ?? []"
       [optionTestIdKey]="portOptionTestIdKey"
-      [placeholder]="tnSelectLabels.placeholder | translate"
-      [noOptionsLabel]="tnSelectLabels.noOptions | translate"
     ></tn-select>
   </tn-form-field>
 } @else if (modeControl.value === 'existing') {
@@ -42,8 +38,6 @@
       [formControl]="form().controls.port"
       [options]="existingPortOptions()"
       [optionTestIdKey]="portOptionTestIdKey"
-      [placeholder]="tnSelectLabels.placeholder | translate"
-      [noOptionsLabel]="tnSelectLabels.noOptions | translate"
     ></tn-select>
   </tn-form-field>
 }

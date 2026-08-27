@@ -35,7 +35,6 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -64,8 +63,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class ExtentFormComponent extends IxFormHostForm implements OnInit {
-  protected readonly tnSelectLabels = tnSelectLabels;
-
   protected iscsiService = inject(IscsiService);
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);

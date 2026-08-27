@@ -1,26 +1,19 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 /**
- * Default trigger strings for `tn-select`.
+ * Translation keys for the copy `tn-select` renders identically in every select in the app.
  *
- * `tn-select` ships its own defaults (`'Select an option'` / `'No options available'`), but they
- * are plain English literals inside the library — they never reach webui's `TranslateService`, so
- * a non-English user sees English. Passing these keys through the `translate` pipe is what makes
- * them translatable; **do not drop the bindings assuming the library default covers it.**
+ * The library ships English literals (`'Select an option'` / `'No options available'`) that never
+ * reach webui's `TranslateService`. Since 0.7.x it resolves them through the `TN_SELECT_LABELS`
+ * token instead, so these keys are wired **once** at the app root by `provideTnSelectLabels()` —
+ * per-call-site `[placeholder]` / `[noOptionsLabel]` bindings are no longer needed and only repeat
+ * the same two attribute rows on every `<tn-select>`.
  *
- * Kept here rather than repeated per template so the wording is pinned in one place and every
- * migrated select matches.
- *
- * @example
- * ```html
- * <tn-select
- *   [placeholder]="tnSelectLabels.placeholder | translate"
- *   [noOptionsLabel]="tnSelectLabels.noOptions | translate"
- * ></tn-select>
- * ```
+ * Bind them on a select only where that particular field needs its own wording.
  */
 export const tnSelectLabels = {
   placeholder: T('Select an option'),
   /** Deliberately shorter than the library's 'No options available'. */
   noOptions: T('No options'),
+  selectAll: T('Select All'),
 };

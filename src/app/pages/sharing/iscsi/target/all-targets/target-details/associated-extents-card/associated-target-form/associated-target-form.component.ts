@@ -15,7 +15,6 @@ import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { AssociatedTargetDialogData, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -41,8 +40,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 })
 export class AssociatedTargetFormComponent {
   protected readonly InputType = InputType;
-  protected readonly tnSelectLabels = tnSelectLabels;
-
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);

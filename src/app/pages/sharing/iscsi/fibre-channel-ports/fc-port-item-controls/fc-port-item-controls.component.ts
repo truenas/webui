@@ -9,7 +9,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { map } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { optionTestIdByKebabLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { configurePortControlsForMode } from 'app/pages/sharing/iscsi/fibre-channel-ports/helpers/port-mode-control.helper';
@@ -27,8 +26,6 @@ import { configurePortControlsForMode } from 'app/pages/sharing/iscsi/fibre-chan
   ],
 })
 export class FcPortItemControlsComponent implements OnInit {
-  protected readonly tnSelectLabels = tnSelectLabels;
-
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);

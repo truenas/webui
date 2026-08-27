@@ -56,8 +56,6 @@
           <tn-select
             formControlName="rpm"
             [options]="(rpms$ | async) ?? []"
-            [placeholder]="tnSelectLabels.placeholder | translate"
-            [noOptionsLabel]="tnSelectLabels.noOptions | translate"
           ></tn-select>
         </tn-form-field>
 
@@ -80,8 +78,6 @@
           <tn-select
             formControlName="type"
             [options]="(types$ | translateOptions | async) ?? []"
-            [placeholder]="tnSelectLabels.placeholder | translate"
-            [noOptionsLabel]="tnSelectLabels.noOptions | translate"
           ></tn-select>
         </tn-form-field>
 
@@ -94,8 +90,6 @@
             <tn-select
               formControlName="disk"
               [options]="(disks$ | async) ?? []"
-              [placeholder]="tnSelectLabels.placeholder | translate"
-              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
 
@@ -167,8 +161,6 @@
           <tn-select
             formControlName="blocksize"
             [options]="(blocksizes$ | async) ?? []"
-            [placeholder]="tnSelectLabels.placeholder | translate"
-            [noOptionsLabel]="tnSelectLabels.noOptions | translate"
           ></tn-select>
         </tn-form-field>
 

@@ -33,8 +33,6 @@
       <tn-select
         formControlName="portal"
         [options]="(portalOptions$ | async) ?? []"
-        [placeholder]="tnSelectLabels.placeholder | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
     @if (isNewPortal) {
@@ -59,8 +57,6 @@
               <tn-select
                 [formControlName]="i"
                 [options]="(addressOptions$ | async) ?? []"
-                [placeholder]="tnSelectLabels.placeholder | translate"
-                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>
             </tn-form-field>
           </ix-list-item>

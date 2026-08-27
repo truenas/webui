@@ -42,7 +42,9 @@ import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
 import { provideTnCalendarIntl } from 'app/core/providers/tn-calendar-intl.provider';
+import { provideTnFallbackLabels } from 'app/core/providers/tn-fallback-labels.provider';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
+import { provideTnSelectLabels } from 'app/core/providers/tn-select-labels.provider';
 import { provideTnTablePagerLabels } from 'app/core/providers/tn-table-pager-labels.provider';
 import { chunkReloadKey, handleChunkLoadError } from 'app/helpers/handle-chunk-load-error';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
@@ -140,6 +142,8 @@ bootstrapApplication(AppComponent, {
     provideTnTablePagerLabels(),
     provideTnFormFieldErrors(),
     provideTnCalendarIntl(),
+    provideTnSelectLabels(),
+    provideTnFallbackLabels(),
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();

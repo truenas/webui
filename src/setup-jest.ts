@@ -44,6 +44,8 @@ import {
   Observable,
 } from 'rxjs';
 import { defaultLanguage } from 'app/constants/languages.constant';
+import { provideTnFallbackLabels } from 'app/core/providers/tn-fallback-labels.provider';
+import { provideTnSelectLabels } from 'app/core/providers/tn-select-labels.provider';
 import { EmptyApiService } from 'app/core/testing/utils/empty-api.service';
 import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -235,6 +237,12 @@ defineGlobalsInjections({
       provide: TN_TEST_ATTR,
       useValue: 'data-test',
     },
+    // Also mirrored from main.ts: without it a spec reads the library's own English copy
+    // ('No options available') where the app renders webui's ('No options').
+    provideTnSelectLabels(),
+    // Names the library's unnamed spinners/progress bars/dialogs, which since 0.7.x warn in dev
+    // mode when nothing named them — and `jest-fail-on-console` turns that warning into a failure.
+    provideTnFallbackLabels(),
     {
       provide: WINDOW,
       // eslint-disable-next-line no-restricted-globals

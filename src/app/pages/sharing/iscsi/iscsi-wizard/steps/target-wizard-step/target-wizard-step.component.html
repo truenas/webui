@@ -1,20 +1,7 @@
 <ng-container [formGroup]="form()">
   @if (hasFibreChannel() && isNewTarget) {
-    <!--
-      The control is bound ONCE on the group — binding it to each standalone `tn-radio` leaves
-      the deselected option rendering stale — and the options are projected rather than passed
-      as `[options]` so the per-option test ids survive.
-    -->
     <tn-form-field [label]="'Mode' | translate">
-      <tn-radio-group formControlName="mode">
-        @for (option of modeOptions; track option.value) {
-          <tn-radio
-            [label]="option.label"
-            [value]="option.value"
-            [testId]="['radio-button', 'mode', option.label]"
-          ></tn-radio>
-        }
-      </tn-radio-group>
+      <tn-radio-group formControlName="mode" [options]="modeOptions"></tn-radio-group>
     </tn-form-field>
   }
   <tn-form-field
@@ -25,8 +12,6 @@
     <tn-select
       formControlName="target"
       [options]="(targetOptions$ | async) ?? []"
-      [placeholder]="tnSelectLabels.placeholder | translate"
-      [noOptionsLabel]="tnSelectLabels.noOptions | translate"
     ></tn-select>
   </tn-form-field>
 </ng-container>
