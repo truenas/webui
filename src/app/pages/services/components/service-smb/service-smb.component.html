@@ -125,7 +125,6 @@
           [options]="(groupOptions$ | async) ?? []"
           [allowCustomValue]="true"
           [loading]="groupsLoading()"
-          [loadingText]="'Loading...' | translate"
           [noResultsText]="(groupsFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
           (searchChange)="groupSearch$.next($event)"
         ></tn-autocomplete>
@@ -142,7 +141,6 @@
           [options]="(userOptions$ | async) ?? []"
           [allowCustomValue]="true"
           [loading]="usersLoading()"
-          [loadingText]="'Loading...' | translate"
           [noResultsText]="(usersFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
           (searchChange)="userSearch$.next($event)"
         ></tn-autocomplete>

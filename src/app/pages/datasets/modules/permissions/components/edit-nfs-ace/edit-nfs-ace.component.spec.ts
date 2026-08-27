@@ -82,7 +82,9 @@ describe('EditNfsAceComponent', () => {
     const allowRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Allow' }));
     expect(await allowRadio.isChecked()).toBe(true);
 
-    const advancedPermsRadio = await loader.getHarness(TnRadioHarness.with({ testId: 'radio-permission-type-advanced' }));
+    const advancedPermsRadio = await loader.getHarness(
+      TnRadioHarness.with({ testId: 'radio-button-permission-type-advanced' }),
+    );
     expect(await advancedPermsRadio.isChecked()).toBe(true);
 
     expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Read Data' }))).isChecked()).toBe(true);
@@ -91,7 +93,9 @@ describe('EditNfsAceComponent', () => {
     expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Read ACL' }))).isChecked()).toBe(true);
     expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'Write Data' }))).isChecked()).toBe(false);
 
-    const advancedFlagsRadio = await loader.getHarness(TnRadioHarness.with({ testId: 'radio-flags-type-advanced' }));
+    const advancedFlagsRadio = await loader.getHarness(
+      TnRadioHarness.with({ testId: 'radio-button-flags-type-advanced' }),
+    );
     expect(await advancedFlagsRadio.isChecked()).toBe(true);
 
     expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'File Inherit' }))).isChecked()).toBe(true);
@@ -101,8 +105,8 @@ describe('EditNfsAceComponent', () => {
 
   it('updates value in store when form is updated', async () => {
     await (await loader.getHarness(TnRadioHarness.with({ label: 'Deny' }))).check();
-    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-permission-type-basic' }))).check();
-    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-flags-type-basic' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-button-permission-type-basic' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-button-flags-type-basic' }))).check();
 
     const basicPermissionSelect = await loader.getHarness(
       TnSelectHarness.with({ selector: '[formControlName="basicPermission"]' }),
@@ -162,7 +166,7 @@ describe('EditNfsAceComponent', () => {
   });
 
   it('shows basic permissions select when permission type is basic', async () => {
-    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-permission-type-basic' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-button-permission-type-basic' }))).check();
 
     const basicPermSelect = await loader.getHarnessOrNull(
       TnSelectHarness.with({ selector: '[formControlName="basicPermission"]' }),
@@ -173,7 +177,7 @@ describe('EditNfsAceComponent', () => {
   });
 
   it('shows advanced permissions checkbox list when permission type is advanced', async () => {
-    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-permission-type-advanced' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-button-permission-type-advanced' }))).check();
 
     const readDataCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Read Data' }));
     const writeOwnerCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Write Owner' }));
@@ -182,7 +186,7 @@ describe('EditNfsAceComponent', () => {
   });
 
   it('shows basic flags when flag type is basic', async () => {
-    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-flags-type-basic' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-button-flags-type-basic' }))).check();
 
     const basicFlagRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Inherit' }));
     expect(basicFlagRadio).toExist();
@@ -191,7 +195,7 @@ describe('EditNfsAceComponent', () => {
   });
 
   it('shows advanced flags when flag type is advanced', async () => {
-    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-flags-type-advanced' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ testId: 'radio-button-flags-type-advanced' }))).check();
 
     const fileInheritCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'File Inherit' }));
     const inheritOnlyCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Inherit Only' }));

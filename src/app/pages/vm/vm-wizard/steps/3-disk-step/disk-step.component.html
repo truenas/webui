@@ -47,8 +47,6 @@
       <tn-select
         formControlName="hdd_type"
         [options]="(hddTypeOptions$ | async) ?? []"
-        [placeholder]="tnSelectLabels.placeholder | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -61,8 +59,6 @@
         <tn-select
           formControlName="datastore"
           [options]="(datastoreOptions$ | async) ?? []"
-          [placeholder]="tnSelectLabels.placeholder | translate"
-          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
 
@@ -84,8 +80,6 @@
         <tn-select
           formControlName="hdd_path"
           [options]="(hddPathOptions$ | async) ?? []"
-          [placeholder]="tnSelectLabels.placeholder | translate"
-          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
 

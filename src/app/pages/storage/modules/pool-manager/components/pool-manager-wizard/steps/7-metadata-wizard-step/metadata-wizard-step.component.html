@@ -18,21 +18,18 @@
   <tn-button
     tnStepperPrevious
     color="secondary"
-    type="button"
     [testId]="'back-metadata'"
     [label]="'Back' | translate"
   ></tn-button>
   <tn-button
     tnStepperNext
     color="primary"
-    type="button"
     [testId]="'next-metadata'"
     [label]="'Next' | translate"
   ></tn-button>
 
   <tn-button
     color="warn"
-    type="button"
     [testId]="'reset-fields-in-metadata-step'"
     [label]="'Reset Step' | translate"
     (onClick)="resetStep()"
@@ -40,7 +37,6 @@
 
   <tn-button
     color="secondary"
-    type="button"
     [testId]="'save-and-go-to-review-metadata'"
     [label]="'Save And Go To Review' | translate"
     (onClick)="goToReviewStep()"

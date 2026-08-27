@@ -13,8 +13,6 @@
           [formControl]="typeControl"
           [testId]="'device-type'"
           [options]="(deviceTypes$ | async) ?? []"
-          [placeholder]="tnSelectLabels.placeholder | translate"
-          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
     }
@@ -63,8 +61,6 @@
               <tn-select
                 formControlName="datastore"
                 [options]="(datastoreOptions$ | async) ?? []"
-                [placeholder]="tnSelectLabels.placeholder | translate"
-                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>
             </tn-form-field>
 
@@ -90,8 +86,6 @@
               <tn-select
                 formControlName="path"
                 [options]="(zvolOptions$ | async) ?? []"
-                [placeholder]="tnSelectLabels.placeholder | translate"
-                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>
             </tn-form-field>
 
@@ -112,8 +106,6 @@
             <tn-select
               formControlName="type"
               [options]="(diskModes$ | async) ?? []"
-              [placeholder]="tnSelectLabels.placeholder | translate"
-              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
 
@@ -125,8 +117,6 @@
             <tn-select
               formControlName="sectorsize"
               [options]="(sectorSizes$ | async) ?? []"
-              [placeholder]="tnSelectLabels.placeholder | translate"
-              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
         }
@@ -139,8 +129,6 @@
             <tn-select
               formControlName="type"
               [options]="(nicTypes$ | async) ?? []"
-              [placeholder]="tnSelectLabels.placeholder | translate"
-              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
 
@@ -170,8 +158,6 @@
             <tn-select
               formControlName="nic_attach"
               [options]="(nicOptions$ | async) ?? []"
-              [placeholder]="tnSelectLabels.placeholder | translate"
-              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
 
@@ -202,8 +188,6 @@
             <tn-select
               formControlName="sectorsize"
               [options]="(sectorSizes$ | async) ?? []"
-              [placeholder]="tnSelectLabels.placeholder | translate"
-              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
 
@@ -215,8 +199,6 @@
             <tn-select
               formControlName="type"
               [options]="(diskModes$ | async) ?? []"
-              [placeholder]="tnSelectLabels.placeholder | translate"
-              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
 
@@ -244,16 +226,12 @@
             <tn-select
               formControlName="controller_type"
               [options]="(usbControllerOptions$ | async) ?? []"
-              [placeholder]="tnSelectLabels.placeholder | translate"
-              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
           <tn-form-field [label]="'Device' | translate" [required]="true">
             <tn-select
               formControlName="device"
               [options]="(usbDeviceOptions$ | async) ?? []"
-              [placeholder]="tnSelectLabels.placeholder | translate"
-              [noOptionsLabel]="tnSelectLabels.noOptions | translate"
             ></tn-select>
           </tn-form-field>
           @if (usbForm.controls.usb.enabled) {
@@ -278,8 +256,6 @@
               <tn-select
                 formControlName="type"
                 [options]="(displayTypes$ | async) ?? []"
-                [placeholder]="tnSelectLabels.placeholder | translate"
-                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>
             </tn-form-field>
           } @else {
@@ -298,8 +274,6 @@
               <tn-select
                 formControlName="bind"
                 [options]="(bindOptions$ | async) ?? []"
-                [placeholder]="tnSelectLabels.placeholder | translate"
-                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>
             </tn-form-field>
 
@@ -329,8 +303,6 @@
               <tn-select
                 formControlName="resolution"
                 [options]="(resolutions$ | async) ?? []"
-                [placeholder]="tnSelectLabels.placeholder | translate"
-                [noOptionsLabel]="tnSelectLabels.noOptions | translate"
               ></tn-select>
             </tn-form-field>
 

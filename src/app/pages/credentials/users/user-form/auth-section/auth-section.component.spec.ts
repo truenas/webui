@@ -4,7 +4,6 @@ import { signal } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness } from '@truenas/ui-components';
-import { helptextUsers } from 'app/helptext/account/user-form';
 import { AuthSectionComponent } from 'app/pages/credentials/users/user-form/auth-section/auth-section.component';
 import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
@@ -218,8 +217,18 @@ describe('AuthSectionComponent', () => {
       // an inline help icon; collect the tooltips those wrappers expose.
       const fields = await loader.getAllHarnesses(TnFormFieldHarness);
       const tooltips = await Promise.all(fields.map((field) => field.getTooltip()));
-      expect(tooltips).toContain(helptextUsers.oneTimePasswordTooltip);
-      expect(tooltips).toContain(helptextUsers.disablePasswordTooltip);
+
+      // Matched on a fragment rather than the whole helptext, because `getTooltip()` reads the
+      // help button's `aria-label` and the library strips markup out of that — an `aria-label`
+      // is announced verbatim, so `<i>` and `<br>` in it would be read out. Both fragments below
+      // are markup-free runs of their helptext, so they read the same either way and still say
+      // which of the two tooltips landed on which option.
+      expect(tooltips).toContainEqual(
+        expect.stringContaining('Temporary password will be generated and shown to you once form is saved.'),
+      );
+      expect(tooltips).toContainEqual(
+        expect.stringContaining('disabling the password prevents using account credentials'),
+      );
     });
 
     // TODO: Expand on test case for Generate Temporary One-Time Password.

@@ -6,6 +6,7 @@
           class="example-margin"
           mode="indeterminate"
           [value]="progressTotalPercent"
+          [ariaLabel]="title | translate"
         ></tn-progress-bar>
         <label> {{ progressTotalPercent | number: '1.2-2' }}% </label>
       </div>
