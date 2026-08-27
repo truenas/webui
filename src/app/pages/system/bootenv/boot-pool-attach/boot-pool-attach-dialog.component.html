@@ -1,6 +1,6 @@
 <tn-dialog-shell testId="boot-pool-attach" [title]="'Attach' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-fieldset>
+  <tn-form-section>
     <ix-unused-disk-select
       formControlName="dev"
       valueField="name"
@@ -8,18 +8,18 @@
       [tooltip]="helptextSystemBootenv.memberDiskTooltip | translate"
       [required]="true"
     ></ix-unused-disk-select>
-    <tn-form-field [tooltip]="expand.tooltip | translate">
+    <tn-form-field [tooltip]="helptextSystemBootenv.expandTooltip | translate">
       <tn-checkbox
         testId="expand"
-        [formControlName]="expand.fcName"
-        [label]="expand.label | translate"
+        formControlName="expand"
+        [label]="helptextSystemBootenv.expandLabel | translate"
       ></tn-checkbox>
     </tn-form-field>
-  </ix-fieldset>
+  </tn-form-section>
 
 </form>
 
-@if (isFormLoading) {
+@if (isFormLoading()) {
   <ix-fake-progress-bar></ix-fake-progress-bar>
 }
 <ix-form-actions tnDialogAction>
@@ -35,7 +35,7 @@
     color="primary"
     testId="save"
     [label]="'Save' | translate"
-    [disabled]="form.invalid || isFormLoading"
+    [disabled]="form.invalid || isFormLoading()"
     (onClick)="onSubmit()"
   ></tn-button>
 </ix-form-actions>

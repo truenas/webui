@@ -3,13 +3,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnFileInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { UploadConfigDialog } from 'app/pages/system/advanced/manage-configuration-menu/upload-config-dialog/upload-config-dialog.component';
 import { UploadService } from 'app/services/upload.service';
 
@@ -42,12 +41,22 @@ describe('UploadConfigDialogComponent', () => {
     spectator = createComponent();
   });
 
+  // `TnFileInputHarness` exposes no setter — a browser will not let a test populate a native file
+  // input — so drive the control the way the component does, through the native change event.
+  const selectFile = (file: File): void => {
+    const nativeInput = spectator.query('input[type="file"]');
+    const event = new Event('change');
+    Object.defineProperty(event, 'target', { value: { files: [file] }, writable: true });
+    nativeInput.dispatchEvent(event);
+    spectator.detectChanges();
+  };
+
   it('uploads config when dialog is submitted', async () => {
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     const file = fakeFile('config.db');
 
-    const fileInput = await loader.getHarness(IxFileInputHarness.with({ label: 'Select Configuration File' }));
-    await fileInput.setValue([file]);
+    expect(await loader.getHarness(TnFileInputHarness)).toBeTruthy();
+    selectFile(file);
 
     const uploadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Upload' }));
     await uploadButton.click();

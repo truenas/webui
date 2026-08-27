@@ -1,16 +1,16 @@
 <tn-dialog-shell testId="boot-pool-replace" [title]="'Replace' | translate">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-fieldset>
+  <tn-form-section>
     <ix-unused-disk-select
       formControlName="dev"
       valueField="name"
       [label]="helptextSystemBootenv.memberDiskLabel | translate"
       [required]="true"
     ></ix-unused-disk-select>
-  </ix-fieldset>
+  </tn-form-section>
 
 </form>
-@if (isFormLoading) {
+@if (isFormLoading()) {
   <ix-fake-progress-bar></ix-fake-progress-bar>
 }
 <ix-form-actions tnDialogAction>
