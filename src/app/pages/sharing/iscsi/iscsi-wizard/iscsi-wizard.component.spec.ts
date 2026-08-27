@@ -29,7 +29,7 @@ import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { ExtentWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/extent-wizard-step/extent-wizard-step.component';
@@ -43,7 +43,6 @@ import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 describe('IscsiWizardComponent', () => {
   let spectator: Spectator<IscsiWizardComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let store$: Store<AppState>;
 
   const createComponent = createComponentFactory({
@@ -132,11 +131,26 @@ describe('IscsiWizardComponent', () => {
     TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
 
-  beforeEach(async () => {
+  /**
+   * Fills controls addressed by their visible label. The wizard holds ix-* (`ix-explorer`) and
+   * tn-* controls side by side, and `IxFormHarness` indexes only the former — `indexFormControls`
+   * walks both. Repeated labels stay last-wins, which is what the FC-port tests rely on to fill
+   * the row they just added.
+   *
+   * Re-indexes before every key, the way `IxFormHarness.fillForm` does: one key can reveal the
+   * next control (picking 'Create new virtual port' is what renders the host select), so a single
+   * snapshot taken up front would miss it.
+   */
+  const fillByLabel = async (values: Record<string, unknown>): Promise<void> => {
+    for (const [label, value] of Object.entries(values)) {
+      await fillControlValues(await indexFormControls(loader), { [label]: value });
+    }
+  };
+
+  beforeEach(() => {
     spectator = createComponent();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     store$ = spectator.inject(Store);
     jest.spyOn(store$, 'dispatch');
   });
@@ -153,10 +167,9 @@ describe('IscsiWizardComponent', () => {
     await clickNext();
 
     // Extent step
-    form = await loader.getHarness(IxFormHarness);
     await (await getTnInput('name')).setValue('test-name');
     await (await getTnSelect('disk')).selectOption('Create New');
-    await form.fillForm({
+    await fillByLabel({
       'Pool/Dataset': '/mnt/new_pool',
     });
     await (await getTnInput('volsize')).setValue('1024 MiB');
@@ -255,22 +268,19 @@ describe('IscsiWizardComponent', () => {
     });
 
     // Target step: switch to Fibre Channel mode
-    form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ Mode: 'Fibre Channel' });
+    await fillByLabel({ Mode: 'Fibre Channel' });
     await clickNext();
 
     // Extent step
-    form = await loader.getHarness(IxFormHarness);
     await (await getTnInput('name')).setValue('test-name');
     await (await getTnSelect('disk')).selectOption('Create New');
-    await form.fillForm({ 'Pool/Dataset': '/mnt/new_pool' });
+    await fillByLabel({ 'Pool/Dataset': '/mnt/new_pool' });
     await (await getTnInput('volsize')).setValue('1024 MiB');
     await clickNext();
 
     // Protocol Options step: FC mode swaps portals/initiators for Fibre Channel ports
     // and auto-adds an empty first port row, so fill it rather than adding another.
-    form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
+    await fillByLabel({
       'Port Mode': 'Use existing port',
       'Existing Port': 'fc0',
     });
@@ -300,24 +310,21 @@ describe('IscsiWizardComponent', () => {
   describe('FC MPIO validation', () => {
     beforeEach(async () => {
       // Target step: switch to Fibre Channel mode, then advance
-      form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
+      await fillByLabel({
         Mode: 'Fibre Channel',
       });
       await clickNext();
 
       // Extent step
-      form = await loader.getHarness(IxFormHarness);
       await (await getTnInput('name')).setValue('test-fc-target');
       await (await getTnSelect('disk')).selectOption('Create New');
-      await form.fillForm({
+      await fillByLabel({
         'Pool/Dataset': '/mnt/new_pool',
       });
       await (await getTnInput('volsize')).setValue('1024 MiB');
       await clickNext();
 
       // Now on the Protocol Options step
-      form = await loader.getHarness(IxFormHarness);
       spectator.detectChanges();
     });
 
@@ -326,7 +333,7 @@ describe('IscsiWizardComponent', () => {
       const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
       await fcPortsList.pressAddButton();
 
-      await form.fillForm({
+      await fillByLabel({
         'Port Mode': 'Use existing port',
         'Existing Port': 'fc0',
       });
@@ -334,7 +341,7 @@ describe('IscsiWizardComponent', () => {
       // Add second port on fc1 (different physical port)
       await fcPortsList.pressAddButton();
 
-      await form.fillForm({
+      await fillByLabel({
         'Port Mode': 'Use existing port',
         'Existing Port': 'fc1',
       });
@@ -356,14 +363,14 @@ describe('IscsiWizardComponent', () => {
 
       // First NPIV port on fc0
       await fcPortsList.pressAddButton();
-      await form.fillForm({
+      await fillByLabel({
         'Port Mode': 'Create new virtual port',
         'Choose Host for New Virtual Port': 'fc0/2',
       });
 
       // Second NPIV port on fc0 (should fail validation)
       await fcPortsList.pressAddButton();
-      await form.fillForm({
+      await fillByLabel({
         'Port Mode': 'Create new virtual port',
         'Choose Host for New Virtual Port': 'fc0/2',
       });
@@ -383,7 +390,7 @@ describe('IscsiWizardComponent', () => {
       const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
       await fcPortsList.pressAddButton();
 
-      await form.fillForm({
+      await fillByLabel({
         'Port Mode': 'Use existing port',
         'Existing Port': 'fc0',
       });
@@ -391,7 +398,7 @@ describe('IscsiWizardComponent', () => {
       // Add NPIV port on fc1 (different physical port)
       await fcPortsList.pressAddButton();
 
-      await form.fillForm({
+      await fillByLabel({
         'Port Mode': 'Create new virtual port',
         'Choose Host for New Virtual Port': 'fc1/1',
       });

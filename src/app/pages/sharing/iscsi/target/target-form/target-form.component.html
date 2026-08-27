@@ -25,6 +25,7 @@
         >
           <ix-fc-port-item-controls
             [form]="form.controls.fcPorts.at(i)"
+            [index]="i"
             [isEdit]="!isNew"
             [currentPort]="currentPorts()[i]"
             [usedPhysicalPorts]="usedPhysicalPortsByIndex()[i]"
@@ -66,11 +67,9 @@
         </tn-form-field>
 
         @if (hasFibreChannel()) {
-          <ix-radio-group
-            formControlName="mode"
-            [label]="'Mode' | translate"
-            [options]="modeOptions$"
-          ></ix-radio-group>
+          <tn-form-field [label]="'Mode' | translate">
+            <tn-radio-group formControlName="mode" [options]="modeOptions"></tn-radio-group>
+          </tn-form-field>
         }
 
         <ix-list

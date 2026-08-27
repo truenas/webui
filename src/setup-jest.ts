@@ -48,6 +48,7 @@ import {
   Observable,
 } from 'rxjs';
 import { defaultLanguage } from 'app/constants/languages.constant';
+import { provideTnSelectLabels } from 'app/core/providers/tn-select-labels.provider';
 import { EmptyApiService } from 'app/core/testing/utils/empty-api.service';
 import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -241,6 +242,9 @@ defineGlobalsInjections({
       provide: TN_TEST_ATTR,
       useValue: 'data-test',
     },
+    // Also mirrored from main.ts: without it a spec reads the library's own English copy
+    // ('No options available') where the app renders webui's ('No options').
+    provideTnSelectLabels(),
     {
       // Mirror production (main.ts) again: the app names every unnamed spinner,
       // progress bar and modal surface through this token, which is also what stands

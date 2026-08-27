@@ -35,8 +35,6 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -56,7 +54,6 @@ import { IscsiService } from 'app/services/iscsi.service';
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,
-    IxInputComponent,
     IxExplorerComponent,
     TnIconComponent,
     TranslateModule,
@@ -67,7 +64,6 @@ import { IscsiService } from 'app/services/iscsi.service';
 })
 export class ExtentFormComponent extends IxFormHostForm implements OnInit {
   protected iscsiService = inject(IscsiService);
-  protected formatter = inject(IxFormatterService);
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);

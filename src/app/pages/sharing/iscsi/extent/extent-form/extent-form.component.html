@@ -117,21 +117,18 @@
             }
           </ix-explorer>
 
-          <!--
-            Kept as ix-input: tn-input [inputType]="InputType.Size" reformats on blur
-            (e.g. 2049 KiB → 2 MiB) and re-parses, losing the exact byte value the
-            extent API requires. ix-input's memory-size parse/format round-trips the
-            exact byte count.
-          -->
-          <ix-input
-            formControlName="filesize"
+          <tn-form-field
             [label]="helptext.extent.filesizeLabel | translate"
             [tooltip]="helptext.extent.filesizeTooltip | translate"
-            [placeholder]="helptext.extent.filesizeLabel | translate"
             [required]="true"
-            [parse]="formatter.memorySizeParsing"
-            [format]="formatter.memorySizeFormatting"
-          ></ix-input>
+          >
+            <tn-input
+              formControlName="filesize"
+              [inputType]="InputType.Size"
+              [required]="true"
+              [placeholder]="helptext.extent.filesizeLabel | translate"
+            ></tn-input>
+          </tn-form-field>
         }
 
         @if (!isNew) {

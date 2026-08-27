@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
+  TnButtonHarness, TnFormFieldHarness, TnInputHarness, TnRadioGroupHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
@@ -23,7 +23,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   FcMpioInfoBannerComponent,
@@ -35,7 +34,6 @@ import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let api: ApiService;
 
   const existingTarget = {
@@ -72,6 +70,18 @@ describe('TargetFormComponent', () => {
   const getTnSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
     TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+
+  // `IxFormHarness` indexes ix-* controls only, so the migrated radio group is driven directly.
+  // Filtered by ancestor rather than by name: `RadioGroupHarnessFilters` offers only
+  // `ariaLabel`/`testId`, and inside a `tn-form-field` the group takes its name via
+  // `aria-labelledby` and writes no `aria-label` to match on. There is exactly one such group here.
+  const getModeGroup = (): Promise<TnRadioGroupHarness> => loader.getHarness(
+    TnRadioGroupHarness.with({ ancestor: 'tn-form-field' }),
+  );
+
+  const setMode = async (label: string): Promise<void> => {
+    await (await getModeGroup()).select(label);
+  };
 
   // Fills the four group selects (portal / initiator / authmethod / auth) for the single
   // group item the mode-switching tests create.
@@ -173,10 +183,9 @@ describe('TargetFormComponent', () => {
   });
 
   describe('adds new target', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       jest.spyOn(console, 'warn').mockImplementation();
       api = spectator.inject(ApiService);
     });
@@ -243,24 +252,34 @@ describe('TargetFormComponent', () => {
   });
 
   describe('edit new target', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent({
         props: {
           targetData: existingTarget,
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       jest.spyOn(console, 'warn').mockImplementation();
       api = spectator.inject(ApiService);
+    });
+
+    // Reads the group back, rather than only the form model it writes to: binding the control to
+    // each standalone tn-radio instead of once on the group leaves the deselected option rendering
+    // stale, and every other assertion here would still pass in that state.
+    it('renders the saved mode as the checked option, and re-renders on switch', async () => {
+      const modeGroup = await getModeGroup();
+      expect(await modeGroup.getOptionLabels()).toEqual(['iSCSI', 'Fibre Channel', 'Both']);
+      expect(await modeGroup.getCheckedLabel()).toBe('iSCSI');
+
+      await setMode('Fibre Channel');
+
+      expect(await modeGroup.getCheckedLabel()).toBe('Fibre Channel');
     });
 
     it('edits existing target when form opened for edit is submitted', async () => {
       await (await getTnInput('name')).setValue('name_new');
       await (await getTnInput('alias')).setValue('alias_new');
-      await form.fillForm({
-        Mode: 'Fibre Channel',
-      });
+      await setMode('Fibre Channel');
 
       const closed = jest.fn();
       spectator.component.closed.subscribe(closed);
@@ -323,14 +342,13 @@ describe('TargetFormComponent', () => {
   // `validatePhysicalPortUniqueness` is one jest.fn shared by every test in this file (it is built
   // once in the factory's providers), so this block restores the permissive default in afterEach.
   describe('FC port uniqueness gate', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent({
         props: {
           targetData: existingTarget,
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       jest.spyOn(console, 'warn').mockImplementation();
     });
 
@@ -343,16 +361,14 @@ describe('TargetFormComponent', () => {
       (spectator.inject(FibreChannelService).validatePhysicalPortUniqueness as jest.Mock)
         .mockImplementation(() => ({ valid: false, duplicates: ['fc0'] }));
 
-      await form.fillForm({
-        Mode: 'Fibre Channel',
-      });
+      await setMode('Fibre Channel');
 
       expect(spectator.component.canSubmit()).toBe(false);
     });
   });
 
   describe('validation error handling', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       api = spectator.inject(ApiService);
       jest.spyOn(api, 'call').mockImplementation((method) => {
@@ -362,7 +378,6 @@ describe('TargetFormComponent', () => {
         return of(null);
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       jest.spyOn(console, 'warn').mockImplementation();
     });
 
@@ -375,17 +390,14 @@ describe('TargetFormComponent', () => {
   });
 
   describe('MPIO info banner conditional display', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       jest.spyOn(console, 'warn').mockImplementation();
     });
 
     it('should not display banner when there are 0 FC ports', async () => {
-      await form.fillForm({
-        Mode: 'Fibre Channel',
-      });
+      await setMode('Fibre Channel');
       spectator.detectChanges();
 
       const banner = spectator.query('ix-fc-mpio-info-banner');
@@ -394,35 +406,28 @@ describe('TargetFormComponent', () => {
   });
 
   describe('groups visibility based on mode', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       jest.spyOn(console, 'warn').mockImplementation();
     });
 
     it('shows groups section when mode is iSCSI', async () => {
-      await form.fillForm({
-        Mode: 'iSCSI',
-      });
+      await setMode('iSCSI');
 
       const groupsList = spectator.query('ix-list[formArrayName="groups"]');
       expect(groupsList).toExist();
     });
 
     it('shows groups section when mode is BOTH', async () => {
-      await form.fillForm({
-        Mode: 'Both',
-      });
+      await setMode('Both');
 
       const groupsList = spectator.query('ix-list[formArrayName="groups"]');
       expect(groupsList).toExist();
     });
 
     it('hides groups section when mode is FC', async () => {
-      await form.fillForm({
-        Mode: 'Fibre Channel',
-      });
+      await setMode('Fibre Channel');
 
       const groupsList = spectator.query('ix-list[formArrayName="groups"]');
       expect(groupsList).not.toExist();
@@ -430,22 +435,19 @@ describe('TargetFormComponent', () => {
   });
 
   describe('groups in API calls based on mode', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent({
         props: {
           targetData: existingTarget,
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       jest.spyOn(console, 'warn').mockImplementation();
       api = spectator.inject(ApiService);
     });
 
     it('sends empty groups array when submitting with FC mode', async () => {
-      await form.fillForm({
-        Mode: 'Fibre Channel',
-      });
+      await setMode('Fibre Channel');
 
       spectator.component.submit();
 
@@ -477,9 +479,7 @@ describe('TargetFormComponent', () => {
     });
 
     it('sends groups array when submitting with BOTH mode', async () => {
-      await form.fillForm({
-        Mode: 'Both',
-      });
+      await setMode('Both');
 
       spectator.component.submit();
 
@@ -497,10 +497,9 @@ describe('TargetFormComponent', () => {
   });
 
   describe('mode switching UX preserves groups in memory', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
       jest.spyOn(console, 'warn').mockImplementation();
       api = spectator.inject(ApiService);
     });
@@ -508,9 +507,7 @@ describe('TargetFormComponent', () => {
     it('preserves groups when switching from iSCSI to FC and back to iSCSI', async () => {
       // Start with iSCSI mode and add a group
       await (await getTnInput('name')).setValue('test-target');
-      await form.fillForm({
-        Mode: 'iSCSI',
-      });
+      await setMode('iSCSI');
 
       const groupsList = await loader.getHarness(IxListHarness.with({ label: 'Add groups' }));
       await groupsList.pressAddButton();
@@ -537,17 +534,13 @@ describe('TargetFormComponent', () => {
       });
 
       // Switch to FC mode - groups should be hidden but preserved
-      await form.fillForm({
-        Mode: 'Fibre Channel',
-      });
+      await setMode('Fibre Channel');
 
       groupsSection = spectator.query('ix-list[formArrayName="groups"]');
       expect(groupsSection).not.toExist();
 
       // Switch back to iSCSI mode - groups should reappear with same values
-      await form.fillForm({
-        Mode: 'iSCSI',
-      });
+      await setMode('iSCSI');
 
       groupsSection = spectator.query('ix-list[formArrayName="groups"]');
       expect(groupsSection).toExist();
@@ -565,9 +558,7 @@ describe('TargetFormComponent', () => {
     it('submits correct API payload after mode switching: iSCSI with groups → FC (no groups) → iSCSI with groups', async () => {
       // Start with iSCSI mode and add a group
       await (await getTnInput('name')).setValue('test-target');
-      await form.fillForm({
-        Mode: 'iSCSI',
-      });
+      await setMode('iSCSI');
 
       const groupsList = await loader.getHarness(IxListHarness.with({ label: 'Add groups' }));
       await groupsList.pressAddButton();
@@ -580,9 +571,7 @@ describe('TargetFormComponent', () => {
       });
 
       // Switch to FC mode and submit - should send empty groups array
-      await form.fillForm({
-        Mode: 'Fibre Channel',
-      });
+      await setMode('Fibre Channel');
 
       spectator.component.submit();
 
@@ -599,9 +588,7 @@ describe('TargetFormComponent', () => {
       spectator.component.form.markAsPristine();
 
       // Switch back to iSCSI and submit - should send groups array
-      await form.fillForm({
-        Mode: 'iSCSI',
-      });
+      await setMode('iSCSI');
 
       spectator.component.submit();
 
@@ -621,9 +608,7 @@ describe('TargetFormComponent', () => {
 
     it('preserves groups when switching from BOTH to FC and back to BOTH', async () => {
       await (await getTnInput('name')).setValue('test-target');
-      await form.fillForm({
-        Mode: 'Both',
-      });
+      await setMode('Both');
 
       const groupsList = await loader.getHarness(IxListHarness.with({ label: 'Add groups' }));
       await groupsList.pressAddButton();
@@ -635,17 +620,13 @@ describe('TargetFormComponent', () => {
       });
 
       // Switch to FC mode
-      await form.fillForm({
-        Mode: 'Fibre Channel',
-      });
+      await setMode('Fibre Channel');
 
       let groupsSection = spectator.query('ix-list[formArrayName="groups"]');
       expect(groupsSection).not.toExist();
 
       // Switch back to BOTH mode
-      await form.fillForm({
-        Mode: 'Both',
-      });
+      await setMode('Both');
 
       groupsSection = spectator.query('ix-list[formArrayName="groups"]');
       expect(groupsSection).toExist();
