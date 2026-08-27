@@ -116,6 +116,7 @@ export class AddDeviceMenuComponent {
   protected addGpu(gpuPci: string): void {
     this.addDevice({
       dev_type: VirtualizationDeviceType.Gpu,
+      gpu_type: VirtualizationGpuType.Physical,
       pci: gpuPci,
     } as VirtualizationGpu);
   }

@@ -6,7 +6,9 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationDeviceType, VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import {
+  VirtualizationDeviceType, VirtualizationGpuType, VirtualizationStatus, VirtualizationType,
+} from 'app/enums/virtualization.enum';
 import { AvailableGpu, AvailableUsb, VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -116,6 +118,7 @@ describe('AddDeviceMenuComponent', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
       dev_type: VirtualizationDeviceType.Gpu,
+      gpu_type: VirtualizationGpuType.Physical,
       pci: 'pci_0000_01_00_1',
     } as VirtualizationDevice]);
     expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
