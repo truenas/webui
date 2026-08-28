@@ -1,8 +1,31 @@
-// The `<ix-form>` wrapper renders the form element itself, so the page owns only the
-// gutter between the card edge and the fields.
-ix-form {
-  display: block;
-  padding: 20px;
+.card {
+  margin: 0 auto;
+  max-width: 850px;
+}
+
+// The `<ix-form>` wrapper renders the form element itself, so the card's padding lives on the
+// two rows it projects: the fields and the footer actions.
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 24px;
+
+  // These ix-* controls ship their own vertical margins, which would stack on the column gap
+  // above. The gap owns the rhythm here.
+  > ix-file-input,
+  > ix-list {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+}
+
+.form-actions {
+  border-top: 1px solid var(--lines);
+  column-gap: 10px;
+  display: flex;
+  justify-content: flex-end;
+  padding: 24px;
 }
 
 ix-list-item {

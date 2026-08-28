@@ -21,7 +21,6 @@ import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset
 import { Job } from 'app/interfaces/job.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import {
   IxFormComponent, SubmitResult,
@@ -59,7 +58,6 @@ interface DatasetFormGroup {
     IxListComponent,
     IxListItemComponent,
     TranslateModule,
-    FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,
   ],

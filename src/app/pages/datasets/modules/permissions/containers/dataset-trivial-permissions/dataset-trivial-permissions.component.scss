@@ -15,15 +15,8 @@
 }
 
 .card {
-  height: auto;
   margin: 0 auto;
   max-width: 850px;
-
-  // TEMP: tn-card's inner element is height:100% and stretches to fill the routed
-  // page height, leaving empty space below short content. Size it to content.
-  ::ng-deep .tn-card {
-    height: auto;
-  }
 }
 
 .dataset-path {
