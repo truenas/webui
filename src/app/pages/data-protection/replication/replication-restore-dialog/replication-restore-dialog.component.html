@@ -1,38 +1,43 @@
 <tn-dialog-shell testId="replication-restore" [title]="'Restore Replication Task' | translate">
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <tn-form-field [label]="'Name' | translate" [tooltip]="helptext.nameTooltip | translate">
-    <tn-input
-      testId="name"
-      formControlName="name"
+  <ix-form
+    [formGroup]="form"
+    [requiredRoles]="requiredRoles"
+    [submitHandler]="handleSubmit"
+    (closed)="dialogRef.close(true)"
+  >
+    <tn-form-field [label]="'Name' | translate" [tooltip]="helptext.nameTooltip | translate" [required]="true">
+      <tn-input
+        testId="name"
+        formControlName="name"
+        [required]="true"
+      ></tn-input>
+    </tn-form-field>
+
+    <ix-explorer
+      formControlName="target_dataset"
+      [label]="'Destination' | translate"
       [required]="true"
-    ></tn-input>
-  </tn-form-field>
+      [tooltip]="helptext.targetDatasetTooltip | translate"
+      [nodeProvider]="treeNodeProvider"
+      [rootNodes]="rootNodes"
+    ></ix-explorer>
+  </ix-form>
 
-  <ix-explorer
-    formControlName="target_dataset"
-    [label]="'Destination' | translate"
-    [required]="true"
-    [tooltip]="helptext.targetDatasetTooltip | translate"
-    [nodeProvider]="treeNodeProvider"
-    [rootNodes]="rootNodes"
-  ></ix-explorer>
+  <ix-form-actions tnDialogAction>
+    <tn-button
+      variant="outline"
+      testId="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close()"
+    ></tn-button>
 
-  </form>
-<ix-form-actions tnDialogAction>
-  <tn-button
-    variant="outline"
-    testId="cancel"
-    [label]="'Cancel' | translate"
-    (onClick)="dialogRef.close()"
-  ></tn-button>
-
-  <tn-button
-    *ixRequiresRoles="requiredRoles"
-    color="primary"
-    testId="restore"
-    [label]="'Restore' | translate"
-    [disabled]="form.invalid"
-    (onClick)="onSubmit()"
-  ></tn-button>
-</ix-form-actions>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      testId="restore"
+      [label]="'Restore' | translate"
+      [disabled]="!canSubmit()"
+      (onClick)="submit()"
+    ></tn-button>
+  </ix-form-actions>
 </tn-dialog-shell>

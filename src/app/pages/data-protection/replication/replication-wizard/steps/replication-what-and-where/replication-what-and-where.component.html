@@ -70,15 +70,17 @@
       }
       @if (form.controls.schema_or_regex.enabled) {
         <tn-form-field [label]="schemaOrRegexLabel | translate" [required]="true">
-          @for (option of (schemaOrRegexOptions$ | async) ?? []; track option.value) {
-            <tn-radio
-              name="schema_or_regex"
-              formControlName="schema_or_regex"
-              [value]="option.value"
-              [label]="option.label"
-              [testId]="['schema-or-regex', option.label]"
-            ></tn-radio>
-          }
+          <tn-radio-group formControlName="schema_or_regex" [required]="true">
+            @for (option of (schemaOrRegexOptions$ | async) ?? []; track option.value) {
+              <!-- `radio-button` in the base is absorbed by composeTestId's idempotent guard, keeping the
+                   legacy `radio-button-*` option ids that `<ix-radio-group>` produced. -->
+              <tn-radio
+                [value]="option.value"
+                [label]="option.label"
+                [testId]="['radio-button', 'schema-or-regex', option.label]"
+              ></tn-radio>
+            }
+          </tn-radio-group>
         </tn-form-field>
       }
       @if (form.controls.naming_schema.enabled) {
@@ -246,15 +248,15 @@
       [tooltip]="helptext.transportTooltip | translate"
       [required]="true"
     >
-      @for (option of (transportOptions$ | async) ?? []; track option.value) {
-        <tn-radio
-          name="transport"
-          formControlName="transport"
-          [value]="option.value"
-          [label]="option.label"
-          [testId]="['transport', option.label]"
-        ></tn-radio>
-      }
+      <tn-radio-group formControlName="transport" [required]="true">
+        @for (option of (transportOptions$ | async) ?? []; track option.value) {
+          <tn-radio
+            [value]="option.value"
+            [label]="option.label"
+            [testId]="['radio-button', 'transport', option.label]"
+          ></tn-radio>
+        }
+      </tn-radio-group>
     </tn-form-field>
   }
   @if (form.controls.sudo.enabled) {
