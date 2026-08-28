@@ -95,20 +95,21 @@ ix-form.form {
   }
 }
 
-.set-acl-button {
-  margin-left: auto;
-}
-
 .form-actions {
   display: flex;
   padding: 24px;
 
-  // `ix-form-actions` right-aligns by default; this page's buttons read left-to-right from the
-  // form's left edge, with Set ACL pushed to the far right by its own `margin-left: auto`.
+  // `ix-form-actions` inherits a 10px gutter inside `.ix-form-container`; this footer sets its
+  // own padding instead so the buttons line up with the sections above.
+  column-gap: 10px;
   justify-content: flex-start;
   margin: 0;
 
-  tn-button {
-    margin-right: 10px;
+  // Set ACL leads the row and `margin-right: auto` pushes Save/Cancel to the far right.
+  // Positioned with `order` rather than template order because `ix-form-actions` always renders
+  // the projected `[type=submit]` Save in a wrapper div ahead of its default content slot.
+  .set-acl-button {
+    order: -1;
+    margin-right: auto;
   }
 }
