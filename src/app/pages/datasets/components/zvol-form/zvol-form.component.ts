@@ -552,7 +552,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     }) || []).filter((name): name is string => name !== undefined);
 
     this.form.controls.name.addValidators([
-      datasetNameTooLong(parent.name),
+      datasetNameTooLong(parent.name, this.translate),
       forbiddenValues(namesInUse, isCaseInsensitive),
     ]);
   }
