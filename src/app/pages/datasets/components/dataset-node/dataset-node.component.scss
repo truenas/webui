@@ -15,12 +15,12 @@
   background-color: var(--bg2);
   display: grid;
   grid-gap: 8px;
-  grid-template-columns: auto 125px 125px 125px 125px;
+  grid-template-columns: minmax(280px, 1fr) 85px 90px 95px 55px;
   min-width: fit-content;
   width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
-    grid-template-columns: auto 0 0 0 0;
+    grid-template-columns: minmax(0, 1fr) 0 0 0 0;
     width: 100%;
   }
 
@@ -29,6 +29,7 @@
     box-sizing: border-box;
     display: inline-flex;
     min-height: 44px;
+    min-width: 0;
 
     @media (max-width: $breakpoint-tablet) {
       display: none;
@@ -36,8 +37,6 @@
 
     &:first-child {
       align-items: center;
-      left: 15px;
-      position: sticky;
 
       @media (max-width: $breakpoint-tablet) {
         display: inline-flex;
@@ -50,6 +49,10 @@
     // margin: 0 0 0 -10px;
     // padding: 0 0 0 10px;
     z-index: 1;
+  }
+
+  .cell-name .name {
+    display: block;
   }
 
   .cell-used span,

@@ -3,16 +3,27 @@ import { maxDatasetPath } from 'app/constants/dataset.constants';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 
 export function datasetNameTooLong(parentPath: string): ValidatorFn {
-  const maxLengthAllowed = maxDatasetPath;
+  // Two characters shorter than what is left of the budget: one goes to the `/` separator, and
+  // `maxDatasetPath` is the first length that is already too long (it is compared with `>=`,
+  // same as in DatasetFormService.checkAndWarnForLengthAndDepth).
+  const maxNameLength = maxDatasetPath - parentPath.length - 2;
 
   return function datasetNameTooLongValidate(control: FormControl<string>) {
     if (!control.value || !parentPath) {
       return null;
     }
 
-    if (parentPath.length + 1 + control.value.length >= maxLengthAllowed) {
+    // "no more than 0 characters" is a limit no name can meet - the parent path itself is the
+    // problem, so say that instead.
+    if (maxNameLength <= 0) {
       return {
-        [DefaultValidationError.MaxLength]: { requiredLength: maxLengthAllowed - parentPath.length },
+        [DefaultValidationError.ParentPathTooLong]: { maxPathLength: maxDatasetPath },
+      };
+    }
+
+    if (control.value.length > maxNameLength) {
+      return {
+        [DefaultValidationError.MaxLength]: { requiredLength: maxNameLength },
       };
     }
 

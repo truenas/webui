@@ -238,6 +238,14 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.scrollSubject.next(scrollLeft);
   }
 
+  /**
+   * The header sits outside the tree's scroll container, so it has to be scrolled in code
+   * to stay above the columns it labels.
+   */
+  protected treeScrolled(): void {
+    this.scrollSubject.next(this.ixTree()?.nativeElement?.scrollLeft || 0);
+  }
+
   protected datasetTreeWidthChanged(event: ResizedEvent): void {
     this.treeWidthChange$.next(event);
   }

@@ -15,8 +15,13 @@
   }
 
   .scroll-window {
-    columns: calc(50vw / 2.7);
-    gap: 8px;
+    // A fixed column width, not a slice of the viewport: the old `calc(50vw / 2.7)` grew the
+    // cards with the screen (711px columns at 2560px), so a card holding "Type: Built-In" was
+    // mostly empty space. The width is the ideal, and the browser stretches the columns to
+    // fill the panel, so the card size is really capped by the details panel's own max-width
+    // (see tree-node-with-details-container in mixins/layout.scss).
+    columns: $card-width-slim;
+    gap: $gap;
 
     @media (max-width: $breakpoint-tablet) {
       columns: 1;
@@ -24,7 +29,6 @@
     }
 
     @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-md) {
-      columns: calc(50vw / 1.5);
       padding: 0 16px;
     }
 
