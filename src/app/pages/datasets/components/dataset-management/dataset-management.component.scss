@@ -74,15 +74,6 @@ ix-dataset-details-panel {
     grid-template-columns: auto 0 0 0 0 0;
   }
 
-  // The rows pin their name cell to the left edge while the value columns scroll under it;
-  // the header's own name cell is counter-translated (in TS) to stay over them, so it needs
-  // to be opaque and above the labels sliding past.
-  > div:first-child {
-    background: var(--bg1);
-    position: relative;
-    z-index: 1;
-  }
-
   .available-header {
     display: flex;
     flex-direction: column;
@@ -169,10 +160,7 @@ ix-dataset-details-panel {
   .tn-tree-node__text {
     display: flex;
     align-items: center;
-    // `clip`, not `hidden`: both clip the row identically, but `hidden` makes this box a
-    // scroll container, and that leaves `position: sticky` on the row's name cell inert —
-    // the names scrolled away with the rest of the row instead of pinning to the left edge.
-    overflow: clip;
+    overflow: hidden;
   }
 
   .dataset-node-click {

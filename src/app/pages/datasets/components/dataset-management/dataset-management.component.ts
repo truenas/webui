@@ -269,14 +269,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
       // mixin's `overflow: visible` so it isn't collapsed, and translateX tracks the
       // wrapper's horizontal scroll to keep the column labels above their rows.
       treeHeader.style.transform = `translateX(${-tree.scrollLeft}px)`;
-      // The rows pin their name cell to the left edge (`position: sticky`), so the header's
-      // name cell has to stay put too: undo the shift above for that one cell. It can't use
-      // `position: sticky` itself — the header sits outside the scrolling wrapper, so it has
-      // no scrollport to stick to.
-      const nameHeader = treeHeader.firstElementChild as HTMLElement | null;
-      if (nameHeader) {
-        nameHeader.style.transform = `translateX(${tree.scrollLeft}px)`;
-      }
     }
   }
 
