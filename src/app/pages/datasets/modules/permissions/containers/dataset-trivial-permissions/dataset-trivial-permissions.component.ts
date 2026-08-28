@@ -18,7 +18,6 @@ import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -59,7 +58,6 @@ interface AccessMode {
     IxGroupComboboxComponent,
     TnCheckboxComponent,
     RequiresRolesDirective,
-    FormActionsComponent,
     TnButtonComponent,
     RouterLink,
     TranslateModule,

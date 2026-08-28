@@ -105,7 +105,18 @@
       </tn-form-section>
     </div>
 
-    <ix-form-actions class="form-actions">
+    <div class="form-actions">
+      <ng-container *ixRequiresRoles="requiredRoles">
+        @if (canSetAcl) {
+          <tn-button
+            class="set-acl-button"
+            testId="set-acl"
+            [label]="'Set ACL' | translate"
+            (onClick)="onSetAclPressed()"
+          ></tn-button>
+        }
+      </ng-container>
+
       <tn-button
         *ixRequiresRoles="requiredRoles"
         class="save-button"
@@ -120,17 +131,6 @@
         [label]="'Cancel' | translate"
         [routerLink]="['/datasets', datasetId]"
       ></tn-button>
-
-      <ng-container *ixRequiresRoles="requiredRoles">
-        @if (canSetAcl) {
-          <tn-button
-            class="set-acl-button"
-            testId="set-acl"
-            [label]="'Set ACL' | translate"
-            (onClick)="onSetAclPressed()"
-          ></tn-button>
-        }
-      </ng-container>
-    </ix-form-actions>
+    </div>
   </ix-form>
 </tn-card>

@@ -95,21 +95,21 @@ ix-form.form {
   }
 }
 
+// A plain row rather than `ix-form-actions`: that component carries a 10px horizontal gutter
+// for legacy forms (which would offset the buttons from the sections above) and always renders
+// the projected `[type=submit]` ahead of its other content, which would put Save first in the
+// DOM. Here the footer owns its own padding and the buttons read in source order, so the visual
+// order matches the tab order. Save still submits natively — it sits inside `<ix-form>`'s form.
 .form-actions {
   display: flex;
+  column-gap: 10px;
+  justify-content: flex-end;
+  // Match the horizontal padding of the sections above so the buttons share their left/right edge.
   padding: 24px;
 
-  // `ix-form-actions` inherits a 10px gutter inside `.ix-form-container`; this footer sets its
-  // own padding instead so the buttons line up with the sections above.
-  column-gap: 10px;
-  justify-content: flex-start;
-  margin: 0;
-
-  // Set ACL leads the row and `margin-right: auto` pushes Save/Cancel to the far right.
-  // Positioned with `order` rather than template order because `ix-form-actions` always renders
-  // the projected `[type=submit]` Save in a wrapper div ahead of its default content slot.
+  // Set ACL leads the row; the auto margin absorbs the free space, pushing Save/Cancel right.
+  // Without the role for it the row is empty on the left and `flex-end` right-aligns the rest.
   .set-acl-button {
-    order: -1;
     margin-right: auto;
   }
 }
