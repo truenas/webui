@@ -12,7 +12,13 @@
     </div>
   </div>
 
-  <form class="form" [formGroup]="form" (submit)="onSubmit()">
+  <ix-form
+    class="form"
+    [formGroup]="form"
+    [requiredRoles]="requiredRoles"
+    [submitHandler]="handleSubmit"
+    [externalLoading]="isLoading()"
+  >
     <div class="owner-and-access">
       <tn-form-section class="owner-fields" [heading]="'Owner' | translate">
         <ix-user-combobox
@@ -99,7 +105,7 @@
       </tn-form-section>
     </div>
 
-    <div class="form-actions">
+    <ix-form-actions class="form-actions">
       <tn-button
         *ixRequiresRoles="requiredRoles"
         class="save-button"
@@ -107,7 +113,7 @@
         color="primary"
         testId="save"
         [label]="'Save' | translate"
-        [disabled]="form.invalid || isLoading()"
+        [disabled]="!canSubmit()"
       ></tn-button>
       <tn-button
         testId="cancel"
@@ -125,6 +131,6 @@
           ></tn-button>
         }
       </ng-container>
-    </div>
-  </form>
+    </ix-form-actions>
+  </ix-form>
 </tn-card>

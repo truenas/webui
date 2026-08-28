@@ -43,9 +43,9 @@
   }
 }
 
-.form {
-  // Let each section own its horizontal padding so the title, section content and footer
-  // buttons all share one left edge.
+// The `<ix-form>` wrapper renders the form element itself; each section below owns its
+// horizontal padding so the title, section content and footer buttons share one left edge.
+ix-form.form {
   display: block;
 }
 
@@ -102,6 +102,11 @@
 .form-actions {
   display: flex;
   padding: 24px;
+
+  // `ix-form-actions` right-aligns by default; this page's buttons read left-to-right from the
+  // form's left edge, with Set ACL pushed to the far right by its own `margin-left: auto`.
+  justify-content: flex-start;
+  margin: 0;
 
   tn-button {
     margin-right: 10px;

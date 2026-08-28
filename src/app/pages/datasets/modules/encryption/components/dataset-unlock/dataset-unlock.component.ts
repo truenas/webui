@@ -1,31 +1,33 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardComponent, TnDialog } from '@truenas/ui-components';
 import {
-  Observable,
-  from, of, switchMap,
-} from 'rxjs';
+  InputType, TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnDialog,
+  TnFormFieldComponent, TnInputComponent, TnRadioGroupComponent,
+} from '@truenas/ui-components';
+import { from, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetEncryptionSummaryQueryParamsDataset } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UnlockSummaryDialog } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
@@ -47,15 +49,17 @@ interface DatasetFormGroup {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnCardComponent,
-    IxRadioGroupComponent,
     ReactiveFormsModule,
-    IxCheckboxComponent,
+    IxFormComponent,
+    TnFormFieldComponent,
+    TnRadioGroupComponent,
+    TnCheckboxComponent,
+    TnInputComponent,
     IxFileInputComponent,
     IxListComponent,
     IxListItemComponent,
     TranslateModule,
-    IxInputComponent,
-    IxTextareaComponent,
+    FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,
   ],
@@ -64,7 +68,6 @@ export class DatasetUnlockComponent implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private aroute = inject(ActivatedRoute);
-  private authService = inject(AuthService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private tnDialog = inject(TnDialog);
@@ -73,11 +76,18 @@ export class DatasetUnlockComponent implements OnInit {
   private upload = inject(UploadService);
   private destroyRef = inject(DestroyRef);
 
+  /**
+   * The shared form wrapper owns the submit lifecycle (loading, validation-error mapping). The
+   * action row's button submits natively (`type="submit"` inside the wrapper's own `<form>`), so
+   * only its disabled state is read back from here.
+   */
+  private readonly ixForm = viewChild(IxFormComponent);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly InputType = InputType;
 
   pk: string;
   dialogOpen = false;
-  isFormLoading = false;
   hideFileInput = false;
 
   form = this.formBuilder.group({
@@ -89,13 +99,13 @@ export class DatasetUnlockComponent implements OnInit {
     force: [false],
   });
 
-  useFileOptions$: Observable<RadioOption[]> = of([{
+  protected readonly useFileOptions: RadioOption[] = [{
     value: true,
     label: this.translate.instant('From a key file'),
   }, {
     value: false,
     label: this.translate.instant('Provide keys/passphrases manually'),
-  }]);
+  }];
 
   readonly helptext = helptextUnlock;
 
@@ -211,7 +221,16 @@ export class DatasetUnlockComponent implements OnInit {
       });
   }
 
-  protected onSave(): void {
+  protected canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  /**
+   * "Unlock" fetches an encryption summary rather than saving anything: success is reported by
+   * the summary dialog it opens, which is also where the actual unlock is confirmed — hence
+   * `suppressSuccessSnackbar` and a `null` success message.
+   */
+  protected handleSubmit = (): SubmitResult<boolean, Job<DatasetEncryptionSummary[]>> => {
     const values = this.form.getRawValue();
     const datasets: DatasetEncryptionSummaryQueryParamsDataset[] = [];
 
@@ -240,19 +259,17 @@ export class DatasetUnlockComponent implements OnInit {
         })
       : this.api.job('pool.dataset.encryption_summary', [this.pk, payload]);
 
-    this.dialogService.jobDialog(job$, {
-      title: this.translate.instant(helptextUnlock.fetchingEncryptionSummaryTitle),
-      description: this.translate.instant(helptextUnlock.fetchingEncryptionSummaryMessage, { dataset: this.pk }),
-    })
-      .afterClosed()
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((job) => {
-        this.openSummaryDialog(payload as DatasetUnlockParams, job.result);
-      });
-  }
+    return {
+      request$: this.dialogService.jobDialog(job$, {
+        title: this.translate.instant(helptextUnlock.fetchingEncryptionSummaryTitle),
+        description: this.translate.instant(helptextUnlock.fetchingEncryptionSummaryMessage, { dataset: this.pk }),
+      })
+        .afterClosed()
+        .pipe(this.errorHandler.withErrorHandler()),
+      successMessage: null,
+      onSuccess: (job) => this.openSummaryDialog(payload as DatasetUnlockParams, job.result),
+    };
+  };
 
   private openUnlockDialog(payload: DatasetUnlockParams, unlockResult: DatasetUnlockResult): void {
     const errors: { name: string; unlock_error: string }[] = [];

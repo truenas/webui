@@ -1,86 +1,104 @@
 <tn-card class="form-card">
-  <form class="ix-form-container" [formGroup]="form" (submit)="onSave()">
-      @if (!hideFileInput) {
-        <ix-radio-group
+  <ix-form
+    [formGroup]="form"
+    [requiredRoles]="requiredRoles"
+    [submitHandler]="handleSubmit"
+    [suppressSuccessSnackbar]="true"
+  >
+    @if (!hideFileInput) {
+      <tn-form-field
+        [label]="helptext.keyFileLabel | translate"
+        [tooltip]="helptext.keyFileTooltip | translate"
+      >
+        <tn-radio-group
           formControlName="use_file"
-          [label]="helptext.keyFileLabel | translate"
-          [tooltip]="helptext.keyFileTooltip | translate"
-          [options]="useFileOptions$"
-        ></ix-radio-group>
-      }
+          [options]="useFileOptions"
+        ></tn-radio-group>
+      </tn-form-field>
+    }
 
-      @if (useFile) {
-        <ix-checkbox
+    @if (useFile) {
+      <tn-form-field [tooltip]="helptext.unlockChildrenTooltip | translate">
+        <tn-checkbox
           formControlName="unlock_children"
           [label]="helptext.unlockChildrenLabel | translate"
-          [tooltip]="helptext.unlockChildrenTooltip | translate"
-        ></ix-checkbox>
-        <ix-file-input
-          formControlName="file"
-          [label]="helptext.uploadKeyFileLabel | translate"
-          [tooltip]="helptext.uploadKeyFileTooltip | translate"
-          [required]="true"
-        ></ix-file-input>
-      } @else {
-        <ix-list
-          formArrayName="datasets"
-          [empty]="form.controls.datasets.controls.length === 0"
-          [label]="'Datasets' | translate"
-          [canAdd]="false"
-          [formArray]="form.controls.datasets"
-        >
-          @for (dataset of form.controls.datasets.controls; track dataset; let i = $index) {
-            <ix-list-item
-              [formGroupName]="i"
-              [canDelete]="false"
-            >
-              <div>
-                <strong> {{'Dataset' | translate }}: </strong>
-                {{ dataset.value.name }}
-              </div>
-              @if (dataset.value.is_passphrase) {
-                <ix-input
-                  formControlName="passphrase"
-                  type="password"
-                  [label]="helptext.datasetPassphraseLabel | translate"
-                  [tooltip]="helptext.datasetPassphraseTooltip | translate"
-                ></ix-input>
-              } @else {
-                <ix-textarea
-                  formControlName="key"
-                  [label]="helptext.datasetKeyLabel | translate"
-                  [tooltip]="helptext.datasetKeyLabel | translate"
-                ></ix-textarea>
-                <ix-file-input
-                  formControlName="file"
-                  [acceptedFiles]="'.json'"
-                ></ix-file-input>
-              }
-            </ix-list-item>
-          }
-        </ix-list>
-      }
+        ></tn-checkbox>
+      </tn-form-field>
 
-      <ix-checkbox
+      <ix-file-input
+        formControlName="file"
+        [label]="helptext.uploadKeyFileLabel | translate"
+        [tooltip]="helptext.uploadKeyFileTooltip | translate"
+        [required]="true"
+      ></ix-file-input>
+    } @else {
+      <ix-list
+        formArrayName="datasets"
+        [empty]="form.controls.datasets.controls.length === 0"
+        [label]="'Datasets' | translate"
+        [canAdd]="false"
+        [formArray]="form.controls.datasets"
+      >
+        @for (dataset of form.controls.datasets.controls; track dataset; let i = $index) {
+          <ix-list-item
+            [formGroupName]="i"
+            [canDelete]="false"
+          >
+            <div>
+              <strong> {{'Dataset' | translate }}: </strong>
+              {{ dataset.value.name }}
+            </div>
+            @if (dataset.value.is_passphrase) {
+              <tn-form-field
+                [label]="helptext.datasetPassphraseLabel | translate"
+                [tooltip]="helptext.datasetPassphraseTooltip | translate"
+              >
+                <tn-input
+                  formControlName="passphrase"
+                  [inputType]="InputType.Password"
+                ></tn-input>
+              </tn-form-field>
+            } @else {
+              <tn-form-field
+                [label]="helptext.datasetKeyLabel | translate"
+                [tooltip]="helptext.datasetKeyLabel | translate"
+              >
+                <tn-input
+                  formControlName="key"
+                  [multiline]="true"
+                ></tn-input>
+              </tn-form-field>
+              <ix-file-input
+                formControlName="file"
+                [acceptedFiles]="'.json'"
+              ></ix-file-input>
+            }
+          </ix-list-item>
+        }
+      </ix-list>
+    }
+
+    <tn-form-field [tooltip]="helptext.datasetForceTooltip | translate">
+      <tn-checkbox
         formControlName="force"
         [label]="'Force' | translate"
-        [tooltip]="helptext.datasetForceTooltip | translate"
-      ></ix-checkbox>
+      ></tn-checkbox>
+    </tn-form-field>
 
-      <div class="form-actions">
-        <tn-button
-          *ixRequiresRoles="requiredRoles"
-          type="submit"
-          color="primary"
-          [testId]="'unlock'"
-          [label]="'Unlock' | translate"
-          [disabled]="form.invalid || isFormLoading"
-        ></tn-button>
-        <tn-button
-          [testId]="'cancel'"
-          [label]="'Cancel' | translate"
-          (onClick)="goBack()"
-        ></tn-button>
-      </div>
-  </form>
+    <ix-form-actions>
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        type="submit"
+        color="primary"
+        [testId]="'unlock'"
+        [label]="'Unlock' | translate"
+        [disabled]="!canSubmit()"
+      ></tn-button>
+      <tn-button
+        [testId]="'cancel'"
+        [label]="'Cancel' | translate"
+        (onClick)="goBack()"
+      ></tn-button>
+    </ix-form-actions>
+  </ix-form>
 </tn-card>
