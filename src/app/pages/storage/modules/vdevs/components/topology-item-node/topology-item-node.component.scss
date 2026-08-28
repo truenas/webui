@@ -13,7 +13,7 @@
   align-items: center;
   display: grid;
   grid-gap: 8px;
-  grid-template-columns: minmax($tree-name-min-width, 1fr) 125px 125px 125px;
+  grid-template-columns: minmax(0, 1fr) 125px 125px 125px;
   min-width: fit-content;
   width: 100%;
 
@@ -54,9 +54,9 @@
       gap: 6px;
       padding-right: 15px;
 
-      // The shared tree styles cap and clip `.name`, but ellipsis needs a block container
+      // The name cell is clipped by its grid track, but ellipsis needs a block container
       // and this one is a flex box (it also holds the descendant-warning icon), so put the
-      // truncation on the text itself. Without this a capped name is cut mid-glyph.
+      // truncation on the text itself. Without this a clipped name is cut mid-glyph.
       > span {
         min-width: 0;
         overflow: hidden;

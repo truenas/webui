@@ -20,11 +20,11 @@
   // icons) never need more than ~80px — so the row fits the tree column without forcing
   // a horizontal scrollbar when the details panel is open.
   //
-  // The name column is `minmax($tree-name-min-width, 1fr)`: `1fr` hands it every spare
-  // pixel of the row, so a name that fits is shown in full and only a longer one
-  // ellipsizes, while the floor keeps it readable on a narrow row — there the grid
-  // outgrows the tree and scrolls horizontally, as it did before.
-  grid-template-columns: minmax($tree-name-min-width, 1fr) 100px 100px 100px 100px;
+  // The name column is `minmax(0, 1fr)`: `1fr` hands it every spare pixel of the row, so
+  // a name that fits is shown in full and only a longer one ellipsizes. The `0` floor is
+  // what keeps that free — a floor in px would exceed the whole row on a laptop, where the
+  // fixed columns already claim 440px of it, and put a horizontal scrollbar under the tree.
+  grid-template-columns: minmax(0, 1fr) 100px 100px 100px 100px;
   min-width: fit-content;
   width: 100%;
 

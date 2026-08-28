@@ -126,7 +126,7 @@
 // The .sticky-header ancestor out-specifies the parent component's host-scoped
 // copies of the mixin rules.
 .sticky-header .tree-header {
-  grid-template-columns: minmax($tree-name-min-width, 1fr) 125px 125px 125px;
+  grid-template-columns: minmax(0, 1fr) 125px 125px 125px;
   padding-left: 41px;
   padding-right: 9px;
 

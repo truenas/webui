@@ -28,6 +28,11 @@
       padding: 0 16px;
     }
 
+    // The mobile overlay, where the panel is the full window. No column width of its own
+    // any more: `$card-width-slim` applies here too, so the overlay lays out the same cards
+    // as the docked panel does. Near the top of this band that is the narrower column — the
+    // old `calc(50vw / 1.5)` was 426px at 1279px — so just under $breakpoint-md the overlay
+    // now fits three columns where it used to fit two. At 768px both give two.
     @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-md) {
       padding: 0 16px;
     }

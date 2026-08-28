@@ -48,9 +48,19 @@ describe('datasetNameTooLong', () => {
     expect(validator(new FormControl('d'))).toEqual({
       maxlength: {
         requiredLength: 0,
-        message: 'The parent path already fills the 200 character limit for a dataset path, so nothing can be created under it.',
+        // 199, not 200: the check rejects at `>=`, so that is the longest path it accepts.
+        message: 'The parent path is too long to fit a dataset name under it: a dataset path can be at most 199 characters.',
       },
     });
+  });
+
+  it('quotes a limit that the longest accepted path actually reaches', () => {
+    const parent = '/mnt/tank';
+    const validator = datasetNameTooLong(parent, translate);
+    const longestName = 'a'.repeat(maxDatasetPath - parent.length - 2);
+
+    expect(validator(new FormControl(longestName))).toBeNull();
+    expect(`${parent}/${longestName}`).toHaveLength(maxDatasetPath - 1);
   });
 
   it('ignores an empty name or a missing parent path', () => {

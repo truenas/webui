@@ -139,7 +139,7 @@ $scrollbar-offset: 20px;
     color: var(--fg2);
     display: grid;
     grid-gap: 8px;
-    grid-template-columns: minmax($tree-name-min-width, 1fr) 125px 125px 125px 40px;
+    grid-template-columns: minmax(0, 1fr) 125px 125px 125px 40px;
     min-height: 40px;
     min-width: fit-content;
     min-width: 100%;
@@ -152,7 +152,7 @@ $scrollbar-offset: 20px;
     }
 
     @media (min-width: $breakpoint-singlecolumn) {
-      grid-template-columns: minmax($tree-name-min-width, 1fr) 125px 125px 125px;
+      grid-template-columns: minmax(0, 1fr) 125px 125px 125px;
     }
 
     > div {
@@ -210,8 +210,8 @@ $scrollbar-offset: 20px;
         align-items: stretch;
         font-weight: bold;
         margin: 0;
-        // Both let the name shrink to its grid track instead of pushing past it; the track
-        // (see $tree-name-min-width) is what decides how wide a name may get.
+        // Both let the name shrink to its grid track instead of pushing past it; the
+        // `minmax(0, 1fr)` track is what decides how wide a name may get.
         min-width: 0;
         padding: 0;
 
