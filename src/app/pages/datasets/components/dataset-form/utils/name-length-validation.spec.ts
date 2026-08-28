@@ -4,7 +4,9 @@ import { maxDatasetPath } from 'app/constants/dataset.constants';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 
 describe('datasetNameTooLong', () => {
-  const translate = { instant: (key: string) => key } as TranslateService;
+  const translate = {
+    instant: (key: string, params?: Record<string, unknown>) => key.replace('{max}', String(params?.max)),
+  } as TranslateService;
   const parentPath = '/mnt/tank';
   // The parent path and the '/' are spent already, and the whole path stays under the max.
   const longestAllowedName = maxDatasetPath - parentPath.length - 2;
@@ -46,7 +48,7 @@ describe('datasetNameTooLong', () => {
     expect(validator(new FormControl('d'))).toEqual({
       maxlength: {
         requiredLength: 0,
-        message: 'The parent path is already at the maximum length, so no name will fit.',
+        message: 'The parent path already fills the 200 character limit for a dataset path, so nothing can be created under it.',
       },
     });
   });

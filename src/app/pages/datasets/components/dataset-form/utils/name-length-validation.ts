@@ -26,13 +26,14 @@ export function datasetNameTooLong(parentPath: string, translate: TranslateServi
 
     if (maxNameLength === 0) {
       // "no more than 0" is not a length anyone can aim for: the parent path has spent the
-      // whole budget, and no name will fit under it. Say that instead — a custom `message`
+      // whole budget, and nothing will fit under it. Say that instead — a custom `message`
       // takes precedence over the generic maxlength wording in both error renderers.
       return {
         [DefaultValidationError.MaxLength]: {
           requiredLength: 0,
           message: translate.instant(
-            T('The parent path is already at the maximum length, so no name will fit.'),
+            T('The parent path already fills the {max} character limit for a dataset path, so nothing can be created under it.'),
+            { max: maxDatasetPath },
           ),
         },
       };
