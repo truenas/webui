@@ -5254,6 +5254,7 @@
   "The NVMe Qualified Name (NQN) is used to identify the subsystem. Leave blank to generate NQN using the base NQN from global settings.": "",
   "The operation timed out. The requested resource might be offline. Check the network connection.": "",
   "The parent of this dataset has an Access Control List (ACL). Do you want to set an ACL for this dataset using the ACL Manager? ": "",
+  "The parent path already fills the {maxPathLength} character limit for a dataset path, so nothing can be created under it.": "",
   "The password for the user account that will obtain the kerberos ticket.": "",
   "The path <i>{path}</i> is in a locked dataset.": "",
   "The pool <i>{pool}</i>is in the database but not connected to the machine. If it was exported by     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />": "",

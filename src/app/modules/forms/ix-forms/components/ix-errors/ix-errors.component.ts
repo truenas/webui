@@ -66,6 +66,10 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
         : T('The length of the field should be no more than {maxLength}'),
       { field: this.label(), maxLength },
     ),
+    parentPathTooLong: (maxPathLength: number) => this.translate.instant(
+      'The parent path already fills the {maxPathLength} character limit for a dataset path, so nothing can be created under it.',
+      { maxPathLength },
+    ),
     pattern: () => this.translate.instant('Invalid format or character'),
     forbidden: (value: string) => this.translate.instant('The name "{value}" is already in use.', { value }),
     range: (min: number, max: number) => this.translate.instant(
@@ -206,6 +210,10 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
         return this.defaultErrMessages.minlength((errors.minlength as SomeError).requiredLength as number);
       case DefaultValidationError.MaxLength:
         return this.defaultErrMessages.maxlength((errors.maxlength as SomeError).requiredLength as number);
+      case DefaultValidationError.ParentPathTooLong:
+        return this.defaultErrMessages.parentPathTooLong(
+          (errors.parentPathTooLong as SomeError).maxPathLength as number,
+        );
       case DefaultValidationError.Range:
         return this.defaultErrMessages.range(
           (errors.rangeValue as SomeError).min as number,

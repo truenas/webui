@@ -1,155 +1,90 @@
-import { DestroyRef, Directive, ElementRef, OnDestroy, OnInit, OnChanges, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Store } from '@ngrx/store';
+import { Directive, ElementRef, OnDestroy, OnInit, inject } from '@angular/core';
 import { WINDOW } from 'app/helpers/window.helper';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { headerHeight, footerHeight } from 'app/modules/layout/admin-layout/admin-layout.component.const';
 import { LayoutService } from 'app/modules/layout/layout.service';
-import { AppState } from 'app/store';
-import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 /**
  * This directive is used to dynamically adjust height of the "details" block in a "master-details" layout
  * to fill the bottom space, which becomes available when user scrolls the page down,
- * so the page's heading is shifted off the screen
+ * so the page's heading is shifted off the screen.
+ *
+ * The block is `position: sticky`, so the space available to it runs from wherever its row has
+ * scrolled to - bounded below by the top of the scroll container, where it sticks - down to the
+ * bottom of the screen. The top is measured off the row rather than off the block itself, because
+ * the block's own position is a function of the height being set here (it sticks, so
+ * `getBoundingClientRect()` reports where it is pinned, not where it sits in the document), and
+ * measuring it would feed the height back into itself.
  */
 @Directive({
   selector: '[ixDetailsHeight]',
   host: {
-    '(window:resize)': 'onResize()',
+    '(window:resize)': 'applyHeight()',
   },
 })
-export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
-  private readonly destroyRef = inject(DestroyRef);
+export class DetailsHeightDirective implements OnInit, OnDestroy {
   private window = inject<Window>(WINDOW);
   private element = inject<ElementRef<HTMLElement>>(ElementRef);
   private layoutService = inject(LayoutService);
-  private store$ = inject<Store<AppState>>(Store);
-
-  private hasConsoleFooter = false;
-  private headerHeight = headerHeight;
-  private footerHeight = footerHeight;
-
-  private parentPadding = 0;
-  private heightBaseOffset = 0;
-  private scrollBreakingPoint = 0;
-  private heightCssValue = '';
 
   private resizeObserver: ResizeObserver | null = null;
   private scrollAnimationFrame: number | null = null;
 
   ngOnInit(): void {
     this.setupResizeObserver();
-    this.listenForConsoleFooterChanges();
-    this.precalculateHeights();
     this.applyHeight();
     this.window.addEventListener('scroll', this.onScroll, true);
-    setTimeout(() => this.onResize());
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if ('hasConsoleFooter' in changes) {
-      this.precalculateHeights();
-      this.applyHeight();
-    }
   }
 
   ngOnDestroy(): void {
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect();
-    }
+    this.resizeObserver?.disconnect();
     if (this.scrollAnimationFrame) {
       cancelAnimationFrame(this.scrollAnimationFrame);
     }
     this.window.removeEventListener('scroll', this.onScroll, true);
   }
 
-  onResize(): void {
-    this.precalculateHeights();
-    this.applyHeight();
+  applyHeight(): void {
+    const container = this.layoutService.getContentContainer();
+    const row = this.element.nativeElement.parentElement;
+    if (!container || !row) {
+      return;
+    }
+
+    const containerBox = container.getBoundingClientRect();
+    const rowBox = row.getBoundingClientRect();
+    const padding = this.getPadding(container);
+
+    const top = Math.max(rowBox.top, containerBox.top + padding.top);
+    // The scroll container shrinks to make room for the console footer, so its own bottom
+    // already accounts for one being shown.
+    const bottom = containerBox.bottom - padding.bottom;
+
+    this.element.nativeElement.style.height = `${Math.floor(Math.max(bottom - top, 0))}px`;
   }
 
-  onScroll = (): void => {
+  private onScroll = (): void => {
     if (this.scrollAnimationFrame) {
       cancelAnimationFrame(this.scrollAnimationFrame);
     }
 
-    this.scrollAnimationFrame = requestAnimationFrame(() => {
-      const parentElement = this.layoutService.getContentContainer();
-      if (!parentElement) {
-        return;
-      }
-
-      const scrollTop = parentElement.scrollTop;
-
-      if (scrollTop < this.scrollBreakingPoint) {
-        this.heightCssValue = `calc(100vh - ${this.heightBaseOffset + 18}px + ${scrollTop}px)`;
-      } else {
-        this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${this.scrollBreakingPoint}px)`;
-      }
-
-      this.element.nativeElement.style.height = this.heightCssValue;
-    });
+    this.scrollAnimationFrame = requestAnimationFrame(() => this.applyHeight());
   };
 
   private setupResizeObserver(): void {
-    this.resizeObserver = new ResizeObserver(() => {
-      this.precalculateHeights();
-      this.applyHeight();
-    });
-
-    const parentElement = this.layoutService.getContentContainer();
-    if (parentElement) {
-      this.resizeObserver.observe(parentElement);
-    }
-  }
-
-  private precalculateHeights(): void {
-    const parentElement = this.layoutService.getContentContainer();
-    if (!parentElement) {
+    const container = this.layoutService.getContentContainer();
+    if (!container) {
       return;
     }
 
-    this.parentPadding = parseFloat(
-      this.window.getComputedStyle(parentElement, null).getPropertyValue('padding-bottom'),
-    ) || 0;
-
-    this.heightBaseOffset = this.calculateBaseOffset();
-    this.scrollBreakingPoint = this.calculateScrollBreakingPoint();
-    this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px)`;
+    this.resizeObserver = new ResizeObserver(() => this.applyHeight());
+    this.resizeObserver.observe(container);
   }
 
-  private applyHeight(): void {
-    this.element.nativeElement.style.height = this.heightCssValue;
-  }
+  private getPadding(element: HTMLElement): { top: number; bottom: number } {
+    const style = this.window.getComputedStyle(element, null);
 
-  private calculateBaseOffset(): number {
-    let result = this.getInitialTopPosition(this.element.nativeElement);
-    result += this.parentPadding;
-    if (this.hasConsoleFooter) {
-      result += this.footerHeight;
-    }
-    return Math.floor(result);
-  }
-
-  private calculateScrollBreakingPoint(): number {
-    let result = this.getInitialTopPosition(this.element.nativeElement);
-    result -= this.parentPadding;
-    result -= this.headerHeight;
-    return Math.max(Math.floor(result), 0);
-  }
-
-  private getInitialTopPosition(element: HTMLElement): number {
-    return Math.floor(element.getBoundingClientRect().top);
-  }
-
-  private listenForConsoleFooterChanges(): void {
-    this.store$
-      .pipe(waitForAdvancedConfig, takeUntilDestroyed(this.destroyRef))
-      .subscribe((advancedConfig) => {
-        this.hasConsoleFooter = advancedConfig.consolemsg;
-        this.precalculateHeights();
-        this.applyHeight();
-      });
+    return {
+      top: parseFloat(style.getPropertyValue('padding-top')) || 0,
+      bottom: parseFloat(style.getPropertyValue('padding-bottom')) || 0,
+    };
   }
 }
