@@ -64,10 +64,10 @@ ix-dataset-details-panel {
   // Its width is synced (in TS) to the tree's full content width so it still scrolls in
   // step with the rows when the content genuinely can't fit. Below $breakpoint-hidden a
   // trailing column reserves space for the row's mobile chevron.
-  grid-template-columns: auto 100px 100px 100px 100px;
+  grid-template-columns: minmax(0, 1fr) 100px 100px 100px 100px;
 
   @media (max-width: $breakpoint-hidden) {
-    grid-template-columns: auto 100px 100px 100px 100px 40px;
+    grid-template-columns: minmax(0, 1fr) 100px 100px 100px 100px 40px;
   }
 
   @media (max-width: $breakpoint-tablet) {
