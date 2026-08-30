@@ -21,11 +21,15 @@ import { helptextPrivilege } from 'app/helptext/account/priviledge';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
-import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import {
+  UserGroupExistenceValidationService,
+} from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -37,11 +41,11 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnChipInputComponent,
-    IxGroupChipsComponent,
     TnSelectComponent,
     TnCheckboxComponent,
     TnButtonComponent,
@@ -49,12 +53,14 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     AsyncPipe,
   ],
 })
-export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
+export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
   private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
+  private userService = inject(UserService);
+  private groupExistence = inject(UserGroupExistenceValidationService);
   private store$ = inject<Store<AppState>>(Store);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
@@ -68,7 +74,6 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
    */
   private readonly GROUP_QUERY_LIMIT = 50;
 
-  protected isLoading = signal(false);
   protected showDsAuthButton = signal(false);
   protected isEnablingDsAuth = signal(false);
   protected dsAuthEnabled = signal(false);
@@ -77,8 +82,12 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
   /** String-mode suggestions for the local-groups chip input, refreshed on each search. */
   protected localGroupsSuggestions = signal<string[]>([]);
 
+  /** Same, for the directory-services chip input (Enterprise only). */
+  protected dsGroupsSuggestions = signal<string[]>([]);
+
   /** Emits the latest chip-input search term; `switchMap` cancels stale in-flight queries. */
   private readonly localGroupsSearch$ = new Subject<string>();
+  private readonly dsGroupsSearch$ = new Subject<string>();
 
   protected readonly form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -87,8 +96,6 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
     web_shell: [false],
     roles: [[] as Role[]],
   });
-
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   protected readonly helptext = helptextPrivilege;
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
@@ -154,11 +161,27 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
   };
 
   /**
+   * Provider for directory-service groups, mirroring what `ix-group-chips` used to supply
+   * internally. Values the user types are still free text — {@link UserGroupExistenceValidationService}
+   * is what rejects a group that does not exist.
+   */
+  private readonly dsGroupsProvider: ChipsProvider = (query: string) => {
+    return this.userService.groupQueryDsCache(query).pipe(
+      map((groups) => groups.map((group) => group.group)),
+    );
+  };
+
+  /**
    * Refreshes the local-groups chip-input suggestions as the user types, driving the
    * autocomplete from {@link localGroupsProvider}.
    */
   protected onLocalGroupsSearch(query: string): void {
     this.localGroupsSearch$.next(query);
+  }
+
+  /** Same, for the directory-services chip input. */
+  protected onDsGroupsSearch(query: string): void {
+    this.dsGroupsSearch$.next(query);
   }
 
   ngOnInit(): void {
@@ -208,6 +231,22 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
       switchMap((query) => this.localGroupsProvider(query)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((groups) => this.localGroupsSuggestions.set(groups));
+
+    // Same stream for the DS chip input.
+    this.dsGroupsSearch$.pipe(
+      debounceTime(defaultDebounceTimeMs),
+      distinctUntilChanged(),
+      startWith(''),
+      switchMap((query) => this.dsGroupsProvider(query)),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((groups) => this.dsGroupsSuggestions.set(groups));
+
+    // `ix-group-chips` carried this validator; the chip input accepts free text, so keep it.
+    // Registered after the edit patch above (and without `updateValueAndValidity`) so opening
+    // the form for edit does not immediately flag the loaded groups.
+    this.form.controls.ds_groups.addAsyncValidators([
+      this.groupExistence.validateGroupsExist(defaultDebounceTimeMs),
+    ]);
   }
 
   private setPrivilegeForEdit(existingPrivilege: Privilege): void {
@@ -277,11 +316,9 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
     });
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
-
-    // Resolve all group names to UIDs before submitting
-    combineLatest([this.localGroupsUids$, this.dsGroupsUids$]).pipe(
+  protected handleSubmit = (): SubmitResult => {
+    // Resolve all group names to UIDs before submitting.
+    const request$ = combineLatest([this.localGroupsUids$, this.dsGroupsUids$]).pipe(
       switchMap(([localGroups, dsGroups]) => {
         const values: PrivilegeUpdate = {
           name: this.form.value.name,
@@ -295,17 +332,15 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
           ? this.api.call('privilege.update', [this.existingPrivilege.id, values])
           : this.api.call('privilege.create', [values]);
       }),
-      finalize(() => this.isLoading.set(false)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        this.close(true);
-      },
-      error: (error: unknown) => {
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    );
+
+    return {
+      request$,
+      successMessage: this.existingPrivilege
+        ? this.translate.instant('Privilege updated')
+        : this.translate.instant('Privilege created'),
+    };
+  };
 
   /**
    * Resolves local group names to GIDs.

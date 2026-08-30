@@ -15,6 +15,7 @@ import { Role } from 'app/enums/role.enum';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
 import { UserService } from 'app/services/user.service';
@@ -72,6 +73,7 @@ describe('PrivilegeFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('group.query', (params) => {
           // Handle all group.query calls - return groups based on filters
@@ -465,6 +467,7 @@ describe('PrivilegeFormComponent', () => {
     it('should call directoryservices.status when DS groups are added and DS is enabled', async () => {
       spectator = createComponent({
         providers: [
+          ...ixFormTestingProviders(),
           mockApi([
             mockCall('group.query', testGroups),
             mockCall('privilege.roles', [
@@ -520,6 +523,7 @@ describe('PrivilegeFormComponent', () => {
     it('should NOT show button when DS groups are added but Directory Services are disabled', async () => {
       spectator = createComponent({
         providers: [
+          ...ixFormTestingProviders(),
           mockApi([
             mockCall('group.query', testGroups),
             mockCall('privilege.roles', [
@@ -574,6 +578,7 @@ describe('PrivilegeFormComponent', () => {
     it('should NOT show button when ds_auth is already enabled', async () => {
       spectator = createComponent({
         providers: [
+          ...ixFormTestingProviders(),
           mockApi([
             mockCall('group.query', testGroups),
             mockCall('privilege.roles', [
@@ -631,6 +636,7 @@ describe('PrivilegeFormComponent', () => {
     it('should NOT show button in non-enterprise mode', async () => {
       spectator = createComponent({
         providers: [
+          ...ixFormTestingProviders(),
           mockApi([
             mockCall('group.query', testGroups),
             mockCall('privilege.roles', [

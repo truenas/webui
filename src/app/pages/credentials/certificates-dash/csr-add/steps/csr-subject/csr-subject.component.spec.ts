@@ -2,9 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnInputHarness, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
+import {
+  TnChipInputHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   CsrSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-subject/csr-subject.component';
@@ -13,7 +14,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 describe('CsrSubjectComponent', () => {
   let spectator: Spectator<CsrSubjectComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
 
   const createComponent = createComponentFactory({
     component: CsrSubjectComponent,
@@ -46,15 +46,16 @@ describe('CsrSubjectComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
-
     const countrySelect = await loader.getHarness(
       TnSelectHarness.with({ selector: '[formControlName="country"]' }),
     );
     await countrySelect.selectOption('United States');
-    await form.fillForm({
-      'Subject Alternative Name': ['jobs.umbrella.com', 'security.umbrella.com'],
-    });
+
+    const sanChips = await loader.getHarness(
+      TnChipInputHarness.with({ selector: '[formControlName="san"]' }),
+    );
+    await sanChips.addChip('jobs.umbrella.com');
+    await sanChips.addChip('security.umbrella.com');
 
     await setText({
       state: 'Pennsylvania',

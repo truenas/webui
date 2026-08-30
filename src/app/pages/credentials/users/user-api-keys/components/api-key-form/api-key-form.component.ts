@@ -3,27 +3,32 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnDateInputComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnAutocompleteComponent, TnAutocompleteOption, TnCheckboxComponent, TnDateInputComponent, TnDialog,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
-import { filter, map } from 'rxjs';
+import {
+  Subject, debounceTime, distinctUntilChanged, filter, map, startWith, switchMap,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
+import { newOption, Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { UserPickerProvider } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker-provider';
-import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { LoaderService } from 'app/modules/loader/loader.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
+import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 
 @Component({
   selector: 'ix-api-key-form',
@@ -31,23 +36,24 @@ import {
   styleUrls: ['./api-key-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
+    TnAutocompleteComponent,
     TnCheckboxComponent,
     TnDateInputComponent,
     ReactiveFormsModule,
     TranslateModule,
-    IxUserPickerComponent,
   ],
 })
-export class ApiKeyFormComponent extends SidePanelForm implements OnInit {
+export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
-  private loader = inject(LoaderService);
-  private errorHandler = inject(FormErrorHandlerService);
   private authService = inject(AuthService);
+  private formPanel = inject(FormSidePanelService);
+  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   /** API key being edited; absent when adding. Supplied by the `<tn-side-panel>` host. */
@@ -58,7 +64,6 @@ export class ApiKeyFormComponent extends SidePanelForm implements OnInit {
   protected readonly minDateToday = new Date();
   protected readonly editingRow = signal<ApiKey | undefined>(undefined);
   protected readonly isNew = computed(() => !this.editingRow());
-  protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.ApiKeyWrite, Role.SharingAdmin, Role.ReadonlyAdmin];
   protected readonly isFullAdmin = toSignal(this.authService.hasRole([Role.FullAdmin]));
   protected readonly isAllowedToReset = computed(
@@ -93,12 +98,28 @@ export class ApiKeyFormComponent extends SidePanelForm implements OnInit {
     queryParams: this.userQueryParams,
   });
 
+  /**
+   * Options behind the username `tn-autocomplete`, refreshed on each search and appended to as
+   * the open dropdown is scrolled. The first row is always "Add New", which opens the user form.
+   */
+  protected readonly usernameOptions = signal<TnAutocompleteOption<string>[]>([]);
+  protected readonly usernamesLoading = signal(false);
+
+  private readonly usernameSearch$ = new Subject<string>();
+
+  /** The term the currently loaded page was fetched with, replayed by {@link onUsernameLoadMore}. */
+  private lastUsernameSearch = '';
+
+  /**
+   * The options are already filtered server-side by {@link userPickerProvider}, so the component's
+   * own client-side pass is disabled — it would otherwise hide results the query matched on a field
+   * other than the label, and drop the "Add New" row as soon as the user typed.
+   */
+  protected readonly showAllOptions = (): boolean => true;
+
   protected readonly forbiddenNames$ = this.api.call('api_key.query', [
     [], { select: ['name'], order_by: ['name'] },
   ]).pipe(map((keys) => keys.map((key) => key.name)));
-
-  /** Drives the host-owned Save action (`<tn-side-panel>` footer). */
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   ngOnInit(): void {
     const editingKey = this.editingKey();
@@ -124,10 +145,11 @@ export class ApiKeyFormComponent extends SidePanelForm implements OnInit {
       }
     }
     this.handleNonExpiringChanges();
+    this.loadUsernameOptions();
+    this.listenForAddNewUser();
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
+  protected handleSubmit = (): SubmitResult<boolean, ApiKey> => {
     const {
       name, username, reset, nonExpiring,
     } = this.form.getRawValue();
@@ -142,23 +164,90 @@ export class ApiKeyFormComponent extends SidePanelForm implements OnInit {
       ? this.api.call('api_key.update', [editingRow.id, { name, reset, expires_at: expiresAt }])
       : this.api.call('api_key.create', [{ name, username, expires_at: expiresAt }]);
 
-    request$
-      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: ({ key }) => {
-          this.isLoading.set(false);
-          this.close(true);
+    return {
+      request$,
+      // A freshly generated key is reported by the dialog below, which is a stronger
+      // confirmation than a snackbar — only a save that produced no key needs one.
+      successMessage: (result) => (result.key ? null : this.translate.instant('API Key Updated')),
+      onSuccess: (result) => {
+        if (result.key) {
+          this.tnDialog.open(KeyCreatedDialog, { data: result.key });
+        }
+      },
+    };
+  };
 
-          if (key) {
-            this.tnDialog.open(KeyCreatedDialog, { data: key });
-          }
+  /** Refreshes the username options as the user types, from the first page of matches. */
+  protected onUsernameSearch(query: string): void {
+    this.usernameSearch$.next(query);
+  }
+
+  /** Appends the next page of matches when the open dropdown is scrolled to its end. */
+  protected onUsernameLoadMore(): void {
+    this.usernamesLoading.set(true);
+    this.userPickerProvider.nextPage(this.lastUsernameSearch)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (options) => {
+          this.usernamesLoading.set(false);
+          this.usernameOptions.update((current) => [
+            ...current,
+            ...this.toAutocompleteOptions(options).filter(
+              (option) => !current.some((existing) => existing.value === option.value),
+            ),
+          ]);
         },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.errorHandler.handleValidationErrors(error, this.form);
-          this.loader.close();
-        },
+        error: () => this.usernamesLoading.set(false),
       });
+  }
+
+  private loadUsernameOptions(): void {
+    this.usernameSearch$.pipe(
+      debounceTime(defaultDebounceTimeMs),
+      distinctUntilChanged(),
+      // Preloads the first page so the dropdown is populated before the user types. It sits after
+      // `debounceTime`, so it fires immediately; routing it through the same stream lets
+      // `switchMap` cancel it the moment a real search starts.
+      startWith(''),
+      switchMap((query) => {
+        this.lastUsernameSearch = query;
+        this.usernamesLoading.set(true);
+        return this.userPickerProvider.fetch(query);
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (options) => {
+        this.usernamesLoading.set(false);
+        this.usernameOptions.set(this.toAutocompleteOptions(options));
+      },
+      error: () => this.usernamesLoading.set(false),
+    });
+  }
+
+  private toAutocompleteOptions(options: Option[]): TnAutocompleteOption<string>[] {
+    return [
+      { label: this.translate.instant('Add New'), value: newOption },
+      ...options.map((option) => ({ label: option.label, value: String(option.value) })),
+    ];
+  }
+
+  /** Selecting "Add New" opens the user form; the created user becomes the selected username. */
+  private listenForAddNewUser(): void {
+    this.form.controls.username.valueChanges.pipe(
+      distinctUntilChanged(),
+      filter((value) => value === newOption),
+      switchMap(() => this.formPanel.open(UserFormComponent, {
+        wide: true,
+        title: this.translate.instant('Add User'),
+      }).success$),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((newUser: User) => {
+      this.usernameOptions.update((current) => [
+        ...current,
+        { label: newUser.username, value: newUser.username },
+      ]);
+      this.form.controls.username.setValue(newUser.username);
+    });
   }
 
   private setCurrentUsername(): void {

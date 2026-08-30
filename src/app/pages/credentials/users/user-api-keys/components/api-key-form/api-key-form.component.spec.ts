@@ -4,16 +4,18 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnDateInputHarness, TnDialog, TnInputHarness,
+  TnAutocompleteHarness, TnCheckboxHarness, TnDateInputHarness, TnDialog, TnInputHarness,
 } from '@truenas/ui-components';
 import { parseISO } from 'date-fns';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
+import { User } from 'app/interfaces/user.interface';
 import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
@@ -34,9 +36,13 @@ describe('ApiKeyFormComponent', () => {
     component: ApiKeyFormComponent,
     imports: [ReactiveFormsModule],
     providers: [
+      ...ixFormTestingProviders(),
       mockAuth(),
       mockApi([
-        mockCall('user.query', []),
+        mockCall('user.query', [
+          { id: 1, uid: 1000, username: 'root' },
+          { id: 2, uid: 1001, username: 'operator' },
+        ] as User[]),
         mockCall('api_key.query', []),
         mockCall('api_key.create', { key: 'generated-key' } as ApiKey),
         mockCall('api_key.update', {} as ApiKey),
@@ -50,7 +56,7 @@ describe('ApiKeyFormComponent', () => {
     ],
   });
 
-  // The form's username control is bound to an `ix-user-picker`, and `tn-date-input` formatting is
+  // The username `tn-autocomplete` commits on selection and `tn-date-input` formatting is
   // locale/timezone dependent; read both from the form model instead of the rendered controls.
   function rawForm(): { username: string; expires_at: Date | null } {
     return (spectator.component as unknown as {
@@ -173,6 +179,19 @@ describe('ApiKeyFormComponent', () => {
       await setupTest({ presetUsername: 'testuser' });
 
       expect(rawForm().username).toBe('testuser');
+    });
+
+    it('offers the privileged users (plus Add New) and commits the picked one', async () => {
+      await setupTest();
+
+      const username = await loader.getHarness(TnAutocompleteHarness);
+      await username.focus();
+
+      expect(await username.getOptions()).toEqual(['Add New', 'root', 'operator']);
+
+      await username.selectOption('operator');
+
+      expect(rawForm().username).toBe('operator');
     });
   });
 });
