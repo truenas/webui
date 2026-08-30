@@ -65,18 +65,17 @@
             </tn-form-field>
 
             <!--
-              Kept on ix-input: the zvol size must round-trip an exact byte count through
-              `memorySizeFormatting`/`memorySizeParsing`. tn-input's `InputType.Size`
-              re-formats on blur to the nearest round unit, which would silently change
-              the requested volume size.
+              `InputType.Size` keeps the exact byte count the user typed since
+              @truenas/ui-components 0.7.x: it renders a value in a unit that states it exactly
+              (1500 MiB stays '1500 MiB' rather than collapsing to a lossy '1.46 GiB'), and reads
+              a unit-less number as MiB — the same contract the byte formatter this replaced had.
             -->
-            <ix-input
-              formControlName="volsize"
-              [label]="'Size' | translate"
-              [required]="true"
-              [format]="formatter.memorySizeFormatting"
-              [parse]="formatter.memorySizeParsing"
-            ></ix-input>
+            <tn-form-field [label]="'Size' | translate" [required]="true">
+              <tn-input
+                formControlName="volsize"
+                [inputType]="InputType.Size"
+              ></tn-input>
+            </tn-form-field>
           } @else {
             <tn-form-field
               [label]="'Zvol' | translate"
@@ -202,15 +201,17 @@
             ></tn-select>
           </tn-form-field>
 
-          <!-- Exact-byte field — see the Size note above. -->
-          <ix-input
-            formControlName="size"
+          <!-- Byte-count field — see the Size note above. -->
+          <tn-form-field
             [label]="'Raw Filesize' | translate"
-            [format]="formatter.memorySizeFormatting"
-            [parse]="formatter.memorySizeParsing"
             [tooltip]="helptext.raw_size_tooltip | translate"
             [hint]="'Must be specified if the raw file needs to be created' | translate"
-          ></ix-input>
+          >
+            <tn-input
+              formControlName="size"
+              [inputType]="InputType.Size"
+            ></tn-input>
+          </tn-form-field>
         }
         @case (VmDeviceType.Pci) {
           <ix-combobox

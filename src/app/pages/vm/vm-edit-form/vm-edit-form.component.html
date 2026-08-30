@@ -138,25 +138,31 @@
     }
 
     <!--
-      Memory fields stay on ix-input: they round-trip an exact byte count through
-      `memorySizeFormatting`/`memorySizeParsing`, and tn-input's `InputType.Size`
-      re-formats on blur to the nearest round unit, which would silently shift the
-      submitted MiB value (e.g. 1000 MiB → 0.98 GiB → 1004 MiB).
+      Byte-count fields. `InputType.Size` keeps the exact value the user typed since
+      @truenas/ui-components 0.7.x: it renders a byte count in a unit that states it exactly
+      (1500 MiB stays '1500 MiB' rather than collapsing to a lossy '1.46 GiB'), and both fields
+      hold whole MiB anyway. Unit-less input is read as MiB, matching the formatter these
+      replaced.
     -->
-    <ix-input
-      formControlName="memory"
+    <tn-form-field
       [label]="'Memory Size' | translate"
       [tooltip]="helptext.memory_tooltip | translate"
-      [format]="formatter.memorySizeFormatting"
-      [parse]="formatter.memorySizeParsing"
-    ></ix-input>
-    <ix-input
-      formControlName="min_memory"
+    >
+      <tn-input
+        formControlName="memory"
+        [inputType]="InputType.Size"
+      ></tn-input>
+    </tn-form-field>
+
+    <tn-form-field
       [label]="'Minimum Memory Size' | translate"
       [tooltip]="helptext.min_memory_tooltip | translate"
-      [format]="formatter.memorySizeFormatting"
-      [parse]="formatter.memorySizeParsing"
-    ></ix-input>
+    >
+      <tn-input
+        formControlName="min_memory"
+        [inputType]="InputType.Size"
+      ></tn-input>
+    </tn-form-field>
 
     <tn-form-field
       [label]="'Optional: NUMA nodeset (Example: 0-1)' | translate"

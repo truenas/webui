@@ -118,6 +118,17 @@ describe('TnFormControlHarness', () => {
       expect(await control.getValue()).toBe('pool1');
     });
 
+    it.each([['', 'an empty string'], [null, 'null']])('clears the field when set to %s', async (value) => {
+      const control = (await getControls()).Name;
+      await control.setValue('pool1');
+
+      // `TnInputHarness.setValue('')` would clear and then send zero keys, which the CDK rejects.
+      await control.setValue(value);
+
+      expect(spectator.hostComponent.name.value).toBe('');
+      expect(await control.getValue()).toBe('');
+    });
+
     it('reports the disabled state', async () => {
       expect(await (await getControls()).Name.isDisabled()).toBe(false);
 
