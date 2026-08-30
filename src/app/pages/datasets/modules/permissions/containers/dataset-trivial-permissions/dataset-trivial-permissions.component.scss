@@ -15,15 +15,8 @@
 }
 
 .card {
-  height: auto;
   margin: 0 auto;
   max-width: 850px;
-
-  // TEMP: tn-card's inner element is height:100% and stretches to fill the routed
-  // page height, leaving empty space below short content. Size it to content.
-  ::ng-deep .tn-card {
-    height: auto;
-  }
 }
 
 .dataset-path {
@@ -43,9 +36,9 @@
   }
 }
 
-.form {
-  // Let each section own its horizontal padding so the title, section content and footer
-  // buttons all share one left edge.
+// The `<ix-form>` wrapper renders the form element itself; each section below owns its
+// horizontal padding so the title, section content and footer buttons share one left edge.
+ix-form.form {
   display: block;
 }
 
@@ -95,15 +88,21 @@
   }
 }
 
-.set-acl-button {
-  margin-left: auto;
-}
-
+// A plain row rather than `ix-form-actions`: that component carries a 10px horizontal gutter
+// for legacy forms (which would offset the buttons from the sections above) and always renders
+// the projected `[type=submit]` ahead of its other content, which would put Save first in the
+// DOM. Here the footer owns its own padding and the buttons read in source order, so the visual
+// order matches the tab order. Save still submits natively — it sits inside `<ix-form>`'s form.
 .form-actions {
   display: flex;
+  column-gap: 10px;
+  justify-content: flex-end;
+  // Match the horizontal padding of the sections above so the buttons share their left/right edge.
   padding: 24px;
 
-  tn-button {
-    margin-right: 10px;
+  // Set ACL leads the row; the auto margin absorbs the free space, pushing Save/Cancel right.
+  // Without the role for it the row is empty on the left and `flex-end` right-aligns the rest.
+  .set-acl-button {
+    margin-right: auto;
   }
 }

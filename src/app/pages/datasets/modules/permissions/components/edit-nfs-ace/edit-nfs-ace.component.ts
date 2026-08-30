@@ -5,7 +5,7 @@ import {
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnRadioComponent, TnSelectComponent,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { fromPairs } from 'lodash-es';
 import {
@@ -69,7 +69,7 @@ function booleanRecordFromLabels<T extends string>(
     TnSelectComponent,
     IxUserComboboxComponent,
     IxGroupComboboxComponent,
-    TnRadioComponent,
+    TnRadioGroupComponent,
     TnCheckboxComponent,
     TranslateModule,
   ],
