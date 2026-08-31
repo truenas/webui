@@ -1,4 +1,9 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section>
     <ix-checkbox-list
       class="trains"
@@ -94,4 +99,4 @@
       ></tn-checkbox>
     </tn-form-field>
   </tn-form-section>
-</form>
+</ix-form>

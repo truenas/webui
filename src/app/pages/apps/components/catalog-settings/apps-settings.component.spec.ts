@@ -17,6 +17,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
@@ -27,6 +28,7 @@ function getNvidiaProviders(
   nvidiaPresent: boolean,
 ): unknown[] {
   return [
+    ...ixFormTestingProviders(),
     mockApi([
       mockCall('catalog.update'),
       mockCall('catalog.trains', ['stable', 'community', 'test']),
@@ -74,6 +76,7 @@ describe('AppsSettingsComponent', () => {
       IxIpInputWithNetmaskComponent,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('catalog.update'),
         mockCall('catalog.trains', ['stable', 'community', 'test']),
