@@ -95,7 +95,6 @@ describe('IxExplorerComponent', () => {
         [formControl]="formControl"
         [nodeProvider]="nodeProvider"
         [label]="label"
-        [hint]="hint"
         [required]="required"
         [tooltip]="tooltip"
         [rootNodes]="roots"
@@ -109,7 +108,6 @@ describe('IxExplorerComponent', () => {
           formControl,
           nodeProvider: fakeNodeProvider,
           label: undefined,
-          hint: undefined,
           required: false,
           tooltip: undefined,
           roots: [{
@@ -168,14 +166,6 @@ describe('IxExplorerComponent', () => {
         { path: '/mnt/pool1', name: 'pool1', type: 'dataset' },
         { path: '/mnt/pool2', name: 'pool2', type: 'dataset' },
       ]);
-    });
-
-    it('renders a hint when it is provided', () => {
-      spectator.setHostInput('hint', 'Please select a directory starting with an A');
-      spectator.detectComponentChanges();
-
-      expect(spectator.query('mat-hint'))
-        .toHaveExactText('Please select a directory starting with an A');
     });
 
     it('renders a label and passes properties to it', () => {

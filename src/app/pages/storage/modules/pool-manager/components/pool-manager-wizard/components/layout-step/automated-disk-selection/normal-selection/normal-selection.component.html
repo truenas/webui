@@ -14,8 +14,6 @@
         formControlName="width"
         [testId]="['width', type()]"
         [options]="(widthOptions$ | async) ?? []"
-        [placeholder]="tnSelectLabels.placeholder | translate"
-        [noOptionsLabel]="tnSelectLabels.noOptions | translate"
       ></tn-select>
     </tn-form-field>
 
@@ -25,8 +23,6 @@
           formControlName="vdevsNumber"
           [testId]="['vdevs-number', type()]"
           [options]="(numberOptions$ | async) ?? []"
-          [placeholder]="tnSelectLabels.placeholder | translate"
-          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
     }

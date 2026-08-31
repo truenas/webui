@@ -26,8 +26,6 @@
           formControlName="limitToEnclosure"
           [options]="(enclosureOptions$ | async) ?? []"
           [optionTestIdKey]="enclosureOptionTestIdKey"
-          [placeholder]="tnSelectLabels.placeholder | translate"
-          [noOptionsLabel]="tnSelectLabels.noOptions | translate"
         ></tn-select>
       </tn-form-field>
 
@@ -48,7 +46,6 @@
   <tn-button
     tnStepperPrevious
     color="secondary"
-    type="button"
     [testId]="'back-enclosure'"
     [label]="'Back' | translate"
     [disabled]="form.invalid"
@@ -57,7 +54,6 @@
     <tn-button
       tnStepperNext
       color="primary"
-      type="button"
       [testId]="'next-enclosure'"
       [label]="'Next' | translate"
       [disabled]="form.invalid"

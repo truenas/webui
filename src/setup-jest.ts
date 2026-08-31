@@ -5,6 +5,8 @@ import 'zone.js/testing';
 import { HighContrastModeDetector } from '@angular/cdk/a11y';
 import { APP_BASE_HREF } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -32,6 +34,8 @@ import {
 } from '@ngx-translate/core';
 import {
   LabelMarkupPipe,
+  TN_DEFAULT_FALLBACK_LABELS,
+  TN_FALLBACK_LABELS,
   TN_TEST_ATTR, TnButtonComponent, TnIconButtonComponent, TnIconComponent, TnIconTesting,
   TnInputComponent,
   TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective, TnTablePagerComponent, TnTestIdDirective,
@@ -44,6 +48,7 @@ import {
   Observable,
 } from 'rxjs';
 import { defaultLanguage } from 'app/constants/languages.constant';
+import { provideTnSelectLabels } from 'app/core/providers/tn-select-labels.provider';
 import { EmptyApiService } from 'app/core/testing/utils/empty-api.service';
 import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -78,22 +83,29 @@ import {
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
-import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
-import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
 import {
   WithLoadingStateDirective,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import {
-  ModalHeaderComponent,
-} from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+/**
+ * Nothing renders this. It exists so the global `declarations` array is non-empty and holds an
+ * ng-mocks mock: ng-mocks only patches `TestBed.configureTestingModule` to tolerate
+ * re-configuration when a mock declaration is present, and specs that nest a
+ * `createComponentFactory` inside a describe whose outer `beforeEach` already created a component
+ * rely on that tolerance. `ix-modal-header`'s global mock used to supply it; this replaces it.
+ */
+/* eslint-disable @angular-eslint/prefer-standalone, @angular-eslint/prefer-on-push-component-change-detection,
+   angular-file-naming/component-filename-suffix -- a declarations-array anchor, never rendered. */
+@Component({ selector: 'ix-global-declarations-anchor', template: '', standalone: false })
+class GlobalDeclarationsAnchorComponent {}
+/* eslint-enable @angular-eslint/prefer-standalone, @angular-eslint/prefer-on-push-component-change-detection,
+   angular-file-naming/component-filename-suffix */
 
 setupZoneTestEnv();
 
@@ -172,7 +184,6 @@ defineGlobalsInjections({
     IxRadioGroupComponent,
     IxSelectComponent,
     IxFieldsetComponent,
-    ModalHeaderComponent,
     IxFormSectionComponent,
     IxButtonGroupComponent,
     IxExplorerComponent,
@@ -192,11 +203,7 @@ defineGlobalsInjections({
     RouterModule.forRoot([]),
     UiSearchDirective,
     RequiresRolesDirective,
-    IxTableComponent,
     TnTablePagerComponent,
-    IxTableEmptyDirective,
-    IxTableHeadComponent,
-    IxTableBodyComponent,
     TestDirective,
     TestOverrideDirective,
     WithLoadingStateDirective,
@@ -220,7 +227,7 @@ defineGlobalsInjections({
     EffectsModule.forRoot([]),
   ],
   declarations: [
-    MockComponent(ModalHeaderComponent),
+    MockComponent(GlobalDeclarationsAnchorComponent),
   ],
   providers: [
     provideHttpClient(),
@@ -234,6 +241,22 @@ defineGlobalsInjections({
       // so specs and Release Engineering selectors target the same attribute.
       provide: TN_TEST_ATTR,
       useValue: 'data-test',
+    },
+    // Also mirrored from main.ts: without it a spec reads the library's own English copy
+    // ('No options available') where the app renders webui's ('No options').
+    provideTnSelectLabels(),
+    {
+      // Mirror production (main.ts) again: the app names every unnamed spinner,
+      // progress bar and modal surface through this token, which is also what stands
+      // the library's dev-mode naming warning down. Without it here, a spec rendering
+      // one warns and `jest-fail-on-console` fails the test for a decision the app
+      // has already made.
+      //
+      // The library's English defaults rather than `provideTnFallbackLabels()`: what a
+      // spec needs is the token PROVIDED, and reusing the app provider would make every
+      // spec that renders a spinner depend on a TranslateService too.
+      provide: TN_FALLBACK_LABELS,
+      useValue: TN_DEFAULT_FALLBACK_LABELS,
     },
     {
       provide: WINDOW,
@@ -260,6 +283,14 @@ defineGlobalsInjections({
 });
 
 beforeEach(() => {
+  // `defineGlobalsInjections` above reaches Spectator specs only, and a plain
+  // `TestBed` spec renders the same components — so the fallback-name token is
+  // registered here too, where every spec sees it. Called before the spec's own
+  // `configureTestingModule`, which merges with rather than replaces this.
+  TestBed.configureTestingModule({
+    providers: [{ provide: TN_FALLBACK_LABELS, useValue: TN_DEFAULT_FALLBACK_LABELS }],
+  });
+
   // eslint-disable-next-line no-restricted-globals
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
@@ -307,11 +338,15 @@ Range.prototype.getClientRects = () => ({
 // eslint-disable-next-line no-restricted-globals
 Object.defineProperty(window.URL, 'createObjectURL', { value: () => '' });
 
+// jsdom's own `performance` is replaced rather than extended, so anything this stub omits
+// is missing entirely: `@truenas/ui-components` reads `performance.now()` to time its
+// transition fallbacks, and without it every spec rendering a side panel or dialog throws.
 Object.defineProperty(global, 'performance', {
   writable: true,
   value: {
     mark: () => {},
     measure: () => {},
+    now: () => Date.now(),
   },
 });
 

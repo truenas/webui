@@ -29,12 +29,12 @@ import { Container, ContainerStats, ContainerStopParams } from 'app/interfaces/c
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerListBulkActionsComponent } from 'app/pages/containers/components/all-containers/container-list/container-list-bulk-actions/container-list-bulk-actions.component';
 import { ContainerStatusCellComponent } from 'app/pages/containers/components/all-containers/container-list/container-status-cell/container-status-cell.component';
@@ -157,10 +157,15 @@ export class ContainerListComponent {
   }
 
   protected onSortChange(event: TnSortEvent): void {
-    // tn-table cycles asc → desc → unsorted, but the containers list is always sorted. Treat the
-    // unsorted step as ascending on the same column so the indicator stays on the clicked column
-    // (asc → desc → asc) instead of visibly jumping back to Name. Unknown columns fall back to Name.
-    const active = this.isSortField(event.column) ? event.column : ContainerSortField.Name;
+    // tn-table cycles asc → desc → cleared, and since 0.5.0 the cleared step reports
+    // { column: '', direction: '' } without naming the column that was cleared. The containers
+    // list is always sorted, so treat that step as ascending on the store's current sort column —
+    // the cycle stays on the clicked column (asc → desc → asc) instead of visibly jumping back to
+    // Name. The route-provided store outlives this component, so it is the source of truth even
+    // right after the list is recreated.
+    const active = this.isSortField(event.column)
+      ? event.column
+      : this.containersStore.sort().active;
     const direction = event.direction === 'desc' ? SortDirection.Desc : SortDirection.Asc;
     this.containersStore.setSort({ active, direction });
   }

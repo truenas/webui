@@ -1,7 +1,7 @@
+@import 'mixins/tier-status';
+
 :host {
-  display: block;
-  min-width: min(360px, 100%);
-  max-width: min(420px, 90vw);
+  @include tier-dialog-size;
 }
 
 .dataset-name {
@@ -34,7 +34,9 @@
 
 .tier-change {
   display: flex;
-  justify-content: center;
+  // Left-aligned like every other row in the body (Dataset, the checkbox, the
+  // rewrite-size note) - centering left the chips floating mid-dialog.
+  justify-content: flex-start;
   align-items: flex-start;
   gap: 12px;
   margin-bottom: 16px;
@@ -48,7 +50,10 @@
 .tier-column {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  // Left-aligned, not centered: the chip is narrower than its "N GiB
+  // available" caption, and centering pushed it off the left edge every other
+  // row in the dialog body shares.
+  align-items: flex-start;
   gap: 4px;
 }
 
@@ -82,4 +87,10 @@
   margin-bottom: 8px;
   font-size: 13px;
   color: var(--orange);
+}
+
+// Sits directly above the dialog actions, so the user reads it before Apply.
+.tier-warning {
+  display: block;
+  margin-top: 16px;
 }

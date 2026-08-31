@@ -20,20 +20,6 @@
   }
 }
 
-.radio-group {
-  align-items: flex-end;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 24px;
-
-  // TEMP: tn-radio ships a default margin-bottom; drop it so the flex gap controls
-  // spacing and the options line up evenly. Remove once @truenas/ui-components
-  // exposes spacing control on tn-radio.
-  ::ng-deep tn-radio {
-    margin-bottom: 0;
-  }
-}
-
 .checkbox-list {
   column-gap: 24px;
   display: flex;

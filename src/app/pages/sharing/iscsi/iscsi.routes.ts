@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UnsavedFormGuard } from 'app/modules/unsaved-changes/unsaved-form.guard';
 import {
   AuthorizedAccessListComponent,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
@@ -63,11 +64,13 @@ export const iscsiRoutes: Routes = [
   {
     path: 'initiators/add',
     component: InitiatorFormComponent,
+    canDeactivate: [UnsavedFormGuard],
     data: { title: T('Add Initiator'), breadcrumb: T('Add') },
   },
   {
     path: 'initiators/edit/:pk',
     component: InitiatorFormComponent,
+    canDeactivate: [UnsavedFormGuard],
     data: { title: T('Add Initiator'), breadcrumb: T('Edit') },
   },
 ];

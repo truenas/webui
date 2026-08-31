@@ -5,7 +5,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -13,22 +13,15 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('AllowedAddressesComponent', () => {
   let spectator: Spectator<AllowedAddressesFormComponent>;
+  let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
   let api: ApiService;
-  const componentRef: SlideInRef<unknown, unknown> = {
-    close: jest.fn(),
-    getData: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-  };
   const createComponent = createComponentFactory({
     component: AllowedAddressesFormComponent,
     imports: [
@@ -42,13 +35,9 @@ describe('AllowedAddressesComponent', () => {
           ui_allowlist: ['1.1.1.1/32'],
         } as SystemGeneralConfig),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInRef, componentRef),
       mockProvider(SystemGeneralService, {
         handleUiServiceRestart: jest.fn(() => of(true)),
       }),
@@ -63,6 +52,7 @@ describe('AllowedAddressesComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    closedSpy = jest.spyOn(spectator.component.closed, 'emit');
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
   });
@@ -74,8 +64,11 @@ describe('AllowedAddressesComponent', () => {
   it('sends an update payload with specific IP address', async () => {
     await (await getAddressInput()).setValue('2.2.2.2');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+    spectator.component.submit();
+
+    spectator.detectChanges();
 
     expect(api.call).toHaveBeenCalledWith('system.general.update', [
       { ui_allowlist: ['2.2.2.2'] },
@@ -85,20 +78,25 @@ describe('AllowedAddressesComponent', () => {
   it('sends an update payload with an IP address and a subnet mask', async () => {
     await (await getAddressInput()).setValue('192.168.1.0/24');
 
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+    spectator.component.submit();
+
+    spectator.detectChanges();
 
     expect(api.call).toHaveBeenCalledWith('system.general.update', [
       { ui_allowlist: ['192.168.1.0/24'] },
     ]);
   });
 
-  it('closes the form normally when no changes are made', async () => {
-    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-    await saveButton.click();
+  it('closes the form normally when no changes are made', () => {
+    // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+    spectator.component.submit();
+    spectator.detectChanges();
 
     expect(api.call).not.toHaveBeenCalledWith('system.general.update');
-    expect(componentRef.close).toHaveBeenCalledWith({ response: false });
+    // `false` is what FormSidePanelService reads as a cancel, so the opener does not reload.
+    expect(closedSpy).toHaveBeenCalledWith(false);
   });
 
   describe('warnings', () => {
@@ -134,17 +132,23 @@ describe('AllowedAddressesComponent', () => {
       const systemGeneralService = spectator.inject(SystemGeneralService);
       await (await getAddressInput()).setValue('2.2.2.2');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
     });
 
-    it('should not call SystemGeneralService.handleUiServiceRestart when no changes are made', async () => {
+    it('should not call SystemGeneralService.handleUiServiceRestart when no changes are made', () => {
       const systemGeneralService = spectator.inject(SystemGeneralService);
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(systemGeneralService.handleUiServiceRestart).not.toHaveBeenCalled();
     });
@@ -153,8 +157,11 @@ describe('AllowedAddressesComponent', () => {
       const systemGeneralService = spectator.inject(SystemGeneralService);
       await (await getAddressInput()).setValue('3.3.3.3');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(api.call).toHaveBeenCalledWith('system.general.update', [
         { ui_allowlist: ['3.3.3.3'] },
@@ -165,10 +172,13 @@ describe('AllowedAddressesComponent', () => {
     it('should close slide-in after successful restart handling', async () => {
       await (await getAddressInput()).setValue('4.4.4.4');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
 
-      expect(componentRef.close).toHaveBeenCalledWith({ response: true });
+      spectator.component.submit();
+
+      spectator.detectChanges();
+
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
     it('should handle form validation and submission correctly', async () => {
@@ -177,8 +187,11 @@ describe('AllowedAddressesComponent', () => {
       // Test with a valid IP address format
       await (await getAddressInput()).setValue('10.0.0.1/24');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(api.call).toHaveBeenCalledWith('system.general.update', [
         { ui_allowlist: ['10.0.0.1/24'] },
@@ -190,15 +203,18 @@ describe('AllowedAddressesComponent', () => {
       const systemGeneralService = spectator.inject(SystemGeneralService);
       await (await getAddressInput()).setValue('5.5.5.5');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       // Verify the flow: update -> restart -> close
       expect(api.call).toHaveBeenCalledWith('system.general.update', [
         { ui_allowlist: ['5.5.5.5'] },
       ]);
       expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
-      expect(componentRef.close).toHaveBeenCalledWith({ response: true });
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
     it('should handle restart cancellation gracefully', async () => {
@@ -208,12 +224,15 @@ describe('AllowedAddressesComponent', () => {
 
       await (await getAddressInput()).setValue('6.6.6.6');
 
-      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       // Even if restart is cancelled, the form should still close successfully
       expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
-      expect(componentRef.close).toHaveBeenCalledWith({ response: true });
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 });

@@ -2,9 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { FibreChannelHost, FibreChannelPortChoices } from 'app/interfaces/fibre-channel.interface';
-import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
+import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FcPortItemControlsComponent } from './fc-port-item-controls.component';
 
@@ -34,6 +35,7 @@ describe('FcPortItemControlsComponent', () => {
     component: FcPortItemControlsComponent,
     providers: [
       FormBuilder,
+      provideTnFormFieldErrors(),
       mockApi([
         mockCall('fcport.port_choices', mockPortChoices),
         mockCall('fc.fc_host.query', mockHosts),
@@ -51,6 +53,7 @@ describe('FcPortItemControlsComponent', () => {
     spectator = createComponent({
       props: {
         form: mockForm,
+        index: 0,
         isEdit: false,
         currentPort: null,
         usedPhysicalPorts: [],
@@ -66,21 +69,21 @@ describe('FcPortItemControlsComponent', () => {
     });
 
     it('defaults to "existing" mode and shows existing port selector', async () => {
-      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      const modeSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Port Mode' }));
       expect(await modeSelect.getValue()).toBe('Use existing port');
 
       // Verify existing port selector is visible
-      const portSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Existing Port' }));
+      const portSelect = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'Existing Port' }));
       expect(portSelect).toBeTruthy();
 
       // Verify new port selector is NOT visible
-      const hostSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      const hostSelect = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'Choose Host for New Virtual Port' }));
       expect(hostSelect).toBeNull();
     });
 
     it('loads existing port options correctly', async () => {
-      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
-      const options = await portSelect.getOptionLabels();
+      const portSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Existing Port' }));
+      const options = await portSelect.getSelectOptions();
 
       expect(options).toContain('fc0');
       expect(options).toContain('fc1');
@@ -89,37 +92,37 @@ describe('FcPortItemControlsComponent', () => {
 
   describe('mode switching', () => {
     it('switches to "new" mode and shows host selector when user selects create new virtual port', async () => {
-      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      const modeSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Port Mode' }));
       await modeSelect.setValue('Create new virtual port');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
       // Verify new port selector is now visible
-      const hostSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      const hostSelect = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'Choose Host for New Virtual Port' }));
       expect(hostSelect).toBeTruthy();
 
       // Verify existing port selector is hidden
-      const portSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Existing Port' }));
+      const portSelect = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'Existing Port' }));
       expect(portSelect).toBeNull();
     });
 
     it('loads host options correctly in new mode', async () => {
-      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      const modeSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Port Mode' }));
       await modeSelect.setValue('Create new virtual port');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const hostSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
-      const options = await hostSelect.getOptionLabels();
+      const hostSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      const options = await hostSelect.getSelectOptions();
 
       expect(options).toContain('fc/2');
       expect(options).toContain('fc1/1');
     });
 
     it('switches back to "existing" mode and shows port selector', async () => {
-      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      const modeSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Port Mode' }));
 
       // Switch to new mode first
       await modeSelect.setValue('Create new virtual port');
@@ -132,22 +135,22 @@ describe('FcPortItemControlsComponent', () => {
       await spectator.fixture.whenStable();
 
       // Verify existing port selector is visible again
-      const portSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Existing Port' }));
+      const portSelect = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'Existing Port' }));
       expect(portSelect).toBeTruthy();
 
       // Verify new port selector is hidden
-      const hostSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      const hostSelect = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'Choose Host for New Virtual Port' }));
       expect(hostSelect).toBeNull();
     });
 
     it('clears port value when switching to "new" mode', async () => {
       // First select a port in existing mode
-      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      const portSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Existing Port' }));
       await portSelect.setValue('fc0');
       expect(mockForm.controls.port.value).toBe('fc0');
 
       // Switch to new mode
-      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      const modeSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Port Mode' }));
       await modeSelect.setValue('Create new virtual port');
       spectator.detectChanges();
 
@@ -157,12 +160,12 @@ describe('FcPortItemControlsComponent', () => {
 
     it('clears host_id value when switching to "existing" mode', async () => {
       // Switch to new mode and select a host
-      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      const modeSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Port Mode' }));
       await modeSelect.setValue('Create new virtual port');
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const hostSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      const hostSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Choose Host for New Virtual Port' }));
       await hostSelect.setValue('fc/2');
       expect(mockForm.controls.host_id.value).toBe(1);
 
@@ -186,6 +189,7 @@ describe('FcPortItemControlsComponent', () => {
       spectator = createComponent({
         props: {
           form: mockForm,
+          index: 0,
           isEdit: true,
           currentPort: 'fc0',
           usedPhysicalPorts: [],
@@ -200,36 +204,36 @@ describe('FcPortItemControlsComponent', () => {
     it('prefills port control with currentPort value', async () => {
       expect(mockForm.controls.port.value).toBe('fc0');
 
-      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      const portSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Existing Port' }));
       expect(await portSelect.getValue()).toBe('fc0');
     });
 
     it('defaults to "existing" mode in edit mode', async () => {
-      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      const modeSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Port Mode' }));
       expect(await modeSelect.getValue()).toBe('Use existing port');
     });
 
     it('shows existing port selector in edit mode', async () => {
-      const portSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Existing Port' }));
+      const portSelect = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'Existing Port' }));
       expect(portSelect).toBeTruthy();
     });
   });
 
   describe('form integration', () => {
     it('updates parent form when user selects a port in existing mode', async () => {
-      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      const portSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Existing Port' }));
       await portSelect.setValue('fc1');
 
       expect(mockForm.controls.port.value).toBe('fc1');
     });
 
     it('updates parent form when user selects a host in new mode', async () => {
-      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      const modeSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Port Mode' }));
       await modeSelect.setValue('Create new virtual port');
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const hostSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      const hostSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Choose Host for New Virtual Port' }));
       await hostSelect.setValue('fc/2');
 
       expect(mockForm.controls.host_id.value).toBe(1);
@@ -244,14 +248,14 @@ describe('FcPortItemControlsComponent', () => {
     });
 
     it('form is valid when mode is "existing" and port selected', async () => {
-      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      const portSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Existing Port' }));
       await portSelect.setValue('fc0');
 
       expect(mockForm.valid).toBe(true);
     });
 
     it('form is invalid when mode is "new" and no host_id selected', async () => {
-      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      const modeSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Port Mode' }));
       await modeSelect.setValue('Create new virtual port');
       spectator.detectChanges();
 
@@ -260,12 +264,12 @@ describe('FcPortItemControlsComponent', () => {
     });
 
     it('form is valid when mode is "new" and host_id selected', async () => {
-      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      const modeSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Port Mode' }));
       await modeSelect.setValue('Create new virtual port');
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const hostSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      const hostSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Choose Host for New Virtual Port' }));
       await hostSelect.setValue('fc/2');
 
       expect(mockForm.valid).toBe(true);
@@ -281,7 +285,7 @@ describe('FcPortItemControlsComponent', () => {
 
   describe('validator management', () => {
     it('does not accumulate validators on repeated mode switches', async () => {
-      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      const modeSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Port Mode' }));
 
       // Switch modes multiple times
       await modeSelect.setValue('Create new virtual port');
@@ -303,7 +307,7 @@ describe('FcPortItemControlsComponent', () => {
       // Verify form validity works correctly after multiple switches
       expect(mockForm.invalid).toBe(true); // port is required but null
 
-      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      const portSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Existing Port' }));
       await portSelect.setValue('fc0');
 
       expect(mockForm.valid).toBe(true); // Should be valid with one port selected
@@ -317,8 +321,8 @@ describe('FcPortItemControlsComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
-      const options = await portSelect.getOptionLabels();
+      const portSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Existing Port' }));
+      const options = await portSelect.getSelectOptions();
 
       // Should NOT include fc0 or fc0/1 (same physical port)
       expect(options).not.toContain('fc0');
@@ -335,8 +339,8 @@ describe('FcPortItemControlsComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
-      const options = await portSelect.getOptionLabels();
+      const portSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Existing Port' }));
+      const options = await portSelect.getSelectOptions();
 
       // Should NOT include any fc0 variants
       expect(options).not.toContain('fc0');
@@ -354,8 +358,8 @@ describe('FcPortItemControlsComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
-      const options = await portSelect.getOptionLabels();
+      const portSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Existing Port' }));
+      const options = await portSelect.getSelectOptions();
 
       // Should include all available ports
       expect(options).toContain('fc0');
@@ -371,8 +375,8 @@ describe('FcPortItemControlsComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
-      const options = await portSelect.getOptionLabels();
+      const portSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Existing Port' }));
+      const options = await portSelect.getSelectOptions();
 
       // Should include fc0 (current port) even though it's in usedPhysicalPorts
       expect(options).toContain('fc0');
@@ -391,8 +395,8 @@ describe('FcPortItemControlsComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
-      let options = await portSelect.getOptionLabels();
+      const portSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Existing Port' }));
+      let options = await portSelect.getSelectOptions();
 
       // Should not include fc0
       expect(options).not.toContain('fc0');
@@ -404,7 +408,7 @@ describe('FcPortItemControlsComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      options = await portSelect.getOptionLabels();
+      options = await portSelect.getSelectOptions();
 
       // Should now exclude fc2 and show fc0
       expect(options).toContain('fc0');
@@ -420,8 +424,8 @@ describe('FcPortItemControlsComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
-      let options = await portSelect.getOptionLabels();
+      const portSelect = await loader.getHarness(TnFormControlHarness.with({ label: 'Existing Port' }));
+      let options = await portSelect.getSelectOptions();
 
       expect(options).toContain('fc0');
       expect(options).toContain('fc1');
@@ -432,7 +436,7 @@ describe('FcPortItemControlsComponent', () => {
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
-      options = await portSelect.getOptionLabels();
+      options = await portSelect.getSelectOptions();
 
       // Should now include fc2
       expect(options).toContain('fc0');

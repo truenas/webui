@@ -3,17 +3,18 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
-import { NEVER, Observable, of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import {
+  ixFormTestingProviders,
+} from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
@@ -82,6 +83,7 @@ jest.mock('./alert-services/ops-genie-service/ops-genie-service.component', () =
 
 describe('AlertServiceComponent', () => {
   let spectator: Spectator<AlertServiceComponent>;
+  let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
@@ -93,12 +95,6 @@ describe('AlertServiceComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
 
   const existingService = {
     id: 4,
@@ -116,7 +112,9 @@ describe('AlertServiceComponent', () => {
   const createComponent = createComponentFactory({
     component: AlertServiceComponent,
     providers: [
-      mockProvider(SlideInRef, slideInRef),
+      // This form delegates to `<ix-form>`; the helper zeroes the panel-host submit-feedback hold
+      // so a successful save closes synchronously here.
+      ...ixFormTestingProviders(),
       mockProvider(SnackbarService, {
         success: jest.fn(),
       }),
@@ -135,6 +133,7 @@ describe('AlertServiceComponent', () => {
   describe('creates a new alert service', () => {
     beforeEach(() => {
       spectator = createComponent();
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -151,8 +150,11 @@ describe('AlertServiceComponent', () => {
       await (await getSelect('type')).selectOption('AWS SNS');
       await (await getSelect('level')).selectOption('Error');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       const awsSnsForm = spectator.query(AwsSnsServiceComponent)!;
       expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
@@ -170,7 +172,7 @@ describe('AlertServiceComponent', () => {
         },
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
     it('disables Save while a Send Test Alert call is in flight', async () => {
@@ -187,15 +189,15 @@ describe('AlertServiceComponent', () => {
       await (await getSelect('type')).selectOption('AWS SNS');
       await (await getSelect('level')).selectOption('Error');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(false);
+      // The host-owned Save reads `canSubmit()`.
+      expect(spectator.component.canSubmit()).toBe(true);
 
       // Send Test Alert is now a side-panel footer action (rendered by the host
       // container, not this component), so trigger it via the exposed action.
       spectator.component.footerActions[0].onClick();
       spectator.detectChanges();
 
-      expect(await saveButton.isDisabled()).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('sends a test alert when Send Test Alert is pressed and shows validation result', async () => {
@@ -230,11 +232,8 @@ describe('AlertServiceComponent', () => {
 
   describe('edits alert service', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingService }),
-        ],
-      });
+      spectator = createComponent({ props: { alertServiceToEdit: existingService } });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -255,15 +254,7 @@ describe('AlertServiceComponent', () => {
       // Edit-open patches `type`, which fires its valueChanges. That subscription
       // must not flip the sticky dirty flag before the user has touched anything,
       // or closing a freshly-opened edit prompts a bogus unsaved-changes dialog.
-      const requireConfirmationWhen = spectator.inject(SlideInRef).requireConfirmationWhen as jest.Mock;
-      const confirmFactory = requireConfirmationWhen.mock.calls.at(-1)![0] as () => Observable<boolean>;
-
-      let needsConfirmation: boolean | undefined;
-      confirmFactory().subscribe((value) => {
-        needsConfirmation = value;
-      });
-
-      expect(needsConfirmation).toBe(false);
+      expect(spectator.component.hasUnsavedChanges()).toBe(false);
     });
 
     it('updates an existing alert service when update form is submitted', async () => {
@@ -271,8 +262,11 @@ describe('AlertServiceComponent', () => {
       await (await getCheckbox('enabled')).uncheck();
       await (await getSelect('type')).selectOption('OpsGenie');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       const opsGenie = spectator.query(OpsGenieServiceComponent)!;
       expect(opsGenie.getSubmitAttributes).toHaveBeenCalled();
@@ -290,7 +284,7 @@ describe('AlertServiceComponent', () => {
         },
       ]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 });

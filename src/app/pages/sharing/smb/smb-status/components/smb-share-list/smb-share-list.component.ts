@@ -13,12 +13,12 @@ import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbShareInfo } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { column } from 'app/modules/tn-table/column-configs';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
-} from 'app/modules/ix-table/utils';
+} from 'app/modules/tn-table/utils';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -67,24 +67,21 @@ export class SmbShareListComponent implements OnInit {
   shares: SmbShareInfo[] = [];
 
   protected readonly columns = signal(createTable<SmbShareInfo>([
-    textColumn({ title: this.translate.instant('Service'), propertyName: 'service' }),
-    textColumn({ title: this.translate.instant('Session ID'), propertyName: 'session_id' }),
-    textColumn({ title: this.translate.instant('Machine'), propertyName: 'machine' }),
-    textColumn({ title: this.translate.instant('Connected at'), propertyName: 'connected_at' }),
-    textColumn({
+    column({ title: this.translate.instant('Service'), propertyName: 'service' }),
+    column({ title: this.translate.instant('Session ID'), propertyName: 'session_id' }),
+    column({ title: this.translate.instant('Machine'), propertyName: 'machine' }),
+    column({ title: this.translate.instant('Connected at'), propertyName: 'connected_at' }),
+    column({
       title: this.translate.instant('Encryption'),
       propertyName: 'encryption',
       getValue: (row) => row.encryption.cipher,
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Signing'),
       propertyName: 'signing',
       getValue: (row) => row.signing.cipher,
     }),
-  ], {
-    uniqueRowTag: (row) => 'smb-share-' + row.server_id.unique_id + '-' + row.machine,
-    ariaLabels: (row) => [row.machine, this.translate.instant('SMB Share')],
-  }));
+  ]));
 
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
 

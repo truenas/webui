@@ -33,22 +33,22 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { convertStringToId } from 'app/modules/ix-table/utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
+import { convertStringToId } from 'app/modules/tn-table/utils';
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import {
+  TaskStateCellComponent,
+} from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
+import {
   TableToggleCellComponent,
 } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
-import {
-  TaskStateCellComponent,
-} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -81,7 +81,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
     TnCellDefDirective,
-    IxTablePagerShowMoreComponent,
+    TablePagerShowMoreComponent,
     TranslateModule,
     AsyncPipe,
     TnEmptyComponent,
@@ -179,14 +179,12 @@ export class ReplicationTaskCardComponent extends JobTaskCardBase<ReplicationTas
     }).onSuccess(() => this.reload(), this.destroyRef);
   }
 
-  // ReplicationFormComponent / ReplicationWizardComponent structurally provide the host surface
-  // (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel reads; cast past the
-  // nominal base type.
-  private readonly replicationForm = ReplicationFormComponent as unknown as Type<SidePanelForm>;
-  private readonly replicationWizard = ReplicationWizardComponent as unknown as Type<SidePanelForm>;
+  // ReplicationWizardComponent is footerless and owns its stepper buttons, so it only provides
+  // `SidePanelHostCloseable` (closed + hasUnsavedChanges) rather than extending a panel base.
+  private readonly replicationWizard: Type<SidePanelHostCloseable> = ReplicationWizardComponent;
 
   private editReplicationTask(row: ReplicationTask): void {
-    this.formPanel.open(this.replicationForm, {
+    this.formPanel.open(ReplicationFormComponent, {
       title: this.translate.instant('Edit Replication Task'),
       wide: true,
       inputs: { replicationToEdit: row },

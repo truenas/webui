@@ -8,7 +8,6 @@ import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import {
   DiskSizeSelectsComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/disk-size-selects/disk-size-selects.component';
@@ -194,7 +193,7 @@ describe('DiskSizeSelectsComponent', () => {
 
     startOver$.next();
 
-    expect(await diskSizeSelect.getDisplayText()).toBe(tnSelectLabels.placeholder);
+    expect(await diskSizeSelect.getDisplayText()).toBe('Select an option');
 
     minimumCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ selector: '[formControlName="treatDiskSizeAsMinimum"]' }));
     expect(minimumCheckbox).toBeNull();

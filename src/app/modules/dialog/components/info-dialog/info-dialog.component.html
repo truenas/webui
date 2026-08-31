@@ -1,4 +1,4 @@
-<tn-dialog-shell testId="info" [title]="''">
+<tn-dialog-shell testId="info" [title]="''" [ariaLabel]="data.title | translate">
   <h1 class="information-header">
     <tn-icon class="information-icon" library="mdi" [name]="data.icon || 'information'"></tn-icon>
     <span class="information-title">{{ data.title | translate }}</span>

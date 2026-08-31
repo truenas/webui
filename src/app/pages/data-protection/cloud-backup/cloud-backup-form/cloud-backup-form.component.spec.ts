@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
   TnBannerHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness, TnSpriteLoaderService,
@@ -20,10 +19,6 @@ import {
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CloudBackupFormComponent,
@@ -86,13 +81,7 @@ describe('CloudBackupFormComponent', () => {
 
   let loader: HarnessLoader;
   let spectator: Spectator<CloudBackupFormComponent>;
-  const getData = jest.fn(() => existingTask);
-  const slideInRef: SlideInRef<CloudBackup | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-    swap: jest.fn(),
-  };
+  let closedSpy: jest.SpyInstance;
   const createComponent = createComponentFactory({
     component: CloudBackupFormComponent,
     imports: [
@@ -116,17 +105,12 @@ describe('CloudBackupFormComponent', () => {
       ...ixFormTestingProviders(),
       // ix-cloud-credentials-select's "Add new" directive opens a SlideIn and reads its result;
       // override the bare SlideIn mock from ixFormTestingProviders() to supply `open`.
-      mockProvider(SlideIn, {
-        openSlideIns: jest.fn(() => 1),
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(CloudCredentialService, {
         getCloudSyncCredentials: jest.fn(() => of([googlePhotosCreds, storjCreds])),
         getProviders: jest.fn(() => of([storjProvider, googlePhotosProvider])),
         getBuckets: jest.fn(() => of([{ Name: 'bucket1', Path: 'path_to_bucket1', Enabled: true }])),
       }),
       mockProvider(FilesystemService),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(TnSpriteLoaderService, {
         ensureSpriteLoaded: jest.fn(() => Promise.resolve(true)),
         getIconUrl: jest.fn(),
@@ -146,10 +130,16 @@ describe('CloudBackupFormComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  // The explorers render inside a `tn-form-field` that owns their label, so they are located by
+  // control name rather than through `IxFormHarness`'s label index.
+  const getExplorer = (name: string): Promise<IxExplorerHarness> => loader.getHarness(
+    IxExplorerHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
 
   describe('adds a new cloud backup', () => {
     beforeEach(() => {
       spectator = createComponent();
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -181,12 +171,9 @@ describe('CloudBackupFormComponent', () => {
     it('adds a new cloud backup task and creates a new bucket', async () => {
       await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="credentials"]' }))).selectOption('Storj (Storj)');
 
-      const ixForm = await loader.getHarness(IxFormHarness);
-      await ixForm.fillForm({
-        'Source Path': '/mnt/my pool 2',
-        'Cache Path': '/mnt/path',
-        Folder: '/',
-      });
+      await (await getExplorer('path')).setValue('/mnt/my pool 2');
+      await (await getExplorer('cache_path')).setValue('/mnt/path');
+      await (await getExplorer('folder')).setValue('/');
 
       await (await getInput('description')).setValue('Cloud Backup Task With New Bucket');
       await (await getInput('password')).setValue('qwerty');
@@ -195,8 +182,11 @@ describe('CloudBackupFormComponent', () => {
       await (await getSelect('bucket')).selectOption('Add new');
       await (await getInput('bucket_input')).setValue('brand-new-bucket');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.create', [{
         args: '',
@@ -224,17 +214,14 @@ describe('CloudBackupFormComponent', () => {
         absolute_paths: false,
         transfer_setting: CloudsyncTransferSetting.Default,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+      expect(closedSpy).toHaveBeenCalledWith(existingTask);
     });
 
     it('adds a new cloud backup task when new form is saved', async () => {
       await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="credentials"]' }))).selectOption('Storj (Storj)');
 
-      const ixForm = await loader.getHarness(IxFormHarness);
-      await ixForm.fillForm({
-        'Source Path': '/mnt/my pool 2',
-        Folder: '/',
-      });
+      await (await getExplorer('path')).setValue('/mnt/my pool 2');
+      await (await getExplorer('folder')).setValue('/');
 
       await (await getInput('description')).setValue('New Cloud Backup Task');
       await (await getInput('password')).setValue('qwerty');
@@ -247,8 +234,11 @@ describe('CloudBackupFormComponent', () => {
       await (await loader.getHarness(TnChipInputHarness.with({ selector: '[formControlName="exclude"]' }))).addChip('/test');
       await (await getSelect('transfer_setting')).selectOption('Fast Storage');
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
         args: '',
@@ -276,20 +266,14 @@ describe('CloudBackupFormComponent', () => {
         absolute_paths: true,
         transfer_setting: CloudsyncTransferSetting.FastStorage,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+      expect(closedSpy).toHaveBeenCalledWith(existingTask);
     });
   });
 
   describe('edits an existing cloud backup', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData,
-          }),
-        ],
-      });
+      spectator = createComponent({ props: { backupToEdit: existingTask } });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -304,15 +288,11 @@ describe('CloudBackupFormComponent', () => {
       expect(await (await getCheckbox('snapshot')).isChecked()).toBe(false);
       expect(await (await getSelect('transfer_setting')).getDisplayText()).toBe('Performance');
 
-      const sourcePath = await loader.getHarness(IxExplorerHarness.with({ label: 'Source Path' }));
-      expect(await sourcePath.getValue()).toBe('/mnt/my pool');
+      expect(await (await getExplorer('path')).getValue()).toBe('/mnt/my pool');
     });
 
     it('saves updated cloud backup task when form opened for edit is saved', async () => {
-      const ixForm = await loader.getHarness(IxFormHarness);
-      await ixForm.fillForm({
-        'Source Path': '/mnt/path1',
-      });
+      await (await getExplorer('path')).setValue('/mnt/path1');
 
       await (await getInput('description')).setValue('Edited description');
       await (await getInput('password')).setValue('qwerty123');
@@ -322,8 +302,11 @@ describe('CloudBackupFormComponent', () => {
       expect(await useAbsolutePathsControl.isDisabled()).toBe(true);
       expect(await useAbsolutePathsControl.isChecked()).toBe(true);
 
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
+      // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+      spectator.component.submit();
+
+      spectator.detectChanges();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloud_backup.update', [1, {
         args: '',
@@ -353,25 +336,23 @@ describe('CloudBackupFormComponent', () => {
         snapshot: false,
         transfer_setting: CloudsyncTransferSetting.Performance,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+      expect(closedSpy).toHaveBeenCalledWith(existingTask);
     });
   });
 
-  describe('side panel host (no SlideInRef)', () => {
+  describe('host-driven submit', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          { provide: SlideInRef, useValue: null },
-        ],
         props: {
           backupToEdit: existingTask,
         },
       });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('emits the saved record through closed when saved via the host submit() entry point', async () => {
-      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
       await (await getSelect('bucket')).selectOption('bucket1');
 

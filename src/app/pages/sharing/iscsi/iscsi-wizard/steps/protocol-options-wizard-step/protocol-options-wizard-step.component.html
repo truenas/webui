@@ -15,6 +15,7 @@
         <ix-list-item [label]="'Port' | translate" (delete)="deleteFcPort()(i)">
           <ix-fc-port-item-controls
             [form]="form().controls.fcPorts.at(i)"
+            [index]="i"
             [isEdit]="false"
             [currentPort]="null"
             [usedPhysicalPorts]="getUsedPhysicalPorts()(i)"

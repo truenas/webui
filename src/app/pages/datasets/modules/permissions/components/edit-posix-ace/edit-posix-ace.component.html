@@ -46,11 +46,11 @@
       </div>
     </tn-form-field>
 
-    <div class="label">{{ 'Flags' | translate }}</div>
-    <tn-checkbox
-      class="default-checkbox"
-      formControlName="default"
-      [label]="'Default' | translate"
-    ></tn-checkbox>
+    <tn-form-field [label]="'Flags' | translate">
+      <tn-checkbox
+        formControlName="default"
+        [label]="'Default' | translate"
+      ></tn-checkbox>
+    </tn-form-field>
   </tn-form-section>
 </form>

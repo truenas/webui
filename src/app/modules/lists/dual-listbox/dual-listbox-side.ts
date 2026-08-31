@@ -1,5 +1,5 @@
 import { computed, signal, Signal } from '@angular/core';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 
 /** Which of the two lists a value belongs to. Doubles as the suffix of the list's test ids. */
 export type ListType = 'available' | 'selected';

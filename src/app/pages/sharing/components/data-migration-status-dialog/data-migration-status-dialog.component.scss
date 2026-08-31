@@ -1,5 +1,15 @@
 @import 'mixins/tier-status';
 
+:host {
+  @include tier-dialog-size;
+}
+
+// Own row above the body, so it lines up with the content's left edge rather
+// than carrying the indent it needed back when it sat inline after the title.
+.status-row {
+  margin-bottom: 16px;
+}
+
 .status-badge {
   border: 1px solid currentColor;
   border-radius: 25px;
@@ -7,7 +17,6 @@
   font-size: 12px;
   font-weight: 500;
   line-height: 1.5;
-  margin-left: 8px;
   padding: 1px 12px;
   white-space: nowrap;
 
@@ -57,12 +66,11 @@ tn-progress-bar {
   gap: 16px;
 }
 
+// Not a card any more - the stats read as plain columns aligned with the rest
+// of the dialog body, so the box went with the padding.
 .stat-card {
   flex: 1;
   min-width: 120px;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
 
   .stat-label {
     font-size: 12px;

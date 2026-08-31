@@ -38,17 +38,11 @@
       [tooltip]="tooltips.type | translate"
       [required]="true"
     >
-      <div class="radio-group" role="radiogroup" [attr.aria-label]="'ACL Type' | translate">
-        @for (option of aclTypes; track option.value) {
-          <tn-radio
-            name="type"
-            formControlName="type"
-            [value]="option.value"
-            [label]="option.label"
-            [testId]="['type', option.label]"
-          ></tn-radio>
-        }
-      </div>
+      <tn-radio-group
+        formControlName="type"
+        [options]="aclTypes"
+        [inline]="true"
+      ></tn-radio-group>
     </tn-form-field>
   </tn-form-section>
 
@@ -59,17 +53,11 @@
         [tooltip]="tooltips.permissionType | translate"
         [required]="true"
       >
-        <div class="radio-group" role="radiogroup" [attr.aria-label]="'Permissions Type' | translate">
-          @for (option of permissionTypes; track option.value) {
-            <tn-radio
-              name="permissionType"
-              formControlName="permissionType"
-              [value]="option.value"
-              [label]="option.label"
-              [testId]="['permissionType', option.label]"
-            ></tn-radio>
-          }
-        </div>
+        <tn-radio-group
+          formControlName="permissionType"
+          [options]="permissionTypes"
+          [inline]="true"
+        ></tn-radio-group>
       </tn-form-field>
       @if (arePermissionsBasic) {
         <tn-form-field
@@ -112,17 +100,11 @@
         [tooltip]="tooltips.flagsType | translate"
         [required]="true"
       >
-        <div class="radio-group" role="radiogroup" [attr.aria-label]="'Flags Type' | translate">
-          @for (option of flagTypes; track option.value) {
-            <tn-radio
-              name="flagsType"
-              formControlName="flagsType"
-              [value]="option.value"
-              [label]="option.label"
-              [testId]="['flagsType', option.label]"
-            ></tn-radio>
-          }
-        </div>
+        <tn-radio-group
+          formControlName="flagsType"
+          [options]="flagTypes"
+          [inline]="true"
+        ></tn-radio-group>
       </tn-form-field>
       @if (areFlagsBasic) {
         <tn-form-field
@@ -130,17 +112,11 @@
           [tooltip]="tooltips.basicFlag | translate"
           [required]="true"
         >
-          <div class="radio-group" role="radiogroup" [attr.aria-label]="'Flags' | translate">
-            @for (option of basicFlags; track option.value) {
-              <tn-radio
-                name="basicFlag"
-                formControlName="basicFlag"
-                [value]="option.value"
-                [label]="option.label"
-                [testId]="['basicFlag', option.label]"
-              ></tn-radio>
-            }
-          </div>
+          <tn-radio-group
+            formControlName="basicFlag"
+            [options]="basicFlags"
+            [inline]="true"
+          ></tn-radio-group>
         </tn-form-field>
       }
       @if (!areFlagsBasic) {

@@ -15,6 +15,7 @@
           mode="indeterminate"
           [diameter]="20"
           [tnTooltip]="item().message || 'Running' | translate"
+          [ariaLabel]="item().message || 'Running' | translate"
         ></tn-spinner>
       }
       @case (State.Success) {

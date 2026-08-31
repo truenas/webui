@@ -18,7 +18,6 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -80,15 +79,9 @@ const existingTask: ReplicationTask = {
 
 describe('ReplicationFormComponent', () => {
   let spectator: Spectator<ReplicationFormComponent>;
+  let closedSpy: jest.SpyInstance;
   const remoteNodeProvider = jest.fn();
   const localNodeProvider = jest.fn();
-  const slideInRef: SlideInRef<ReplicationTask | undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    swap: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const generalForm = new FormGroup({
     name: new FormControl('dataset'),
     direction: new FormControl(Direction.Pull),
@@ -152,6 +145,9 @@ describe('ReplicationFormComponent', () => {
       ),
     ],
     providers: [
+      // The component renders `<ix-form>`; the bundle mocks the services it injects and zeroes the
+      // min submit-feedback hold so the `closed` assertions below stay synchronous.
+      ...ixFormTestingProviders(),
       mockAuth(),
       mockProvider(DatasetService, {
         getDatasetNodeProvider: jest.fn(() => localNodeProvider),
@@ -177,7 +173,6 @@ describe('ReplicationFormComponent', () => {
         confirm: jest.fn(() => of()),
       }),
       mockProvider(SnackbarService),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(FormSidePanelService),
     ],
     componentProviders: [
@@ -190,8 +185,16 @@ describe('ReplicationFormComponent', () => {
   describe('checks replication form', () => {
     beforeEach(fakeAsync(() => {
       spectator = createComponent();
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       tick();
     }));
+
+    // The section groups are module-level and shared by every test here, so anything a test
+    // dirties or invalidates has to be put back even when that test fails part way through.
+    afterEach(() => {
+      sourceForm.controls.name_regex.markAsPristine();
+      targetForm.controls.target_dataset.setErrors(null);
+    });
 
     it('shows form sections', () => {
       expect(spectator.query(GeneralSectionComponent)).toExist();
@@ -206,9 +209,10 @@ describe('ReplicationFormComponent', () => {
       expect(switchAction).toBeTruthy();
       switchAction!.onClick();
 
-      expect(
-        slideInRef.swap,
-      ).toHaveBeenCalledWith(ReplicationWizardComponent, { wide: true });
+      expect(spectator.inject(FormSidePanelService).swap).toHaveBeenCalledWith(
+        ReplicationWizardComponent,
+        expect.objectContaining({ wide: true, footerless: true }),
+      );
     });
 
     it('creates a new replication task', () => {
@@ -231,7 +235,22 @@ describe('ReplicationFormComponent', () => {
         auto: true,
         sudo: false,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
+      expect(closedSpy).toHaveBeenCalledWith(true);
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task created.');
+    });
+
+    it('rolls a dirty section up into the host unsaved-changes guard', () => {
+      expect(spectator.component.hasUnsavedChanges()).toBe(false);
+
+      sourceForm.controls.name_regex.markAsDirty();
+      expect(spectator.component.hasUnsavedChanges()).toBe(true);
+    });
+
+    it('rolls section validity up into the host Save gate', () => {
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      targetForm.controls.target_dataset.setErrors({ required: true });
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('shows eligible snapshots message', fakeAsync(() => {
@@ -264,11 +283,8 @@ describe('ReplicationFormComponent', () => {
 
   describe('updates task', () => {
     beforeEach(fakeAsync(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ id: 1 } as ReplicationTask)) }),
-        ],
-      });
+      spectator = createComponent({ props: { replicationToEdit: { id: 1 } as ReplicationTask } });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       tick();
     }));
 
@@ -289,13 +305,14 @@ describe('ReplicationFormComponent', () => {
           sudo: false,
         },
       ]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 
   describe('updates node providers when direction, transport or ssh credentials change', () => {
     beforeEach(fakeAsync(() => {
       spectator = createComponent();
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       tick();
     }));
 
@@ -335,24 +352,19 @@ describe('ReplicationFormComponent', () => {
     }));
   });
 
-  describe('side panel host (no SlideInRef)', () => {
+  describe('host-driven submit', () => {
     beforeEach(fakeAsync(() => {
       spectator = createComponent({
-        providers: [
-          { provide: SlideInRef, useValue: null },
-          // The `<ix-form>` this mode renders needs its own service mocks, and the bundle also
-          // zeroes the min submit-feedback hold so the close assertions below stay synchronous.
-          ...ixFormTestingProviders(),
-        ],
         props: {
           replicationToEdit: { id: 1 } as ReplicationTask,
         },
       });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       tick();
     }));
 
     it('emits closed when saved via the host submit() entry point', () => {
-      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
       spectator.component.submit();
 
@@ -364,6 +376,7 @@ describe('ReplicationFormComponent', () => {
   describe('sudo enabled dialog', () => {
     beforeEach(fakeAsync(() => {
       spectator = createComponent();
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       tick();
     }));
 

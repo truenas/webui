@@ -28,32 +28,28 @@ import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import {
-  stateButtonColumn,
-} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
-import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { column } from 'app/modules/tn-table/column-configs';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { TableDetailsRowComponent } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
+import { createTable, detailActionTestId, tnTableListHost } from 'app/modules/tn-table/utils';
 import {
   TableRelativeDateCellComponent,
+  formatRelativeDateValue,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
+import {
+  formatTaskStateValue, TaskStateCellComponent,
+} from 'app/modules/tn-table-cells/state-cell/task-state-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
-import {
-  TaskStateCellComponent,
-} from 'app/pages/data-protection/components/task-state-cell/task-state-cell.component';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -86,7 +82,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnCellDefDirective,
     TnDetailRowDefDirective,
     TnTablePagerComponent,
-    IxTableDetailsRowComponent,
+    TableDetailsRowComponent,
     TableRelativeDateCellComponent,
     TableTextCellComponent,
     TableToggleCellComponent,
@@ -148,80 +144,98 @@ export class ReplicationListComponent implements OnInit {
     lastSnapshot: this.translate.instant('Last Snapshot'),
   }));
 
+  private yesNoText(value: boolean): string {
+    return this.translate.instant(value ? 'Yes' : 'No');
+  }
+
+  protected sourceDatasets(row: ReplicationTask): string {
+    return (row.source_datasets || []).join(', ');
+  }
+
   protected readonly list = tnTableListHost<ReplicationTask>(this.dataProvider, {
     columns: () => createTable<ReplicationTask>([
-      textColumn({
+      column({
         title: this.titles().name,
         propertyName: 'name',
       }),
-      textColumn({
+      column({
         title: this.titles().direction,
         propertyName: 'direction',
       }),
-      textColumn({
+      column({
         title: this.titles().transport,
         propertyName: 'transport',
         hidden: true,
       }),
-      textColumn({
+      column({
         title: this.titles().sshConnection,
         hidden: true,
         propertyName: 'ssh_credentials',
         getValue: (task) => this.getSshConnection(task),
       }),
-      textColumn({
+      column({
         title: this.titles().sourceDataset,
         propertyName: 'source_datasets',
+        // A list of datasets: the cell joins them and a details row has to print the same text,
+        // or it falls back to String(array) — a comma-run with no spaces.
+        formatValue: (row) => this.sourceDatasets(row),
         hidden: true,
       }),
-      textColumn({
+      column({
         title: this.titles().targetDataset,
         propertyName: 'target_dataset',
         hidden: true,
       }),
-      yesNoColumn({
+      column({
         title: this.titles().recursive,
         propertyName: 'recursive',
         hidden: true,
+        // The table shows this as Yes/No in the template; a details row prints it, under the id
+        // that cell resolves.
+        formatValue: (row) => this.yesNoText(row.recursive),
+        testIdSuffix: 'row-yesno',
       }),
-      yesNoColumn({
+      column({
         title: this.titles().auto,
         propertyName: 'auto',
         hidden: true,
+        formatValue: (row) => this.yesNoText(row.auto),
+        testIdSuffix: 'row-yesno',
       }),
-      relativeDateColumn({
+      column({
         title: this.titles().lastRun,
         columnName: 'last-run',
         getValue: (row) => row.state?.datetime?.$date,
+        // The table shows this through <ix-table-relative-date-cell>; a details row prints it,
+        // under the id that cell resolves.
+        formatValue: (row) => formatRelativeDateValue(row.state?.datetime?.$date, this.translate),
+        testIdSuffix: 'row-relative-date',
       }),
-      stateButtonColumn({
+      column({
         title: this.titles().state,
         columnName: 'state',
         getValue: (row) => row.state.state,
-        cssClass: 'state-button',
-        getJob: (row) => row.job || null,
+        // The table shows this as a pill labelled by `jobStateDisplay`; a details row prints it,
+        // under the suffix that pill resolves.
+        formatValue: (row) => formatTaskStateValue(row.state.state, this.translate),
+        testIdSuffix: 'row-state',
       }),
-      // Modelled as yes/no rather than a toggle: the template renders the visible
-      // column as an <ix-table-toggle-cell>, but when the picker hides this column
-      // <ix-table-details-row> renders it through the ix cell components, where a
-      // toggle would be interactive without an `onRowToggle`/`requiredRoles`.
-      // Read-only in the detail row is a small regression from the pre-migration
-      // toggle — see "Migration follow-ups" in TRUENAS_UI_INTEGRATION.md.
-      yesNoColumn({
+      // The visible column renders as an <ix-table-toggle-cell>, but once the picker hides it
+      // <ix-table-details-row> only prints text — so it reads as Yes/No there. Read-only in the
+      // detail row is a small regression from the pre-migration toggle — see "Migration
+      // follow-ups" in TRUENAS_UI_INTEGRATION.md.
+      column({
         title: this.titles().enabled,
         propertyName: 'enabled',
+        formatValue: (row) => this.yesNoText(row.enabled),
+        testIdSuffix: 'row-toggle',
       }),
-      textColumn({
+      column({
         title: this.titles().lastSnapshot,
         columnName: 'last-snapshot',
         getValue: (task) => this.getLastSnapshot(task),
       }),
-    ], {
-      // Still needed: <ix-table-details-row> renders the hidden columns through the
-      // ix cell components, which read `uniqueRowTag`/`ariaLabels` off the column.
-      ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
-      uniqueRowTag: (row) => this.rowTag(row),
-    }),
+    ]),
   });
 
   protected readonly trackByTaskId = (_index: number, row: ReplicationTask): number => row.id;
@@ -296,15 +310,13 @@ export class ReplicationListComponent implements OnInit {
       .subscribe(() => this.getReplicationTasks());
   }
 
-  // ReplicationFormComponent / ReplicationWizardComponent structurally provide the host surface
-  // (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel reads; cast past the
-  // nominal base type.
-  private readonly replicationForm = ReplicationFormComponent as unknown as Type<SidePanelForm>;
-  private readonly replicationWizard = ReplicationWizardComponent as unknown as Type<SidePanelForm>;
+  // ReplicationWizardComponent is footerless and owns its stepper buttons, so it only provides
+  // `SidePanelHostCloseable` (closed + hasUnsavedChanges) rather than extending a panel base.
+  private readonly replicationWizard: Type<SidePanelHostCloseable> = ReplicationWizardComponent;
 
   protected openForm(row?: ReplicationTask): void {
     if (row) {
-      this.formPanel.open(this.replicationForm, {
+      this.formPanel.open(ReplicationFormComponent, {
         title: this.translate.instant('Edit Replication Task'),
         wide: true,
         inputs: { replicationToEdit: row },

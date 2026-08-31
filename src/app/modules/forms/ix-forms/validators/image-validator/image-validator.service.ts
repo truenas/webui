@@ -9,7 +9,7 @@ import {
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { ValidatedFile } from 'app/interfaces/validated-file.interface';
-import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +31,7 @@ export class ImageValidatorService {
           }
 
           const message = invalidFiles.map((error) => `${error.name} – ${error.errorMessage}`).join('\n');
-          return { [ixManualValidateError]: { message } };
+          return { [ixManualValidateErrorKey]: { message } };
         }),
       );
     };

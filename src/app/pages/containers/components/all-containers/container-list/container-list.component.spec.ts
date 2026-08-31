@@ -12,10 +12,10 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { Container, ContainerStats } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerListComponent } from 'app/pages/containers/components/all-containers/container-list/container-list.component';
 import {
@@ -43,6 +43,11 @@ describe('ContainerListComponent', () => {
 
   const containersSignal = signal<Container[]>([runningContainer]);
 
+  const defaultSort = { active: ContainerSortField.Name, direction: SortDirection.Asc };
+  // Mirrors the real store contract: `sort()` reflects the last `setSort()`. The component's
+  // cleared-sort fallback reads it, so a static mock would hide regressions there.
+  let currentSort = defaultSort;
+
   const metrics: Record<number, ContainerStats> = {
     1: {
       cpu: { cpu_user_percentage: 20 },
@@ -63,8 +68,10 @@ describe('ContainerListComponent', () => {
         selectedContainer: jest.fn(() => runningContainer),
         selectContainer: jest.fn(),
         reload: jest.fn(),
-        sort: jest.fn(() => ({ active: ContainerSortField.Name, direction: SortDirection.Asc })),
-        setSort: jest.fn(),
+        sort: jest.fn(() => currentSort),
+        setSort: jest.fn((sort: typeof defaultSort) => {
+          currentSort = sort;
+        }),
       }),
       mockProvider(Router, { events: of() }),
       mockProvider(LayoutService, {
@@ -95,6 +102,7 @@ describe('ContainerListComponent', () => {
 
   beforeEach(() => {
     containersSignal.set([runningContainer]);
+    currentSort = defaultSort;
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
