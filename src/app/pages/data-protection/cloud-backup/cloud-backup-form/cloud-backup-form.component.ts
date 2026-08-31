@@ -7,7 +7,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnBannerComponent, TnBannerActionDirective } from '@truenas/ui-components';
 import {
-  debounceTime, distinctUntilChanged, map, of,
+  debounceTime, distinctUntilChanged, filter, map, of,
 } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -28,6 +28,7 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -288,7 +289,10 @@ export class CloudBackupFormComponent implements OnInit {
 
   private listenForCredentialsChanges(): void {
     this.form.controls.credentials.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        filter((credentialId) => credentialId?.toString() !== addNewIxSelectValue),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((credentialId) => {
         if (credentialId !== (this.editingTask?.credentials?.id || null)) {
           this.form.controls.bucket.patchValue('');
