@@ -133,7 +133,17 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
         // it: it clears the element and then calls `sendKeys()` with no keys, which the CDK
         // rejects outright ('No keys have been specified'). `clear()` alone dispatches the same
         // `input` event, so the control still sees the empty value.
-        await (await this.inputElement())?.clear();
+        const element = await this.inputElement();
+        if (!element) {
+          // `input()` matched, so there IS a control here — this only misses if the library
+          // stops rendering it as an `input`/`textarea` with `.tn-input`. Failing loudly keeps
+          // that drift at the harness instead of surfacing as a stale value in a caller's assert.
+          throw new Error(
+            `tn-form-field "${await this.getLabelText()}" holds a tn-input whose inner element `
+            + 'could not be reached — TnFormControlHarness cannot clear it.',
+          );
+        }
+        await element.clear();
         return;
       }
       await input.setValue(text);

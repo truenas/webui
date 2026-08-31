@@ -2,7 +2,7 @@ import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import {
   HttpEvent, HttpEventType, HttpProgressEvent, HttpResponse,
 } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -58,7 +58,7 @@ import { UploadService } from 'app/services/upload.service';
     ExplorerCreateDatasetComponent,
   ],
 })
-export class UploadIsoDialogComponent implements OnDestroy {
+export class UploadIsoDialogComponent {
   private formBuilder = inject(FormBuilder);
   private filesystemService = inject(FilesystemService);
   private errorHandler = inject(ErrorHandlerService);
@@ -81,8 +81,13 @@ export class UploadIsoDialogComponent implements OnDestroy {
 
   form = this.formBuilder.nonNullable.group({
     // Start with empty path instead of '/mnt' to avoid showing immediate validation error
-    // Users will use the file explorer to navigate to a valid dataset path
-    path: ['', [validateNotPoolRoot(this.translate.instant(this.helptext.upload_iso_pool_root_error))]],
+    // Users will use the file explorer to navigate to a valid dataset path.
+    // `validateNotPoolRoot` passes an empty value through (it leaves emptiness to the required
+    // validator), so without `required` here an empty path would upload to `/<filename>`.
+    path: [
+      '',
+      [Validators.required, validateNotPoolRoot(this.translate.instant(this.helptext.upload_iso_pool_root_error))],
+    ],
     // tn-file-input in single mode emits File | null (ix-file-input used File[]).
     files: [null as File | null, Validators.required],
   });
@@ -90,16 +95,11 @@ export class UploadIsoDialogComponent implements OnDestroy {
   readonly directoryNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   protected readonly requiredRoles = [Role.VmWrite];
 
-  // Aborts the in-flight XHR. Non-null only while a transfer is actually running, which is what
-  // makes it safe for both the cancel confirmation and `ngOnDestroy` to call unconditionally.
+  // Aborts the in-flight XHR. Non-null only while a transfer is actually running, which is both
+  // what makes it safe to call unconditionally and how a loader close is attributed: the user
+  // can only dismiss the loader while a transfer is running, so a close with this already
+  // cleared is one `endUpload()` performed itself.
   private cancelUpload: (() => void) | null = null;
-
-  ngOnDestroy(): void {
-    // The wrapper unsubscribes its own request on destroy, which tears the loader down through
-    // `finalize`; the XHR behind it has to be aborted explicitly.
-    this.cancelUpload?.();
-    this.cancelUpload = null;
-  }
 
   protected canSubmit(): boolean {
     return this.ixForm()?.canSubmit() ?? false;
@@ -168,13 +168,19 @@ export class UploadIsoDialogComponent implements OnDestroy {
         });
       });
 
-      // The loader is only dismissible through that confirmation, so its close means the user
-      // asked to abort.
-      const cancelled$ = loaderClosed$.pipe(tap(() => {
-        this.cancelUpload?.();
-        this.cancelUpload = null;
-        this.snackbar.success(this.translate.instant('Upload cancelled'));
-      }));
+      // `loaderClosed$` is the CDK `DialogRef.closed` subject, so it fires on ANY close — the
+      // user's confirmed cancellation and the programmatic `endUpload()` alike. Only the former
+      // is a cancellation, and it is the only one that can happen while the transfer is still
+      // running, so the cleared handle rules the latter out. Without this the success path
+      // completes the chain through `takeUntil` before the value is forwarded, and a finished
+      // upload reports itself as cancelled.
+      const cancelled$ = loaderClosed$.pipe(
+        filter(() => this.cancelUpload !== null),
+        tap(() => {
+          this.abortUpload();
+          this.snackbar.success(this.translate.instant('Upload cancelled'));
+        }),
+      );
 
       return upload$.pipe(
         tap((event) => this.reportProgress(event)),
@@ -186,8 +192,10 @@ export class UploadIsoDialogComponent implements OnDestroy {
         map(() => uploadPath),
         takeUntil(cancelled$),
         // Success, failure, cancellation and the dialog being destroyed all land here, and all
-        // four mean the loader and its confirmation must go.
-        finalize(() => this.endUpload()),
+        // four mean the loader and its confirmation must go. Destruction reaches this operator
+        // as a plain unsubscribe — `UploadService` registers no teardown on its observable, so
+        // the abort has to be issued from here or the transfer outlives the dialog.
+        finalize(() => this.abortUpload()),
       );
     });
   }
@@ -206,11 +214,22 @@ export class UploadIsoDialogComponent implements OnDestroy {
     this.loader.setTitle(this.translate.instant('{n}% Uploaded', { n: percentDone }));
   }
 
+  /**
+   * Marks the transfer as over and takes the loader and its cancel confirmation off screen.
+   * Clearing the handle first is what stops the `loader.close()` below from being read back as
+   * a user cancellation. Idempotent: `LoaderService.close()` no-ops without an open loader.
+   */
   private endUpload(): void {
     this.cancelUpload = null;
     this.loader.removeConfirmationBeforeClose();
     this.closeAllConfirmationDialogs();
     this.loader.close();
+  }
+
+  /** `endUpload()`, plus an abort of the XHR if it is still in flight. */
+  private abortUpload(): void {
+    this.cancelUpload?.();
+    this.endUpload();
   }
 
   private closeAllConfirmationDialogs(): void {

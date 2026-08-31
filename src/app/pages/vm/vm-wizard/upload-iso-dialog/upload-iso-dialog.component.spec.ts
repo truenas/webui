@@ -5,7 +5,7 @@ import { HttpEvent, HttpResponse } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
-import { EMPTY, of, Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
@@ -18,6 +18,12 @@ import { UploadService } from 'app/services/upload.service';
 describe('UploadIsoDialogComponent', () => {
   let spectator: Spectator<UploadIsoDialogComponent>;
   let loader: HarnessLoader;
+  /**
+   * Stands in for the CDK `DialogRef.closed` subject `LoaderService.open()` returns: it emits on
+   * EVERY close of the loader, the component's own programmatic one included, not only on a
+   * cancellation the user confirmed.
+   */
+  let loaderClosed$: Subject<void>;
 
   const createComponent = createComponentFactory({
     component: UploadIsoDialogComponent,
@@ -35,11 +41,10 @@ describe('UploadIsoDialogComponent', () => {
         getFilesystemNodeProvider: jest.fn(() => of()),
       }),
       mockProvider(LoaderService, {
-        // The real `open()` emits only when the loader closes, which for this dialog means the
-        // user confirmed a cancellation. A mock that emits immediately would read as "cancelled
-        // before the first byte" and abort every upload under test.
-        open: jest.fn(() => EMPTY),
-        close: jest.fn(),
+        open: jest.fn(() => loaderClosed$),
+        // Closing feeds the notifier, as the real service does — that is what makes the
+        // success path (which closes the loader itself) distinguishable from a cancellation.
+        close: jest.fn(() => loaderClosed$.next()),
         setTitle: jest.fn(),
         setConfirmationBeforeClose: jest.fn(),
         removeConfirmationBeforeClose: jest.fn(),
@@ -65,6 +70,7 @@ describe('UploadIsoDialogComponent', () => {
   }
 
   beforeEach(() => {
+    loaderClosed$ = new Subject<void>();
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
@@ -85,6 +91,8 @@ describe('UploadIsoDialogComponent', () => {
       params: ['/mnt/tank/iso/new-windows.iso', { mode: 493 }],
     }));
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('ISO uploaded successfully');
+    // Closing the loader on the success path must not be mistaken for the user cancelling.
+    expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalledWith('Upload cancelled');
     expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('/mnt/tank/iso/new-windows.iso');
   });
@@ -93,7 +101,16 @@ describe('UploadIsoDialogComponent', () => {
     const uploadButton = await loader.getHarness(TnButtonHarness.with({ label: 'Upload' }));
     expect(await uploadButton.isDisabled()).toBe(true);
 
+    // A file on its own is not enough: without a path the upload would target `/<filename>`.
+    spectator.component.form.patchValue({ files: fakeFile('test.iso') });
+    spectator.detectChanges();
+    expect(await uploadButton.isDisabled()).toBe(true);
+
+    // Neither is a path on its own.
+    spectator.component.form.patchValue({ files: null });
     await fillForm({ 'ISO save location': '/mnt/tank/iso' });
+    expect(await uploadButton.isDisabled()).toBe(true);
+
     spectator.component.form.patchValue({ files: fakeFile('test.iso') });
     spectator.detectChanges();
 
@@ -102,12 +119,10 @@ describe('UploadIsoDialogComponent', () => {
 
   it('aborts the transfer and leaves the dialog open when the user cancels the upload', async () => {
     const cancel = jest.fn();
-    const loaderClosed$ = new Subject<void>();
     jest.spyOn(spectator.inject(UploadService), 'upload').mockReturnValue({
       observable: new Subject<HttpEvent<unknown>>().asObservable(),
       cancel,
     });
-    jest.spyOn(spectator.inject(LoaderService), 'open').mockReturnValue(loaderClosed$);
 
     await fillForm({ 'ISO save location': '/mnt/tank/iso' });
     spectator.component.form.patchValue({ files: fakeFile('test-upload.iso') });
@@ -138,7 +153,9 @@ describe('UploadIsoDialogComponent', () => {
     await clickUpload();
     expect(cancel).not.toHaveBeenCalled();
 
-    spectator.component.ngOnDestroy();
+    // A real destroy tears `<ix-form>` down first, which unsubscribes the transfer; the abort
+    // has to survive that ordering, so drive the whole sequence rather than one hook.
+    spectator.fixture.destroy();
 
     expect(cancel).toHaveBeenCalled();
   });
