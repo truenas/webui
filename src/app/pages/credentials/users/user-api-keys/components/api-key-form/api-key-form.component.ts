@@ -9,7 +9,7 @@ import {
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import {
-  Subject, debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap,
+  Subject, catchError, debounceTime, distinctUntilChanged, filter, map, of, startWith, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
@@ -29,6 +29,7 @@ import {
   KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-api-key-form',
@@ -54,6 +55,7 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
   private authService = inject(AuthService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
   /** API key being edited; absent when adding. Supplied by the `<tn-side-panel>` host. */
@@ -112,6 +114,13 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
 
   /** The username selected before "Add New" was picked, restored when the user form is cancelled. */
   private previousUsername = '';
+
+  /**
+   * Cleared once a page comes back shorter than {@link UserPickerProvider.pageSize}: without it
+   * every further scroll past the last user would issue another `user.query` at a growing offset
+   * that can only return `[]`. Reset by each fresh search, which restarts paging at page 0.
+   */
+  private hasMoreUsernames = true;
 
   /**
    * The options are already filtered server-side by {@link userPickerProvider}, so the component's
@@ -187,12 +196,17 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
 
   /** Appends the next page of matches when the open dropdown is scrolled to its end. */
   protected onUsernameLoadMore(): void {
+    if (!this.hasMoreUsernames) {
+      return;
+    }
+
     this.usernamesLoading.set(true);
     this.userPickerProvider.nextPage(this.lastUsernameSearch)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (options) => {
           this.usernamesLoading.set(false);
+          this.hasMoreUsernames = options.length >= this.userPickerProvider.pageSize;
           this.usernameOptions.update((current) => [
             ...current,
             ...this.toAutocompleteOptions(options).filter(
@@ -200,30 +214,41 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
             ),
           ]);
         },
-        error: () => this.usernamesLoading.set(false),
+        error: (error: unknown) => {
+          this.usernamesLoading.set(false);
+          this.errorHandler.showErrorModal(error);
+        },
       });
   }
 
   private loadUsernameOptions(): void {
     this.usernameSearch$.pipe(
       debounceTime(defaultDebounceTimeMs),
-      distinctUntilChanged(),
       // Preloads the first page so the dropdown is populated before the user types. It sits after
       // `debounceTime`, so it fires immediately; routing it through the same stream lets
-      // `switchMap` cancel it the moment a real search starts.
+      // `switchMap` cancel it the moment a real search starts. It also sits *above*
+      // `distinctUntilChanged`, so the '' the dropdown emits when it is first opened is
+      // recognized as a repeat of this preload instead of refetching page 0.
       startWith(''),
+      distinctUntilChanged(),
       switchMap((query) => {
         this.lastUsernameSearch = query;
         this.usernamesLoading.set(true);
-        return this.userPickerProvider.fetch(query);
+        // Caught inside `switchMap` so a failed query reports once and leaves the outer
+        // subscription alive — otherwise a single transient error would permanently freeze
+        // the picker, with `requireSelection` leaving nothing to select.
+        return this.userPickerProvider.fetch(query).pipe(
+          catchError((error: unknown) => {
+            this.errorHandler.showErrorModal(error);
+            return of([] as Option[]);
+          }),
+        );
       }),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (options) => {
-        this.usernamesLoading.set(false);
-        this.usernameOptions.set(this.withSelectedUsername(this.toAutocompleteOptions(options)));
-      },
-      error: () => this.usernamesLoading.set(false),
+    ).subscribe((options) => {
+      this.usernamesLoading.set(false);
+      this.hasMoreUsernames = options.length >= this.userPickerProvider.pageSize;
+      this.usernameOptions.set(this.withSelectedUsername(this.toAutocompleteOptions(options)));
     });
   }
 

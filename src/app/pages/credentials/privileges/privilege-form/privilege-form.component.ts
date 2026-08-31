@@ -13,7 +13,8 @@ import {
   TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  Observable, Subject, combineLatest, debounceTime, distinctUntilChanged, finalize, map, of, startWith, switchMap,
+  Observable, Subject, catchError, combineLatest, debounceTime, distinctUntilChanged, filter, finalize, map, of,
+  startWith, switchMap, take,
 } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
@@ -29,6 +30,7 @@ import {
   UserGroupExistenceValidationService,
 } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -59,6 +61,7 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
+  private globalErrorHandler = inject(ErrorHandlerService);
   private userService = inject(UserService);
   private groupExistence = inject(UserGroupExistenceValidationService);
   private store$ = inject<Store<AppState>>(Store);
@@ -184,6 +187,20 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
     this.dsGroupsSearch$.next(query);
   }
 
+  /**
+   * Runs one suggestion query, reporting a failure and recovering with an empty list. The
+   * `catchError` sits inside the `switchMap` on purpose: an error escaping to the outer
+   * subscription would terminate it, killing the autocomplete for the rest of the panel's life.
+   */
+  private suggestionsFor(provider: ChipsProvider, query: string): Observable<string[]> {
+    return provider(query).pipe(
+      catchError((error: unknown) => {
+        this.globalErrorHandler.showErrorModal(error);
+        return of([]);
+      }),
+    );
+  }
+
   ngOnInit(): void {
     this.existingPrivilege = this.editPrivilege();
 
@@ -228,16 +245,23 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
       debounceTime(defaultDebounceTimeMs),
       distinctUntilChanged(),
       startWith(''),
-      switchMap((query) => this.localGroupsProvider(query)),
+      switchMap((query) => this.suggestionsFor(this.localGroupsProvider, query)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((groups) => this.localGroupsSuggestions.set(groups));
 
-    // Same stream for the DS chip input.
-    this.dsGroupsSearch$.pipe(
-      debounceTime(defaultDebounceTimeMs),
-      distinctUntilChanged(),
-      startWith(''),
-      switchMap((query) => this.dsGroupsProvider(query)),
+    // Same stream for the DS chip input, but only once the field it feeds actually exists:
+    // `ix-group-chips` queried the directory service only while it was rendered, and the field
+    // is Enterprise-only, so an ungated preload would be a `group.query` per form open on every
+    // non-Enterprise system, for a result that can never be shown.
+    this.store$.select(selectIsEnterprise).pipe(
+      filter(Boolean),
+      take(1),
+      switchMap(() => this.dsGroupsSearch$.pipe(
+        debounceTime(defaultDebounceTimeMs),
+        distinctUntilChanged(),
+        startWith(''),
+        switchMap((query) => this.suggestionsFor(this.dsGroupsProvider, query)),
+      )),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((groups) => this.dsGroupsSuggestions.set(groups));
 

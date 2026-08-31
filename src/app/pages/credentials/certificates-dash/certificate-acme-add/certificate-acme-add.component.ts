@@ -71,10 +71,12 @@ export class CertificateAcmeAddComponent extends IxFormHostForm implements OnIni
 
   protected domains: TranslatedString[] = [];
 
-  /** CSR to create the ACME certificate from, supplied by the `<tn-side-panel>` host. */
-  readonly csr = input<Certificate | undefined>(undefined);
-
-  private csrData: Certificate | undefined;
+  /**
+   * CSR to create the ACME certificate from, supplied by the `<tn-side-panel>` host. Required:
+   * the payload below is meaningless without it, and `csr_id: undefined` would be dropped by
+   * JSON serialisation and rejected by middleware rather than failing here.
+   */
+  readonly csr = input.required<Certificate>();
 
   protected readonly acmeDirectoryUris$ = this.api.call('certificate.acme_server_choices').pipe(choicesToOptions());
   protected readonly authenticators$ = this.api.call('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
@@ -84,16 +86,10 @@ export class CertificateAcmeAddComponent extends IxFormHostForm implements OnIni
   protected readonly InputType = InputType;
 
   ngOnInit(): void {
-    this.csrData = this.csr();
-    if (this.csrData) {
-      this.loadDomains(this.csrData);
-    }
+    this.loadDomains(this.csr());
   }
 
   protected handleSubmit = (): SubmitResult => {
-    // The form is only ever opened with a CSR (both call sites supply it via the `csr` input),
-    // so the payload just carries the id through; a CSR-less open would send `csr_id: undefined`.
-    const csr = this.csrData;
     const formValues = this.form.getRawValue();
 
     const dnsMapping = this.domains.reduce((mapping, domain, i) => {
@@ -105,7 +101,7 @@ export class CertificateAcmeAddComponent extends IxFormHostForm implements OnIni
 
     const payload = {
       name: formValues.name,
-      csr_id: csr?.id,
+      csr_id: this.csr().id,
       tos: formValues.tos,
       create_type: CertificateCreateType.CreateAcme,
       renew_days: formValues.renew_days,
