@@ -84,13 +84,19 @@ export class AddUsbDeviceMenuComponent {
       .filter((device) => device.dtype === ContainerDeviceType.Usb);
 
     return Object.entries(usbChoices)
-      .filter(([, usb]) => {
-        if (!usb?.description) {
+      .filter(([devicePath, usb]) => {
+        if (!usb?.description || !usb.available) {
           return false;
         }
-        const isAlreadyAdded = existingUsbDevices
-          .some((device) => device.usb?.product_id === usb.capability?.product_id);
-        return usb.available && !isAlreadyAdded;
+        const isAlreadyAdded = existingUsbDevices.some((device) => {
+          if (device.device) {
+            return device.device === devicePath;
+          }
+          // Devices recorded by vendor/product IDs match any port they are plugged into.
+          return device.usb?.vendor_id === usb.capability?.vendor_id
+            && device.usb?.product_id === usb.capability?.product_id;
+        });
+        return !isAlreadyAdded;
       })
       .map(([devicePath, usb]) => ({ ...usb, devicePath }));
   });
@@ -100,15 +106,49 @@ export class AddUsbDeviceMenuComponent {
   });
 
   protected readonly menuItems = computed<TnMenuItem[]>(() => {
-    return this.availableUsbDevices().map((usb) => ({
-      id: usb.devicePath,
-      label: usb.description,
-      testId: ['add-usb-device', usb.description],
-      action: () => this.addUsb(usb),
-    }));
+    return this.availableUsbDevices().map((usb) => {
+      const children: TnMenuItem[] = [{
+        id: `${usb.devicePath}-port`,
+        label: this.translate.instant(this.helptext.usbAttachByPortLabel),
+        testId: ['add-usb-device', usb.description, 'port'],
+        action: () => this.addUsbByPort(usb),
+      }];
+
+      if (usb.capability?.vendor_id && usb.capability?.product_id) {
+        children.push({
+          id: `${usb.devicePath}-ids`,
+          label: this.translate.instant(this.helptext.usbAttachByIdsLabel),
+          testId: ['add-usb-device', usb.description, 'ids'],
+          action: () => this.addUsbByIds(usb),
+        });
+      }
+
+      return {
+        id: usb.devicePath,
+        label: usb.description,
+        testId: ['add-usb-device', usb.description],
+        children,
+      };
+    });
   });
 
-  protected addUsb(usb: AvailableUsb & { devicePath: string }): void {
+  /**
+   * Records the physical port (the default): it stays stable across reboots and allows
+   * two identical devices to be attached at the same time.
+   */
+  protected addUsbByPort(usb: AvailableUsb & { devicePath: string }): void {
+    this.addDevice({
+      dtype: ContainerDeviceType.Usb,
+      device: usb.devicePath,
+      usb: null,
+    } as ContainerUsbDevice);
+  }
+
+  /**
+   * Records vendor/product IDs instead: the device is matched no matter which port
+   * it is plugged into.
+   */
+  protected addUsbByIds(usb: AvailableUsb & { devicePath: string }): void {
     this.addDevice({
       dtype: ContainerDeviceType.Usb,
       device: null,

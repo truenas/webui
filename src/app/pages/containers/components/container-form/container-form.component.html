@@ -151,6 +151,17 @@
         </ix-list>
       </tn-form-section>
 
+      @if (!isEditMode() && (usbDeviceOptions$ | async)?.length) {
+        <tn-form-section [heading]="helptext.usbDevicesLabel | translate">
+          <ix-checkbox-list
+            formControlName="usb_devices"
+            [label]="helptext.usbDevicesLabel | translate"
+            [tooltip]="helptext.usbDevicesTooltip | translate"
+            [options]="usbDeviceOptions$"
+          ></ix-checkbox-list>
+        </tn-form-section>
+      }
+
       @if (!isEditMode()) {
         <tn-form-section [heading]="'ID Mapping' | translate">
           <tn-form-field

@@ -25,12 +25,13 @@ import {
   TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  filter, map, Observable, of, take, tap,
+  catchError, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take, tap,
 } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
   ContainerCapabilitiesPolicy,
   containerCapabilitiesPolicyLabels,
+  ContainerDeviceType,
   ContainerIdmapType,
   containerIdmapTypeLabels,
   containerTimeLabels,
@@ -46,10 +47,12 @@ import {
   Container,
   ContainerEnvVariablesFormGroup,
   ContainerIdmap,
+  ContainerUsbDevice,
   CreateContainer,
   UpdateContainer,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -79,6 +82,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
+    IxCheckboxListComponent,
     IxListComponent,
     IxListItemComponent,
     ReactiveFormsModule,
@@ -176,6 +180,21 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   });
 
   private config$ = toObservable(this.containerConfigStore.config);
+
+  protected readonly helptext = containersHelptext;
+
+  /**
+   * Devices are offered by the physical port they are plugged into, labeled with the
+   * human-readable description middleware returns for each port.
+   */
+  protected readonly usbDeviceOptions$ = this.api.call('container.device.usb_choices').pipe(
+    map((choices) => {
+      return Object.entries(choices)
+        .filter(([, choice]) => choice.available && choice.description)
+        .map(([devicePath, choice]) => ({ label: choice.description, value: devicePath }));
+    }),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   poolOptions$ = this.api.call('container.pool_choices').pipe(
     choicesToOptions(),
@@ -474,7 +493,39 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
           }
           return job.result;
         }),
+        switchMap((container) => this.createUsbDevices(container)),
       );
+  }
+
+  /**
+   * `container.create` does not accept devices, so USB devices selected in the form are
+   * attached with separate `container.device.create` calls once the container exists.
+   * Devices are recorded by physical port - the default identification method.
+   */
+  private createUsbDevices(container: Container): Observable<Container> {
+    const usbDevices = this.form.getRawValue().usb_devices;
+    if (!usbDevices.length) {
+      return of(container);
+    }
+
+    return forkJoin(usbDevices.map((devicePath) => {
+      return this.api.call('container.device.create', [{
+        container: container.id,
+        attributes: {
+          dtype: ContainerDeviceType.Usb,
+          device: devicePath,
+          usb: null,
+        } as ContainerUsbDevice,
+      }]);
+    })).pipe(
+      map(() => container),
+      catchError((error: unknown) => {
+        // The container itself was created at this point: surface the device failure,
+        // but let the success flow (navigation to the new container) continue.
+        this.errorHandler.showErrorModal(error);
+        return of(container);
+      }),
+    );
   }
 
   private updateContainer(): Observable<Container> {
