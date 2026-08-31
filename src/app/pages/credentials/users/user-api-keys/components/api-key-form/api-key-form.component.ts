@@ -9,7 +9,7 @@ import {
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import {
-  Subject, catchError, debounceTime, distinctUntilChanged, filter, map, of, startWith, switchMap, tap,
+  Subject, catchError, debounceTime, distinctUntilChanged, filter, map, of, startWith, switchMap, take, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
@@ -123,6 +123,13 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
   private hasMoreUsernames = true;
 
   /**
+   * Set when a search fails and cleared when the next one starts. Without it the failed term stays
+   * recorded in `distinctUntilChanged` below, so reopening the dropdown — which re-emits '' — would
+   * be suppressed as a duplicate and the field could never recover from a transient error.
+   */
+  private lastUsernameSearchFailed = false;
+
+  /**
    * The options are already filtered server-side by {@link userPickerProvider}, so the component's
    * own client-side pass is disabled — it would otherwise hide results the query matched on a field
    * other than the label, and drop the "Add New" row as soon as the user typed.
@@ -222,32 +229,45 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
   }
 
   private loadUsernameOptions(): void {
-    this.usernameSearch$.pipe(
-      debounceTime(defaultDebounceTimeMs),
-      // Preloads the first page so the dropdown is populated before the user types. It sits after
-      // `debounceTime`, so it fires immediately; routing it through the same stream lets
-      // `switchMap` cancel it the moment a real search starts. It also sits *above*
-      // `distinctUntilChanged`, so the '' the dropdown emits when it is first opened is
-      // recognized as a repeat of this preload instead of refetching page 0.
-      startWith(''),
-      distinctUntilChanged(),
-      switchMap((query) => {
-        this.lastUsernameSearch = query;
-        this.usernamesLoading.set(true);
-        // Caught inside `switchMap` so a failed query reports once and leaves the outer
-        // subscription alive — otherwise a single transient error would permanently freeze
-        // the picker, with `requireSelection` leaving nothing to select.
-        return this.userPickerProvider.fetch(query).pipe(
-          catchError((error: unknown) => {
-            this.errorHandler.showErrorModal(error);
-            return of([] as Option[]);
-          }),
-        );
-      }),
+    // The username field only exists for full admins, so gate the whole stream on that role the
+    // way the template gates the field — the picker this replaced preloaded from its own
+    // `ngOnInit`, i.e. only when it was instantiated. Without the gate every SharingAdmin and
+    // ReadonlyAdmin open would issue a `user.query` whose result can never be rendered.
+    this.authService.hasRole([Role.FullAdmin]).pipe(
+      filter(Boolean),
+      take(1),
+      switchMap(() => this.usernameSearch$.pipe(
+        debounceTime(defaultDebounceTimeMs),
+        // Preloads the first page so the dropdown is populated before the user types. It sits after
+        // `debounceTime`, so it fires immediately; routing it through the same stream lets
+        // `switchMap` cancel it the moment a real search starts. It also sits *above*
+        // `distinctUntilChanged`, so the '' the dropdown emits when it is first opened is
+        // recognized as a repeat of this preload instead of refetching page 0 — unless that
+        // preload failed, which the comparator below treats as a reason to retry.
+        startWith(''),
+        distinctUntilChanged((previous, current) => previous === current && !this.lastUsernameSearchFailed),
+        switchMap((query) => {
+          this.lastUsernameSearch = query;
+          this.lastUsernameSearchFailed = false;
+          this.usernamesLoading.set(true);
+          // Caught inside `switchMap` so a failed query reports once and leaves the outer
+          // subscription alive — otherwise a single transient error would permanently freeze
+          // the picker, with `requireSelection` leaving nothing to select.
+          return this.userPickerProvider.fetch(query).pipe(
+            catchError((error: unknown) => {
+              this.lastUsernameSearchFailed = true;
+              this.errorHandler.showErrorModal(error);
+              return of([] as Option[]);
+            }),
+          );
+        }),
+      )),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((options) => {
       this.usernamesLoading.set(false);
-      this.hasMoreUsernames = options.length >= this.userPickerProvider.pageSize;
+      if (!this.lastUsernameSearchFailed) {
+        this.hasMoreUsernames = options.length >= this.userPickerProvider.pageSize;
+      }
       this.usernameOptions.set(this.withSelectedUsername(this.toAutocompleteOptions(options)));
     });
   }

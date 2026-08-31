@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -38,7 +38,14 @@ export class UserPickerProvider implements IxComboboxProvider {
 
   nextPage(filterValue: string): Observable<Option[]> {
     this.page++;
-    return this.queryUsers(filterValue);
+    return this.queryUsers(filterValue).pipe(
+      // Roll the cursor back when the page fails, so the next scroll re-requests the page that
+      // errored instead of stepping over it and silently skipping those users.
+      catchError((error: unknown) => {
+        this.page--;
+        return throwError(() => error);
+      }),
+    );
   }
 
   private queryUsers(search: string): Observable<Option[]> {
