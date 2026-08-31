@@ -218,9 +218,12 @@ export class DeviceFormComponent implements OnInit {
   readonly usbDeviceOptions$ = this.api.call('vm.device.usb_passthrough_choices').pipe(
     map((usbDevices) => {
       const options = Object.entries(usbDevices).map(([id, device]) => {
-        let label = id;
-        label += device.capability?.product ? ` ${device.capability.product}` : '';
-        label += device.capability?.vendor ? ` (${device.capability.vendor})` : '';
+        let label = device.description;
+        if (!label) {
+          label = id;
+          label += device.capability?.product ? ` ${device.capability.product}` : '';
+          label += device.capability?.vendor ? ` (${device.capability.vendor})` : '';
+        }
         return { label, value: id };
       });
       options.push({

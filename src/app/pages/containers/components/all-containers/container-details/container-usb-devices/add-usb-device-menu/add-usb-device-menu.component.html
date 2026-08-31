@@ -24,10 +24,29 @@
         <button
           mat-menu-item
           [ixTest]="['add-usb-device', usb.description]"
-          (click)="addUsb(usb)"
+          [matMenuTriggerFor]="usbAttachMenu"
         >
           {{ usb.description }}
         </button>
+
+        <mat-menu #usbAttachMenu="matMenu">
+          <button
+            mat-menu-item
+            [ixTest]="['add-usb-device', usb.description, 'port']"
+            (click)="addUsbByPort(usb)"
+          >
+            {{ helptext.usbAttachByPortLabel | translate }}
+          </button>
+          @if (usb.capability?.vendor_id && usb.capability?.product_id) {
+            <button
+              mat-menu-item
+              [ixTest]="['add-usb-device', usb.description, 'ids']"
+              (click)="addUsbByIds(usb)"
+            >
+              {{ helptext.usbAttachByIdsLabel | translate }}
+            </button>
+          }
+        </mat-menu>
       }
     }
   </mat-menu>

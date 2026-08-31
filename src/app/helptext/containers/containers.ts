@@ -59,6 +59,10 @@ export const containersHelptext = {
   networkMacVlanNicsLabel: T('Macvlan NICs'),
 
   usbDevicesLabel: T('USB Devices'),
+  usbDevicesTooltip: T('USB devices to pass through to the container. Devices are identified by the physical port they are plugged into.'),
+
+  usbAttachByPortLabel: T('By physical port'),
+  usbAttachByIdsLabel: T('By vendor and product ID'),
 
   enableVncLabel: T('Enable VNC'),
   enableVncTooltip: T('Check to allow remote desktop access via VNC.'),

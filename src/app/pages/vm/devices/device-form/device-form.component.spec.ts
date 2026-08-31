@@ -78,9 +78,11 @@ describe('DeviceFormComponent', () => {
         mockCall('vm.device.usb_passthrough_choices', {
           usb_device_1: {
             capability: { product: 'prod_1', vendor: 'vendor_1' },
+            description: 'prod_1 by vendor_1',
           } as VmUsbPassthroughDeviceChoice,
           usb_device_2: {
             capability: { product: 'prod_2', vendor: 'vendor_2' },
+            description: 'prod_2 by vendor_2',
           } as VmUsbPassthroughDeviceChoice,
         }),
         mockCall('vm.device.passthrough_device_choices', {
@@ -1333,7 +1335,7 @@ describe('DeviceFormComponent', () => {
           {
             Type: 'USB Passthrough Device',
             'Controller Type': 'pci-ohci',
-            Device: 'usb_device_2 prod_2 (vendor_2)',
+            Device: 'prod_2 by vendor_2',
           },
         );
         await saveButton.click();
@@ -1370,7 +1372,7 @@ describe('DeviceFormComponent', () => {
         const values = await form.getValues();
         expect(values).toEqual({
           'Controller Type': 'pci-ohci',
-          Device: 'usb_device_2 prod_2 (vendor_2)',
+          Device: 'prod_2 by vendor_2',
           'Device Order': '7',
         });
       });
@@ -1378,7 +1380,7 @@ describe('DeviceFormComponent', () => {
       it('updates an existing USB Passthrough when device is selected', async () => {
         await form.fillForm({
           'Controller Type': 'piix3-uhci',
-          Device: 'usb_device_1 prod_1 (vendor_1)',
+          Device: 'prod_1 by vendor_1',
         });
 
         await saveButton.click();

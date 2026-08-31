@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -9,8 +10,10 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ContainerCapabilitiesPolicy, ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
-import { Container } from 'app/interfaces/container.interface';
+import {
+  ContainerCapabilitiesPolicy, ContainerDeviceType, ContainerIdmapType, ContainerStatus,
+} from 'app/enums/container.enum';
+import { AvailableUsb, Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
@@ -85,6 +88,14 @@ describe('ContainerFormComponent', () => {
         mockCall('container.get_instance', existingContainer),
         mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
         mockCall('container.query', []),
+        mockCall('container.device.usb_choices', {
+          usb_1_1: {
+            capability: { vendor_id: '0x046d', product_id: '0x0825' },
+            available: true,
+            description: 'Web Cam by Logitech',
+          } as AvailableUsb,
+        }),
+        mockCall('container.device.create'),
       ]),
       mockProvider(SlideInRef, {
         getData: jest.fn(() => undefined as Container | undefined),
@@ -349,6 +360,39 @@ describe('ContainerFormComponent', () => {
       expect(slideInRef.close).toHaveBeenCalledWith({ response: true, error: false });
       expect(containersStore.reload).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['/containers', 'view', 1]);
+
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('container.device.create', expect.anything());
+    });
+
+    it('attaches selected USB devices by physical port after the container is created', async () => {
+      const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+      await nameInput.setValue('new-container');
+
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({
+        pool: 'pool1',
+        image: 'ubuntu:22.04',
+      });
+      spectator.detectChanges();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const usbCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Web Cam by Logitech' }));
+      await usbCheckbox.check();
+
+      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await submitButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+        container: 1,
+        attributes: {
+          dtype: ContainerDeviceType.Usb,
+          device: 'usb_1_1',
+          usb: null,
+        },
+      }]);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers', 'view', 1]);
     });
   });
 
@@ -526,6 +570,7 @@ describe('ContainerFormComponent', () => {
           mockCall('container.get_instance', existingContainer),
           mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
+          mockCall('container.device.usb_choices', {}),
         ]),
         mockProvider(SlideInRef, {
           getData: jest.fn(() => undefined as Container | undefined),
