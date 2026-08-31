@@ -389,9 +389,9 @@ describe('alert-enhancement.registry route fixes (NAS-140943)', () => {
     });
   });
 
-  describe('Scrub finished/not started alerts', () => {
+  describe('Scrub alerts', () => {
     it.each([
-      AlertClassName.ScrubFinished,
+      AlertClassName.ScrubStarted,
       AlertClassName.ScrubNotStarted,
     ])('navigates %s to /storage with the View Storage label', (klass) => {
       const enhancement = getAlertEnhancement('', klass, '', buildAlert(klass));

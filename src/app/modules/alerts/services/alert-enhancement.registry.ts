@@ -673,18 +673,6 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Applications
-    [AlertClassName.FailuresInAppMigration]: {
-      category: SmartAlertCategory.Applications,
-      relatedMenuPath: ['apps', 'installed'],
-      actions: [{
-        label: T('Go to Applications'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('apps', 'material'),
-        route: ['/apps', 'installed'],
-        primary: true,
-      }],
-    },
-
     [AlertClassName.AppUpdate]: {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps', 'installed'],
@@ -807,19 +795,6 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    [AlertClassName.CertificateRevoked]: {
-      category: SmartAlertCategory.Security,
-      relatedMenuPath: ['credentials', 'certificates'],
-      groupSummary: T('{count, plural, other {# certificates have been revoked}}'),
-      actions: [{
-        label: T('Go to Certificates'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('certificate', 'mdi'),
-        route: ['/credentials', 'certificates'],
-        primary: true,
-      }],
-    },
-
     [AlertClassName.WebUiCertificateSetupFailed]: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'general'],
@@ -833,59 +808,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    WebUiBindAddressV2: {
-      category: SmartAlertCategory.System,
-      relatedMenuPath: ['system', 'general'],
-      actions: [{
-        label: T('Go to GUI Settings'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('desktop-classic', 'mdi'),
-        route: ['/system', 'general'],
-        fragment: 'gui-settings',
-        primary: true,
-      }],
-    },
-
     // Directory Services
-    [AlertClassName.ActiveDirectoryDomainBind]: {
-      category: SmartAlertCategory.Services,
-      relatedMenuPath: ['credentials', 'directory-services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/directoryservices/configadscale/',
-      actions: [{
-        label: T('Go To Directory Services'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('sitemap', 'mdi'),
-        route: ['/credentials', 'directory-services'],
-        primary: true,
-      }],
-    },
-
-    [AlertClassName.ActiveDirectoryDomainHealth]: {
-      category: SmartAlertCategory.Services,
-      relatedMenuPath: ['credentials', 'directory-services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/directoryservices/configadscale/',
-      actions: [{
-        label: T('Go To Directory Services'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('sitemap', 'mdi'),
-        route: ['/credentials', 'directory-services'],
-        primary: true,
-      }],
-    },
-
-    [AlertClassName.LdapBind]: {
-      category: SmartAlertCategory.Services,
-      relatedMenuPath: ['credentials', 'directory-services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/directoryservices/configldapscale/',
-      actions: [{
-        label: T('Go To Directory Services'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('sitemap', 'mdi'),
-        route: ['/credentials', 'directory-services'],
-        primary: true,
-      }],
-    },
-
     [AlertClassName.DirectoryServiceBind]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['credentials', 'directory-services'],
@@ -1258,20 +1181,6 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Disks & SMART
-    [AlertClassName.Smart]: {
-      category: SmartAlertCategory.Hardware,
-      relatedMenuPath: ['storage', 'disks'],
-      groupSummary: T('{count, plural, other {SMART reported problems on # disks}}'),
-      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
-      actions: [{
-        label: T('Go to Disks'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('harddisk', 'mdi'),
-        route: ['/storage', 'disks'],
-        primary: true,
-      }],
-    },
-
     // The single SMART alert class was split into per-condition classes. Each one names a
     // disk, so they all lead to the disk list.
     [AlertClassName.SmartUncorrectedErrors]: {
@@ -1368,18 +1277,6 @@ export const smartAlertRegistry: SmartAlertConfig = {
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('harddisk', 'mdi'),
         route: ['/storage', 'disks'],
-        primary: true,
-      }],
-    },
-
-    [AlertClassName.Smartd]: {
-      category: SmartAlertCategory.Services,
-      relatedMenuPath: ['system', 'services'],
-      actions: [{
-        label: T('Go to Services'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('cog', 'mdi'),
-        route: ['/system', 'services'],
         primary: true,
       }],
     },
@@ -1757,20 +1654,6 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // NFS
-    [AlertClassName.NfsBindAddress]: {
-      category: SmartAlertCategory.Services,
-      relatedMenuPath: ['system', 'services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/services/nfsservicescale/',
-      actions: [{
-        label: T('Go to NFS Service'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('folder-network', 'mdi'),
-        route: ['/system', 'services'],
-        fragment: 'nfs',
-        primary: true,
-      }],
-    },
-
     [AlertClassName.NfsHostListExcessive]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['sharing', 'nfs'],
@@ -2360,19 +2243,6 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    [AlertClassName.PoolUsbDisks]: {
-      category: SmartAlertCategory.Storage,
-      relatedMenuPath: ['storage'],
-      groupSummary: T('{count, plural, other {# pools have USB disks}}'),
-      actions: [{
-        label: T('Go to Storage'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('dns', 'material'),
-        route: ['/storage'],
-        primary: true,
-      }],
-    },
-
     // Snapshots
     [AlertClassName.SnapshotTotalCount]: {
       category: SmartAlertCategory.Storage,
@@ -2734,19 +2604,6 @@ export const smartAlertRegistry: SmartAlertConfig = {
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('security', 'material'),
         route: ['/data-protection'],
-        primary: true,
-      }],
-    },
-
-    [AlertClassName.ScrubFinished]: {
-      category: SmartAlertCategory.Storage,
-      relatedMenuPath: ['storage'],
-      groupSummary: T('{count, plural, other {Scrub finished on # pools}}'),
-      actions: [{
-        label: T('View Storage'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('dns', 'material'),
-        route: ['/storage'],
         primary: true,
       }],
     },
