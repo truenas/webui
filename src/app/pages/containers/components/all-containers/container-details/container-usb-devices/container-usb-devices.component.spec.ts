@@ -1,8 +1,9 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
-import { ContainerDevice } from 'app/interfaces/container.interface';
+import { AvailableUsb, ContainerDevice } from 'app/interfaces/container.interface';
 import {
   AddUsbDeviceMenuComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-usb-devices/add-usb-device-menu/add-usb-device-menu.component';
@@ -22,18 +23,24 @@ describe('ContainerUsbDevicesComponent', () => {
     {
       id: 1,
       dtype: ContainerDeviceType.Usb,
-      usb: {
-        vendor_id: '046d',
-        product_id: '0825',
-      },
-      device: null,
+      usb: null,
+      device: 'usb_1_1',
     },
     {
       id: 2,
       dtype: ContainerDeviceType.Usb,
       usb: {
-        vendor_id: '045e',
-        product_id: '07f8',
+        vendor_id: '0x045e',
+        product_id: '0x07f8',
+      },
+      device: null,
+    },
+    {
+      id: 3,
+      dtype: ContainerDeviceType.Usb,
+      usb: {
+        vendor_id: '0x1234',
+        product_id: '0x5678',
       },
       device: null,
     },
@@ -49,6 +56,20 @@ describe('ContainerUsbDevicesComponent', () => {
       ),
     ],
     providers: [
+      mockApi([
+        mockCall('container.device.usb_choices', {
+          usb_1_1: {
+            capability: { vendor_id: '0x046d', product_id: '0x0825' },
+            available: true,
+            description: 'Web Cam by Logitech',
+          } as AvailableUsb,
+          usb_1_2: {
+            capability: { vendor_id: '0x045e', product_id: '0x07f8' },
+            available: false,
+            description: 'Wireless Controller by Microsoft',
+          } as AvailableUsb,
+        }),
+      ]),
       mockProvider(ContainersStore, {
         selectedContainer: () => fakeContainer({
           id: 1,
@@ -67,17 +88,21 @@ describe('ContainerUsbDevicesComponent', () => {
     spectator = createComponent();
   });
 
-  it('shows a list of USB devices', () => {
+  it('shows human-readable descriptions for USB devices middleware knows about', () => {
     const deviceRows = spectator.queryAll('.device');
 
-    expect(deviceRows).toHaveLength(2);
-    expect(deviceRows[0]).toHaveText('USB 046d:0825');
-    expect(deviceRows[1]).toHaveText('USB 045e:07f8');
+    expect(deviceRows).toHaveLength(3);
+    // Recorded by physical port - resolved via the choice key.
+    expect(deviceRows[0]).toHaveText('Web Cam by Logitech');
+    // Recorded by vendor/product IDs - resolved via matching capability.
+    expect(deviceRows[1]).toHaveText('Wireless Controller by Microsoft');
+    // Not connected at the moment - falls back to the raw identifiers.
+    expect(deviceRows[2]).toHaveText('USB 0x1234:0x5678');
   });
 
   it('renders a menu to delete the device', () => {
     const actionsMenu = spectator.queryAll(DeviceActionsMenuComponent);
-    expect(actionsMenu).toHaveLength(2);
+    expect(actionsMenu).toHaveLength(3);
     expect(actionsMenu[0].device).toBe(devices[0]);
   });
 

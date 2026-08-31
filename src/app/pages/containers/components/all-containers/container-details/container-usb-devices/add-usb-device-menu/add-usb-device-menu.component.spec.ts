@@ -22,6 +22,43 @@ describe('AddUsbDeviceMenuComponent', () => {
     type: ContainerType.Container,
   });
 
+  const usbChoices = {
+    usb_1_1: {
+      capability: {
+        vendor_id: '0x046d',
+        product_id: '0x0001',
+        product: 'Web Cam',
+      },
+      available: true,
+      description: 'Web Cam',
+    } as AvailableUsb,
+    usb_1_2: {
+      capability: {
+        vendor_id: '0x0781',
+        product_id: '0x0002',
+        product: 'Card Reader',
+      },
+      available: true,
+      description: 'Card Reader',
+    } as AvailableUsb,
+  };
+
+  async function openSubmenu(
+    spectator: Spectator<AddUsbDeviceMenuComponent>,
+    loader: HarnessLoader,
+    label: string,
+  ): Promise<TnMenuHarness> {
+    const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+    await trigger.click();
+
+    const rootLoader = TnMenuTesting.rootLoader(spectator.fixture);
+    const menu = await rootLoader.getHarness(TnMenuHarness);
+    await menu.clickItem({ label });
+
+    const menus = await rootLoader.getAllHarnesses(TnMenuHarness);
+    return menus[menus.length - 1];
+  }
+
   describe('with available devices', () => {
     let spectator: Spectator<AddUsbDeviceMenuComponent>;
     let loader: HarnessLoader;
@@ -30,26 +67,7 @@ describe('AddUsbDeviceMenuComponent', () => {
       providers: [
         mockAuth(),
         mockApi([
-          mockCall('container.device.usb_choices', {
-            usb_1_1: {
-              capability: {
-                vendor_id: '0x046d',
-                product_id: '0x0001',
-                product: 'Web Cam',
-              },
-              available: true,
-              description: 'Web Cam',
-            } as AvailableUsb,
-            usb_1_2: {
-              capability: {
-                vendor_id: '0x0781',
-                product_id: '0x0002',
-                product: 'Card Reader',
-              },
-              available: true,
-              description: 'Card Reader',
-            } as AvailableUsb,
-          }),
+          mockCall('container.device.usb_choices', usbChoices),
           mockCall('container.device.create'),
         ]),
         mockProvider(ContainersStore, {
@@ -59,10 +77,7 @@ describe('AddUsbDeviceMenuComponent', () => {
           devices: () => [
             {
               dtype: ContainerDeviceType.Usb,
-              usb: {
-                vendor_id: '0x046d',
-                product_id: '0x0001',
-              },
+              usb: null,
               device: 'usb_1_1',
             } as ContainerDevice,
           ] as ContainerDevice[],
@@ -88,12 +103,25 @@ describe('AddUsbDeviceMenuComponent', () => {
       expect(itemLabels[0]).toContain('Card Reader');
     });
 
-    it('adds a usb device when it is selected', async () => {
-      const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
-      await trigger.click();
+    it('adds a usb device by physical port when By physical port is selected', async () => {
+      const submenu = await openSubmenu(spectator, loader, 'Card Reader');
+      await submenu.clickItem({ label: 'By physical port' });
 
-      const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
-      await menu.clickItem({ label: 'Card Reader' });
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+        container: 123,
+        attributes: {
+          dtype: ContainerDeviceType.Usb,
+          device: 'usb_1_2',
+          usb: null,
+        } as ContainerDevice,
+      }]);
+      expect(spectator.inject(ContainerDevicesStore).reload).toHaveBeenCalled();
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('USB Device was added');
+    });
+
+    it('adds a usb device by vendor and product IDs when that option is selected', async () => {
+      const submenu = await openSubmenu(spectator, loader, 'Card Reader');
+      await submenu.clickItem({ label: 'By vendor and product ID' });
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
         container: 123,
@@ -108,6 +136,48 @@ describe('AddUsbDeviceMenuComponent', () => {
       }]);
       expect(spectator.inject(ContainerDevicesStore).reload).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('USB Device was added');
+    });
+  });
+
+  describe('with a device recorded by vendor/product IDs', () => {
+    const createComponent = createComponentFactory({
+      component: AddUsbDeviceMenuComponent,
+      providers: [
+        mockAuth(),
+        mockApi([
+          mockCall('container.device.usb_choices', usbChoices),
+        ]),
+        mockProvider(ContainersStore, {
+          selectedContainer,
+        }),
+        mockProvider(ContainerDevicesStore, {
+          devices: () => [
+            {
+              dtype: ContainerDeviceType.Usb,
+              usb: {
+                vendor_id: '0x046d',
+                product_id: '0x0001',
+              },
+              device: null,
+            } as ContainerDevice,
+          ] as ContainerDevice[],
+          isLoading: () => false,
+        }),
+        mockProvider(SnackbarService),
+      ],
+    });
+
+    it('excludes devices whose vendor and product IDs are already attached', async () => {
+      const spectator = createComponent();
+      const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const trigger = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
+      await trigger.click();
+
+      const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+      const itemLabels = await menu.getItemLabels();
+      expect(itemLabels).toHaveLength(1);
+      expect(itemLabels[0]).toContain('Card Reader');
     });
   });
 
