@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -41,6 +41,9 @@ describe('ServiceSshComponent', () => {
   );
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getPasswordLoginGroups = (): Promise<TnChipInputHarness> => loader.getHarness(
+    TnChipInputHarness.with({ selector: '[formControlName="password_login_groups"]' }),
   );
   const hasInput = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -139,6 +142,28 @@ describe('ServiceSshComponent', () => {
     expect(await (await getCheckbox('passwordauth')).isChecked()).toBe(true);
     expect(await (await getCheckbox('kerberosauth')).isChecked()).toBe(false);
     expect(await (await getCheckbox('tcpfwd')).isChecked()).toBe(false);
+  });
+
+  it('shows the configured password login groups as chips and submits an added one', async () => {
+    const groups = await getPasswordLoginGroups();
+    expect(await groups.getChips()).toEqual(['dummy-group']);
+
+    await groups.addChip('another-group');
+
+    spectator.component.submit();
+
+    expect(api.call).toHaveBeenCalledWith('ssh.update', [
+      expect.objectContaining({ password_login_groups: ['dummy-group', 'another-group'] }),
+    ]);
+  });
+
+  it('suggests groups from the directory-services cache as the user types', async () => {
+    const groups = await getPasswordLoginGroups();
+    await groups.removeChip('dummy-group');
+    await groups.typeText('dummy');
+
+    expect(await groups.getSuggestions()).toEqual(['dummy-group']);
+    expect(spectator.inject(UserService).groupQueryDsCache).toHaveBeenCalledWith('dummy');
   });
 
   it('exposes a single footer action that flips between Advanced and Basic Settings', () => {

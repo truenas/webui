@@ -160,24 +160,29 @@
         <tn-input formControlName="dirmask"></tn-input>
       </tn-form-field>
 
-      <ix-list
+      <tn-form-list
         formArrayName="bindip"
-        [empty]="form.controls.bindip.controls.length === 0"
+        [control]="form.controls.bindip"
         [label]="'Bind IP Addresses' | translate"
         [tooltip]="tooltips.bindip | translate"
+        [addLabel]="'Add' | translate"
+        [emptyMessage]="'No items have been added yet.' | translate"
         (add)="addBindIp()"
       >
         @for (address of form.controls.bindip.controls; track address; let i = $index) {
-          <ix-list-item
+          <!-- `testId` keeps the `icon-button-remove-from-list` value the ix-list rows shipped. -->
+          <tn-form-list-item
+            testId="remove-from-list"
             [formGroupName]="i"
+            [removeAriaLabel]="'Remove Bind IP Address' | translate"
             (delete)="removeBindIp(i)"
           >
             <tn-form-field [label]="'IP Address' | translate">
               <tn-select formControlName="bindIp" [options]="bindIpAddressOptions()"></tn-select>
             </tn-form-field>
-          </ix-list-item>
+          </tn-form-list-item>
         }
-      </ix-list>
+      </tn-form-list>
     </tn-form-section>
   }
 </ix-form>
