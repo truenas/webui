@@ -91,8 +91,8 @@ export class CertificateAcmeAddComponent extends IxFormHostForm implements OnIni
   }
 
   protected handleSubmit = (): SubmitResult => {
-    // The form is only ever opened with a CSR (the panel supplies it via the `csr` input);
-    // guard the invariant explicitly rather than rely on non-strict null checks.
+    // The form is only ever opened with a CSR (both call sites supply it via the `csr` input),
+    // so the payload just carries the id through; a CSR-less open would send `csr_id: undefined`.
     const csr = this.csrData;
     const formValues = this.form.getRawValue();
 

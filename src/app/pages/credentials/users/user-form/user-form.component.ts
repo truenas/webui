@@ -425,7 +425,7 @@ export class UserFormComponent extends SidePanelForm<User> implements OnInit {
         this.isFormLoading.set(false);
         if (user) {
           // Hand the created/updated record back to the opener. Most callers just reload, but
-          // some (e.g. ix-user-picker's "Add New") select the returned User from the response.
+          // some (e.g. the API key form's "Add New" username) select the returned User.
           this.closed.emit(user);
 
           if (this.isNewUser()) {

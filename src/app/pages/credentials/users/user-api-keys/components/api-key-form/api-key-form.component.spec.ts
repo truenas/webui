@@ -17,6 +17,8 @@ import {
 } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { KeyCreatedDialog } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
@@ -49,6 +51,9 @@ describe('ApiKeyFormComponent', () => {
       ]),
       mockProvider(DialogRef),
       mockProvider(DialogService),
+      mockProvider(FormSidePanelService, {
+        open: jest.fn(() => SlideInResult.cancel<User>()),
+      }),
       mockProvider(LocaleService, {
         timezone: 'UTC',
         getDateFromString: (date: string) => parseISO(date),
@@ -192,6 +197,39 @@ describe('ApiKeyFormComponent', () => {
       await username.selectOption('operator');
 
       expect(rawForm().username).toBe('operator');
+    });
+
+    it('keeps the selected username listed when the fetched page does not contain it', async () => {
+      await setupTest({ presetUsername: 'testuser' });
+
+      const username = await loader.getHarness(TnAutocompleteHarness);
+      await username.focus();
+
+      expect(await username.getOptions()).toEqual(['Add New', 'root', 'operator', 'testuser']);
+    });
+
+    it('selects the user created through Add New', async () => {
+      await setupTest();
+      spectator.inject(FormSidePanelService).open = jest.fn(
+        () => SlideInResult.success({ username: 'newuser' } as User),
+      );
+
+      const username = await loader.getHarness(TnAutocompleteHarness);
+      await username.focus();
+      await username.selectOption('Add New');
+
+      expect(rawForm().username).toBe('newuser');
+    });
+
+    it('restores the previous username when Add New is cancelled', async () => {
+      await setupTest();
+
+      const username = await loader.getHarness(TnAutocompleteHarness);
+      await username.focus();
+      await username.selectOption('Add New');
+
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalled();
+      expect(rawForm().username).toBe('root');
     });
   });
 });

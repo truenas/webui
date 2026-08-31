@@ -9,7 +9,7 @@ import {
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import {
-  Subject, debounceTime, distinctUntilChanged, filter, map, startWith, switchMap,
+  Subject, debounceTime, distinctUntilChanged, filter, map, startWith, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
@@ -109,6 +109,9 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
 
   /** The term the currently loaded page was fetched with, replayed by {@link onUsernameLoadMore}. */
   private lastUsernameSearch = '';
+
+  /** The username selected before "Add New" was picked, restored when the user form is cancelled. */
+  private previousUsername = '';
 
   /**
    * The options are already filtered server-side by {@link userPickerProvider}, so the component's
@@ -218,7 +221,7 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
     ).subscribe({
       next: (options) => {
         this.usernamesLoading.set(false);
-        this.usernameOptions.set(this.toAutocompleteOptions(options));
+        this.usernameOptions.set(this.withSelectedUsername(this.toAutocompleteOptions(options)));
       },
       error: () => this.usernamesLoading.set(false),
     });
@@ -231,17 +234,50 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
     ];
   }
 
-  /** Selecting "Add New" opens the user form; the created user becomes the selected username. */
+  /**
+   * Keeps the selected username in the list when the page just fetched doesn't contain it —
+   * a preset username sorted past the first page, or one just created that the `roles != []`
+   * query doesn't match yet. Without it the field would render empty for a perfectly valid value.
+   */
+  private withSelectedUsername(options: TnAutocompleteOption<string>[]): TnAutocompleteOption<string>[] {
+    const selected = this.form.controls.username.value;
+    if (!selected || selected === newOption || options.some((option) => option.value === selected)) {
+      return options;
+    }
+
+    return [...options, { label: selected, value: selected }];
+  }
+
+  /**
+   * Selecting "Add New" opens the user form; the created user becomes the selected username.
+   * Dismissing that form without saving puts the control back to whatever was selected before —
+   * `newOption` ('NEW') is not a real username, but it does satisfy `Validators.required`, so
+   * leaving it in place would let the form submit it (and block a second "Add New", whose value
+   * would then be unchanged).
+   */
   private listenForAddNewUser(): void {
     this.form.controls.username.valueChanges.pipe(
+      // The username set in `ngOnInit` predates this subscription, so seed it explicitly —
+      // otherwise a cancel before any manual pick would restore an empty field.
+      startWith(this.form.controls.username.value),
       distinctUntilChanged(),
+      tap((value) => {
+        if (value !== newOption) {
+          this.previousUsername = value;
+        }
+      }),
       filter((value) => value === newOption),
       switchMap(() => this.formPanel.open(UserFormComponent, {
         wide: true,
         title: this.translate.instant('Add User'),
-      }).success$),
+      })),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((newUser: User) => {
+    ).subscribe(({ response: newUser }) => {
+      if (!newUser) {
+        this.form.controls.username.setValue(this.previousUsername);
+        return;
+      }
+
       this.usernameOptions.update((current) => [
         ...current,
         { label: newUser.username, value: newUser.username },
