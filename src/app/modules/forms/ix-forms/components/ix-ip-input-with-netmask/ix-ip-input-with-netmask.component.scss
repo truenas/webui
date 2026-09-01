@@ -42,6 +42,10 @@
   input {
     background: transparent;
     border: none;
+    // Explicit, exactly as tn-input's own field sets it: webui's global reset only borders-boxes
+    // `div`, so a content-box input would add its 0.5rem padding ON TOP of the 2.5rem min-height
+    // and stand ~14px taller than the tn-input beside it.
+    box-sizing: border-box;
     color: var(--fg1);
     flex: 1 1 auto;
     font-size: 1rem;
