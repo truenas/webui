@@ -1,6 +1,7 @@
 import { HarnessPredicate } from '@angular/cdk/testing';
 import {
   FormFieldHarnessFilters,
+  TnCheckboxGroupHarness,
   TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import {
@@ -17,8 +18,9 @@ import {
  * `tn-form-field` host, and `locatorFor` only searches descendants — so inheriting is
  * the only way to reuse the library's own `getLabel()` instead of re-deriving it.
  *
- * **Supported controls: `tn-input`, `tn-select`, `tn-checkbox`, `tn-radio`.** A field wrapping
- * anything else (`tn-autocomplete`, `tn-chip-input`, `tn-file-input`, …) still indexes by label,
+ * **Supported controls: `tn-input`, `tn-select`, `tn-checkbox`, `tn-checkbox-group`, `tn-radio`.**
+ * A field wrapping anything else (`tn-autocomplete`, `tn-chip-input`, `tn-file-input`, …) still
+ * indexes by label,
  * but {@link getValue} and {@link isDisabled} return {@link unreadableControl} — whole-form
  * readers like `getControlValues`/`getDisabledStates` walk every control at once, so a throw there
  * would take the rest of the form down with it, while returning `''`/`false` would let an
@@ -32,6 +34,12 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
 
   private input = this.locatorForOptional(TnInputHarness);
   private select = this.locatorForOptional(TnSelectHarness);
+  /**
+   * Probed BEFORE {@link checkbox} everywhere below: a group renders `tn-checkbox`es of its own,
+   * so the single-checkbox locator matches its first option and would report one option's boolean
+   * where the field's value is the whole checked array.
+   */
+  private checkboxGroup = this.locatorForOptional(TnCheckboxGroupHarness);
   private checkbox = this.locatorForOptional(TnCheckboxHarness);
   private radios = this.locatorForAll(TnRadioHarness);
   /**
@@ -42,6 +50,8 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
   private selectPlaceholder = this.locatorForOptional('.tn-select-text.placeholder');
   /** Only `tn-radio-group` renders this, and only with an explicit `[ariaLabel]`. */
   private namedRadioGroup = this.locatorForOptional('[role="radiogroup"][aria-label]');
+  /** Only `tn-checkbox-group` renders this, and only with an explicit `[ariaLabel]`. */
+  private namedCheckboxGroup = this.locatorForOptional('[role="group"][aria-label]');
 
   /**
    * `TnFormFieldHarness.with()` names its own class in the predicate it builds, so inheriting it
@@ -75,6 +85,12 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
     if (label) {
       return label;
     }
+    // Same as the radio group below, and checked before the lone-checkbox branch: a group's
+    // first option would otherwise name the whole field.
+    const checkboxGroup = await this.namedCheckboxGroup();
+    if (checkboxGroup) {
+      return (await checkboxGroup.getAttribute('aria-label')) ?? '';
+    }
     // A tn-checkbox carries its own label (via `[label]`) inside a bare tn-form-field
     // that has no field-level label of its own.
     const checkbox = await this.checkbox();
@@ -102,6 +118,12 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
       // `getDisplayText()` falls back to the placeholder when nothing is picked; the
       // IxFormControlHarness contract these specs assert against reports that as ''.
       return await this.selectPlaceholder() ? '' : select.getDisplayText();
+    }
+    // The labels of the checked options, which is what the DOM carries — the values themselves
+    // live in the bound control.
+    const checkboxGroup = await this.checkboxGroup();
+    if (checkboxGroup) {
+      return checkboxGroup.getValue();
     }
     const checkbox = await this.checkbox();
     if (checkbox) {
@@ -131,6 +153,12 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
       await select.selectOption(String(value));
       return;
     }
+    // Replaces the whole checked set, so `setValue([])` clears the group rather than no-opping.
+    const checkboxGroup = await this.checkboxGroup();
+    if (checkboxGroup) {
+      await checkboxGroup.setValue((value ?? []) as string[]);
+      return;
+    }
     const checkbox = await this.checkbox();
     if (checkbox) {
       if (value) {
@@ -152,7 +180,8 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
     }
     throw new Error(
       `tn-form-field "${await this.getLabelText()}" holds no control TnFormControlHarness can set `
-      + '(supported: tn-input, tn-select, tn-checkbox, tn-radio) — drive it through its own tn-* harness.',
+      + '(supported: tn-input, tn-select, tn-checkbox, tn-checkbox-group, tn-radio) — drive it '
+      + 'through its own tn-* harness.',
     );
   }
 
@@ -191,6 +220,10 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
     const select = await this.select();
     if (select) {
       return select.isDisabled();
+    }
+    const checkboxGroup = await this.checkboxGroup();
+    if (checkboxGroup) {
+      return checkboxGroup.isDisabled();
     }
     const checkbox = await this.checkbox();
     if (checkbox) {

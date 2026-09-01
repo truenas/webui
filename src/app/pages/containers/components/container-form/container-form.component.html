@@ -159,15 +159,23 @@
       </ix-list>
     </tn-form-section>
 
-    @if (!isEditMode() && (usbDeviceOptions$ | async)?.length) {
-      <tn-form-section [heading]="helptext.usbDevicesLabel | translate">
-        <ix-checkbox-list
-          formControlName="usb_devices"
-          [label]="helptext.usbDevicesLabel | translate"
-          [tooltip]="helptext.usbDevicesTooltip | translate"
-          [options]="usbDeviceOptions$"
-        ></ix-checkbox-list>
-      </tn-form-section>
+    @if (!isEditMode()) {
+      <!-- Scoped inside the edit-mode guard so the async pipe (and with it the
+           `container.device.usb_choices` call) is never subscribed while editing. -->
+      @let usbOptions = (usbDeviceOptions$ | async) ?? [];
+      @if (usbOptions.length) {
+        <tn-form-section [heading]="helptext.usbDevicesLabel | translate">
+          <tn-form-field
+            [label]="helptext.usbDevicesLabel | translate"
+            [tooltip]="helptext.usbDevicesTooltip | translate"
+          >
+            <tn-checkbox-group
+              formControlName="usb_devices"
+              [options]="usbOptions"
+            ></tn-checkbox-group>
+          </tn-form-field>
+        </tn-form-section>
+      }
     }
 
     @if (!isEditMode()) {

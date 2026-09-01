@@ -18,6 +18,7 @@ import {
   TnBannerComponent,
   TnButtonComponent,
   TnCheckboxComponent,
+  TnCheckboxGroupComponent,
   TnDialog,
   TnFormFieldComponent,
   TnFormSectionComponent,
@@ -52,7 +53,6 @@ import {
   UpdateContainer,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import {
   IxFormHostForm,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -85,7 +85,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    IxCheckboxListComponent,
     IxFormComponent,
     IxListComponent,
     IxListItemComponent,
@@ -93,6 +92,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnBannerComponent,
     TnButtonComponent,
     TnCheckboxComponent,
+    TnCheckboxGroupComponent,
     TnFormFieldComponent,
     TnFormSectionComponent,
     TnInputComponent,

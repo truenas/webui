@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
-  TnBannerHarness, TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness, TnDialog,
+  TnBannerHarness, TnButtonHarness, TnCheckboxGroupHarness, TnCheckboxHarness, TnInputHarness,
+  TnSelectHarness, TnDialog,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -373,8 +373,8 @@ describe('ContainerFormComponent', () => {
 
       await toggleAdvanced();
 
-      const usbCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Web Cam by Logitech' }));
-      await usbCheckbox.check();
+      const usbDevices = await loader.getHarness(TnCheckboxGroupHarness);
+      await usbDevices.setValue(['Web Cam by Logitech']);
 
       await submit();
 

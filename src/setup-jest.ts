@@ -60,9 +60,6 @@ import {
   IxButtonGroupComponent,
 } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import {
-  IxCheckboxListComponent,
-} from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -198,7 +195,6 @@ defineGlobalsInjections({
     IxErrorsComponent,
     IxLabelComponent,
     WarningComponent,
-    IxCheckboxListComponent,
     FormActionsComponent,
     RouterModule.forRoot([]),
     UiSearchDirective,

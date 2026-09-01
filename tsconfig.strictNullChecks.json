@@ -392,7 +392,6 @@
     "./src/app/modules/forms/ix-forms/components/form-actions/form-actions.component.ts",
     "./src/app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component.ts",
     "./src/app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.harness.ts",
-    "./src/app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness.ts",
     "./src/app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component.ts",
     "./src/app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness.ts",
     "./src/app/modules/forms/ix-forms/components/ix-chips/chips-provider.ts",

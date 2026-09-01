@@ -4,8 +4,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnInputComponent,
-  TnRadioGroupComponent, TnSelectComponent,
+  TnCheckboxComponent, TnCheckboxGroupComponent, TnChipInputComponent, TnFormFieldComponent,
+  TnInputComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { Option } from 'app/interfaces/option.interface';
 import {
@@ -28,6 +28,7 @@ import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
+    TnCheckboxGroupComponent,
     TnChipInputComponent,
     TnRadioGroupComponent,
   ],
@@ -37,6 +38,7 @@ class HostComponent {
   readonly letter = new FormControl<string | null>(null);
   readonly enabled = new FormControl(false);
   readonly choice = new FormControl<string | null>(null);
+  readonly letters = new FormControl<string[]>([]);
   readonly tags = new FormControl<string[]>([]);
 
   readonly options: Option<string>[] = [
@@ -57,6 +59,7 @@ describe('TnFormControlHarness', () => {
       TnInputComponent,
       TnSelectComponent,
       TnCheckboxComponent,
+      TnCheckboxGroupComponent,
       TnChipInputComponent,
       TnRadioGroupComponent,
     ],
@@ -83,6 +86,10 @@ describe('TnFormControlHarness', () => {
         <tn-radio-group [formControl]="choice" [options]="options"></tn-radio-group>
       </tn-form-field>
 
+      <tn-form-field [label]="'Letters'">
+        <tn-checkbox-group [formControl]="letters" [options]="options"></tn-checkbox-group>
+      </tn-form-field>
+
       <tn-form-field [label]="'Tags'">
         <tn-chip-input [formControl]="tags"></tn-chip-input>
       </tn-form-field>
@@ -97,7 +104,7 @@ describe('TnFormControlHarness', () => {
   it('indexes every field by its label, falling back to a checkbox\'s own label', async () => {
     const labels = Object.keys(await getControls()).sort((a, b) => a.localeCompare(b));
 
-    expect(labels).toEqual(['Choice', 'Enabled', 'Letter', 'Name', 'Tags']);
+    expect(labels).toEqual(['Choice', 'Enabled', 'Letter', 'Letters', 'Name', 'Tags']);
   });
 
   it('finds a self-naming control under the label the index files it under', async () => {
@@ -173,6 +180,41 @@ describe('TnFormControlHarness', () => {
       spectator.detectChanges();
 
       expect(await (await getControls()).Enabled.isDisabled()).toBe(true);
+    });
+  });
+
+  // The group renders `tn-checkbox`es of its own, so every branch has to reach it before the
+  // lone-checkbox one — otherwise the field reports its first option's boolean as the value.
+  describe('tn-checkbox-group', () => {
+    it('reads the checked option labels, and empty when nothing is picked', async () => {
+      const control = (await getControls()).Letters;
+      expect(await control.getValue()).toEqual([]);
+
+      await control.setValue(['Beta']);
+
+      expect(spectator.hostComponent.letters.value).toEqual(['b']);
+      expect(await (await getControls()).Letters.getValue()).toEqual(['Beta']);
+    });
+
+    it('replaces the whole checked set rather than adding to it', async () => {
+      const control = (await getControls()).Letters;
+      await control.setValue(['Alpha', 'Beta']);
+      expect(spectator.hostComponent.letters.value).toEqual(['a', 'b']);
+
+      await control.setValue(['Alpha']);
+      expect(spectator.hostComponent.letters.value).toEqual(['a']);
+
+      await control.setValue([]);
+      expect(spectator.hostComponent.letters.value).toEqual([]);
+    });
+
+    it('reports disabled only when every option is disabled', async () => {
+      expect(await (await getControls()).Letters.isDisabled()).toBe(false);
+
+      spectator.hostComponent.letters.disable();
+      spectator.detectChanges();
+
+      expect(await (await getControls()).Letters.isDisabled()).toBe(true);
     });
   });
 

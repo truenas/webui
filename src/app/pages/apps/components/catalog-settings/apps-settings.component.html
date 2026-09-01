@@ -1,13 +1,15 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <tn-form-section>
-    <ix-checkbox-list
-      class="trains"
-      formControlName="preferred_trains"
+    <tn-form-field
       [label]="'Preferred Trains' | translate"
       [tooltip]="tooltips.preferred_trains | translate"
-      [options]="allTrains$"
-      [inlineFields]="true"
-    ></ix-checkbox-list>
+    >
+      <tn-checkbox-group
+        formControlName="preferred_trains"
+        [inline]="true"
+        [options]="(allTrains$ | async) ?? []"
+      ></tn-checkbox-group>
+    </tn-form-field>
 
     <ix-list
       formArrayName="address_pools"

@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
 } from '@angular/core';
@@ -8,7 +9,7 @@ import {
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnCheckboxComponent, TnCheckboxGroupComponent, TnFormFieldComponent, TnFormSectionComponent,
 } from '@truenas/ui-components';
 import {
   combineLatest,
@@ -21,7 +22,6 @@ import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -42,15 +42,16 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   styleUrls: ['./apps-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     ReactiveFormsModule,
     TnFormSectionComponent,
-    IxCheckboxListComponent,
     IxListItemComponent,
     IxListComponent,
     IxIpInputWithNetmaskComponent,
     IxInputComponent,
     IxCheckboxComponent,
     TnCheckboxComponent,
+    TnCheckboxGroupComponent,
     TnFormFieldComponent,
     TranslateModule,
   ],
