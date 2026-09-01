@@ -48,6 +48,7 @@ interface ExportDiskFormValue {
 @Component({
   selector: 'ix-export-disk-dialog',
   templateUrl: './export-disk-dialog.component.html',
+  styleUrls: ['./export-disk-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   providers: [

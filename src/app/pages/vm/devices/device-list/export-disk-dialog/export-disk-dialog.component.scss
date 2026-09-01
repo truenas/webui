@@ -1,0 +1,13 @@
+// The source disk is a fact about the operation rather than a field, so it sits outside the
+// form section and needs its own surface to read as a panel next to the info banner above it.
+.source-info {
+  background-color: var(--bg2);
+  border-radius: 4px;
+  margin-bottom: 16px;
+  padding: 12px;
+
+  p {
+    color: var(--fg2);
+    margin: 0;
+  }
+}

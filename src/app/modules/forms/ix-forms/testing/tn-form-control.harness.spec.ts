@@ -118,7 +118,7 @@ describe('TnFormControlHarness', () => {
       expect(await control.getValue()).toBe('pool1');
     });
 
-    it.each([['', 'an empty string'], [null, 'null']])('clears the field when set to %s', async (value) => {
+    it.each([['an empty string', ''], ['null', null]])('clears the field when set to %s', async (_label, value) => {
       const control = (await getControls()).Name;
       await control.setValue('pool1');
 

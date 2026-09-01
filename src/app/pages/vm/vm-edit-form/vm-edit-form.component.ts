@@ -98,7 +98,10 @@ export class VmEditFormComponent extends IxFormHostForm implements OnInit {
       Validators.min(256 * MiB),
       this.translate.instant(helptextVmWizard.memory_size_err),
     )],
-    min_memory: [null as number | null],
+    min_memory: [null as number | null, this.validators.withMessage(
+      Validators.min(20 * MiB),
+      this.translate.instant(helptextVmWizard.min_memory_size_err),
+    )],
     nodeset: ['', Validators.pattern(vmNodesetPattern)],
     hide_from_msr: [false],
     ensure_display_device: [false],

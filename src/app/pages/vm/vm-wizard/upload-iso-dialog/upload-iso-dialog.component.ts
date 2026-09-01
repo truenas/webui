@@ -101,6 +101,11 @@ export class UploadIsoDialogComponent {
   // cleared is one `endUpload()` performed itself.
   private cancelUpload: (() => void) | null = null;
 
+  // The "Cancel Upload" confirmation, while it is on screen. Non-null only between the user
+  // asking to dismiss the loader and answering, which is the window in which the upload can
+  // finish (or fail) underneath it and have to take the question away again.
+  private confirmationRef: DialogRef | null = null;
+
   protected canSubmit(): boolean {
     return this.ixForm()?.canSubmit() ?? false;
   }
@@ -158,14 +163,7 @@ export class UploadIsoDialogComponent {
           return of(false);
         }
 
-        return this.dialogService.confirm({
-          title: this.translate.instant('Cancel Upload'),
-          message: this.translate.instant('Are you sure you want to cancel the upload? This will stop the current upload process.'),
-          hideCheckbox: true,
-          buttonText: this.translate.instant('Cancel Upload'),
-          cancelText: this.translate.instant('Keep Uploading'),
-          hideCancel: false,
-        });
+        return this.askToCancelUpload();
       });
 
       // `loaderClosed$` is the CDK `DialogRef.closed` subject, so it fires on ANY close — the
@@ -200,6 +198,31 @@ export class UploadIsoDialogComponent {
     });
   }
 
+  /**
+   * Asks the user whether to abandon the transfer, keeping hold of the dialog it opens so
+   * `endUpload()` can dismiss exactly this confirmation. `DialogService.confirm()` opens
+   * synchronously but does not hand its `DialogRef` back, so the confirmation is picked out of
+   * the CDK stack as the one dialog that was not open a moment ago.
+   */
+  private askToCancelUpload(): Observable<boolean> {
+    const alreadyOpen = new Set(this.cdkDialog.openDialogs);
+    const confirmed$ = this.dialogService.confirm({
+      title: this.translate.instant('Cancel Upload'),
+      message: this.translate.instant('Are you sure you want to cancel the upload? This will stop the current upload process.'),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Cancel Upload'),
+      cancelText: this.translate.instant('Keep Uploading'),
+      hideCancel: false,
+    });
+    this.confirmationRef = this.cdkDialog.openDialogs.find((dialog) => !alreadyOpen.has(dialog)) ?? null;
+
+    return confirmed$.pipe(
+      finalize(() => {
+        this.confirmationRef = null;
+      }),
+    );
+  }
+
   private reportProgress(event: HttpEvent<unknown>): void {
     if (event.type !== HttpEventType.UploadProgress) {
       return;
@@ -222,7 +245,11 @@ export class UploadIsoDialogComponent {
   private endUpload(): void {
     this.cancelUpload = null;
     this.loader.removeConfirmationBeforeClose();
-    this.closeAllConfirmationDialogs();
+    // Only this component's own cancel confirmation: a blanket sweep of the CDK stack would
+    // also take down the error dialog the failure path opens a moment earlier, leaving a failed
+    // upload with no explanation at all.
+    this.confirmationRef?.close();
+    this.confirmationRef = null;
     this.loader.close();
   }
 
@@ -230,16 +257,5 @@ export class UploadIsoDialogComponent {
   private abortUpload(): void {
     this.cancelUpload?.();
     this.endUpload();
-  }
-
-  private closeAllConfirmationDialogs(): void {
-    // Force close any open confirmation dialogs (but not the upload dialog itself)
-    const openDialogs = this.cdkDialog.openDialogs;
-    openDialogs.forEach((dialog) => {
-      // Only close dialogs that are not this upload dialog
-      if (dialog !== this.dialogRef) {
-        dialog.close();
-      }
-    });
   }
 }

@@ -1,17 +1,18 @@
-import { DialogRef } from '@angular/cdk/dialog';
+import { Dialog, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HttpEvent, HttpResponse } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { UploadIsoDialogComponent } from 'app/pages/vm/vm-wizard/upload-iso-dialog/upload-iso-dialog.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
 
@@ -53,6 +54,7 @@ describe('UploadIsoDialogComponent', () => {
         success: jest.fn(),
       }),
       mockProvider(DialogRef),
+      mockProvider(ErrorHandlerService),
       mockAuth(),
     ],
   });
@@ -136,6 +138,27 @@ describe('UploadIsoDialogComponent', () => {
 
     expect(cancel).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Upload cancelled');
+    expect(spectator.inject(DialogRef).close).not.toHaveBeenCalled();
+  });
+
+  it('reports a failed upload without dismissing the error dialog it just opened', async () => {
+    jest.spyOn(spectator.inject(UploadService), 'upload').mockReturnValue({
+      observable: throwError(() => new Error('HTTP 500: Internal Server Error')),
+      cancel: jest.fn(),
+    });
+    // The error dialog `showErrorModal` opens is on the CDK stack by the time the transfer is
+    // torn down; the teardown must leave it there or the failure goes unreported.
+    const errorDialog = { close: jest.fn() } as unknown as DialogRef;
+    jest.spyOn(spectator.inject(Dialog), 'openDialogs', 'get').mockReturnValue([errorDialog]);
+
+    await fillForm({ 'ISO save location': '/mnt/tank/iso' });
+    spectator.component.form.patchValue({ files: fakeFile('test-upload.iso') });
+    spectator.detectChanges();
+
+    await clickUpload();
+
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+    expect(errorDialog.close).not.toHaveBeenCalled();
     expect(spectator.inject(DialogRef).close).not.toHaveBeenCalled();
   });
 
