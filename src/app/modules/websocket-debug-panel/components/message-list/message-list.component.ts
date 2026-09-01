@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnIconComponent, TnIconButtonComponent, TnCheckboxComponent, TnInputComponent, TnTooltipDirective,
+  TnIconComponent, TnIconButtonComponent, TnCheckboxComponent, TnEmptyComponent, TnInputComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
@@ -36,6 +36,7 @@ interface JsonRpcSuccessResponse {
     JsonPipe,
     FormsModule,
     TnCheckboxComponent,
+    TnEmptyComponent,
     TnInputComponent,
     TnTooltipDirective,
     TranslateModule,

@@ -6,7 +6,10 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCheckboxComponent, TnFileInputComponent, TnFormFieldComponent, TnInputComponent,
+  TnTestIdDirective,
+} from '@truenas/ui-components';
 import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
@@ -14,9 +17,7 @@ import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackForm } from 'app/modules/feedback/interfaces/feedback-form';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -35,11 +36,12 @@ export const maxFileSizeBytes = 5 * MiB;
   imports: [
     ReactiveFormsModule,
     IxStarRatingComponent,
-    IxTextareaComponent,
-    IxFileInputComponent,
     TnButtonComponent,
     TnCheckboxComponent,
+    TnFileInputComponent,
     TnFormFieldComponent,
+    TnInputComponent,
+    TnTestIdDirective,
     TranslateModule,
   ],
   providers: [

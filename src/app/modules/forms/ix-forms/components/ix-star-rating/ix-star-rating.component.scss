@@ -3,6 +3,12 @@
 }
 
 .star-rating {
+  // `tn-icon-button` dims its icon to `--tn-fg2` and sizes it from the token behind its size
+  // preset. Both are scoped back here so the stars keep the full-strength, 28px look they had
+  // under `mat-icon-button` — custom properties inherit, so neither needs `::ng-deep`.
+  --tn-icon-color: var(--fg1);
+  --tn-icon-lg: 28px;
+
   display: flex;
   gap: 4px;
 }

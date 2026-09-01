@@ -1,89 +1,91 @@
 <form [formGroup]="form">
   <div class="columns">
     <div class="column">
-      <ix-input
-        formControlName="name"
+      <tn-form-field
         [label]="'Name' | translate"
         [tooltip]="tooltips.name | translate"
         [required]="true"
-      ></ix-input>
+      >
+        <tn-input formControlName="name"></tn-input>
+      </tn-form-field>
     </div>
     <div class="column">
-      <ix-input
-        formControlName="phone"
+      <tn-form-field
         [label]="'Phone' | translate"
         [tooltip]="tooltips.phone | translate"
         [required]="true"
-      ></ix-input>
+      >
+        <tn-input formControlName="phone"></tn-input>
+      </tn-form-field>
     </div>
   </div>
 
   <div class="columns">
     <div class="column">
-      <ix-input
-        formControlName="email"
+      <tn-form-field
         [label]="'Email' | translate"
         [tooltip]="tooltips.email | translate"
         [required]="true"
-      ></ix-input>
+      >
+        <tn-input formControlName="email"></tn-input>
+      </tn-form-field>
     </div>
 
     <div class="column">
-      <ix-chips
-        formControlName="cc"
+      <tn-form-field
         [label]="'CC' | translate"
         [tooltip]="tooltips.cc | translate"
-      ></ix-chips>
+      >
+        <tn-chip-input
+          formControlName="cc"
+          [ariaLabel]="'CC' | translate"
+        ></tn-chip-input>
+      </tn-form-field>
     </div>
   </div>
 
   <div class="columns">
     <div class="column">
-      <ix-select
-        formControlName="category"
+      <tn-form-field
         [label]="'Type' | translate"
-        [options]="categoryOptions$"
         [tooltip]="tooltips.category | translate"
         [required]="true"
-      ></ix-select>
+      >
+        <tn-select formControlName="category" [options]="categoryOptions"></tn-select>
+      </tn-form-field>
     </div>
     <div class="column"></div>
   </div>
 
   <div class="columns">
     <div class="column">
-      <ix-select
-        formControlName="environment"
-        [label]="'Environment' | translate"
-        [options]="environmentOptions$"
-        [required]="true"
-      ></ix-select>
+      <tn-form-field [label]="'Environment' | translate" [required]="true">
+        <tn-select formControlName="environment" [options]="environmentOptions"></tn-select>
+      </tn-form-field>
     </div>
 
     <div class="column">
-      <ix-select
-        formControlName="criticality"
-        [label]="'Criticality' | translate"
-        [options]="criticalityOptions$"
-        [required]="true"
-      ></ix-select>
+      <tn-form-field [label]="'Criticality' | translate" [required]="true">
+        <tn-select formControlName="criticality" [options]="criticalityOptions"></tn-select>
+      </tn-form-field>
     </div>
   </div>
 
-  <ix-input
-    formControlName="title"
-    [label]="'Subject' | translate"
-    [placeholder]="tooltips.title | translate"
-    [required]="true"
-  ></ix-input>
+  <tn-form-field [label]="'Subject' | translate" [required]="true">
+    <tn-input
+      formControlName="title"
+      [placeholder]="tooltips.title | translate"
+    ></tn-input>
+  </tn-form-field>
 
-  <ix-textarea
-    formControlName="message"
-    [label]="'Message' | translate"
-    [rows]="8"
-    [placeholder]="messagePlaceholder | translate"
-    [required]="true"
-  ></ix-textarea>
+  <tn-form-field [label]="'Message' | translate" [required]="true">
+    <tn-input
+      formControlName="message"
+      [multiline]="true"
+      [rows]="8"
+      [placeholder]="messagePlaceholder | translate"
+    ></tn-input>
+  </tn-form-field>
 
   <tn-form-field
     [tooltip]="tooltips.attach_debug | translate"
@@ -110,14 +112,27 @@
   </tn-form-field>
 
   @if (form.controls.attach_images.value) {
-    <ix-file-input
-      formControlName="images"
+    <!--
+      `tn-file-input` composes its own id under a `file-input-*` prefix and has no control-name
+      fallback, so the legacy `input-images` is pinned on the host instead — see the tn-button
+      anchor precedent in the migration playbook.
+    -->
+    <tn-form-field
       class="attach-images"
       [label]="'Attach images (optional)' | translate"
       [tooltip]="'Select images you want attach to review' | translate"
-      [multiple]="true"
-      [acceptedFiles]="acceptedFiles"
-    ></ix-file-input>
+    >
+      <tn-file-input
+        tnTestIdType="input"
+        formControlName="images"
+        [tnTestId]="'images'"
+        [multiple]="true"
+        [accept]="acceptedFiles"
+        [ariaLabel]="'Attach images (optional)' | translate"
+        [buttonLabel]="'Choose File' | translate"
+        [noFileText]="'No file chosen' | translate"
+      ></tn-file-input>
+    </tn-form-field>
   }
 </form>
 
