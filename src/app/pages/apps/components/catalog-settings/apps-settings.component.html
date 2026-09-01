@@ -11,18 +11,20 @@
       ></tn-checkbox-group>
     </tn-form-field>
 
-    <ix-list
+    <tn-form-list
       formArrayName="address_pools"
       class="address-pools"
-      [empty]="form.controls.address_pools.controls.length === 0"
+      [control]="form.controls.address_pools"
       [label]="'Address Pools' | translate"
-      [formArray]="form.controls.address_pools"
+      [addLabel]="'Add' | translate"
+      [emptyMessage]="'No items have been added yet.' | translate"
       (add)="addAddressPool()"
     >
       @for (network of form.controls.address_pools.controls; track network; let i = $index) {
-        <ix-list-item
+        <tn-form-list-item
           [formGroupName]="i"
           [label]="'Address Pool' | translate"
+          [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Address Pool' | translate }"
           (delete)="removeAddressPool(i)"
         >
           <div class="address-pool">
@@ -34,49 +36,48 @@
               [tooltip]="helptext.dockerSettings.addressPoolsBase | translate"
             ></ix-ip-input-with-netmask>
 
-            <ix-input
-              formControlName="size"
-              type="number"
+            <tn-form-field
               class="size"
-              [required]="true"
               [label]="'Size' | translate"
+              [required]="true"
               [tooltip]="helptext.dockerSettings.addressPoolsSize | translate"
-            ></ix-input>
+            >
+              <tn-input formControlName="size" [inputType]="InputType.Number"></tn-input>
+            </tn-form-field>
           </div>
-        </ix-list-item>
+        </tn-form-list-item>
       }
-    </ix-list>
+    </tn-form-list>
 
-    <ix-list
+    <tn-form-list
       formArrayName="registry_mirrors"
       class="registry-mirrors"
-      [empty]="form.controls.registry_mirrors.controls.length === 0"
+      [control]="form.controls.registry_mirrors"
       [label]="'Registry Mirrors' | translate"
       [tooltip]="tooltips.registry_mirrors | translate"
-      [formArray]="form.controls.registry_mirrors"
+      [addLabel]="'Add' | translate"
+      [emptyMessage]="'No items have been added yet.' | translate"
       (add)="addRegistryMirror()"
     >
       @for (mirror of form.controls.registry_mirrors.controls; track mirror; let i = $index) {
-        <ix-list-item
+        <tn-form-list-item
           [formGroupName]="i"
           [label]="'Registry Mirror' | translate"
+          [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Registry Mirror' | translate }"
           (delete)="removeRegistryMirror(i)"
         >
           <div class="registry-mirror">
-            <ix-input
-              formControlName="url"
-              [label]="'Mirror URL' | translate"
-              [required]="true"
-            ></ix-input>
+            <tn-form-field class="url" [label]="'Mirror URL' | translate" [required]="true">
+              <tn-input formControlName="url"></tn-input>
+            </tn-form-field>
 
-            <ix-checkbox
-              formControlName="insecure"
-              [label]="'Insecure' | translate"
-            ></ix-checkbox>
+            <tn-form-field class="insecure">
+              <tn-checkbox formControlName="insecure" [label]="'Insecure' | translate"></tn-checkbox>
+            </tn-form-field>
           </div>
-        </ix-list-item>
+        </tn-form-list-item>
       }
-    </ix-list>
+    </tn-form-list>
 
     @if (showNvidiaCheckbox()) {
       <tn-form-field [tooltip]="tooltips.install_nvidia_driver | translate">

@@ -21,6 +21,8 @@ import {
   TnCheckboxGroupComponent,
   TnDialog,
   TnFormFieldComponent,
+  TnFormListComponent,
+  TnFormListItemComponent,
   TnFormSectionComponent,
   TnInputComponent,
   TnSelectComponent,
@@ -59,8 +61,6 @@ import {
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
   forbiddenAsyncValues,
@@ -86,14 +86,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     AsyncPipe,
     IxFormComponent,
-    IxListComponent,
-    IxListItemComponent,
     ReactiveFormsModule,
     TnBannerComponent,
     TnButtonComponent,
     TnCheckboxComponent,
     TnCheckboxGroupComponent,
     TnFormFieldComponent,
+    TnFormListComponent,
+    TnFormListItemComponent,
     TnFormSectionComponent,
     TnInputComponent,
     TnSelectComponent,

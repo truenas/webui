@@ -9,7 +9,9 @@ import {
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnCheckboxGroupComponent, TnFormFieldComponent, TnFormSectionComponent,
+  InputType,
+  TnCheckboxComponent, TnCheckboxGroupComponent, TnFormFieldComponent, TnFormListComponent,
+  TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import {
   combineLatest,
@@ -21,11 +23,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
@@ -45,14 +43,13 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
     AsyncPipe,
     ReactiveFormsModule,
     TnFormSectionComponent,
-    IxListItemComponent,
-    IxListComponent,
     IxIpInputWithNetmaskComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
     TnCheckboxComponent,
     TnCheckboxGroupComponent,
     TnFormFieldComponent,
+    TnFormListComponent,
+    TnFormListItemComponent,
+    TnInputComponent,
     TranslateModule,
   ],
   providers: [
@@ -70,6 +67,7 @@ export class AppsSettingsComponent extends SidePanelForm implements OnInit {
   private urlValidationService = inject(UrlValidationService);
   private destroyRef = inject(DestroyRef);
 
+  protected readonly InputType = InputType;
   readonly isFormLoading = signal(false);
   protected showNvidiaCheckbox = signal(false);
   readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];

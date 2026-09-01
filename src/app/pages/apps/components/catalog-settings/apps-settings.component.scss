@@ -25,12 +25,15 @@
   column-gap: 20px;
   display: flex;
 
-  ix-input {
+  .url {
     flex-grow: 1;
   }
 
-  ix-checkbox {
-    padding-top: 40px;
+  // The URL field spends a label row (label line + its 0.5rem margin) before its
+  // input; the checkbox field has no label, so push it down by the same amount to
+  // line the two controls up.
+  .insecure {
+    padding-top: 32px;
     width: auto;
   }
 }

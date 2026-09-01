@@ -133,16 +133,19 @@
     </tn-form-section>
 
     <tn-form-section [heading]="'Environment Variables' | translate">
-      <ix-list
+      <tn-form-list
         formArrayName="environment_variables"
-        [empty]="form.controls.environment_variables.controls.length === 0"
+        [control]="form.controls.environment_variables"
         [label]="'Environment Variables' | translate"
+        [addLabel]="'Add' | translate"
+        [emptyMessage]="'No items have been added yet.' | translate"
         (add)="addEnvironmentVariable()"
       >
         @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
-          <ix-list-item
+          <tn-form-list-item
             [formGroupName]="i"
             [label]="'Environment Variable' | translate"
+            [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Environment Variable' | translate }"
             (delete)="removeEnvironmentVariable(i)"
           >
             <div class="environment-variable">
@@ -154,9 +157,9 @@
                 <tn-input formControlName="value"></tn-input>
               </tn-form-field>
             </div>
-          </ix-list-item>
+          </tn-form-list-item>
         }
-      </ix-list>
+      </tn-form-list>
     </tn-form-section>
 
     @if (!isEditMode()) {
