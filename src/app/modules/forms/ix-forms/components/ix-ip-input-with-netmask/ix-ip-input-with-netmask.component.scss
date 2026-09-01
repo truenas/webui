@@ -17,14 +17,19 @@
 // One bordered box holding: address input | "/" | netmask dropdown — full width, the address
 // input grows to fill and the netmask select sits compact on the right. The input and the
 // tn-select carry no border of their own; the container owns the single border.
+//
+// Box metrics mirror `tn-input`'s (border, radius, min-height, padding, font-size) rather than
+// the ix-* input they were originally tuned against: every form that still uses this control now
+// sits it beside tn-* fields, where a shorter, smaller-texted box reads as a different kind of
+// control. Keep the two in step if the library's input metrics move.
 .input-container {
   align-items: center;
   background: var(--bg1);
-  border: solid 1.5px var(--lines);
-  border-radius: 2px;
+  border: 1px solid var(--lines);
+  border-radius: 0.375rem;
   display: flex;
   flex-direction: row;
-  font-size: 12px;
+  font-size: 1rem;
   position: relative;
   width: 100%;
 
@@ -39,11 +44,11 @@
     border: none;
     color: var(--fg1);
     flex: 1 1 auto;
-    font-size: 12px;
-    min-height: 26px;
+    font-size: 1rem;
+    min-height: 2.5rem;
     min-width: 0;
     outline: none;
-    padding: 8.5px 8px;
+    padding: 0.5rem 0.75rem;
   }
 
   .select {
@@ -61,13 +66,14 @@
         border: none;
         border-radius: 0;
         box-shadow: none;
-        font-size: 12px;
+        font-size: 1rem;
+        // `auto` so the netmask never drives the box taller than the address input beside it.
         min-height: auto;
-        padding: 8.5px 1.25rem 8.5px 8px;
+        padding: 0.5rem 1.25rem 0.5rem 0.75rem;
       }
 
       .tn-select-text {
-        font-size: 12px;
+        font-size: 1rem;
       }
 
       .tn-select-arrow {
