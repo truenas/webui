@@ -5,7 +5,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnRadioComponent, TnSelectComponent, TnStepperPreviousDirective,
+  TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent, TnStepperPreviousDirective,
 } from '@truenas/ui-components';
 import {
   map, Observable, of, startWith,
@@ -34,6 +34,7 @@ import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.int
     TnFormFieldComponent,
     TnFormSectionComponent,
     TnRadioComponent,
+    TnRadioGroupComponent,
     TnCheckboxComponent,
     TnInputComponent,
     TnSelectComponent,

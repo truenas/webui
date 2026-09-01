@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -16,12 +18,13 @@ import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
@@ -47,6 +50,7 @@ interface AccessMode {
     TnCardComponent,
     TnTooltipDirective,
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnTestIdDirective,
@@ -66,13 +70,18 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private storageService = inject(StorageService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private validatorService = inject(IxValidatorsService);
-  private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
+
+  /**
+   * The shared form wrapper owns the submit lifecycle (loading, snackbar, validation-error
+   * mapping). The action row's Save submits natively (`type="submit"` inside the wrapper's own
+   * `<form>`), so only its disabled state is read back from here.
+   */
+  private readonly ixForm = viewChild(IxFormComponent);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
@@ -162,25 +171,24 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected canSubmit(): boolean {
+    return this.ixForm()?.canSubmit() ?? false;
+  }
+
+  protected handleSubmit = (): SubmitResult => {
     const payload = this.preparePayload();
 
-    this.dialog.jobDialog(
-      this.api.job('filesystem.setperm', [payload]),
-      { title: this.translate.instant('Saving Permissions') },
-    )
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.snackbar.success(this.translate.instant('Permissions saved.'));
-          this.router.navigate(['/datasets', this.datasetId]);
-        },
-        error: (error: unknown) => {
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-  }
+    return {
+      request$: this.dialog.jobDialog(
+        this.api.job('filesystem.setperm', [payload]),
+        { title: this.translate.instant('Saving Permissions') },
+      ).afterClosed(),
+      successMessage: this.translate.instant('Permissions saved.'),
+      onSuccess: () => {
+        this.router.navigate(['/datasets', this.datasetId]);
+      },
+    };
+  };
 
   private loadPermissionsInformation(): void {
     this.isLoading.set(true);

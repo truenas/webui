@@ -1,18 +1,70 @@
 import { FormControl } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { maxDatasetPath } from 'app/constants/dataset.constants';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 
 describe('datasetNameTooLong', () => {
-  it('takes path and returns a validator that makes sure that dataset path is less than maximum', () => {
-    const parentPath = '/mnt/tank';
-    const validator = datasetNameTooLong(parentPath);
+  const translate = {
+    instant: (key: string, params?: Record<string, unknown>) => key.replace('{max}', String(params?.max)),
+  } as TranslateService;
+  const parentPath = '/mnt/tank';
+  // The parent path and the '/' are spent already, and the whole path stays under the max.
+  const longestAllowedName = maxDatasetPath - parentPath.length - 2;
+
+  it('allows a name that keeps the whole path within the maximum', () => {
+    const validator = datasetNameTooLong(parentPath, translate);
 
     expect(validator(new FormControl(''))).toBeNull();
     expect(validator(new FormControl('a'))).toBeNull();
-    expect(validator(new FormControl('a'.repeat(maxDatasetPath - parentPath.length - 1)))).toEqual({
+    expect(validator(new FormControl('a'.repeat(longestAllowedName)))).toBeNull();
+  });
+
+  it('rejects a name that pushes the path over the maximum', () => {
+    const validator = datasetNameTooLong(parentPath, translate);
+
+    expect(validator(new FormControl('a'.repeat(longestAllowedName + 1)))).toEqual({
       maxlength: {
-        requiredLength: 191,
+        requiredLength: longestAllowedName,
       },
     });
+  });
+
+  it('reports the length it actually enforces, so a name of that length passes', () => {
+    // A parent path long enough that the name gets a single character.
+    const nearlyFullPath = 'a'.repeat(maxDatasetPath - 3);
+    const validator = datasetNameTooLong(nearlyFullPath, translate);
+
+    expect(validator(new FormControl('d'))).toBeNull();
+    expect(validator(new FormControl('dd'))).toEqual({
+      maxlength: {
+        requiredLength: 1,
+      },
+    });
+  });
+
+  it('says the parent path has no room left, rather than "no more than 0"', () => {
+    const validator = datasetNameTooLong('a'.repeat(maxDatasetPath - 2), translate);
+
+    expect(validator(new FormControl('d'))).toEqual({
+      maxlength: {
+        requiredLength: 0,
+        // 199, not 200: the check rejects at `>=`, so that is the longest path it accepts.
+        message: 'The parent path is too long to fit a dataset name under it: a dataset path can be at most 199 characters.',
+      },
+    });
+  });
+
+  it('quotes a limit that the longest accepted path actually reaches', () => {
+    const parent = '/mnt/tank';
+    const validator = datasetNameTooLong(parent, translate);
+    const longestName = 'a'.repeat(maxDatasetPath - parent.length - 2);
+
+    expect(validator(new FormControl(longestName))).toBeNull();
+    expect(`${parent}/${longestName}`).toHaveLength(maxDatasetPath - 1);
+  });
+
+  it('ignores an empty name or a missing parent path', () => {
+    expect(datasetNameTooLong(parentPath, translate)(new FormControl(''))).toBeNull();
+    expect(datasetNameTooLong('', translate)(new FormControl('name'))).toBeNull();
   });
 });

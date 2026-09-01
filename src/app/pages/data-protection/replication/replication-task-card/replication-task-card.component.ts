@@ -34,7 +34,7 @@ import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-aler
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
@@ -179,14 +179,12 @@ export class ReplicationTaskCardComponent extends JobTaskCardBase<ReplicationTas
     }).onSuccess(() => this.reload(), this.destroyRef);
   }
 
-  // ReplicationFormComponent / ReplicationWizardComponent structurally provide the host surface
-  // (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel reads; cast past the
-  // nominal base type.
-  private readonly replicationForm = ReplicationFormComponent as unknown as Type<SidePanelForm>;
-  private readonly replicationWizard = ReplicationWizardComponent as unknown as Type<SidePanelForm>;
+  // ReplicationWizardComponent is footerless and owns its stepper buttons, so it only provides
+  // `SidePanelHostCloseable` (closed + hasUnsavedChanges) rather than extending a panel base.
+  private readonly replicationWizard: Type<SidePanelHostCloseable> = ReplicationWizardComponent;
 
   private editReplicationTask(row: ReplicationTask): void {
-    this.formPanel.open(this.replicationForm, {
+    this.formPanel.open(ReplicationFormComponent, {
       title: this.translate.instant('Edit Replication Task'),
       wide: true,
       inputs: { replicationToEdit: row },

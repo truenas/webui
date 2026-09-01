@@ -4,10 +4,20 @@
   padding: 16px;
 
   .controls {
-    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    padding-top: 16px;
 
-    ix-input {
-      margin: 0;
+    // `tn-form-section`'s body spaces only its DIRECT children, and this whole block is one of
+    // them — so the fields inside it have to space themselves. Anything but a pair of related
+    // checkboxes gets the section's own rhythm, so the SMB Name label isn't glued to the
+    // checkbox above it.
+    tn-form-field + tn-form-field {
+      margin-top: 1.25rem;
+    }
+
+    tn-form-field:has(tn-checkbox) + tn-form-field:has(tn-checkbox) {
+      margin-top: 8px;
     }
   }
 

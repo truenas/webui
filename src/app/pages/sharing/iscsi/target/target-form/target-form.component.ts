@@ -7,7 +7,8 @@ import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioGroupComponent,
+  TnSelectComponent,
 } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -28,7 +29,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -55,6 +55,7 @@ import { LicenseService } from 'app/services/license.service';
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
+    TnRadioGroupComponent,
     TnSelectComponent,
     IxListComponent,
     IxListItemComponent,
@@ -62,7 +63,6 @@ import { LicenseService } from 'app/services/license.service';
     FcPortItemControlsComponent,
     FcMpioInfoBannerComponent,
     TranslateModule,
-    IxRadioGroupComponent,
     TranslateOptionsPipe,
     AsyncPipe,
   ],
@@ -138,7 +138,9 @@ export class TargetFormComponent extends IxFormHostForm implements OnInit {
     }),
   );
 
-  readonly modeOptions$ = of(mapToOptions(iscsiTargetModeNames, this.translate));
+  // A stable array, not an observable: tn-radio-group takes its options synchronously, and
+  // rebuilding them per change-detection pass would re-create the whole option list.
+  protected readonly modeOptions = mapToOptions(iscsiTargetModeNames, this.translate);
 
   protected readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,

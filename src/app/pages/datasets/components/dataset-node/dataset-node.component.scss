@@ -18,10 +18,13 @@
   // Fixed value columns (must match .tree-header exactly so the header labels stay
   // aligned over the columns). Kept narrow — the values (sizes, "Unencrypted", usage
   // icons) never need more than ~80px — so the row fits the tree column without forcing
-  // a horizontal scrollbar when the details panel is open. The name column (auto) still
-  // grows and the tree scrolls only when the content genuinely can't fit (very long
-  // names / deep nesting).
-  grid-template-columns: auto 100px 100px 100px 100px;
+  // a horizontal scrollbar when the details panel is open.
+  //
+  // The name column is `minmax(0, 1fr)`: `1fr` hands it every spare pixel of the row, so
+  // a name that fits is shown in full and only a longer one ellipsizes. The `0` floor is
+  // what keeps that free — a floor in px would exceed the whole row on a laptop, where the
+  // fixed columns already claim 440px of it, and put a horizontal scrollbar under the tree.
+  grid-template-columns: minmax(0, 1fr) 100px 100px 100px 100px;
   min-width: fit-content;
   width: 100%;
 
@@ -56,6 +59,15 @@
     // margin: 0 0 0 -10px;
     // padding: 0 0 0 10px;
     z-index: 1;
+  }
+
+  // The shared tree styles give `.name` `text-overflow: ellipsis`, but they also make it an
+  // inline-flex box, and ellipsis only applies to a block container's own inline content —
+  // so a truncated dataset name was clipped mid-glyph. A dataset name is plain text, so it
+  // can be a block; `align-self` keeps it centred in the stretched cell.
+  .cell-name .name {
+    align-self: center;
+    display: block;
   }
 
   .cell-used span,

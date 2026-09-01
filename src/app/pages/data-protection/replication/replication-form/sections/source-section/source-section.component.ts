@@ -4,7 +4,7 @@ import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angula
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnChipInputComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-  TnRadioComponent, TnSelectComponent,
+  TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -44,6 +44,7 @@ import { TaskService } from 'app/services/task.service';
     TnSelectComponent,
     TnInputComponent,
     TnRadioComponent,
+    TnRadioGroupComponent,
     // ix-explorer / ix-scheduler have no tn-* equivalent yet.
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,

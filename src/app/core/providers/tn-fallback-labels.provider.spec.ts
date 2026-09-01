@@ -40,9 +40,7 @@ describe('provideTnFallbackLabels', () => {
   }
 
   it('exposes a translated value for every TnFallbackLabels key', () => {
-    const labels = setup()();
-
-    expect(labels).toEqual({
+    expect(setup()()).toEqual({
       spinner: 'Loading-en',
       brandedSpinner: 'Loading-en',
       progressBar: 'Progress-en',
@@ -62,6 +60,18 @@ describe('provideTnFallbackLabels', () => {
 
     expect(labelsSignal().spinner).toBe('Loading-fr');
     expect(labelsSignal().progressBar).toBe('Progress-fr');
+    expect(labelsSignal().sidePanel).toBe('Side panel-fr');
+  });
+
+  it('recomputes labels when a bundle is merged after construction', () => {
+    const labelsSignal = setup();
+    expect(labelsSignal().spinner).toBe('Loading-en');
+
+    // The lazy-load case: the language never changes, the bundle for it just arrives late.
+    instantSpy.mockImplementation((key: string) => `${key}-loaded`);
+    translationChange$.next({ lang: 'en', translations: {} });
+
+    expect(labelsSignal().spinner).toBe('Loading-loaded');
   });
 
   it('names an unlabelled tn-spinner from the provided bundle', () => {
