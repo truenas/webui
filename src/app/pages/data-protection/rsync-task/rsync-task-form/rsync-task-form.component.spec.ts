@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness, TnSlideToggleHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -136,7 +136,7 @@ describe('RsyncTaskFormComponent', () => {
     });
 
     it('adds a new rsync task when new form is saved', async () => {
-      await (await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }))).setValue('/mnt/new');
+      await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }))).setValue('/mnt/new');
       await (await loader.getHarness(IxComboboxHarness.with({ label: 'User' }))).setValue('steven');
       await (await getSelect('direction')).selectOption('Pull');
       await (await getInput('desc')).setValue('My new task');
@@ -197,7 +197,7 @@ describe('RsyncTaskFormComponent', () => {
     });
 
     it('shows values for an existing rsync task when it is open for edit', async () => {
-      expect(await (await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }))).getValue()).toBe('/mnt/x/oooo');
+      expect(await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }))).getValue()).toBe('/mnt/x/oooo');
       expect(await (await loader.getHarness(IxComboboxHarness.with({ label: 'User' }))).getValue()).toBe('root');
       expect(await (await getSelect('direction')).getDisplayText()).toBe('Push');
       expect(await (await getInput('desc')).getValue()).toBe('My rsync task');
@@ -215,7 +215,7 @@ describe('RsyncTaskFormComponent', () => {
     });
 
     it('saves updated rsync task when form opened for edit is saved', async () => {
-      await (await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }))).setValue('/mnt/new');
+      await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }))).setValue('/mnt/new');
       await (await getSelect('direction')).selectOption('Push');
 
       await setCheckbox('times', false);
@@ -244,6 +244,9 @@ describe('RsyncTaskFormComponent', () => {
       await (await getInput('remoteport')).setValue('45');
       await (await getInput('remotepath')).setValue('/mnt/path');
       await setCheckbox('validate_rpath', true);
+      await (await loader.getHarness(
+        TnSlideToggleHarness.with({ selector: '[formControlName="ssh_keyscan"]' }),
+      )).check();
 
       saveForm();
 
@@ -257,7 +260,7 @@ describe('RsyncTaskFormComponent', () => {
           mode: RsyncMode.Ssh,
           remoteport: 45,
           remotepath: '/mnt/path',
-          ssh_keyscan: false,
+          ssh_keyscan: true,
           validate_rpath: true,
           ssh_credentials: null,
         },
