@@ -17,12 +17,14 @@
     z-index: 3;
   }
 
+  // Only rendered while rows are checked (bulk actions). Padded to line up with the
+  // search field below it, which the shared master-detail layout pads by 16px.
   .table-header {
     align-items: flex-end;
     color: var(--fg1);
     display: flex;
     justify-content: flex-end;
-    padding: 13px 0;
+    padding: 16px 16px 0;
   }
 
   .controls-cell {

@@ -1,27 +1,26 @@
 @import 'mixins/text';
 
+// Only rendered while rows are checked (bulk actions). Padded to line up with the
+// search field below it, which the shared master-detail layout pads by 16px.
 .table-header {
   align-items: flex-end;
   color: var(--fg1);
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  min-height: 56px;
-
-  h2 {
-    align-items: center;
-    display: flex;
-    margin-top: 20px;
-    min-height: 36px;
-  }
-}
-
-.item-search {
-  margin-bottom: 8px;
+  justify-content: flex-end;
+  padding: 16px 16px 0;
 }
 
 .apps-table {
-  font-size: 12px;
+  // The table fits the master pane (no horizontal scroll), so a long value wraps rather
+  // than being cut short — but only at a space, never mid-word: tn-table's
+  // `.tn-table__cell-content` sets `overflow-wrap: anywhere`, which is what broke
+  // "779.57 kb/s - 779.57 kb/s" into "779.57 kb" / "/s - 779." fragments. Reset it and the
+  // value falls onto a second line at its separator instead. The column widths below are
+  // sized so that second line is the most any cell needs.
+  ::ng-deep .tn-table__cell-content {
+    overflow-wrap: normal;
+    word-break: normal;
+  }
 
   // TEMP: tn-table has no cell-density/font-size input, so the compact spacing the
   // apps table needs is applied by reaching into the private `.tn-table__cell` /
@@ -30,8 +29,14 @@
   ::ng-deep .tn-table__cell,
   ::ng-deep .tn-table__header-cell {
     font-size: 13px;
-    padding-left: 3px;
-    padding-right: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  // Column labels are never worth wrapping — "Block I/O" on two lines would deepen the
+  // header row for every table width.
+  ::ng-deep .tn-table__header-cell {
+    white-space: nowrap;
   }
 
   // TEMP: tn-table has no selection-column width/padding input, so the checkbox
@@ -41,9 +46,24 @@
   // (NAS-141021 library follow-up).
   ::ng-deep .tn-table__select-cell {
     padding-left: 14px;
-    padding-right: 0;
-    width: 30px;
+    padding-right: 6px;
+    width: 38px;
   }
+}
+
+// A stat is made of parts that must stay whole — "226.92 MiB", or the incoming and outgoing
+// halves of a Block I/O / Network pair.
+.stat-part {
+  white-space: nowrap;
+}
+
+// The two halves of a pair sit on their own lines, always. Left to the line breaker the cell
+// was 1, 2 or 3 lines depending on the reading (the separator is its own break opportunity,
+// so "549.48 kb/s" / "-" / "536.45 kb/s" was reachable), and the row height flickered with
+// the numbers. Two fixed lines: each half whole, and the row keeps still.
+.stat-pair {
+  display: flex;
+  flex-direction: column;
 }
 
 .name-cell {
@@ -67,6 +87,8 @@
     }
   }
 
+  // Wraps onto a second line like the other cells (usually at a hyphen), rather than being
+  // trimmed. The clamp caps it at two lines — beyond that the cell's tooltip has the rest.
   .app-name {
     @include line-clamp(2);
     font-weight: bold;
