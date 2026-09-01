@@ -1,204 +1,212 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-    <tn-form-section [heading]="'Basic' | translate">
-      <tn-form-field
-        [label]="'Name' | translate"
-        [required]="true"
-        [tooltip]="nameTooltip()"
-      >
-        <tn-input formControlName="name"></tn-input>
-      </tn-form-field>
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="isEditMode()"
+  [addTitle]="'Add Container' | translate"
+  [editTitle]="'Edit Container' | translate"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
+  <tn-form-section [heading]="'Basic' | translate">
+    <tn-form-field
+      [label]="'Name' | translate"
+      [required]="true"
+      [tooltip]="nameTooltip()"
+    >
+      <tn-input formControlName="name"></tn-input>
+    </tn-form-field>
 
-      <tn-form-field
-        [label]="'Description' | translate"
-        [tooltip]="'Container description' | translate"
-      >
-        <tn-input formControlName="description"></tn-input>
-      </tn-form-field>
+    <tn-form-field
+      [label]="'Description' | translate"
+      [tooltip]="'Container description' | translate"
+    >
+      <tn-input formControlName="description"></tn-input>
+    </tn-form-field>
 
-      <tn-form-field [tooltip]="'Automatically start the container on boot' | translate">
-        <tn-checkbox formControlName="autostart" [label]="'Autostart' | translate"></tn-checkbox>
-      </tn-form-field>
+    <tn-form-field [tooltip]="'Automatically start the container on boot' | translate">
+      <tn-checkbox formControlName="autostart" [label]="'Autostart' | translate"></tn-checkbox>
+    </tn-form-field>
 
-      @if (!isEditMode()) {
-        <div class="image-field">
-          <tn-form-field
-            class="input"
-            [label]="'Image' | translate"
-            [required]="true"
-          >
-            <tn-input formControlName="image" [readonly]="true"></tn-input>
-          </tn-form-field>
-
-          <tn-button
-            testId="browse-images"
-            [label]="'Browse Catalog' | translate"
-            (onClick)="onBrowseCatalogImages()"
-          ></tn-button>
-        </div>
-      }
-
-      @if (!isEditMode() && !hasPreferredPool()) {
+    @if (!isEditMode()) {
+      <div class="image-field">
         <tn-form-field
-          [label]="'Pool' | translate"
+          class="input"
+          [label]="'Image' | translate"
           [required]="true"
-          [tooltip]="'Pool to use for this container' | translate"
         >
-          <tn-select formControlName="pool" [options]="(poolOptions$ | async) ?? []"></tn-select>
+          <tn-input formControlName="image" [readonly]="true"></tn-input>
         </tn-form-field>
-      }
+
+        <tn-button
+          testId="browse-images"
+          [label]="'Browse Catalog' | translate"
+          (onClick)="onBrowseCatalogImages()"
+        ></tn-button>
+      </div>
+    }
+
+    @if (!isEditMode() && !hasPreferredPool()) {
+      <tn-form-field
+        [label]="'Pool' | translate"
+        [required]="true"
+        [tooltip]="'Pool to use for this container' | translate"
+      >
+        <tn-select formControlName="pool" [options]="(poolOptions$ | async) ?? []"></tn-select>
+      </tn-form-field>
+    }
+  </tn-form-section>
+
+  @if (isAdvancedMode()) {
+    @if (!isEditMode() && hasPreferredPool()) {
+      <tn-form-section [heading]="'Storage' | translate">
+        <tn-form-field [tooltip]="'Use the system preferred pool for this container' | translate">
+          <tn-checkbox formControlName="use_preferred_pool" [label]="'Use Preferred Pool' | translate"></tn-checkbox>
+        </tn-form-field>
+
+        @if (!form.controls.use_preferred_pool.value) {
+          <tn-form-field
+            [label]="'Pool' | translate"
+            [required]="true"
+            [tooltip]="'Pool to use for this container' | translate"
+          >
+            <tn-select formControlName="pool" [options]="(poolOptions$ | async) ?? []"></tn-select>
+          </tn-form-field>
+        }
+      </tn-form-section>
+    }
+
+    <tn-form-section [heading]="'CPU Configuration' | translate">
+      <tn-form-field
+        [label]="'CPU Set' | translate"
+        [tooltip]="'List of physical CPU numbers to bind container to (e.g., 0-3,5)' | translate"
+      >
+        <tn-input formControlName="cpuset"></tn-input>
+      </tn-form-field>
     </tn-form-section>
 
-    @if (isAdvancedMode()) {
-      @if (!isEditMode() && hasPreferredPool()) {
-        <tn-form-section [heading]="'Storage' | translate">
-          <tn-form-field [tooltip]="'Use the system preferred pool for this container' | translate">
-            <tn-checkbox formControlName="use_preferred_pool" [label]="'Use Preferred Pool' | translate"></tn-checkbox>
-          </tn-form-field>
+    <tn-form-section [heading]="'Time Configuration' | translate">
+      <tn-form-field
+        [label]="'Container Time' | translate"
+        [tooltip]="'Whether container time should be local time or UTC time' | translate"
+      >
+        <tn-select formControlName="time" [options]="(timeOptions$ | async) ?? []"></tn-select>
+      </tn-form-field>
 
-          @if (!form.controls.use_preferred_pool.value) {
-            <tn-form-field
-              [label]="'Pool' | translate"
-              [required]="true"
-              [tooltip]="'Pool to use for this container' | translate"
-            >
-              <tn-select formControlName="pool" [options]="(poolOptions$ | async) ?? []"></tn-select>
-            </tn-form-field>
-          }
-        </tn-form-section>
+      <tn-form-field
+        [label]="'Shutdown Timeout (seconds)' | translate"
+        [tooltip]="'How many seconds to wait for container to shut down before killing it' | translate"
+      >
+        <tn-input formControlName="shutdown_timeout" [inputType]="InputType.Number"></tn-input>
+      </tn-form-field>
+    </tn-form-section>
+
+    <tn-form-section [heading]="'Init Process' | translate">
+      @if (!isEditMode()) {
+        <tn-form-field
+          [label]="'Init Process' | translate"
+          [tooltip]="'Init process command line' | translate"
+        >
+          <tn-input formControlName="init"></tn-input>
+        </tn-form-field>
       }
 
-      <tn-form-section [heading]="'CPU Configuration' | translate">
-        <tn-form-field
-          [label]="'CPU Set' | translate"
-          [tooltip]="'List of physical CPU numbers to bind container to (e.g., 0-3,5)' | translate"
-        >
-          <tn-input formControlName="cpuset"></tn-input>
-        </tn-form-field>
-      </tn-form-section>
+      <tn-form-field
+        [label]="'Init Working Directory' | translate"
+        [tooltip]="'Init process working directory' | translate"
+      >
+        <tn-input formControlName="initdir"></tn-input>
+      </tn-form-field>
 
-      <tn-form-section [heading]="'Time Configuration' | translate">
-        <tn-form-field
-          [label]="'Container Time' | translate"
-          [tooltip]="'Whether container time should be local time or UTC time' | translate"
-        >
-          <tn-select formControlName="time" [options]="(timeOptions$ | async) ?? []"></tn-select>
-        </tn-form-field>
+      <tn-form-field
+        [label]="'Init User' | translate"
+        [tooltip]="'Init process username' | translate"
+      >
+        <tn-input formControlName="inituser"></tn-input>
+      </tn-form-field>
 
-        <tn-form-field
-          [label]="'Shutdown Timeout (seconds)' | translate"
-          [tooltip]="'How many seconds to wait for container to shut down before killing it' | translate"
-        >
-          <tn-input formControlName="shutdown_timeout" [inputType]="InputType.Number"></tn-input>
-        </tn-form-field>
-      </tn-form-section>
+      <tn-form-field
+        [label]="'Init Group' | translate"
+        [tooltip]="'Init process group' | translate"
+      >
+        <tn-input formControlName="initgroup"></tn-input>
+      </tn-form-field>
+    </tn-form-section>
 
-      <tn-form-section [heading]="'Init Process' | translate">
-        @if (!isEditMode()) {
-          <tn-form-field
-            [label]="'Init Process' | translate"
-            [tooltip]="'Init process command line' | translate"
+    <tn-form-section [heading]="'Environment Variables' | translate">
+      <ix-list
+        formArrayName="environment_variables"
+        [empty]="form.controls.environment_variables.controls.length === 0"
+        [label]="'Environment Variables' | translate"
+        (add)="addEnvironmentVariable()"
+      >
+        @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
+          <ix-list-item
+            [formGroupName]="i"
+            [label]="'Environment Variable' | translate"
+            (delete)="removeEnvironmentVariable(i)"
           >
-            <tn-input formControlName="init"></tn-input>
+            <div class="environment-variable">
+              <tn-form-field [label]="'Name' | translate" [required]="true">
+                <tn-input formControlName="name"></tn-input>
+              </tn-form-field>
+
+              <tn-form-field [label]="'Value' | translate" [required]="true">
+                <tn-input formControlName="value"></tn-input>
+              </tn-form-field>
+            </div>
+          </ix-list-item>
+        }
+      </ix-list>
+    </tn-form-section>
+
+    @if (!isEditMode() && (usbDeviceOptions$ | async)?.length) {
+      <tn-form-section [heading]="helptext.usbDevicesLabel | translate">
+        <ix-checkbox-list
+          formControlName="usb_devices"
+          [label]="helptext.usbDevicesLabel | translate"
+          [tooltip]="helptext.usbDevicesTooltip | translate"
+          [options]="usbDeviceOptions$"
+        ></ix-checkbox-list>
+      </tn-form-section>
+    }
+
+    @if (!isEditMode()) {
+      <tn-form-section [heading]="'ID Mapping' | translate">
+        <tn-form-field
+          [label]="'ID Map Type' | translate"
+          [tooltip]="'Controls how user/group IDs are mapped between the container and the host' | translate"
+        >
+          <tn-select formControlName="idmap_type" [options]="(idmapTypeOptions$ | async) ?? []"></tn-select>
+        </tn-form-field>
+
+        @if (isIsolatedIdmap()) {
+          <tn-form-field
+            [label]="'ID Map Slice' | translate"
+            [tooltip]="'Optional slice number (1-999) for isolated ID mapping. Leave empty to let the system auto-assign a unique slice.' | translate"
+          >
+            <tn-input formControlName="idmap_slice" [inputType]="InputType.Number"></tn-input>
           </tn-form-field>
         }
 
-        <tn-form-field
-          [label]="'Init Working Directory' | translate"
-          [tooltip]="'Init process working directory' | translate"
-        >
-          <tn-input formControlName="initdir"></tn-input>
-        </tn-form-field>
-
-        <tn-form-field
-          [label]="'Init User' | translate"
-          [tooltip]="'Init process username' | translate"
-        >
-          <tn-input formControlName="inituser"></tn-input>
-        </tn-form-field>
-
-        <tn-form-field
-          [label]="'Init Group' | translate"
-          [tooltip]="'Init process group' | translate"
-        >
-          <tn-input formControlName="initgroup"></tn-input>
-        </tn-form-field>
-      </tn-form-section>
-
-      <tn-form-section [heading]="'Environment Variables' | translate">
-        <ix-list
-          formArrayName="environment_variables"
-          [empty]="form.controls.environment_variables.controls.length === 0"
-          [label]="'Environment Variables' | translate"
-          (add)="addEnvironmentVariable()"
-        >
-          @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
-            <ix-list-item
-              [formGroupName]="i"
-              [label]="'Environment Variable' | translate"
-              (delete)="removeEnvironmentVariable(i)"
-            >
-              <div class="environment-variable">
-                <tn-form-field [label]="'Name' | translate" [required]="true">
-                  <tn-input formControlName="name"></tn-input>
-                </tn-form-field>
-
-                <tn-form-field [label]="'Value' | translate" [required]="true">
-                  <tn-input formControlName="value"></tn-input>
-                </tn-form-field>
-              </div>
-            </ix-list-item>
+        <div aria-live="polite">
+          @if (isPrivilegedIdmap()) {
+            <tn-banner
+              type="warning"
+              [heading]="'Security Risk' | translate"
+              [message]="'Privileged containers share the host UID/GID space. This is a security risk and should only be used when absolutely necessary.' | translate"
+            ></tn-banner>
           }
-        </ix-list>
-      </tn-form-section>
-
-      @if (!isEditMode() && (usbDeviceOptions$ | async)?.length) {
-        <tn-form-section [heading]="helptext.usbDevicesLabel | translate">
-          <ix-checkbox-list
-            formControlName="usb_devices"
-            [label]="helptext.usbDevicesLabel | translate"
-            [tooltip]="helptext.usbDevicesTooltip | translate"
-            [options]="usbDeviceOptions$"
-          ></ix-checkbox-list>
-        </tn-form-section>
-      }
-
-      @if (!isEditMode()) {
-        <tn-form-section [heading]="'ID Mapping' | translate">
-          <tn-form-field
-            [label]="'ID Map Type' | translate"
-            [tooltip]="'Controls how user/group IDs are mapped between the container and the host' | translate"
-          >
-            <tn-select formControlName="idmap_type" [options]="(idmapTypeOptions$ | async) ?? []"></tn-select>
-          </tn-form-field>
-
-          @if (isIsolatedIdmap()) {
-            <tn-form-field
-              [label]="'ID Map Slice' | translate"
-              [tooltip]="'Optional slice number (1-999) for isolated ID mapping. Leave empty to let the system auto-assign a unique slice.' | translate"
-            >
-              <tn-input formControlName="idmap_slice" [inputType]="InputType.Number"></tn-input>
-            </tn-form-field>
-          }
-
-          <div aria-live="polite">
-            @if (isPrivilegedIdmap()) {
-              <tn-banner
-                type="warning"
-                [heading]="'Security Risk' | translate"
-                [message]="'Privileged containers share the host UID/GID space. This is a security risk and should only be used when absolutely necessary.' | translate"
-              ></tn-banner>
-            }
-          </div>
-        </tn-form-section>
-      }
-
-      <tn-form-section [heading]="'Capabilities' | translate">
-        <tn-form-field
-          [label]="'Capabilities Policy' | translate"
-          [tooltip]="'Default rules for capabilities: Default (allow most capabilities but drop dangerous ones) or Allow All (keep all capabilities)' | translate"
-        >
-          <tn-select formControlName="capabilities_policy" [options]="(capabilitiesPolicyOptions$ | async) ?? []"></tn-select>
-        </tn-form-field>
+        </div>
       </tn-form-section>
     }
-  </form>
+
+    <tn-form-section [heading]="'Capabilities' | translate">
+      <tn-form-field
+        [label]="'Capabilities Policy' | translate"
+        [tooltip]="'Default rules for capabilities: Default (allow most capabilities but drop dangerous ones) or Allow All (keep all capabilities)' | translate"
+      >
+        <tn-select formControlName="capabilities_policy" [options]="(capabilitiesPolicyOptions$ | async) ?? []"></tn-select>
+      </tn-form-field>
+    </tn-form-section>
+  }
+</ix-form>

@@ -1,23 +1,23 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import {
-  finalize,
-} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
+import {
+  IxFormHostForm,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-global-config-form',
@@ -25,6 +25,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrl: './global-config-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnSelectComponent,
@@ -34,20 +35,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxIpInputWithNetmaskComponent,
   ],
 })
-export class GlobalConfigFormComponent extends SidePanelForm implements OnInit {
+export class GlobalConfigFormComponent extends IxFormHostForm implements OnInit {
   private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
-  private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private errorHandler = inject(ErrorHandlerService);
 
   /**
    * LXC role is required for global container configuration (lxc.update, lxc.config).
    * Public because the `<tn-side-panel>` host reads it to gate its footer Save.
    */
   readonly requiredRoles = [Role.LxcConfigWrite];
-  protected isFormLoading = signal(false);
   protected readonly autoBridge = '[AUTO]';
 
   protected readonly form = this.formBuilder.nonNullable.group({
@@ -58,8 +56,6 @@ export class GlobalConfigFormComponent extends SidePanelForm implements OnInit {
   }, {
     validators: [],
   });
-
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   /**
    * Wrapper for IP/CIDR validator that properly handles null values.
@@ -112,8 +108,27 @@ export class GlobalConfigFormComponent extends SidePanelForm implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isFormLoading.set(true);
+    // Wired before the load: `loadFormConfig`'s patch replays on retry, so a subscription set up
+    // there would be registered twice.
+    this.setUpValidatorWiring();
 
+    // Fetch fresh config from API to ensure we have the latest values.
+    this.loadFormConfig(this.api.call('lxc.config'), (config) => {
+      this.form.patchValue({
+        // Transform empty string from API to [AUTO] for the form
+        bridge: config.bridge || this.autoBridge,
+        v4_network: config.v4_network,
+        v6_network: config.v6_network,
+        preferred_pool: config.preferred_pool,
+      });
+
+      // Set initial validators based on bridge value
+      this.updateNetworkValidators();
+      this.form.markAsUntouched();
+    });
+  }
+
+  private setUpValidatorWiring(): void {
     // Update network field validators when bridge changes
     this.form.controls.bridge.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
@@ -138,25 +153,6 @@ export class GlobalConfigFormComponent extends SidePanelForm implements OnInit {
         // Update form validation without emitEvent to trigger validator check
         this.form.updateValueAndValidity();
       }
-    });
-
-    // Fetch fresh config from API to ensure we have the latest values
-    this.api.call('lxc.config').pipe(
-      this.errorHandler.withErrorHandler(),
-      finalize(() => this.isFormLoading.set(false)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((config) => {
-      this.form.patchValue({
-        // Transform empty string from API to [AUTO] for the form
-        bridge: config.bridge || this.autoBridge,
-        v4_network: config.v4_network,
-        v6_network: config.v6_network,
-        preferred_pool: config.preferred_pool,
-      });
-
-      // Set initial validators based on bridge value
-      this.updateNetworkValidators();
-      this.form.markAsUntouched();
     });
   }
 
@@ -185,9 +181,7 @@ export class GlobalConfigFormComponent extends SidePanelForm implements OnInit {
     this.form.updateValueAndValidity({ emitEvent: false });
   }
 
-  protected onSubmit(): void {
-    this.isFormLoading.set(true);
-
+  protected handleSubmit = (): SubmitResult => {
     const controls = this.form.controls;
     const values: ContainerGlobalConfig = {
       // Transform [AUTO] back to empty string for the API
@@ -198,15 +192,9 @@ export class GlobalConfigFormComponent extends SidePanelForm implements OnInit {
       preferred_pool: controls.preferred_pool.value,
     };
 
-    this.api.call('lxc.update', [values])
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        finalize(() => this.isFormLoading.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Container settings updated'));
-        this.close(true);
-      });
-  }
+    return {
+      request$: this.api.call('lxc.update', [values]),
+      successMessage: this.translate.instant('Container settings updated'),
+    };
+  };
 }

@@ -12,43 +12,28 @@ ix-fake-progress-bar {
   right: 0;
 }
 
+// The dialog title now lives in `tn-dialog-shell`'s own header, so this row carries
+// nothing but the help icon.
 .header {
   align-items: center;
   display: flex;
   justify-content: space-between;
 
-  h1 {
-    align-items: center;
-    display: flex;
-    gap: 8px;
-    margin-bottom: 0;
-    padding-top: 20px;
+  .help-icon {
+    cursor: pointer;
+    color: var(--fg2);
+    outline: none;
 
-    .help-icon {
-      cursor: pointer;
-      margin-bottom: 4px;
-      color: var(--fg2);
-      outline: none;
-
-      &:focus-visible {
-        outline: 2px solid var(--primary);
-        outline-offset: 2px;
-      }
+    &:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
     }
-  }
-
-  button {
-    margin-right: 20px;
   }
 }
 
 .type-selector {
   display: block;
   margin-bottom: 7px;
-}
-
-.dialog-content {
-  padding-top: 18px;
 }
 
 .loading-container {

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChanges, OnInit, output, inject,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnChanges, OnInit, output, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -7,16 +7,24 @@ import {
 } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormSectionComponent, TnIconComponent, TnTooltipDirective,
+  InputType,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnIconComponent,
+  TnInputComponent,
+  TnTooltipDirective,
 } from '@truenas/ui-components';
 import { Observable, switchMap } from 'rxjs';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import { directIdMapping } from 'app/interfaces/user.interface';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ViewType,
@@ -35,12 +43,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormsModule,
     ReactiveFormsModule,
     TranslateModule,
+    IxFormComponent,
     TnCheckboxComponent,
     TnButtonComponent,
+    TnFormFieldComponent,
     TnFormSectionComponent,
     TnIconComponent,
+    TnInputComponent,
     TnTooltipDirective,
-    IxInputComponent,
   ],
 })
 export class NewMappingFormComponent implements OnChanges, OnInit {
@@ -49,12 +59,12 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private formBuilder = inject(NonNullableFormBuilder);
-  private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
 
   readonly type = input.required<ViewType>();
   readonly mappingAdded = output();
 
+  protected readonly InputType = InputType;
   protected readonly ViewType = ViewType;
   protected readonly helptext = containersHelptext;
 
@@ -67,14 +77,14 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
   protected readonly isUserType = computed(() => this.type() === ViewType.Users);
 
   ngOnChanges(): void {
-    this.resetFormOnTypeChanges();
+    this.resetForm();
   }
 
   ngOnInit(): void {
     this.handleMapDirectlyChanges();
   }
 
-  protected submit(): void {
+  protected handleSubmit = (): SubmitResult => {
     const values = this.form.value;
     const update = {
       userns_idmap: values.mapDirectly ? directIdMapping : values.instanceUidOrGid,
@@ -104,20 +114,22 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
       );
     }
 
-    request$
-      .pipe(
+    return {
+      // Kept inside `request$` so the existing show-modal-and-swallow behaviour survives: the
+      // handler returns EMPTY, which `<ix-form>`'s completion safety net handles.
+      request$: request$.pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        this.resetFormOnTypeChanges();
+      ),
+      successMessage: this.translate.instant('Mapping added'),
+      onSuccess: () => {
+        this.resetForm();
         this.mappingAdded.emit();
-        this.snackbar.success(this.translate.instant('Mapping added'));
-      });
-  }
+      },
+    };
+  };
 
-  private resetFormOnTypeChanges(): void {
+  private resetForm(): void {
     this.form.setValue({
       mapDirectly: true,
       instanceUidOrGid: null,

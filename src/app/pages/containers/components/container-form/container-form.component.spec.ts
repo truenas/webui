@@ -16,6 +16,7 @@ import {
 } from 'app/enums/container.enum';
 import { AvailableUsb, Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
@@ -116,6 +117,7 @@ describe('ContainerFormComponent', () => {
       mockProvider(SnackbarService, {
         success: jest.fn(),
       }),
+      ...ixFormTestingProviders(),
     ],
   });
 
@@ -215,6 +217,7 @@ describe('ContainerFormComponent', () => {
         }),
         mockProvider(DialogService),
         mockProvider(Router),
+        ...ixFormTestingProviders(),
       ],
     });
 
@@ -278,6 +281,7 @@ describe('ContainerFormComponent', () => {
           mockProvider(TnDialog),
           mockProvider(DialogService),
           mockProvider(Router),
+          ...ixFormTestingProviders(),
         ],
       });
 
@@ -423,6 +427,7 @@ describe('ContainerFormComponent', () => {
         mockProvider(DialogService),
         mockProvider(Router),
         mockProvider(SnackbarService),
+        ...ixFormTestingProviders(),
       ],
     });
 
@@ -567,6 +572,7 @@ describe('ContainerFormComponent', () => {
         mockProvider(SnackbarService, {
           success: jest.fn(),
         }),
+        ...ixFormTestingProviders(),
       ],
     });
 
@@ -659,6 +665,7 @@ describe('ContainerFormComponent', () => {
         mockProvider(TnDialog),
         mockProvider(DialogService),
         mockProvider(Router),
+        ...ixFormTestingProviders(),
       ],
     });
 

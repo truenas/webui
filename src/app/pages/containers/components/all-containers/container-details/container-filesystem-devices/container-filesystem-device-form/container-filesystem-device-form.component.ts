@@ -1,7 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, input,
+  ChangeDetectionStrategy, Component, OnInit, inject, input,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -18,9 +17,12 @@ import {
 } from 'app/interfaces/container.interface';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  IxFormHostForm,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   containerPathValidator,
@@ -36,6 +38,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
   imports: [
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
+    IxFormComponent,
     TnInputComponent,
     ReactiveFormsModule,
     TranslateModule,
@@ -43,13 +46,10 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TnFormFieldComponent,
   ],
 })
-export class ContainerFilesystemDeviceFormComponent extends SidePanelForm implements OnInit {
-  private destroyRef = inject(DestroyRef);
+export class ContainerFilesystemDeviceFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private errorHandler = inject(FormErrorHandlerService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private snackbar = inject(SnackbarService);
   private filesystem = inject(FilesystemService);
 
   /** The device being edited; absent when adding. Supplied by the `<tn-side-panel>` host. */
@@ -60,16 +60,12 @@ export class ContainerFilesystemDeviceFormComponent extends SidePanelForm implem
   /** Public because the `<tn-side-panel>` host reads it to gate its footer Save. */
   readonly requiredRoles = [Role.ContainerDeviceWrite];
 
-  protected readonly isFormLoading = signal(false);
-
   readonly fileProvider = this.filesystem.getFilesystemNodeProvider();
 
   protected form = this.formBuilder.nonNullable.group({
     source: ['', [Validators.required, poolPathValidator()]],
     target: ['', [Validators.required, containerPathValidator()]],
   });
-
-  readonly canSubmit = this.trackCanSubmit(this.isFormLoading);
 
   ngOnInit(): void {
     const disk = this.disk();
@@ -82,22 +78,12 @@ export class ContainerFilesystemDeviceFormComponent extends SidePanelForm implem
     }
   }
 
-  protected onSubmit(): void {
-    this.isFormLoading.set(true);
-    this.prepareRequest()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        complete: () => {
-          this.snackbar.success(this.translate.instant('Filesystem Device was saved'));
-          this.isFormLoading.set(false);
-          this.close(true);
-        },
-        error: (error: unknown) => {
-          this.errorHandler.handleValidationErrors(error, this.form);
-          this.isFormLoading.set(false);
-        },
-      });
-  }
+  protected handleSubmit = (): SubmitResult => {
+    return {
+      request$: this.prepareRequest(),
+      successMessage: this.translate.instant('Filesystem Device was saved'),
+    };
+  };
 
   private prepareRequest(): Observable<unknown> {
     const formValue = this.form.getRawValue();

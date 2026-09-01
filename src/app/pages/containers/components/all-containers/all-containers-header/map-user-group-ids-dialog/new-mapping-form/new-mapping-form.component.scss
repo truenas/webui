@@ -6,7 +6,13 @@
 :host tn-form-section {
   margin-top: 0;
 
-  form.form {
+  // `<ix-form>` owns the `<form>` element, and its host has no display of its own; the row
+  // layout therefore lives on the projected wrapper rather than on the form itself.
+  ix-form {
+    display: block;
+  }
+
+  .form-row {
     align-items: flex-start;
     display: flex;
     gap: 12px;
