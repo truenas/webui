@@ -170,7 +170,10 @@
         (add)="addBindIp()"
       >
         @for (address of form.controls.bindip.controls; track address; let i = $index) {
-          <!-- `testId` keeps the `icon-button-remove-from-list` value the ix-list rows shipped. -->
+          <!-- `testId` keeps the `button-remove-from-list` value the ix-list rows shipped: both
+               render it on a `tn-icon-button`, which declares the `button` prefix. The Add button
+               needs no binding — `tn-form-list` composes it as `['add-item', label()]`, the very
+               expression ix-list used, so it stays `button-add-item-bind-ip-addresses`. -->
           <tn-form-list-item
             testId="remove-from-list"
             [formGroupName]="i"

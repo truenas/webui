@@ -6,7 +6,7 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import {
   TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
@@ -155,6 +155,24 @@ describe('ServiceSshComponent', () => {
     expect(api.call).toHaveBeenCalledWith('ssh.update', [
       expect.objectContaining({ password_login_groups: ['dummy-group', 'another-group'] }),
     ]);
+  });
+
+  // The async existence check is the one behaviour that moved out of ix-group-chips and into
+  // this component, so it needs a case where it actually fails: the suite-wide
+  // `getGroupByNameCached` mock answers `of(null)` for an unknown group, which the validator
+  // reads as "exists", and every other test would pass with the validator not wired at all.
+  it('blocks Save while a typed group does not exist on the system', () => {
+    // `Once`, so the erroring lookup cannot leak into the submit tests below: the validator
+    // makes exactly one call per group, and this control holds exactly one.
+    const lookup = jest.spyOn(spectator.inject(UserService), 'getGroupByNameCached')
+      .mockImplementationOnce(() => throwError(() => new Error('Group not found')));
+
+    const groups = spectator.component.form.controls.password_login_groups;
+    groups.setValue(['ghost-group']);
+
+    expect(lookup).toHaveBeenCalledWith('ghost-group');
+    expect(groups.hasError('groupsDoNotExist')).toBe(true);
+    expect(spectator.component.canSubmit()).toBe(false);
   });
 
   it('suggests groups from the directory-services cache as the user types', async () => {
