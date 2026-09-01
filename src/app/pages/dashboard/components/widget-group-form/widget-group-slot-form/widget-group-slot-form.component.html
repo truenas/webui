@@ -1,7 +1,7 @@
 <form [formGroup]="form">
   <div class="widget-options-container">
-    <ix-fieldset
-      [title]="'Card {slot} Settings' | translate: { slot: slot().slotPosition + 1 }"
+    <tn-form-section
+      [heading]="'Card {slot} Settings' | translate: { slot: slot().slotPosition + 1 }"
     >
       <tn-form-field class="half-width" [label]="'Card Category' | translate" [required]="true">
         <tn-select
@@ -22,6 +22,6 @@
         </tn-form-field>
       }
       <ng-container #settingsContainer></ng-container>
-    </ix-fieldset>
+    </tn-form-section>
   </div>
 </form>
