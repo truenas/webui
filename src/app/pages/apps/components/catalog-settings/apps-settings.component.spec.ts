@@ -18,7 +18,6 @@ import {
   IxIpInputWithNetmaskHarness,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
@@ -138,8 +137,10 @@ describe('AppsSettingsComponent', () => {
   // The list entries repeat their labels, so each control is addressed by DOM position within
   // its kind rather than through a by-label index that would collapse the three mirrors into one.
   it('shows current docker settings', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    expect(await form.getValues()).toMatchObject({ Base: '172.17.0.0/12' });
+    // Base's label row belongs to its wrapping `tn-form-field`, so the control itself renders no
+    // ix-label for `IxFormHarness` to index it under — read it through its own harness.
+    const bases = await loader.getAllHarnesses(IxIpInputWithNetmaskHarness);
+    expect(await bases[0].getValue()).toBe('172.17.0.0/12');
 
     const sizes = await loader.getAllHarnesses(TnFormControlHarness.with({ label: 'Size' }));
     expect(await sizes[0].getValue()).toBe('12');

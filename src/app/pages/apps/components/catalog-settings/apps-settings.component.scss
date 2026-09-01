@@ -2,8 +2,10 @@
   margin-bottom: 0;
 }
 
+// Both fields are `tn-form-field`s now, so their label rows are identical and aligning the tops
+// lines the two boxes up.
 .address-pool {
-  align-items: baseline;
+  align-items: flex-start;
   column-gap: 20px;
   display: flex;
 

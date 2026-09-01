@@ -12,6 +12,14 @@
     margin-bottom: 0;
     margin-top: 0;
   }
+
+  // Inside a `tn-form-field` the field owns the label row and the spacing around the control, so
+  // this component's own ix-* rhythm would stack on top of it.
+  :host-context(tn-form-field) & {
+    margin-bottom: 0;
+    margin-top: 0;
+    padding: 0;
+  }
 }
 
 // One bordered box holding: address input | "/" | netmask dropdown — full width, the address

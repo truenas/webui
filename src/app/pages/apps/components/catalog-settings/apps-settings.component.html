@@ -28,13 +28,17 @@
           (delete)="removeAddressPool(i)"
         >
           <div class="address-pool">
-            <ix-ip-input-with-netmask
+            <tn-form-field
               class="base"
-              formControlName="base"
               [label]="'Base' | translate"
               [required]="true"
               [tooltip]="helptext.dockerSettings.addressPoolsBase | translate"
-            ></ix-ip-input-with-netmask>
+            >
+              <ix-ip-input-with-netmask
+                formControlName="base"
+                [required]="true"
+              ></ix-ip-input-with-netmask>
+            </tn-form-field>
 
             <tn-form-field
               class="size"
