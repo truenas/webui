@@ -56,6 +56,9 @@ describe('FormSidePanelContainerComponent busy overlay', () => {
 
     fixture = TestBed.createComponent(FormSidePanelContainerComponent);
     fixture.componentRef.setInput('portal', new ComponentPortal(BusyTestFormComponent));
+    // A panel without a title has no accessible name, which the library warns about in
+    // dev mode; production callers always pass one.
+    fixture.componentRef.setInput('title', 'Busy Overlay Form');
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
   });

@@ -1,9 +1,10 @@
-tn-form-field,
-tn-checkbox {
-  display: block;
-  margin-bottom: 2rem;
-}
-
-tn-form-field tn-checkbox {
-  margin-bottom: 0;
+// The library's banners colour their border and icon from --tn-warning / --tn-info,
+// falling back to a fixed hex that ignores the theme when neither is defined, and webui
+// hasn't wired the global --tn-* bridge yet. Mapping them on the host themes all three
+// banners this form can show — the legacy-purpose warning below, <ix-smb-users-warning>,
+// and <ix-smb-extensions-warning> — from one source, since custom properties inherit
+// down the DOM regardless of view encapsulation.
+:host {
+  --tn-info: var(--blue);
+  --tn-warning: var(--orange);
 }

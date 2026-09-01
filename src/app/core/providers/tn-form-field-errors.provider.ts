@@ -2,7 +2,11 @@ import { inject, Provider } from '@angular/core';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
-import { TN_FORM_FIELD_ERRORS, type TnFormFieldErrorResolver } from '@truenas/ui-components';
+import {
+  TN_FORM_FIELD_DISMISSIBLE_ERRORS,
+  TN_FORM_FIELD_ERRORS,
+  type TnFormFieldErrorResolver,
+} from '@truenas/ui-components';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import {
   ixManualValidateErrorKey, manualValidateErrorKey, manualValidateErrorMsgKey,
@@ -179,5 +183,26 @@ export function provideTnFormFieldErrors(): Provider {
         return translateError(translate, errorKey, control?.errors ?? { [errorKey]: errorValue });
       };
     },
+  };
+}
+
+/**
+ * App-wide list of error keys a user may close.
+ *
+ * Only the manual validation keys: a server-side rejection is not something the
+ * user can retype their way out of, so without a close button the message sits
+ * under the field until the control changes. The legacy `ix-errors` component
+ * gave every such message a close icon; wiring the keys once here keeps that
+ * behaviour for every `tn-form-field` and `tn-form-errors` in the app, rather
+ * than needing the input on each of hundreds of fields.
+ *
+ * `FormErrorHandlerService` writes all three keys together, and the resolver
+ * above reads across them, so all three are listed — whichever ends up active is
+ * the one carrying the message on screen.
+ */
+export function provideTnFormFieldDismissibleErrors(): Provider {
+  return {
+    provide: TN_FORM_FIELD_DISMISSIBLE_ERRORS,
+    useValue: [...manualValidateKeys],
   };
 }

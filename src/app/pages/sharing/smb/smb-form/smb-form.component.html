@@ -38,7 +38,13 @@
     </tn-form-field>
 
     @if (showLegacyWarning()) {
-      <ix-warning [message]="legacyWarningMessage"></ix-warning>
+      <tn-banner
+        type="warning"
+        [message]="
+          'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.'
+            | translate
+        "
+      ></tn-banner>
     }
 
     @if (showExtensionsWarning()) {
@@ -168,7 +174,7 @@
         ></tn-checkbox>
       </tn-form-field>
 
-      <ix-errors [control]="form.controls.audit"></ix-errors>
+      <tn-form-errors [control]="form.controls.audit"></tn-form-errors>
 
       @if (form.value.audit.enable) {
         <tn-form-field
@@ -225,13 +231,23 @@
           (form.controls.timemachine_quota.enabled && form.value.timemachine && form.controls.timemachine.enabled) ||
           (form.controls.timemachine_quota.enabled && !form.controls.timemachine.enabled)
         ) {
-          <ix-input
-            formControlName="timemachine_quota"
+          <tn-form-field
             [label]="helptextSharingSmb.timemachineQuotaLabel | translate"
             [tooltip]="helptextSharingSmb.timemachineQuotaTooltip | translate"
-            [format]="formatter.memorySizeFormatting"
-            [parse]="formatter.memorySizeParsing"
-          ></ix-input>
+          >
+            <!--
+              `sizeDefaultUnit` is the library default too, but it is spelled out here
+              the way the other Size fields do: it is the MiB assumption a unitless
+              entry relies on, and it should not silently follow a library default
+              change.
+            -->
+            <tn-input
+              testId="timemachine-quota"
+              formControlName="timemachine_quota"
+              sizeDefaultUnit="MiB"
+              [inputType]="InputType.Size"
+            ></tn-input>
+          </tn-form-field>
         }
 
         @if (form.controls.afp.enabled) {

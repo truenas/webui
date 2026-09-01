@@ -7,7 +7,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnAutocompleteComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
+  TnAutocompleteComponent, TnFormErrorsComponent, TnFormFieldComponent, TnFormListComponent,
+  TnFormListItemComponent, TnFormSectionComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { isNumber } from 'lodash-es';
 import {
@@ -24,13 +25,10 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -61,10 +59,10 @@ interface FormAclEntry {
     TnFormFieldComponent,
     TnFormSectionComponent,
     TnSelectComponent,
-    IxListComponent,
-    IxListItemComponent,
+    TnFormListComponent,
+    TnFormListItemComponent,
+    TnFormErrorsComponent,
     TnAutocompleteComponent,
-    IxErrorsComponent,
     TranslateModule,
   ],
 })
