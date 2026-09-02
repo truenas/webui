@@ -8,6 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { Subject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -27,7 +28,6 @@ import { mockSharingTierService } from 'app/pages/sharing/components/testing/moc
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 const shares: Partial<NfsShare>[] = [
   {
@@ -54,6 +54,7 @@ const commonImports = [
 
 const commonProviders = [
   mockAuth(),
+  mockEntitlements(),
   mockProvider(EmptyService),
   mockProvider(SlideInRef, slideInRef),
   mockProvider(DialogService, {
@@ -64,10 +65,6 @@ const commonProviders = [
   }),
   provideMockStore({
     selectors: [
-      {
-        selector: selectIsEnterprise,
-        value: true,
-      },
       {
         selector: selectPreferences,
         value: {},

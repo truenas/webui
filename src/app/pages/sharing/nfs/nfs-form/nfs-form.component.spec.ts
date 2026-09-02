@@ -10,6 +10,8 @@ import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
@@ -33,9 +35,9 @@ import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.compon
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('NfsFormComponent', () => {
   const existingShare = {
@@ -114,8 +116,14 @@ describe('NfsFormComponent', () => {
             value: [],
           },
           {
-            selector: selectIsEnterprise,
-            value: false,
+            selector: selectEntitlements,
+            value: {
+              [EntitlementFeature.NfsSnapshot]: {
+                entitled: false,
+                reason: EntitlementReason.KeyMissing,
+                message: "This system's license does not include NFS snapshot exposure.",
+              },
+            },
           },
         ],
       }),
@@ -185,7 +193,8 @@ describe('NfsFormComponent', () => {
 
       expect(await form.getControl('Expose Snapshots')).not.toBeTruthy();
 
-      mockStore$.overrideSelector(selectIsEnterprise, true);
+      mockStore$.overrideSelector(selectEntitlements, {});
+      mockStore$.refreshState();
       mockStore$.refreshState();
 
       await form.fillForm({
