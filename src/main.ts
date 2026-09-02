@@ -8,6 +8,7 @@ import {
   provideNativeDateAdapter,
 } from '@angular/material/core';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipDefaultOptions } from '@angular/material/tooltip';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import {
   withPreloading,
@@ -112,6 +113,31 @@ bootstrapApplication(AppComponent, {
         verticalPosition: 'top',
         duration: 3000,
       } as MatSnackBarConfig,
+    },
+    {
+      /**
+       * A tooltip is placed clear of its own trigger, so the area it covers belongs to whatever
+       * sits next to that trigger - on the dataset Details card, the path row's "Copy to Clipboard"
+       * tooltip lands squarely on the Storage Tier badge and its "Change" button one row up.
+       *
+       * Material's tooltips are interactive by default: the trigger's `mouseleave` deliberately
+       * skips `hide()` when the pointer moves onto the tooltip itself, so a panel you walk into on
+       * the way to the control underneath stays up - and, being `pointer-events: auto`, swallows
+       * the click. The only way out is to retreat and re-approach along a path that misses the
+       * panel, which is exactly the "different angles" workaround NAS-142236 reports.
+       *
+       * That interactivity only buys the ability to select tooltip text, which nothing here needs.
+       * Turning it off adds `mat-mdc-tooltip-panel-non-interactive` (`pointer-events: none`), so a
+       * hover tooltip stops being a hit target and `mouseleave` fires normally against whatever is
+       * really underneath.
+       */
+      provide: MAT_TOOLTIP_DEFAULT_OPTIONS,
+      useValue: {
+        showDelay: 0,
+        hideDelay: 0,
+        touchendHideDelay: 1500,
+        disableTooltipInteractivity: true,
+      } as MatTooltipDefaultOptions,
     },
     {
       provide: ErrorHandler,
