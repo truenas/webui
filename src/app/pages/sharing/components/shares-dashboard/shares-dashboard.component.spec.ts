@@ -11,8 +11,8 @@ import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboa
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { WebShareCardComponent } from 'app/pages/sharing/components/shares-dashboard/webshare-card/webshare-card.component';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
-import { LicenseService } from 'app/services/license.service';
 
 describe('SharesDashboardComponent', () => {
   MockInstance.scope();
@@ -47,8 +47,8 @@ describe('SharesDashboardComponent', () => {
   function setup(shouldShowWebshare = true): void {
     spectator = createComponent({
       providers: [
-        mockProvider(LicenseService, {
-          shouldShowWebshare$: of(shouldShowWebshare),
+        mockProvider(EntitlementsService, {
+          entitled: () => () => shouldShowWebshare,
         }),
       ],
     });
