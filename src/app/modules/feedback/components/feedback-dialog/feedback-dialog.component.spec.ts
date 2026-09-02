@@ -9,6 +9,8 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
@@ -22,7 +24,7 @@ import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-b
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 
 describe('FeedbackDialogComponent', () => {
   let spectator: Spectator<FeedbackDialog>;
@@ -61,6 +63,15 @@ describe('FeedbackDialogComponent', () => {
       },
       provideMockStore({
         initialState: {
+          entitlements: {
+            entitlements: {
+              [EntitlementFeature.Support]: {
+                entitled: false,
+                reason: EntitlementReason.NoLicense,
+                message: 'This system is not licensed to use support.',
+              },
+            },
+          },
           systemInfo: {
             systemInfo: null,
             productType: ProductType.CommunityEdition,
@@ -152,9 +163,9 @@ describe('FeedbackDialogComponent', () => {
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
       });
 
-      it('shows FileTicketLicensed form when Bug is selected on an enterprise system', async () => {
+      it('shows FileTicketLicensed form when Bug is selected and the system is entitled to SUPPORT', async () => {
         isEnterprise$.next(true);
-        store$.overrideSelector(selectIsEnterprise, true);
+        store$.overrideSelector(selectEntitlements, {});
         store$.refreshState();
         spectator.detectChanges();
 
@@ -172,7 +183,13 @@ describe('FeedbackDialogComponent', () => {
       it('disables dialog close when loading is set to true', async () => {
         // Reset to non-enterprise to ensure FileTicketComponent is shown
         isEnterprise$.next(false);
-        store$.overrideSelector(selectIsEnterprise, false);
+        store$.overrideSelector(selectEntitlements, {
+          [EntitlementFeature.Support]: {
+            entitled: false,
+            reason: EntitlementReason.NoLicense,
+            message: 'This system is not licensed to use support.',
+          },
+        });
         store$.refreshState();
         spectator.detectChanges();
 
@@ -202,7 +219,13 @@ describe('FeedbackDialogComponent', () => {
     });
     await setupTest();
     isReviewAllowed$.next(true);
-    store$.overrideSelector(selectIsEnterprise, false);
+    store$.overrideSelector(selectEntitlements, {
+      [EntitlementFeature.Support]: {
+        entitled: false,
+        reason: EntitlementReason.NoLicense,
+        message: 'This system is not licensed to use support.',
+      },
+    });
     store$.refreshState();
     spectator.detectChanges();
 

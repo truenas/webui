@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   Observable, of,
 } from 'rxjs';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
@@ -22,8 +22,7 @@ import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { EntitlementsService } from 'app/services/entitlements.service';
 
 @Component({
   selector: 'ix-feedback-dialog',
@@ -48,9 +47,9 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 })
 export class FeedbackDialog implements OnInit {
   private feedbackService = inject(FeedbackService);
+  private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
-  private store$ = inject<Store<AppState>>(Store);
   protected dialogRef = inject<MatDialogRef<FeedbackDialog>>(MatDialogRef);
   private requestedType = inject<FeedbackType>(MAT_DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
@@ -59,7 +58,8 @@ export class FeedbackDialog implements OnInit {
   protected isLoadingTypes = false;
   protected typeControl = new FormControl(undefined as FeedbackType | undefined);
   protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypesLabels, this.translate));
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  /** Middleware picks the ticket path on this same key. */
+  protected readonly hasSupport = this.entitlements.entitled(EntitlementFeature.Support);
   protected allowedTypes: FeedbackType[] = [];
 
   get isReview(): boolean {
