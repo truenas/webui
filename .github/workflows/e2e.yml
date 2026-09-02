@@ -164,10 +164,27 @@ jobs:
         # The host's node_modules is reused: it is pure JavaScript apart from
         # the browsers, and the image already has those at its default path.
         # TMPDIR is deliberately not passed in — it names a host path.
-        # Variables are passed by value, not `-e NAME` pass-through, because
-        # $DOCKER may be `sudo -n docker` and sudo scrubs the environment.
+        #
+        # Variables go through --env-file, not `-e NAME=value`. $DOCKER may be
+        # `sudo -n docker`: sudo scrubs the environment, so `-e NAME` pass-
+        # through is empty, and a value on the command line lands in sudo's
+        # own log line and in /proc/<pid>/cmdline for the life of the
+        # container. The file is read by the docker client after sudo has
+        # exec'd it, lives on the runner's own dataset, and is removed after.
         run: |
           set -euo pipefail
+          envFile="$RUNNER_TEMP/suite.env"
+          trap 'rm -f "$envFile"' EXIT
+          printf '%s\n' \
+            "CI=$CI" \
+            "TN_GREP=${TN_GREP:-}" \
+            "TN_PROFILE=$TN_PROFILE" \
+            "TN_HOST=$TN_HOST" \
+            "TN_USERNAME=$TN_USERNAME" \
+            "TN_PASSWORD=$TN_PASSWORD" \
+            "TN_DOMAIN=$TN_DOMAIN" \
+            "TN_BASELINE=$TN_BASELINE" \
+            > "$envFile"
           $DOCKER run --rm \
             --network host \
             --ipc host \
@@ -175,30 +192,23 @@ jobs:
             -e HOME=/tmp \
             -v "$GITHUB_WORKSPACE:/work" \
             -w /work \
-            -e "CI=$CI" \
-            -e "TN_GREP=${TN_GREP:-}" \
-            -e "TN_PROFILE=$TN_PROFILE" \
-            -e "TN_HOST=$TN_HOST" \
-            -e "TN_USERNAME=$TN_USERNAME" \
-            -e "TN_PASSWORD=$TN_PASSWORD" \
-            -e "TN_DOMAIN=$TN_DOMAIN" \
-            -e "TN_BASELINE=$TN_BASELINE" \
+            --env-file "$envFile" \
             "$PLAYWRIGHT_IMAGE" \
             bash -c 'if [ -n "${TN_GREP:-}" ]; then ./node_modules/.bin/playwright test --grep "$TN_GREP"; else ./node_modules/.bin/playwright test; fi'
 
-      # Must happen while the appliance still exists.
-      - name: Collect middleware logs
-        if: always()
-        run: ./e2e/ci/appliance.sh collect-logs "${TN_HOST:-}" "test-results/appliance-logs"
-
+      # No middleware log collection (R7.2). The appliance sits behind hostfwd
+      # with only 80 and 443 forwarded, so there is no SSH to collect over. It
+      # needs an API route; until then the job log is what there is.
+      #
       # Safe to publish: test names and failure messages, no attachments.
       #
-      # Traces, videos and screenshots are NOT uploaded. Artifacts on a public
-      # repository are downloadable by anyone, and a Playwright trace records
-      # action parameters verbatim — including the appliance password `signIn`
-      # types. The fix is a credential worthless once published: a unique
-      # password per ixnode claim, and the appliance destroyed rather than
-      # reused at release. Until that holds, diagnose from the job log.
+      # Traces, videos and screenshots are NOT uploaded yet. Artifacts on a
+      # public repository are downloadable by anyone, and a Playwright trace
+      # records action parameters verbatim — including the appliance password
+      # `signIn` types. The precondition for publishing them now holds: the
+      # password is generated per claim and the appliance is destroyed at
+      # release, so a published trace carries a credential to nothing. Turning
+      # that upload on is a deliberate next step, not a side effect.
       - name: Upload JUnit results
         if: always()
         uses: actions/upload-artifact@v4

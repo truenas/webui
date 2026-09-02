@@ -128,8 +128,10 @@ claim() {
   [ -n "${TN_GUEST_HOST_API_KEY:-}${TN_GUEST_HOST_PASSWORD:-}" ] \
     || die "TN_GUEST_HOST_API_KEY or TN_GUEST_HOST_PASSWORD is required"
 
-  # A name the lab can trace back to a run, and a password nobody else knows.
-  local nickname="e2e-${GITHUB_RUN_ID:-local-$$}"
+  # A name the lab can trace back to a run and attempt, and a password nobody
+  # else knows. The attempt matters: a re-run keeps the run id, and a nickname
+  # that repeats would collide with anything the previous attempt leaked.
+  local nickname="e2e-${GITHUB_RUN_ID:-local-$$}-${GITHUB_RUN_ATTEMPT:-1}"
   local password
   password=$(openssl rand -base64 18 | tr -d '/+=' | cut -c1-20)
 
@@ -217,35 +219,15 @@ release() {
 snapshot() { die "snapshot is not available with tn_guest.py yet (E1, E5)"; }
 revert() { die "revert is not available with tn_guest.py yet (E1, E5)"; }
 
-# Collect middleware logs before the appliance is destroyed (R7.2).
-#
-# Deliberately best-effort: this runs in teardown, frequently after something
-# has already gone wrong, and must not turn a test failure into an
-# infrastructure failure.
-collect_logs() {
-  local host="${1:-}" dest="${2:?destination directory required}"
-  # No host means the claim never happened — the run failed before it, and the
-  # step still runs because it is `if: always()`. Nothing to collect, and a
-  # non-zero exit here would paint a second failure over the real one.
-  [ -n "$host" ] || { echo "appliance.sh: no host, nothing to collect" >&2; return 0; }
-  # A host with a port is a hostfwd guest: only 80 and 443 are forwarded, so
-  # there is no SSH to collect over. Middleware logs for these need an API
-  # route, which does not exist yet.
-  case "$host" in
-    *:*) echo "appliance.sh: '$host' is behind hostfwd, no SSH — skipping log collection" >&2; return 0 ;;
-  esac
-  mkdir -p "$dest"
-  # shellcheck disable=SC2029  # remote expansion is intended
-  ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "root@${host}" \
-    'cat /var/log/middlewared.log' > "${dest}/middlewared.log" 2>/dev/null \
-    || echo "appliance.sh: could not collect middleware logs from ${host}" >&2
-}
+# Middleware log collection (R7.2) has no implementation here. The appliance
+# is behind hostfwd with only 80 and 443 forwarded, so there is no SSH path;
+# it needs an API route. Not stubbed, so nothing reports green while doing
+# nothing.
 
 case "${1:-}" in
   claim)        shift; claim "$@" ;;
   release)      shift; release "$@" ;;
   snapshot)     shift; snapshot "$@" ;;
   revert)       shift; revert "$@" ;;
-  collect-logs) shift; collect_logs "$@" ;;
-  *) die "usage: appliance.sh {claim|release|snapshot|revert|collect-logs} [args]" ;;
+  *) die "usage: appliance.sh {claim|release|snapshot|revert} [args]" ;;
 esac

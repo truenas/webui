@@ -147,5 +147,5 @@ comment instead.
 | T3 | Middleware client is `@truenas/api-client` (3.x; T3.1 covered the curated-subset problem that version removed) |
 | T5 | Authentication via a setup project plus `storageState` |
 | T10 | Configuration through target profiles, resolved in one module |
-| D1 | PR gating — deferred; needs CI and a measured flake rate first |
+| D1 | PR gating — deferred; needs a measured flake rate first. The `e2e` check runs on same-repo PRs touching the suite, but it is not a required check, so a red run informs and does not block |
 | D2 | Parallel execution by sharding across appliances — deferred |
