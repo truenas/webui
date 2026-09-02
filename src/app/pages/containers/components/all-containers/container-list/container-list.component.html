@@ -1,11 +1,11 @@
-<div class="table-header">
-  @if (hasCheckedContainers) {
+@if (hasCheckedContainers) {
+  <div class="table-header">
     <ix-container-list-bulk-actions
       [checkedContainers]="checkedContainers()"
       (resetBulkSelection)="resetSelection()"
     ></ix-container-list-bulk-actions>
-  }
-</div>
+  </div>
+}
 
 <div class="item-search">
   <ix-fake-progress-bar

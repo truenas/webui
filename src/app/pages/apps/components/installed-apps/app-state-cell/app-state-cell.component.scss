@@ -17,12 +17,16 @@
     }
   }
 
+  // Sized to its label, not to the table cell, and never wrapped: a stretched, two-line
+  // chip was the result inside the narrow Status column.
   &.has-cell {
     border: 1px solid transparent;
     border-radius: 20px;
+    display: inline-flex;
     font-weight: bold;
     gap: 6px;
-    padding: 3px 8px;
+    padding: 3px 6px;
+    white-space: nowrap;
   }
 
   &.running {

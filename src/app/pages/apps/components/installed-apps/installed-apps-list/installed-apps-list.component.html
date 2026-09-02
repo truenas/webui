@@ -1,7 +1,5 @@
-<div class="table-header">
-  <h2>{{ 'Applications' | translate }}</h2>
-
-  @if (hasCheckedApps) {
+@if (hasCheckedApps) {
+  <div class="table-header">
     <ix-installed-apps-list-bulk-actions
       [checkedApps]="checkedApps()"
       (bulkStart)="onBulkStart()"
@@ -9,8 +7,8 @@
       (bulkUpdate)="onBulkUpdate()"
       (bulkDelete)="onBulkDelete()"
     ></ix-installed-apps-list-bulk-actions>
-  }
-</div>
+  </div>
+}
 
 <div class="item-search">
   <ix-fake-progress-bar
@@ -50,14 +48,14 @@
     (rowClick)="viewDetails($event)"
     (selectionChange)="onSelectionChange($event)"
   >
-    <ng-container [tnColumnDef]="sortableField.Application" [sortable]="true" [width]="'20%'">
+    <ng-container [tnColumnDef]="sortableField.Application" [sortable]="true" [width]="'18%'">
       <ng-template tnHeaderCellDef>{{ 'Application' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <div class="name-cell">
           <div class="app-logo">
             <img [src]="row.metadata.icon" [src-fallback]="imagePlaceholder" />
           </div>
-          <div class="app-name">{{ row.name }}</div>
+          <div class="app-name" [tnTooltip]="row.name">{{ row.name }}</div>
           <ix-app-action-required-badge
             [app]="row"
             (actionRequiredClicked)="showActionRequired(row)"
@@ -66,7 +64,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="sortableField.State" [sortable]="true" [width]="'12%'">
+    <ng-container [tnColumnDef]="sortableField.State" [sortable]="true" [width]="'13%'">
       <ng-template tnHeaderCellDef>{{ 'Status' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-app-state-cell
@@ -91,13 +89,16 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'ram'" [width]="'8%'">
+    <ng-container [tnColumnDef]="'ram'" [width]="'12%'">
       <ng-template tnHeaderCellDef>{{ 'RAM' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         @let ramStats = getAppStats(row.name) | async;
-        <span [tnTooltip]="'Memory usage of app' | translate">
+        <span [tnTooltip]="hasStats(row, ramStats)
+          ? (ramStats.memory | ixFileSize)
+          : ('Memory usage of app' | translate)"
+        >
           @if (hasStats(row, ramStats)) {
-            {{ ramStats.memory | ixFileSize }}
+            <span class="stat-part">{{ ramStats.memory | ixFileSize }}</span>
           } @else {
             {{ 'N/A' | translate }}
           }
@@ -105,13 +106,19 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'io'" [width]="'11%'">
+    <ng-container [tnColumnDef]="'io'" [width]="'12%'">
       <ng-template tnHeaderCellDef>{{ 'Block I/O' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         @let ioStats = getAppStats(row.name) | async;
-        <span [tnTooltip]="'Block I/O read and writes' | translate">
+        <span [tnTooltip]="hasStats(row, ioStats)
+          ? (ioStats.blkio.read | ixFileSize) + ' - ' + (ioStats.blkio.write | ixFileSize)
+          : ('Block I/O read and writes' | translate)"
+        >
           @if (hasStats(row, ioStats)) {
-            {{ ioStats.blkio.read | ixFileSize }} - {{ ioStats.blkio.write | ixFileSize }}
+            <span class="stat-pair">
+              <span class="stat-part">{{ ioStats.blkio.read | ixFileSize }}</span>
+              <span class="stat-part">- {{ ioStats.blkio.write | ixFileSize }}</span>
+            </span>
           } @else {
             {{ 'N/A' | translate }}
           }
@@ -119,13 +126,19 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'network'" [width]="'11%'">
+    <ng-container [tnColumnDef]="'network'" [width]="'15%'">
       <ng-template tnHeaderCellDef>{{ 'Network' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         @let networkStats = getAppStats(row.name) | async;
-        <span [tnTooltip]="'Incoming / Outgoing network traffic' | translate">
+        <span [tnTooltip]="hasStats(row, networkStats) && networkStats.networks?.length
+          ? (incomingTrafficBits(networkStats) | ixNetworkSpeed) + ' - ' + (outgoingTrafficBits(networkStats) | ixNetworkSpeed)
+          : ('Incoming / Outgoing network traffic' | translate)"
+        >
           @if (hasStats(row, networkStats) && networkStats.networks?.length) {
-            {{ incomingTrafficBits(networkStats) | ixNetworkSpeed }} - {{ outgoingTrafficBits(networkStats) | ixNetworkSpeed }}
+            <span class="stat-pair">
+              <span class="stat-part">{{ incomingTrafficBits(networkStats) | ixNetworkSpeed }}</span>
+              <span class="stat-part">- {{ outgoingTrafficBits(networkStats) | ixNetworkSpeed }}</span>
+            </span>
           } @else {
             {{ 'N/A' | translate }}
           }
@@ -133,7 +146,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="sortableField.Updates" [sortable]="hasUpdates" [width]="'14%'">
+    <ng-container [tnColumnDef]="sortableField.Updates" [sortable]="hasUpdates" [width]="'15%'">
       <ng-template tnHeaderCellDef>
         <span class="updates-header">
           {{ 'Updates' | translate }}
@@ -153,7 +166,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'controls'" [width]="'12%'">
+    <ng-container [tnColumnDef]="'controls'" [width]="'10%'">
       <ng-template tnHeaderCellDef>{{ 'Controls' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <div class="controls-cell">

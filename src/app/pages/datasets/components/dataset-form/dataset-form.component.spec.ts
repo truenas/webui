@@ -575,6 +575,9 @@ describe('DatasetFormComponent hosted in the side panel', () => {
     fixture = TestBed.createComponent(FormSidePanelContainerComponent);
     fixture.componentRef.setInput('portal', new ComponentPortal(DatasetFormComponent));
     fixture.componentRef.setInput('formInputs', { params: { datasetId: 'parent', isNew: true } });
+    // A panel without a title has no accessible name, which the library warns about in
+    // dev mode; production callers always pass one.
+    fixture.componentRef.setInput('title', 'Add Dataset');
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
     await fixture.whenStable();

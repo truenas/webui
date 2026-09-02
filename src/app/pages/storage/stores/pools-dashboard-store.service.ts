@@ -110,19 +110,21 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
       tap(([pools, rootDatasets, zpools]) => {
         const zpoolsByName = keyBy(zpools, (zpool) => zpool.name);
         const poolsWithTierData = pools.map((pool) => {
-          const zpool = zpoolsByName[pool.name];
-          if (!zpool) return pool;
+          // `properties` is null when ZFS can't read them (unavailable pool),
+          // in which case the pool is shown with the numbers pool.query gave us.
+          const properties = zpoolsByName[pool.name]?.properties;
+          if (!properties) return pool;
           const toBytes = (raw: number | string | undefined | null): number => Number(raw ?? 0);
           // The metadata reserve is derived in the Usage card from
           // zfs.tier.config (special_class_metadata_reserve_pct), so the raw
           // ZFS values are passed through here untouched.
-          const rawSpecialUsable = zpool.properties.class_special_usable?.value;
+          const rawSpecialUsable = properties.class_special_usable?.value;
           return {
             ...pool,
-            used: toBytes(zpool.properties.class_normal_used?.value) || pool.used,
-            available: toBytes(zpool.properties.class_normal_available?.value) || pool.available,
-            special_class_used: toBytes(zpool.properties.class_special_used?.value),
-            special_class_available: toBytes(zpool.properties.class_special_available?.value),
+            used: toBytes(properties.class_normal_used?.value) || pool.used,
+            available: toBytes(properties.class_normal_available?.value) || pool.available,
+            special_class_used: toBytes(properties.class_special_used?.value),
+            special_class_available: toBytes(properties.class_special_available?.value),
             // Left undefined (not 0) when ZFS doesn't report it, so the Usage card
             // can tell "absent" from a genuine empty special vdev and fall back.
             special_class_usable: rawSpecialUsable == null ? undefined : Number(rawSpecialUsable),

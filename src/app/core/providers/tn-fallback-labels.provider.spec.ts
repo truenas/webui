@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import {
   DefaultLangChangeEvent, LangChangeEvent, TranslationChangeEvent, TranslateService,
 } from '@ngx-translate/core';
-import { TN_FALLBACK_LABELS, type TnFallbackLabels } from '@truenas/ui-components';
+import { TN_FALLBACK_LABELS, TnSpinnerComponent, type TnFallbackLabels } from '@truenas/ui-components';
 import { Subject } from 'rxjs';
 import { provideTnFallbackLabels } from 'app/core/providers/tn-fallback-labels.provider';
 
@@ -59,6 +59,7 @@ describe('provideTnFallbackLabels', () => {
     langChange$.next({ lang: 'fr', translations: {} });
 
     expect(labelsSignal().spinner).toBe('Loading-fr');
+    expect(labelsSignal().progressBar).toBe('Progress-fr');
     expect(labelsSignal().sidePanel).toBe('Side panel-fr');
   });
 
@@ -71,5 +72,13 @@ describe('provideTnFallbackLabels', () => {
     translationChange$.next({ lang: 'en', translations: {} });
 
     expect(labelsSignal().spinner).toBe('Loading-loaded');
+  });
+
+  it('names an unlabelled tn-spinner from the provided bundle', () => {
+    setup();
+    const fixture = TestBed.createComponent(TnSpinnerComponent);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.getAttribute('aria-label')).toBe('Loading-en');
   });
 });

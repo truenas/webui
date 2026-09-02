@@ -10,7 +10,11 @@
 >
   <!-- Indeterminate loader pinned to the top of the panel while the hosted form submits. -->
   @if (form()?.isBusy?.()) {
-    <tn-progress-bar class="panel-progress" mode="indeterminate"></tn-progress-bar>
+    <tn-progress-bar
+      class="panel-progress"
+      mode="indeterminate"
+      [ariaLabel]="'Saving' | translate"
+    ></tn-progress-bar>
   }
 
   <!--

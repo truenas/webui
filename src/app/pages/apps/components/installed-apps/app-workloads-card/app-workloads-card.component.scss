@@ -58,14 +58,21 @@
 .container {
   align-items: center;
   display: flex;
+  // The card is narrow, so a long service name leaves the state with only a few pixels.
+  // Let the row break onto a second line instead of squeezing its parts.
+  flex-wrap: wrap;
   gap: 8px;
 
   .service-name {
     font-weight: 500;
   }
 
+  // The details-cards mixin sets `word-break: break-word` on the whole panel, which chopped
+  // the state into "Runnin" / "g". A state label is one word — it moves to the next line
+  // whole or not at all.
   .container-state {
     flex: 1;
+    word-break: keep-all;
   }
 
   .container-action {

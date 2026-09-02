@@ -45,7 +45,10 @@ import { provideTnAutocompleteLabels } from 'app/core/providers/tn-autocomplete-
 import { provideTnCalendarIntl } from 'app/core/providers/tn-calendar-intl.provider';
 import { provideTnDialogLabels } from 'app/core/providers/tn-dialog-labels.provider';
 import { provideTnFallbackLabels } from 'app/core/providers/tn-fallback-labels.provider';
-import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
+import {
+  provideTnFormFieldDismissibleErrors,
+  provideTnFormFieldErrors,
+} from 'app/core/providers/tn-form-field-errors.provider';
 import { provideTnSelectLabels } from 'app/core/providers/tn-select-labels.provider';
 import { provideTnTableLabels } from 'app/core/providers/tn-table-labels.provider';
 import { provideTnTablePagerLabels } from 'app/core/providers/tn-table-pager-labels.provider';
@@ -144,6 +147,7 @@ bootstrapApplication(AppComponent, {
     },
     provideTnTablePagerLabels(),
     provideTnFormFieldErrors(),
+    provideTnFormFieldDismissibleErrors(),
     provideTnCalendarIntl(),
     provideTnSelectLabels(),
     provideTnAutocompleteLabels(),

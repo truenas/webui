@@ -1,7 +1,7 @@
 import {
   BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel,
 } from '@angular/cdk/testing';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
+import { TnCheckboxHarness } from '@truenas/ui-components';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
 import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
@@ -20,7 +20,7 @@ export class IxPermissionsHarness extends ComponentHarness implements IxFormCont
       .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
-  getMatCheckboxHarnesses = this.locatorForAll(MatCheckboxHarness);
+  getCheckboxHarnesses = this.locatorForAll(TnCheckboxHarness);
   getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
@@ -32,7 +32,7 @@ export class IxPermissionsHarness extends ComponentHarness implements IxFormCont
   }
 
   async getValue(): Promise<string> {
-    const permissions = await this.getMatCheckboxHarnesses();
+    const permissions = await this.getCheckboxHarnesses();
     let owner = 0;
     let grp = 0;
     let other = 0;
@@ -79,7 +79,7 @@ export class IxPermissionsHarness extends ComponentHarness implements IxFormCont
   }
 
   async setValue(value: string): Promise<void> {
-    const checkboxes = await this.getMatCheckboxHarnesses();
+    const checkboxes = await this.getCheckboxHarnesses();
 
     const permissions = parseMode(value);
     return Promise.all([
@@ -96,7 +96,7 @@ export class IxPermissionsHarness extends ComponentHarness implements IxFormCont
   }
 
   async isDisabled(): Promise<boolean> {
-    const checkboxes = await this.getMatCheckboxHarnesses();
+    const checkboxes = await this.getCheckboxHarnesses();
     const inputState = await parallel(() => checkboxes.map((control) => control.isDisabled()));
 
     return inputState.every((control) => !!control);

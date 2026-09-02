@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnBannerHarness, TnButtonHarness } from '@truenas/ui-components';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -27,7 +27,8 @@ describe('SmbExtensionsWarningComponent', () => {
   });
 
   it('shows the warning', async () => {
-    expect(spectator.query('.warning-text')).toHaveText(
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain(
       'This parameter requires Apple SMB2/3 protocol extension support to be enabled in SMB service.',
     );
 
