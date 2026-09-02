@@ -94,9 +94,12 @@ jobs:
           rm -rf "$tmp"
           true
 
-      - name: Experiment, hardened mode off
+      - name: Experiment, TMPDIR off tmpfs
         if: failure()
-        run: YARN_ENABLE_HARDENED_MODE=0 yarn install --immutable --mode=skip-build
+        run: |
+          mkdir -p "$RUNNER_TEMP/yarn-tmp"
+          df -T "$RUNNER_TEMP/yarn-tmp"
+          TMPDIR="$RUNNER_TEMP/yarn-tmp" yarn install --immutable --mode=skip-build
 
       - name: Show the checksum this runner computes
         if: failure()
