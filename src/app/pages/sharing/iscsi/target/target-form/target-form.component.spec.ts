@@ -7,6 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import {
@@ -71,6 +72,7 @@ describe('TargetFormComponent', () => {
       FcMpioInfoBannerComponent,
     ],
     providers: [
+      mockEntitlements(),
       provideMockStore({
         selectors: [
           {
@@ -99,7 +101,6 @@ describe('TargetFormComponent', () => {
         mockCall('iscsi.target.create'),
         mockCall('iscsi.target.update', { id: 123 } as IscsiTarget),
         mockCall('iscsi.target.validate_name', null),
-        mockCall('fc.capable', true),
         mockCall('iscsi.portal.query', [{
           comment: 'comment_1',
           id: 1,
@@ -258,10 +259,9 @@ describe('TargetFormComponent', () => {
       spectator.component.initiators$.subscribe((options) => initiator = options);
       spectator.component.auths$.subscribe((options) => auth = options);
 
-      expect(api.call).toHaveBeenNthCalledWith(1, 'fc.capable');
-      expect(api.call).toHaveBeenNthCalledWith(2, 'iscsi.portal.query', []);
-      expect(api.call).toHaveBeenNthCalledWith(3, 'iscsi.initiator.query', []);
-      expect(api.call).toHaveBeenNthCalledWith(4, 'iscsi.auth.query', []);
+      expect(api.call).toHaveBeenNthCalledWith(1, 'iscsi.portal.query', []);
+      expect(api.call).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query', []);
+      expect(api.call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
 
       expect(spectator.component.hasFibreChannel()).toBe(true);
 

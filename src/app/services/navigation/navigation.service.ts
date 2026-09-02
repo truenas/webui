@@ -1,8 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { tnIconMarker } from '@truenas/ui-components';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { LicenseService } from 'app/services/license.service';
 
 @Injectable({
@@ -10,6 +12,7 @@ import { LicenseService } from 'app/services/license.service';
 })
 export class NavigationService {
   private license = inject(LicenseService);
+  private entitlements = inject(EntitlementsService);
   private authService = inject(AuthService);
 
   readonly menuItems: MenuItem[] = [
@@ -64,7 +67,7 @@ export class NavigationService {
         {
           name: 'KMIP',
           state: 'kmip',
-          isVisible$: this.license.hasKmip$,
+          isVisible$: this.entitlements.entitled$(EntitlementFeature.Kmip),
         },
       ],
     },
@@ -74,7 +77,7 @@ export class NavigationService {
       tooltip: T('Containers'),
       icon: tnIconMarker('package-variant-closed', 'mdi'),
       state: 'containers',
-      isVisible$: this.license.shouldShowContainers$,
+      isVisible$: this.entitlements.entitled$(EntitlementFeature.Containers),
     },
     {
       name: T('Virtual Machines'),
@@ -82,7 +85,7 @@ export class NavigationService {
       tooltip: T('Virtual Machines'),
       icon: tnIconMarker('laptop', 'mdi'),
       state: 'vm',
-      isVisible$: this.license.hasVms$,
+      isVisible$: this.entitlements.entitled$(EntitlementFeature.Vms),
     },
     {
       name: T('Apps'),
@@ -90,7 +93,7 @@ export class NavigationService {
       tooltip: T('Apps'),
       icon: tnIconMarker('apps', 'mdi'),
       state: 'apps',
-      isVisible$: this.license.hasApps$,
+      isVisible$: this.entitlements.entitled$(EntitlementFeature.Apps),
     },
     {
       name: T('Reporting'),
