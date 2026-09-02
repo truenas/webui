@@ -12,7 +12,7 @@
           formControlName="search"
           [label]="'Enable TrueSearch' | translate"
           [tooltip]="helptext.search_enabled_tooltip | translate"
-          [hint]="isTruenasConnectConfigured() ? '' : ('TrueSearch requires TrueNAS Connect to be configured.' | translate)"
+          [hint]="trueSearchHint() | translate"
         ></ix-checkbox>
 
         <ix-select
