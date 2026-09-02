@@ -106,6 +106,15 @@ jobs:
         run: |
           YARN_ENABLE_HARDENED_MODE=0 YARN_CHECKSUM_BEHAVIOR=update yarn install --mode=skip-build || true
           git --no-pager diff yarn.lock
+          ls -la .yarn/cache/ | grep -i common-typescript
+          python3 - .yarn/cache/@truenas-common-typescript-*.zip <<'EOF'
+          import sys, zipfile
+          z = zipfile.ZipFile(sys.argv[1])
+          for i in z.infolist():
+              print(f"{i.filename} mode={oct(i.external_attr >> 16)} crc={i.CRC:08x} size={i.file_size} csize={i.compress_size} dt={i.date_time} ct={i.compress_type} extra={len(i.extra)}")
+          print("---- package.json as packed")
+          print(repr(z.read("node_modules/@truenas/common-typescript/package.json").decode()))
+          EOF
 
       - name: Install Playwright browsers
         run: yarn playwright install --with-deps chromium
