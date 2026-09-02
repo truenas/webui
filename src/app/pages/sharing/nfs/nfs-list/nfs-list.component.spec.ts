@@ -9,6 +9,7 @@ import {
 import { Subject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -38,6 +39,7 @@ const shares: Partial<NfsShare>[] = [
 // its own side-panel container — the list only asserts the open() contract.
 const commonProviders = [
   mockAuth(),
+  mockEntitlements(),
   mockProvider(EmptyService),
   mockProvider(DialogService, {
     confirm: jest.fn(() => of(true)),

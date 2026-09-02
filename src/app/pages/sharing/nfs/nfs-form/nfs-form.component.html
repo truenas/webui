@@ -30,7 +30,7 @@
 
     <tn-checkbox testId="enabled" formControlName="enabled" [label]="'Enabled' | translate"></tn-checkbox>
 
-    @if (isEnterprise()) {
+    @if (hasNfsSnapshots()) {
       <tn-form-field [tooltip]="helptext.exposeTooltip | translate">
         <tn-checkbox
           testId="expose-snapshots"

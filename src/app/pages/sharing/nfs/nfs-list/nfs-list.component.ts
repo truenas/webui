@@ -15,6 +15,7 @@ import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -39,10 +40,10 @@ import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/ti
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
 import { getUnavailableReason, isShareUnavailable } from 'app/pages/sharing/utils/share-exported-pool.utils';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-nfs-list',
@@ -75,6 +76,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 })
 export class NfsListComponent implements OnInit {
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
@@ -101,7 +103,7 @@ export class NfsListComponent implements OnInit {
   protected readonly isLoading = dataProviderLoading(this.dataProvider);
   protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
   protected readonly currentPageCount = toSignal(this.dataProvider.currentPageCount$);
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly hasNfsSnapshots = this.entitlements.entitled(EntitlementFeature.NfsSnapshot);
 
   private nfsShares: NfsShare[] = [];
   /** null = pools not yet loaded; string[] once pool.query completes */
@@ -162,7 +164,7 @@ export class NfsListComponent implements OnInit {
     column({
       title: this.translate.instant('Expose Snapshots'),
       propertyName: 'expose_snapshots',
-      hidden: !this.isEnterprise(),
+      hidden: !this.hasNfsSnapshots(),
     }),
     actionsColumn(),
   ]));
