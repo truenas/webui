@@ -97,6 +97,7 @@ jobs:
       - name: Experiment, TMPDIR off tmpfs
         if: failure()
         run: |
+          rm -rf .yarn/cache/@truenas-common-typescript-*
           mkdir -p "$RUNNER_TEMP/yarn-tmp"
           df -T "$RUNNER_TEMP/yarn-tmp"
           TMPDIR="$RUNNER_TEMP/yarn-tmp" yarn install --immutable --mode=skip-build
