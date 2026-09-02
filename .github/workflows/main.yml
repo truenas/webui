@@ -64,7 +64,10 @@ jobs:
     if: needs.check-ux-team.outputs.is_member == 'true'
     strategy:
       fail-fast: false
-    runs-on: self-hosted
+    # Named labels rather than a bare `self-hosted`, which matches whichever
+    # registered runner happens to be free. More than one is registered, and
+    # they are not interchangeable — this job wants the ARM builder.
+    runs-on: [self-hosted, Linux, ARM64]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
