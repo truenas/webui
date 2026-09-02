@@ -8,6 +8,8 @@ import { lastValueFrom, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { Role } from 'app/enums/role.enum';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Group } from 'app/interfaces/group.interface';
@@ -18,8 +20,8 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
 import { UserService } from 'app/services/user.service';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 /**
  * Type guard to check if a filter is a 'group in' filter.
@@ -122,8 +124,9 @@ describe('PrivilegeFormComponent', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectIsEnterprise,
-            value: true,
+            // Loaded map with no gated keys, i.e. entitled to everything.
+            selector: selectEntitlements,
+            value: {},
           },
           {
             selector: selectGeneralConfig,
@@ -446,8 +449,8 @@ describe('PrivilegeFormComponent', () => {
           provideMockStore({
             selectors: [
               {
-                selector: selectIsEnterprise,
-                value: true,
+                selector: selectEntitlements,
+                value: {},
               },
               {
                 selector: selectGeneralConfig,
@@ -501,8 +504,8 @@ describe('PrivilegeFormComponent', () => {
           provideMockStore({
             selectors: [
               {
-                selector: selectIsEnterprise,
-                value: true,
+                selector: selectEntitlements,
+                value: {},
               },
               {
                 selector: selectGeneralConfig,
@@ -556,8 +559,8 @@ describe('PrivilegeFormComponent', () => {
           provideMockStore({
             selectors: [
               {
-                selector: selectIsEnterprise,
-                value: true,
+                selector: selectEntitlements,
+                value: {},
               },
               {
                 selector: selectGeneralConfig,
@@ -613,8 +616,14 @@ describe('PrivilegeFormComponent', () => {
           provideMockStore({
             selectors: [
               {
-                selector: selectIsEnterprise,
-                value: false, // Not enterprise
+                selector: selectEntitlements,
+                value: {
+                  [EntitlementFeature.DirectoryServices]: {
+                    entitled: false,
+                    reason: EntitlementReason.KeyMissing,
+                    message: 'Directory services authentication for UI and API access requires an Enterprise license.',
+                  },
+                },
               },
               {
                 selector: selectGeneralConfig,
@@ -649,8 +658,8 @@ describe('PrivilegeFormComponent', () => {
           provideMockStore({
             selectors: [
               {
-                selector: selectIsEnterprise,
-                value: true,
+                selector: selectEntitlements,
+                value: {},
               },
               {
                 selector: selectGeneralConfig,

@@ -16,6 +16,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -59,6 +60,9 @@ describe('AccessFormComponent', () => {
           },
         },
         selectors: [{
+          selector: selectEntitlements,
+          value: {},
+        }, {
           selector: selectGeneralConfig,
           value: { ds_auth: true },
         }, {

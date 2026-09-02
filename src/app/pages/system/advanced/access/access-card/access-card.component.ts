@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -14,6 +14,7 @@ import {
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
@@ -38,11 +39,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-access-card',
@@ -82,10 +83,11 @@ export class AccessCardComponent implements OnInit {
   private firstTimeWarning = inject(FirstTimeWarningService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);
+  private entitlements = inject(EntitlementsService);
 
   protected readonly searchableElements = accessCardElements;
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServices);
 
   readonly generalConfig$ = this.store$.pipe(
     waitForGeneralConfig,
