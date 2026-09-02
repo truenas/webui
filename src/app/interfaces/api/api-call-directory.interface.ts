@@ -3,6 +3,7 @@ import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.e
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -117,6 +118,7 @@ import {
   DsUncachedGroup, DsUncachedUser, LoggedInUser,
 } from 'app/interfaces/ds-cache.interface';
 import { DashboardEnclosure, Enclosure, SetDriveBayLightStatus } from 'app/interfaces/enclosure.interface';
+import { EntitlementEntry, EntitlementsInfo } from 'app/interfaces/entitlement.interface';
 import {
   FailoverConfig,
   FailoverUpdate,
@@ -876,6 +878,11 @@ export interface ApiCallDirectory {
 
   // TrueNAS
   'truenas.accept_eula': { params: void; response: void };
+  'truenas.entitlements.check': {
+    params: [feature: EntitlementFeature];
+    response: EntitlementEntry;
+  };
+  'truenas.entitlements.info': { params: void; response: EntitlementsInfo };
   'truenas.get_eula': { params: void; response: string };
   'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.is_production': { params: void; response: boolean };
