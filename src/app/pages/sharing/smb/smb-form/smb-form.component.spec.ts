@@ -25,6 +25,7 @@ import {
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
@@ -51,6 +52,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
@@ -143,6 +145,7 @@ describe('SmbFormComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockEntitlements(),
       mockApi([
         mockCall('group.query', [{ id: 1, group: 'test', builtin: false }] as Group[]),
         mockCall('group.get_group_obj', { gr_gid: 1000, gr_name: 'test', gr_mem: [] }),
@@ -822,6 +825,18 @@ describe('SmbFormComponent', () => {
         'Veeam Repository Share',
         'Final Cut Pro Storage Share',
       ]);
+    });
+
+    it('omits Veeam Repository Share when the system is not entitled to SMB_VEEAM', async () => {
+      jest.spyOn(spectator.inject(EntitlementsService), 'entitled$').mockReturnValue(of(false));
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+
+      const purposeSelect = await getTnSelect('purpose');
+      await purposeSelect.open();
+
+      expect(await purposeSelect.getOptions()).not.toContain('Veeam Repository Share');
     });
 
     it('should autofill name from path if name is empty', async () => {

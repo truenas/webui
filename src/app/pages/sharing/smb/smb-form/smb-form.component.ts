@@ -10,7 +10,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
@@ -37,6 +37,7 @@ import {
   debounceTime, distinctUntilChanged, filter, map, shareReplay, switchMap, take, tap,
 } from 'rxjs/operators';
 import { DatasetPreset } from 'app/enums/dataset.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -77,13 +78,13 @@ import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-use
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-smb-form',
@@ -113,6 +114,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterViewInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private tnDialog = inject(TnDialog);
   private dialogService = inject(DialogService);
   private datasetService = inject(DatasetService);
@@ -154,7 +156,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
   protected showLegacyWarning = signal(false);
   protected showExtensionsWarning = signal(false);
 
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   protected SmbPresetType = SmbSharePurpose;
   protected isAdvancedMode = signal(false);
@@ -454,7 +455,11 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
     this.existingSmbShare = data?.existingSmbShare;
     this.defaultSmbShare = data?.defaultSmbShare;
     this.setupExplorerRootNodes();
-    this.purposeOptions$ = of(this.buildPurposeOptions());
+    // Derived rather than snapshotted: `entitled$` defers until the answer is real, so the
+    // list cannot freeze with Veeam wrongly filtered out because entitlements had not loaded.
+    this.purposeOptions$ = this.entitlements.entitled$(EntitlementFeature.SmbVeeam).pipe(
+      map((hasVeeamRepository) => this.buildPurposeOptions(hasVeeamRepository)),
+    );
 
     this.setupPurposeControl();
     this.loadSmbConfig();
@@ -923,7 +928,7 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
     );
   }
 
-  private buildPurposeOptions(): SelectOption<SmbSharePurpose>[] {
+  private buildPurposeOptions(hasVeeamRepository: boolean): SelectOption<SmbSharePurpose>[] {
     let options = mapToOptionsWithHoverTooltips(
       smbSharePurposeLabels,
       smbSharePurposeTooltips,
@@ -934,7 +939,7 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
       options = options.filter((option) => option.value !== SmbSharePurpose.LegacyShare);
     }
 
-    if (!this.isEnterprise()) {
+    if (!hasVeeamRepository) {
       options = options.filter((option) => option.value !== SmbSharePurpose.VeeamRepositoryShare);
     }
 
