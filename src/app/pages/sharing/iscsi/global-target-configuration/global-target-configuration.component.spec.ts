@@ -149,12 +149,15 @@ describe('TargetGlobalConfigurationComponent', () => {
 
     spectator.component.submit();
 
+    // `iser` is now part of the payload: the control is enabled whenever iSER is an RDMA
+    // capable protocol, and a disabled control is omitted from `form.value`.
     expect(api.call).toHaveBeenCalledWith('iscsi.global.update', [{
       basename: 'iqn.new.org.freenas.ctl',
       isns_servers: ['32.12.112.42', '8.2.1.2'],
       pool_avail_threshold: 15,
       listen_port: 3270,
       alua: false,
+      iser: false,
     }]);
     expect(closed).toHaveBeenCalledWith(true);
   });
@@ -185,16 +188,25 @@ describe('TargetGlobalConfigurationComponent', () => {
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
   });
 
-  it('disables iSER field unless it is an enterprise system with RDMA capable NIC', async () => {
-    expect(await (await getTnCheckbox('iser')).isDisabled()).toBe(true);
+  it('enables the iSER field when iSER is an RDMA capable protocol', async () => {
+    expect(await (await getTnCheckbox('iser')).isDisabled()).toBe(false);
+  });
+
+  it('disables the iSER field when iSER is not an RDMA capable protocol', async () => {
+    // An empty list is how both "no capable NIC" and "not entitled" reach the UI:
+    // `rdma.capable_protocols` already accounts for the RDMA entitlement.
+    jest.spyOn(api, 'call').mockImplementation((method: string) => {
+      if (method === 'rdma.capable_protocols') {
+        return of([]);
+      }
+      return of(undefined);
+    });
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions.
-    mockStore$.overrideSelector(selectIsEnterprise, true);
-    mockStore$.refreshState();
     recreateComponent();
 
-    expect(await (await getTnCheckbox('iser')).isDisabled()).toBe(false);
+    expect(await (await getTnCheckbox('iser')).isDisabled()).toBe(true);
   });
 
   it('keeps the loaded ALUA value across a change in HA license status', async () => {

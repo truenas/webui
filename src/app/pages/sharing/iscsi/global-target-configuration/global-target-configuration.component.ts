@@ -13,9 +13,6 @@ import {
   TnFormSectionComponent,
   TnInputComponent,
 } from '@truenas/ui-components';
-import {
-  forkJoin, take,
-} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { helptextIscsi } from 'app/helptext/sharing';
@@ -26,7 +23,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-global-target-configuration',
@@ -134,13 +130,12 @@ export class GlobalTargetConfigurationComponent extends IxFormHostForm implement
   }
 
   private checkForRdmaSupport(): void {
-    forkJoin([
-      this.api.call('rdma.capable_protocols'),
-      this.store$.select(selectIsEnterprise).pipe(take(1)),
-    ]).pipe(
+    // `rdma.capable_protocols` already accounts for the RDMA entitlement, so it decides this
+    // alone. It used to be qualified by product type, which is not a licensing signal.
+    this.api.call('rdma.capable_protocols').pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(([capableProtocols, isEnterprise]) => {
-      const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Iser) && isEnterprise;
+    ).subscribe((capableProtocols) => {
+      const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Iser);
       if (hasRdmaSupport) {
         this.form.controls.iser.enable();
       } else {

@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
@@ -39,6 +39,10 @@ describe('ServiceNfsComponent', () => {
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
 
+  // Varied per scenario by a nested `beforeAll`, which runs before the outer `beforeEach`
+  // that builds the component. `createRoutingFactory` cannot re-create inside a test.
+  let rdmaCapableProtocols: RdmaProtocolName[] = [RdmaProtocolName.Nfs];
+
   const createComponent = createRoutingFactory({
     component: ServiceNfsComponent,
     imports: [
@@ -66,7 +70,7 @@ describe('ServiceNfsComponent', () => {
           '192.168.1.119': '192.168.1.119',
         }),
         mockCall('nfs.update'),
-        mockCall('rdma.capable_protocols', [RdmaProtocolName.Nfs]),
+        mockCall('rdma.capable_protocols', () => rdmaCapableProtocols),
         mockCall('directoryservices.status', {
           status: DirectoryServiceStatus.Healthy,
           type: DirectoryServiceType.ActiveDirectory,
@@ -231,13 +235,23 @@ describe('ServiceNfsComponent', () => {
     expect(api.call).not.toHaveBeenCalledWith('nfs.update', expect.anything());
   });
 
-  it('disables RDMA field unless it is an enterprise system with RDMA capable NIC', async () => {
-    expect(await (await getCheckbox('rdma')).isDisabled()).toBe(true);
+  it('enables the RDMA field when NFS is an RDMA capable protocol', async () => {
+    expect(await (await getCheckbox('rdma')).isDisabled()).toBe(false);
+  });
 
-    const mockStore$ = spectator.inject(MockStore);
-    mockStore$.overrideSelector(selectIsEnterprise, true);
-    spectator.detectChanges();
+  describe('when NFS is not an RDMA capable protocol', () => {
+    // An empty list is how both "no capable NIC" and "not entitled" reach the UI:
+    // `rdma.capable_protocols` already accounts for the RDMA entitlement.
+    beforeAll(() => {
+      rdmaCapableProtocols = [];
+    });
 
-    expect(await (await getCheckbox('rdma')).isDisabled()).toBe(true);
+    afterAll(() => {
+      rdmaCapableProtocols = [RdmaProtocolName.Nfs];
+    });
+
+    it('disables the RDMA field', async () => {
+      expect(await (await getCheckbox('rdma')).isDisabled()).toBe(true);
+    });
   });
 });
