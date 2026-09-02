@@ -75,25 +75,33 @@ jobs:
       # a checksum mismatch on the one git dependency, and nowhere else. The git
       # dependency is packed from a clone on the box, so anything that changes
       # the clone changes the checksum: umask, git eol/filemode config, user.
+      - uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+
       - name: Diagnose the runner
+        if: always()
         run: |
+          set +e
           set -x
-          umask; id; git --version; node -v
-          git config --system --list || true
-          git config --global --list || true
-          env | grep -i '^YARN\|^COREPACK\|^npm_' || true
-          ls -la "$HOME/.yarnrc.yml" "$HOME/.yarnrc" 2>/dev/null || true
+          umask; id; git --version; node -v; yarn -v; which git node yarn
+          git config --system --list
+          git config --global --list
+          env | grep -i '^YARN\|^COREPACK\|^npm_\|^HOME\|^TMPDIR'
+          ls -la "$HOME/.yarnrc.yml" "$HOME/.yarnrc"
+          mount | grep -E ' / | /tmp | /mnt/tank'
           tmp=$(mktemp -d)
           git clone -q https://github.com/truenas/tn-common-typescript.git "$tmp"
           ls -la "$tmp" "$tmp/scripts" "$tmp/eslint"
           rm -rf "$tmp"
+          true
 
-      - uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+      - name: Experiment, hardened mode off
+        if: failure()
+        run: YARN_ENABLE_HARDENED_MODE=0 yarn install --immutable --mode=skip-build
 
       - name: Show the checksum this runner computes
         if: failure()
         run: |
-          YARN_CHECKSUM_BEHAVIOR=update yarn install --mode=skip-build || true
+          YARN_ENABLE_HARDENED_MODE=0 YARN_CHECKSUM_BEHAVIOR=update yarn install --mode=skip-build || true
           git --no-pager diff yarn.lock
 
       - name: Install Playwright browsers
