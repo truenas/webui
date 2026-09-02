@@ -7,6 +7,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, Subject, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
@@ -55,6 +57,7 @@ describe('ServiceWebshareComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(FormErrorHandlerService),
+      mockEntitlements(),
       mockProvider(TruenasConnectService, {
         config: tnConnectConfig,
       }),
@@ -169,6 +172,45 @@ describe('ServiceWebshareComponent', () => {
     const searchCheckbox = await getSearchCheckbox();
     expect(await searchCheckbox.isDisabled()).toBe(true);
     expect(await searchCheckbox.getValue()).toBe(false);
+  });
+
+  describe('when the system is not entitled to TRUESEARCH', () => {
+    const createDenied = createComponentFactory({
+      component: ServiceWebshareComponent,
+      imports: [
+        ReactiveFormsModule,
+      ],
+      providers: [
+        mockAuth(),
+        mockApi([
+          mockCall('webshare.config', mockWebShareConfig),
+          mockCall('webshare.update', mockWebShareConfig),
+        ]),
+        mockProvider(SlideInRef, {
+          close: jest.fn(),
+          requireConfirmationWhen: jest.fn(),
+        }),
+        mockProvider(SnackbarService),
+        mockProvider(FormErrorHandlerService),
+        mockEntitlements([EntitlementFeature.TrueSearch]),
+        mockProvider(TruenasConnectService, {
+          config: tnConnectConfig,
+        }),
+      ],
+    });
+
+    it('locks the TrueSearch toggle even while TrueNAS Connect is configured', async () => {
+      tnConnectConfig.set({ status: TruenasConnectStatus.Configured } as TruenasConnectConfig);
+      const deniedSpectator = createDenied();
+      deniedSpectator.detectChanges();
+      await deniedSpectator.fixture.whenStable();
+
+      const deniedLoader = TestbedHarnessEnvironment.loader(deniedSpectator.fixture);
+      const searchCheckbox = await deniedLoader.getHarness(IxCheckboxHarness.with({ label: 'Enable TrueSearch' }));
+
+      expect(await searchCheckbox.isDisabled()).toBe(true);
+      expect(await searchCheckbox.getValue()).toBe(false);
+    });
   });
 
   it('does not submit TrueSearch as enabled when TrueNAS Connect is not configured', async () => {
