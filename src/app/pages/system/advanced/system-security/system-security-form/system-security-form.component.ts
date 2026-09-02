@@ -135,7 +135,6 @@ export class SystemSecurityFormComponent extends SidePanelForm implements OnInit
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
 
   protected readonly InputType = InputType;
-  protected readonly stigRequirements = stigPasswordRequirements;
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
   private readonly stigValidatorFn = this.stigValidator.bind(this);

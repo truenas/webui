@@ -225,6 +225,7 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
     idmap_slice: [null as number | null],
     capabilities_policy: [ContainerCapabilitiesPolicy.Default],
     environment_variables: new FormArray<ContainerEnvVariablesFormGroup>([]),
+    usb_devices: [[] as string[]],
   });
 
   readonly canSubmit = this.trackCanSubmit(this.isLoading);
@@ -305,6 +306,7 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
       idmap_type: ContainerIdmapType.Default,
       idmap_slice: null,
       capabilities_policy: ContainerCapabilitiesPolicy.Default,
+      usb_devices: [],
     });
   }
 
