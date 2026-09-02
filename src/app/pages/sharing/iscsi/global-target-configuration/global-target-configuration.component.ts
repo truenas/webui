@@ -7,9 +7,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  forkJoin, of, take,
-} from 'rxjs';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
@@ -31,7 +29,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-global-target-configuration',
@@ -162,13 +159,12 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   }
 
   private checkForRdmaSupport(): void {
-    forkJoin([
-      this.api.call('rdma.capable_protocols'),
-      this.store$.select(selectIsEnterprise).pipe(take(1)),
-    ]).pipe(
+    // `rdma.capable_protocols` already accounts for the RDMA entitlement, so it decides this
+    // alone. It used to be qualified by product type, which is not a licensing signal.
+    this.api.call('rdma.capable_protocols').pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(([capableProtocols, isEnterprise]) => {
-      const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Iser) && isEnterprise;
+    ).subscribe((capableProtocols) => {
+      const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Iser);
       if (hasRdmaSupport) {
         this.form.controls.iser.enable();
       } else {
