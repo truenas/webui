@@ -43,6 +43,13 @@
 #   TN_GUEST_HOST_API_KEY or TN_GUEST_HOST_PASSWORD — credential for that user
 #   TN_GUEST_LIFETIME   VM lifetime, so a leaked one expires (default: 3h)
 #
+# Guest sizing, all with defaults below. The host is shared with the runner,
+# Docker and the browser, so these are deliberately smaller than tn_guest.py's
+# own defaults (8GB, 32GB OS disk, ten data disks):
+#
+#   TN_GUEST_MEMORY_MB, TN_GUEST_VCPUS, TN_GUEST_OS_DISK_GB,
+#   TN_GUEST_DATA_DISK_COUNT, TN_GUEST_DATA_DISK_GB
+#
 # The password `claim` sets on the guest is generated per claim, and `release`
 # destroys the guest. Test artifacts on a public repository are world-readable
 # and a browser trace records the password as typed, so it has to be worthless
@@ -56,6 +63,11 @@ TN_GUEST_HOST="${TN_GUEST_HOST:-localhost}"
 TN_GUEST_POOL="${TN_GUEST_POOL:-tank}"
 TN_GUEST_HOST_USER="${TN_GUEST_HOST_USER:-root}"
 TN_GUEST_LIFETIME="${TN_GUEST_LIFETIME:-3h}"
+TN_GUEST_MEMORY_MB="${TN_GUEST_MEMORY_MB:-6144}"
+TN_GUEST_VCPUS="${TN_GUEST_VCPUS:-4}"
+TN_GUEST_OS_DISK_GB="${TN_GUEST_OS_DISK_GB:-10}"
+TN_GUEST_DATA_DISK_COUNT="${TN_GUEST_DATA_DISK_COUNT:-1}"
+TN_GUEST_DATA_DISK_GB="${TN_GUEST_DATA_DISK_GB:-10}"
 
 # Where `claim` records the deployment name, so `release` can find it without
 # the caller.
@@ -132,6 +144,11 @@ claim() {
     --admin-pass "$password" \
     --nickname "$nickname" \
     --lifetime "$TN_GUEST_LIFETIME" \
+    --memory-mb "$TN_GUEST_MEMORY_MB" \
+    --vcpus "$TN_GUEST_VCPUS" \
+    --os-disk-gb "$TN_GUEST_OS_DISK_GB" \
+    --data-disk-count "$TN_GUEST_DATA_DISK_COUNT" \
+    --data-disk-gb "$TN_GUEST_DATA_DISK_GB" \
     --network hostfwd) \
     || die "tn_guest.py create failed for '$nickname'"
 
