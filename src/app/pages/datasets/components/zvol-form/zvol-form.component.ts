@@ -24,6 +24,7 @@ import {
 } from 'app/enums/dataset.enum';
 import { deduplicationSettingLabels } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
@@ -62,8 +63,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { LicenseService } from 'app/services/license.service';
 
 @Component({
   selector: 'ix-zvol-form',
@@ -101,11 +102,12 @@ export class ZvolFormComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
-  private licenseService = inject(LicenseService);
   slideInRef = inject<SlideInRef<{
     isNew: boolean;
     parentOrZvolId: string;
   }, Dataset>>(SlideInRef);
+
+  private entitlements = inject(EntitlementsService);
 
   private destroyRef = inject(DestroyRef);
 
@@ -247,7 +249,9 @@ export class ZvolFormComponent implements OnInit {
   }
 
   private checkIfDedupIsSupported(): void {
-    this.licenseService.hasDedup$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((hasDedup) => {
+    this.entitlements.entitled$(EntitlementFeature.Dedup).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((hasDedup) => {
       this.hasDeduplication = hasDedup;
       this.updateDeduplicationControl();
       this.cdr.markForCheck();

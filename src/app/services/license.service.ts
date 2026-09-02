@@ -1,17 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-  catchError, combineLatest, defer, of, shareReplay,
+  catchError, defer, of, shareReplay,
 } from 'rxjs';
 import { first, map, switchMap } from 'rxjs/operators';
-import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -40,7 +38,6 @@ export class LicenseService {
   private store$ = inject<Store<AppState>>(Store);
   private api = inject(ApiService);
   private truenasConnectService = inject(TruenasConnectService);
-  private entitlements = inject(EntitlementsService);
 
   /** `failover.licensed` is the runtime truth here; the `HA` entitlement is the narrower
    * license-type question. Left as-is until the two are reconciled. */
@@ -48,24 +45,6 @@ export class LicenseService {
 
   /** Not an entitlement — iX hardware detection. */
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
-
-  /** The licence may permit Fibre Channel on a box with no FC hardware, so only the
-   * entitlement half moved. */
-  hasFibreChannel$ = combineLatest([
-    this.entitlements.entitled$(EntitlementFeature.FibreChannel),
-    this.api.call('fc.capable'),
-  ]).pipe(
-    map(([hasFibreChannel, isFcCapable]) => hasFibreChannel && isFcCapable),
-    shareReplay({ bufferSize: 1, refCount: false }),
-  );
-
-  hasVms$ = this.entitlements.entitled$(EntitlementFeature.Vms);
-
-  hasApps$ = this.entitlements.entitled$(EntitlementFeature.Apps);
-
-  hasDedup$ = this.entitlements.entitled$(EntitlementFeature.Dedup);
-
-  readonly hasKmip$ = this.entitlements.entitled$(EntitlementFeature.Kmip);
 
   readonly hasSed$ = this.store$.select(selectHasSedFeature);
 
@@ -112,8 +91,6 @@ export class LicenseService {
   );
 
   /** Previously borrowed the APPS feature. Same decision today, but keyed on what it means. */
-  readonly shouldShowContainers$ = this.entitlements.entitled$(EntitlementFeature.Containers);
-
   /**
    * Not migrated: the `WEBSHARE` entitlement grants only when the licence carries the key,
    * while this shows WebShare precisely when the system is *not* Enterprise. NAS-143012

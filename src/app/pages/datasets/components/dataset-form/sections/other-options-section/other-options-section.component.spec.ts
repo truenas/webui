@@ -16,7 +16,8 @@ import {
   DatasetSync,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
@@ -33,7 +34,7 @@ import {
 } from 'app/pages/datasets/components/dataset-form/sections/other-options-section/other-options-section.component';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 
 describe('OtherOptionsSectionComponent', () => {
   let spectator: Spectator<OtherOptionsSectionComponent>;
@@ -239,6 +240,7 @@ describe('OtherOptionsSectionComponent', () => {
       }),
       provideMockStore({
         initialState: {
+          entitlements: { entitlements: {} },
           systemInfo: {
             productType: ProductType.CommunityEdition,
             license: {
@@ -581,26 +583,23 @@ describe('OtherOptionsSectionComponent', () => {
       );
     });
 
-    it('shows deduplication field based on product type and license', async () => {
-      // Default state (CommunityEdition) should show deduplication
+    it('shows the deduplication field when the system is entitled to DEDUP', async () => {
       expect(await form.getLabels()).toContain('ZFS Deduplication');
+    });
 
-      // Test with Enterprise with dedup license - should show
+    it('hides the deduplication field when DEDUP is denied', async () => {
       const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectSystemInfo, {
-        productType: ProductType.Enterprise,
-        license: {
-          features: [{ name: LicenseFeature.Dedup, start_date: null, expires_at: null }],
+      store$.overrideSelector(selectEntitlements, {
+        [EntitlementFeature.Dedup]: {
+          entitled: false,
+          reason: EntitlementReason.KeyMissing,
+          message: "This system's license does not include the ZFS deduplication feature.",
         },
-      } as unknown as SystemInfo);
+      });
       store$.refreshState();
 
       const testSpectator = createComponent();
-      testSpectator.setInput({
-        advancedMode: true,
-      });
-
-      // Wait for all async operations including nested subscriptions
+      testSpectator.setInput({ advancedMode: true });
       await testSpectator.fixture.whenStable();
       testSpectator.detectChanges();
       await testSpectator.fixture.whenStable();
@@ -608,7 +607,7 @@ describe('OtherOptionsSectionComponent', () => {
       const testLoader = TestbedHarnessEnvironment.loader(testSpectator.fixture);
       const testForm = await testLoader.getHarness(IxFieldsetHarness);
 
-      expect(await testForm.getLabels()).toContain('ZFS Deduplication');
+      expect(await testForm.getLabels()).not.toContain('ZFS Deduplication');
     });
   });
 

@@ -14,7 +14,8 @@ import {
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
@@ -29,7 +30,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { selectIsEnterprise, selectSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 
 describe('ZvolFormComponent', () => {
   let loader: HarnessLoader;
@@ -146,6 +147,7 @@ describe('ZvolFormComponent', () => {
       mockAuth(),
       provideMockStore({
         initialState: {
+          entitlements: { entitlements: {} },
           systemInfo: {
             productType: ProductType.CommunityEdition,
             systemInfo: {
@@ -263,7 +265,7 @@ describe('ZvolFormComponent', () => {
       spectator.inject(MockStore).resetSelectors();
     });
 
-    async function setupVisibilityTest(isEnterprise: boolean, hasDedupLicense: boolean): Promise<void> {
+    async function setupVisibilityTest(isEntitled: boolean): Promise<void> {
       spectator = createComponent({
         providers: [
           mockProvider(SlideInRef, {
@@ -273,39 +275,36 @@ describe('ZvolFormComponent', () => {
         ],
       });
       const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectIsEnterprise, isEnterprise);
-      store$.overrideSelector(selectSystemInfo, {
-        license: {
-          features: hasDedupLicense ? [{ name: LicenseFeature.Dedup }] : [],
-        },
-      } as SystemInfo);
+      store$.overrideSelector(selectEntitlements, isEntitled
+        ? {}
+        : {
+            [EntitlementFeature.Dedup]: {
+              entitled: false,
+              reason: EntitlementReason.KeyMissing,
+              message: "This system's license does not include the ZFS deduplication feature.",
+            },
+          });
       store$.refreshState();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
       mainDetails = await loader.getHarness(DetailsTableHarness);
     }
 
-    it('shows deduplication when not enterprise', async () => {
-      await setupVisibilityTest(false, false);
+    it('shows deduplication when the system is entitled to DEDUP', async () => {
+      await setupVisibilityTest(true);
       expect(Object.keys(await mainDetails.getValues())).toContain('ZFS Deduplication');
       expect(spectator.component.form.controls.deduplication.hasValidator(Validators.required)).toBe(true);
     });
 
-    it('shows deduplication when enterprise with dedup license', async () => {
-      await setupVisibilityTest(true, true);
-      expect(Object.keys(await mainDetails.getValues())).toContain('ZFS Deduplication');
-      expect(spectator.component.form.controls.deduplication.hasValidator(Validators.required)).toBe(true);
-    });
-
-    it('hides deduplication when enterprise without dedup license', async () => {
-      await setupVisibilityTest(true, false);
+    it('hides deduplication when DEDUP is denied', async () => {
+      await setupVisibilityTest(false);
       expect(Object.keys(await mainDetails.getValues())).not.toContain('ZFS Deduplication');
       // Hidden control drops its required validator so it never blocks submission.
       expect(spectator.component.form.controls.deduplication.hasValidator(Validators.required)).toBe(false);
     });
 
     it('omits deduplication from the create payload when hidden', async () => {
-      await setupVisibilityTest(true, false);
+      await setupVisibilityTest(false);
       form = await loader.getHarness(IxFormHarness);
       await form.fillForm({ Name: 'new zvol', Size: '1 GiB' });
 

@@ -9,7 +9,7 @@ import {
 } from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
-import { LicenseService } from 'app/services/license.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 
 describe('NvmeOfService', () => {
   let spectator: SpectatorService<NvmeOfService>;
@@ -24,8 +24,8 @@ describe('NvmeOfService', () => {
         mockCall('rdma.capable_protocols', [RdmaProtocolName.Nvmet]),
         mockCall('nvmet.port_subsys.delete'),
       ]),
-      mockProvider(LicenseService, {
-        hasFibreChannel$: of(false),
+      mockProvider(EntitlementsService, {
+        entitled$: () => of(false),
       }),
     ],
   });

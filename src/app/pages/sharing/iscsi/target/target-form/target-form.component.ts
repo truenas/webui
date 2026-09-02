@@ -13,6 +13,7 @@ import { uniq } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { IscsiAuthMethod, IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { createFormArraySnapshot } from 'app/helpers/form-array-snapshot.helper';
@@ -44,9 +45,9 @@ import {
   FcPortItemControlsComponent,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-port-item-controls/fc-port-item-controls.component';
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { LicenseService } from 'app/services/license.service';
 
 @Component({
   selector: 'ix-target-form',
@@ -85,7 +86,7 @@ export class TargetFormComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
   private fcService = inject(FibreChannelService);
-  private license = inject(LicenseService);
+  private entitlements = inject(EntitlementsService);
   private targetNameValidationService = inject(TargetNameValidationService);
   private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<IscsiTarget | undefined, IscsiTarget>>(SlideInRef);
@@ -113,7 +114,7 @@ export class TargetFormComponent implements OnInit {
       : this.translate.instant('Edit ISCSI Target');
   }
 
-  hasFibreChannel = toSignal(this.license.hasFibreChannel$);
+  hasFibreChannel = toSignal(this.entitlements.entitled$(EntitlementFeature.FibreChannel));
 
   readonly helptext = helptextIscsi;
   readonly portals$ = this.iscsiService.listPortals().pipe(
