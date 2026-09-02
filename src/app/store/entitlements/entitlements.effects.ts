@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, mergeMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { entitlementsLoaded, entitlementsLoadFailed } from 'app/store/entitlements/entitlements.actions';
@@ -14,7 +14,9 @@ export class EntitlementsEffects {
 
   loadEntitlements = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, systemInfoUpdated),
-    mergeMap(() => {
+    // Latest wins: `systemInfoUpdated` also fires on unrelated saves, so a second load can
+    // start while the first is in flight and must not be overtaken by it.
+    switchMap(() => {
       return this.api.call('truenas.entitlements.info').pipe(
         map((info) => entitlementsLoaded({ entitlements: info.features })),
         catchError((error: unknown) => {
