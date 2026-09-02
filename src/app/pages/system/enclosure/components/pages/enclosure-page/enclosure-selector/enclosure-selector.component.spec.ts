@@ -16,8 +16,8 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
 describe('EnclosureSelectorComponent', () => {
   let spectator: Spectator<EnclosureSelectorComponent>;
   const enclosures = [
-    { id: '1', label: 'M40' },
-    { id: '2', label: 'ES24N' },
+    { id: '1', label: 'M40', model: 'M40' },
+    { id: '2', label: 'ES24N', model: 'ES24N' },
   ];
   const createComponent = createComponentFactory({
     component: EnclosureSelectorComponent,
@@ -55,6 +55,15 @@ describe('EnclosureSelectorComponent', () => {
     const enclosureElements = spectator.queryAll('.enclosure');
     expect(enclosureElements[0]).toHaveClass('active');
     expect(enclosureElements[1]).not.toHaveClass('active');
+  });
+
+  // The model carries digits, which the library's kebab-casing does not split the way the
+  // legacy `[ixTest]` directive did — pinned so a regression in the normalization is caught.
+  it('keeps the legacy per-enclosure test id', () => {
+    const enclosureElements = spectator.queryAll('.enclosure');
+
+    expect(enclosureElements[0]).toHaveAttribute('data-test', 'link-select-enclosure-m-40');
+    expect(enclosureElements[1]).toHaveAttribute('data-test', 'link-select-enclosure-es-24-n');
   });
 
   it('has a link to navigate to an enclosure', () => {

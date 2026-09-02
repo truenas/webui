@@ -6,19 +6,18 @@
   <div>{{ 'No vdev info for this disk' | translate }}</div>
 }
 
-@if (selectedSlot().pool_info?.vdev_disks?.length) {
-    @for (disk of selectedSlot().pool_info.vdev_disks; track disk.dev) {
-      <a
-        class="disk-name"
-        [ixTest]="['select-disk', disk.dev]"
-        (click)="diskClick.emit(disk)"
-      >
-        <div
-          class="disk-circle"
-          [style.background]="isSelectedSlot(disk) ? undefined : poolColor()"
-          [class.selected]="isSelectedSlot(disk)"
-        ></div>
-        <span class="devname">{{ disk.dev }}</span>
-      </a>
-    }
+@for (vdevDisk of vdevDisks(); track vdevDisk.disk.dev) {
+  <a
+    class="disk-name"
+    tnTestIdType="link"
+    [tnTestId]="vdevDisk.testId"
+    (click)="diskClick.emit(vdevDisk.disk)"
+  >
+    <div
+      class="disk-circle"
+      [style.background]="isSelectedSlot(vdevDisk.disk) ? undefined : poolColor()"
+      [class.selected]="isSelectedSlot(vdevDisk.disk)"
+    ></div>
+    <span class="devname">{{ vdevDisk.disk.dev }}</span>
+  </a>
 }
