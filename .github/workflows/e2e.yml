@@ -69,14 +69,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
-      - name: Install dependencies
-        run: |
-          corepack enable
-          yarn install --immutable
+      # Same Node pin and install path as every job in main.yml, so a failure
+      # here is the runner and not a difference in how the tree was prepared.
+      - uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
 
       - name: Install Playwright browsers
         run: yarn playwright install --with-deps chromium

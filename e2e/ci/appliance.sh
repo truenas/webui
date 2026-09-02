@@ -134,7 +134,11 @@ revert() {
 # has already gone wrong, and must not turn a test failure into an
 # infrastructure failure.
 collect_logs() {
-  local host="${1:?host required}" dest="${2:?destination directory required}"
+  local host="${1:-}" dest="${2:?destination directory required}"
+  # No host means the claim never happened — the run failed before it, and the
+  # step still runs because it is `if: always()`. Nothing to collect, and a
+  # non-zero exit here would paint a second failure over the real one.
+  [ -n "$host" ] || { echo "appliance.sh: no host, nothing to collect" >&2; return 0; }
   mkdir -p "$dest"
   # shellcheck disable=SC2029  # remote expansion is intended
   ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "root@${host}" \
