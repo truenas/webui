@@ -1,3 +1,5 @@
+import { Injector, runInInjectionContext } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { TestBed } from '@angular/core/testing';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -26,6 +28,23 @@ describe('LicenseService', () => {
     });
     return TestBed.inject(LicenseService);
   }
+
+  describe('hasSed$', () => {
+    /**
+     * `DiskListComponent` reads this under `toSignal(..., { requireSync: true })` at field
+     * init and freezes its column array, so an observable that defers until entitlements
+     * load throws there and permanently drops the SED column. Asserted here because the
+     * disk-list spec stubs `LicenseService` wholesale and cannot catch it.
+     */
+    it('emits synchronously so requireSync consumers can read it at field init', () => {
+      const service = setup(ProductType.Enterprise);
+      const injector = TestBed.inject(Injector);
+
+      expect(() => runInInjectionContext(injector, () => {
+        toSignal(service.hasSed$, { requireSync: true });
+      })).not.toThrow();
+    });
+  });
 
   describe('shouldShowWebshare$', () => {
     it('emits true on non-enterprise systems', async () => {
