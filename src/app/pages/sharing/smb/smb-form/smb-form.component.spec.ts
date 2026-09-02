@@ -10,6 +10,7 @@ import {
   TnBannerHarness,
   TnCheckboxHarness,
   TnChipInputHarness,
+  TnGroupChipsHarness,
   TnDialog,
   TnFormFieldHarness,
   TnInputHarness,
@@ -22,6 +23,7 @@ import {
   provideTnFormFieldDismissibleErrors,
   provideTnFormFieldErrors,
 } from 'app/core/providers/tn-form-field-errors.provider';
+import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -117,6 +119,12 @@ describe('SmbFormComponent', () => {
   const getTnChipInput = (name: string): Promise<TnChipInputHarness> => loader.getHarness(
     TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+
+  // The audit Watch/Ignore lists are `tn-group-chips`, so the control name sits on
+  // that wrapper — its own harness reaches the chip input nested inside.
+  const getGroupChips = (name: string): Promise<TnGroupChipsHarness> => loader.getHarness(
+    TnGroupChipsHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
   // tn-select fires a value change even when re-selecting the currently displayed option,
   // which re-runs the purpose presets and wipes edit-loaded values. Mirror the Material
   // dedupe by only selecting when the displayed purpose actually differs.
@@ -142,6 +150,7 @@ describe('SmbFormComponent', () => {
       MockComponent(SmbUsersWarningComponent),
     ],
     providers: [
+      provideTnUserDirectory(),
       mockAuth(),
       mockApi([
         mockCall('group.query', [{ id: 1, group: 'test', builtin: false }] as Group[]),
@@ -1178,7 +1187,7 @@ describe('SmbFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(false);
 
       // Add a group to watch list
-      const watchListChips = await getTnChipInput('watch_list');
+      const watchListChips = await getGroupChips('watch_list');
       await watchListChips.addChip('test');
 
       spectator.detectChanges();
@@ -1203,7 +1212,7 @@ describe('SmbFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(false);
 
       // Add a group to ignore list
-      const ignoreListChips = await getTnChipInput('ignore_list');
+      const ignoreListChips = await getGroupChips('ignore_list');
       await ignoreListChips.addChip('test');
 
       spectator.detectChanges();
@@ -1267,7 +1276,7 @@ describe('SmbFormComponent', () => {
       expect(getErrorText()).toContain('At least one group must be specified');
 
       // Add a group to watch list
-      const watchListChips = await getTnChipInput('watch_list');
+      const watchListChips = await getGroupChips('watch_list');
       await watchListChips.addChip('test');
 
       spectator.detectChanges();

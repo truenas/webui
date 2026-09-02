@@ -181,26 +181,22 @@
           [label]="'Watch List' | translate"
           [tooltip]="helptextSharingSmb.watchListTooltip | translate"
         >
-          <tn-chip-input
+          <tn-group-chips
             testId="watch-list"
             formControlName="watch_list"
-            [suggestions]="(groupSuggestions$ | async) ?? []"
             [allowCustomValue]="true"
-            (searchChange)="onGroupSearch($event)"
-          ></tn-chip-input>
+          ></tn-group-chips>
         </tn-form-field>
 
         <tn-form-field
           [label]="'Ignore List' | translate"
           [tooltip]="helptextSharingSmb.ignoreListTooltip | translate"
         >
-          <tn-chip-input
+          <tn-group-chips
             testId="ignore-list"
             formControlName="ignore_list"
-            [suggestions]="(groupSuggestions$ | async) ?? []"
             [allowCustomValue]="true"
-            (searchChange)="onGroupSearch($event)"
-          ></tn-chip-input>
+          ></tn-group-chips>
         </tn-form-field>
       }
     </tn-form-section>

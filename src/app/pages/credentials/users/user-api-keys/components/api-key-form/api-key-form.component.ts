@@ -5,31 +5,25 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnAutocompleteComponent, TnAutocompleteOption, TnCheckboxComponent, TnDateInputComponent, TnDialog,
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnCheckboxComponent, TnDateInputComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent, TnUserAutocompleteComponent,
 } from '@truenas/ui-components';
-import {
-  Subject, catchError, debounceTime, distinctUntilChanged, filter, map, of, startWith, switchMap, take, tap,
-} from 'rxjs';
+import { filter, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
-import { newOption, Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { UserPickerProvider } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker-provider';
-import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
-import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { TrueNasDirectoryOptions } from 'app/services/truenas-user-directory.service';
 
 @Component({
   selector: 'ix-api-key-form',
@@ -41,7 +35,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    TnAutocompleteComponent,
+    TnUserAutocompleteComponent,
     TnCheckboxComponent,
     TnDateInputComponent,
     ReactiveFormsModule,
@@ -53,7 +47,6 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
   private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
   private authService = inject(AuthService);
-  private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
@@ -96,45 +89,14 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
     .setOptions({ select: ['username', 'id', 'uid'], order_by: ['username'] })
     .getParams();
 
-  protected readonly userPickerProvider = new UserPickerProvider({
+  /**
+   * Narrows the field to users that have a role, and is also what its "Add New"
+   * row creates against. The field is only rendered for a full admin, so no
+   * query can be issued for a user who could never see the result.
+   */
+  protected readonly userDirectoryOptions: TrueNasDirectoryOptions = {
     queryParams: this.userQueryParams,
-  });
-
-  /**
-   * Options behind the username `tn-autocomplete`, refreshed on each search and appended to as
-   * the open dropdown is scrolled. The first row is always "Add New", which opens the user form.
-   */
-  protected readonly usernameOptions = signal<TnAutocompleteOption<string>[]>([]);
-  protected readonly usernamesLoading = signal(false);
-
-  private readonly usernameSearch$ = new Subject<string>();
-
-  /** The term the currently loaded page was fetched with, replayed by {@link onUsernameLoadMore}. */
-  private lastUsernameSearch = '';
-
-  /** The username selected before "Add New" was picked, restored when the user form is cancelled. */
-  private previousUsername = '';
-
-  /**
-   * Cleared once a page comes back shorter than {@link UserPickerProvider.pageSize}: without it
-   * every further scroll past the last user would issue another `user.query` at a growing offset
-   * that can only return `[]`. Reset by each fresh search, which restarts paging at page 0.
-   */
-  private hasMoreUsernames = true;
-
-  /**
-   * Set when a search fails and cleared when the next one starts. Without it the failed term stays
-   * recorded in `distinctUntilChanged` below, so reopening the dropdown — which re-emits '' — would
-   * be suppressed as a duplicate and the field could never recover from a transient error.
-   */
-  private lastUsernameSearchFailed = false;
-
-  /**
-   * The options are already filtered server-side by {@link userPickerProvider}, so the component's
-   * own client-side pass is disabled — it would otherwise hide results the query matched on a field
-   * other than the label, and drop the "Add New" row as soon as the user typed.
-   */
-  protected readonly showAllOptions = (): boolean => true;
+  };
 
   protected readonly forbiddenNames$ = this.api.call('api_key.query', [
     [], { select: ['name'], order_by: ['name'] },
@@ -164,8 +126,6 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
       }
     }
     this.handleNonExpiringChanges();
-    this.loadUsernameOptions();
-    this.listenForAddNewUser();
   }
 
   protected handleSubmit = (): SubmitResult<boolean, ApiKey> => {
@@ -195,141 +155,6 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
       },
     };
   };
-
-  /** Refreshes the username options as the user types, from the first page of matches. */
-  protected onUsernameSearch(query: string): void {
-    this.usernameSearch$.next(query);
-  }
-
-  /** Appends the next page of matches when the open dropdown is scrolled to its end. */
-  protected onUsernameLoadMore(): void {
-    if (!this.hasMoreUsernames) {
-      return;
-    }
-
-    this.usernamesLoading.set(true);
-    this.userPickerProvider.nextPage(this.lastUsernameSearch)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (options) => {
-          this.usernamesLoading.set(false);
-          this.hasMoreUsernames = options.length >= this.userPickerProvider.pageSize;
-          this.usernameOptions.update((current) => [
-            ...current,
-            ...this.toAutocompleteOptions(options).filter(
-              (option) => !current.some((existing) => existing.value === option.value),
-            ),
-          ]);
-        },
-        error: (error: unknown) => {
-          this.usernamesLoading.set(false);
-          this.errorHandler.showErrorModal(error);
-        },
-      });
-  }
-
-  private loadUsernameOptions(): void {
-    // The username field only exists for full admins, so gate the whole stream on that role the
-    // way the template gates the field — the picker this replaced preloaded from its own
-    // `ngOnInit`, i.e. only when it was instantiated. Without the gate every SharingAdmin and
-    // ReadonlyAdmin open would issue a `user.query` whose result can never be rendered.
-    this.authService.hasRole([Role.FullAdmin]).pipe(
-      filter(Boolean),
-      take(1),
-      switchMap(() => this.usernameSearch$.pipe(
-        debounceTime(defaultDebounceTimeMs),
-        // Preloads the first page so the dropdown is populated before the user types. It sits after
-        // `debounceTime`, so it fires immediately; routing it through the same stream lets
-        // `switchMap` cancel it the moment a real search starts. It also sits *above*
-        // `distinctUntilChanged`, so the '' the dropdown emits when it is first opened is
-        // recognized as a repeat of this preload instead of refetching page 0 — unless that
-        // preload failed, which the comparator below treats as a reason to retry.
-        startWith(''),
-        distinctUntilChanged((previous, current) => previous === current && !this.lastUsernameSearchFailed),
-        switchMap((query) => {
-          this.lastUsernameSearch = query;
-          this.lastUsernameSearchFailed = false;
-          this.usernamesLoading.set(true);
-          // Caught inside `switchMap` so a failed query reports once and leaves the outer
-          // subscription alive — otherwise a single transient error would permanently freeze
-          // the picker, with `requireSelection` leaving nothing to select.
-          return this.userPickerProvider.fetch(query).pipe(
-            catchError((error: unknown) => {
-              this.lastUsernameSearchFailed = true;
-              this.errorHandler.showErrorModal(error);
-              return of([] as Option[]);
-            }),
-          );
-        }),
-      )),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((options) => {
-      this.usernamesLoading.set(false);
-      if (!this.lastUsernameSearchFailed) {
-        this.hasMoreUsernames = options.length >= this.userPickerProvider.pageSize;
-      }
-      this.usernameOptions.set(this.withSelectedUsername(this.toAutocompleteOptions(options)));
-    });
-  }
-
-  private toAutocompleteOptions(options: Option[]): TnAutocompleteOption<string>[] {
-    return [
-      { label: this.translate.instant('Add New'), value: newOption },
-      ...options.map((option) => ({ label: option.label, value: String(option.value) })),
-    ];
-  }
-
-  /**
-   * Keeps the selected username in the list when the page just fetched doesn't contain it —
-   * a preset username sorted past the first page, or one just created that the `roles != []`
-   * query doesn't match yet. Without it the field would render empty for a perfectly valid value.
-   */
-  private withSelectedUsername(options: TnAutocompleteOption<string>[]): TnAutocompleteOption<string>[] {
-    const selected = this.form.controls.username.value;
-    if (!selected || selected === newOption || options.some((option) => option.value === selected)) {
-      return options;
-    }
-
-    return [...options, { label: selected, value: selected }];
-  }
-
-  /**
-   * Selecting "Add New" opens the user form; the created user becomes the selected username.
-   * Dismissing that form without saving puts the control back to whatever was selected before —
-   * `newOption` ('NEW') is not a real username, but it does satisfy `Validators.required`, so
-   * leaving it in place would let the form submit it (and block a second "Add New", whose value
-   * would then be unchanged).
-   */
-  private listenForAddNewUser(): void {
-    this.form.controls.username.valueChanges.pipe(
-      // The username set in `ngOnInit` predates this subscription, so seed it explicitly —
-      // otherwise a cancel before any manual pick would restore an empty field.
-      startWith(this.form.controls.username.value),
-      distinctUntilChanged(),
-      tap((value) => {
-        if (value !== newOption) {
-          this.previousUsername = value;
-        }
-      }),
-      filter((value) => value === newOption),
-      switchMap(() => this.formPanel.open(UserFormComponent, {
-        wide: true,
-        title: this.translate.instant('Add User'),
-      })),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(({ response: newUser }) => {
-      if (!newUser) {
-        this.form.controls.username.setValue(this.previousUsername);
-        return;
-      }
-
-      this.usernameOptions.update((current) => [
-        ...current,
-        { label: newUser.username, value: newUser.username },
-      ]);
-      this.form.controls.username.setValue(newUser.username);
-    });
-  }
 
   private setCurrentUsername(): void {
     const username = this.username();

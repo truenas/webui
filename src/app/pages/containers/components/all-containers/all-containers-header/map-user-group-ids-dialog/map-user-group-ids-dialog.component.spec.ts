@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { directIdMapping, User } from 'app/interfaces/user.interface';
@@ -66,6 +67,7 @@ describe('MapUserGroupIdsDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      provideTnUserDirectory(),
       mockApi([
         mockCall('user.query', mockUsers),
         mockCall('group.query', mockGroups),

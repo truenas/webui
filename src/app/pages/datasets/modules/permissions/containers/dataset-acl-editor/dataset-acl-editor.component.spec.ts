@@ -5,9 +5,12 @@ import { Router } from '@angular/router';
 import {
   createRoutingFactory, mockProvider, SpectatorRouting,
 } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnDialog, TnGroupAutocompleteComponent, TnUserAutocompleteComponent,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { firstValueFrom, of } from 'rxjs';
+import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -17,8 +20,6 @@ import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enu
 import { NfsAcl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import {
@@ -89,10 +90,13 @@ describe('DatasetAclEditorComponent', () => {
     imports: [
       CastPipe,
       ReactiveFormsModule,
-      IxUserComboboxComponent,
-      IxGroupComboboxComponent,
     ],
     declarations: [
+      // Mocked, as the ix-* wrappers they replaced were: this suite is about the ACL
+      // editor, and rendering real directory-backed pickers only adds their own
+      // dependencies to it.
+      MockComponent(TnUserAutocompleteComponent),
+      MockComponent(TnGroupAutocompleteComponent),
       MockComponent(EditPosixAceComponent),
       MockComponent(EditNfsAceComponent),
       MockComponent(AclEditorSaveControlsComponent),
@@ -100,6 +104,7 @@ describe('DatasetAclEditorComponent', () => {
       PermissionsItemComponent,
     ],
     providers: [
+      provideTnUserDirectory(),
       StorageService,
       DatasetAclEditorStore,
       mockProvider(DialogService),

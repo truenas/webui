@@ -5,7 +5,8 @@ import {
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnRadioGroupComponent, TnSelectComponent,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnGroupAutocompleteComponent,
+  TnRadioGroupComponent, TnSelectComponent, TnUserAutocompleteComponent,
 } from '@truenas/ui-components';
 import { fromPairs } from 'lodash-es';
 import {
@@ -25,8 +26,6 @@ import {
   BasicNfsPermissions,
   NfsAclItem,
 } from 'app/interfaces/acl.interface';
-import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { newNfsAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
 import {
@@ -67,8 +66,8 @@ function booleanRecordFromLabels<T extends string>(
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnSelectComponent,
-    IxUserComboboxComponent,
-    IxGroupComboboxComponent,
+    TnUserAutocompleteComponent,
+    TnGroupAutocompleteComponent,
     TnRadioGroupComponent,
     TnCheckboxComponent,
     TranslateModule,

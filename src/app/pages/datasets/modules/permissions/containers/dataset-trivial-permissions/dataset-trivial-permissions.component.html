@@ -21,12 +21,15 @@
   >
     <div class="owner-and-access">
       <tn-form-section class="owner-fields" [heading]="'Owner' | translate">
-        <ix-user-combobox
-          formControlName="owner"
+        <tn-form-field
           [label]="'User' | translate"
           [tooltip]="tooltips.user | translate"
           [required]="isToApplyUser"
-        ></ix-user-combobox>
+        >
+          <tn-user-autocomplete
+            formControlName="owner"
+          ></tn-user-autocomplete>
+        </tn-form-field>
 
         <tn-form-field [tooltip]="tooltips.applyUser | translate">
           <tn-checkbox
@@ -35,12 +38,15 @@
           ></tn-checkbox>
         </tn-form-field>
 
-        <ix-group-combobox
-          formControlName="ownerGroup"
+        <tn-form-field
           [label]="'Group' | translate"
           [tooltip]="tooltips.group | translate"
           [required]="isToApplyGroup"
-        ></ix-group-combobox>
+        >
+          <tn-group-autocomplete
+            formControlName="ownerGroup"
+          ></tn-group-autocomplete>
+        </tn-form-field>
 
         <tn-form-field [tooltip]="tooltips.applyGroup | translate">
           <tn-checkbox

@@ -9,28 +9,23 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnChipInputComponent, TnCheckboxComponent, TnFormFieldComponent,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnGroupChipsComponent,
   TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  Observable, Subject, catchError, combineLatest, debounceTime, distinctUntilChanged, filter, finalize, map, of,
-  startWith, switchMap, take,
+  Observable, combineLatest, finalize, map, of, switchMap,
 } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
-import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import {
-  UserGroupExistenceValidationService,
-} from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { TrueNasDirectoryOptions } from 'app/services/truenas-user-directory.service';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -47,7 +42,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    TnChipInputComponent,
+    TnGroupChipsComponent,
     TnSelectComponent,
     TnCheckboxComponent,
     TnButtonComponent,
@@ -63,7 +58,6 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private globalErrorHandler = inject(ErrorHandlerService);
   private userService = inject(UserService);
-  private groupExistence = inject(UserGroupExistenceValidationService);
   private store$ = inject<Store<AppState>>(Store);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
@@ -82,15 +76,12 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
   protected dsAuthEnabled = signal(false);
   private dsStatus = signal<DirectoryServicesStatus | null>(null);
 
-  /** String-mode suggestions for the local-groups chip input, refreshed on each search. */
-  protected localGroupsSuggestions = signal<string[]>([]);
-
-  /** Same, for the directory-services chip input (Enterprise only). */
-  protected dsGroupsSuggestions = signal<string[]>([]);
-
-  /** Emits the latest chip-input search term; `switchMap` cancels stale in-flight queries. */
-  private readonly localGroupsSearch$ = new Subject<string>();
-  private readonly dsGroupsSearch$ = new Subject<string>();
+  /**
+   * Local groups only, built-ins included: a privilege can legitimately be
+   * granted to a built-in local group, so this deliberately does not ask for
+   * `mutableOnly`.
+   */
+  protected readonly localGroupsOptions: TrueNasDirectoryOptions = { localOnly: true };
 
   protected readonly form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -122,84 +113,6 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
     }),
   );
 
-  /**
-   * Provider for local groups autocomplete.
-   *
-   * Uses ChipsProvider instead of GroupComboboxProvider because:
-   * - Chips UI is simpler and more appropriate for multi-select privileges
-   * - No pagination needed - 50-item limit is sufficient for most privilege scenarios
-   * - Avoids complexity of managing paginated state across multiple chips fields
-   *
-   * Fetches local groups from API with search filtering:
-   * - Uses '^' prefix filter for server-side search
-   * - Falls back to client-side includes() for better UX (contains match)
-   * - Limited to 50 results for performance
-   *
-   * Note: No caching to keep implementation simple and avoid stale data issues.
-   * For SMB shares with larger group lists requiring pagination, see GroupComboboxProvider.
-   */
-  readonly localGroupsProvider: ChipsProvider = (query: string) => {
-    const trimmedQuery = query?.trim() || '';
-    const lowerCaseQuery = trimmedQuery.toLowerCase();
-
-    const filters: (['local', '=', true] | ['group', '^', string])[] = [['local', '=', true]];
-    if (trimmedQuery) {
-      // The server-side `^` (prefix) filter is case-sensitive, so pass the query verbatim
-      // (matching UserService.smbGroupQueryDsCache) — lowercasing it would drop groups with
-      // uppercase names. The client-side contains-match below is what's intentionally lax.
-      filters.push(['group', '^', trimmedQuery]);
-    }
-
-    return this.api.call('group.query', [filters, { limit: this.GROUP_QUERY_LIMIT, order_by: ['group'] }]).pipe(
-      map((groups) => {
-        const groupNames = groups.map((group) => group.group);
-        if (!trimmedQuery) {
-          return groupNames;
-        }
-
-        // Client-side contains match (case-insensitive) for better UX.
-        return groupNames.filter((name) => name.toLowerCase().includes(lowerCaseQuery));
-      }),
-    );
-  };
-
-  /**
-   * Provider for directory-service groups, mirroring what `ix-group-chips` used to supply
-   * internally. Values the user types are still free text — {@link UserGroupExistenceValidationService}
-   * is what rejects a group that does not exist.
-   */
-  private readonly dsGroupsProvider: ChipsProvider = (query: string) => {
-    return this.userService.groupQueryDsCache(query).pipe(
-      map((groups) => groups.map((group) => group.group)),
-    );
-  };
-
-  /**
-   * Refreshes the local-groups chip-input suggestions as the user types, driving the
-   * autocomplete from {@link localGroupsProvider}.
-   */
-  protected onLocalGroupsSearch(query: string): void {
-    this.localGroupsSearch$.next(query);
-  }
-
-  /** Same, for the directory-services chip input. */
-  protected onDsGroupsSearch(query: string): void {
-    this.dsGroupsSearch$.next(query);
-  }
-
-  /**
-   * Runs one suggestion query, reporting a failure and recovering with an empty list. The
-   * `catchError` sits inside the `switchMap` on purpose: an error escaping to the outer
-   * subscription would terminate it, killing the autocomplete for the rest of the panel's life.
-   */
-  private suggestionsFor(provider: ChipsProvider, query: string): Observable<string[]> {
-    return provider(query).pipe(
-      catchError((error: unknown) => {
-        this.globalErrorHandler.showErrorModal(error);
-        return of([]);
-      }),
-    );
-  }
 
   ngOnInit(): void {
     this.existingPrivilege = this.editPrivilege();
@@ -233,44 +146,6 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
     ).subscribe((dsGroups) => {
       this.updateDsAuthButtonVisibility(dsGroups);
     });
-
-    // Drive suggestions off the latest search term only. `tn-chip-input` does not debounce
-    // its `searchChange`, so debounce here (matching the old ix-chips behavior) to avoid a
-    // `group.query` per keystroke. `startWith('')` preloads the dropdown immediately on init
-    // (it sits after `debounceTime`, so it fires without waiting a debounce interval), and
-    // routing that preload through the same stream means `switchMap` serializes it with the
-    // typed queries — an in-flight empty-query preload is cancelled the moment the user types,
-    // so its stale response can't overwrite fresh search results.
-    this.localGroupsSearch$.pipe(
-      debounceTime(defaultDebounceTimeMs),
-      distinctUntilChanged(),
-      startWith(''),
-      switchMap((query) => this.suggestionsFor(this.localGroupsProvider, query)),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((groups) => this.localGroupsSuggestions.set(groups));
-
-    // Same stream for the DS chip input, but only once the field it feeds actually exists:
-    // `ix-group-chips` queried the directory service only while it was rendered, and the field
-    // is Enterprise-only, so an ungated preload would be a `group.query` per form open on every
-    // non-Enterprise system, for a result that can never be shown.
-    this.store$.select(selectIsEnterprise).pipe(
-      filter(Boolean),
-      take(1),
-      switchMap(() => this.dsGroupsSearch$.pipe(
-        debounceTime(defaultDebounceTimeMs),
-        distinctUntilChanged(),
-        startWith(''),
-        switchMap((query) => this.suggestionsFor(this.dsGroupsProvider, query)),
-      )),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((groups) => this.dsGroupsSuggestions.set(groups));
-
-    // `ix-group-chips` carried this validator; the chip input accepts free text, so keep it.
-    // Registered after the edit patch above (and without `updateValueAndValidity`) so opening
-    // the form for edit does not immediately flag the loaded groups.
-    this.form.controls.ds_groups.addAsyncValidators([
-      this.groupExistence.validateGroupsExist(defaultDebounceTimeMs),
-    ]);
   }
 
   private setPrivilegeForEdit(existingPrivilege: Privilege): void {

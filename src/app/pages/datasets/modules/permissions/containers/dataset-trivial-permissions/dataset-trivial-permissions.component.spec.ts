@@ -3,8 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnCheckboxHarness, TnGroupAutocompleteHarness, TnUserAutocompleteHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import {
   mockCall, mockJob, mockApi,
 } from 'app/core/testing/utils/mock-api.utils';
@@ -13,7 +16,6 @@ import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
@@ -22,7 +24,6 @@ import { DatasetTrivialPermissionsComponent } from './dataset-trivial-permission
 describe('DatasetTrivialPermissionsComponent', () => {
   let spectator: Spectator<DatasetTrivialPermissionsComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   let api: ApiService;
   let saveButton: TnButtonHarness;
   const createComponent = createRoutingFactory({
@@ -34,6 +35,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       datasetId: 'pool/trivial',
     },
     providers: [
+      provideTnUserDirectory(),
       ixFormTestingProviders(),
       mockApi([
         mockCall('pool.dataset.query', [{
@@ -77,7 +79,6 @@ describe('DatasetTrivialPermissionsComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
     api = spectator.inject(ApiService);
     saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
   });
@@ -88,13 +89,18 @@ describe('DatasetTrivialPermissionsComponent', () => {
     expect(datasetPath).toHaveText('Dataset: /mnt/pool/trivial');
   });
 
-  it('shows current setting owner and access information', async () => {
-    const values = await form.getValues();
+  // The user/group fields are their own CVAs, so the ix-* form harness — which resolves
+  // only ix-* controls — cannot reach them by label; they are addressed by control name.
+  const getOwner = (): Promise<TnUserAutocompleteHarness> => loader.getHarness(
+    TnUserAutocompleteHarness.with({ selector: '[formControlName="owner"]' }),
+  );
+  const getOwnerGroup = (): Promise<TnGroupAutocompleteHarness> => loader.getHarness(
+    TnGroupAutocompleteHarness.with({ selector: '[formControlName="ownerGroup"]' }),
+  );
 
-    expect(values).toEqual({
-      User: 'root',
-      Group: 'kmem',
-    });
+  it('shows current setting owner and access information', async () => {
+    expect(await (await getOwner()).getInputValue()).toBe('root');
+    expect(await (await getOwnerGroup()).getInputValue()).toBe('kmem');
 
     const applyUser = await loader.getHarness(TnCheckboxHarness.with({ label: 'Apply User' }));
     const applyGroup = await loader.getHarness(TnCheckboxHarness.with({ label: 'Apply Group' }));
@@ -111,10 +117,12 @@ describe('DatasetTrivialPermissionsComponent', () => {
   });
 
   it('saves new user and group when form is saved', async () => {
-    await form.fillForm({
-      User: 'games',
-      Group: 'wheel',
-    });
+    const owner = await getOwner();
+    await owner.setInputValue('games');
+    await owner.blur();
+    const ownerGroup = await getOwnerGroup();
+    await ownerGroup.setInputValue('wheel');
+    await ownerGroup.blur();
 
     const applyUser = await loader.getHarness(TnCheckboxHarness.with({ label: 'Apply User' }));
     const applyGroup = await loader.getHarness(TnCheckboxHarness.with({ label: 'Apply Group' }));

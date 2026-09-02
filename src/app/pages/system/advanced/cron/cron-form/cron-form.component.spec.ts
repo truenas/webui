@@ -3,8 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnInputHarness, TnUserAutocompleteHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
@@ -41,6 +44,9 @@ describe('CronFormComponent', () => {
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  const getRunAsUser = (): Promise<TnUserAutocompleteHarness> => loader.getHarness(
+    TnUserAutocompleteHarness.with({ selector: '[formControlName="user"]' }),
+  );
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
@@ -51,6 +57,7 @@ describe('CronFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      provideTnUserDirectory(),
       mockProvider(LocaleService, {
         timezone: 'America/New_York',
       }),
@@ -93,8 +100,11 @@ describe('CronFormComponent', () => {
       await (await getCheckbox('stdout')).check();
       await (await getCheckbox('stderr')).check();
       await (await getCheckbox('enabled')).check();
+      // `tn-user-autocomplete` is its own CVA, so IxFormHarness — which resolves
+      // only ix-* controls — cannot reach it by label.
+      await (await getRunAsUser()).setInputValue('root');
+      await (await getRunAsUser()).blur();
       await form.fillForm({
-        'Run As User': 'root',
         Schedule: '0 0 * * *',
       });
 
@@ -138,8 +148,9 @@ describe('CronFormComponent', () => {
       expect(await (await getCheckbox('stderr')).isChecked()).toBe(false);
       expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
 
+      expect(await (await getRunAsUser()).getInputValue()).toBe('root');
+
       const values = await form.getValues();
-      expect(values['Run As User']).toBe('root');
       expect(values.Schedule).toBe(
         'Custom At 30 minutes past the hour, every hour, on day 12 of the month, and on Monday, Tuesday, and Wednesday',
       );

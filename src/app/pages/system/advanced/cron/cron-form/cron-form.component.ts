@@ -4,12 +4,13 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
+import {
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnUserAutocompleteComponent,
+} from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextCron } from 'app/helptext/system/cron-form';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -29,7 +30,7 @@ import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    IxUserComboboxComponent,
+    TnUserAutocompleteComponent,
     SchedulerComponent,
     TnCheckboxComponent,
     TranslateModule,

@@ -5,8 +5,8 @@ import { ReactiveFormsModule, ValidationErrors, Validators } from '@angular/form
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-  TnSelectComponent,
+  InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
+  TnGroupAutocompleteComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
   combineLatest,
@@ -33,8 +33,6 @@ import { User } from 'app/interfaces/user.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
@@ -48,6 +46,7 @@ import { SudoCommandsValidatorService } from 'app/pages/credentials/users/user-f
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
+import { TrueNasDirectoryOptions } from 'app/services/truenas-user-directory.service';
 import { UserService } from 'app/services/user.service';
 
 @Component({
@@ -64,7 +63,7 @@ import { UserService } from 'app/services/user.service';
     TnChipInputComponent,
     TnFormFieldComponent,
     TranslateModule,
-    IxComboboxComponent,
+    TnGroupAutocompleteComponent,
     IxExplorerComponent,
     IxPermissionsComponent,
     DetailsTableComponent,
@@ -127,10 +126,16 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  protected groupComboboxProvider: GroupComboboxProvider = new GroupComboboxProvider(
-    this.userService,
-    { valueField: 'id', localOnly: true },
-  );
+  /**
+   * The primary group is stored by id, and only a local, editable group can be
+   * one. A plain object rather than the old stateful provider: the field owns
+   * the paging cursor, so nothing has to be reconstructed to reset it.
+   */
+  protected readonly primaryGroupOptions: TrueNasDirectoryOptions = {
+    valueField: 'id',
+    localOnly: true,
+    mutableOnly: true,
+  };
 
   protected readonly roleGroupMap = new Map<Role, string>([
     [Role.FullAdmin, 'builtin_administrators'],
@@ -503,12 +508,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((auxGroupIds) => {
-        this.groupComboboxProvider = new GroupComboboxProvider(
-          this.userService,
-          { valueField: 'id', localOnly: true },
-        );
-        this.cdr.markForCheck();
-
         const primaryGroupId = this.form.controls.group.value;
         if (primaryGroupId != null && auxGroupIds.includes(primaryGroupId)) {
           const groupName = this.groupNameCache.get(primaryGroupId) || String(primaryGroupId);

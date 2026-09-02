@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { directIdMapping, User } from 'app/interfaces/user.interface';
@@ -34,6 +35,7 @@ describe('NewMappingFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      provideTnUserDirectory(),
       mockApi([
         mockCall('user.query', [mockUser]),
         mockCall('group.query', [mockGroup]),
@@ -55,14 +57,14 @@ describe('NewMappingFormComponent', () => {
   });
 
   it('shows user combobox when type is Users', () => {
-    expect(spectator.query('ix-user-combobox')).toBeTruthy();
+    expect(spectator.query('tn-user-autocomplete')).toBeTruthy();
   });
 
   it('shows group combobox when type is Groups', () => {
     spectator.setInput('type', ViewType.Groups);
     spectator.detectChanges();
 
-    expect(spectator.query('ix-group-combobox')).toBeTruthy();
+    expect(spectator.query('tn-group-autocomplete')).toBeTruthy();
   });
 
   it('has "Map directly" checkbox checked by default', async () => {

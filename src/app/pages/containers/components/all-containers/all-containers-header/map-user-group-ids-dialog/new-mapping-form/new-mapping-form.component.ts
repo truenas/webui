@@ -7,14 +7,13 @@ import {
 } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormSectionComponent, TnIconComponent, TnTooltipDirective,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnGroupAutocompleteComponent,
+  TnIconComponent, TnTooltipDirective, TnUserAutocompleteComponent,
 } from '@truenas/ui-components';
 import { Observable, switchMap } from 'rxjs';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import { directIdMapping } from 'app/interfaces/user.interface';
-import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -30,8 +29,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxUserComboboxComponent,
-    IxGroupComboboxComponent,
+    TnFormFieldComponent,
+    TnUserAutocompleteComponent,
+    TnGroupAutocompleteComponent,
     FormsModule,
     ReactiveFormsModule,
     TranslateModule,
@@ -83,7 +83,7 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
     let request$: Observable<unknown>;
 
     if (this.isUserType()) {
-      // ix-user-combobox returns username, need to query for user ID
+      // tn-user-autocomplete commits the username; the id has to be looked up
       request$ = this.api.call('user.query', [[['username', '=', values.hostUidOrGid]]]).pipe(
         switchMap((users) => {
           if (!users.length) {
@@ -93,7 +93,7 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
         }),
       );
     } else {
-      // ix-group-combobox returns group name, need to query for group ID
+      // tn-group-autocomplete commits the group name; the id has to be looked up
       request$ = this.api.call('group.query', [[['group', '=', values.hostUidOrGid]]]).pipe(
         switchMap((groups) => {
           if (!groups.length) {

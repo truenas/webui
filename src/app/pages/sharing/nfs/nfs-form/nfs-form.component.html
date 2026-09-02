@@ -49,60 +49,44 @@
         [label]="'Maproot User' | translate"
         [tooltip]="helptext.maprootUserTooltip | translate"
       >
-        <tn-autocomplete
+        <tn-user-autocomplete
           formControlName="maproot_user"
           [testId]="'maproot-user'"
           [placeholder]="'Maproot User' | translate"
-          [options]="(userOptions$ | async) ?? []"
-          [allowCustomValue]="true"
-          [loading]="usersLoading()"
-          (searchChange)="userSearch$.next($event)"
-        ></tn-autocomplete>
+        ></tn-user-autocomplete>
       </tn-form-field>
 
       <tn-form-field
         [label]="'Maproot Group' | translate"
         [tooltip]="helptext.maprootGroupTooltip | translate"
       >
-        <tn-autocomplete
+        <tn-group-autocomplete
           formControlName="maproot_group"
           [testId]="'maproot-group'"
           [placeholder]="'Maproot Group' | translate"
-          [options]="(groupOptions$ | async) ?? []"
-          [allowCustomValue]="true"
-          [loading]="groupsLoading()"
-          (searchChange)="groupSearch$.next($event)"
-        ></tn-autocomplete>
+        ></tn-group-autocomplete>
       </tn-form-field>
 
       <tn-form-field
         [label]="'Mapall User' | translate"
         [tooltip]="helptext.mapallUserTooltip | translate"
       >
-        <tn-autocomplete
+        <tn-user-autocomplete
           formControlName="mapall_user"
           [testId]="'mapall-user'"
           [placeholder]="'Mapall User' | translate"
-          [options]="(userOptions$ | async) ?? []"
-          [allowCustomValue]="true"
-          [loading]="usersLoading()"
-          (searchChange)="userSearch$.next($event)"
-        ></tn-autocomplete>
+        ></tn-user-autocomplete>
       </tn-form-field>
 
       <tn-form-field
         [label]="'Mapall Group' | translate"
         [tooltip]="helptext.mapallGroupTooltip | translate"
       >
-        <tn-autocomplete
+        <tn-group-autocomplete
           formControlName="mapall_group"
           [testId]="'mapall-group'"
           [placeholder]="'Mapall Group' | translate"
-          [options]="(groupOptions$ | async) ?? []"
-          [allowCustomValue]="true"
-          [loading]="groupsLoading()"
-          (searchChange)="groupSearch$.next($event)"
-        ></tn-autocomplete>
+        ></tn-group-autocomplete>
       </tn-form-field>
 
       @if (hasNfsSecurityField()) {

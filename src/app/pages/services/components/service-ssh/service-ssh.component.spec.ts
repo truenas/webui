@@ -4,9 +4,10 @@ import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnGroupChipsHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
+import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
@@ -42,8 +43,8 @@ describe('ServiceSshComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  const getPasswordLoginGroups = (): Promise<TnChipInputHarness> => loader.getHarness(
-    TnChipInputHarness.with({ selector: '[formControlName="password_login_groups"]' }),
+  const getPasswordLoginGroups = (): Promise<TnGroupChipsHarness> => loader.getHarness(
+    TnGroupChipsHarness.with({ selector: '[formControlName="password_login_groups"]' }),
   );
   const hasInput = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -64,6 +65,7 @@ describe('ServiceSshComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      provideTnUserDirectory(),
       mockApi([
         mockCall('group.query', fakeGroupDataSource),
         mockCall('ssh.config', {
@@ -157,18 +159,24 @@ describe('ServiceSshComponent', () => {
     ]);
   });
 
-  // The async existence check is the one behaviour that moved out of ix-group-chips and into
-  // this component, so it needs a case where it actually fails: the suite-wide
-  // `getGroupByNameCached` mock answers `of(null)` for an unknown group, which the validator
-  // reads as "exists", and every other test would pass with the validator not wired at all.
-  it('blocks Save while a typed group does not exist on the system', () => {
-    // `Once`, so the erroring lookup cannot leak into the submit tests below: the validator
+  // The existence check now lives in `tn-group-chips`, which reaches the system through
+  // TrueNasUserDirectory. It needs a case where it actually fails: the suite-wide
+  // `getGroupByNameCached` mock answers `of(null)` for an unknown group, which the directory
+  // reads as "exists", so every other test would pass with the validation not wired at all.
+  it('blocks Save while a typed group does not exist on the system', async () => {
+    // `Once`, so the erroring lookup cannot leak into the submit tests below: the field
     // makes exactly one call per group, and this control holds exactly one.
     const lookup = jest.spyOn(spectator.inject(UserService), 'getGroupByNameCached')
       .mockImplementationOnce(() => throwError(() => new Error('Group not found')));
 
     const groups = spectator.component.form.controls.password_login_groups;
     groups.setValue(['ghost-group']);
+
+    // The field debounces before it asks, so the verdict lands a tick later.
+    await new Promise((resolve) => {
+      setTimeout(resolve, 400);
+    });
+    spectator.detectChanges();
 
     expect(lookup).toHaveBeenCalledWith('ghost-group');
     expect(groups.hasError('groupsDoNotExist')).toBe(true);
@@ -181,7 +189,8 @@ describe('ServiceSshComponent', () => {
     await groups.typeText('dummy');
 
     expect(await groups.getSuggestions()).toEqual(['dummy-group']);
-    expect(spectator.inject(UserService).groupQueryDsCache).toHaveBeenCalledWith('dummy');
+    // The directory passes the full query shape: (search, hideBuiltIn, offset, extraFilters).
+    expect(spectator.inject(UserService).groupQueryDsCache).toHaveBeenCalledWith('dummy', false, 0, []);
   });
 
   it('exposes a single footer action that flips between Advanced and Basic Settings', () => {

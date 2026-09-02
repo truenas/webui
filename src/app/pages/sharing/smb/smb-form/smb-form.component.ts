@@ -23,6 +23,7 @@ import {
   TnFormErrorsComponent,
   TnCheckboxComponent,
   TnChipInputComponent,
+  TnGroupChipsComponent,
   TnDialog,
   TnFormFieldComponent,
   TnFormSectionComponent,
@@ -30,11 +31,9 @@ import {
   TnSelectComponent,
   TnTestIdDirective,
 } from '@truenas/ui-components';
+import { endWith, Observable, of } from 'rxjs';
 import {
-  BehaviorSubject, endWith, Observable, of,
-} from 'rxjs';
-import {
-  debounceTime, distinctUntilChanged, filter, map, shareReplay, switchMap, take, tap,
+  debounceTime, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
@@ -63,7 +62,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import {
   advancedModeFooterAction, SidePanelFooterAction,
@@ -99,6 +97,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnSelectComponent,
     TnCheckboxComponent,
     TnChipInputComponent,
+    TnGroupChipsComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     TnFormErrorsComponent,
@@ -127,7 +126,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
   private store$ = inject<Store<ServicesState>>(Store);
   private smbValidationService = inject(SmbValidationService);
   private userService = inject(UserService);
-  private groupExistenceValidator = inject(UserGroupExistenceValidationService);
 
   private destroyRef = inject(DestroyRef);
 
@@ -214,23 +212,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
   });
 
   protected purposeOptions$: Observable<SelectOption<SmbSharePurpose>[]>;
-
-  /** Drives server-side group lookups for the audit Watch/Ignore List chip inputs. */
-  private readonly groupSearch$ = new BehaviorSubject<string>('');
-
-  /**
-   * Group-name autocomplete suggestions for the audit Watch/Ignore List chip inputs. Re-queries the
-   * server as the user types (fed from `(searchChange)` via {@link onGroupSearch}), restoring the
-   * query-as-you-type behavior the old `ix-group-chips` provided — a single empty query only returned
-   * the first 50 groups. `shareReplay` keeps both chip inputs on one subscription / one request.
-   */
-  protected readonly groupSuggestions$ = this.groupSearch$.pipe(
-    debounceTime(250),
-    distinctUntilChanged(),
-    switchMap((search) => this.userService.groupQueryDsCache(search)),
-    map((groups) => groups.map((group) => group.group)),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
 
   get isRestartRequired(): boolean {
     return this.isNew || this.form.dirty;
@@ -428,11 +409,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
     ]],
   });
 
-  /** Feeds typed text from the audit chip inputs into the server-side group lookup. */
-  protected onGroupSearch(search: string): void {
-    this.groupSearch$.next(search);
-  }
-
   get shouldShowNamingSchema(): boolean {
     return (this.form.controls.dataset_naming_schema.enabled && this.form.controls.auto_dataset_creation.value)
       || this.form.controls.purpose.value === SmbSharePurpose.PrivateDatasetsShare;
@@ -495,14 +471,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
       this.smbValidationService.validate(this.existingSmbShare?.name),
     ]);
 
-    // Validate that entered Watch/Ignore List groups exist (previously supplied by ix-group-chips).
-    const auditGroup = this.form.controls.audit;
-    auditGroup.controls.watch_list.addAsyncValidators([
-      this.groupExistenceValidator.validateGroupsExist(),
-    ]);
-    auditGroup.controls.ignore_list.addAsyncValidators([
-      this.groupExistenceValidator.validateGroupsExist(),
-    ]);
     // Duplicate check removed - already handled in ngOnInit() via openAdvancedOptionsIfInvalid()
   }
 

@@ -2,14 +2,15 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnGroupAutocompleteHarness, TnSelectHarness, TnUserAutocompleteHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
 import { User } from 'app/interfaces/user.interface';
-import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { UserService } from 'app/services/user.service';
 import { EditPosixAceComponent } from './edit-posix-ace.component';
@@ -17,7 +18,6 @@ import { EditPosixAceComponent } from './edit-posix-ace.component';
 describe('EditPosixAceComponent', () => {
   let spectator: Spectator<EditPosixAceComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: EditPosixAceComponent,
     imports: [
@@ -25,6 +25,7 @@ describe('EditPosixAceComponent', () => {
       IxPermissionsComponent,
     ],
     providers: [
+      provideTnUserDirectory(),
       mockProvider(DatasetAclEditorStore, {
         updateSelectedAce: jest.fn(),
         updateSelectedAceValidation: jest.fn(),
@@ -47,7 +48,16 @@ describe('EditPosixAceComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  // The user/group fields are their own CVAs, addressed by control name — the
+  // control name sits on the wrapper, not on the tn-autocomplete inside it.
+  const getUserField = (): Promise<TnUserAutocompleteHarness> => loader.getHarness(
+    TnUserAutocompleteHarness.with({ selector: '[formControlName="user"]' }),
+  );
+  const getGroupField = (): Promise<TnGroupAutocompleteHarness> => loader.getHarness(
+    TnGroupAutocompleteHarness.with({ selector: '[formControlName="group"]' }),
+  );
+
+  beforeEach(() => {
     spectator = createComponent({
       props: {
         ace: {
@@ -64,15 +74,14 @@ describe('EditPosixAceComponent', () => {
     });
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
   });
 
   it('shows current ace values from ace input', async () => {
     const whoSelect = await loader.getHarness(TnSelectHarness);
     expect(await whoSelect.getDisplayText()).toBe('Group');
 
-    const groupCombobox = await form.getControl('Group') as IxComboboxHarness;
-    expect(await groupCombobox.getValue()).toBe('wheel');
+    const groupCombobox = await getGroupField();
+    expect(await groupCombobox.getInputValue()).toBe('wheel');
 
     const readCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Read' }));
     const writeCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Write' }));
@@ -106,13 +115,14 @@ describe('EditPosixAceComponent', () => {
 
   describe('group ace', () => {
     it('shows group combobox when Who is group', async () => {
-      const groupSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'Group' }));
+      const groupSelect = await getGroupField();
       expect(groupSelect).toExist();
     });
 
     it('allows custom values in Group combobox', async () => {
-      const userCombobox = await form.getControl('Group') as IxComboboxHarness;
-      await userCombobox.writeCustomValue('AD\\domain users');
+      const userCombobox = await getGroupField();
+      await userCombobox.setInputValue('AD\\domain users');
+      await userCombobox.blur();
 
       expect(spectator.inject(DatasetAclEditorStore).updateSelectedAce).toHaveBeenLastCalledWith(
         expect.objectContaining({ who: 'AD\\domain users' }),
@@ -126,7 +136,7 @@ describe('EditPosixAceComponent', () => {
       const whoSelect = await loader.getHarness(TnSelectHarness);
       await whoSelect.selectOption(/^User$/);
 
-      const userSelect = await loader.getHarness(IxComboboxHarness.with({ label: 'User' }));
+      const userSelect = await getUserField();
       expect(userSelect).toExist();
     });
 
@@ -134,8 +144,9 @@ describe('EditPosixAceComponent', () => {
       const whoSelect = await loader.getHarness(TnSelectHarness);
       await whoSelect.selectOption(/^User$/);
 
-      const userCombobox = await form.getControl('User') as IxComboboxHarness;
-      await userCombobox.writeCustomValue('AD\\administrator');
+      const userCombobox = await getUserField();
+      await userCombobox.setInputValue('AD\\administrator');
+      await userCombobox.blur();
 
       expect(spectator.inject(DatasetAclEditorStore).updateSelectedAce).toHaveBeenLastCalledWith(
         expect.objectContaining({ who: 'AD\\administrator' }),

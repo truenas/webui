@@ -7,6 +7,7 @@ import {
   TnAutocompleteHarness, TnCheckboxHarness, TnDateInputHarness, TnDialog, TnInputHarness,
 } from '@truenas/ui-components';
 import { parseISO } from 'date-fns';
+import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -38,6 +39,7 @@ describe('ApiKeyFormComponent', () => {
     component: ApiKeyFormComponent,
     imports: [ReactiveFormsModule],
     providers: [
+      provideTnUserDirectory(),
       ...ixFormTestingProviders(),
       mockAuth(),
       mockApi([

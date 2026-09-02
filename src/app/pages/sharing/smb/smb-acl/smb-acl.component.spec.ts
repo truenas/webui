@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnAutocompleteHarness, TnFormListHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
+import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
@@ -85,6 +86,7 @@ describe('SmbAclComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      provideTnUserDirectory(),
       mockAuth(),
       mockApi([
         mockCall('sharing.smb.getacl', mockAcl),

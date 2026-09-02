@@ -3,13 +3,9 @@ import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@ang
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnGroupChipsComponent,
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import {
-  BehaviorSubject, catchError, debounceTime, distinctUntilChanged, of, shareReplay, switchMap,
-} from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -18,10 +14,6 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
-import {
-  UserGroupExistenceValidationService,
-} from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import {
   advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
@@ -69,7 +61,7 @@ type SshFormValue = ReturnType<ReturnType<typeof createSshForm>['getRawValue']>;
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    TnChipInputComponent,
+    TnGroupChipsComponent,
     TnCheckboxComponent,
     TnSelectComponent,
     TranslateModule,
@@ -80,7 +72,6 @@ export class ServiceSshComponent extends IxFormHostForm<boolean, SshFormValue> i
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private userService = inject(UserService);
-  private existenceValidation = inject(UserGroupExistenceValidationService);
 
   readonly requiredRoles = [Role.SshWrite];
   protected readonly InputType = InputType;
@@ -110,24 +101,6 @@ export class ServiceSshComponent extends IxFormHostForm<boolean, SshFormValue> i
 
   readonly bindInterfaces$ = this.api.call('ssh.bindiface_choices').pipe(choicesToOptions());
 
-  // Server-searched suggestions for the Password Login Groups chips, the same shape the
-  // SMB form uses for its autocompletes: switchMap cancels the in-flight query on new
-  // input, and catchError keeps one failed directory-services query from killing the
-  // stream for the rest of the form's life — the dropdown just stops suggesting.
-  protected readonly groupSearch$ = new BehaviorSubject('');
-  protected readonly groupOptions$ = this.groupSearch$.pipe(
-    debounceTime(defaultDebounceTimeMs),
-    distinctUntilChanged(),
-    switchMap((query) => this.userService.groupQueryDsCache(query).pipe(
-      catchError((error: unknown) => {
-        console.error('Group suggestions fetch failed:', error);
-        return of([]);
-      }),
-    )),
-    map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
-
   /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
   private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode, {
     labels: advancedModeSettingLabels,
@@ -138,12 +111,6 @@ export class ServiceSshComponent extends IxFormHostForm<boolean, SshFormValue> i
   }
 
   ngOnInit(): void {
-    // Parity with the former ix-group-chips control, which added this itself: a typed
-    // group that does not exist on the system is a validation error, not a new group.
-    this.form.controls.password_login_groups.addAsyncValidators(
-      this.existenceValidation.validateGroupsExist(),
-    );
-
     this.loadFormConfig(this.api.call('ssh.config'), (config) => this.form.patchValue(config));
   }
 

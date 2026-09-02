@@ -118,32 +118,26 @@
         [label]="'Administrators Group' | translate"
         [tooltip]="tooltips.admin_group | translate"
       >
-        <tn-autocomplete
+        <tn-group-autocomplete
           formControlName="admin_group"
           [testId]="'admin-group'"
           [placeholder]="'Administrators Group' | translate"
-          [options]="(groupOptions$ | async) ?? []"
-          [allowCustomValue]="true"
-          [loading]="groupsLoading()"
           [noResultsText]="(groupsFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
-          (searchChange)="groupSearch$.next($event)"
-        ></tn-autocomplete>
+          (directoryError)="groupsFetchFailed.set(true)"
+        ></tn-group-autocomplete>
       </tn-form-field>
 
       <tn-form-field
         [label]="'Guest Account' | translate"
         [tooltip]="tooltips.guest | translate"
       >
-        <tn-autocomplete
+        <tn-user-autocomplete
           formControlName="guest"
           [testId]="'guest'"
           [placeholder]="'Guest Account' | translate"
-          [options]="(userOptions$ | async) ?? []"
-          [allowCustomValue]="true"
-          [loading]="usersLoading()"
           [noResultsText]="(usersFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
-          (searchChange)="userSearch$.next($event)"
-        ></tn-autocomplete>
+          (directoryError)="usersFetchFailed.set(true)"
+        ></tn-user-autocomplete>
       </tn-form-field>
 
       <tn-form-field
