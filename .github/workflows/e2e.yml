@@ -65,20 +65,22 @@ jobs:
     # group at once. Without it the job inherits GitHub's 360-minute default and
     # a hang blocks the lab for six hours.
     timeout-minutes: 90
-    env:
+
+    steps:
+      - uses: actions/checkout@v4
+
       # The lab runner is a TrueNAS box, and TrueNAS mounts /tmp noexec. Yarn
       # packs the one git dependency (`@truenas/common-typescript`) by writing
       # a `yarn` shim into a temp directory and running it; on noexec /tmp the
       # shim cannot execute, PATH lookup falls through to corepack, corepack
       # finds no pinned package manager in the clone and downloads Yarn 1, and
       # Yarn 1 produces a different archive from Yarn 4 — so `yarn install`
-      # fails with a checksum mismatch, on this runner only. `runner.temp` is
-      # on the runner's own dataset, which allows exec. Node, npm and Playwright
-      # all honour TMPDIR, so this is the whole fix.
-      TMPDIR: ${{ runner.temp }}
-
-    steps:
-      - uses: actions/checkout@v4
+      # fails with a checksum mismatch, on this runner only. RUNNER_TEMP is on
+      # the runner's own dataset, which allows exec. Node, npm and Playwright
+      # all honour TMPDIR, so this is the whole fix. A step rather than job
+      # `env:` because the `runner` context is not available there.
+      - name: Keep temp files off noexec /tmp
+        run: echo "TMPDIR=$RUNNER_TEMP" >> "$GITHUB_ENV"
 
       # Same Node pin and install path as every job in main.yml, so a failure
       # here is the runner and not a difference in how the tree was prepared.
