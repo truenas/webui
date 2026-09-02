@@ -8,6 +8,7 @@ import {
   TnRadioComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { finalize, forkJoin } from 'rxjs';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -19,11 +20,11 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectService } from 'app/store/services/services.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-nvme-of-configuration',
@@ -44,6 +45,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export class NvmeOfConfigurationComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private nvmeOfService = inject(NvmeOfService);
@@ -56,7 +58,7 @@ export class NvmeOfConfigurationComponent extends IxFormHostForm implements OnIn
   protected readonly isLoadingConfig = signal(false);
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly hasSpdk = this.entitlements.entitled(EntitlementFeature.NvmeOfSpdk);
   protected readonly service = toSignal(this.store$.select(selectService(ServiceName.NvmeOf)));
 
   protected readonly form = this.formBuilder.nonNullable.group({
@@ -118,7 +120,7 @@ export class NvmeOfConfigurationComponent extends IxFormHostForm implements OnIn
     // `form.value` (not the event's raw values) so controls disabled by the loaded system
     // capabilities — RDMA, ANA, Implementation — stay out of the payload.
     const { kernel, ...rest } = this.form.value;
-    const payload = this.isEnterprise() ? { ...rest, kernel } : rest;
+    const payload = this.hasSpdk() ? { ...rest, kernel } : rest;
 
     return {
       request$: this.api.call('nvmet.global.update', [payload]),
