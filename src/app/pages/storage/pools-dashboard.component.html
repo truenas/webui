@@ -13,7 +13,7 @@
     {{ 'Disks' | translate }}
   </a>
 
-  @if (isEnterprise()) {
+  @if (hasZfsTier()) {
     <button
       *ixRequiresRoles="requiredRoles"
       mat-button
