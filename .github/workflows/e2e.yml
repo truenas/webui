@@ -65,6 +65,10 @@ jobs:
     # group at once. Without it the job inherits GitHub's 360-minute default and
     # a hang blocks the lab for six hours.
     timeout-minutes: 90
+    env:
+      # Where the lab runner keeps ixnode: a Python venv on the runner's own
+      # dataset, not on PATH. appliance.sh honours this override.
+      IXNODE: /mnt/tank/github/venv/bin/ixnode
 
     steps:
       - uses: actions/checkout@v4
