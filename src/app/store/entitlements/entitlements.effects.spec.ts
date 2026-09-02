@@ -1,6 +1,8 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { firstValueFrom, ReplaySubject, throwError } from 'rxjs';
+import {
+  firstValueFrom, Observable, of, ReplaySubject, Subject, throwError,
+} from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
@@ -50,6 +52,24 @@ describe('EntitlementsEffects', () => {
 
     expect(await firstValueFrom(spectator.service.loadEntitlements))
       .toEqual(entitlementsLoaded({ entitlements: info.features }));
+  });
+
+  it('supersedes an in-flight load rather than racing it', () => {
+    const slow$ = new Subject<EntitlementsInfo>();
+    const fast = { features: {} } as EntitlementsInfo;
+    jest.spyOn(spectator.inject(ApiService), 'call')
+      .mockReturnValueOnce(slow$ as unknown as Observable<never>)
+      .mockReturnValueOnce(of(fast) as unknown as Observable<never>);
+
+    const emitted: unknown[] = [];
+    spectator.service.loadEntitlements.subscribe((action) => emitted.push(action));
+
+    actions$.next(adminUiInitialized());
+    actions$.next(systemInfoUpdated());
+    slow$.next(info);
+    slow$.complete();
+
+    expect(emitted).toEqual([entitlementsLoaded({ entitlements: fast.features })]);
   });
 
   it('reports failure instead of erroring, leaving the reducer to fall back permissively', async () => {
