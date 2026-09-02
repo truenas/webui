@@ -27,6 +27,7 @@ import {
 } from 'app/enums/dataset.enum';
 import { deduplicationSettingLabels } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
@@ -59,6 +60,7 @@ import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.
 import {
   getDatasetLabel, getUserProperty, transformSpecialSmallBlockSizeForPayload,
 } from 'app/pages/datasets/utils/dataset.utils';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { LicenseService } from 'app/services/license.service';
 
@@ -98,6 +100,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private licenseService = inject(LicenseService);
+  private entitlements = inject(EntitlementsService);
 
   private destroyRef = inject(DestroyRef);
 
@@ -232,7 +235,9 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   }
 
   private checkIfDedupIsSupported(): void {
-    this.licenseService.hasDedup$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((hasDedup) => {
+    this.entitlements.entitled$(EntitlementFeature.Dedup).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((hasDedup) => {
       this.hasDeduplication = hasDedup;
       this.updateDeduplicationControl();
       this.cdr.markForCheck();

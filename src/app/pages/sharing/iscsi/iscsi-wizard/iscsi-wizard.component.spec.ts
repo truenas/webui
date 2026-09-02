@@ -11,6 +11,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { IscsiExtentType, IscsiExtentUsefor } from 'app/enums/iscsi.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -96,6 +97,7 @@ describe('IscsiWizardComponent', () => {
         mockCall('fcport.create'),
         mockCall('fc.fc_host.update'),
       ]),
+      mockEntitlements(),
       provideMockStore({
         selectors: [
           {

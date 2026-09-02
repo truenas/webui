@@ -4,10 +4,12 @@ import {
   from, mergeMap, Observable, of, switchMap, toArray,
 } from 'rxjs';
 import { catchError, map, shareReplay, take } from 'rxjs/operators';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { LicenseService } from 'app/services/license.service';
 
 @Injectable({
@@ -16,6 +18,7 @@ import { LicenseService } from 'app/services/license.service';
 export class NvmeOfService {
   private api = inject(ApiService);
   private license = inject(LicenseService);
+  private entitlements = inject(EntitlementsService);
 
   private maxConcurrentRequests = 15;
 
@@ -23,7 +26,7 @@ export class NvmeOfService {
 
   getSupportedTransports(): Observable<NvmeOfTransportType[]> {
     return combineLatest([
-      this.license.hasFibreChannel$,
+      this.entitlements.entitled$(EntitlementFeature.FibreChannel),
       this.isRdmaCapable(),
     ])
       .pipe(

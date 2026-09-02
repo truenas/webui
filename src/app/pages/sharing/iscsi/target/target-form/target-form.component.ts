@@ -13,6 +13,7 @@ import {
 import { uniq } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { IscsiAuthMethod, IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { createFormArraySnapshot } from 'app/helpers/form-array-snapshot.helper';
@@ -39,6 +40,7 @@ import {
   FcPortItemControlsComponent,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-port-item-controls/fc-port-item-controls.component';
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { LicenseService } from 'app/services/license.service';
@@ -75,6 +77,7 @@ export class TargetFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private fcService = inject(FibreChannelService);
   private license = inject(LicenseService);
+  private entitlements = inject(EntitlementsService);
   private targetNameValidationService = inject(TargetNameValidationService);
   private destroyRef = inject(DestroyRef);
 
@@ -98,7 +101,7 @@ export class TargetFormComponent extends IxFormHostForm implements OnInit {
     return mode === IscsiTargetMode.Iscsi || mode === IscsiTargetMode.Both;
   }
 
-  hasFibreChannel = toSignal(this.license.hasFibreChannel$);
+  hasFibreChannel = toSignal(this.entitlements.entitled$(EntitlementFeature.FibreChannel));
 
   readonly helptext = helptextIscsi;
   readonly portals$ = this.iscsiService.listPortals().pipe(

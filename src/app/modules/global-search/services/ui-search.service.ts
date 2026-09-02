@@ -6,11 +6,13 @@ import {
   BehaviorSubject,
   Observable, combineLatest, filter, first, from, map, mergeMap, of, tap, toArray,
 } from 'rxjs';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { GlobalSearchVisibleToken } from 'app/modules/global-search/enums/global-search-visible-token.enum';
 import { GlobalSearchProvider } from 'app/modules/global-search/interfaces/global-search-provider.interface';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { sortSearchResults } from 'app/modules/global-search/services/utils/sort-search-results';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { LicenseService } from 'app/services/license.service';
 
 @Injectable({
@@ -20,6 +22,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
   private authService = inject(AuthService);
   private translate = inject(TranslateService);
   private license = inject(LicenseService);
+  private entitlements = inject(EntitlementsService);
 
   uiElements = UiElementsJson as UiSearchableElement[];
 
@@ -45,10 +48,10 @@ export class UiSearchProvider implements GlobalSearchProvider {
           item.requiredRoles?.length ? this.authService.hasRole(item.requiredRoles) : of(true),
           this.license.hasFailover$,
           this.license.hasEnclosure$,
-          this.license.hasVms$,
-          this.license.hasApps$,
-          this.license.hasKmip$,
-          this.license.hasFibreChannel$,
+          this.entitlements.entitled$(EntitlementFeature.Vms),
+          this.entitlements.entitled$(EntitlementFeature.Apps),
+          this.entitlements.entitled$(EntitlementFeature.Kmip),
+          this.entitlements.entitled$(EntitlementFeature.FibreChannel),
           this.license.hasSedFeature$,
           this.license.hasSystemSecurity$,
         ]).pipe(

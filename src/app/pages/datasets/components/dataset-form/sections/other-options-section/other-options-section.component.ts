@@ -35,6 +35,7 @@ import {
   datasetSyncLabels,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting, deduplicationSettingLabels } from 'app/enums/deduplication-setting.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -52,6 +53,7 @@ import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/u
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { LicenseService } from 'app/services/license.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -75,6 +77,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private licenseService = inject(LicenseService);
+  private entitlements = inject(EntitlementsService);
   private cdr = inject(ChangeDetectorRef);
   private systemGeneralService = inject(SystemGeneralService);
   private dialogService = inject(DialogService);
@@ -94,7 +97,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   readonly advancedModeChange = output();
   readonly formValidityChange = output<boolean>();
 
-  protected readonly hasDeduplication = toSignal(this.licenseService.hasDedup$, { initialValue: false });
+  protected readonly hasDeduplication = toSignal(
+    this.entitlements.entitled$(EntitlementFeature.Dedup),
+    { initialValue: false },
+  );
+
   hasRecordsizeWarning = false;
   wasDedupChecksumWarningShown = false;
   minimumRecommendedRecordsize = '128K' as DatasetRecordSize;
