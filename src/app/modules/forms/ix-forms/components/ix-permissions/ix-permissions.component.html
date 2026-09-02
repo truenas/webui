@@ -26,34 +26,34 @@
         <span class="header-label">{{ 'User' | translate }}</span>
       </td>
       <td>
-        <mat-checkbox
-          color="primary"
-          ixTest="user-read"
+        <tn-checkbox
+          testId="user-read"
+          [hideLabel]="true"
+          [label]="'User Read' | translate"
           [disabled]="isDisabled"
           [checked]="ownerRead"
-          [attr.aria-label]="'User Read' | translate"
           (change)="toggleOwnerRead()"
-        ></mat-checkbox>
+        ></tn-checkbox>
       </td>
       <td>
-        <mat-checkbox
-          color="primary"
-          ixTest="user-write"
+        <tn-checkbox
+          testId="user-write"
+          [hideLabel]="true"
+          [label]="'User Write' | translate"
           [disabled]="isDisabled"
           [checked]="ownerWrite"
-          [attr.aria-label]="'User Write' | translate"
           (change)="toggleOwnerWrite()"
-        ></mat-checkbox>
+        ></tn-checkbox>
       </td>
       <td>
-        <mat-checkbox
-          color="primary"
-          ixTest="user-execute"
+        <tn-checkbox
+          testId="user-execute"
+          [hideLabel]="true"
+          [label]="'User Execute' | translate"
           [disabled]="isDisabled"
           [checked]="ownerExec"
-          [attr.aria-label]="'User Execute' | translate"
           (change)="toggleOwnerExec()"
-        ></mat-checkbox>
+        ></tn-checkbox>
       </td>
     </tr>
     <tr [ixTest]="[controlDirective.name, 'group-permissions']">
@@ -61,34 +61,34 @@
         <span class="header-label">{{ 'Group' | translate }}</span>
       </td>
       <td>
-        <mat-checkbox
-          color="primary"
-          ixTest="group-read"
+        <tn-checkbox
+          testId="group-read"
+          [hideLabel]="true"
+          [label]="'Group Read' | translate"
           [disabled]="isDisabled"
           [checked]="groupRead"
-          [attr.aria-label]="'Group Read' | translate"
           (change)="toggleGroupRead()"
-        ></mat-checkbox>
+        ></tn-checkbox>
       </td>
       <td>
-        <mat-checkbox
-          color="primary"
-          ixTest="group-write"
+        <tn-checkbox
+          testId="group-write"
+          [hideLabel]="true"
+          [label]="'Group Write' | translate"
           [disabled]="isDisabled"
           [checked]="groupWrite"
-          [attr.aria-label]="'Group Write' | translate"
           (change)="toggleGroupWrite()"
-        ></mat-checkbox>
+        ></tn-checkbox>
       </td>
       <td>
-        <mat-checkbox
-          color="primary"
-          ixTest="group-execute"
+        <tn-checkbox
+          testId="group-execute"
+          [hideLabel]="true"
+          [label]="'Group Execute' | translate"
           [disabled]="isDisabled"
           [checked]="groupExec"
-          [attr.aria-label]="'Group Execute' | translate"
           (change)="toggleGroupExec()"
-        ></mat-checkbox>
+        ></tn-checkbox>
       </td>
     </tr>
     @if (!hideOthersPermissions()) {
@@ -97,34 +97,34 @@
           <span class="header-label">{{ 'Other' | translate }}</span>
         </td>
         <td>
-          <mat-checkbox
-            color="primary"
-            ixTest="other-read"
+          <tn-checkbox
+            testId="other-read"
+            [hideLabel]="true"
+            [label]="'Other Read' | translate"
             [disabled]="isDisabled"
             [checked]="otherRead"
-            [attr.aria-label]="'Other Read' | translate"
             (change)="toggleOtherRead()"
-          ></mat-checkbox>
+          ></tn-checkbox>
         </td>
         <td>
-          <mat-checkbox
-            color="primary"
-            ixTest="other-write"
+          <tn-checkbox
+            testId="other-write"
+            [hideLabel]="true"
+            [label]="'Other Write' | translate"
             [disabled]="isDisabled"
             [checked]="otherWrite"
-            [attr.aria-label]="'Other Write' | translate"
             (change)="toggleOtherWrite()"
-          ></mat-checkbox>
+          ></tn-checkbox>
         </td>
         <td>
-          <mat-checkbox
-            color="primary"
-            ixTest="other-execute"
+          <tn-checkbox
+            testId="other-execute"
+            [hideLabel]="true"
+            [label]="'Other Execute' | translate"
             [disabled]="isDisabled"
             [checked]="otherExec"
-            [attr.aria-label]="'Other Execute' | translate"
             (change)="toggleOtherExec()"
-          ></mat-checkbox>
+          ></tn-checkbox>
         </td>
       </tr>
     }
