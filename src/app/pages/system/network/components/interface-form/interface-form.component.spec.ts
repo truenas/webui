@@ -10,6 +10,8 @@ import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import {
   LacpduRate,
   LinkAggregationProtocol, NetworkInterfaceAliasType,
@@ -38,10 +40,12 @@ import { InterfaceFormComponent } from 'app/pages/system/network/components/inte
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { entitlementsLoaded } from 'app/store/entitlements/entitlements.actions';
+import { entitlementsReducer } from 'app/store/entitlements/entitlements.reducer';
+import { entitlementsStateKey } from 'app/store/entitlements/entitlements.selectors';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
-import { productTypeLoaded } from 'app/store/system-info/system-info.actions';
 import { systemInfoReducer } from 'app/store/system-info/system-info.reducer';
 import { systemInfoStateKey } from 'app/store/system-info/system-info.selectors';
 
@@ -107,8 +111,10 @@ describe('InterfaceFormComponent', () => {
       StoreModule.forRoot({
         [haInfoStateKey]: haInfoReducer,
         [systemInfoStateKey]: systemInfoReducer,
+        [entitlementsStateKey]: entitlementsReducer,
       }, {
         initialState: {
+          [entitlementsStateKey]: { entitlements: null },
           [haInfoStateKey]: {
             haStatus: {
               hasHa: true,
@@ -513,7 +519,7 @@ describe('InterfaceFormComponent', () => {
 
       // Dispatch action to set Enterprise product type
       const store$ = spectator.inject(Store);
-      store$.dispatch(productTypeLoaded({ productType: ProductType.Enterprise }));
+      store$.dispatch(entitlementsLoaded({ entitlements: {} }));
 
       const websocketMock = spectator.inject(MockApiService);
       websocketMock.mockCall('failover.licensed', true);
@@ -605,7 +611,7 @@ describe('InterfaceFormComponent', () => {
     });
   });
 
-  describe('fec mode on enterprise', () => {
+  describe('fec mode when entitled to NETWORK_FEC', () => {
     beforeEach(async () => {
       spectator = createComponent({
         detectChanges: false,
@@ -618,7 +624,7 @@ describe('InterfaceFormComponent', () => {
       });
 
       const store$ = spectator.inject(Store);
-      store$.dispatch(productTypeLoaded({ productType: ProductType.Enterprise }));
+      store$.dispatch(entitlementsLoaded({ entitlements: {} }));
 
       const websocketMock = spectator.inject(MockApiService);
       websocketMock.mockCall('interface.available_fec_modes', ['auto', 'rs', 'baser', 'off']);
@@ -634,14 +640,14 @@ describe('InterfaceFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('interface.available_fec_modes', ['enp0s6']);
     });
 
-    it('shows FEC Mode dropdown when interface supports FEC on enterprise', async () => {
+    it('shows the FEC Mode dropdown when the interface supports FEC', async () => {
       const fecModeSelect = await loader.getHarnessOrNull(
         TnSelectHarness.with({ selector: '[formControlName="fec_mode"]' }),
       );
       expect(fecModeSelect).toBeTruthy();
     });
 
-    it('sends fec_mode when saving on enterprise with FEC support', async () => {
+    it('sends fec_mode when saving with FEC support', async () => {
       jest.spyOn(spectator.inject(TnDialog), 'open');
 
       await setSelectValue('fec_mode', 'rs');
@@ -661,7 +667,7 @@ describe('InterfaceFormComponent', () => {
     });
   });
 
-  describe('fec mode hidden on non-enterprise', () => {
+  describe('fec mode when not entitled to NETWORK_FEC', () => {
     beforeEach(() => {
       spectator = createComponent({
         props: {
@@ -669,10 +675,22 @@ describe('InterfaceFormComponent', () => {
         },
       });
 
+      // Explicitly denied rather than merely unloaded, so this asserts the gate itself.
+      spectator.inject(Store).dispatch(entitlementsLoaded({
+        entitlements: {
+          [EntitlementFeature.NetworkFec]: {
+            entitled: false,
+            reason: EntitlementReason.KeyMissing,
+            message: 'Configuring FEC mode is an enterprise feature.',
+          },
+        },
+      }));
+      spectator.detectChanges();
+
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('does not show FEC Mode dropdown on non-enterprise systems', async () => {
+    it('does not show the FEC Mode dropdown', async () => {
       const fecModeSelect = await loader.getHarnessOrNull(
         TnSelectHarness.with({ selector: '[formControlName="fec_mode"]' }),
       );
@@ -690,7 +708,7 @@ describe('InterfaceFormComponent', () => {
       });
 
       const store$ = spectator.inject(Store);
-      store$.dispatch(productTypeLoaded({ productType: ProductType.Enterprise }));
+      store$.dispatch(entitlementsLoaded({ entitlements: {} }));
 
       const websocketMock = spectator.inject(MockApiService);
       websocketMock.mockCall('interface.available_fec_modes', []);
