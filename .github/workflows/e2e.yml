@@ -86,8 +86,23 @@ jobs:
       # here is the runner and not a difference in how the tree was prepared.
       - uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
 
-      - name: Install Playwright browsers
-        run: yarn playwright install --with-deps chromium
+      # The browser runs in Playwright's own image rather than on the runner.
+      # The runner is a TrueNAS box: read-only root, no apt, and `playwright
+      # install --with-deps` would need sudo for system libraries anyway. The
+      # image ships Chromium and every library it needs, and its tag must match
+      # the installed @playwright/test exactly or Playwright refuses to launch,
+      # so the tag is read from node_modules rather than written down twice.
+      #
+      # Checked before claiming, so a runner without a usable Docker fails here
+      # and never holds an appliance.
+      - name: Resolve the Playwright image
+        run: |
+          set -euo pipefail
+          docker info > /dev/null
+          version=$(node -p "require('@playwright/test/package.json').version")
+          image="mcr.microsoft.com/playwright:v${version}-noble"
+          docker pull --quiet "$image"
+          echo "PLAYWRIGHT_IMAGE=$image" >> "$GITHUB_ENV"
 
       - name: Claim an appliance
         run: |
@@ -106,13 +121,33 @@ jobs:
           # line: `${{ inputs.grep }}` there would be executed as code, on a
           # runner with hypervisor access.
           TN_GREP: ${{ inputs.grep }}
+        # Only the test run is containerised. Claim, release and log collection
+        # stay on the host, where `ixnode` and `ssh` live.
+        #
+        # --network host: the container reaches the appliance exactly as the
+        #   host does, no port mapping and no Docker DNS in the way.
+        # --ipc host: what Playwright's own docs ask for with Chromium, which
+        #   otherwise runs out of shared memory and crashes mid-test.
+        # -u: run as the runner user so everything written under test-results
+        #   is owned by it rather than by root. HOME is set because that uid has
+        #   no home inside the image.
+        # The host's node_modules is reused: it is pure JavaScript apart from
+        # the browsers, and the image already has those at its default path.
+        # TMPDIR is deliberately not passed in — it names a host path.
         run: |
           set -euo pipefail
-          if [ -n "${TN_GREP:-}" ]; then
-            yarn playwright test --grep "$TN_GREP"
-          else
-            yarn playwright test
-          fi
+          docker run --rm \
+            --network host \
+            --ipc host \
+            -u "$(id -u):$(id -g)" \
+            -e HOME=/tmp \
+            -v "$GITHUB_WORKSPACE:/work" \
+            -w /work \
+            -e CI \
+            -e TN_GREP \
+            -e TN_PROFILE -e TN_HOST -e TN_USERNAME -e TN_PASSWORD -e TN_DOMAIN -e TN_BASELINE \
+            "$PLAYWRIGHT_IMAGE" \
+            bash -c 'if [ -n "${TN_GREP:-}" ]; then ./node_modules/.bin/playwright test --grep "$TN_GREP"; else ./node_modules/.bin/playwright test; fi'
 
       # Must happen while the appliance still exists.
       - name: Collect middleware logs
