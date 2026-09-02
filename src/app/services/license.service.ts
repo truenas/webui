@@ -4,28 +4,19 @@ import {
   catchError, combineLatest, defer, of, shareReplay,
 } from 'rxjs';
 import { first, map, switchMap } from 'rxjs/operators';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectHasEnclosureSupport,
-  selectHasLicenseFeature,
-  selectIsEnterprise,
   selectProductType,
 } from 'app/store/system-info/system-info.selectors';
-
-// Hoist parameterized selector instances so consumers share memoization across
-// subscriptions (each call to `selectHasLicenseFeature` builds a new selector).
-const selectHasAppsFeature = selectHasLicenseFeature(LicenseFeature.Apps);
-const selectHasVmsFeature = selectHasLicenseFeature(LicenseFeature.Vms);
-const selectHasSedFeature = selectHasLicenseFeature(LicenseFeature.Sed);
-const selectHasDedupFeature = selectHasLicenseFeature(LicenseFeature.Dedup);
-const selectHasFibreChannelFeature = selectHasLicenseFeature(LicenseFeature.FibreChannel);
 
 @Injectable({
   providedIn: 'root',
@@ -34,42 +25,34 @@ export class LicenseService {
   private store$ = inject<Store<AppState>>(Store);
   private api = inject(ApiService);
   private truenasConnectService = inject(TruenasConnectService);
+  private entitlements = inject(EntitlementsService);
 
+  /** `failover.licensed` is the runtime truth here; the `HA` entitlement is the narrower
+   * license-type question. Left as-is until the two are reconciled. */
   hasFailover$ = this.store$.select(selectIsHaLicensed);
+
+  /** Not an entitlement — iX hardware detection. */
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
 
+  /** The licence may permit Fibre Channel on a box with no FC hardware, so only the
+   * entitlement half moved. */
   hasFibreChannel$ = combineLatest([
-    this.store$.select(selectHasFibreChannelFeature),
+    this.entitlements.entitled$(EntitlementFeature.FibreChannel),
     this.api.call('fc.capable'),
   ]).pipe(
     map(([hasFibreChannel, isFcCapable]) => hasFibreChannel && isFcCapable),
     shareReplay({ bufferSize: 1, refCount: false }),
   );
 
-  hasVms$ = combineLatest([
-    this.store$.select(selectHasVmsFeature),
-    this.store$.select(selectIsEnterprise),
-  ]).pipe(
-    map(([hasVms, isEnterprise]) => !isEnterprise || hasVms),
-  );
+  hasVms$ = this.entitlements.entitled$(EntitlementFeature.Vms);
 
-  hasApps$ = combineLatest([
-    this.store$.select(selectHasAppsFeature),
-    this.store$.select(selectIsEnterprise),
-  ]).pipe(
-    map(([hasApps, isEnterprise]) => !isEnterprise || hasApps),
-  );
+  hasApps$ = this.entitlements.entitled$(EntitlementFeature.Apps);
 
-  hasDedup$ = combineLatest([
-    this.store$.select(selectHasDedupFeature),
-    this.store$.select(selectIsEnterprise),
-  ]).pipe(
-    map(([hasDedup, isEnterprise]) => !isEnterprise || hasDedup),
-  );
+  hasDedup$ = this.entitlements.entitled$(EntitlementFeature.Dedup);
 
-  readonly hasKmip$ = this.store$.select(selectIsEnterprise);
+  readonly hasKmip$ = this.entitlements.entitled$(EntitlementFeature.Kmip);
 
-  readonly hasSed$ = this.store$.select(selectHasSedFeature);
+  readonly hasSed$ = this.entitlements.entitled$(EntitlementFeature.Sed);
 
   /**
    * Mirrors `showSedCard` in `AdvancedSettingsComponent` — the SED card is
@@ -84,10 +67,10 @@ export class LicenseService {
    * goes idle re-runs `defer` and gets a fresh answer once the backend is
    * healthy again.
    */
-  readonly hasSedFeature$ = defer(() => this.store$.select(selectIsEnterprise).pipe(
+  readonly hasSedFeature$ = defer(() => this.entitlements.entitled$(EntitlementFeature.Sed).pipe(
     first(),
-    switchMap((isEnterprise) => (
-      isEnterprise
+    switchMap((isEntitled) => (
+      isEntitled
         ? of(true)
         : this.api.call('system.advanced.sed_global_password_is_set').pipe(map(Boolean))
     )),
@@ -97,8 +80,10 @@ export class LicenseService {
   );
 
   /**
-   * Gates visibility of the System Security card (FIPS / STIG / password
-   * policy). True when the backend reports FIPS hardware support — that's
+   * Not migrated to the `STIG` entitlement: `fips_available` reports firmware capability,
+   * a different question from whether the licence permits STIG. The card likely needs both.
+   *
+   * True when the backend reports FIPS hardware support — that's
    * the same condition `AdvancedSettingsComponent.isSystemLicensed` uses to
    * render the card. `catchError` falls back to `false` so a transient
    * `fips_available` failure hides the System Security entries rather than
@@ -111,14 +96,14 @@ export class LicenseService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly shouldShowContainers$ = combineLatest([
-    this.store$.select(selectIsEnterprise),
-    this.store$.select(selectHasAppsFeature),
-  ]).pipe(
-    map(([isEnterprise, hasApps]) => !isEnterprise || hasApps),
-  );
+  /** Previously borrowed the APPS feature. Same decision today, but keyed on what it means. */
+  readonly shouldShowContainers$ = this.entitlements.entitled$(EntitlementFeature.Containers);
 
   /**
+   * Not migrated: the `WEBSHARE` entitlement grants only when the licence carries the key,
+   * while this shows WebShare precisely when the system is *not* Enterprise. NAS-143012
+   * resolves it in favour of the entitlement.
+   *
    * WebShare (a TrueNAS Connect feature) is not offered on Enterprise systems.
    * Deliberately waits for the product type to load instead of using `selectIsEnterprise`
    * (which reads `false` while the product type is still null), so consumers — the shares
