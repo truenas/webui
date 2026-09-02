@@ -3,12 +3,13 @@ import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, TemplateRef, computed, inject, signal, viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonToggleComponent, TnButtonToggleGroupComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { generateUuid } from 'app/helpers/uuid.helper';
 import { Option } from 'app/interfaces/option.interface';
@@ -20,8 +21,8 @@ import { FeedbackType, feedbackTypesLabels } from 'app/modules/feedback/interfac
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-feedback-dialog',
@@ -48,6 +49,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 })
 export class FeedbackDialog implements OnInit {
   private feedbackService = inject(FeedbackService);
+  private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
   protected dialogRef = inject<DialogRef<unknown, FeedbackDialog>>(DialogRef);
@@ -64,7 +66,8 @@ export class FeedbackDialog implements OnInit {
     mapToOptions(feedbackTypesLabels, this.translate),
   );
 
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  /** Middleware picks the ticket path on this same key. */
+  protected readonly hasSupport = this.entitlements.entitled(EntitlementFeature.Support);
   protected readonly allowedTypes = signal<FeedbackType[]>([]);
 
   // Only one feedback form is rendered at a time; each provides the FeedbackForm
