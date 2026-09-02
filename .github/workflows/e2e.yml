@@ -98,10 +98,21 @@ jobs:
       - name: Resolve the Playwright image
         run: |
           set -euo pipefail
-          docker info > /dev/null
+          # The runner user may or may not be allowed at the Docker socket
+          # directly. `sudo -n` fails rather than prompting, because a prompt
+          # here would hang the job for its full timeout with the lab held.
+          if docker info > /dev/null 2>&1; then
+            docker=docker
+          elif sudo -n docker info > /dev/null 2>&1; then
+            docker="sudo -n docker"
+          else
+            echo "::error::No usable Docker: neither 'docker' nor 'sudo -n docker' can reach the daemon"
+            exit 1
+          fi
+          echo "DOCKER=$docker" >> "$GITHUB_ENV"
           version=$(node -p "require('@playwright/test/package.json').version")
           image="mcr.microsoft.com/playwright:v${version}-noble"
-          docker pull --quiet "$image"
+          $docker pull --quiet "$image"
           echo "PLAYWRIGHT_IMAGE=$image" >> "$GITHUB_ENV"
 
       - name: Claim an appliance
@@ -134,18 +145,25 @@ jobs:
         # The host's node_modules is reused: it is pure JavaScript apart from
         # the browsers, and the image already has those at its default path.
         # TMPDIR is deliberately not passed in — it names a host path.
+        # Variables are passed by value, not `-e NAME` pass-through, because
+        # $DOCKER may be `sudo -n docker` and sudo scrubs the environment.
         run: |
           set -euo pipefail
-          docker run --rm \
+          $DOCKER run --rm \
             --network host \
             --ipc host \
             -u "$(id -u):$(id -g)" \
             -e HOME=/tmp \
             -v "$GITHUB_WORKSPACE:/work" \
             -w /work \
-            -e CI \
-            -e TN_GREP \
-            -e TN_PROFILE -e TN_HOST -e TN_USERNAME -e TN_PASSWORD -e TN_DOMAIN -e TN_BASELINE \
+            -e "CI=$CI" \
+            -e "TN_GREP=${TN_GREP:-}" \
+            -e "TN_PROFILE=$TN_PROFILE" \
+            -e "TN_HOST=$TN_HOST" \
+            -e "TN_USERNAME=$TN_USERNAME" \
+            -e "TN_PASSWORD=$TN_PASSWORD" \
+            -e "TN_DOMAIN=$TN_DOMAIN" \
+            -e "TN_BASELINE=$TN_BASELINE" \
             "$PLAYWRIGHT_IMAGE" \
             bash -c 'if [ -n "${TN_GREP:-}" ]; then ./node_modules/.bin/playwright test --grep "$TN_GREP"; else ./node_modules/.bin/playwright test; fi'
 
