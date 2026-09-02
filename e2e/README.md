@@ -191,6 +191,14 @@ state with `expect.poll`. If you need a dialog, wait for it — `isVisible()`
 does not wait, and probing for a dialog right after the click that opens it will
 silently miss.
 
+## CI
+
+The suite runs in GitHub Actions on a self-hosted TrueNAS runner, against a
+nested VM installed fresh for every run. `docs/05-ci.md` describes the
+pipeline, what the lab box has to provide, and what each early failure taught.
+It runs on same-repo pull requests that touch the suite; documentation-only
+changes do not trigger it.
+
 ## Troubleshooting
 
 | Symptom | Cause |

@@ -40,6 +40,10 @@ on:
   pull_request:
     paths:
       - 'e2e/**'
+      # A documentation-only change should not claim a lab appliance.
+      - '!e2e/docs/**'
+      - '!e2e/CLAUDE.md'
+      - '!e2e/README.md'
       - 'playwright.config.ts'
       - '.github/workflows/e2e.yml'
   workflow_dispatch:

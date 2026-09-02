@@ -1,18 +1,39 @@
 # TrueNAS WebUI E2E — Environment Architecture
 
-**Status:** Draft for review, 2026-08-08
+**Status:** Draft for review, 2026-08-08; reality check 2026-09-02
 **Prerequisite:** [`status.md`](./status.md)
 
-> **What is actually running.** `.github/workflows/e2e.yml` implements a reduced
-> shape of this design: one appliance, claimed and released per run, no
-> sharding and no snapshot restore. Everything below that depends on the
-> proposed `ixnode` verbs is unimplemented. That is deliberate — the reduced
-> pipeline exercises the parts of E12 nobody has tested, and the rest is layered
-> on when the verbs land and Q0b can be measured.
+> **What is actually running, 2026-09-02.** `.github/workflows/e2e.yml` is
+> green: one appliance per run, installed and destroyed, no sharding, no
+> snapshot restore. See [`05-ci.md`](./05-ci.md) for the pipeline as built.
+>
+> Building it overturned three of this document's premises, and the sections
+> below have not been rewritten around that yet — read them with this in mind:
+>
+> - **The provisioner is `tn_guest.py`, not `ixnode`.** `ixnode` is the legacy
+>   tool for dedicated Debian KVM hosts (libvirt, `virt-install`, a `/data`
+>   tree, root). The lab runner is a **TrueNAS box**, and `tn_guest.py` in the
+>   same repository creates nested VMs on it through its middleware API. Every
+>   "ask the `ixnode` team" below is moot: **E5**'s snapshot and revert are ours
+>   to build against the host's own API, with no other team in the loop.
+> - **The substrate is TrueNAS's VM service, not raw libvirt.** Disks are zvols,
+>   not qcow2. The VM API exposes no memory-state snapshot, so **E1**'s
+>   fast row is not available; the primitive is a ZFS snapshot of the
+>   deployment's zvols with the VM stopped, then rollback and boot — the
+>   design's *disk-only* row, and **Q0b** has to be measured on that path.
+> - **The guest is 6GB, not the "confirmed" 4GB** (**Q6**); 8GB crashed the
+>   host twice. The install measured at ~3.5 minutes from a nightly ISO to a
+>   usable API, so the 210s figure (**Q0a**) is roughly right for the wrong
+>   reason.
+>
+> Also settled by the build: the runner sits on the host (**Q7**, yes); the
+> guest is behind `hostfwd` NAT with only 80 and 443 forwarded, so the SSH
+> capability in **E8** does not exist in this mode; and the appliance has ten
+> data disks, which closes the 8-vs-9 mismatch in **E5**.
 
 The suite's own decisions — how to drive a browser, how to talk to middleware —
-are settled and live in `status.md` and `e2e/CLAUDE.md`.
-It assumed an appliance was simply *there*. This document is about where that
+are settled and live in `status.md` and `e2e/CLAUDE.md`. Those decisions
+assumed an appliance was simply *there*. This document is about where that
 appliance comes from, what shape it is in, and what happens to it during a run.
 
 Decisions are numbered `E<n>` and cited the way `R`, `T` and `D` already are.
@@ -58,15 +79,21 @@ Established 2026-08-08 with grwilliam. These numbers drive the decisions below;
 if they are wrong, revisit.
 
 - A middleware-test VM **installs and boots in ~3m30s**. That suite does no
-  snapshotting or rollback.
+  snapshotting or rollback. *Confirmed 2026-09-02: the e2e appliance measures
+  the same from a nightly ISO to a usable API.*
 - Provisioning already exists: **`ixnode`**, a Jenkins-invoked script that
   installs TrueNAS from an ISO. **The team that owns it is resistant to
   changes**, which is a design input, not just an inconvenience — see **E5**.
+  *Superseded 2026-09-02: `ixnode` cannot run on the lab runner; the pipeline
+  uses `tn_guest.py` from the same repository, see the status box above.*
 - The hypervisor is **libvirt/KVM**, which supports domain-level snapshots with
   optional memory state. This is what makes **E1** possible. Disks are
-  **qcow2 files**; guests need **4GB of RAM**, 8GB worst case.
+  **qcow2 files**; guests need **4GB of RAM**, 8GB worst case. *Revised
+  2026-09-02: TrueNAS's VM service on zvols, no memory-state snapshot exposed,
+  guest 6GB.*
 - The `ixnode` team **will add snapshot and revert verbs** (**Q2**, answered
   2026-08-10). **E1** is therefore buildable as written, not contingent.
+  *Moot 2026-09-02: no `ixnode`, so snapshot and revert are ours to build.*
 - **One VM per run is affordable.** More than one per run is unquantified
   (**Q5**), and **E3** depends on the answer.
 - AD, LDAP, S3 and KMIP **exist in the lab and can be shared** (**Q3**,
@@ -101,6 +128,14 @@ because the 210s dominates either way.)
 ---
 
 ## E1. Restore is a VM snapshot rollback
+
+> *2026-09-02: on the TrueNAS host the pipeline actually runs on, the memory-
+> state rows below are not available — the VM API exposes no `virsh save`
+> equivalent. What is available is the disk-only row: `zfs snapshot` of the
+> deployment dataset (all zvols atomically, which preserves the "snapshot the
+> VM, never the volumes" rule), `vm.stop`, `zfs rollback`, `vm.start`, and a
+> boot. Q0b is that cycle's duration and is still unmeasured; the install it
+> replaces is ~3.5 minutes.*
 
 Roll the appliance back to a libvirt snapshot. Reinstall only to *build* a
 baseline, not to return to one.
@@ -275,7 +310,7 @@ banked by the first run.
 Concurrency comes from N appliances each executing a disjoint slice serially. It
 never comes from raising Playwright's `workers`.
 
-**Why.** `playwright.config.ts:73-79` pins `workers: 1` because pools, services
+**Why.** `playwright.config.ts` pins `workers: 1` because pools, services
 and system settings are global to an appliance — two workers against one box
 interfere by construction (**R3.4**). That reasoning does not change; the unit
 of parallelism just has to be the appliance. This is **D2**
@@ -285,8 +320,7 @@ of parallelism just has to be the appliance. This is **D2**
 `1 + ⌈restore ÷ test⌉` per shard — between 2 and 12 depending on the primitive
 and on numbers nobody has measured. Shard count is therefore a *derived*
 quantity, not the thing to ask for: the budget question is total concurrent
-appliances. Until that is answered
-is known, this is a shape, not a plan.
+appliances. Until that is answered, this is a shape, not a plan.
 
 **Consequence, and it is a hard rule.** Shard assignment is by test file, and no
 test may depend on another's residue: **any test must produce the same result
@@ -338,6 +372,14 @@ it earns one.
 
 ## E5. Baselines are snapshots, and `ixnode` has to take them
 
+> *2026-09-02: the ownership question this section is about no longer exists.
+> There is no `ixnode` in the pipeline; the VMs are created through the TrueNAS
+> host's own API by `tn_guest.py`, and their disks are zvols in a dataset per
+> deployment. Snapshot and revert are therefore a ZFS snapshot and rollback of
+> that dataset around a `vm.stop`/`vm.start`, driven by us. The "three ways this
+> can land" below collapse to option 3, at a fraction of its stated cost,
+> because `tn_guest.py` already provides the unattended install.*
+
 A baseline is a named appliance condition — `fresh-install`, `single-pool`,
 `pool-and-ad-joined` — captured as a **VM snapshot**. A test names the baseline
 it needs; restoring is a revert (**E1**).
@@ -388,12 +430,12 @@ Its saving grace is that the cost is one-time and bounded: baselines are built
 rarely, only when the nightly image moves. If option 1 stalls, option 3 is a
 schedule we control rather than one we wait on.
 
-**Baselines must specify a disk profile,** and there is an existing mismatch to
-settle when they do: **R2.2** specifies 8 virtual disks, while
-`fresh-install.e2e.ts:38` builds a 9-wide RAIDZ2 and calls
-`requireUnusedDisks(api, 9)`. Today that is a fail-fast at startup on an 8-disk
-box, and it is a concrete argument for pinning disk inventory to a baseline
-rather than assuming it.
+**Baselines must specify a disk profile.** The mismatch that motivated this —
+**R2.2** said 8 virtual disks while `fresh-install.e2e.ts` builds a 9-wide
+RAIDZ2 and calls `requireUnusedDisks(api, 9)` — was met in CI exactly as
+predicted, as a fail-fast on a one-disk guest, and is closed: `appliance.sh`
+provisions ten identical 10GB data disks with distinct serials. The lesson
+stands: disk inventory is part of a baseline's definition, not an assumption.
 
 ## E6. The environment contract
 
@@ -562,6 +604,11 @@ artifact does not exist yet and has to be built.
 
 ## E12. CI: GitHub Actions on self-hosted runners
 
+> *2026-09-02: implemented, one shard, see `05-ci.md`. The runner is on the
+> TrueNAS host; the browser runs in Playwright's container on that host with
+> host networking. `upload-artifact` carries JUnit only so far, and **R7.2**'s
+> log collection has no path behind `hostfwd`.*
+
 **Sharding is native.** Playwright accepts `--shard=i/n`, and a matrix job maps
 onto it directly: each leg claims one appliance, so **E2**'s appliance count
 *is* the matrix size. No bespoke orchestration.
@@ -611,6 +658,11 @@ exactly the later change that opens the hole quietly.
 Working assumption, 2026-08-10: a 64-thread AMD Epyc, 128GB RAM, 512GB SSD.
 **Hardware is not yet assigned**, so this section exists to influence the spec
 while that is still possible.
+
+> *2026-09-02: the pipeline is running on an interim box — a TrueNAS VM host
+> that crashed under an 8GB guest, so nothing like the assumed spec. The
+> arithmetic below is for the eventual box, and the guest is now 6GB rather
+> than the 4GB it assumes.*
 
 ### What the assumed box supports
 
@@ -675,15 +727,15 @@ measurement justifies it, not before.
 
 | | Question | Blocks |
 |---|---|---|
-| **Q0a** | End-to-end `ixnode` turnaround for an e2e-ready box — invocation, VM create, ISO install, boot, **R2.8** boot-state contract, first successful connect | **E1**, **E5**; the 210s figure is a *middleware-test* number and is certainly a floor. Now paid per *baseline build*, not per restore |
+| ~~**Q0a**~~ | **Answered 2026-09-02: ~3.5 minutes** from `tn_guest.py create` to a usable, credentialed API on a v27 nightly ISO; ~10 minutes on a 25.10 release ISO. See `05-ci.md` | — |
 | **Q0b** | **Revert-to-usable**, for the guest RAM and backing store actually in use: `virsh snapshot-revert` + NTP resync + middleware ready + WebSocket reconnect + re-auth | **E1**, **E2**. The most load-bearing unmeasured number in this document — it sets the appliance count |
 | **Q1** | How long does the Local tier take against one appliance, and how long is a representative Global test? | Whether tiering is needed *yet*; sets the appliance count in **E2** |
 | ~~**Q2**~~ | **Answered 2026-08-10: yes**, `ixnode` will add snapshot and revert. **E5** option 1 applies; options 2 and 3 are no longer needed | — |
 | ~~**Q3**~~ | **Answered 2026-08-10: shared.** So per-run identity is now required work, not a contingency — see **E9** | — |
 | ~~**Q4**~~ | **Answered 2026-08-10: no commitment, local stand-ins are fine.** MinIO, Samba AD DC, OpenLDAP and PyKMIP cover everything; no real-endpoint nightly needed | — |
 | **Q5** | **libvirt host capacity.** Working assumption 2026-08-10: 64-thread Epyc, 128GB RAM, 512GB SSD — *not yet assigned hardware*, so still influenceable. See **E13** | **E3**, **E2** |
-| ~~**Q6**~~ | **Answered 2026-08-10: qcow2, 4GB guests (8GB worst case).** Folded into **E1** and **E2** | — |
-| ~~**Q7**~~ | **Answered 2026-08-10: yes.** Snapshot and revert are local `virsh` calls | — |
+| ~~**Q6**~~ | **Answered 2026-08-10: qcow2, 4GB guests (8GB worst case).** Folded into **E1** and **E2**. **Revised 2026-09-02: zvols, 6GB guests** — 8GB crashed the host; **E1** and **E2**'s 4GB rows need redoing | — |
+| ~~**Q7**~~ | **Answered 2026-08-10: yes.** Snapshot and revert are local `virsh` calls. **2026-09-02:** the runner is on the host, but the calls are the host's own API and `zfs`, not `virsh` | — |
 
 ---
 
@@ -692,9 +744,9 @@ measurement justifies it, not before.
 Front-loaded with measurement, because most of this document assumes a scaling
 problem that has not been demonstrated.
 
-1. ~~Open the `ixnode` conversation.~~ **Done — Q2 answered yes.** The two
-   verbs are agreed, so **E1** is unblocked and **E5** option 1 applies. What
-   remains is agreeing their exact shape with that team.
+1. ~~Open the `ixnode` conversation.~~ **Overtaken, 2026-09-02.** There is no
+   `ixnode` in the pipeline; snapshot and revert are ours to build against the
+   TrueNAS host's API (**E5** note). Nothing to agree with anyone.
 2. **Measure Q0b, then Q1.** A revert-to-usable time is what sets the appliance
    count, and it is cheap to measure by hand on one box. If the Local tier also
    runs 80 tests in 20 minutes on one appliance without tainting, tiering is
@@ -711,9 +763,10 @@ problem that has not been demonstrated.
    until the harness survives an appliance disappearing.
 6. **Settle shared-service identity** (**Q3**) before the first AD test — no
    local snapshot restores a domain machine account.
-   Decide runner placement and the fork-trigger policy at the same time
-   (**E12**, **Q7**) — the security gates are cheaper to set before the first
-   workflow exists than to retrofit.
+   ~~Decide runner placement and the fork-trigger policy at the same time
+   (**E12**, **Q7**).~~ **Done:** the runner is on the host, the
+   `pull_request` trigger is same-repo only, and the `e2e-lab` environment
+   exists. Required reviewers on that environment are still to be configured.
 7. **Agree baseline names and disk profiles** (**E5**), including the 8-vs-9
    disk mismatch.
 
