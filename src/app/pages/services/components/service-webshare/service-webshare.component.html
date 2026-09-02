@@ -7,7 +7,7 @@
   <tn-form-section>
     <tn-form-field
       [tooltip]="helptext.search_enabled_tooltip | translate"
-      [hint]="isTruenasConnectConfigured() ? '' : ('TrueSearch requires TrueNAS Connect to be configured.' | translate)"
+      [hint]="trueSearchHint() | translate"
     >
       <tn-checkbox formControlName="search" [label]="'Enable TrueSearch' | translate"></tn-checkbox>
     </tn-form-field>
