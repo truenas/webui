@@ -11,10 +11,11 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
 import {
-  BehaviorSubject, EMPTY, forkJoin, of, Observable,
+  BehaviorSubject, forkJoin, of, Observable,
 } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
   CreateNetworkInterfaceType,
   LacpduRate,
@@ -62,12 +63,12 @@ import {
   interfaceAliasesToFormAliases,
   NetworkInterfaceFormAlias,
 } from 'app/pages/system/network/components/interface-form/network-interface-alias-control.interface';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-interface-form',
@@ -103,6 +104,7 @@ export class InterfaceFormComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
   private networkService = inject(NetworkService);
   private errorHandler = inject(ErrorHandlerService);
@@ -126,7 +128,6 @@ export class InterfaceFormComponent implements OnInit {
   protected readonly isHaEnabled$ = new BehaviorSubject(false);
 
   protected isLoading = signal(false);
-  protected isEnterprise = false;
   protected fecModeOptions$: Observable<{ label: string; value: string }[]> = of([]);
   protected showFecMode = signal(false);
   isHaLicensed = false;
@@ -248,6 +249,7 @@ export class InterfaceFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFailoverStatus();
+    this.loadFecModes();
     this.validateNameOnTypeChange();
     this.checkFailoverDisabled();
 
@@ -405,24 +407,28 @@ export class InterfaceFormComponent implements OnInit {
     }
   }
 
+  /**
+   * FEC mode is gated on `NETWORK_FEC` and nothing else. It used to share a product-type
+   * check with the failover lookup below, which gated two unrelated things at once.
+   */
+  private loadFecModes(): void {
+    if (!this.existingInterface) {
+      return;
+    }
+
+    this.entitlements.entitled$(EntitlementFeature.NetworkFec).pipe(
+      filter(Boolean),
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.loadAvailableFecModes(this.existingInterface.id));
+  }
+
+  /** `failover.licensed` is the truth about HA here; product type must not pre-gate it. */
   private loadFailoverStatus(): void {
-    this.store$.select(selectIsEnterprise).pipe(
-      switchMap((isEnterprise) => {
-        this.isEnterprise = isEnterprise;
-
-        if (!isEnterprise) {
-          return EMPTY;
-        }
-
-        if (this.existingInterface) {
-          this.loadAvailableFecModes(this.existingInterface.id);
-        }
-
-        return forkJoin([
-          this.api.call('failover.licensed'),
-          this.api.call('failover.node'),
-        ]);
-      }),
+    forkJoin([
+      this.api.call('failover.licensed'),
+      this.api.call('failover.node'),
+    ]).pipe(
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(([isHaLicensed, failoverNode]) => {
@@ -514,7 +520,7 @@ export class InterfaceFormComponent implements OnInit {
       };
     }
 
-    if (this.isEnterprise && this.showFecMode() && formValues.fec_mode) {
+    if (this.showFecMode() && formValues.fec_mode) {
       params.fec_mode = formValues.fec_mode;
     }
 
