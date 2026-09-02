@@ -109,8 +109,17 @@ claim() {
     || die "baseline '$baseline' is not available: tn_guest.py can only produce 'fresh-install'"
   checkTools
 
+  # The ISO is a path on the host. When the host is this machine, which is the
+  # layout this pipeline runs in, check it here rather than letting tn_guest.py
+  # create a VM and find out at the CD-ROM attach.
+  local isoProblem=""
   if [ -z "${TN_GUEST_ISO:-}" ]; then
-    echo "appliance.sh: TN_GUEST_ISO is not set. ISOs found under /mnt/$TN_GUEST_POOL:" >&2
+    isoProblem="TN_GUEST_ISO is not set"
+  elif [ "$TN_GUEST_HOST" = "localhost" ] && [ ! -f "$TN_GUEST_ISO" ]; then
+    isoProblem="TN_GUEST_ISO does not exist on this host: $TN_GUEST_ISO"
+  fi
+  if [ -n "$isoProblem" ]; then
+    echo "appliance.sh: $isoProblem. ISOs found under /mnt/$TN_GUEST_POOL:" >&2
     find "/mnt/$TN_GUEST_POOL" -maxdepth 4 -name '*.iso' 2>/dev/null | sed 's/^/  /' >&2 || true
     die "set TN_GUEST_ISO to one of them (a path inside a dataset, not the pool root)"
   fi
