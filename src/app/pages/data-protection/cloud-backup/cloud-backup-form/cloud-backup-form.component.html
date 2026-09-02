@@ -23,27 +23,33 @@
 
   <div class="fieldsets">
     <tn-form-section class="fieldset" [heading]="helptext.local | translate">
-      <ix-explorer
-        formControlName="path"
+      <tn-form-field
         [label]="helptext.sourcePath | translate"
         [tooltip]="helptext.sourcePathTooltip | translate"
         [required]="true"
-        [multiple]="false"
-        [rootNodes]="slashRootNode"
-        [nodeProvider]="fileNodeProvider"
       >
-        <ix-explorer-create-dataset></ix-explorer-create-dataset>
-      </ix-explorer>
+        <ix-explorer
+          formControlName="path"
+          [multiple]="false"
+          [rootNodes]="slashRootNode"
+          [nodeProvider]="fileNodeProvider"
+        >
+          <ix-explorer-create-dataset></ix-explorer-create-dataset>
+        </ix-explorer>
+      </tn-form-field>
 
-      <ix-explorer
-        formControlName="cache_path"
+      <tn-form-field
         [label]="helptext.cachePath | translate"
         [tooltip]="helptext.cachePathTooltip | translate"
-        [multiple]="false"
-        [nodeProvider]="directoriesNodeProvider"
       >
-        <ix-explorer-create-dataset></ix-explorer-create-dataset>
-      </ix-explorer>
+        <ix-explorer
+          formControlName="cache_path"
+          [multiple]="false"
+          [nodeProvider]="directoriesNodeProvider"
+        >
+          <ix-explorer-create-dataset></ix-explorer-create-dataset>
+        </ix-explorer>
+      </tn-form-field>
     </tn-form-section>
 
     <tn-form-section class="fieldset" [heading]="helptext.remote | translate">
@@ -93,14 +99,17 @@
             ></tn-input>
           </tn-form-field>
         } @else {
-          <ix-explorer
-            formControlName="folder"
-            [rootNodes]="slashRootNode"
+          <tn-form-field
             [label]="helptext.folder | translate"
             [tooltip]="helptext.folderTooltip | translate"
-            [nodeProvider]="bucketNodeProvider"
             [required]="true"
-          ></ix-explorer>
+          >
+            <ix-explorer
+              formControlName="folder"
+              [rootNodes]="slashRootNode"
+              [nodeProvider]="bucketNodeProvider"
+            ></ix-explorer>
+          </tn-form-field>
         }
       }
     </tn-form-section>

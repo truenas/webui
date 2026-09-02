@@ -221,4 +221,56 @@ describe('PoolsDashboardStore', () => {
       });
     });
   });
+
+  it('keeps showing pools when zpool.query returns null properties', () => {
+    testScheduler.run(({ cold, expectObservable }) => {
+      const mockedApi = spectator.inject(ApiService);
+      const pools = [
+        {
+          id: 1, name: 'pool1', used: 10, available: 20,
+        },
+      ] as Pool[];
+      const zpools = [
+        { name: 'pool1', properties: null },
+      ];
+
+      jest.spyOn(mockedApi, 'call').mockImplementation((method: string) => {
+        switch (method) {
+          case 'pool.dataset.query':
+            return cold('-a|', { a: [] });
+          case 'zpool.query':
+            return cold('-a|', { a: zpools });
+          case 'pool.scrub.query':
+            return cold('-a|', { a: [] });
+          case 'disk.query':
+            return cold('-a|', { a: [] });
+          case 'disk.temperature_alerts':
+            return cold('-a|', { a: [] });
+          case 'disk.temperature_agg':
+            return cold('-a|', { a: {} });
+          default:
+            throw new Error(`Unexpected method: ${method}`);
+        }
+      });
+      jest.spyOn(mockedApi, 'callAndSubscribe').mockImplementation((method: string) => {
+        if (method === 'pool.query') {
+          return cold('-a|', { a: pools });
+        }
+        throw new Error(`Unexpected method: ${method}`);
+      });
+
+      spectator.service.loadDashboard();
+
+      expectObservable(
+        spectator.service.select((state) => state.pools),
+      ).toBe('ab', {
+        a: [],
+        b: [
+          {
+            id: 1, name: 'pool1', used: 10, available: 20,
+          },
+        ],
+      });
+    });
+  });
 });

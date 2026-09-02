@@ -43,7 +43,7 @@ describe('TableRelativeDateCellComponent', () => {
   };
 
   const cell = (): HTMLElement => spectator.query('span')!;
-  const tooltip = (): string => String(spectator.query(TnTooltipDirective)!.message);
+  const tooltip = (): string => String(spectator.query(TnTooltipDirective)!.message());
 
   it('composes the legacy text-prefixed test id', () => {
     setup(new Date());

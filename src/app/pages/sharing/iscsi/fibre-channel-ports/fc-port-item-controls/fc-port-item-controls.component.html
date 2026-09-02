@@ -1,24 +1,43 @@
-<ix-select
-  [formControl]="modeControl"
+<!--
+  This component renders once per row of the parent's `fcPorts` array, so every id is scoped by
+  `index()` — `tn-select` derives its DOM id namespace (panel, option rows, `aria-controls`) from
+  the resolved test id, and an unscoped base would collide across rows.
+-->
+<tn-form-field
   [label]="'Port Mode' | translate"
   [tooltip]="'Choose whether to use an existing FC port or create a new virtual port' | translate"
-  [options]="modeOptions$"
-></ix-select>
+>
+  <tn-select
+    [testId]="['port-mode', index()]"
+    [formControl]="modeControl"
+    [options]="modeOptions"
+  ></tn-select>
+</tn-form-field>
 
 @if (modeControl.value === 'new') {
-  <ix-select
-    [formControl]="form().controls.host_id"
+  <tn-form-field
     [label]="'Choose Host for New Virtual Port' | translate"
     [tooltip]="'Select which physical port will host the new NPIV virtual port' | translate"
-    [options]="creatingPortOptions$"
     [required]="true"
-  ></ix-select>
+  >
+    <tn-select
+      [testId]="['host-id', index()]"
+      [formControl]="form().controls.host_id"
+      [options]="(creatingPortOptions$ | async) ?? []"
+      [optionTestIdKey]="portOptionTestIdKey"
+    ></tn-select>
+  </tn-form-field>
 } @else if (modeControl.value === 'existing') {
-  <ix-select
-    [formControl]="form().controls.port"
+  <tn-form-field
     [label]="'Existing Port' | translate"
     [tooltip]="'Select an existing FC port to use for this target' | translate"
-    [options]="existingPortOptions$"
     [required]="true"
-  ></ix-select>
+  >
+    <tn-select
+      [testId]="['existing-port', index()]"
+      [formControl]="form().controls.port"
+      [options]="existingPortOptions()"
+      [optionTestIdKey]="portOptionTestIdKey"
+    ></tn-select>
+  </tn-form-field>
 }

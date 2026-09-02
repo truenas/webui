@@ -56,23 +56,29 @@
         [mode]="form.controls.transfer_mode.value"
       ></ix-transfer-mode-explanation>
       @if (form.controls.path_destination.enabled) {
-        <ix-explorer
-          formControlName="path_destination"
+        <tn-form-field
           [label]="helptext.pathLabel | translate"
           [tooltip]="helptext.pathTooltip | translate"
           [required]="true"
-          [nodeProvider]="fileNodeProvider"
-        ></ix-explorer>
+        >
+          <ix-explorer
+            formControlName="path_destination"
+            [nodeProvider]="fileNodeProvider"
+          ></ix-explorer>
+        </tn-form-field>
       }
       @if (form.controls.path_source.enabled) {
-        <ix-explorer
-          formControlName="path_source"
+        <tn-form-field
           [label]="helptext.pathLabel | translate"
           [tooltip]="helptext.pathTooltip | translate"
           [required]="true"
-          [multiple]="true"
-          [nodeProvider]="fileNodeProvider"
-        ></ix-explorer>
+        >
+          <ix-explorer
+            formControlName="path_source"
+            [multiple]="true"
+            [nodeProvider]="fileNodeProvider"
+          ></ix-explorer>
+        </tn-form-field>
       }
     </tn-form-section>
 
@@ -131,25 +137,31 @@
         </tn-form-field>
       }
       @if (form.controls.folder_destination.enabled) {
-        <ix-explorer
-          formControlName="folder_destination"
-          [rootNodes]="slashRootNode"
-          [readonly]="!hasRequiredRoles()"
+        <tn-form-field
           [label]="helptext.folderLabel | translate"
           [tooltip]="helptext.folderTooltip | translate"
-          [nodeProvider]="bucketNodeProvider"
-        ></ix-explorer>
+        >
+          <ix-explorer
+            formControlName="folder_destination"
+            [rootNodes]="slashRootNode"
+            [readonly]="!hasRequiredRoles()"
+            [nodeProvider]="bucketNodeProvider"
+          ></ix-explorer>
+        </tn-form-field>
       }
       @if (form.controls.folder_source.enabled) {
-        <ix-explorer
-          formControlName="folder_source"
-          [rootNodes]="slashRootNode"
-          [readonly]="!hasRequiredRoles()"
+        <tn-form-field
           [label]="helptext.folderLabel | translate"
           [tooltip]="helptext.folderTooltip | translate"
-          [multiple]="true"
-          [nodeProvider]="bucketNodeProvider"
-        ></ix-explorer>
+        >
+          <ix-explorer
+            formControlName="folder_source"
+            [rootNodes]="slashRootNode"
+            [readonly]="!hasRequiredRoles()"
+            [multiple]="true"
+            [nodeProvider]="bucketNodeProvider"
+          ></ix-explorer>
+        </tn-form-field>
       }
       @if (form.controls.bucket_policy_only.enabled) {
         <tn-form-field [tooltip]="helptext.bucketPolicyOnlyTooltip | translate">
@@ -397,26 +409,4 @@
       }
     </tn-form-section>
   </div>
-
-  <!-- Inline extra actions only in the legacy SlideIn host. In the `<tn-side-panel>` host these are
-       rendered in the panel footer instead (see `footerActions`), so gate them to avoid duplicates. -->
-  @if (slideInRef) {
-    <tn-button
-      *ixRequiresRoles="requiredRoles"
-      ixExtraActions
-      testId="dry-run"
-      [label]="helptext.dryRunButton | translate"
-      [disabled]="form.invalid || isLoading() || ixForm.isSubmitting()"
-      (onClick)="onDryRun()"
-    ></tn-button>
-    @if (isNew) {
-      <tn-button
-        ixExtraActions
-        testId="switch-to-wizard"
-        [label]="'Switch To Wizard' | translate"
-        [disabled]="ixForm.isSubmitting()"
-        (onClick)="onSwitchToWizard()"
-      ></tn-button>
-    }
-  }
 </ix-form>

@@ -18,7 +18,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { mapTnSortToTableSort } from 'app/modules/ix-table/utils';
+import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { auditElements } from 'app/pages/audit/audit.elements';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';

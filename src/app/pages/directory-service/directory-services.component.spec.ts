@@ -14,7 +14,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LeaveDomainDialog } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
@@ -82,7 +81,6 @@ describe('DirectoryServicesComponent', () => {
         })),
         error: jest.fn(),
       }),
-      mockProvider(SlideIn),
       mockProvider(TnDialog),
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),

@@ -69,16 +69,68 @@ describe('DataMigrationStatusDialogComponent', () => {
   }
 
   describe('progress math', () => {
-    it('renders progressPercent as 50 when half the bytes have been transferred', () => {
+    it('renders progressPercent as 50 when half the items are done', () => {
       build({ ...baseJob, stats: { ...baseStats } });
 
       const bar = spectator.query('tn-progress-bar')!;
       expect(bar.getAttribute('aria-valuenow') || bar.getAttribute('ng-reflect-value')).toBe('50');
     });
 
-    it('emits 0 when total_bytes is 0', () => {
-      build({ ...baseJob, stats: { ...baseStats, total_bytes: 0, count_bytes: 0 } });
+    it('emits 0 when total_items is 0', () => {
+      build({ ...baseJob, stats: { ...baseStats, total_items: 0, success: 0 } });
       expect(spectator.component.progressPercent()).toBe(0);
+    });
+
+    it('ignores byte counts, which reach the total before anything is rewritten', () => {
+      build({
+        ...baseJob,
+        stats: {
+          ...baseStats, count_bytes: 4_000_000, total_bytes: 4_000_000, success: 0, total_items: 10,
+        },
+      });
+
+      expect(spectator.component.progressPercent()).toBe(0);
+    });
+
+    it('clamps an item count that overshoots its total', () => {
+      build({ ...baseJob, stats: { ...baseStats, success: 12, total_items: 10 } });
+
+      expect(spectator.component.progressPercent()).toBe(100);
+    });
+
+    it('floors the percentage, so a nearly-done job does not read 100 while it runs', () => {
+      build({ ...baseJob, stats: { ...baseStats, success: 999, total_items: 1000 } });
+
+      expect(spectator.component.progressPercent()).toBe(99);
+    });
+
+    it('counts failed items as processed, so a terminal job reaches 100%', () => {
+      build({
+        ...baseJob,
+        status: TierRewriteJobStatus.Complete,
+        stats: {
+          ...baseStats, total_items: 10, success: 9, failures: 1,
+        },
+      });
+
+      expect(spectator.component.progressPercent()).toBe(100);
+    });
+
+    it('runs the bar indeterminate while a single-item job is in flight', () => {
+      build({ ...baseJob, stats: { ...baseStats, total_items: 1, success: 0 } });
+
+      expect(spectator.query('tn-progress-bar')).toHaveAttribute('mode', 'indeterminate');
+    });
+
+    it('settles a single-item job back to a determinate bar once it ends', () => {
+      build({
+        ...baseJob,
+        status: TierRewriteJobStatus.Complete,
+        stats: { ...baseStats, total_items: 1, success: 1 },
+      });
+
+      expect(spectator.query('tn-progress-bar')).toHaveAttribute('mode', 'determinate');
+      expect(spectator.component.progressPercent()).toBe(100);
     });
   });
 
@@ -118,8 +170,23 @@ describe('DataMigrationStatusDialogComponent', () => {
     it('suppresses ETA below the 1% fraction threshold', () => {
       build({
         ...baseJob,
-        stats: { ...baseStats, count_bytes: 1, total_bytes: 1_000_000 },
+        stats: { ...baseStats, success: 1, total_items: 1000 },
       });
+      expect(spectator.component.estimatedCompletion()).toBeNull();
+    });
+
+    it('suppresses ETA once every item is done, instead of extrapolating to the start time', () => {
+      build({
+        ...baseJob,
+        stats: { ...baseStats, success: 10, total_items: 10 },
+      });
+
+      expect(spectator.component.estimatedCompletion()).toBeNull();
+    });
+
+    it('suppresses ETA when the first tick lands in the same second the job started', () => {
+      build({ ...baseJob, stats: { ...baseStats, update_time: 1000 } });
+
       expect(spectator.component.estimatedCompletion()).toBeNull();
     });
 
@@ -156,6 +223,17 @@ describe('DataMigrationStatusDialogComponent', () => {
         [{ tier_job_id: 'job-1' }],
       );
       expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
+    });
+
+    it('warns in the confirmation that the tier change itself is not reverted', async () => {
+      build({ ...baseJob, stats: { ...baseStats } });
+
+      const cancelButton = await loader.getHarness(TnButtonHarness.with({ label: 'Cancel' }));
+      await cancelButton.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
+        message: expect.stringContaining('The storage tier change has already been applied and is not reverted by cancelling.'),
+      }));
     });
   });
 

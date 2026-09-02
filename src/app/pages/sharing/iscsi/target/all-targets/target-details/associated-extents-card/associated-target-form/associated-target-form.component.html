@@ -1,7 +1,7 @@
 <tn-dialog-shell testId="associated-target-form" [title]="('Associate' | translate) + ' ' + data.target.name">
 
   <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-    <ix-fieldset>
+    <tn-form-section>
       <tn-form-field [label]="'LUN ID' | translate" [tooltip]="tooltips.lunid | translate">
         <tn-input
           testId="lunid"
@@ -17,8 +17,9 @@
           [options]="(extents$ | async) ?? []"
         ></tn-select>
       </tn-form-field>
-    </ix-fieldset>
+    </tn-form-section>
   </form>
+
   <ix-form-actions tnDialogAction class="form-actions">
     <tn-button
       variant="outline"

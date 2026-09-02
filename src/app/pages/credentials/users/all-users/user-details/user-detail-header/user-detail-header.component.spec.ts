@@ -89,7 +89,7 @@ describe('UserDetailHeaderComponent', () => {
     expect(await editButton.isDisabled()).toBe(true);
 
     const tooltips = spectator.queryAll(TnTooltipDirective);
-    const tooltip = tooltips.find((tip) => String(tip.message) === 'This user is managed by a directory service and cannot be modified.');
+    const tooltip = tooltips.find((tip) => String(tip.message()) === 'This user is managed by a directory service and cannot be modified.');
     expect(tooltip).toBeTruthy();
   });
 
@@ -114,7 +114,7 @@ describe('UserDetailHeaderComponent', () => {
     expect(await deleteButton.isDisabled()).toBe(true);
 
     const tooltips = spectator.queryAll(TnTooltipDirective);
-    const tooltip = tooltips.find((tip) => String(tip.message) === 'This user is managed by a directory service and cannot be modified.');
+    const tooltip = tooltips.find((tip) => String(tip.message()) === 'This user is managed by a directory service and cannot be modified.');
     expect(tooltip).toBeTruthy();
   });
 

@@ -6,7 +6,6 @@
   @if (isFormLoading() || isDataLoading()) {
     <tn-progress-bar
       mode="indeterminate"
-      [ariaLabel]="'Loading' | translate"
     ></tn-progress-bar>
   }
 
@@ -28,7 +27,6 @@
     <div class="button-group">
       <tn-button
         color="primary"
-        type="button"
         [testId]="'renew-secret'"
         [label]="userTwoFactorAuthConfigured() ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate)"
         [disabled]="isFormLoading()"
@@ -38,7 +36,6 @@
       @if (userTwoFactorAuthConfigured()) {
         <tn-button
           color="warn"
-          type="button"
           [testId]="'unset-2fa-secret'"
           [label]="'Unset 2FA Secret' | translate"
           [disabled]="isFormLoading()"
@@ -47,7 +44,6 @@
       }
       @if (showSkipButton()) {
         <tn-button
-          type="button"
           [testId]="'skip-2fa-setup'"
           [label]="'Skip Setup' | translate"
           [disabled]="isFormLoading()"

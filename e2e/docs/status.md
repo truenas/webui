@@ -14,11 +14,25 @@ and keep it short.**
 
 ## Where we are
 
-Three tests, green against real appliances. `smoke` proves the authenticated
-session loads; `admin-user` creates a TrueNAS admin and signs in as them;
-`fresh-install` is the day-one journey — user, 9-wide RAIDZ2 pool, dataset, SMB
-share, start the service, then verify over the API that the appliance is really
-serving and that the owner can actually write to it.
+Running on **`@truenas/api-client` 3.x**, which types the full generated API
+surface per version rather than a curated subset of 65 endpoints. There is no
+escape hatch: every middleware call is checked against a real signature.
+`pool.export` and `service.control` are declared as jobs and go through `runJob`
+in `support/jobs.ts`, which starts the job and re-reads `core.get_jobs` until it
+reaches a terminal state — a poll rather than `client.api.job()`, because both
+jobs restart services over the socket the event stream depends on.
+
+`support/api/client.ts` names the API surface the suite is written against:
+**v27**, which the nightlies advertise and the client implements. That type
+parameter is the one place the choice is made; unset, the client defaults to
+v25.10.0 and most of what the fixtures call looks unavailable.
+
+Three tests. Green against real appliances on the 1.x client — **the move to
+3.x has not been re-run against hardware.** Every middleware call in the
+fixtures was rewritten, job handling moved, and the API budgets changed; what
+backs it is typecheck, lint, test collection, and `ensurePoolAbsent` driven
+against a scripted middleware over nine cases. Treat a first real run as
+unproven until someone does it.
 
 The framework is done and the coverage is not. Two journeys against 19 top-level
 feature areas. What the work bought is that the next twenty tests are cheap: the
@@ -49,30 +63,29 @@ argued from a number that does not exist.
 2. **CI.** Only `yarn e2e:typecheck` runs today, in the lint job. Running the
    suite needs runners that can reach the appliance network and a provisioning
    step — see `NAS-e2e-environment-architecture` for that design.
-3. **Retire `support/api/untyped.ts`.** Eleven call sites across
-   `fixtures/storage.ts` (8), `fresh-install.e2e.ts` (2) and `fixtures/users.ts`
-   (1), waiting on an api-client release that types the full surface and jobs.
-   `pool.export` and `service.control` are jobs, so that release also removes
-   the polling in `ensurePoolAbsent` and `ensureSmbServiceStopped`.
-4. **Observability.** No WebSocket capture, no middleware log collection, no
+3. **Observability.** No WebSocket capture, no middleware log collection, no
    version recording in reports. These are what make a 3am failure diagnosable
    by someone who did not write the test.
 
 ## Known gaps
 
 - **TLS verification is disabled process-wide** by `playwright.config.ts`, not
-  scoped to the one connection that needs it. No seam exists in
-  `@truenas/api-client@1.0.6` — see the comment there for what would be needed.
+  scoped to the one connection that needs it. Still no seam in
+  `@truenas/api-client@3.0.2`: `CreateClientOptions` still exposes no TLS,
+  socket-constructor or dispatcher option. See the comment there for what would
+  close it.
 - **Nothing guards the `data-test` contract.** Every locator depends on
   attributes that webui's own convention forbids unit tests from asserting on,
   so they have no coverage in the repository that emits them. NAS-142069 was one
   such attribute deleted by a migration and caught by a person, not by CI.
 - **Fixed names** (`bob`, `e2e_tank`) mean two runs against one appliance
   collide. Fine for one-appliance-per-run; run-scoped naming is the fix.
-- **Upstream asks on `@truenas/api-client`:** `AuthResponseType` and
-  `ServiceControlAction` are declared but not exported, and both appear in
-  signatures callers must satisfy. The second is why `service.control` alone
-  cannot go through the typed API.
+- **`AuthResponseType` is declared but not exported** while
+  `AuthResponse.response_type` is typed as it, so `support/api/client.ts` checks
+  a successful login by comparing `String(...)` against `'SUCCESS'`. Still true
+  in 3.0.2. `ServiceControlAction` has the same problem but no longer costs
+  anything: `service.control` is a job, and the job path takes the verb as a
+  literal.
 
 ---
 
@@ -110,8 +123,7 @@ comment instead.
 | R8.2 | At most one retry per test |
 | R8.3 | No fixed sleeps — wait on observable conditions |
 | R8.4 | Quarantine policy for persistently flaky tests |
-| T3 | Middleware client is `@truenas/api-client` |
-| T3.1 | Its typed `call()` covers a curated subset, hence `support/api/untyped.ts` |
+| T3 | Middleware client is `@truenas/api-client` (3.x; T3.1 covered the curated-subset problem that version removed) |
 | T5 | Authentication via a setup project plus `storageState` |
 | T10 | Configuration through target profiles, resolved in one module |
 | D2 | Parallel execution by sharding across appliances — deferred |

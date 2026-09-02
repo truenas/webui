@@ -1,11 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness, TnSlideToggleHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -24,7 +23,6 @@ import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-expl
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
@@ -59,13 +57,8 @@ describe('RsyncTaskFormComponent', () => {
     extra: ['param=value'],
   } as RsyncTask;
 
-  const slideInRef: SlideInRef<RsyncTask | undefined, unknown> = {
-    close: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-    requireConfirmationWhen: jest.fn(),
-  };
-
   let spectator: Spectator<RsyncTaskFormComponent>;
+  let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
@@ -106,7 +99,6 @@ describe('RsyncTaskFormComponent', () => {
         ],
       }),
       ...ixFormTestingProviders(),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -128,19 +120,23 @@ describe('RsyncTaskFormComponent', () => {
     }
   };
 
-  const saveForm = async (): Promise<void> => {
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+  // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+
+  const saveForm = (): void => {
+    spectator.component.submit();
+
+    spectator.detectChanges();
   };
 
   describe('adds a new rsync task', () => {
     beforeEach(() => {
       spectator = createComponent();
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('adds a new rsync task when new form is saved', async () => {
-      await (await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }))).setValue('/mnt/new');
+      await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }))).setValue('/mnt/new');
       await (await loader.getHarness(IxComboboxHarness.with({ label: 'User' }))).setValue('steven');
       await (await getSelect('direction')).selectOption('Pull');
       await (await getInput('desc')).setValue('My new task');
@@ -163,7 +159,7 @@ describe('RsyncTaskFormComponent', () => {
       await setCheckbox('delayupdates', false);
       await (await loader.getHarness(TnChipInputHarness.with({ selector: '[formControlName="extra"]' }))).addChip('param=newValue');
 
-      await saveForm();
+      saveForm();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.create', [{
         archive: false,
@@ -189,22 +185,19 @@ describe('RsyncTaskFormComponent', () => {
         times: false,
         user: 'steven',
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });
 
   describe('edits rsync task', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ ...existingTask, id: 1 })) }),
-        ],
-      });
+      spectator = createComponent({ props: { taskToEdit: { ...existingTask, id: 1 } } });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('shows values for an existing rsync task when it is open for edit', async () => {
-      expect(await (await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }))).getValue()).toBe('/mnt/x/oooo');
+      expect(await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }))).getValue()).toBe('/mnt/x/oooo');
       expect(await (await loader.getHarness(IxComboboxHarness.with({ label: 'User' }))).getValue()).toBe('root');
       expect(await (await getSelect('direction')).getDisplayText()).toBe('Push');
       expect(await (await getInput('desc')).getValue()).toBe('My rsync task');
@@ -222,14 +215,14 @@ describe('RsyncTaskFormComponent', () => {
     });
 
     it('saves updated rsync task when form opened for edit is saved', async () => {
-      await (await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }))).setValue('/mnt/new');
+      await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }))).setValue('/mnt/new');
       await (await getSelect('direction')).selectOption('Push');
 
       await setCheckbox('times', false);
       await setCheckbox('compress', false);
       await setCheckbox('delayupdates', true);
 
-      await saveForm();
+      saveForm();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
@@ -243,7 +236,7 @@ describe('RsyncTaskFormComponent', () => {
           delayupdates: true,
         },
       ]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+      expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
     it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH private key stored in user\'s home directory', async () => {
@@ -251,8 +244,11 @@ describe('RsyncTaskFormComponent', () => {
       await (await getInput('remoteport')).setValue('45');
       await (await getInput('remotepath')).setValue('/mnt/path');
       await setCheckbox('validate_rpath', true);
+      await (await loader.getHarness(
+        TnSlideToggleHarness.with({ selector: '[formControlName="ssh_keyscan"]' }),
+      )).check();
 
-      await saveForm();
+      saveForm();
 
       const existingTaskWithoutModule = { ...existingTask };
       delete existingTaskWithoutModule.remotemodule;
@@ -264,7 +260,7 @@ describe('RsyncTaskFormComponent', () => {
           mode: RsyncMode.Ssh,
           remoteport: 45,
           remotepath: '/mnt/path',
-          ssh_keyscan: false,
+          ssh_keyscan: true,
           validate_rpath: true,
           ssh_credentials: null,
         },
@@ -277,7 +273,7 @@ describe('RsyncTaskFormComponent', () => {
       await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials"]' }))).selectOption('ssh01');
       await (await getInput('remotepath')).setValue('/mnt/path');
 
-      await saveForm();
+      saveForm();
 
       const existingTaskWithoutModule = { ...existingTask };
       delete existingTaskWithoutModule.remotemodule;
@@ -297,21 +293,19 @@ describe('RsyncTaskFormComponent', () => {
     });
   });
 
-  describe('side panel host (no SlideInRef)', () => {
+  describe('host-driven submit', () => {
     beforeEach(() => {
       spectator = createComponent({
-        providers: [
-          { provide: SlideInRef, useValue: null },
-        ],
         props: {
           taskToEdit: { ...existingTask, id: 1 } as RsyncTask,
         },
       });
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('emits closed and updates when saved via the host submit() entry point', () => {
-      const closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
       spectator.component.submit();
 

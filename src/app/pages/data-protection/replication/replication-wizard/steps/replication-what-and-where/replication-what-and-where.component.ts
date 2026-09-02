@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, output, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -8,7 +8,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnRadioComponent, TnSelectComponent, TnStepperNextDirective,
+  TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent, TnStepperNextDirective,
 } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import {
@@ -32,10 +32,10 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -43,8 +43,6 @@ import { namingSchemaValidator } from 'app/modules/forms/ix-forms/validators/nam
 import { regexValidator } from 'app/modules/forms/ix-forms/validators/regex-validation/regex-validation';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -68,6 +66,7 @@ import { ReplicationService } from 'app/services/replication.service';
     TnSelectComponent,
     TnCheckboxComponent,
     TnRadioComponent,
+    TnRadioGroupComponent,
     TnInputComponent,
     SshCredentialsSelectComponent,
     IxExplorerComponent,
@@ -91,9 +90,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   private cdr = inject(ChangeDetectorRef);
   private errorParser = inject(ErrorParserService);
   private errorHandler = inject(ErrorHandlerService);
-  // Optional: the wizard is hosted in the `<tn-side-panel>` form panel (no SlideInRef); "Advanced
-  // Options" swaps via {@link formPanel} there.
-  slideInRef = inject<SlideInRef<ReplicationTask, ReplicationTask>>(SlideInRef, { optional: true });
   private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
@@ -205,12 +201,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     return this.form.value.source_datasets_from === DatasetSource.Local
       ? helptextReplicationWizard.nameSchemaOrRegexPush
       : helptextReplicationWizard.nameSchemaOrRegexPull;
-  }
-
-  constructor() {
-    this.slideInRef?.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
   }
 
   ngOnInit(): void {
@@ -441,7 +431,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   openAdvanced(): void {
     // Panel host: swap the wizard out for the advanced form in place.
-    this.formPanel.swap(ReplicationFormComponent as unknown as Type<SidePanelForm>, {
+    this.formPanel.swap(ReplicationFormComponent, {
       title: this.translate.instant('Add Replication Task'),
       wide: true,
     });
@@ -496,7 +486,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.snapshotsText = '';
           const errorMessage = this.errorParser.getFirstErrorMessage(error);
           if (errorMessage) {
-            this.form.controls.source_datasets.setErrors({ [ixManualValidateError]: { message: errorMessage } });
+            this.form.controls.source_datasets.setErrors({ [ixManualValidateErrorKey]: { message: errorMessage } });
           }
           this.cdr.markForCheck();
         },

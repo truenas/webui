@@ -16,7 +16,6 @@ import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { CriticalGpuPreventionService } from 'app/services/gpu/critical-gpu-prevention.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -57,7 +56,6 @@ export class GpuStepComponent implements SummaryProvider, OnInit {
   });
 
   readonly helptext = helptextVmWizard;
-  protected readonly tnSelectLabels = tnSelectLabels;
 
   // Drives the stepper's linear gating (replaces mat's [stepControl]).
   readonly completed = stepCompletedSignal(this.form);

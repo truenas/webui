@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, output, viewChild,
 } from '@angular/core';
@@ -7,9 +6,9 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent,
+  TnInputComponent, TnSelectComponent, TnSelectOption, TnSlideToggleComponent,
 } from '@truenas/ui-components';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -23,7 +22,6 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -31,7 +29,6 @@ import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -42,7 +39,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
   styleUrls: ['./rsync-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormSectionComponent,
@@ -51,7 +47,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TnSelectComponent,
     TnCheckboxComponent,
     TnChipInputComponent,
-    IxSlideToggleComponent,
+    TnSlideToggleComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     IxUserComboboxComponent,
@@ -67,9 +63,6 @@ export class RsyncTaskFormComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);
   private validatorsService = inject(IxValidatorsService);
-  // Optional: present only in the legacy SlideIn host. Absent when hosted in the
-  // `<tn-side-panel>` form panel, where data arrives via {@link taskToEdit}.
-  private slideInRef = inject<SlideInRef<RsyncTask | undefined, boolean>>(SlideInRef, { optional: true });
   private destroyRef = inject(DestroyRef);
 
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
@@ -127,20 +120,22 @@ export class RsyncTaskFormComponent implements OnInit {
 
   readonly helptext = helptextRsyncForm;
 
-  readonly directions$ = of([
+  // `tn-select` takes synchronous options, so these are plain arrays rather than the
+  // observables the `ix-select` era needed.
+  protected readonly directions: TnSelectOption<Direction>[] = [
     { label: this.translate.instant('Push'), value: Direction.Push },
     { label: this.translate.instant('Pull'), value: Direction.Pull },
-  ]);
+  ];
 
-  readonly rsyncModes$ = of([
+  protected readonly rsyncModes: TnSelectOption<RsyncMode>[] = [
     { label: this.translate.instant('Module'), value: RsyncMode.Module },
     { label: ignoreTranslation('SSH'), value: RsyncMode.Ssh },
-  ]);
+  ];
 
-  readonly sshConnectModes$ = of([
+  protected readonly sshConnectModes: TnSelectOption<RsyncSshConnectMode>[] = [
     { label: this.translate.instant('SSH private key stored in user\'s home directory'), value: RsyncSshConnectMode.PrivateKey },
     { label: this.translate.instant('SSH connection from the keychain'), value: RsyncSshConnectMode.KeyChain },
-  ]);
+  ];
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
@@ -179,7 +174,7 @@ export class RsyncTaskFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.editingTask = this.slideInRef?.getData() ?? this.taskToEdit();
+    this.editingTask = this.taskToEdit();
 
     if (this.editingTask) {
       this.setTaskForEdit(this.editingTask);

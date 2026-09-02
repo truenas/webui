@@ -14,7 +14,8 @@ import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
 import { UploadService } from 'app/services/upload.service';
@@ -34,6 +35,7 @@ describe('DatasetUnlockComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ixFormTestingProviders(),
       mockAuth(),
       mockProvider(Router),
       mockProvider(ActivatedRoute, {
@@ -80,16 +82,15 @@ describe('DatasetUnlockComponent', () => {
   });
 
   it('saves when set key manually', async () => {
-    const form = await loader.getHarness(IxFormHarness);
+    await fillControlValues(await indexFormControls(loader), {
+      'Unlock with Key file': 'Provide keys/passphrases manually',
+    });
 
-    await form.fillForm(
-      {
-        'Unlock with Key file': 'Provide keys/passphrases manually',
-        Force: true,
-        'Dataset Key': '0123456789012345678901234567890123456789012345678901234567890123',
-        'Dataset Passphrase': '12345678',
-      },
-    );
+    await fillControlValues(await indexFormControls(loader), {
+      Force: true,
+      'Dataset Key': '0123456789012345678901234567890123456789012345678901234567890123',
+      'Dataset Passphrase': '12345678',
+    });
 
     const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }));
     await unlockButton.click();

@@ -57,7 +57,7 @@ export class ScrubFormComponent extends SidePanelForm implements OnInit {
   protected existingTask: ScrubTask | undefined;
   private poolId: number;
 
-  /** Params supplied by the `<tn-side-panel>` host, which has no `SlideInRef` to carry data. */
+  /** Params supplied by the `<tn-side-panel>` host. */
   readonly scrubParams = input.required<ScrubFormParams>();
 
   private get isNew(): boolean {

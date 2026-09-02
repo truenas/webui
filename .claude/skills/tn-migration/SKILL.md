@@ -30,7 +30,7 @@ their own tickets and migrating them piecemeal will cause conflicts:
 | Concern | Owning ticket | What to do in a feature-area migration |
 |---|---|---|
 | `ix-forms` internals (`ix-input`, `ix-select`, `ix-fieldset`, `ix-chips`, `ix-checkbox`) | NAS-141028 | **Leave as-is.** Keep using `ix-*` form controls. |
-| `ix-table` and its sub-components | NAS-141029 | **Leave as-is.** |
+| `ix-table` and its sub-components | NAS-141029 | **Gone.** `app/modules/ix-table` was deleted; use `tn-table` + `app/modules/tn-table`. |
 | `DialogService` / dialog components | NAS-141022 | Keep calling `DialogService`. |
 | `SnackbarService` | NAS-141027 | Keep calling `SnackbarService`. |
 | SlideIn system / `modal-header` | NAS-141030 | Use the **dual-host recipe** below — do not delete `SlideIn`. |
@@ -44,11 +44,18 @@ declarative actions, and `tn-icon` (already migrated — always `tn-icon`, never
 > **active feature-area tickets**, the `ix-forms`, `ix-table`, and `SlideIn` rows in the
 > table above are **superseded** — migrate them in-place alongside the Material work:
 >
-> - **`ix-table` → `tn-table`.** Use `*tnColumnDef` + `<ng-template tnHeaderCellDef>` /
->   `<ng-template tnCellDef let-row>`. Reuse `TableActionsCellComponent` /
->   `TableToggleCellComponent` from `app/modules/tn-table-cells/`. `[expandable]="true"` +
->   `*tnDetailRowDef` for detail rows. No column-selector equivalent. Reference: `cron-list`,
->   `map-user-group-ids-dialog`.
+> - **`ix-table` → `tn-table`. DONE (NAS-141029): `app/modules/ix-table` no longer exists.**
+>   Tables use `[tnColumnDef]` + `<ng-template tnHeaderCellDef>` / `<ng-template tnCellDef
+>   let-row>`, with the cell components in `app/modules/tn-table-cells/`
+>   (`TableTextCellComponent`, `TableActionsCellComponent`, `TableToggleCellComponent`,
+>   `TableRelativeDateCellComponent`, `TaskStateCellComponent`). `[expandable]="true"` +
+>   `<ng-template tnDetailRowDef>` for detail rows, with `<ix-table-details-row>` printing the
+>   columns the picker has hidden. Everything around the table — data providers, `createTable`,
+>   `column()`/`actionsColumn()`, `toDisplayedColumns`, `mapTnSortToTableSort`,
+>   `tnTableListHost`, `<ix-table-column-picker>`, `<ix-table-pager-show-more>` — now lives in
+>   `app/modules/tn-table/`. The pager itself, `<tn-table-pager>`, comes from
+>   `@truenas/ui-components`.
+>   Reference: `cron-list`, `portal-list`, `jobs-list`.
 > - **`ix-*` form controls → `tn-form` primitives.** `ix-fieldset` → `<tn-form-section
 >   [heading]>` (there is **no `tn-fieldset`**). Wrap each control in `<tn-form-field [label]
 >   [tooltip] [required]>` containing `tn-input` / `tn-checkbox` / `tn-select`. `tn-input
@@ -56,6 +63,9 @@ declarative actions, and `tn-icon` (already migrated — always `tn-icon`, never
 >   `tn-select` takes a **synchronous** `TnSelectOption[]` (unwrap observables with `| async`)
 >   and does **not** translate labels — pre-translate with `translateOptions(this.translate,
 >   …)`. `tn-select` has no `[required]` — put the indicator on the wrapping `tn-form-field`.
+>   Its own copy (placeholder, empty-dropdown message, "select all") comes from the app-root
+>   `TN_SELECT_LABELS` provider (`provideTnSelectLabels()`, `main.ts`), so do **not** bind
+>   `[placeholder]`/`[noOptionsLabel]` per call site — only where a field needs its own wording.
 >   Controls with no `tn-*` equivalent (`ix-explorer`, `ix-permissions`, `ix-chips`,
 >   `ix-ip-input-with-netmask`, `ix-user/group-combobox`) **stay `ix-*`**. Reference:
 >   `service-ftp`, `global-config-form`.
@@ -189,7 +199,7 @@ read-only views) unless a feature-ticket explicitly carries `ix-*` work.
 
 | Angular Material | @truenas/ui-components | Notes |
 |---|---|---|
-| `<mat-table>` etc. | `<tn-table>` *(non-form)* or `<ix-table>` *(NAS-141029 owns)* | See **Recipe 6**. `tn-table` is intentionally smaller surface than `ix-table` — verify every input/output against d.ts. ⚠ `.tn-table__*` classes are NOT public; any `::ng-deep` into them requires a `// TEMP` marker + library follow-up. |
+| `<mat-table>` etc. | `<tn-table>` | See **Recipe 6**. `tn-table` is intentionally smaller surface than `ix-table` — verify every input/output against d.ts. ⚠ `.tn-table__*` classes are NOT public; any `::ng-deep` into them requires a `// TEMP` marker + library follow-up. |
 | `[matSort]` / `[mat-sort-header]` | `[sortable]` on `*tnColumnDef` + `(sortChange)` | Built into `tn-table`'s column-def directive. |
 | `[matColumnDef]` | `*tnColumnDef` | Structural directive on `<ng-container>` with `<ng-template tnHeader>` / `<ng-template tnCell>`. |
 | `<mat-paginator>` | `<tn-table-pager>` | `TnTablePagerComponent`/`TnTablePagerHarness`. Use `TN_TABLE_PAGER_LABELS` provider for i18n (replacement for `MatPaginatorIntl`); default labels in `TN_TABLE_PAGER_DEFAULT_LABELS`. |
@@ -279,7 +289,6 @@ component's comment.
 | `tn-card` header/footer dividers use the unmapped `--tn-lines` token | Divider falls back to a light colour that reads wrong in the dark theme | `tn-detail-card` repoints them at webui's `--lines` | Design tokens are bridged |
 | `tn-empty`'s internal action button carries no test id, and the input exposes no way to set one | Empty-state CTAs are unaddressable by automation | Render the button outside `tn-empty` instead of via `actionText` | Library accepts a test id for the action |
 | `tn-checkbox` does not consume `TN_FORM_FIELD_CONTEXT` | Only `tn-input`, `tn-select`, `tn-autocomplete` and `tn-chip-input` call `injectTnFormFieldAria` in 0.3.26. A `tn-form-field [hint]` wrapping a checkbox renders the hint visibly but never links it via `aria-describedby` — the checkbox's `aria-describedby` is hard-wired to its own error id | Fold the hint into the checkbox's `[label]` (which becomes its `aria-label`), accepting name-vs-description as the lesser loss. See `unlock-sed-disks.component.ts` | `tn-checkbox` wires up the field context |
-| `tn-select`'s default `placeholder` / `noOptionsLabel` are English literals inside the library | They never reach webui's `TranslateService`, so omitting the bindings ships untranslated English | Always pass both, via `tnSelectLabels` (`modules/forms/ix-forms/constants/tn-select-labels.constant.ts`) piped through `translate` | Library accepts translated defaults via DI |
 | No `TnCardHarness` | Card titles can only be asserted by reaching for `.tn-card__title` in the DOM | White-box query, commented as such | Library ships a card harness |
 | `tn-button`'s anchor arm hard-codes `tnTestIdType="button"` | A `tn-button` that renders a real `<a routerLink>` still resolves `[testId]="'x'"` to `button-x`, renaming a legacy `link-x` id | Pin the id on the host instead — `tnTestIdType="link"` + `[tnTestId]`. Do this for **every** call site of a given action, so one action never has two ids depending on which branch rendered it | Library derives the type from the rendered element |
 
@@ -587,7 +596,7 @@ closes, focus must return to the trigger element. Escape must close the panel. T
 silently regress. Verify each migrated panel on first use; if any of the three is missing,
 file a library bug rather than papering over it with imperative focus calls.
 
-## Recipe 6 — Table (`ix-table` / `mat-table` → `tn-table`)
+## Recipe 6 — Table (`mat-table` → `tn-table`)
 
 `tn-table` is intentionally a smaller surface than `ix-table` — verify every input/output
 you use against `node_modules/@truenas/ui-components/types/truenas-ui-components.d.ts`.
@@ -734,6 +743,23 @@ Without this provider every tn-component `testId` lands on the wrong attribute a
 selector misses. This provider is part of the webui-side rollout and may not be wired yet —
 `grep -rn 'TN_TEST_ATTR' src` and add it if absent before relying on tn-component test IDs.
 
+**App-root label providers (0.7.x).** The library resolves the copy it renders itself through DI
+tokens, so webui wires each one once in `main.ts` (and mirrors it in `setup-jest.ts` so specs read
+what the app renders) instead of binding the same string on every call site:
+
+| Token | webui provider | Covers |
+|---|---|---|
+| `TN_SELECT_LABELS` | `provideTnSelectLabels()` | `tn-select` placeholder, empty-dropdown message, "select all" |
+| `TN_FALLBACK_LABELS` | `provideTnFallbackLabels()` | accessible names for an unnamed `tn-spinner`, `tn-progress-bar`, `tn-dialog-shell`, `tn-side-panel`, `tn-drawer` |
+| `TN_TABLE_PAGER_LABELS` | `provideTnTablePagerLabels()` | pager copy |
+| `TN_FORM_FIELD_ERRORS` | `provideTnFormFieldErrors()` | validation messages |
+| `TN_CALENDAR_INTL` | `provideTnCalendarIntl()` | calendar copy |
+
+An input on a particular instance still wins, which is how a field or surface with its own wording
+opts out — and for `TN_FALLBACK_LABELS` an `[ariaLabel]` that says *what* is loading is still the
+better answer. Without the fallback provider the library warns in dev mode on every unnamed
+instance, and `jest-fail-on-console` turns that warning into a spec failure.
+
 **Phasing out `[ixTest]`.** On a migrated element, `[ixTest]` is the wrong mechanism:
 - On a `<tn-*>` component, use its `[testId]` input — not `[ixTest]`.
 - On a surviving plain element, use `[tnTestId]` (+ `tnTestIdType` for a prefix).
@@ -779,43 +805,27 @@ type, changing the type changes the resolved value even when the base is identic
   the bare base; do NOT pass `testId="button-foo"` (it survives only because of the idempotent
   guard) and do NOT edit `test.directive.ts`.
 
-**Radio groups: the one sanctioned use of the idempotent guard.** `<mat-radio-button>` mapped to
-the prefix `radio-button`, but `tn-radio` declares `radio` — and unlike every other case above,
-the prefix cannot be pinned on a host. `TnRadioGroupComponent` and `TnRadioComponent` both resolve
-their id through `controlTestId()`, which falls back to the bound `formControlName`, so their inner
-elements *always* emit a `data-test`; adding `tnTestIdType`/`tnTestId` to the host would leave two
-`data-test` attributes in the DOM rather than one, which is why the `<tn-button>` remedy does not
-transfer. The only way to keep the legacy option ids is to let the guard absorb the prefix:
+**Radio groups need no prefix compensation.** `<mat-radio-button>` mapped to the prefix
+`radio-button`, and since **0.7.0** `tn-radio` declares the same one — an option identifies a radio
+BUTTON inside a `radio-group`, matching the `button-toggle-group`/`button-toggle` pair. The group
+itself declares `radio-group`. Both resolve through `controlTestId()`, so a bound group needs
+nothing at all:
 
 ```html
-<!-- group id ← formControlName: radio-group-encryption-type (legacy parity, nothing passed) -->
-<tn-radio-group formControlName="encryptionType">
-  @for (option of encryptionTypeOptions(); track option.value) {
-    <!-- composeTestId('radio', ['radio-button', …]) → body already starts with `radio-`,
-         so the guard skips the prefix: radio-button-encryption-type-<label> -->
-    <tn-radio
-      [label]="option.label"
-      [value]="option.value"
-      [testId]="['radio-button', 'encryption-type', option.label]"
-    ></tn-radio>
-  }
-</tn-radio-group>
+<!-- radio-group-encryption-type on the group, radio-button-encryption-type-<label> per option -->
+<tn-radio-group formControlName="encryptionType" [options]="encryptionTypeOptions()"></tn-radio-group>
 ```
 
-Two rules follow, and both matter:
+`[options]` scopes each option's id by the option **label** — the same discriminator `[ixTest]`
+used — so it reproduces legacy ids exactly and there is no reason to project `<tn-radio>` children
+just to reach them. Project only when an option needs markup of its own, and give each projected
+child its own `testId` (the group does not reach into content it did not render).
 
-- **Project the options; do not pass `[options]`.** The group's `[options]` path renders each
-  child with `[testId]="scopeTestId(resolvedTestId(), option.label)"`, a hardcoded expression with
-  no per-option override (there is no `optionTestIdKey` as on `tn-select`). Pushing `radio-button`
-  into the *group's* base to reach the options is the trap: it also feeds the group's own element,
-  which resolves `radio-group-radio-button-encryption-type` instead of the legacy
-  `radio-group-encryption-type`. Projection is the only shape that keeps both halves.
-- **Never put `radio-button` on the `<tn-radio-group>`.** Its base stays bare, or absent entirely
-  so the control name supplies it.
+Do **not** push `radio-button` into a `testId` you pass — the library already owns that prefix, and
+earlier revisions of this playbook told you to. Legacy call sites carrying
+`[testId]="['radio-button', …]"` still resolve correctly (the idempotent guard absorbs it) but the
+segment is dead weight; drop it when you touch them.
 
-Call sites: `general-wizard-step`, `enclosure-wizard-step`, `pool-warnings`. Retire the whole
-pattern if the library ever exposes a per-option test-id key or adopts `radio-button` as `tn-radio`'s
-prefix.
 
 ## Spec / test updates
 

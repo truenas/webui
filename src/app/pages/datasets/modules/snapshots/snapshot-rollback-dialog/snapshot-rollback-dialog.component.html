@@ -5,7 +5,7 @@
 >
 @if (isLoading()) {
   <div class="loading">
-    <tn-spinner [diameter]="40"></tn-spinner>
+    <tn-spinner [diameter]="40" [ariaLabel]="'Loading snapshot' | translate"></tn-spinner>
   </div>
 } @else if (snapshot) {
   @if (!wasDatasetRolledBack()) {

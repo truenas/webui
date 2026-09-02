@@ -41,7 +41,6 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -120,7 +119,6 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   readonly requiredRoles = [Role.VmDeviceWrite];
   protected formatter = inject(IxFormatterService);
   protected readonly InputType = InputType;
-  protected readonly tnSelectLabels = tnSelectLabels;
 
   private readonly isLoading = signal(false);
   private vmName: string;
@@ -312,9 +310,12 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   readonly usbDeviceOptions$ = this.api.call('vm.device.usb_passthrough_choices').pipe(
     map((usbDevices) => {
       const options = Object.entries(usbDevices).map(([id, device]) => {
-        let label = id;
-        label += device.capability?.product ? ` ${device.capability.product}` : '';
-        label += device.capability?.vendor ? ` (${device.capability.vendor})` : '';
+        let label = device.description;
+        if (!label) {
+          label = id;
+          label += device.capability?.product ? ` ${device.capability.product}` : '';
+          label += device.capability?.vendor ? ` (${device.capability.vendor})` : '';
+        }
         return { label, value: id };
       });
       options.push({

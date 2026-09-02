@@ -45,7 +45,7 @@
     [style.font-size]="fontSize() + 'px'"
   >
     @if (isLoading()) {
-      <tn-spinner class="spinner" [diameter]="40" [ariaLabel]="'Loading logs' | translate"></tn-spinner>
+      <tn-spinner class="spinner" [diameter]="40"></tn-spinner>
     } @else {
       @for (podLog of logs(); track podLog) {
         <div class="log-row">

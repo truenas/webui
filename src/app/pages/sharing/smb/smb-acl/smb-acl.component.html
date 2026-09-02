@@ -8,17 +8,17 @@
   <tn-form-section [heading]="'ACL Entries' | translate">
     <p>{{ helptext.shareAclDescription | translate }}</p>
 
-    <ix-list
+    <tn-form-list
       formArrayName="entries"
-      [formArray]="form.get('entries')"
+      [control]="form.controls.entries"
+      [addLabel]="'Add entry' | translate"
       [empty]="form.controls.entries.length === 0 && !isLoading()"
-      [label]="'Add entry' | translate"
       (add)="addAce()"
     >
       @for (entry of form.controls.entries.controls; track entry; let i = $index) {
-        <ix-list-item
+        <tn-form-list-item
           [formGroupName]="i"
-          [label]="'ACL Entries' | translate"
+          [label]="'ACL entry' | translate"
           (delete)="removeAce(i)"
         >
           @if (entry.controls.ae_who_sid.value) {
@@ -46,7 +46,6 @@
                   [options]="(userOptions$ | async) ?? []"
                   [allowCustomValue]="true"
                   [loading]="usersLoading()"
-                  [loadingText]="'Loading...' | translate"
                   [noResultsText]="(usersFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
                   (searchChange)="userSearch$.next($event)"
                 ></tn-autocomplete>
@@ -62,7 +61,6 @@
                   [options]="(groupOptions$ | async) ?? []"
                   [allowCustomValue]="true"
                   [loading]="groupsLoading()"
-                  [loadingText]="'Loading...' | translate"
                   [noResultsText]="(groupsFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
                   (searchChange)="groupSearch$.next($event)"
                 ></tn-autocomplete>
@@ -71,7 +69,7 @@
           </div>
 
           <div class="entry-row">
-            <ix-errors [control]="entry"></ix-errors>
+            <tn-form-errors [control]="entry"></tn-form-errors>
           </div>
 
           <div class="entry-row">
@@ -99,8 +97,8 @@
               ></tn-select>
             </tn-form-field>
           </div>
-        </ix-list-item>
+        </tn-form-list-item>
       }
-    </ix-list>
+    </tn-form-list>
   </tn-form-section>
 </ix-form>

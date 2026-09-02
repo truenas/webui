@@ -1,4 +1,8 @@
-<tn-dialog-shell testId="truenas-connect-status" [title]="''">
+<tn-dialog-shell
+  testId="truenas-connect-status"
+  [title]="''"
+  [ariaLabel]="'TrueNAS Connect Status' | translate"
+>
   @if (isLoading()) {
     <div class="loading-state-content">
       <ix-truenas-connect-spinner></ix-truenas-connect-spinner>

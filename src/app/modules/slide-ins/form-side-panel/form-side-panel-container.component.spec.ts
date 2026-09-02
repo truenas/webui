@@ -30,7 +30,6 @@ import {
   SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 
@@ -114,6 +113,9 @@ describe('FormSidePanelContainerComponent footer menu', () => {
 
     fixture = TestBed.createComponent(FormSidePanelContainerComponent);
     fixture.componentRef.setInput('portal', new ComponentPortal(MenuTestFormComponent));
+    // A panel without a title has no accessible name, which the library warns about in
+    // dev mode; production callers always pass one.
+    fixture.componentRef.setInput('title', 'Footer Menu Form');
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
   });
@@ -240,6 +242,9 @@ describe('FormSidePanelContainerComponent footer actions', () => {
 
     fixture = TestBed.createComponent(FormSidePanelContainerComponent);
     fixture.componentRef.setInput('portal', new ComponentPortal(ActionsTestFormComponent));
+    // A panel without a title has no accessible name, which the library warns about in
+    // dev mode; production callers always pass one.
+    fixture.componentRef.setInput('title', 'Footer Actions Form');
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
   });
@@ -399,6 +404,9 @@ describe('FormSidePanelContainerComponent footer Save', () => {
 
     fixture = TestBed.createComponent(FormSidePanelContainerComponent);
     fixture.componentRef.setInput('portal', new ComponentPortal(SaveTestFormComponent));
+    // A panel without a title has no accessible name, which the library warns about in
+    // dev mode; production callers always pass one.
+    fixture.componentRef.setInput('title', 'Footer Save Form');
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
   };
@@ -518,8 +526,6 @@ describe('FormSidePanelContainerComponent footer Save with a real <ix-form>', ()
         mockAuth(),
         // The hold is the point of this suite; everywhere else it is zeroed.
         ...ixFormTestingProviders({ realSubmitFeedback: true }),
-        // No SlideInRef → `<ix-form>` takes the side-panel path, which is the one that holds.
-        { provide: SlideInRef, useValue: null },
         {
           provide: UnsavedChangesService,
           useValue: { showConfirmDialog: jest.fn(() => of(true)) },
@@ -530,6 +536,9 @@ describe('FormSidePanelContainerComponent footer Save with a real <ix-form>', ()
 
     fixture = TestBed.createComponent(FormSidePanelContainerComponent);
     fixture.componentRef.setInput('portal', new ComponentPortal(HostedIxFormComponent));
+    // A panel without a title has no accessible name, which the library warns about in
+    // dev mode; production callers always pass one.
+    fixture.componentRef.setInput('title', 'Hosted Form');
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
   });

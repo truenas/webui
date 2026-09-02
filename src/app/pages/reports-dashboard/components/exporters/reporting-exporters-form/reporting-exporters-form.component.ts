@@ -39,7 +39,6 @@ import {
   FormSubmitEvent,
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -69,8 +68,6 @@ export class ReportingExportersFormComponent extends IxFormHostForm implements O
    * supplied by the `<tn-side-panel>` host (null = create).
    **/
   readonly exporter = input<ReportingExporter | undefined>(undefined);
-
-  protected readonly tnSelectLabels = tnSelectLabels;
 
   get isNew(): boolean {
     return !this.editingExporter;

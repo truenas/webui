@@ -4,22 +4,17 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-} from '@truenas/ui-components';
+import { TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextCron } from 'app/helptext/system/cron-form';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -30,7 +25,6 @@ import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row
   templateUrl: './cron-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ModalHeaderComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -38,9 +32,6 @@ import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row
     IxUserComboboxComponent,
     SchedulerComponent,
     TnCheckboxComponent,
-    FormActionsComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
     TranslateModule,
   ],
 })
@@ -88,17 +79,11 @@ export class CronFormComponent extends SidePanelForm implements OnInit {
 
   private editingCron: Cronjob | undefined;
 
-  /**
-   * Row to edit when hosted in a `<tn-side-panel>` (which has no `SlideInRef` to
-   * carry data). Absent for Add, and unused in the legacy SlideIn host (which
-   * supplies the row via `slideInRef.getData()`).
-   */
+  /** Row to edit, supplied by the `<tn-side-panel>` host. Absent for Add. */
   readonly editCronjob = input<CronjobRow | undefined>(undefined);
 
   ngOnInit(): void {
-    this.editingCron = this.slideInRef
-      ? this.slideInRef.getData() as Cronjob | undefined
-      : this.editCronjob();
+    this.editingCron = this.editCronjob();
     if (this.editingCron) {
       this.form.patchValue({
         ...this.editingCron,

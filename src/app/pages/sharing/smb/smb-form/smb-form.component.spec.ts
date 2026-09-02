@@ -6,6 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
+  TnBannerComponent,
+  TnBannerHarness,
   TnCheckboxHarness,
   TnChipInputHarness,
   TnDialog,
@@ -13,10 +15,13 @@ import {
   TnInputHarness,
   TnSelectHarness,
 } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, ngMocks } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
-import { GiB } from 'app/constants/bytes.constant';
-import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
+import { GiB, MiB } from 'app/constants/bytes.constant';
+import {
+  provideTnFormFieldDismissibleErrors,
+  provideTnFormFieldErrors,
+} from 'app/core/providers/tn-form-field-errors.provider';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -36,9 +41,9 @@ import {
 } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { WarningHarness } from 'app/modules/forms/ix-forms/components/warning/warning.harness';
+import {
+  ixManualValidateErrorKey, manualValidateErrorKey, manualValidateErrorMsgKey,
+} from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -54,6 +59,10 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { SmbFormComponent } from './smb-form.component';
+
+// `MockComponent(SmbUsersWarningComponent)` deep-mocks that child's import graph, which now
+// includes `tn-banner` — and that mock leaks onto the banner this form renders itself.
+ngMocks.globalKeep(TnBannerComponent);
 
 describe('SmbFormComponent', () => {
   const existingShare = {
@@ -87,8 +96,8 @@ describe('SmbFormComponent', () => {
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
-  /** Every validation message the form's `ix-errors` are currently rendering, joined. */
-  const getErrorText = (): string => spectator.queryAll('ix-errors .form-error')
+  /** Every validation message the form's `tn-form-errors` are currently rendering, joined. */
+  const getErrorText = (): string => spectator.queryAll('tn-form-errors .tn-form-errors')
     .map((element) => element.textContent?.trim() ?? '')
     .filter(Boolean)
     .join('\n');
@@ -130,7 +139,6 @@ describe('SmbFormComponent', () => {
     component: SmbFormComponent,
     imports: [
       ReactiveFormsModule,
-      WarningComponent,
       MockComponent(SmbUsersWarningComponent),
     ],
     providers: [
@@ -190,6 +198,7 @@ describe('SmbFormComponent', () => {
         handleValidationErrors: jest.fn(),
       }),
       provideTnFormFieldErrors(),
+      provideTnFormFieldDismissibleErrors(),
     ],
   });
 
@@ -258,7 +267,7 @@ describe('SmbFormComponent', () => {
     });
 
     it('shows a warning when opening Legacy Share for editing', async () => {
-      const warning = await loader.getHarness(WarningHarness);
+      const warning = await loader.getHarness(TnBannerHarness);
       expect(await warning.getText()).toContain(
         'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.',
       );
@@ -374,7 +383,7 @@ describe('SmbFormComponent', () => {
     it('creates time machine share', async () => {
       await selectPurpose('Time Machine Share');
       await applyCommonValues();
-      const timeMachineQuota = await loader.getHarness(IxInputHarness.with({ label: 'Time Machine Quota' }));
+      const timeMachineQuota = await getTnInput('timemachine_quota');
       await timeMachineQuota.setValue('10G');
       await (await getTnInput('vuid')).setValue('08e00781-18ac-4c6c-bfeb-9c1c504ea0d7');
       await (await getTnCheckbox('auto_snapshot')).check();
@@ -545,6 +554,73 @@ describe('SmbFormComponent', () => {
             hostsallow: ['192.168.1.0/24', '10.0.0.1'],
             hostsdeny: ['172.16.0.0/16'],
           }),
+        }),
+      ]);
+    });
+  });
+
+  describe('Time Machine quota', () => {
+    it('reads a unitless quota as MiB', async () => {
+      await setupTest();
+      jest.spyOn(console, 'warn').mockImplementation();
+
+      await selectPurpose('Time Machine Share');
+      await applyCommonValues();
+      await (await getTnInput('timemachine_quota')).setValue('10');
+
+      clickSave();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          options: expect.objectContaining({ timemachine_quota: 10 * MiB }),
+        }),
+      ]);
+    });
+
+    it('re-submits an existing quota unchanged when the field is not edited', async () => {
+      // A stored quota is shown in a unit that states it exactly — '1500 MiB', not the
+      // natural-unit '1.46 GiB', which denotes ~5 MB less than the share actually has.
+      // So an untouched resubmit sends back the byte count that was read.
+      await setupTest({
+        purpose: SmbSharePurpose.TimeMachineShare,
+        options: { timemachine_quota: 1500 * MiB },
+      });
+      jest.spyOn(console, 'warn').mockImplementation();
+
+      expect(await (await getTnInput('timemachine_quota')).getValue()).toBe('1500 MiB');
+
+      clickSave();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.update', [
+        1,
+        expect.objectContaining({
+          options: expect.objectContaining({ timemachine_quota: 1500 * MiB }),
+        }),
+      ]);
+    });
+
+    it('submits an edited quota as the exact byte count that was typed', async () => {
+      // An edited quota is submitted as the exact bytes the typed text denotes, and
+      // the text left on screen still denotes them: '1500M' tidies to '1500 MiB', not
+      // to a '1.46 GiB' that would mean 1_567_663_063 — ~5 MB short of what is saved.
+      await setupTest({
+        purpose: SmbSharePurpose.TimeMachineShare,
+        options: { timemachine_quota: 10 * GiB },
+      });
+      jest.spyOn(console, 'warn').mockImplementation();
+
+      const quota = await getTnInput('timemachine_quota');
+      await quota.setValue('1500M');
+      await quota.blur();
+
+      expect(await quota.getValue()).toBe('1500 MiB');
+
+      clickSave();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.update', [
+        1,
+        expect.objectContaining({
+          options: expect.objectContaining({ timemachine_quota: 1500 * MiB }),
         }),
       ]);
     });
@@ -1719,6 +1795,67 @@ describe('SmbFormComponent', () => {
       await (await getTnInput('grace_period')).setValue('15552001');
 
       expect(spectator.component.canSubmit()).toBe(false);
+    });
+  });
+
+  describe('server-side validation errors', () => {
+    /**
+     * Exactly what FormErrorHandlerService leaves on a control when the API rejects a
+     * save. The name is filled in first because that is the only way the API ever sees
+     * one: a share whose name is empty never gets submitted. It also matters for the
+     * dismissal — closing the message re-runs the control's own validators rather than
+     * asserting VALID on their behalf, so a name that is still `required` stays in error.
+     */
+    async function rejectNameFromServer(message: string): Promise<void> {
+      spectator.component.form.controls.name.setValue('ds222');
+      await spectator.fixture.whenStable();
+
+      spectator.component.form.controls.name.setErrors({
+        [manualValidateErrorKey]: true,
+        [manualValidateErrorMsgKey]: message,
+        [ixManualValidateErrorKey]: { message },
+      });
+      spectator.component.form.controls.name.markAsTouched();
+      spectator.detectChanges();
+    }
+
+    beforeEach(async () => {
+      await setupTest();
+    });
+
+    it('shows the message the server sent under the field it belongs to', async () => {
+      await rejectNameFromServer('Share name is already in use');
+
+      const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
+
+      expect(await nameField.getErrorMessage()).toBe('Share name is already in use');
+    });
+
+    it('lets the user close it, since no edit to the form will clear it', async () => {
+      // The legacy ix-errors gave every manual error a close icon; the migrated
+      // tn-form-field gets the same from the app-wide dismissible-errors provider.
+      await rejectNameFromServer('Share name is already in use');
+
+      const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
+      expect(await nameField.isErrorDismissible()).toBe(true);
+
+      await nameField.dismissError();
+      spectator.detectChanges();
+
+      expect(await nameField.hasError()).toBe(false);
+      // All three sibling keys go together — leave one and the message returns.
+      expect(spectator.component.form.controls.name.errors).toBeNull();
+    });
+
+    it('leaves an ordinary validation error unclosable', async () => {
+      spectator.component.form.controls.name.setValue('');
+      spectator.component.form.controls.name.markAsTouched();
+      spectator.detectChanges();
+
+      const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
+
+      expect(await nameField.hasError()).toBe(true);
+      expect(await nameField.isErrorDismissible()).toBe(false);
     });
   });
 });

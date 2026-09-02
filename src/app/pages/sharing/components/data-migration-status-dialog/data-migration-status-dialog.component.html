@@ -33,14 +33,18 @@
   </div>
 
   @if (job().stats; as stats) {
-    <tn-progress-bar
-      mode="determinate"
-      [value]="progressPercent()"
-    />
+    @if (hasIndeterminateProgress()) {
+      <tn-progress-bar mode="indeterminate" />
+    } @else {
+      <tn-progress-bar
+        mode="determinate"
+        [value]="progressPercent()"
+      />
+    }
 
     <div class="stats-cards">
       <div class="stat-card">
-        <div class="stat-label">{{ 'Data Transferred' | translate }}</div>
+        <div class="stat-label">{{ 'Data Scanned' | translate }}</div>
         <div class="stat-value">
           {{ stats.count_bytes | ixFileSize }}
           /
@@ -49,7 +53,7 @@
       </div>
 
       <div class="stat-card">
-        <div class="stat-label">{{ 'Items Completed' | translate }}</div>
+        <div class="stat-label">{{ 'Items Succeeded' | translate }}</div>
         <div class="stat-value">{{ stats.success }} / {{ stats.total_items }}</div>
       </div>
 

@@ -1,4 +1,4 @@
-<tn-card class="card" [padContent]="false">
+<tn-card class="card" [padContent]="false" [fillHeight]="false">
   <ix-fake-progress-bar [loading]="isLoading()"></ix-fake-progress-bar>
 
   <div class="header">
@@ -12,7 +12,13 @@
     </div>
   </div>
 
-  <form class="form" [formGroup]="form" (submit)="onSubmit()">
+  <ix-form
+    class="form"
+    [formGroup]="form"
+    [requiredRoles]="requiredRoles"
+    [submitHandler]="handleSubmit"
+    [externalLoading]="isLoading()"
+  >
     <div class="owner-and-access">
       <tn-form-section class="owner-fields" [heading]="'Owner' | translate">
         <ix-user-combobox
@@ -100,6 +106,17 @@
     </div>
 
     <div class="form-actions">
+      <ng-container *ixRequiresRoles="requiredRoles">
+        @if (canSetAcl) {
+          <tn-button
+            class="set-acl-button"
+            testId="set-acl"
+            [label]="'Set ACL' | translate"
+            (onClick)="onSetAclPressed()"
+          ></tn-button>
+        }
+      </ng-container>
+
       <tn-button
         *ixRequiresRoles="requiredRoles"
         class="save-button"
@@ -107,26 +124,13 @@
         color="primary"
         testId="save"
         [label]="'Save' | translate"
-        [disabled]="form.invalid || isLoading()"
+        [disabled]="!canSubmit()"
       ></tn-button>
       <tn-button
-        type="button"
         testId="cancel"
         [label]="'Cancel' | translate"
         [routerLink]="['/datasets', datasetId]"
       ></tn-button>
-
-      <ng-container *ixRequiresRoles="requiredRoles">
-        @if (canSetAcl) {
-          <tn-button
-            class="set-acl-button"
-            type="button"
-            testId="set-acl"
-            [label]="'Set ACL' | translate"
-            (onClick)="onSetAclPressed()"
-          ></tn-button>
-        }
-      </ng-container>
     </div>
-  </form>
+  </ix-form>
 </tn-card>

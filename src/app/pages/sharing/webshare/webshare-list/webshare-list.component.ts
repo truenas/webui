@@ -23,16 +23,15 @@ import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare'
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
-import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { IconActionConfig } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
-import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { TableColumnPickerComponent } from 'app/modules/ix-table/components/table-column-picker/table-column-picker.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
+import { actionsColumn, column } from 'app/modules/tn-table/column-configs';
+import { TableColumnPickerComponent } from 'app/modules/tn-table/components/table-column-picker/table-column-picker.component';
+import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
+import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
-} from 'app/modules/ix-table/utils';
-import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+} from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -142,19 +141,19 @@ export class WebShareListComponent implements OnInit {
     },
   ];
 
-  // ix-table column model retained purely to drive <ix-table-column-picker>
+  // Column model retained purely to drive <ix-table-column-picker>
   // (visibility + saved prefs); tn-table renders cells from the template and
   // derives its `displayedColumns` from these via `toDisplayedColumns`.
   protected readonly columns = signal(createTable<WebShareTableRow>([
-    textColumn({
+    column({
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
-    textColumn({
+    column({
       title: this.translate.instant('Path'),
       propertyName: 'path',
     }),
-    actionsColumn({}),
+    actionsColumn(),
   ]));
 
   protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));

@@ -11,7 +11,6 @@ import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { redundantListToUniqueOptions } from 'app/helpers/operators/options.operators';
-import { tnSelectLabels } from 'app/modules/forms/ix-forms/constants/tn-select-labels.constant';
 import {
   ManualDiskSelectionStore,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
@@ -37,8 +36,6 @@ export class ManualSelectionDiskFiltersComponent implements OnInit, OnChanges {
   private formBuilder = inject(FormBuilder);
   store$ = inject(ManualDiskSelectionStore);
   private destroyRef = inject(DestroyRef);
-
-  protected readonly tnSelectLabels = tnSelectLabels;
 
   readonly isSedEncryption = input<boolean>(false);
   readonly filtersUpdated = output<ManualDiskSelectionFilters>();

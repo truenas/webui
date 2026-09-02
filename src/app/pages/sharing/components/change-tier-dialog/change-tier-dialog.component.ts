@@ -5,7 +5,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent } from '@truenas/ui-components';
+import {
+  TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent,
+} from '@truenas/ui-components';
 import { forkJoin, tap } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -33,6 +35,7 @@ export interface ChangeTierDialogData {
     ReactiveFormsModule,
     TnCheckboxComponent,
     TnFormFieldComponent,
+    TnBannerComponent,
   ],
 })
 export class ChangeTierDialogComponent implements OnInit {
@@ -139,10 +142,10 @@ export class ChangeTierDialogComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ([zpools, datasets]) => {
-        const zpool = zpools[0];
-        if (zpool) {
-          const regularAvailable = Number(zpool.properties.class_normal_available?.value ?? 0);
-          const specialAvailable = Number(zpool.properties.class_special_available?.value ?? 0);
+        const properties = zpools[0]?.properties;
+        if (properties) {
+          const regularAvailable = Number(properties.class_normal_available?.value ?? 0);
+          const specialAvailable = Number(properties.class_special_available?.value ?? 0);
           this.regularAvailable.set(buildNormalizedFileSize(regularAvailable, 'B', 2));
           if (specialAvailable > 0) {
             this.performanceAvailable.set(buildNormalizedFileSize(specialAvailable, 'B', 2));

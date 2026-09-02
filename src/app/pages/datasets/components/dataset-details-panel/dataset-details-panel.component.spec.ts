@@ -12,7 +12,6 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
@@ -51,12 +50,6 @@ describe('DatasetDetailsPanelComponent', () => {
     name: 'root/parent',
   } as DatasetDetails;
 
-  const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: DatasetDetailsPanelComponent,
     imports: [
@@ -92,7 +85,6 @@ describe('DatasetDetailsPanelComponent', () => {
         ],
       }),
       mockProvider(SnackbarService),
-      mockProvider(SlideInRef, slideInRef),
     ],
   });
 

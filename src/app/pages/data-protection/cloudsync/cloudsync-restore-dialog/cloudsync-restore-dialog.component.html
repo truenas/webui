@@ -20,13 +20,16 @@
     [mode]="form.controls.transfer_mode.value"
   ></ix-transfer-mode-explanation>
 
-  <ix-explorer
-    formControlName="path"
+  <tn-form-field
     [label]="'Directory/Files' | translate"
-    [required]="true"
     [tooltip]="helptext.pathTooltip | translate"
-    [nodeProvider]="treeNodeProvider"
-  ></ix-explorer>
+    [required]="true"
+  >
+    <ix-explorer
+      formControlName="path"
+      [nodeProvider]="treeNodeProvider"
+    ></ix-explorer>
+  </tn-form-field>
 
   </form>
 <ix-form-actions tnDialogAction>

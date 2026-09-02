@@ -4514,12 +4514,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/api-client@npm:~1.0.3":
-  version: 1.0.6
-  resolution: "@truenas/api-client@npm:1.0.6"
+"@truenas/api-client@npm:~3.0.2":
+  version: 3.0.2
+  resolution: "@truenas/api-client@npm:3.0.2"
   peerDependencies:
     rxjs: ^7.8.0
-  checksum: 10/3c23c725cd759303d2892043d4c9a91b9c8c91b25b01c234e4d842fa66aa44947db1643d4a28bbcc23b2d5ff1a281cee3d5486e537db5a1c9f94ccc38c438012
+  checksum: 10/8e245247d1b677ca90f30cff2827e57241ab153d901c6994a83f6262e12cdbf081cdc9fa6381a873b729a7794e1d3df186234a943c3ca0f87e6a563944b8514f
   languageName: node
   linkType: hard
 
@@ -4551,9 +4551,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/ui-components@npm:~0.4.11":
-  version: 0.4.11
-  resolution: "@truenas/ui-components@npm:0.4.11"
+"@truenas/ui-components@npm:~0.7.1":
+  version: 0.7.1
+  resolution: "@truenas/ui-components@npm:0.7.1"
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
     "@mdi/svg": "npm:~7.4.47"
@@ -4574,7 +4574,7 @@ __metadata:
     "@mdi/js": ^7.4.47
   bin:
     truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/c41d103fb2e1309c40e014bf04bd96b177a97d429c9cbfcb741e48b4b231fc9eeaa974dc2c534f17c3d316df8e433ea66d97a13b7344e1aec88a41cc3f9b3627
+  checksum: 10/db67ed8702059a35bbfde01da7fe0be6e5d44e3e7c2b3d4d7f4d15bfefa7e9f2dbc731db4fa26b7850976e1ca18f1e77c42ff7b48cb1f69d217ce36ece136b2d
   languageName: node
   linkType: hard
 
@@ -11750,14 +11750,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:~5.2.3":
-  version: 5.2.3
-  resolution: "js-yaml@npm:5.2.3"
+"js-yaml@npm:~5.3.0":
+  version: 5.3.0
+  resolution: "js-yaml@npm:5.3.0"
   dependencies:
     argparse: "npm:^2.0.1"
   bin:
     js-yaml: bin/js-yaml.mjs
-  checksum: 10/5d2562f2d7e7bc51bd678b43d2dbc3965129ac854222c794157369c8904d249cfc78325dff8fc64becb505a2506242548c54c8fa50cdb24554bb1a557e460004
+  checksum: 10/6c7e8ea8dd5643d9df73f4aa796f3572537284e9b819b74ef919467452bfa4624f8f7477cfc775c91db7e2f32387133b1b6c4e95aef9702be6bb042ae554884a
   languageName: node
   linkType: hard
 
@@ -14035,12 +14035,12 @@ __metadata:
   linkType: hard
 
 "postcss-selector-parser@npm:^7.1.1":
-  version: 7.1.1
-  resolution: "postcss-selector-parser@npm:7.1.1"
+  version: 7.1.5
+  resolution: "postcss-selector-parser@npm:7.1.5"
   dependencies:
     cssesc: "npm:^3.0.0"
     util-deprecate: "npm:^1.0.2"
-  checksum: 10/bb3c6455b20af26a556e3021e21101d8470252644e673c1612f7348ff8dd41b11321329f0694cf299b5b94863f823480b72d3e2f4bd3a89dc43e2d8c0dbad341
+  checksum: 10/ae66bbcb5d370a3f4b4660e23a208352a885c651f1b420f7b998faaa1034832b870066f49e295f73ee3da6a6c6312c56fea1b2039969f8d803438fa48232b307
   languageName: node
   linkType: hard
 
@@ -16109,9 +16109,9 @@ __metadata:
     "@shopify/eslint-plugin": "npm:~50.0.0"
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
-    "@truenas/api-client": "npm:~1.0.3"
+    "@truenas/api-client": "npm:~3.0.2"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
-    "@truenas/ui-components": "npm:~0.4.11"
+    "@truenas/ui-components": "npm:~0.7.1"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"
@@ -16163,7 +16163,7 @@ __metadata:
     jest-junit: "npm:~16.0.0"
     jest-preset-angular: "npm:~16.0.0"
     jest-when: "npm:~3.6.0"
-    js-yaml: "npm:~5.2.3"
+    js-yaml: "npm:~5.3.0"
     lint-staged: "npm:^15.2.10"
     lmdb: "npm:^3.3.0"
     lodash: "npm:~4.18.1"
@@ -16196,7 +16196,7 @@ __metadata:
     typescript: "npm:~5.9.3"
     typescript-eslint: "npm:~8.38.0"
     utility-types: "npm:~3.11.0"
-    uuid: "npm:~14.0.1"
+    uuid: "npm:~14.0.2"
     vinyl: "npm:~3.0.0"
     zone.js: "npm:~0.15.0"
   dependenciesMeta:
@@ -16739,12 +16739,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:~14.0.1":
-  version: 14.0.1
-  resolution: "uuid@npm:14.0.1"
+"uuid@npm:~14.0.2":
+  version: 14.0.2
+  resolution: "uuid@npm:14.0.2"
   bin:
     uuid: dist-node/bin/uuid
-  checksum: 10/0f978fd5b0269d7acb615342aeb131f0b8d85eeb8ec34f2915d906baa3befcc14a079a430d0f8116aec6fd20c850cbfab65d1b3d1643fa81ed373c0cf9574f18
+  checksum: 10/e8263a76ad7b2d1f246df5a48a5bdf30d886eedbb1d3d74c75356d02b2966f5fffd7790b85afdb3682e4e732d13fca7974626419814f45de6847f78ce03c745e
   languageName: node
   linkType: hard
 

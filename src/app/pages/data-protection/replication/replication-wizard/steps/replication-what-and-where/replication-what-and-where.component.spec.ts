@@ -24,9 +24,6 @@ import {
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -34,13 +31,6 @@ import { DatasetService } from 'app/services/dataset/dataset.service';
 describe('ReplicationWhatAndWhereComponent', () => {
   let spectator: Spectator<ReplicationWhatAndWhereComponent>;
   let loader: HarnessLoader;
-  const slideInRef: SlideInRef<unknown, unknown> = {
-    close: jest.fn(),
-    swap: jest.fn(),
-    requireConfirmationWhen: jest.fn(),
-    getData: jest.fn((): undefined => undefined),
-  };
-
   const createComponent = createComponentFactory({
     component: ReplicationWhatAndWhereComponent,
     imports: [
@@ -73,9 +63,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
         ] as KeychainCredential[]),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => SlideInResult.empty()),
-      }),
       mockProvider(DatasetService),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
@@ -85,7 +72,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
       }),
-      mockProvider(SlideInRef, slideInRef),
       mockProvider(FormSidePanelService),
       mockProvider(LocaleService),
     ],
