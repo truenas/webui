@@ -2,11 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnEmptyHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -18,7 +20,7 @@ import { TierConfigFormComponent } from 'app/pages/storage/components/tier-confi
 import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-resources/unused-resources.component';
 import { PoolsDashboardComponent } from 'app/pages/storage/pools-dashboard.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 
 describe('PoolsDashboardComponent', () => {
   let spectator: Spectator<PoolsDashboardComponent>;
@@ -58,7 +60,8 @@ describe('PoolsDashboardComponent', () => {
         invalidate: jest.fn(),
       }),
       provideMockStore({
-        selectors: [{ selector: selectIsEnterprise, value: true }],
+        // Loaded map with no gated keys, i.e. entitled to everything.
+        selectors: [{ selector: selectEntitlements, value: {} }],
       }),
     ],
   });
@@ -90,6 +93,24 @@ describe('PoolsDashboardComponent', () => {
       expect.objectContaining({ title: 'Tiering' }),
     );
     expect(spectator.inject(SharingTierService).invalidate).toHaveBeenCalled();
+  });
+
+  it('hides the Tiering button when the system is not entitled to ZFSTIER', async () => {
+    spectator.inject(MockStore).overrideSelector(selectEntitlements, {
+      [EntitlementFeature.ZfsTier]: {
+        entitled: false,
+        reason: EntitlementReason.KeyMissing,
+        message: "This system's license does not include ZFS tiering.",
+      },
+    });
+    spectator.inject(MockStore).refreshState();
+    spectator.detectChanges();
+
+    const tiering = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Tiering' }));
+    expect(tiering).toBeNull();
+
+    // Disks sits beside it and is ungated — proves the toolbar rendered.
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Disks' }))).not.toBeNull();
   });
 
   it('renders the header navigations as links under their legacy link-* test ids', () => {

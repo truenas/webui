@@ -15,7 +15,7 @@
     [label]="'Disks' | translate"
   ></tn-button>
 
-  @if (isEnterprise()) {
+  @if (hasZfsTier()) {
     <tn-button
       *ixRequiresRoles="requiredRoles"
       [testId]="'tiering'"
