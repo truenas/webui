@@ -1,42 +1,43 @@
 <tn-dialog-shell testId="boot-pool-attach" [title]="'Attach' | translate">
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-fieldset>
-    <ix-unused-disk-select
-      formControlName="dev"
-      valueField="name"
-      [label]="helptextSystemBootenv.memberDiskLabel | translate"
-      [tooltip]="helptextSystemBootenv.memberDiskTooltip | translate"
-      [required]="true"
-    ></ix-unused-disk-select>
-    <tn-form-field [tooltip]="expand.tooltip | translate">
-      <tn-checkbox
-        testId="expand"
-        [formControlName]="expand.fcName"
-        [label]="expand.label | translate"
-      ></tn-checkbox>
-    </tn-form-field>
-  </ix-fieldset>
+  <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+    <tn-form-section>
+      <ix-unused-disk-select
+        formControlName="dev"
+        valueField="name"
+        [label]="helptextSystemBootenv.memberDiskLabel | translate"
+        [tooltip]="helptextSystemBootenv.memberDiskTooltip | translate"
+        [required]="true"
+      ></ix-unused-disk-select>
 
-</form>
+      <tn-form-field [tooltip]="expand.tooltip | translate">
+        <tn-checkbox
+          testId="expand"
+          [formControlName]="expand.fcName"
+          [label]="expand.label | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+    </tn-form-section>
+  </form>
 
-@if (isFormLoading) {
-  <ix-fake-progress-bar></ix-fake-progress-bar>
-}
-<ix-form-actions tnDialogAction>
-  <tn-button
-    variant="outline"
-    testId="cancel"
-    [label]="'Cancel' | translate"
-    (onClick)="dialogRef.close(false)"
-  ></tn-button>
+  @if (isFormLoading) {
+    <ix-fake-progress-bar></ix-fake-progress-bar>
+  }
 
-  <tn-button
-    *ixRequiresRoles="[Role.DiskWrite]"
-    color="primary"
-    testId="save"
-    [label]="'Save' | translate"
-    [disabled]="form.invalid || isFormLoading"
-    (onClick)="onSubmit()"
-  ></tn-button>
-</ix-form-actions>
+  <ix-form-actions tnDialogAction>
+    <tn-button
+      variant="outline"
+      testId="cancel"
+      [label]="'Cancel' | translate"
+      (onClick)="dialogRef.close(false)"
+    ></tn-button>
+
+    <tn-button
+      *ixRequiresRoles="[Role.DiskWrite]"
+      color="primary"
+      testId="save"
+      [label]="'Save' | translate"
+      [disabled]="form.invalid || isFormLoading"
+      (onClick)="onSubmit()"
+    ></tn-button>
+  </ix-form-actions>
 </tn-dialog-shell>
