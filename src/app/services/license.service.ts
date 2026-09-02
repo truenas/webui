@@ -5,6 +5,7 @@ import {
 } from 'rxjs';
 import { first, map, switchMap } from 'rxjs/operators';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
@@ -15,8 +16,22 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectHasEnclosureSupport,
+  selectHasLicenseFeature,
+  selectIsEnterprise,
   selectProductType,
 } from 'app/store/system-info/system-info.selectors';
+
+/**
+ * SED is held back from the entitlement engine pending a continuity carve-out: a system
+ * already running SED must keep unlocking its disks after an upgrade even when the licence
+ * does not entitle SED, or its pools stay locked. Until middleware settles that, SED keeps
+ * its pre-existing gating.
+ *
+ * `hasSed$` must also stay synchronous. `DiskListComponent` reads it at field init under
+ * `requireSync`, and builds its column array once without ever recomputing it, so an
+ * observable that defers until entitlements load would throw there.
+ */
+const selectHasSedFeature = selectHasLicenseFeature(LicenseFeature.Sed);
 
 @Injectable({
   providedIn: 'root',
@@ -52,7 +67,7 @@ export class LicenseService {
 
   readonly hasKmip$ = this.entitlements.entitled$(EntitlementFeature.Kmip);
 
-  readonly hasSed$ = this.entitlements.entitled$(EntitlementFeature.Sed);
+  readonly hasSed$ = this.store$.select(selectHasSedFeature);
 
   /**
    * Mirrors `showSedCard` in `AdvancedSettingsComponent` — the SED card is
@@ -67,10 +82,10 @@ export class LicenseService {
    * goes idle re-runs `defer` and gets a fresh answer once the backend is
    * healthy again.
    */
-  readonly hasSedFeature$ = defer(() => this.entitlements.entitled$(EntitlementFeature.Sed).pipe(
+  readonly hasSedFeature$ = defer(() => this.store$.select(selectIsEnterprise).pipe(
     first(),
-    switchMap((isEntitled) => (
-      isEntitled
+    switchMap((isEnterprise) => (
+      isEnterprise
         ? of(true)
         : this.api.call('system.advanced.sed_global_password_is_set').pipe(map(Boolean))
     )),
