@@ -71,7 +71,30 @@ jobs:
 
       # Same Node pin and install path as every job in main.yml, so a failure
       # here is the runner and not a difference in how the tree was prepared.
+      # TEMPORARY bring-up diagnostics. `yarn install` fails on this runner with
+      # a checksum mismatch on the one git dependency, and nowhere else. The git
+      # dependency is packed from a clone on the box, so anything that changes
+      # the clone changes the checksum: umask, git eol/filemode config, user.
+      - name: Diagnose the runner
+        run: |
+          set -x
+          umask; id; git --version; node -v
+          git config --system --list || true
+          git config --global --list || true
+          env | grep -i '^YARN\|^COREPACK\|^npm_' || true
+          ls -la "$HOME/.yarnrc.yml" "$HOME/.yarnrc" 2>/dev/null || true
+          tmp=$(mktemp -d)
+          git clone -q https://github.com/truenas/tn-common-typescript.git "$tmp"
+          ls -la "$tmp" "$tmp/scripts" "$tmp/eslint"
+          rm -rf "$tmp"
+
       - uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
+
+      - name: Show the checksum this runner computes
+        if: failure()
+        run: |
+          YARN_CHECKSUM_BEHAVIOR=update yarn install --mode=skip-build || true
+          git --no-pager diff yarn.lock
 
       - name: Install Playwright browsers
         run: yarn playwright install --with-deps chromium
