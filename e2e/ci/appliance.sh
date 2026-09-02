@@ -44,8 +44,8 @@
 #   TN_GUEST_LIFETIME   VM lifetime, so a leaked one expires (default: 3h)
 #
 # Guest sizing, all with defaults below. The host is shared with the runner,
-# Docker and the browser, so these are deliberately smaller than tn_guest.py's
-# own defaults (8GB, 32GB OS disk, ten data disks):
+# Docker and the browser, so memory and the OS disk are deliberately smaller
+# than tn_guest.py's own defaults (8GB, 32GB OS disk):
 #
 #   TN_GUEST_MEMORY_MB, TN_GUEST_VCPUS, TN_GUEST_OS_DISK_GB,
 #   TN_GUEST_DATA_DISK_COUNT, TN_GUEST_DATA_DISK_GB
@@ -66,7 +66,9 @@ TN_GUEST_LIFETIME="${TN_GUEST_LIFETIME:-3h}"
 TN_GUEST_MEMORY_MB="${TN_GUEST_MEMORY_MB:-6144}"
 TN_GUEST_VCPUS="${TN_GUEST_VCPUS:-4}"
 TN_GUEST_OS_DISK_GB="${TN_GUEST_OS_DISK_GB:-10}"
-TN_GUEST_DATA_DISK_COUNT="${TN_GUEST_DATA_DISK_COUNT:-1}"
+# Sparse zvols, so the count costs nothing until written. The pool journey
+# needs at least nine identical unused disks (see e2e/docs/status.md).
+TN_GUEST_DATA_DISK_COUNT="${TN_GUEST_DATA_DISK_COUNT:-10}"
 TN_GUEST_DATA_DISK_GB="${TN_GUEST_DATA_DISK_GB:-10}"
 
 # Where `claim` records the deployment name, so `release` can find it without
