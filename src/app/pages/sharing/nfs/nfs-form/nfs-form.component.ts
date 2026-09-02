@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -11,6 +11,7 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { Role } from 'app/enums/role.enum';
@@ -41,10 +42,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-nfs-form',
@@ -76,6 +77,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 })
 export class NfsFormComponent implements OnInit {
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
@@ -129,7 +131,7 @@ export class NfsFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   readonly helptext = helptextSharingNfs;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  readonly hasNfsSnapshots = this.entitlements.entitled(EntitlementFeature.NfsSnapshot);
 
   readonly securityOptions$ = of([
     {
@@ -203,7 +205,7 @@ export class NfsFormComponent implements OnInit {
   protected onSubmit(): void {
     const nfsShare = { ...this.form.value } as NfsShareUpdate;
 
-    if (!this.isEnterprise()) {
+    if (!this.hasNfsSnapshots()) {
       delete nfsShare.expose_snapshots;
     }
 
