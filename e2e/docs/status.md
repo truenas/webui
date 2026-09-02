@@ -61,12 +61,20 @@ argued from a number that does not exist.
    per-row test id on `tn-table`, so no list-driven journey can be automated
    compliantly. Fixing that once unblocks every future one.
 2. **CI.** `.github/workflows/e2e.yml` runs the suite against one appliance on
-   a same-repo pull request: claim, run, release. Deliberately smaller than the
+   a same-repo pull request: claim, run, release. The runner is a TrueNAS box;
+   the appliance is a nested VM installed on it by `tn_guest.py` from
+   iXsystems/api-ci-testbed, and the browser runs in Playwright's container on
+   the same box. `ixnode`, which the design assumed, is the legacy KVM-host
+   tool and cannot run on a TrueNAS appliance. Deliberately smaller than the
    design in `04-environment-architecture.md`, which shards across appliances
-   and reverts a snapshot between tests — both need `ixnode` verbs that do not
-   exist. Proving the reduced shape first tests the parts nobody has exercised
+   and reverts a snapshot between tests — neither exists yet. Proving the
+   reduced shape first tests the parts nobody has exercised
    (runner-to-appliance networking, the claim/release contract, teardown after a
    failure) without waiting on anything.
+
+   Behind `hostfwd` networking only ports 80 and 443 reach the guest, so
+   middleware log collection over SSH is skipped for these appliances until
+   there is an API route for it.
 
    Not published: traces, videos and screenshots. Artifacts on a public
    repository are world-readable and a trace records the appliance password as

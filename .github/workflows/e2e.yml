@@ -2,13 +2,18 @@
 #
 # Deliberately smaller than the design in `e2e/docs/04-environment-architecture.md`.
 # That design shards across appliances and reverts a VM snapshot between tests,
-# and both need `ixnode` verbs that do not exist yet. This runs the shape that
-# works with `ixnode` as it is today — claim one appliance, run the suite on it,
-# release it — so the parts nobody has exercised get exercised: the runner
-# reaching the appliance network, the claim/release contract, credentials
-# arriving as environment variables, and teardown releasing after a failure.
+# and neither is available yet. This runs the shape that works today — install
+# one appliance, run the suite on it, destroy it — so the parts nobody has
+# exercised get exercised: the runner reaching the appliance, the claim/release
+# contract, credentials arriving as environment variables, and teardown
+# releasing after a failure.
 #
-# Sharding and snapshot restore are layered on once the verbs land, with a
+# The runner is a TrueNAS box and the appliance is a nested VM on it, created
+# by `tn_guest.py` from iXsystems/api-ci-testbed through the box's own API.
+# The browser runs in Playwright's container on the same box. See
+# e2e/ci/appliance.sh for the contract and the configuration it needs.
+#
+# Sharding and snapshot restore are layered on once they exist, with a
 # measured reason. See E1, E2 and E12 in the design.
 #
 # ─── The `pull_request` trigger is same-repo only, and must stay that way ────
@@ -66,9 +71,18 @@ jobs:
     # a hang blocks the lab for six hours.
     timeout-minutes: 90
     env:
-      # Where the lab runner keeps ixnode: a Python venv on the runner's own
-      # dataset, not on PATH. appliance.sh honours this override.
-      IXNODE: /mnt/tank/github/venv/bin/ixnode
+      # Where the lab runner keeps tn_guest.py and a Python with
+      # truenas_api_client: on the runner's own dataset, not on PATH.
+      TN_GUEST: /mnt/tank/github/api-ci-testbed/jenkins/scripts/tn_guest.py
+      TN_GUEST_PYTHON: /mnt/tank/github/venv/bin/python3
+      # Lab facts that belong in the e2e-lab environment's variables and
+      # secrets rather than here: which pool holds the VMs, which ISO to
+      # install, and a credential for the box's own API.
+      TN_GUEST_POOL: ${{ vars.E2E_TN_GUEST_POOL || 'tank' }}
+      TN_GUEST_ISO: ${{ vars.E2E_TN_GUEST_ISO }}
+      TN_GUEST_HOST_USER: ${{ vars.E2E_TN_GUEST_HOST_USER || 'root' }}
+      TN_GUEST_HOST_API_KEY: ${{ secrets.TN_GUEST_HOST_API_KEY }}
+      TN_GUEST_HOST_PASSWORD: ${{ secrets.TN_GUEST_HOST_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v4
@@ -123,8 +137,9 @@ jobs:
         run: |
           set -euo pipefail
           ./e2e/ci/appliance.sh claim fresh-install > "$RUNNER_TEMP/appliance.env"
-          # The appliance password comes from ixnode, not from GitHub secrets, so
-          # nothing masks it automatically. Register it before it can reach a log.
+          # The appliance password is generated per claim, not a GitHub secret,
+          # so nothing masks it automatically. Register it before it can reach
+          # a log.
           echo "::add-mask::$(sed -n 's/^TN_PASSWORD=//p' "$RUNNER_TEMP/appliance.env")"
           cat "$RUNNER_TEMP/appliance.env" >> "$GITHUB_ENV"
           rm -f "$RUNNER_TEMP/appliance.env"
@@ -137,7 +152,7 @@ jobs:
           # runner with hypervisor access.
           TN_GREP: ${{ inputs.grep }}
         # Only the test run is containerised. Claim, release and log collection
-        # stay on the host, where `ixnode` and `ssh` live.
+        # stay on the host, where tn_guest.py and its Python live.
         #
         # --network host: the container reaches the appliance exactly as the
         #   host does, no port mapping and no Docker DNS in the way.
