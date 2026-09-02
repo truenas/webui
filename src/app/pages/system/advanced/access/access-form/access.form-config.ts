@@ -23,13 +23,13 @@ export function getAccessFormConfig(
   api: ApiService,
   translate: TranslateService,
   store$: Store<AppState>,
-  isEnterprise: () => boolean,
+  hasDirectoryServices: () => boolean,
 ): FormDefinition<AccessFormValues> {
   return {
     title: T('Access Settings'),
     requiredRoles: [Role.AuthSessionsWrite],
     fields: [
-      ...(isEnterprise()
+      ...(hasDirectoryServices()
         ? [{
             name: 'ds_auth' as const,
             type: 'checkbox' as const,
@@ -52,7 +52,7 @@ export function getAccessFormConfig(
     }))),
     submit: (event) => {
       const bannerChanged = 'login_banner' in event.changedValues;
-      const enterprise = isEnterprise();
+      const canManageDsAuth = hasDirectoryServices();
       const requests$: Observable<unknown>[] = [];
 
       if (bannerChanged) {
@@ -67,7 +67,7 @@ export function getAccessFormConfig(
         );
       }
 
-      if (enterprise) {
+      if (canManageDsAuth) {
         requests$.push(
           api.call('system.general.update', [{ ds_auth: event.allValues.ds_auth }]).pipe(
             finalize(() => store$.dispatch(generalConfigUpdated())),

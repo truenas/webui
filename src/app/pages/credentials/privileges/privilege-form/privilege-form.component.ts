@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, Component, OnInit, signal, inject,
   DestroyRef, input,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
@@ -16,6 +16,7 @@ import {
   Observable, Subject, combineLatest, debounceTime, distinctUntilChanged, finalize, map, of, startWith, switchMap,
 } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
@@ -26,10 +27,10 @@ import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.const
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-privilege-form',
@@ -54,6 +55,7 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private errorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
 
@@ -91,7 +93,7 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
   readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   protected readonly helptext = helptextPrivilege;
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly hasDirectoryServices = this.entitlements.entitled(EntitlementFeature.DirectoryServices);
   protected existingPrivilege: Privilege | undefined;
 
   readonly rolesOptions$ = this.api.call('privilege.roles').pipe(
@@ -234,8 +236,8 @@ export class PrivilegeFormComponent extends SidePanelForm implements OnInit {
       return;
     }
 
-    // Hide button in non-enterprise mode
-    if (!this.isEnterprise()) {
+    // Hide button when the system is not entitled to directory-services authentication
+    if (!this.hasDirectoryServices()) {
       this.showDsAuthButton.set(false);
       return;
     }

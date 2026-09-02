@@ -5,7 +5,7 @@
   [ixUiSearch]="searchableElements.elements.access"
 >
   <div class="details">
-    @if (isEnterprise()) {
+    @if (hasDirectoryServices()) {
       <div class="details-item">
         <span class="label">{{ 'Allow Directory Service users to access WebUI' | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
