@@ -7,7 +7,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
+  TnAutocompleteHarness, TnCheckboxHarness, TnChipInputHarness, TnFormListHarness, TnInputHarness,
+  TnSelectHarness,
 } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
 import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -20,7 +21,6 @@ import { SmbShare, SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -349,9 +349,9 @@ describe('ServiceSmbComponent', () => {
   it('sends an update payload to websocket when advanced form is filled and saved', async () => {
     toggleAdvancedSettings();
 
-    const bindIpList = await loader.getHarness(IxListHarness.with({ label: 'Bind IP Addresses' }));
-    await bindIpList.pressAddButton();
-    await bindIpList.pressAddButton();
+    const bindIpList = await loader.getHarness(TnFormListHarness.with({ label: 'Bind IP Addresses' }));
+    await bindIpList.add();
+    await bindIpList.add();
 
     const bindIpSelects = await loader.getAllHarnesses(
       TnSelectHarness.with({ selector: '[formControlName="bindIp"]' }),

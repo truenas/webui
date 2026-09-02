@@ -18,7 +18,9 @@ export interface Zpool {
   warning: boolean;
   status_code: string;
   status_detail: string | null;
-  properties: Record<string, ZpoolProperty>;
+  // Null for pools ZFS cannot read properties from, e.g. an unavailable or
+  // faulted pool, so every access has to be guarded.
+  properties: Record<string, ZpoolProperty> | null;
   topology: PoolTopology | null;
   scan: PoolScanUpdate | null;
   // `expand` and `features` are present on the wire but not consumed in the

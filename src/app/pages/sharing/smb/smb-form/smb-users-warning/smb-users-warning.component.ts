@@ -2,8 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TnBannerComponent, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 
 @Component({
@@ -12,8 +11,9 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
   templateUrl: './smb-users-warning.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnBannerComponent,
     TnIconComponent,
-    TestDirective,
+    TnTestIdDirective,
     TranslateModule,
   ],
 })

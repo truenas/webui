@@ -1,13 +1,11 @@
-<tn-icon name="information" library="mdi" class="warning-icon"></tn-icon>
-
-<div class="warning-content">
-  <span class="warning-text">
-    {{ 'This parameter requires Apple SMB2/3 protocol extension support to be enabled in SMB service.' | translate }}
-  </span>
+<tn-banner
+  type="info"
+  [message]="'This parameter requires Apple SMB2/3 protocol extension support to be enabled in SMB service.' | translate"
+>
   <tn-button
-    class="enable-button"
+    tnBannerAction
     [testId]="'enable-apple-extensions'"
     [label]="'Enable Now' | translate"
     (onClick)="enableExtensions()"
   ></tn-button>
-</div>
+</tn-banner>
