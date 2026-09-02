@@ -65,60 +65,24 @@ jobs:
     # group at once. Without it the job inherits GitHub's 360-minute default and
     # a hang blocks the lab for six hours.
     timeout-minutes: 90
+    env:
+      # The lab runner is a TrueNAS box, and TrueNAS mounts /tmp noexec. Yarn
+      # packs the one git dependency (`@truenas/common-typescript`) by writing
+      # a `yarn` shim into a temp directory and running it; on noexec /tmp the
+      # shim cannot execute, PATH lookup falls through to corepack, corepack
+      # finds no pinned package manager in the clone and downloads Yarn 1, and
+      # Yarn 1 produces a different archive from Yarn 4 — so `yarn install`
+      # fails with a checksum mismatch, on this runner only. `runner.temp` is
+      # on the runner's own dataset, which allows exec. Node, npm and Playwright
+      # all honour TMPDIR, so this is the whole fix.
+      TMPDIR: ${{ runner.temp }}
 
     steps:
       - uses: actions/checkout@v4
 
       # Same Node pin and install path as every job in main.yml, so a failure
       # here is the runner and not a difference in how the tree was prepared.
-      # TEMPORARY bring-up diagnostics. `yarn install` fails on this runner with
-      # a checksum mismatch on the one git dependency, and nowhere else. The git
-      # dependency is packed from a clone on the box, so anything that changes
-      # the clone changes the checksum: umask, git eol/filemode config, user.
       - uses: iXsystems/ux-github-workflows/.github/actions/prepare@master
-
-      - name: Diagnose the runner
-        if: always()
-        run: |
-          set +e
-          set -x
-          umask; id; git --version; node -v; yarn -v; which git node yarn
-          git config --system --list
-          git config --global --list
-          env | grep -i '^YARN\|^COREPACK\|^npm_\|^HOME\|^TMPDIR'
-          ls -la "$HOME/.yarnrc.yml" "$HOME/.yarnrc"
-          mount | grep -E ' / | /tmp | /mnt/tank'
-          tmp=$(mktemp -d)
-          git clone -q https://github.com/truenas/tn-common-typescript.git "$tmp"
-          ls -la "$tmp" "$tmp/scripts" "$tmp/eslint"
-          rm -rf "$tmp"
-          true
-
-      - name: Experiment, TMPDIR off tmpfs
-        if: failure()
-        run: |
-          rm -rf .yarn/cache/@truenas-common-typescript-*
-          mirror="$(yarn config get globalFolder)/cache"
-          ls -la "$mirror" | grep -i common-typescript || echo "nothing in mirror"
-          rm -rf "$mirror"/@truenas-common-typescript-*
-          mkdir -p "$RUNNER_TEMP/yarn-tmp"
-          df -T "$RUNNER_TEMP/yarn-tmp"
-          TMPDIR="$RUNNER_TEMP/yarn-tmp" yarn install --immutable --mode=skip-build
-
-      - name: Show the checksum this runner computes
-        if: failure()
-        run: |
-          YARN_ENABLE_HARDENED_MODE=0 YARN_CHECKSUM_BEHAVIOR=update yarn install --mode=skip-build || true
-          git --no-pager diff yarn.lock
-          ls -la .yarn/cache/ | grep -i common-typescript
-          python3 - .yarn/cache/@truenas-common-typescript-*.zip <<'EOF'
-          import sys, zipfile
-          z = zipfile.ZipFile(sys.argv[1])
-          for i in z.infolist():
-              print(f"{i.filename} mode={oct(i.external_attr >> 16)} crc={i.CRC:08x} size={i.file_size} csize={i.compress_size} dt={i.date_time} ct={i.compress_type} extra={len(i.extra)}")
-          print("---- package.json as packed")
-          print(repr(z.read("node_modules/@truenas/common-typescript/package.json").decode()))
-          EOF
 
       - name: Install Playwright browsers
         run: yarn playwright install --with-deps chromium
