@@ -80,6 +80,15 @@
       }
     }
   </form>
+
+  <tn-banner
+    class="tier-warning"
+    type="warning"
+    [heading]="'Changing the tier takes effect immediately' | translate"
+    [message]="form.value.moveExistingData
+      ? ('Data migration can be cancelled while it runs, but cancelling does not undo the tier change: the dataset stays on the new tier.' | translate)
+      : ''"
+  ></tn-banner>
 </div>
 
 <mat-dialog-actions align="end">

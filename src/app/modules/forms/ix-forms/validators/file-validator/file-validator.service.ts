@@ -3,8 +3,8 @@ import { FormControl, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -70,7 +70,7 @@ export class FileValidatorService {
       for (const file of files) {
         if (file.size > maxSizeInBytes) {
           return {
-            [ixManualValidateError]: {
+            [ixManualValidateErrorKey]: {
               message: this.translate.instant(
                 'Maximum file size is limited to {maxSize}.',
                 { maxSize: buildNormalizedFileSize(maxSizeInBytes) },

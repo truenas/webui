@@ -123,9 +123,10 @@ export class PageAlertsComponent {
     const pathSegments = this.getPathSegments();
 
     return this.consolidatedAlerts().filter((alert) => {
-      // Scope the banner by bannerMenuPath when provided, otherwise fall back to relatedMenuPath.
-      // This lets the banner target a narrower route than the nav badge (e.g. API keys live under
-      // /credentials/users/api-keys but the badge stays on the Credentials menu).
+      // Scope the banner by bannerMenuPath when provided, otherwise fall back to relatedMenuPath,
+      // plus any extraMenuPaths. This lets the banner target a narrower route than the nav badge
+      // (e.g. API keys live under /credentials/users/api-keys but the badge stays on the
+      // Credentials menu), or a wider one for alerts that span two feature areas.
       const menuPaths = getAlertBannerMenuPaths(alert);
       if (!menuPaths.length) {
         return false;

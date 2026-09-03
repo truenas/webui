@@ -10,11 +10,10 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { ArrayLengthValidationError } from 'app/modules/forms/ix-forms/validators/array-length-validation';
 
 type SomeError = Record<string, unknown>;
-
-export const ixManualValidateError = 'ixManualValidateError';
 
 @Component({
   selector: 'ix-errors',
@@ -37,7 +36,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
   readonly control = input.required<AbstractControl>();
   readonly label = input<string>();
 
-  readonly ixManualValidateError = ixManualValidateError;
+  readonly ixManualValidateError = ixManualValidateErrorKey;
 
   private statusChangeSubscription: Subscription;
   messages: string[] = [];
@@ -66,6 +65,10 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
         ? T('The length of {field} should be no more than {maxLength}')
         : T('The length of the field should be no more than {maxLength}'),
       { field: this.label(), maxLength },
+    ),
+    parentPathTooLong: (maxPathLength: number) => this.translate.instant(
+      'The parent path already fills the {maxPathLength} character limit for a dataset path, so nothing can be created under it.',
+      { maxPathLength },
     ),
     pattern: () => this.translate.instant('Invalid format or character'),
     forbidden: (value: string) => this.translate.instant('The name "{value}" is already in use.', { value }),
@@ -158,7 +161,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
 
   private handleErrors(options: { skipMarkAsTouched?: boolean } = {}): void {
     const newErrors: (string | null)[] = Object.keys(this.control().errors || []).map((error) => {
-      if (error === ixManualValidateError) {
+      if (error === ixManualValidateErrorKey) {
         return null;
       }
       const message = (this.control().errors?.[error] as SomeError)?.message as string;
@@ -207,6 +210,10 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
         return this.defaultErrMessages.minlength((errors.minlength as SomeError).requiredLength as number);
       case DefaultValidationError.MaxLength:
         return this.defaultErrMessages.maxlength((errors.maxlength as SomeError).requiredLength as number);
+      case DefaultValidationError.ParentPathTooLong:
+        return this.defaultErrMessages.parentPathTooLong(
+          (errors.parentPathTooLong as SomeError).maxPathLength as number,
+        );
       case DefaultValidationError.Range:
         return this.defaultErrMessages.range(
           (errors.rangeValue as SomeError).min as number,
@@ -263,7 +270,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
   removeManualError(): void {
     const errors = this.control().errors;
     if (errors) {
-      delete errors[ixManualValidateError];
+      delete errors[ixManualValidateErrorKey];
       delete errors.manualValidateError;
       delete errors.manualValidateErrorMsg;
     }
@@ -279,7 +286,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
   private announceErrors(): void {
     const messages = [...this.messages];
     const manualError = (
-      this.control().errors?.[ixManualValidateError] as { message: string } | undefined
+      this.control().errors?.[ixManualValidateErrorKey] as { message: string } | undefined
     )?.message;
     if (manualError) {
       messages.push(manualError);

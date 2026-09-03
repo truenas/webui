@@ -97,6 +97,7 @@ export interface VmUsbPassthroughDeviceChoice {
   };
   available: boolean;
   error: unknown;
+  description: string;
 }
 
 interface VmDisplayAttributes {

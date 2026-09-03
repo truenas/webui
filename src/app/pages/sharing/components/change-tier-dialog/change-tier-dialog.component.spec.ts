@@ -3,12 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnBannerHarness } from '@truenas/ui-components';
 import {
   EMPTY, Observable, catchError, of, throwError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
@@ -211,5 +213,58 @@ describe('ChangeTierDialogComponent — loadDetails parsing', () => {
     await spectator.fixture.whenStable();
 
     expect(spectator.component.hasSnapshots()).toBe(true);
+  });
+});
+
+describe('ChangeTierDialogComponent — tier change warning', () => {
+  let spectator: Spectator<ChangeTierDialogComponent>;
+  let loader: HarnessLoader;
+
+  const dialogData: ChangeTierDialogData = {
+    datasetName: 'tank/SHARE',
+    currentTier: DatasetTier.Regular,
+    poolName: 'tank',
+  };
+
+  const createComponent = createComponentFactory({
+    component: ChangeTierDialogComponent,
+    providers: [
+      mockApi([
+        mockCall('zpool.query', []),
+        mockCall('pool.dataset.query', []),
+        mockCall('sharing.smb.query', []),
+        mockCall('sharing.nfs.query', []),
+        mockCall('sharing.webshare.query', []),
+      ]),
+      { provide: MAT_DIALOG_DATA, useValue: dialogData },
+      mockProvider(MatDialogRef),
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent({ detectChanges: false });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('warns that the tier takes effect immediately, and that cancelling the migration does not undo it', async () => {
+    const banner = await loader.getHarness(TnBannerHarness);
+
+    expect(await banner.getText()).toContain('Changing the tier takes effect immediately');
+    expect(await banner.getText()).toContain(
+      'Data migration can be cancelled while it runs, but cancelling does not undo the tier change',
+    );
+  });
+
+  it('drops the migration half of the warning when existing data is not moved', async () => {
+    const moveExistingData = await loader.getHarness(IxCheckboxHarness.with({ label: 'Move existing data' }));
+    await moveExistingData.setValue(false);
+
+    const banner = await loader.getHarness(TnBannerHarness);
+
+    expect(await banner.getText()).toContain('Changing the tier takes effect immediately');
+    expect(await banner.getText()).not.toContain('Data migration can be cancelled');
   });
 });

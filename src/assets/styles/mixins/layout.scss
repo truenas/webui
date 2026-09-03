@@ -4,6 +4,9 @@ $scrollbar-offset: 20px;
 
 @mixin tree-node-with-details-container() {
   .container {
+    // Each side keeps its own height: stretching would give the table a tall empty area below
+    // its last row whenever the details panel is the taller of the two.
+    align-items: flex-start;
     display: flex;
     flex-direction: row;
     gap: 16px;
@@ -63,14 +66,11 @@ $scrollbar-offset: 20px;
       max-width: $singlecolumn-max-width;
     }
 
-    // Two Cards Columns
-    @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    // Two Cards Columns. This is as wide as the details panel ever gets: the cards hold
+    // short label/value rows, so past two slim columns they only get emptier. Every extra
+    // pixel goes to the master table instead.
+    @media (min-width: $breakpoint-dualcolumn-slim) {
       max-width: ($dualcolumn-slim-max-width + $scrollbar-offset);
-    }
-
-    // Two Cards Columns
-    @media (min-width: $breakpoint-dualcolumn) {
-      max-width: 70%;
     }
   }
 
@@ -142,20 +142,19 @@ $scrollbar-offset: 20px;
     color: var(--fg2);
     display: grid;
     grid-gap: 8px;
-    grid-template-columns: auto 125px 125px 125px 40px;
+    grid-template-columns: minmax(200px, 1fr) 125px 125px 125px 40px;
     min-height: 40px;
-    min-width: fit-content;
     min-width: 100%;
     padding-left: 25px;
     width: 100%;
 
     @media (max-width: $breakpoint-tablet) {
-      grid-template-columns: auto 0 0 0 0;
+      grid-template-columns: minmax(0, 1fr) 0 0 0 0;
       width: auto;
     }
 
     @media (min-width: $breakpoint-singlecolumn) {
-      grid-template-columns: auto 125px 125px 125px;
+      grid-template-columns: minmax(200px, 1fr) 125px 125px 125px;
     }
 
     > div {
@@ -167,9 +166,6 @@ $scrollbar-offset: 20px;
       }
 
       &:first-child {
-        left: 0;
-        position: sticky;
-
         @media (max-width: $breakpoint-tablet) {
           display: block;
         }
@@ -178,23 +174,28 @@ $scrollbar-offset: 20px;
   }
 
   .sticky-header {
-    overflow: visible;
+    // `overflow: hidden` is what lets the header be scrolled sideways in step with the tree,
+    // but it also drops the flex item's automatic minimum size, hence the explicit shrink/height.
+    flex-shrink: 0;
+    min-height: 40px;
+    overflow: hidden;
     position: sticky;
     top: 51px;
     z-index: 1;
   }
 
+  // Lines up with the row's toggle/spacer, which the name sits after.
   .name-header {
     align-items: center;
-    background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) 0, transparent 80%);
     display: flex;
-    left: 15px;
     padding-left: 15px;
     padding-right: 0;
-    position: sticky;
   }
 
   .tree-wrapper {
+    // The tree paints its own background, but only over its content box - which scrolls away
+    // with the rows. The scroll container keeps the empty area below them filled.
+    background: var(--bg2);
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -220,10 +221,15 @@ $scrollbar-offset: 20px;
           display: flex;
         }
 
+        // No width cap: the name is shown in full wherever the name column has room for it,
+        // and only truncates once it doesn't. The column is `minmax(<floor>, 1fr)`, so on a
+        // wide table that is everything the value columns don't take, and on a narrow or
+        // deeply indented one the floor pushes the tree past the wrapper, which scrolls.
+        // `display` is intentionally left to each tree's own node styles: a plain text name
+        // needs a block box for `text-overflow` to apply, a name with trailing icons doesn't.
         .name {
-          align-items: center;
-          display: inline-flex;
-          max-width: calc(100vw - 80vw);
+          flex: 0 1 auto;
+          min-width: 0;
           overflow: hidden;
           padding-right: 15px;
           text-overflow: ellipsis;
@@ -239,8 +245,12 @@ $scrollbar-offset: 20px;
     }
   }
 
+  // Rows stretch to the full (content-driven) tree width rather than each sizing to its own
+  // content, so that every row's value columns end on the same right edge as the header's -
+  // otherwise each nesting level would shift them by its indent.
   ix-tree-node {
     color: var(--fg1);
+    min-width: 100%;
   }
 
   .nested-tree-root-node {
@@ -313,26 +323,11 @@ $scrollbar-offset: 20px;
       min-width: calc($table-min-width + 0px);
     }
 
-    // Two Cards Slim Columns
-    @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    // Two Cards Slim Columns. The details panel stops growing here, so the table takes
+    // the whole remainder no matter how wide the screen gets.
+    @media (min-width: $breakpoint-dualcolumn-slim) {
       max-width: calc(100% - $dualcolumn-slim-max-width - 16px - $scrollbar-offset);
       min-width: calc($table-min-width + 0px);
-    }
-
-    // Two Cards Columns
-    @media (min-width: $breakpoint-dualcolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-      min-width: calc(98% - 2 * ($card-width + $gap));
-    }
-
-    // Three Cards Columns
-    @media (min-width: $breakpoint-triplecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-      min-width: calc(98% - 3 * ($card-width + $gap));
-    }
-
-    // Cards spill to the right
-    @media (min-width: $breakpoint-flex) {
-      max-width: 1200px;
-      width: 50%;
     }
   }
 }

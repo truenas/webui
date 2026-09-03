@@ -1145,6 +1145,73 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
+    // ZFS Tiering
+    // Special allocation class (special vdev) capacity is a pool-level condition, but it is
+    // resolved from Datasets by moving datasets back to the Regular tier — badge both menus.
+    [AlertClassName.TierSpecialVdevCritical]: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['storage'],
+      extraMenuPaths: [['datasets']],
+      contextualHelp: T('The special allocation class of this pool is nearly full. Tier rewrites will abort and new Performance tier writes will overflow into the Regular tier. Free space by moving datasets back to the Regular tier, or expand the special vdev.'),
+      actions: [{
+        label: T('Go to Storage'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('dns', 'material'),
+        route: ['/storage'],
+        primary: true,
+      }, {
+        label: T('Go to Datasets'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('database', 'mdi'),
+        route: ['/datasets'],
+      }],
+    },
+
+    [AlertClassName.TierSpecialVdevWarning]: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['storage'],
+      extraMenuPaths: [['datasets']],
+      contextualHelp: T('The special allocation class of this pool is approaching the configured critical cap. Review the tier assignments of your datasets or expand the special vdev before tier rewrites start to fail.'),
+      actions: [{
+        label: T('Go to Storage'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('dns', 'material'),
+        route: ['/storage'],
+        primary: true,
+      }, {
+        label: T('Go to Datasets'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('database', 'mdi'),
+        route: ['/datasets'],
+      }],
+    },
+
+    [AlertClassName.TierJobError]: {
+      category: SmartAlertCategory.Tasks,
+      relatedMenuPath: ['datasets'],
+      contextualHelp: T('A tier migration job did not finish. The dataset keeps its previous tier placement until the migration is retried.'),
+      actions: [{
+        label: T('Go to Datasets'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('database', 'mdi'),
+        route: ['/datasets'],
+        primary: true,
+      }],
+    },
+
+    // Informational only, so it carries no menu path and never badges a menu.
+    // (Notice-level alerts are filtered out of the badge and banner surfaces upstream.)
+    [AlertClassName.TierJobComplete]: {
+      category: SmartAlertCategory.Tasks,
+      actions: [{
+        label: T('Go to Datasets'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('database', 'mdi'),
+        route: ['/datasets'],
+        primary: true,
+      }],
+    },
+
     // Storage/Pools
     PoolUpgraded: {
       category: SmartAlertCategory.Storage,

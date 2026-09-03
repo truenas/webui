@@ -51,6 +51,28 @@ describe('SmartAlertService', () => {
     dismissed: false,
   } as unknown as Alert;
 
+  const tierSpecialVdevCriticalAlert = {
+    id: '44',
+    klass: AlertClassName.TierSpecialVdevCritical,
+    source: '',
+    level: AlertLevel.Critical,
+    formatted: 'Pool hddpool: special allocation class usage exceeds 70%.',
+    text: 'Pool hddpool: special allocation class usage exceeds 70%.',
+    args: { pool_name: 'hddpool', threshold: 70 },
+    dismissed: false,
+  } as unknown as Alert;
+
+  const tierSpecialVdevWarningAlert = {
+    id: '45',
+    klass: AlertClassName.TierSpecialVdevWarning,
+    source: '',
+    level: AlertLevel.Warning,
+    formatted: 'Pool hddpool: special allocation class usage exceeds 60%.',
+    text: 'Pool hddpool: special allocation class usage exceeds 60%.',
+    args: { pool_name: 'hddpool', threshold: 60 },
+    dismissed: false,
+  } as unknown as Alert;
+
   const createService = createServiceFactory({
     service: SmartAlertService,
     providers: [
@@ -241,6 +263,28 @@ describe('SmartAlertService', () => {
 
       expect(counts.get('data-protection')?.critical).toBe(1);
       expect(counts.get('data-protection.cloud-backup')?.critical).toBe(1);
+    });
+
+    it('counts alerts under their extra menu paths as well', () => {
+      const tierCritical = spectator.service.enhanceAlert(tierSpecialVdevCriticalAlert);
+      const tierWarning = spectator.service.enhanceAlert(tierSpecialVdevWarningAlert);
+
+      const counts = spectator.service.getAlertCountsByMenuPath([tierCritical, tierWarning]);
+
+      expect(counts.get('storage')).toEqual({ critical: 1, warning: 1, info: 0 });
+      expect(counts.get('datasets')).toEqual({ critical: 1, warning: 1, info: 0 });
+    });
+
+    it('does not count an alert twice when its menu paths overlap', () => {
+      const alert = {
+        ...spectator.service.enhanceAlert(tierSpecialVdevCriticalAlert),
+        relatedMenuPath: ['storage'],
+        extraMenuPaths: [['storage']],
+      };
+
+      const counts = spectator.service.getAlertCountsByMenuPath([alert]);
+
+      expect(counts.get('storage')?.critical).toBe(1);
     });
   });
 });

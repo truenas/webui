@@ -115,6 +115,33 @@ describe('PageAlertsComponent', () => {
     relatedMenuPath: ['storage'],
   } as unknown as Alert & EnhancedAlert;
 
+  const tierWarningAlert = {
+    id: 'tier-warning',
+    uuid: 'tier-warning',
+    // Middleware keys both tier alerts on the pool name alone.
+    key: '"hddpool"',
+    klass: AlertClassName.TierSpecialVdevWarning,
+    level: AlertLevel.Warning,
+    formatted: 'Pool hddpool: special allocation class usage exceeds 60%.',
+    dismissed: false,
+    datetime: { $date: 1 },
+    relatedMenuPath: ['storage'],
+    extraMenuPaths: [['datasets']],
+  } as unknown as Alert & EnhancedAlert;
+
+  const tierCriticalAlert = {
+    id: 'tier-critical',
+    uuid: 'tier-critical',
+    key: '"hddpool"',
+    klass: AlertClassName.TierSpecialVdevCritical,
+    level: AlertLevel.Critical,
+    formatted: 'Pool hddpool: special allocation class usage exceeds 70%.',
+    dismissed: false,
+    datetime: { $date: 2 },
+    relatedMenuPath: ['storage'],
+    extraMenuPaths: [['datasets']],
+  } as unknown as Alert & EnhancedAlert;
+
   const defaultAlerts = [
     lockedShareAlert,
     rootLoginAlert,
@@ -353,5 +380,31 @@ describe('PageAlertsComponent', () => {
 
     const messages = renderedMessages();
     expect(messages.some((message) => message.includes('API key has been revoked'))).toBe(false);
+  });
+
+  describe('alerts spanning several feature areas (NAS-142267)', () => {
+    beforeEach(() => {
+      alertsSignal.set([tierWarningAlert, tierCriticalAlert]);
+    });
+
+    it.each(['/storage', '/datasets'])('shows a tiering alert on %s', async (url) => {
+      await setUrl(url);
+
+      const messages = renderedMessages();
+      expect(messages.some((message) => message.includes('special allocation class'))).toBe(true);
+    });
+
+    it('does not show a tiering alert on an unrelated route', async () => {
+      await setUrl('/credentials/users');
+
+      expect(renderedMessages()).toEqual([]);
+    });
+
+    it('keeps alert classes that share a middleware key apart instead of counting them as duplicates', async () => {
+      await setUrl('/storage');
+
+      expect(renderedMessages()).toHaveLength(2);
+      expect(spectator.queryAll('.duplicate-count-badge')).toEqual([]);
+    });
   });
 });

@@ -1,13 +1,27 @@
 import { EnhancedAlert } from 'app/interfaces/smart-alert.interface';
 
 /**
+ * Menu paths that should show a navigation badge for this alert.
+ * `extraMenuPaths` lets an alert that spans two feature areas badge both of them.
+ */
+export function getAlertBadgeMenuPaths(alert: EnhancedAlert): string[][] {
+  return [
+    ...(alert.relatedMenuPath ? [alert.relatedMenuPath] : []),
+    ...(alert.extraMenuPaths || []),
+  ];
+}
+
+/**
  * Menu paths whose pages should show the alert banner.
- * `bannerMenuPath` narrows the primary scope (see SmartAlertEnhancement), falling back
- * to the path that drives the nav badge.
+ * `bannerMenuPath` narrows the primary scope (see SmartAlertEnhancement), while
+ * `extraMenuPaths` widens it to the alert's secondary feature areas.
  */
 export function getAlertBannerMenuPaths(alert: EnhancedAlert): string[][] {
   const primaryPath = alert.bannerMenuPath ?? alert.relatedMenuPath;
-  return primaryPath ? [primaryPath] : [];
+  return [
+    ...(primaryPath ? [primaryPath] : []),
+    ...(alert.extraMenuPaths || []),
+  ];
 }
 
 /**

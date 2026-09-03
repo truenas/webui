@@ -5,6 +5,7 @@ export enum DefaultValidationError {
   Email = 'email',
   Cpu = 'cpu',
   MaxLength = 'maxlength',
+  ParentPathTooLong = 'parentPathTooLong',
   Range = 'range',
   MinLength = 'minlength',
   Pattern = 'pattern',

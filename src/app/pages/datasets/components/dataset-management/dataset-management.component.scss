@@ -28,20 +28,29 @@ ix-dataset-details-panel {
 }
 
 .tree-header {
-  grid-template-columns: auto 125px 125px 125px 125px 40px;
+  // Value columns are kept narrow (and must match .tree-node-grid exactly, so the labels
+  // stay above their values) to leave the dataset name as much of the table as possible.
+  // The name column's floor is what makes a deeply nested tree scroll horizontally instead
+  // of truncating the name down to a few characters.
+  grid-template-columns: minmax(280px, 1fr) 85px 90px 95px 55px 40px;
 
   @media (max-width: $breakpoint-tablet) {
-    grid-template-columns: auto 0 0 0 0 0;
+    grid-template-columns: minmax(0, 1fr) 0 0 0 0 0;
   }
 
   @media (min-width: $breakpoint-singlecolumn) {
-    grid-template-columns: auto 125px 125px 125px 125px;
+    grid-template-columns: minmax(280px, 1fr) 85px 90px 95px 55px;
   }
 
   .available-header {
     display: flex;
     flex-direction: column;
     line-height: 1.2;
+
+    // This rule outranks the `> div { display: none }` every other value header falls under.
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
 
     .tier-subtitle {
       color: var(--fg2);

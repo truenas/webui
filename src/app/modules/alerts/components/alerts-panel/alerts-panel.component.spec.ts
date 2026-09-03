@@ -257,6 +257,39 @@ describe('AlertsPanelComponent', () => {
     expect(alertPanel.unreadAlertComponents[0]).toBe(before);
   });
 
+  // Regression for NAS-142267: middleware builds `key` from the alert arguments alone, so
+  // TierSpecialVdevWarning and TierSpecialVdevCritical for the same pool share a key. They are
+  // separate alerts and must not be counted as duplicates of one another (nor dismissed together).
+  it('does not treat different alert classes sharing a key as duplicates', () => {
+    const sameKeyAlerts = [
+      {
+        id: 'tier-warning',
+        klass: AlertClassName.TierSpecialVdevWarning,
+        key: '"hddpool"',
+        dismissed: false,
+        datetime: { $date: 1641811015 },
+        level: AlertLevel.Warning,
+      },
+      {
+        id: 'tier-critical',
+        klass: AlertClassName.TierSpecialVdevCritical,
+        key: '"hddpool"',
+        dismissed: false,
+        datetime: { $date: 1641811020 },
+        level: AlertLevel.Critical,
+      },
+    ] as Alert[];
+    spectator.inject(Store).dispatch(alertsLoaded({ alerts: sameKeyAlerts }));
+    spectator.detectChanges();
+
+    const rendered = alertPanel.unreadAlertComponents.map(
+      (component) => alertPanel.getAlertData(component),
+    );
+
+    expect(rendered.map((alert) => alert?.allIds)).toEqual([['tier-critical'], ['tier-warning']]);
+    expect(rendered.map((alert) => alert?.duplicateCount)).toEqual([1, 1]);
+  });
+
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {
     spectator.click(alertPanel.dismissAllButton!);
 

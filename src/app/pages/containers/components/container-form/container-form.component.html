@@ -162,6 +162,17 @@
           </ix-list>
         </ix-fieldset>
 
+        @if (!isEditMode() && (usbDeviceOptions$ | async)?.length) {
+          <ix-fieldset [title]="helptext.usbDevicesLabel | translate">
+            <ix-checkbox-list
+              formControlName="usb_devices"
+              [label]="helptext.usbDevicesLabel | translate"
+              [tooltip]="helptext.usbDevicesTooltip | translate"
+              [options]="usbDeviceOptions$"
+            ></ix-checkbox-list>
+          </ix-fieldset>
+        }
+
         @if (!isEditMode()) {
           <ix-fieldset [title]="'ID Mapping' | translate">
             <ix-select
