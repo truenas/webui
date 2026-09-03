@@ -267,6 +267,27 @@ describe('UserAccessCardComponent', () => {
       });
     });
 
+    it('offers Add API Key for directory service users, whose roles are never reported', () => {
+      spectator.setInput('user', {
+        ...mockUser,
+        api_keys: [],
+        local: false,
+        roles: [],
+      });
+
+      expect(spectator.query(byText('Add API Key'))).toExist();
+    });
+
+    it('does not offer Add API Key for a local user without roles', () => {
+      spectator.setInput('user', {
+        ...mockUser,
+        api_keys: [],
+        roles: [],
+      });
+
+      expect(spectator.query(byText('Add API Key'))).not.toExist();
+    });
+
     it('downloads public ssh key when Download Public Key link is clicked', () => {
       const downloadLink = spectator.query(byText('Download Public Key'));
       spectator.click(downloadLink);
