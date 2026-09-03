@@ -11,6 +11,8 @@ import { NEVER, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -39,7 +41,6 @@ import {
 import {
   DiskWipeDialog,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
-import { LicenseService } from 'app/services/license.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('DiskListComponent', () => {
@@ -132,9 +133,7 @@ describe('DiskListComponent', () => {
           close: jest.fn(),
         }) as unknown as DialogRef),
       }),
-      mockProvider(LicenseService, {
-        hasSed$: of(true),
-      }),
+      mockEntitlements(),
       provideMockStore({
         selectors: [
           {
@@ -551,9 +550,7 @@ describe('DiskListComponent - without SED license', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(TnDialog),
-      mockProvider(LicenseService, {
-        hasSed$: of(false),
-      }),
+      mockEntitlements([EntitlementFeature.Sed]),
       provideMockStore({
         selectors: [
           {
@@ -575,7 +572,7 @@ describe('DiskListComponent - without SED license', () => {
     table = await loader.getHarness(TnTableHarness);
   });
 
-  it('hides SED column when hasSed$ is false', async () => {
+  it('hides the SED column when the system is not entitled to SED', async () => {
     const headerRow = await table.getHeaderTexts();
 
     expect(headerRow).not.toContain('Self-Encrypting Drive (SED)');

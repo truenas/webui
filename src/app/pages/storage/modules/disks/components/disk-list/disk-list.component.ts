@@ -8,14 +8,14 @@ import {
   TnHeaderCellDefDirective, TnTableColumnDirective, TnTableComponent, TnTablePagerComponent,
   type TnSortEvent,
 } from '@truenas/ui-components';
-import {
-  defer, filter, forkJoin, map, Subject,
-} from 'rxjs';
+import { filter, forkJoin, map, Subject } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -41,7 +41,7 @@ import { ResetSedDialog } from 'app/pages/storage/modules/disks/components/disk-
 import { UnlockSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/unlock-sed-dialog/unlock-sed-dialog.component';
 import { DiskWipeDialog } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 import { sedStatusLabel } from 'app/pages/storage/modules/disks/utils/sed-status-label.utils';
-import { LicenseService } from 'app/services/license.service';
+import { EntitlementsService } from 'app/services/entitlements.service';
 
 /**
  * A disk row with every display-only value resolved once, when the rows are built, so
@@ -122,11 +122,11 @@ function toDisk(row: DiskRow): Disk {
 })
 export class DiskListComponent {
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
-  private licenseService = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
@@ -136,39 +136,41 @@ export class DiskListComponent {
 
   protected readonly searchQuery = signal('');
 
-  // `hasSed$` is a store selector, so this resolves synchronously at field init — both the
-  // SED column's default visibility and the disk.query `extra` args read it. `requireSync`
-  // makes that a hard error rather than two silent omissions if it ever becomes async.
-  private readonly hasSed = toSignal(this.licenseService.hasSed$, { requireSync: true });
+  private readonly hasSedEntitlement = this.entitlements.entitled(EntitlementFeature.Sed);
 
   private disks: DiskRow[] = [];
   private unusedDisks: DetailsDisk[] = [];
 
-  private readonly disks$ = defer(() => {
-    const extraOptions: ExtraDiskQueryOptions = {
-      extra: {
-        pools: true,
-        passwords: true,
-        ...(this.hasSed() && { sed_status: true }),
-      },
-    };
+  // Waits for a real entitlement answer before querying, so `sed_status` is never silently
+  // omitted because entitlements had not loaded yet.
+  private readonly disks$ = this.entitlements.entitled$(EntitlementFeature.Sed).pipe(
+    take(1),
+    switchMap((hasSed) => {
+      const extraOptions: ExtraDiskQueryOptions = {
+        extra: {
+          pools: true,
+          passwords: true,
+          ...(hasSed && { sed_status: true }),
+        },
+      };
 
-    return forkJoin([
-      this.api.call('disk.details').pipe(
-        map((diskDetails) => [
-          ...diskDetails.unused,
-          ...diskDetails.used.filter((disk) => disk.exported_zpool),
-        ]),
-      ),
-      this.api.call('disk.query', [[], extraOptions]),
-    ]).pipe(
-      map(([unusedDisks, disks]) => {
-        this.unusedDisks = unusedDisks;
-        this.disks = disks.map((disk) => this.toRow(disk));
-        return this.disks;
-      }),
-    );
-  });
+      return forkJoin([
+        this.api.call('disk.details').pipe(
+          map((diskDetails) => [
+            ...diskDetails.unused,
+            ...diskDetails.used.filter((disk) => disk.exported_zpool),
+          ]),
+        ),
+        this.api.call('disk.query', [[], extraOptions]),
+      ]).pipe(
+        map(([unusedDisks, disks]) => {
+          this.unusedDisks = unusedDisks;
+          this.disks = disks.map((disk) => this.toRow(disk));
+          return this.disks;
+        }),
+      );
+    }),
+  );
 
   protected readonly dataProvider = new AsyncDataProvider<DiskRow>(this.disks$);
 
@@ -315,11 +317,21 @@ export class DiskListComponent {
       getValue: (row) => row.sedStatusText,
       // Sort by that translated status, not by the raw SedStatus enum.
       sortBy: (row) => row.sedStatusText,
-      hidden: !this.hasSed(),
     }),
   ]));
 
-  protected readonly displayedColumns = computed(() => toDisplayedColumns(this.columns()));
+  /**
+   * `columns` stays a writable signal because the column picker writes back to it. SED
+   * visibility is layered on top rather than frozen into the column definition, so it
+   * follows the entitlement instead of whatever was known at field init.
+   */
+  protected readonly visibleColumns = computed(() => (
+    this.hasSedEntitlement()
+      ? this.columns()
+      : this.columns().filter((col) => col.propertyName !== 'sed_status')
+  ));
+
+  protected readonly displayedColumns = computed(() => toDisplayedColumns(this.visibleColumns()));
 
   protected readonly hiddenColumns = computed<TableColumn<DiskRow>[]>(
     () => this.columns().filter((tableColumn) => tableColumn?.hidden),
@@ -381,7 +393,9 @@ export class DiskListComponent {
   protected onSortChange(event: TnSortEvent): void {
     // Pass the column model so the derived columns keep sorting by their displayed
     // text (and Disk Size by its raw byte count), the way ix-table's head did.
-    this.dataProvider.setSorting(mapTnSortToTableSort(event, this.displayedColumns(), { columns: this.columns() }));
+    this.dataProvider.setSorting(
+      mapTnSortToTableSort(event, this.displayedColumns(), { columns: this.visibleColumns() }),
+    );
   }
 
   protected onColumnsChange(columns: TableColumn<DiskRow>[]): void {

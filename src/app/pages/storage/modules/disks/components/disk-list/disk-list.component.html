@@ -5,7 +5,7 @@
   ></ix-basic-search>
 
   <ix-table-column-picker
-    [columns]="columns()"
+    [columns]="visibleColumns()"
     [columnPreferencesKey]="'diskList'"
     (columnsChange)="onColumnsChange($event)"
   ></ix-table-column-picker>
