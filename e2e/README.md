@@ -196,8 +196,10 @@ silently miss.
 The suite runs in GitHub Actions on a self-hosted TrueNAS runner, against a
 nested VM installed fresh for every run. `docs/05-ci.md` describes the
 pipeline, what the lab box has to provide, and what each early failure taught.
-It runs on same-repo pull requests that touch the suite; documentation-only
-changes do not trigger it.
+It runs on same-repo pull requests that touch the suite. A pull request that
+only touches documentation does not trigger it; note that GitHub evaluates the
+path filter against everything the pull request changes, so within a PR that
+touches code, every push runs it.
 
 ## Troubleshooting
 

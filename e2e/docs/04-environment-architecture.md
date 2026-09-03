@@ -622,7 +622,9 @@ The gates as set:
 - The job runs in the `e2e-lab` environment, which holds the lab credential.
   **Required reviewers on that environment are not yet configured**; they are
   the second line, and the thing to add before **D1**.
-- Documentation-only changes under `e2e/docs` do not trigger a run.
+- A pull request that only changes `e2e/docs` does not trigger a run. The
+  filter is evaluated against the whole PR, so a docs commit inside a PR that
+  also touches code still runs.
 - The runner should be in its own network segment with no route to anything
   but the lab, and treated as compromised-by-default. Whether the interim box
   is segmented that way is not known from this repository.
