@@ -4,9 +4,9 @@ import { FormControl } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { LicenseType } from 'app/enums/license-type.enum';
 import { ContractType } from 'app/interfaces/system-info.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -15,7 +15,6 @@ import {
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('SysInfoComponent', () => {
   const systemInfo = {
@@ -26,6 +25,7 @@ describe('SysInfoComponent', () => {
     system_serial: 'ffbb355c',
   };
   const licenseInfo: LicenseInfoInSupport = {
+    type: LicenseType.Commercial,
     contractType: ContractType.Gold,
     model: 'M60',
     expirationDateDisplay: '2022-06-10',
@@ -44,11 +44,6 @@ describe('SysInfoComponent', () => {
       mockAuth(),
       mockProvider(MatDialog, { open: jest.fn() }),
       mockApi([mockCall('truenas.license.fingerprint', fingerprintBase64)]),
-      provideMockStore({
-        selectors: [
-          { selector: selectIsEnterprise, value: false },
-        ],
-      }),
     ],
   });
 
@@ -178,20 +173,29 @@ describe('SysInfoComponent', () => {
   });
 
   describe('License fingerprint', () => {
-    it('shows the thumbprint row on community (non-enterprise) systems', () => {
+    it('shows the thumbprint row when the system has no license', () => {
       expect(spectator.query('.fingerprint-row')).toExist();
     });
 
-    it('hides the thumbprint row on enterprise systems', () => {
-      const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectIsEnterprise, true);
-      store$.refreshState();
-      spectator.detectChanges();
+    it.each([LicenseType.Commercial, LicenseType.Community, LicenseType.Unknown])(
+      'shows the thumbprint row on a %s license',
+      (type) => {
+        spectator.setInput({ hasLicense: true, licenseInfo: { ...licenseInfo, type } });
 
-      expect(spectator.query('.fingerprint-row')).not.toExist();
-    });
+        expect(spectator.query('.fingerprint-row')).toExist();
+      },
+    );
 
-    it('renders a View Fingerprint button regardless of license state', async () => {
+    it.each([LicenseType.EnterpriseHa, LicenseType.EnterpriseSingle])(
+      'hides the thumbprint row on a %s license',
+      (type) => {
+        spectator.setInput({ hasLicense: true, licenseInfo: { ...licenseInfo, type } });
+
+        expect(spectator.query('.fingerprint-row')).not.toExist();
+      },
+    );
+
+    it('renders a View Fingerprint button with and without a non-enterprise license', async () => {
       spectator.setInput({ hasLicense: false, licenseInfo: undefined });
       expect(spectator.query('.fingerprint-row')).toExist();
       const viewWithoutLicense = await loader.getHarness(

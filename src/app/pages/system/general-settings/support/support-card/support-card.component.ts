@@ -154,6 +154,7 @@ export class SupportCardComponent implements OnInit {
       .join(', ') || null;
 
     return {
+      type: license.type,
       contractType: license.contract_type,
       model: license.model,
       expirationDateDisplay,
