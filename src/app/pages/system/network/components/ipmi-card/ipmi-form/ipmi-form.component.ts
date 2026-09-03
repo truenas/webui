@@ -35,7 +35,6 @@ import { RedirectService } from 'app/services/redirect.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-ipmi-form',
@@ -334,26 +333,19 @@ export class IpmiFormComponent implements OnInit {
     );
   }
 
+  /** `failover.licensed` alone decides HA; product type must not pre-gate it. */
   private loadFailoverData(): Observable<unknown> {
-    return this.store$.select(selectIsEnterprise).pipe(
-      switchMap((isEnterprise) => {
-        if (!isEnterprise) {
+    return this.store$.select(selectIsHaLicensed).pipe(
+      switchMap((isHaLicensed) => {
+        if (!isHaLicensed) {
           return of(null);
         }
 
-        return this.store$.select(selectIsHaLicensed).pipe(
-          switchMap((isHaLicensed) => {
-            if (!isHaLicensed) {
-              return of(null);
-            }
-
-            return this.api.call('failover.node').pipe(
-              tap((node) => {
-                this.createControllerOptions(node);
-                this.loadDataOnRemoteControllerChange();
-                this.form.controls.apply_remote.setValue(false);
-              }),
-            );
+        return this.api.call('failover.node').pipe(
+          tap((node) => {
+            this.createControllerOptions(node);
+            this.loadDataOnRemoteControllerChange();
+            this.form.controls.apply_remote.setValue(false);
           }),
         );
       }),

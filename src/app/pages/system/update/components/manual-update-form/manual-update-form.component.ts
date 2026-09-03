@@ -144,16 +144,13 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   private checkHaLicenseAndUpdateStatus(): void {
-    this.store$.select(selectIsEnterprise).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isEnterprise) => {
-      if (isEnterprise) {
-        this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
-          this.isHaLicensed = isHaLicensed;
-          this.checkForUpdateRunning();
+    // `failover.licensed` alone decides HA; product type must not pre-gate it.
+    this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
+      this.isHaLicensed = isHaLicensed;
+      this.checkForUpdateRunning();
 
-          if (this.isHaLicensed) {
-            this.form.removeControl('filelocation');
-          }
-        });
+      if (this.isHaLicensed) {
+        this.form.removeControl('filelocation');
       }
     });
   }
