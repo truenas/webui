@@ -35,10 +35,11 @@
 #                      --nickname <template nickname>            -> JSON
 #   tn_guest.py delete --host H --pool P (...) <name or nickname>
 #
-# A claim clones the template when one exists (seconds, no ISO install) and
-# falls back to an ISO install when it does not. `build-template` makes the
-# template: a bare install, shut down and snapshotted, that `clone` copies
-# with middleware's vm.clone. This is E5 of the design in its first form:
+# With a template password configured, a claim clones the template (seconds,
+# no ISO install), building it first if the host has none. Without one,
+# every claim installs from the ISO. `build-template` makes the template: a
+# bare install, shut down and snapshotted, that `clone` copies with
+# middleware's vm.clone. This is E5 of the design in its first form:
 # baselines as snapshots, clones as provisioning. Revert between tests (E1)
 # is not here yet.
 #
@@ -168,7 +169,14 @@ claim() {
   local json
   # tn_guest.py logs progress to stderr and prints the deployment JSON last on
   # stdout; the log noise is worth keeping in the job log.
-  if [ -n "${TN_GUEST_TEMPLATE_PASSWORD:-}" ] && templateExists; then
+  if [ -n "${TN_GUEST_TEMPLATE_PASSWORD:-}" ]; then
+    # No template yet — the first run after a fresh box, or after someone
+    # deleted it — builds one, so a claim never silently regresses to an ISO
+    # install per run. Costs one install, once.
+    if ! templateExists; then
+      echo "appliance.sh: no template named '$TN_GUEST_TEMPLATE' on the host, building it first" >&2
+      build_template fresh-install
+    fi
     echo "appliance.sh: cloning template '$TN_GUEST_TEMPLATE' into '$nickname' on $TN_GUEST_HOST" >&2
     json=$(tnGuest clone "$TN_GUEST_TEMPLATE" \
       --admin-pass "$TN_GUEST_TEMPLATE_PASSWORD" \
@@ -179,8 +187,6 @@ claim() {
       --vcpus "$TN_GUEST_VCPUS") \
       || die "tn_guest.py clone failed for '$nickname'"
   else
-    [ -n "${TN_GUEST_TEMPLATE_PASSWORD:-}" ] \
-      && echo "appliance.sh: no template named '$TN_GUEST_TEMPLATE' on the host, installing from the ISO instead" >&2
     echo "appliance.sh: creating '$nickname' on $TN_GUEST_HOST from $TN_GUEST_ISO" >&2
     json=$(tnGuest create \
       --iso "$TN_GUEST_ISO" \
