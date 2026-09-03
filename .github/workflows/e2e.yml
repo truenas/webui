@@ -151,6 +151,7 @@ jobs:
           rm -f "$RUNNER_TEMP/appliance.env"
 
       - name: Run the suite
+        id: suite
         env:
           CI: 'true'
           # Passed as an environment variable, never interpolated into the shell
@@ -222,13 +223,18 @@ jobs:
       # password is generated per claim and the appliance is destroyed at
       # release, so a published trace carries a credential to nothing. Turning
       # that upload on is a deliberate next step, not a side effect.
+      #
+      # Runs whenever the suite ran, pass or fail, and then insists on the
+      # file: JUnit is the run history R7.4 and R8.4 are built on, so a run
+      # that produced none must not report green. The only honest no-file
+      # case is the suite never starting, which is the `skipped` outcome.
       - name: Upload JUnit results
-        if: always()
+        if: always() && steps.suite.outcome != 'skipped'
         uses: actions/upload-artifact@v4
         with:
           name: e2e-junit
           path: test-results/junit.xml
-          if-no-files-found: ignore
+          if-no-files-found: error
           retention-days: 14
 
       # Unconditional: an appliance left claimed is one the next run cannot use.
