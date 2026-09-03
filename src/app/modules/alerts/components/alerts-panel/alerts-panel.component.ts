@@ -29,7 +29,7 @@ import {
   selectDismissedAlerts,
   selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
-import { getAlertDuplicateKey } from 'app/modules/alerts/utils/alert-duplicate-key.utils';
+import { consolidateAlerts, getAlertConsolidationKey } from 'app/modules/alerts/utils/alert-consolidation.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
@@ -82,6 +82,10 @@ export class AlertsPanelComponent implements OnInit {
   protected readonly cancelIcon = tnIconMarker('close-circle', 'mdi');
   protected readonly bellIcon = tnIconMarker('bell-outline', 'mdi');
 
+  // The button-label computeds below cache translated strings, so they have to re-run
+  // on a language switch.
+  private langChange = toSignal(this.translate.onLangChange, { initialValue: null });
+
   // Severity filter
   protected severityFilter = signal<'all' | 'critical' | 'warning' | 'info' | 'dismissed'>('all');
 
@@ -89,32 +93,38 @@ export class AlertsPanelComponent implements OnInit {
   private unreadAlertsSignal = toSignal(this.store$.select(selectUnreadAlerts), { initialValue: [] });
   private dismissedAlertsSignal = toSignal(this.store$.select(selectDismissedAlerts), { initialValue: [] });
 
-  // Enhance alerts with smart actions and add duplicate counts
+  // Enhance alerts with smart actions, then consolidate alerts of the same kind
+  // into a single entry so repeated messages don't fill the panel.
+  private enhancedUnread = computed(() => {
+    return this.unreadAlertsSignal().map((alert) => this.smartAlertService.enhanceAlert(alert));
+  });
+
+  private enhancedDismissed = computed(() => {
+    return this.dismissedAlertsSignal().map((alert) => this.smartAlertService.enhanceAlert(alert));
+  });
+
   private allEnhancedUnreadAlerts = computed<AlertWithDuplicates[]>(() => {
-    const alerts = this.unreadAlertsSignal().map((alert) => this.smartAlertService.enhanceAlert(alert));
-    return this.addDuplicateCounts(alerts);
+    return consolidateAlerts(this.enhancedUnread());
   });
 
   private allEnhancedDismissedAlerts = computed<AlertWithDuplicates[]>(() => {
-    const alerts = this.dismissedAlertsSignal().map((alert) => this.smartAlertService.enhanceAlert(alert));
-    return this.addDuplicateCounts(alerts);
+    return consolidateAlerts(this.enhancedDismissed());
   });
 
   // Filtered alerts based on severity
-  protected enhancedUnreadAlerts = computed<AlertWithDuplicates[]>(() => {
-    const alerts = this.allEnhancedUnreadAlerts();
-    return this.filterBySeverity(alerts);
+  protected unreadAlerts = computed<AlertWithDuplicates[]>(() => {
+    return this.filterBySeverity(this.allEnhancedUnreadAlerts());
   });
 
-  protected enhancedDismissedAlerts = computed<AlertWithDuplicates[]>(() => {
-    const alerts = this.allEnhancedDismissedAlerts();
-    return this.filterBySeverity(alerts);
+  protected dismissedAlerts = computed<AlertWithDuplicates[]>(() => {
+    return this.filterBySeverity(this.allEnhancedDismissedAlerts());
   });
 
   // Counts for filter buttons
+  // Counts stay per alert instance (not per consolidated entry) so they match the nav badges.
   protected alertCounts = computed(() => {
-    const unreadAlerts = this.allEnhancedUnreadAlerts();
-    const dismissedAlerts = this.allEnhancedDismissedAlerts();
+    const unreadAlerts = this.enhancedUnread();
+    const dismissedAlerts = this.enhancedDismissed();
     return {
       all: unreadAlerts.length,
       critical: unreadAlerts.filter((a) => this.isCritical(a.level)).length,
@@ -126,11 +136,11 @@ export class AlertsPanelComponent implements OnInit {
 
   // Group alerts by category (always enabled)
   protected groupedUnreadAlerts = computed(() => {
-    return this.smartAlertService.groupAlertsByCategory(this.enhancedUnreadAlerts());
+    return this.smartAlertService.groupAlertsByCategory(this.unreadAlerts());
   });
 
   protected groupedDismissedAlerts = computed(() => {
-    return this.smartAlertService.groupAlertsByCategory(this.enhancedDismissedAlerts());
+    return this.smartAlertService.groupAlertsByCategory(this.dismissedAlerts());
   });
 
   // Category labels for display
@@ -161,29 +171,18 @@ export class AlertsPanelComponent implements OnInit {
     this.checkHaStatus();
   }
 
-  // Dispatchers use `allIds` so the dismiss/reopen actions carry every duplicate,
-  // avoiding any after-the-fact lookup against post-reducer store state.
-  private addDuplicateCounts<T extends Alert>(
-    alerts: T[],
-  ): (T & { duplicateCount: number; allIds: string[] })[] {
-    const idsByKey = new Map<string, string[]>();
-    const idsForAlert = alerts.map((alert) => {
-      const duplicateKey = getAlertDuplicateKey(alert);
-      const existing = idsByKey.get(duplicateKey);
-      if (existing) {
-        existing.push(alert.id);
-        return existing;
-      }
-      const ids = [alert.id];
-      idsByKey.set(duplicateKey, ids);
-      return ids;
-    });
+  /**
+   * Identifies a row across refreshes. Not the alert id: consolidation picks the newest
+   * alert as the representative, so a newer group member would change it and Angular would
+   * rebuild the `ix-alert`, resetting whether the user had expanded it.
+   */
+  protected trackAlert(alert: AlertWithDuplicates): string {
+    return getAlertConsolidationKey(alert);
+  }
 
-    return alerts.map((alert, index) => ({
-      ...alert,
-      duplicateCount: idsForAlert[index].length,
-      allIds: idsForAlert[index],
-    }));
+  /** Number of alerts a category holds, counting every alert a consolidated entry stands for. */
+  protected getCategoryCount(alerts: AlertWithDuplicates[]): number {
+    return alerts.reduce((total, alert) => total + alert.duplicateCount, 0);
   }
 
   onPanelClosed(): void {
@@ -191,12 +190,12 @@ export class AlertsPanelComponent implements OnInit {
   }
 
   onReopenAll(): void {
-    const alertIds = this.enhancedDismissedAlerts().map((alert) => alert.id);
+    const alertIds = this.dismissedAlerts().flatMap((alert) => alert.allIds);
     this.store$.dispatch(reopenAllAlertsPressed({ alertIds }));
   }
 
   onDismissAll(): void {
-    const alertIds = this.enhancedUnreadAlerts().map((alert) => alert.id);
+    const alertIds = this.unreadAlerts().flatMap((alert) => alert.allIds);
     this.store$.dispatch(dismissAllAlertsPressed({ alertIds }));
   }
 
@@ -222,6 +221,7 @@ export class AlertsPanelComponent implements OnInit {
    * Get text for "Dismiss All" button based on current filter
    */
   protected dismissAllButtonText = computed(() => {
+    this.langChange();
     const filter = this.severityFilter();
     switch (filter) {
       case 'critical':
@@ -239,6 +239,7 @@ export class AlertsPanelComponent implements OnInit {
    * Get text for "Re-Open All" button based on current filter
    */
   protected reopenAllButtonText = computed(() => {
+    this.langChange();
     const filter = this.severityFilter();
     switch (filter) {
       case 'critical':

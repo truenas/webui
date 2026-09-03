@@ -1,55 +1,66 @@
 @if (hasAlerts()) {
   <div class="page-alerts-container">
-    @for (alert of sortedPageAlerts(); track alert.id) {
-      <div [class]="'page-alert ' + getAlertClass(alert.level)">
-        <tn-icon class="alert-icon" [name]="getAlertIcon(alert.level)"></tn-icon>
-        @if (hasDuplicates(alert)) {
+    @for (alert of sortedPageAlerts(); track alert.expansionKey) {
+      @let expanded = isExpanded(alert.expansionKey);
+      <!-- The id only has to be unique within this list, which $index gives without a hash. -->
+      @let expandableId = 'alert-content-' + $index;
+      <div [class]="'page-alert ' + alert.cssClass">
+        <tn-icon class="alert-icon" [name]="alert.icon"></tn-icon>
+        @if (alert.hasDuplicates) {
           <span
             class="duplicate-count-badge"
-            [matTooltip]="getDuplicateTooltip(alert)"
+            [attr.aria-label]="alert.duplicateTooltip"
+            [matTooltip]="alert.duplicateTooltip"
           >
-            {{ getDuplicateCount(alert) }}
+            {{ alert.duplicateCount }}
           </span>
         }
         <div class="alert-content-wrapper">
           <div class="alert-content">
-            <div class="alert-message">
-              @if (isLongMessage(alert.formatted)) {
-                <div
-                  [attr.id]="'alert-content-' + alert.id"
-                  [attr.aria-live]="'polite'"
-                >
-                  @if (isExpanded(alert.id)) {
-                    <span [innerHTML]="alert.formatted"></span>
-                  } @else {
-                    <span [innerHTML]="getTruncatedMessage(alert.formatted)"></span>
+            <!--
+              The whole expandable region, not just the details block: a single alert
+              expands in place, so the text the toggle reveals is the message line itself.
+            -->
+            <div
+              class="alert-expandable"
+              [attr.id]="expandableId"
+              [attr.aria-live]="'polite'"
+            >
+              <div
+                class="alert-message"
+                [innerHTML]="expanded && !alert.hasMultipleObjects ? alert.fullMessage : alert.summary"
+              ></div>
+              @if (expanded && alert.hasExpandedContent) {
+                <div class="alert-details">
+                  @for (message of alert.detailMessages; track message) {
+                    <div class="alert-detail" [innerHTML]="message"></div>
+                  }
+                  @if (alert.contextualHelp) {
+                    <div class="alert-help">{{ alert.contextualHelp | translate }}</div>
+                  }
+                  @if (alert.documentationUrl) {
+                    <a
+                      class="alert-docs-link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      [href]="alert.documentationUrl"
+                    >
+                      {{ 'Learn More' | translate }}
+                    </a>
                   }
                 </div>
-                <button
-                  type="button"
-                  class="toggle-btn"
-                  [attr.aria-expanded]="isExpanded(alert.id)"
-                  [attr.aria-controls]="'alert-content-' + alert.id"
-                  (click)="toggleExpansion(alert.id)"
-                >
-                  {{ (isExpanded(alert.id) ? 'Show Less' : 'Show More') | translate }}
-                </button>
-              } @else {
-                <span [innerHTML]="alert.formatted"></span>
               }
             </div>
-            @if (alert.contextualHelp) {
-              <div class="alert-help">{{ alert.contextualHelp }}</div>
-            }
-            @if (alert.documentationUrl) {
-              <a
-                class="alert-docs-link"
-                target="_blank"
-                rel="noopener noreferrer"
-                [href]="alert.documentationUrl"
+            @if (alert.hasDetails) {
+              <button
+                type="button"
+                class="toggle-btn"
+                [attr.aria-expanded]="expanded"
+                [attr.aria-controls]="expandableId"
+                (click)="toggleExpansion(alert.expansionKey)"
               >
-                {{ 'Learn More' | translate }}
-              </a>
+                {{ (expanded ? 'Show Less' : 'Show More') | translate }}
+              </button>
             }
           </div>
         </div>
@@ -57,8 +68,8 @@
         <button
           type="button"
           class="dismiss-btn"
-          [attr.aria-label]="getDismissAriaLabel(alert)"
-          [matTooltip]="getDismissTooltip(alert)"
+          [attr.aria-label]="alert.dismissAriaLabel"
+          [matTooltip]="alert.dismissTooltip"
           (click)="onDismiss(alert)"
         >
           <tn-icon name="clear" library="material" [attr.aria-hidden]="true"></tn-icon>
