@@ -1,17 +1,5 @@
-.info-message {
-  background-color: var(--primary-bg);
-  border-left: 4px solid var(--primary);
-  border-radius: 4px;
-  margin-bottom: 20px;
-  padding: 16px;
-
-  p {
-    color: var(--fg1);
-    line-height: 1.5;
-    margin: 0;
-  }
-}
-
+// The source disk is a fact about the operation rather than a field, so it sits outside the
+// form section and needs its own surface to read as a panel next to the info banner above it.
 .source-info {
   background-color: var(--bg2);
   border-radius: 4px;
