@@ -3,17 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import {
-  TnCheckboxHarness, TnInputHarness, TnUserAutocompleteHarness,
-} from '@truenas/ui-components';
+import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -44,8 +42,8 @@ describe('CronFormComponent', () => {
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  const getRunAsUser = (): Promise<TnUserAutocompleteHarness> => loader.getHarness(
-    TnUserAutocompleteHarness.with({ selector: '[formControlName="user"]' }),
+  const getRunAsUser = (): Promise<IxUserComboboxHarness> => loader.getHarness(
+    IxUserComboboxHarness.with({ selector: '[formControlName="user"]' }),
   );
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -57,7 +55,6 @@ describe('CronFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      provideTnUserDirectory(),
       mockProvider(LocaleService, {
         timezone: 'America/New_York',
       }),
@@ -100,7 +97,7 @@ describe('CronFormComponent', () => {
       await (await getCheckbox('stdout')).check();
       await (await getCheckbox('stderr')).check();
       await (await getCheckbox('enabled')).check();
-      // `tn-user-autocomplete` is its own CVA, so IxFormHarness — which resolves
+      // `ix-user-combobox` is its own CVA, so IxFormHarness — which resolves
       // only ix-* controls — cannot reach it by label.
       await (await getRunAsUser()).setInputValue('root');
       await (await getRunAsUser()).blur();

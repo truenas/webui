@@ -10,7 +10,6 @@ import {
 import { BehaviorSubject, map } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -77,7 +76,6 @@ describe('AdditionalDetailsSectionComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      provideTnUserDirectory(),
       mockAuth(),
       mockProvider(FilesystemService),
       mockProvider(UserFormStore, {

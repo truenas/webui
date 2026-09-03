@@ -6,7 +6,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnGroupAutocompleteComponent, TnInputComponent, TnSelectComponent,
+  TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
   combineLatest,
@@ -38,6 +38,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -46,7 +47,7 @@ import { SudoCommandsValidatorService } from 'app/pages/credentials/users/user-f
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
-import { TrueNasDirectoryOptions } from 'app/services/truenas-user-directory.service';
+import { DirectoryQueryOptions } from 'app/services/user-directory.service';
 import { UserService } from 'app/services/user.service';
 
 @Component({
@@ -63,7 +64,7 @@ import { UserService } from 'app/services/user.service';
     TnChipInputComponent,
     TnFormFieldComponent,
     TranslateModule,
-    TnGroupAutocompleteComponent,
+    IxGroupComboboxComponent,
     IxExplorerComponent,
     IxPermissionsComponent,
     DetailsTableComponent,
@@ -131,7 +132,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
    * one. A plain object rather than the old stateful provider: the field owns
    * the paging cursor, so nothing has to be reconstructed to reset it.
    */
-  protected readonly primaryGroupOptions: TrueNasDirectoryOptions = {
+  protected readonly primaryGroupOptions: DirectoryQueryOptions = {
     valueField: 'id',
     localOnly: true,
     mutableOnly: true,

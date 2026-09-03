@@ -3,11 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  TnCheckboxHarness, TnGroupChipsHarness, TnInputHarness, TnSelectHarness,
-} from '@truenas/ui-components';
+import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
-import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
@@ -15,6 +12,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { SshConfig } from 'app/interfaces/ssh-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { IxGroupChipsHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -43,8 +41,8 @@ describe('ServiceSshComponent', () => {
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  const getPasswordLoginGroups = (): Promise<TnGroupChipsHarness> => loader.getHarness(
-    TnGroupChipsHarness.with({ selector: '[formControlName="password_login_groups"]' }),
+  const getPasswordLoginGroups = (): Promise<IxGroupChipsHarness> => loader.getHarness(
+    IxGroupChipsHarness.with({ selector: '[formControlName="password_login_groups"]' }),
   );
   const hasInput = async (name: string): Promise<boolean> => (await loader.getAllHarnesses(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -65,7 +63,6 @@ describe('ServiceSshComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      provideTnUserDirectory(),
       mockApi([
         mockCall('group.query', fakeGroupDataSource),
         mockCall('ssh.config', {
@@ -159,8 +156,8 @@ describe('ServiceSshComponent', () => {
     ]);
   });
 
-  // The existence check now lives in `tn-group-chips`, which reaches the system through
-  // TrueNasUserDirectory. It needs a case where it actually fails: the suite-wide
+  // The existence check now lives in `ix-group-chips`, which reaches the system through
+  // UserDirectoryService. It needs a case where it actually fails: the suite-wide
   // `getGroupByNameCached` mock answers `of(null)` for an unknown group, which the directory
   // reads as "exists", so every other test would pass with the validation not wired at all.
   it('blocks Save while a typed group does not exist on the system', async () => {

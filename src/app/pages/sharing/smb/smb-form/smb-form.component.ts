@@ -18,18 +18,8 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  InputType,
-  TnBannerComponent,
-  TnFormErrorsComponent,
-  TnCheckboxComponent,
-  TnChipInputComponent,
-  TnGroupChipsComponent,
-  TnDialog,
-  TnFormFieldComponent,
-  TnFormSectionComponent,
-  TnInputComponent,
-  TnSelectComponent,
-  TnTestIdDirective,
+  InputType, TnBannerComponent, TnFormErrorsComponent, TnCheckboxComponent, TnChipInputComponent, TnDialog,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { endWith, Observable, of } from 'rxjs';
 import {
@@ -60,6 +50,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-chips.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -97,7 +88,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnSelectComponent,
     TnCheckboxComponent,
     TnChipInputComponent,
-    TnGroupChipsComponent,
+    IxGroupChipsComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     TnFormErrorsComponent,

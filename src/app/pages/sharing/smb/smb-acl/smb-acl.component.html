@@ -39,7 +39,7 @@
 
             @if (entry.controls.ae_who.value === nfsAclTag.User) {
               <tn-form-field [label]="'User' | translate" [required]="true">
-                <tn-user-autocomplete
+                <ix-user-combobox
                   formControlName="user"
                   [testId]="'user'"
                   [placeholder]="'User' | translate"
@@ -47,13 +47,13 @@
                   [extraOptions]="initialUserOptions()"
                   [noResultsText]="(usersFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
                   (directoryError)="usersFetchFailed.set(true)"
-                ></tn-user-autocomplete>
+                ></ix-user-combobox>
               </tn-form-field>
             }
 
             @if (entry.controls.ae_who.value === nfsAclTag.UserGroup) {
               <tn-form-field [label]="'Group' | translate" [required]="true">
-                <tn-group-autocomplete
+                <ix-group-combobox
                   formControlName="group"
                   [testId]="'group'"
                   [placeholder]="'Group' | translate"
@@ -61,7 +61,7 @@
                   [extraOptions]="initialGroupOptions()"
                   [noResultsText]="(groupsFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
                   (directoryError)="groupsFetchFailed.set(true)"
-                ></tn-group-autocomplete>
+                ></ix-group-combobox>
               </tn-form-field>
             }
           </div>

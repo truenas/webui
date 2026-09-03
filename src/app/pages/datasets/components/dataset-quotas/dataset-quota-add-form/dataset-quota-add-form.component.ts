@@ -4,10 +4,7 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  InputType, TnFormFieldComponent, TnFormSectionComponent, TnGroupChipsComponent, TnInputComponent,
-  TnUserChipsComponent,
-} from '@truenas/ui-components';
+import { InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
@@ -18,6 +15,8 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-chips.component';
+import { IxUserChipsComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-chips.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
@@ -31,8 +30,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
     TnFormFieldComponent,
     TnInputComponent,
     TranslateModule,
-    TnGroupChipsComponent,
-    TnUserChipsComponent,
+    IxGroupChipsComponent,
+    IxUserChipsComponent,
   ],
 })
 export class DatasetQuotaAddFormComponent extends IxFormHostForm {

@@ -76,7 +76,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   readonly allowNewEntries = input(true);
   /**
    * Debounce time in milliseconds for autocomplete suggestions.
-   * Note: For the user/group fields (tn-user-chips, tn-group-chips), this value is also
+   * Note: For the user/group fields (ix-user-chips, ix-group-chips), this value is also
    * passed to validation, controlling both autocomplete fetch AND validation debouncing.
    * @default defaultDebounceTimeMs (300)
    */

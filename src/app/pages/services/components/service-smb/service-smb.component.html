@@ -118,26 +118,26 @@
         [label]="'Administrators Group' | translate"
         [tooltip]="tooltips.admin_group | translate"
       >
-        <tn-group-autocomplete
+        <ix-group-combobox
           formControlName="admin_group"
           [testId]="'admin-group'"
           [placeholder]="'Administrators Group' | translate"
           [noResultsText]="(groupsFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
           (directoryError)="groupsFetchFailed.set(true)"
-        ></tn-group-autocomplete>
+        ></ix-group-combobox>
       </tn-form-field>
 
       <tn-form-field
         [label]="'Guest Account' | translate"
         [tooltip]="tooltips.guest | translate"
       >
-        <tn-user-autocomplete
+        <ix-user-combobox
           formControlName="guest"
           [testId]="'guest'"
           [placeholder]="'Guest Account' | translate"
           [noResultsText]="(usersFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
           (directoryError)="usersFetchFailed.set(true)"
-        ></tn-user-autocomplete>
+        ></ix-user-combobox>
       </tn-form-field>
 
       <tn-form-field

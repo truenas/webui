@@ -26,9 +26,9 @@
           [tooltip]="tooltips.user | translate"
           [required]="isToApplyUser"
         >
-          <tn-user-autocomplete
+          <ix-user-combobox
             formControlName="owner"
-          ></tn-user-autocomplete>
+          ></ix-user-combobox>
         </tn-form-field>
 
         <tn-form-field [tooltip]="tooltips.applyUser | translate">
@@ -43,9 +43,9 @@
           [tooltip]="tooltips.group | translate"
           [required]="isToApplyGroup"
         >
-          <tn-group-autocomplete
+          <ix-group-combobox
             formControlName="ownerGroup"
-          ></tn-group-autocomplete>
+          ></ix-group-combobox>
         </tn-form-field>
 
         <tn-form-field [tooltip]="tooltips.applyGroup | translate">

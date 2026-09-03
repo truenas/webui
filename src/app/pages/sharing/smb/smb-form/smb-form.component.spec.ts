@@ -6,15 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnBannerComponent,
-  TnBannerHarness,
-  TnCheckboxHarness,
-  TnChipInputHarness,
-  TnGroupChipsHarness,
-  TnDialog,
-  TnFormFieldHarness,
-  TnInputHarness,
-  TnSelectHarness,
+  TnBannerComponent, TnBannerHarness, TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness,
+  TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
@@ -23,7 +16,6 @@ import {
   provideTnFormFieldDismissibleErrors,
   provideTnFormFieldErrors,
 } from 'app/core/providers/tn-form-field-errors.provider';
-import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -48,6 +40,7 @@ import {
 } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { IxGroupChipsHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -120,10 +113,10 @@ describe('SmbFormComponent', () => {
     TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
 
-  // The audit Watch/Ignore lists are `tn-group-chips`, so the control name sits on
+  // The audit Watch/Ignore lists are `ix-group-chips`, so the control name sits on
   // that wrapper — its own harness reaches the chip input nested inside.
-  const getGroupChips = (name: string): Promise<TnGroupChipsHarness> => loader.getHarness(
-    TnGroupChipsHarness.with({ selector: `[formControlName="${name}"]` }),
+  const getGroupChips = (name: string): Promise<IxGroupChipsHarness> => loader.getHarness(
+    IxGroupChipsHarness.with({ selector: `[formControlName="${name}"]` }),
   );
   // tn-select fires a value change even when re-selecting the currently displayed option,
   // which re-runs the purpose presets and wipes edit-loaded values. Mirror the Material
@@ -150,7 +143,6 @@ describe('SmbFormComponent', () => {
       MockComponent(SmbUsersWarningComponent),
     ],
     providers: [
-      provideTnUserDirectory(),
       mockAuth(),
       mockApi([
         mockCall('group.query', [{ id: 1, group: 'test', builtin: false }] as Group[]),

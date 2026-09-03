@@ -8,7 +8,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnFormErrorsComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent,
-  TnGroupAutocompleteComponent, TnPrincipalOption, TnSelectComponent, TnUserAutocompleteComponent,
+  TnSelectComponent,
 } from '@truenas/ui-components';
 import { isNumber } from 'lodash-es';
 import { concatMap, firstValueFrom, from, mergeMap, Observable, of, toArray } from 'rxjs';
@@ -27,10 +27,12 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { TrueNasDirectoryOptions } from 'app/services/truenas-user-directory.service';
+import { DirectoryQueryOptions, PrincipalOption } from 'app/services/user-directory.service';
 import { UserService } from 'app/services/user.service';
 
 type NameOrId = string | number | null;
@@ -60,8 +62,8 @@ interface FormAclEntry {
     TnFormListComponent,
     TnFormListItemComponent,
     TnFormErrorsComponent,
-    TnUserAutocompleteComponent,
-    TnGroupAutocompleteComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     TranslateModule,
   ],
 })
@@ -130,8 +132,8 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
    * are pinned into each field's list with `[extraOptions]`, which is what the
    * old provider's `initialOptions` did.
    */
-  protected readonly initialUserOptions = signal<TnPrincipalOption[]>([]);
-  protected readonly initialGroupOptions = signal<TnPrincipalOption[]>([]);
+  protected readonly initialUserOptions = signal<PrincipalOption[]>([]);
+  protected readonly initialGroupOptions = signal<PrincipalOption[]>([]);
 
   /**
    * Set from `(directoryError)` so the dropdown says "Options cannot be loaded"
@@ -142,12 +144,12 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
   protected readonly groupsFetchFailed = signal(false);
 
   /** SMB ACL entries hold uids/gids, and only SMB-capable principals qualify. */
-  protected readonly smbUserOptions: TrueNasDirectoryOptions = {
+  protected readonly smbUserOptions: DirectoryQueryOptions = {
     queryType: ComboboxQueryType.Smb,
     valueField: 'uid',
   };
 
-  protected readonly smbGroupOptions: TrueNasDirectoryOptions = {
+  protected readonly smbGroupOptions: DirectoryQueryOptions = {
     queryType: ComboboxQueryType.Smb,
     valueField: 'gid',
   };

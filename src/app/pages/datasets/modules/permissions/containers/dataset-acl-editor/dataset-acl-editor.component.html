@@ -27,10 +27,10 @@
         <div class="control">
           <label class="header-label">{{ 'Owner' | translate }}:</label>
           <tn-form-field>
-            <tn-user-autocomplete
+            <ix-user-combobox
               class="owner-combobox"
               formControlName="owner"
-            ></tn-user-autocomplete>
+            ></ix-user-combobox>
           </tn-form-field>
           <tn-form-field [tooltip]="helptext.applyTooltip | translate">
             <tn-checkbox
@@ -43,10 +43,10 @@
         <div class="control">
           <label class="header-label">{{ 'Owner Group' | translate }}:</label>
           <tn-form-field>
-            <tn-group-autocomplete
+            <ix-group-combobox
               class="owner-combobox"
               formControlName="ownerGroup"
-            ></tn-group-autocomplete>
+            ></ix-group-combobox>
           </tn-form-field>
           <tn-form-field [tooltip]="helptext.applyGroupTooltip | translate">
             <tn-checkbox

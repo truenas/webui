@@ -6,7 +6,7 @@ import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angula
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnCheckboxComponent, TnDateInputComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnUserAutocompleteComponent,
+  TnInputComponent,
 } from '@truenas/ui-components';
 import { filter, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
@@ -17,13 +17,14 @@ import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { TrueNasDirectoryOptions } from 'app/services/truenas-user-directory.service';
+import { DirectoryQueryOptions } from 'app/services/user-directory.service';
 
 @Component({
   selector: 'ix-api-key-form',
@@ -35,7 +36,7 @@ import { TrueNasDirectoryOptions } from 'app/services/truenas-user-directory.ser
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    TnUserAutocompleteComponent,
+    IxUserComboboxComponent,
     TnCheckboxComponent,
     TnDateInputComponent,
     ReactiveFormsModule,
@@ -94,7 +95,7 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
    * row creates against. The field is only rendered for a full admin, so no
    * query can be issued for a user who could never see the result.
    */
-  protected readonly userDirectoryOptions: TrueNasDirectoryOptions = {
+  protected readonly userDirectoryOptions: DirectoryQueryOptions = {
     queryParams: this.userQueryParams,
   };
 

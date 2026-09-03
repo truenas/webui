@@ -4,10 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnGroupChipsHarness, TnInputHarness, TnSelectHarness,
+  TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -17,6 +16,7 @@ import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { IxGroupChipsHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
 import { UserService } from 'app/services/user.service';
@@ -74,7 +74,6 @@ describe('PrivilegeFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      provideTnUserDirectory(),
       ...ixFormTestingProviders(),
       mockApi([
         mockCall('group.query', (params) => {
@@ -359,8 +358,8 @@ describe('PrivilegeFormComponent', () => {
   });
 
   // The query shaping these used to assert — the server-side filter, the limit, the
-  // ordering — moved into TrueNasUserDirectory, which is where it is now covered
-  // (truenas-user-directory.service.spec.ts). What is left here is the part this form
+  // ordering — moved into UserDirectoryService, which is where it is now covered
+  // (user-directory.service.spec.ts). What is left here is the part this form
   // still owns: how it narrows the list.
   describe('local groups field', () => {
     beforeEach(() => {
@@ -371,7 +370,7 @@ describe('PrivilegeFormComponent', () => {
 
     it('asks the directory for local groups, built-ins included', async () => {
       const localGroups = await loader.getHarness(
-        TnGroupChipsHarness.with({ selector: '[formControlName="local_groups"]' }),
+        IxGroupChipsHarness.with({ selector: '[formControlName="local_groups"]' }),
       );
       await localGroups.typeText('test');
 

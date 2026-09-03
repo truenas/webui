@@ -7,8 +7,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnGroupAutocompleteComponent,
-  TnInputComponent, TnSelectComponent, TnUserAutocompleteComponent,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
   Observable, catchError, filter, map, of, switchMap,
@@ -30,6 +29,8 @@ import {
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import {
@@ -63,8 +64,8 @@ export interface NfsFormData {
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,
-    TnUserAutocompleteComponent,
-    TnGroupAutocompleteComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     IxListComponent,

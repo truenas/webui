@@ -8,7 +8,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnGroupAutocompleteComponent, TnTestIdDirective, TnTooltipDirective, TnUserAutocompleteComponent,
+  TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
@@ -21,6 +21,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -52,8 +54,8 @@ interface AccessMode {
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnTestIdDirective,
-    TnUserAutocompleteComponent,
-    TnGroupAutocompleteComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     TnCheckboxComponent,
     RequiresRolesDirective,
     TnButtonComponent,

@@ -52,7 +52,6 @@ import {
 import { provideTnSelectLabels } from 'app/core/providers/tn-select-labels.provider';
 import { provideTnTableLabels } from 'app/core/providers/tn-table-labels.provider';
 import { provideTnTablePagerLabels } from 'app/core/providers/tn-table-pager-labels.provider';
-import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { chunkReloadKey, handleChunkLoadError } from 'app/helpers/handle-chunk-load-error';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
@@ -155,7 +154,6 @@ bootstrapApplication(AppComponent, {
     provideTnDialogLabels(),
     provideTnTableLabels(),
     provideTnFallbackLabels(),
-    provideTnUserDirectory(),
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);
       swService.register();

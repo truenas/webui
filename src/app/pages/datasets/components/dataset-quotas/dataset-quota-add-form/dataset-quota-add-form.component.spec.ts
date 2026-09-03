@@ -2,16 +2,17 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  TnGroupChipsHarness, TnInputHarness, TnUserChipsHarness,
-} from '@truenas/ui-components';
+import { TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import {
+  IxGroupChipsHarness,
+  IxUserChipsHarness,
+} from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { UserService } from 'app/services/user.service';
@@ -31,7 +32,6 @@ describe('DatasetQuotaAddFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      provideTnUserDirectory(),
       mockApi([
         mockCall('pool.dataset.set_quota'),
       ]),
@@ -91,7 +91,7 @@ describe('DatasetQuotaAddFormComponent', () => {
       await (await getTnInput('obj_quota')).setValue('2000');
 
       const usersInput = await loader.getHarness(
-        TnUserChipsHarness.with({ selector: '[formControlName="users"]' }),
+        IxUserChipsHarness.with({ selector: '[formControlName="users"]' }),
       );
       await usersInput.selectSuggestion('john');
 
@@ -124,7 +124,7 @@ describe('DatasetQuotaAddFormComponent', () => {
 
     it('adds group quotas when form is submitted', async () => {
       const groupsInput = await loader.getHarness(
-        TnGroupChipsHarness.with({ selector: '[formControlName="groups"]' }),
+        IxGroupChipsHarness.with({ selector: '[formControlName="groups"]' }),
       );
       await groupsInput.addChip('sys');
       await groupsInput.addChip('bin');

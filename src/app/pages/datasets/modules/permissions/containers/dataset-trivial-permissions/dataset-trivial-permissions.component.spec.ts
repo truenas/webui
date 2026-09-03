@@ -3,11 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  TnButtonHarness, TnCheckboxHarness, TnGroupAutocompleteHarness, TnUserAutocompleteHarness,
-} from '@truenas/ui-components';
+import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import {
   mockCall, mockJob, mockApi,
 } from 'app/core/testing/utils/mock-api.utils';
@@ -16,6 +13,10 @@ import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import {
+  IxGroupComboboxHarness,
+  IxUserComboboxHarness,
+} from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
@@ -35,7 +36,6 @@ describe('DatasetTrivialPermissionsComponent', () => {
       datasetId: 'pool/trivial',
     },
     providers: [
-      provideTnUserDirectory(),
       ixFormTestingProviders(),
       mockApi([
         mockCall('pool.dataset.query', [{
@@ -91,11 +91,11 @@ describe('DatasetTrivialPermissionsComponent', () => {
 
   // The user/group fields are their own CVAs, so the ix-* form harness — which resolves
   // only ix-* controls — cannot reach them by label; they are addressed by control name.
-  const getOwner = (): Promise<TnUserAutocompleteHarness> => loader.getHarness(
-    TnUserAutocompleteHarness.with({ selector: '[formControlName="owner"]' }),
+  const getOwner = (): Promise<IxUserComboboxHarness> => loader.getHarness(
+    IxUserComboboxHarness.with({ selector: '[formControlName="owner"]' }),
   );
-  const getOwnerGroup = (): Promise<TnGroupAutocompleteHarness> => loader.getHarness(
-    TnGroupAutocompleteHarness.with({ selector: '[formControlName="ownerGroup"]' }),
+  const getOwnerGroup = (): Promise<IxGroupComboboxHarness> => loader.getHarness(
+    IxGroupComboboxHarness.with({ selector: '[formControlName="ownerGroup"]' }),
   );
 
   it('shows current setting owner and access information', async () => {

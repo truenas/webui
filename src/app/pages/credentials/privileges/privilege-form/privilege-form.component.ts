@@ -9,8 +9,8 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnGroupChipsComponent,
-  TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnSelectComponent,
 } from '@truenas/ui-components';
 import {
   Observable, combineLatest, finalize, map, of, switchMap,
@@ -22,10 +22,11 @@ import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-chips.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { TrueNasDirectoryOptions } from 'app/services/truenas-user-directory.service';
+import { DirectoryQueryOptions } from 'app/services/user-directory.service';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -42,7 +43,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    TnGroupChipsComponent,
+    IxGroupChipsComponent,
     TnSelectComponent,
     TnCheckboxComponent,
     TnButtonComponent,
@@ -81,7 +82,7 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
    * granted to a built-in local group, so this deliberately does not ask for
    * `mutableOnly`.
    */
-  protected readonly localGroupsOptions: TrueNasDirectoryOptions = { localOnly: true };
+  protected readonly localGroupsOptions: DirectoryQueryOptions = { localOnly: true };
 
   protected readonly form = this.formBuilder.group({
     name: ['', [Validators.required]],

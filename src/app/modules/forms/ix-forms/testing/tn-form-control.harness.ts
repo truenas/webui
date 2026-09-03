@@ -1,12 +1,16 @@
 import { HarnessPredicate } from '@angular/cdk/testing';
 import {
-  FormFieldHarnessFilters,
-  TnCheckboxHarness, TnFormFieldHarness, TnGroupAutocompleteHarness, TnGroupChipsHarness,
-  TnInputHarness, TnRadioHarness, TnSelectHarness, TnUserAutocompleteHarness, TnUserChipsHarness,
+  FormFieldHarnessFilters, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import {
   IxFormControlHarness, unreadableControl,
 } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
+import {
+  IxGroupChipsHarness,
+  IxGroupComboboxHarness,
+  IxUserChipsHarness,
+  IxUserComboboxHarness,
+} from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 
 /**
  * Adapter that lets a `tn-form-field`-wrapped tn-* control be driven through the same
@@ -19,7 +23,7 @@ import {
  * the only way to reuse the library's own `getLabel()` instead of re-deriving it.
  *
  * **Supported controls: `tn-input`, `tn-select`, `tn-checkbox`, `tn-radio`, and the
- * `tn-user-*` / `tn-group-*` fields.** A field wrapping anything else (a bare
+ * `ix-user-*` / `ix-group-*` pickers.** A field wrapping anything else (a bare
  * `tn-autocomplete`, `tn-chip-input`, `tn-file-input`, …) still indexes by label,
  * but {@link getValue} and {@link isDisabled} return {@link unreadableControl} — whole-form
  * readers like `getControlValues`/`getDisabledStates` walk every control at once, so a throw there
@@ -42,10 +46,10 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
    * `tn-chip-input` inside — so they need their own branches rather than being
    * reachable through the plain autocomplete/chip harnesses.
    */
-  private userAutocomplete = this.locatorForOptional(TnUserAutocompleteHarness);
-  private groupAutocomplete = this.locatorForOptional(TnGroupAutocompleteHarness);
-  private userChips = this.locatorForOptional(TnUserChipsHarness);
-  private groupChips = this.locatorForOptional(TnGroupChipsHarness);
+  private userAutocomplete = this.locatorForOptional(IxUserComboboxHarness);
+  private groupAutocomplete = this.locatorForOptional(IxGroupComboboxHarness);
+  private userChips = this.locatorForOptional(IxUserChipsHarness);
+  private groupChips = this.locatorForOptional(IxGroupChipsHarness);
   /**
    * White-box: present only while the select shows its placeholder, i.e. nothing is selected.
    * `TnSelectHarness.getDisplayText()` returns the placeholder string rather than '', and the
@@ -141,12 +145,12 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
   }
 
   /** The single-valued user/group field in this form field, if it holds one. */
-  private async principalAutocomplete(): Promise<TnUserAutocompleteHarness | TnGroupAutocompleteHarness | null> {
+  private async principalAutocomplete(): Promise<IxUserComboboxHarness | IxGroupComboboxHarness | null> {
     return (await this.userAutocomplete()) ?? (await this.groupAutocomplete());
   }
 
   /** The list-valued user/group field in this form field, if it holds one. */
-  private async principalChips(): Promise<TnUserChipsHarness | TnGroupChipsHarness | null> {
+  private async principalChips(): Promise<IxUserChipsHarness | IxGroupChipsHarness | null> {
     return (await this.userChips()) ?? (await this.groupChips());
   }
 
@@ -199,7 +203,7 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
     }
     throw new Error(
       `tn-form-field "${await this.getLabelText()}" holds no control TnFormControlHarness can set `
-      + '(supported: tn-input, tn-select, tn-checkbox, tn-radio, tn-user-*/tn-group-*) '
+      + '(supported: tn-input, tn-select, tn-checkbox, tn-radio, ix-user-*/ix-group-*) '
       + '— drive it through its own tn-* harness.',
     );
   }

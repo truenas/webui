@@ -6,7 +6,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent, TnSelectOption, TnSlideToggleComponent, TnUserAutocompleteComponent,
+  TnInputComponent, TnSelectComponent, TnSelectOption, TnSlideToggleComponent,
 } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
@@ -22,6 +22,7 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
@@ -49,7 +50,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TnSlideToggleComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
-    TnUserAutocompleteComponent,
+    IxUserComboboxComponent,
     SshCredentialsSelectComponent,
     SchedulerComponent,
     TranslateModule,

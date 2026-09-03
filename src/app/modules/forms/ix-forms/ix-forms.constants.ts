@@ -2,7 +2,7 @@
  * Default debounce time in milliseconds for autocomplete suggestions and validation.
  *
  * This value is used across ix-chips, ix-combobox, and their specialized wrappers
- * (the tn-user-* / tn-group-* fields in @truenas/ui-components).
+ * (the ix-user-* / ix-group-* pickers).
  *
  * The 300ms value provides a balance between:
  * - Responsive UI (fast enough that users don't notice delay)

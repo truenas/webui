@@ -7,8 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
-  TnFormSectionComponent, TnGroupAutocompleteComponent, TnInputComponent, TnSelectComponent,
-  TnUserAutocompleteComponent,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { catchError, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -25,6 +24,8 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import {
   advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
@@ -97,8 +98,8 @@ type SmbFormValue = ReturnType<ReturnType<typeof createSmbForm>['getRawValue']>;
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,
-    TnUserAutocompleteComponent,
-    TnGroupAutocompleteComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     TnChipInputComponent,
     TnFormListComponent,
     TnFormListItemComponent,

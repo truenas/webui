@@ -1,8 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  TnDirectoryQuery, TnPrincipalOption, TnUserDirectory, TnUserDirectoryLabels,
-} from '@truenas/ui-components';
+import { TnSelectOption } from '@truenas/ui-components';
 import { Observable, from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
@@ -15,20 +13,26 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { UserService } from 'app/services/user.service';
 
 /**
- * How a `tn-user-*` / `tn-group-*` field narrows the list, as this app defines
- * it. Bound with `[directoryOptions]`, and read only here.
+ * The value a user or group field commits. A name at nearly every call site,
+ * but an id where the API takes one — so it is deliberately not narrowed.
+ */
+export type PrincipalValue = string | number;
+
+/** An option in a user or group field: the name is displayed, the value committed. */
+export type PrincipalOption = TnSelectOption<PrincipalValue>;
+
+/**
+ * How an `ix-user-*` / `ix-group-*` field narrows the list. Bound with
+ * `[directoryOptions]`, and interpreted only here.
  *
  * @example
  * ```html
- * <tn-group-autocomplete
+ * <ix-group-combobox
  *   formControlName="group"
  *   [directoryOptions]="{ localOnly: true, valueField: 'id' }" />
  * ```
  */
-// A type alias rather than an interface: only an alias gets TypeScript's implicit
-// index signature, and without one this is not assignable to the library's
-// `TnDirectoryQuery` (`Readonly<Record<string, unknown>>`) when bound in a template.
-export interface TrueNasDirectoryOptions {
+export interface DirectoryQueryOptions {
   /**
    * Which field of the record becomes the control's value. Defaults to the
    * name (`username` / `group`), which is what the API takes nearly everywhere.
@@ -56,34 +60,37 @@ export interface TrueNasDirectoryOptions {
 }
 
 /** Rows per page. Matches `UserService`'s own `limit`. */
-const pageSize = 50;
+export const directoryPageSize = 50;
 
 /**
- * This app's implementation of the component library's user/group store.
+ * The query-shaping layer behind the `ix-user-*` / `ix-group-*` fields.
  *
- * It is the whole seam between the `tn-user-*` / `tn-group-*` fields and
- * TrueNAS: the fields own searching, paging, validation and the create flow,
- * and everything below is the part that is genuinely about this product —
- * which endpoint answers a lookup, how a query is narrowed, which record field
- * is the value, and what "create a user" means.
+ * The fields own searching, paging, validation and the create flow — all of it
+ * generic, and all of it built on `tn-autocomplete` / `tn-chip-input`.
+ * Everything here is the part that is genuinely about TrueNAS: which endpoint
+ * answers a lookup, how a query is narrowed, which record field is the value,
+ * and what "create a user" means.
  *
- * Replaces five near-identical webui wrappers (`ix-user-combobox`,
- * `ix-group-combobox`, `ix-user-chips`, `ix-group-chips`, `ix-user-picker`) and
- * the per-form `BehaviorSubject` → `debounceTime` → `switchMap` → `shareReplay`
- * pipelines that sat beside them.
+ * It stays in webui rather than in `@truenas/ui-components` on purpose — a
+ * `user.query` filter, an SMB flag and an immutable built-in group are product
+ * concepts, not component-library ones.
  */
 @Injectable({ providedIn: 'root' })
-export class TrueNasUserDirectory implements TnUserDirectory {
+export class UserDirectoryService {
   private userService = inject(UserService);
   private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
 
-  readonly pageSize = pageSize;
+  readonly pageSize = directoryPageSize;
 
-  queryUsers(search: string, page: number, options: TnDirectoryQuery): Observable<TnPrincipalOption[]> {
-    const { valueField = 'username', queryType, queryParams } = options as TrueNasDirectoryOptions;
-    const offset = page * pageSize;
+  /**
+   * One page of users matching `search`. `page` is zero-based, and a page
+   * shorter than {@link pageSize} ends pagination.
+   */
+  queryUsers(search: string, page: number, options: DirectoryQueryOptions): Observable<PrincipalOption[]> {
+    const { valueField = 'username', queryType, queryParams } = options;
+    const offset = page * directoryPageSize;
 
     // A field with its own filters cannot go through UserService, whose
     // autocomplete cache takes none — it queries the endpoint directly.
@@ -101,11 +108,12 @@ export class TrueNasUserDirectory implements TnUserDirectory {
     );
   }
 
-  queryGroups(search: string, page: number, options: TnDirectoryQuery): Observable<TnPrincipalOption[]> {
+  /** One page of groups matching `search`, on the same terms as {@link queryUsers}. */
+  queryGroups(search: string, page: number, options: DirectoryQueryOptions): Observable<PrincipalOption[]> {
     const {
       valueField = 'group', queryType, localOnly, mutableOnly, excludedIds = [],
-    } = options as TrueNasDirectoryOptions;
-    const offset = page * pageSize;
+    } = options;
+    const offset = page * directoryPageSize;
 
     let groups$: Observable<Group[]>;
     if (queryType === ComboboxQueryType.Smb) {
@@ -137,6 +145,10 @@ export class TrueNasUserDirectory implements TnUserDirectory {
    * Whether a username resolves. Both caches are consulted first — the fields
    * call this on every validation pass, and a directory-service lookup is slow
    * enough that repeating it per keystroke is felt.
+   *
+   * The fields fail open on a transport error — a lookup that errors, or
+   * completes without emitting, is read as "cannot say" and the name is left
+   * unflagged. Only an emitted `false` marks a name as missing.
    */
   userExists(username: string): Observable<boolean> {
     if (this.userService.isUserInAutocompleteCache(username)) {
@@ -181,10 +193,10 @@ export class TrueNasUserDirectory implements TnUserDirectory {
    *
    * Imported dynamically: this service is provided at the root, and a static
    * import would pull a page component (and its dependency tree) into the
-   * initial bundle for every app that never opens a user picker.
+   * initial bundle for every screen that never opens a user picker.
    */
-  createUser(options: TnDirectoryQuery): Observable<TnPrincipalOption | null> {
-    const { valueField = 'username' } = options as TrueNasDirectoryOptions;
+  createUser(options: DirectoryQueryOptions): Observable<PrincipalOption | null> {
+    const { valueField = 'username' } = options;
 
     return from(import('app/pages/credentials/users/user-form/user-form.component')).pipe(
       switchMap((module) => this.formPanel.open(module.UserFormComponent, {
@@ -192,27 +204,9 @@ export class TrueNasUserDirectory implements TnUserDirectory {
         title: this.translate.instant('Add User'),
       })),
       map(({ response }) => (response
-        ? toOption(response.username, response[valueField as keyof User] as string | number)
+        ? toOption(response.username, response[valueField as keyof User] as PrincipalValue)
         : null)),
     );
-  }
-
-  /**
-   * The library's field copy, translated. Registered alongside the directory
-   * itself so the messages follow the app's language.
-   */
-  labels(): TnUserDirectoryLabels {
-    return {
-      userPlaceholder: this.translate.instant('Type to search users...'),
-      groupPlaceholder: this.translate.instant('Type to search groups...'),
-      addUser: this.translate.instant('Add New'),
-      // `{name}` / `{names}` are the library's own placeholders, substituted
-      // after translation — so they must survive it verbatim.
-      userDoesNotExist: this.translate.instant('User "{name}" does not exist'),
-      groupDoesNotExist: this.translate.instant('Group "{name}" does not exist'),
-      usersDoNotExist: this.translate.instant('The following users do not exist: {names}'),
-      groupsDoNotExist: this.translate.instant('The following groups do not exist: {names}'),
-    };
   }
 
   private queryUsersWithParams(
@@ -235,7 +229,7 @@ export class TrueNasUserDirectory implements TnUserDirectory {
       filters.unshift(['username', '~', `(?i).*${trimmed.replaceAll('\\', '\\\\')}`]);
     }
 
-    return this.api.call('user.query', [filters, { ...baseOptions, offset, limit: pageSize }]);
+    return this.api.call('user.query', [filters, { ...baseOptions, offset, limit: directoryPageSize }]);
   }
 }
 
@@ -243,6 +237,6 @@ export class TrueNasUserDirectory implements TnUserDirectory {
  * Usernames and group names are data, not copy — `ignoreTranslation` keeps them
  * out of the extracted string catalogue while satisfying `TranslatedString`.
  */
-function toOption(label: string, value: unknown): TnPrincipalOption {
-  return { label: ignoreTranslation(label), value: value as string | number };
+function toOption(label: string, value: unknown): PrincipalOption {
+  return { label: ignoreTranslation(label), value: value as PrincipalValue };
 }

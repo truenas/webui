@@ -3,8 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@ang
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnGroupChipsComponent,
-  TnInputComponent, TnSelectComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { Role } from 'app/enums/role.enum';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
@@ -14,6 +13,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-chips.component';
 import {
   advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
@@ -61,7 +61,7 @@ type SshFormValue = ReturnType<ReturnType<typeof createSshForm>['getRawValue']>;
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    TnGroupChipsComponent,
+    IxGroupChipsComponent,
     TnCheckboxComponent,
     TnSelectComponent,
     TranslateModule,

@@ -1,0 +1,18 @@
+<!-- Shared by ix-user-combobox and ix-group-combobox: they differ only in which
+     side of the directory `optionsSource` reads, and in whether a create row is
+     offered at all. -->
+<tn-autocomplete
+  [dataSource]="optionsSource"
+  [dataSourceDebounce]="debounce()"
+  [pageSize]="pageSize()"
+  [placeholder]="resolvedPlaceholder()"
+  [disabled]="disabled()"
+  [allowCustomValue]="allowCustomValue()"
+  [requireSelection]="requireSelection()"
+  [noResultsText]="noResultsText()"
+  [actionOption]="createOption()"
+  [testId]="resolvedTestId()"
+  [ariaLabel]="ariaLabel()"
+  (actionSelected)="onCreate()"
+  (dataSourceError)="directoryError.emit($event)"
+></tn-autocomplete>

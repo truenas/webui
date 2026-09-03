@@ -5,10 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness, TnSlideToggleHarness,
-  TnUserAutocompleteHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Direction } from 'app/enums/direction.enum';
@@ -22,6 +20,7 @@ import {
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -69,7 +68,6 @@ describe('RsyncTaskFormComponent', () => {
       SshCredentialsSelectComponent,
     ],
     providers: [
-      provideTnUserDirectory(),
       mockProvider(LocaleService, {
         timezone: 'America/New_York',
       }),
@@ -139,9 +137,9 @@ describe('RsyncTaskFormComponent', () => {
 
     it('adds a new rsync task when new form is saved', async () => {
       await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }))).setValue('/mnt/new');
-      // `tn-user-autocomplete` is its own CVA — the control name is on the wrapper,
+      // `ix-user-combobox` is its own CVA — the control name is on the wrapper,
       // so it is addressed by that rather than by the field label.
-      const user = await loader.getHarness(TnUserAutocompleteHarness.with({ selector: '[formControlName="user"]' }));
+      const user = await loader.getHarness(IxUserComboboxHarness.with({ selector: '[formControlName="user"]' }));
       await user.setInputValue('steven');
       await user.blur();
       await (await getSelect('direction')).selectOption('Pull');
@@ -205,7 +203,7 @@ describe('RsyncTaskFormComponent', () => {
     it('shows values for an existing rsync task when it is open for edit', async () => {
       expect(await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }))).getValue()).toBe('/mnt/x/oooo');
       expect(await (await loader.getHarness(
-        TnUserAutocompleteHarness.with({ selector: '[formControlName="user"]' }),
+        IxUserComboboxHarness.with({ selector: '[formControlName="user"]' }),
       )).getInputValue()).toBe('root');
       expect(await (await getSelect('direction')).getDisplayText()).toBe('Push');
       expect(await (await getInput('desc')).getValue()).toBe('My rsync task');

@@ -6,11 +6,11 @@ import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { TrueNasUserDirectory } from 'app/services/truenas-user-directory.service';
+import { UserDirectoryService } from 'app/services/user-directory.service';
 import { UserService } from 'app/services/user.service';
 
 /**
- * The seam between the library's `tn-user-*` / `tn-group-*` fields and TrueNAS.
+ * The query-shaping layer behind the `ix-user-*` / `ix-group-*` pickers.
  *
  * Everything here used to be spread across five webui wrapper components and
  * their providers, so these cases are the surviving product behaviour from all
@@ -18,13 +18,13 @@ import { UserService } from 'app/services/user.service';
  * narrow it, which record field becomes the value, and how existence checks use
  * the caches.
  */
-describe('TrueNasUserDirectory', () => {
-  let spectator: SpectatorService<TrueNasUserDirectory>;
-  let directory: TrueNasUserDirectory;
+describe('UserDirectoryService', () => {
+  let spectator: SpectatorService<UserDirectoryService>;
+  let directory: UserDirectoryService;
   let userService: UserService;
 
   const createService = createServiceFactory({
-    service: TrueNasUserDirectory,
+    service: UserDirectoryService,
     providers: [
       mockApi([mockCall('user.query', [])]),
       mockProvider(FormSidePanelService),

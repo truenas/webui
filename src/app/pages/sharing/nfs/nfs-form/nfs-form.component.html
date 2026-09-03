@@ -49,44 +49,44 @@
         [label]="'Maproot User' | translate"
         [tooltip]="helptext.maprootUserTooltip | translate"
       >
-        <tn-user-autocomplete
+        <ix-user-combobox
           formControlName="maproot_user"
           [testId]="'maproot-user'"
           [placeholder]="'Maproot User' | translate"
-        ></tn-user-autocomplete>
+        ></ix-user-combobox>
       </tn-form-field>
 
       <tn-form-field
         [label]="'Maproot Group' | translate"
         [tooltip]="helptext.maprootGroupTooltip | translate"
       >
-        <tn-group-autocomplete
+        <ix-group-combobox
           formControlName="maproot_group"
           [testId]="'maproot-group'"
           [placeholder]="'Maproot Group' | translate"
-        ></tn-group-autocomplete>
+        ></ix-group-combobox>
       </tn-form-field>
 
       <tn-form-field
         [label]="'Mapall User' | translate"
         [tooltip]="helptext.mapallUserTooltip | translate"
       >
-        <tn-user-autocomplete
+        <ix-user-combobox
           formControlName="mapall_user"
           [testId]="'mapall-user'"
           [placeholder]="'Mapall User' | translate"
-        ></tn-user-autocomplete>
+        ></ix-user-combobox>
       </tn-form-field>
 
       <tn-form-field
         [label]="'Mapall Group' | translate"
         [tooltip]="helptext.mapallGroupTooltip | translate"
       >
-        <tn-group-autocomplete
+        <ix-group-combobox
           formControlName="mapall_group"
           [testId]="'mapall-group'"
           [placeholder]="'Mapall Group' | translate"
-        ></tn-group-autocomplete>
+        ></ix-group-combobox>
       </tn-form-field>
 
       @if (hasNfsSecurityField()) {

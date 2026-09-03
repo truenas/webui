@@ -2,15 +2,16 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  TnCheckboxHarness, TnGroupAutocompleteHarness, TnSelectHarness, TnUserAutocompleteHarness,
-} from '@truenas/ui-components';
+import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
+import {
+  IxGroupComboboxHarness,
+  IxUserComboboxHarness,
+} from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { UserService } from 'app/services/user.service';
 import { EditPosixAceComponent } from './edit-posix-ace.component';
@@ -25,7 +26,6 @@ describe('EditPosixAceComponent', () => {
       IxPermissionsComponent,
     ],
     providers: [
-      provideTnUserDirectory(),
       mockProvider(DatasetAclEditorStore, {
         updateSelectedAce: jest.fn(),
         updateSelectedAceValidation: jest.fn(),
@@ -50,11 +50,11 @@ describe('EditPosixAceComponent', () => {
 
   // The user/group fields are their own CVAs, addressed by control name — the
   // control name sits on the wrapper, not on the tn-autocomplete inside it.
-  const getUserField = (): Promise<TnUserAutocompleteHarness> => loader.getHarness(
-    TnUserAutocompleteHarness.with({ selector: '[formControlName="user"]' }),
+  const getUserField = (): Promise<IxUserComboboxHarness> => loader.getHarness(
+    IxUserComboboxHarness.with({ selector: '[formControlName="user"]' }),
   );
-  const getGroupField = (): Promise<TnGroupAutocompleteHarness> => loader.getHarness(
-    TnGroupAutocompleteHarness.with({ selector: '[formControlName="group"]' }),
+  const getGroupField = (): Promise<IxGroupComboboxHarness> => loader.getHarness(
+    IxGroupComboboxHarness.with({ selector: '[formControlName="group"]' }),
   );
 
   beforeEach(() => {

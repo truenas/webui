@@ -11,7 +11,6 @@ import {
   TnSelectHarness,
 } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
-import { provideTnUserDirectory } from 'app/core/providers/tn-user-directory.provider';
 import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
@@ -89,7 +88,6 @@ describe('ServiceSmbComponent', () => {
       TranslateModule.forRoot(),
     ],
     providers: [
-      provideTnUserDirectory(),
       mockAuth(),
       mockApi([
         mockCall('smb.config', smbConfig),

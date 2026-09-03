@@ -76,7 +76,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   readonly allowCustomValue = input(false);
   /**
    * Debounce time in milliseconds for autocomplete suggestions.
-   * Note: For the user/group fields (tn-user-autocomplete, tn-group-autocomplete), this value is also
+   * Note: For the user/group fields (ix-user-combobox, ix-group-combobox), this value is also
    * passed to validation, controlling both autocomplete fetch AND validation debouncing.
    * @default defaultDebounceTimeMs (300)
    */
