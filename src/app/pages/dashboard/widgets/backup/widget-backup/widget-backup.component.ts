@@ -38,6 +38,14 @@ interface BackupRow {
   direction: Direction;
 }
 
+/**
+ * Disabled tasks are not going to run, so they are excluded from the widget counts
+ * to avoid reporting a failure that no longer needs attention.
+ */
+function isTaskEnabled(task: { enabled?: boolean }): boolean {
+  return task.enabled !== false;
+}
+
 @Component({
   selector: 'ix-widget-backup',
   templateUrl: './widget-backup.component.html',
@@ -136,25 +144,25 @@ export class WidgetBackupComponent implements OnInit {
       .subscribe(([replicationTasks, rsyncTasks, cloudSyncTasks, cloudBackupTasks]) => {
         this.isLoading = false;
         this.backups = [
-          ...replicationTasks.map((task) => ({
+          ...replicationTasks.filter(isTaskEnabled).map((task) => ({
             type: BackupType.Replication,
             direction: task.direction,
             state: task.state.state,
             timestamp: task.state.datetime,
           })),
-          ...rsyncTasks.map((task) => ({
+          ...rsyncTasks.filter(isTaskEnabled).map((task) => ({
             type: BackupType.Rsync,
             direction: task.direction,
             state: task.job?.state || (task.locked ? TaskState.Locked : TaskState.Pending),
             timestamp: task.job?.time_finished,
           })),
-          ...cloudSyncTasks.map((task) => ({
+          ...cloudSyncTasks.filter(isTaskEnabled).map((task) => ({
             type: BackupType.CloudSync,
             direction: task.direction,
             state: task.job?.state || (task.locked ? TaskState.Locked : TaskState.Pending),
             timestamp: task.job?.time_finished,
           })),
-          ...cloudBackupTasks.map((task) => ({
+          ...cloudBackupTasks.filter(isTaskEnabled).map((task) => ({
             type: BackupType.CloudBackup,
             direction: Direction.Push,
             state: task.job?.state || (task.locked ? TaskState.Locked : TaskState.Pending),

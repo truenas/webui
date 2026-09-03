@@ -321,6 +321,56 @@ describe('WidgetBackupComponent', () => {
     });
   });
 
+  describe('disabled tasks', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Full,
+        },
+        providers: [
+          mockProvider(WidgetResourcesService, {
+            backups$: of([
+              [],
+              [
+                {
+                  id: 1,
+                  direction: Direction.Pull,
+                  enabled: true,
+                  job: {
+                    state: JobState.Success,
+                    time_finished: { $date: currentDatetime.getTime() - 50000 },
+                  },
+                },
+                {
+                  id: 2,
+                  direction: Direction.Pull,
+                  enabled: false,
+                  job: {
+                    state: JobState.Failed,
+                    time_finished: { $date: currentDatetime.getTime() - 50000 },
+                  },
+                },
+              ] as RsyncTask[],
+              [],
+              [],
+            ]),
+          }),
+        ],
+      });
+
+      widgetBackup = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, WidgetBackupHarness);
+    });
+
+    it('does not count disabled tasks', async () => {
+      const header = await widgetBackup.getHeader();
+      expect(header.icon).toBe('check-circle');
+      expect(header.message).toBeFalsy();
+
+      const tiles = await widgetBackup.getTiles();
+      expect(tiles.Rsync.firstColumn).toEqual(['0 send tasks', '1 receive task', 'Total failed: 0']);
+    });
+  });
+
   describe('fifth mockup variation', () => {
     beforeEach(async () => {
       spectator = createComponent({
