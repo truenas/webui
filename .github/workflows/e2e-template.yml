@@ -1,0 +1,57 @@
+# Build the template the e2e suite's appliances are cloned from.
+#
+# A template is a bare TrueNAS install — admin user set, nothing else — shut
+# down after its first boot and snapshotted. `e2e.yml` clones it per run with
+# middleware's vm.clone, which takes seconds where the ISO install takes
+# minutes. This is E5 of e2e/docs/04-environment-architecture.md in its first
+# form; e2e/ci/appliance.sh holds the mechanics.
+#
+# Weekly, because a template is one nightly frozen: the appliance the suite
+# tests against ages until this runs again. Rebuilding replaces the template
+# of the same nickname, which is only possible when nothing is cloned from it;
+# sharing the `e2e-lab` concurrency group with e2e.yml guarantees that, since
+# every run destroys its clone before releasing the group.
+#
+# Same public-repository rules as e2e.yml: this runs on the lab runner, so
+# schedule and dispatch only, never a pull request.
+
+name: E2E template
+
+on:
+  schedule:
+    - cron: '0 1 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-lab
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux, truenas-lab]
+    environment: e2e-lab
+    timeout-minutes: 45
+    env:
+      # Kept identical to e2e.yml's block on purpose: a template built with
+      # different sizing than the clones expect is a slow way to find out.
+      TN_GUEST: /mnt/tank/github/api-ci-testbed/jenkins/scripts/tn_guest.py
+      TN_GUEST_PYTHON: /mnt/tank/github/venv/bin/python3
+      TN_GUEST_POOL: ${{ vars.E2E_TN_GUEST_POOL || 'tank' }}
+      TN_GUEST_ISO: ${{ vars.E2E_TN_GUEST_ISO }}
+      TN_GUEST_HOST_USER: ${{ vars.E2E_TN_GUEST_HOST_USER || 'root' }}
+      TN_GUEST_HOST_API_KEY: ${{ secrets.TN_GUEST_HOST_API_KEY }}
+      TN_GUEST_HOST_PASSWORD: ${{ secrets.TN_GUEST_HOST_PASSWORD }}
+      TN_GUEST_TEMPLATE: ${{ vars.E2E_TN_GUEST_TEMPLATE || 'e2e-template' }}
+      TN_GUEST_TEMPLATE_PASSWORD: ${{ secrets.TN_GUEST_TEMPLATE_PASSWORD }}
+
+    steps:
+      # Only the lifecycle script is needed; no Node, no dependencies.
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: e2e/ci
+
+      - name: Build the template
+        run: ./e2e/ci/appliance.sh build-template fresh-install
