@@ -277,6 +277,10 @@ describe('CloudBackupFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
+    it('does not show the getting started banner when editing', async () => {
+      expect(await loader.getAllHarnesses(TnBannerHarness)).toHaveLength(0);
+    });
+
     it('shows values for an existing cloud backup task when it is open for edit', async () => {
       expect(await (await getInput('description')).getValue()).toBe('sdf');
       expect(await (await getInput('password')).getValue()).toBe('1234');
