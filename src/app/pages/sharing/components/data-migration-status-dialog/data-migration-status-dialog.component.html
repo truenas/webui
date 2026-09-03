@@ -46,20 +46,24 @@
       <div class="stat-card">
         <div class="stat-label">{{ 'Data Scanned' | translate }}</div>
         <div class="stat-value">
-          {{ stats.count_bytes | ixFileSize }}
-          /
-          {{ stats.total_bytes | ixFileSize }}
+          <span class="stat-part">{{ stats.count_bytes | ixFileSize }} /</span>
+          <span class="stat-part">{{ stats.total_bytes | ixFileSize }}</span>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">{{ 'Items Succeeded' | translate }}</div>
-        <div class="stat-value">{{ stats.success }} / {{ stats.total_items }}</div>
+        <div class="stat-value">
+          <span class="stat-part">{{ stats.success }} /</span>
+          <span class="stat-part">{{ stats.total_items }}</span>
+        </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">{{ 'Failures' | translate }}</div>
-        <div class="stat-value">{{ stats.failures }}</div>
+        <div class="stat-value">
+          <span class="stat-part">{{ stats.failures }}</span>
+        </div>
       </div>
     </div>
   } @else if (isRunning()) {
