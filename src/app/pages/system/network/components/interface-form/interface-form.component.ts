@@ -11,9 +11,11 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
 import {
-  BehaviorSubject, forkJoin, of, Observable,
+  BehaviorSubject, Observable, of,
 } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import {
+  filter, map, switchMap, take,
+} from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
@@ -68,6 +70,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @Component({
@@ -423,12 +426,14 @@ export class InterfaceFormComponent implements OnInit {
     ).subscribe(() => this.loadAvailableFecModes(this.existingInterface.id));
   }
 
-  /** `failover.licensed` is the truth about HA here; product type must not pre-gate it. */
+  /** The `HA` entitlement alone decides HA here; product type must not pre-gate it. */
   private loadFailoverStatus(): void {
-    forkJoin([
-      this.api.call('failover.licensed'),
-      this.api.call('failover.node'),
-    ]).pipe(
+    this.store$.select(selectIsHaLicensed).pipe(
+      take(1),
+      switchMap((isHaLicensed) => (isHaLicensed
+        ? this.api.call('failover.node').pipe(map((failoverNode) => [true, failoverNode] as const))
+        : of([false, null] as const)
+      )),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(([isHaLicensed, failoverNode]) => {

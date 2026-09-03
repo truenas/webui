@@ -327,7 +327,7 @@ export class AlertsPanelComponent implements OnInit {
   }
 
   private checkHaStatus(): void {
-    // `failover.licensed` alone decides HA; product type must not pre-gate it.
+    // The `HA` entitlement alone decides HA; product type must not pre-gate it.
     this.store$.select(selectIsHaLicensed)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isHaLicensed) => {
