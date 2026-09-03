@@ -95,22 +95,13 @@
         <tn-checkbox
           formControlName="spotlight_search"
           [label]="'Enable Search (Spotlight)' | translate"
-          [attr.aria-describedby]="shouldShowTruenasConnectNotice() ? 'truenas-connect-notice' : null"
+          [attr.aria-describedby]="shouldShowSpotlightNotice() ? 'spotlight-notice' : null"
         ></tn-checkbox>
       </tn-form-field>
 
-      @if (shouldShowTruenasConnectNotice()) {
-        <div id="truenas-connect-notice" class="truenas-connect-notice">
-          <span
-            class="truenas-connect-link"
-            role="button"
-            tabindex="0"
-            [attr.aria-label]="'Configure TrueNAS Connect to enable Spotlight Search feature' | translate"
-            (click)="openTruenasConnectModal()"
-            (keydown)="onTruenasConnectLinkKeydown($event)"
-          >
-            {{ 'Configure TrueNAS Connect to enable this feature.' | translate }}
-          </span>
+      @if (shouldShowSpotlightNotice()) {
+        <div id="spotlight-notice" class="truenas-connect-notice">
+          {{ 'Search (Spotlight) is not included in this system\'s license.' | translate }}
         </div>
       }
 

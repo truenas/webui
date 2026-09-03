@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -12,24 +11,23 @@ import {
 import { Observable, of } from 'rxjs';
 import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
 import { SmbMinProtocol } from 'app/enums/smb-min-protocol.enum';
-import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { SmbConfig, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
 import { SmbShare, SmbSharePurpose } from 'app/interfaces/smb-share.interface';
-import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UserService } from 'app/services/user.service';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 const smbConfig = {
   id: 1,
@@ -60,10 +58,6 @@ describe('ServiceSmbComponent', () => {
   let loader: HarnessLoader;
   let api: ApiService;
   let store$: MockStore;
-
-  const tncConfigSignal = signal<TruenasConnectConfig>({
-    status: TruenasConnectStatus.Configured,
-  } as TruenasConnectConfig);
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -125,13 +119,10 @@ describe('ServiceSmbComponent', () => {
         getUserByNameCached: (username: string) => of({ username } as User),
         getGroupByNameCached: (groupName: string) => of({ group: groupName }),
       }),
-      mockProvider(TruenasConnectService, {
-        config: tncConfigSignal,
-        openStatusModal: jest.fn(),
-      }),
       provideMockStore({
         selectors: [
-          { selector: selectIsEnterprise, value: false },
+          // Loaded map with no gated keys, i.e. entitled to everything.
+          { selector: selectEntitlements, value: {} },
           { selector: selectIsHaLicensed, value: false },
         ],
       }),
@@ -139,10 +130,6 @@ describe('ServiceSmbComponent', () => {
   });
 
   beforeEach(() => {
-    tncConfigSignal.set({
-      status: TruenasConnectStatus.Configured,
-    } as TruenasConnectConfig);
-
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
@@ -410,40 +397,27 @@ describe('ServiceSmbComponent', () => {
     }]);
   });
 
-  describe('TrueNAS Connect validation', () => {
-    it('should disable Spotlight checkbox when TrueNAS Connect is not configured', async () => {
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Disabled,
-      } as TruenasConnectConfig);
+  describe('Spotlight search (TRUESEARCH entitlement)', () => {
+    const denied = {
+      [EntitlementFeature.TrueSearch]: {
+        entitled: false,
+        reason: EntitlementReason.KeyMissing,
+        message: "This system's license does not include TrueSearch.",
+      },
+    };
 
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      toggleAdvancedSettings();
-
-      const searchCheckbox = await getCheckbox('spotlight_search');
-      expect(await searchCheckbox.isDisabled()).toBe(true);
-    });
-
-    it('should enable Spotlight checkbox when TrueNAS Connect is configured', async () => {
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Configured,
-      } as TruenasConnectConfig);
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
+    it('enables the Spotlight checkbox and shows no notice when entitled to TRUESEARCH', async () => {
       toggleAdvancedSettings();
 
       const searchCheckbox = await getCheckbox('spotlight_search');
       expect(await searchCheckbox.isDisabled()).toBe(false);
+      expect(spectator.query('#spotlight-notice')).toBeFalsy();
     });
 
-    it('should enable Spotlight checkbox when TrueNAS Connect becomes configured', async () => {
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Disabled,
-      } as TruenasConnectConfig);
-
+    it('disables the Spotlight checkbox and shows a licensing notice when not entitled to TRUESEARCH', async () => {
+      // The facade caches the per-feature signal, so the override needs refreshState to reach it.
+      store$.overrideSelector(selectEntitlements, denied);
+      store$.refreshState();
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
@@ -452,185 +426,9 @@ describe('ServiceSmbComponent', () => {
       const searchCheckbox = await getCheckbox('spotlight_search');
       expect(await searchCheckbox.isDisabled()).toBe(true);
 
-      // Status changes to configured
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Configured,
-      } as TruenasConnectConfig);
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      expect(await searchCheckbox.isDisabled()).toBe(false);
-    });
-
-    it('should show TrueNAS Connect notice when not configured', async () => {
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Disabled,
-      } as TruenasConnectConfig);
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      toggleAdvancedSettings();
-
-      const notice = spectator.query('.truenas-connect-notice');
+      const notice = spectator.query('#spotlight-notice');
       expect(notice).toBeTruthy();
-      expect(notice.textContent).toContain('Configure TrueNAS Connect to enable this feature.');
-    });
-
-    it('should not show TrueNAS Connect notice when configured', async () => {
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Configured,
-      } as TruenasConnectConfig);
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      toggleAdvancedSettings();
-
-      const notice = spectator.query('.truenas-connect-notice');
-      expect(notice).toBeFalsy();
-    });
-
-    it('should open TrueNAS Connect modal when clicking the notice link', async () => {
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Disabled,
-      } as TruenasConnectConfig);
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      toggleAdvancedSettings();
-
-      const truenasConnectService = spectator.inject(TruenasConnectService);
-
-      const noticeLink = spectator.query('.truenas-connect-link');
-      spectator.click(noticeLink);
-
-      expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
-    });
-
-    it('should open TrueNAS Connect modal when pressing Enter on the notice link', async () => {
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Disabled,
-      } as TruenasConnectConfig);
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      toggleAdvancedSettings();
-
-      const truenasConnectService = spectator.inject(TruenasConnectService);
-
-      const noticeLink = spectator.query('.truenas-connect-link') as HTMLElement;
-      spectator.dispatchKeyboardEvent(noticeLink, 'keydown', 'Enter');
-
-      expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
-    });
-
-    it('should open TrueNAS Connect modal when pressing Space on the notice link', async () => {
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Disabled,
-      } as TruenasConnectConfig);
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      toggleAdvancedSettings();
-
-      const truenasConnectService = spectator.inject(TruenasConnectService);
-
-      const noticeLink = spectator.query('.truenas-connect-link') as HTMLElement;
-      spectator.dispatchKeyboardEvent(noticeLink, 'keydown', ' ');
-
-      expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
-    });
-
-    it('should not open TrueNAS Connect modal when pressing other keys on the notice link', async () => {
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Disabled,
-      } as TruenasConnectConfig);
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      toggleAdvancedSettings();
-
-      const truenasConnectService = spectator.inject(TruenasConnectService);
-
-      const noticeLink = spectator.query('.truenas-connect-link') as HTMLElement;
-      spectator.dispatchKeyboardEvent(noticeLink, 'keydown', 'Tab');
-
-      expect(truenasConnectService.openStatusModal).not.toHaveBeenCalled();
-    });
-
-    it('should have proper accessibility attributes on the notice link', async () => {
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Disabled,
-      } as TruenasConnectConfig);
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      toggleAdvancedSettings();
-
-      const noticeLink = spectator.query('.truenas-connect-link') as HTMLElement;
-      expect(noticeLink.getAttribute('role')).toBe('button');
-      expect(noticeLink.getAttribute('tabindex')).toBe('0');
-    });
-
-    it('should enable Spotlight checkbox on Enterprise system even if TrueNAS Connect is not configured', async () => {
-      store$.overrideSelector(selectIsEnterprise, true);
-      store$.refreshState();
-
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Disabled,
-      } as TruenasConnectConfig);
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      toggleAdvancedSettings();
-
-      const searchCheckbox = await getCheckbox('spotlight_search');
-      expect(await searchCheckbox.isDisabled()).toBe(false);
-    });
-
-    it('should not show TrueNAS Connect notice on Enterprise system', async () => {
-      store$.overrideSelector(selectIsEnterprise, true);
-      store$.refreshState();
-
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Disabled,
-      } as TruenasConnectConfig);
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      toggleAdvancedSettings();
-
-      const notice = spectator.query('.truenas-connect-notice');
-      expect(notice).toBeFalsy();
-    });
-
-    it('should disable Spotlight checkbox on non-Enterprise system without TrueNAS Connect', async () => {
-      store$.overrideSelector(selectIsEnterprise, false);
-      store$.refreshState();
-
-      tncConfigSignal.set({
-        status: TruenasConnectStatus.Disabled,
-      } as TruenasConnectConfig);
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      toggleAdvancedSettings();
-
-      const searchCheckbox = await getCheckbox('spotlight_search');
-      expect(await searchCheckbox.isDisabled()).toBe(true);
-
-      const notice = spectator.query('.truenas-connect-notice');
-      expect(notice).toBeTruthy();
+      expect(notice).toHaveText("Search (Spotlight) is not included in this system's license.");
     });
   });
 

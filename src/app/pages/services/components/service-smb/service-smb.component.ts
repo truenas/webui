@@ -13,10 +13,10 @@ import {
   BehaviorSubject, catchError, debounceTime, distinctUntilChanged, of, shareReplay, switchMap, tap,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
 import { SmbMinProtocol, smbMinProtocolLabels } from 'app/enums/smb-min-protocol.enum';
-import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
@@ -34,14 +34,13 @@ import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/
 import {
   advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { UserService } from 'app/services/user.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 interface BindIp {
   bindIp: string;
@@ -112,10 +111,10 @@ type SmbFormValue = ReturnType<ReturnType<typeof createSmbForm>['getRawValue']>;
 })
 export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> implements OnInit {
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
-  private truenasConnectService = inject(TruenasConnectService);
   private userService = inject(UserService);
   private existenceValidation = inject(UserGroupExistenceValidationService);
   private store$ = inject(Store);
@@ -125,29 +124,21 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
   protected isSmb1Enabled = signal(false);
   protected readonly minimumProtocolOptions = mapToOptions(smbMinProtocolLabels, this.translate);
 
-  protected isEnterprise = toSignal(this.store$.select(selectIsEnterprise), { initialValue: false });
   protected isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed), { initialValue: false });
 
-  protected isTruenasConnectConfigured = computed(() => {
-    const config = this.truenasConnectService.config();
-    return config?.status === TruenasConnectStatus.Configured;
-  });
+  private readonly hasTrueSearch = this.entitlements.entitled(EntitlementFeature.TrueSearch);
 
-  protected isSpotlightEnabled = computed(() => {
-    return this.isEnterprise() || this.isTruenasConnectConfigured();
-  });
+  protected isSpotlightEnabled = computed(() => Boolean(this.hasTrueSearch()));
 
-  protected shouldShowTruenasConnectNotice = computed(() => {
-    return !this.isEnterprise() && !this.isTruenasConnectConfigured();
-  });
+  /** `=== false` so the licensing notice is not shown while entitlements are still loading. */
+  protected shouldShowSpotlightNotice = computed(() => this.hasTrueSearch() === false);
 
   protected isStatefulFailoverEnabled = computed(() => {
     return this.isHaLicensed() && !this.hasIncompatibleShares() && !this.isSmb1Enabled();
   });
 
   /**
-   * Reactively enable/disable the Spotlight checkbox based on TrueNAS Connect configuration
-   * and Enterprise status. On non-Enterprise systems, Spotlight requires TrueNAS Connect.
+   * Reactively enable/disable the Spotlight checkbox on the TRUESEARCH entitlement.
    *
    * Reactively enable/disable the Stateful Failover checkbox based on HA license,
    * incompatible shares, and SMB1 status.
@@ -335,17 +326,6 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
     this.form.controls.bindip.removeAt(index);
   }
 
-  protected openTruenasConnectModal(): void {
-    this.truenasConnectService.openStatusModal();
-  }
-
-  protected onTruenasConnectLinkKeydown(event: KeyboardEvent): void {
-    if (event.key !== 'Enter' && event.key !== ' ') {
-      return;
-    }
-    event.preventDefault(); // Prevents page scroll on Space
-    this.openTruenasConnectModal();
-  }
 
   // Built from `allValues`, not `changedValues`, so the disabled controls — `spotlight_search` /
   // `stateful_failover` — still reach the API.
