@@ -596,19 +596,73 @@ export const smartAlertRegistry: SmartAlertConfig = {
       ],
     },
 
-    // Applications
-    [AlertClassName.FailuresInAppMigration]: {
-      category: SmartAlertCategory.Applications,
-      relatedMenuPath: ['apps', 'installed'],
-      actions: [{
-        label: T('Go to Applications'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('apps', 'material'),
-        route: ['/apps', 'installed'],
-        primary: true,
-      }],
+    // Audit
+    [AlertClassName.AuditBackendSetup]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'audit'],
+      contextualHelp: T('The audit service could not start its storage backend, so no audit records are being written.'),
+      actions: [
+        {
+          label: T('Go to Audit'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('clipboard-text', 'mdi'),
+          route: ['/system', 'audit'],
+          primary: true,
+        },
+      ],
     },
 
+    [AlertClassName.AuditServiceHealth]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'audit'],
+      contextualHelp: T('The audit service failed a health check. Audit records may be incomplete until it recovers.'),
+      actions: [
+        {
+          label: T('Go to Audit'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('clipboard-text', 'mdi'),
+          route: ['/system', 'audit'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.AuditDatabaseCorrupted]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'audit'],
+      contextualHelp: T('The audit database contains corrupted records. Export what you need and contact support before the damaged rows are pruned.'),
+      actions: [
+        {
+          label: T('Go to Audit'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('clipboard-text', 'mdi'),
+          route: ['/system', 'audit'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.TrueNasVerifyServiceChangeDetection]: {
+      category: SmartAlertCategory.Security,
+      contextualHelp: T('The verify service found files in the root filesystem that differ from the shipped image. Unexpected changes there should be investigated.'),
+      actions: [
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+          primary: true,
+        },
+      ],
+    },
+
+    // Applications
     [AlertClassName.AppUpdate]: {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps', 'installed'],
@@ -643,6 +697,36 @@ export const smartAlertRegistry: SmartAlertConfig = {
         route: ['/apps', 'installed'],
         primary: true,
       }],
+    },
+
+    [AlertClassName.CatalogNotHealthy]: {
+      category: SmartAlertCategory.Applications,
+      relatedMenuPath: ['apps', 'available'],
+      contextualHelp: T('The application catalog is not healthy, so app listings and updates may be out of date.'),
+      actions: [
+        {
+          label: T('Browse Applications'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('apps', 'material'),
+          route: ['/apps', 'available'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.CatalogSyncFailed]: {
+      category: SmartAlertCategory.Applications,
+      relatedMenuPath: ['apps', 'available'],
+      contextualHelp: T('TrueNAS could not sync the application catalog. Check outbound network access and DNS.'),
+      actions: [
+        {
+          label: T('Browse Applications'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('apps', 'material'),
+          route: ['/apps', 'available'],
+          primary: true,
+        },
+      ],
     },
 
     // Certificates
@@ -694,18 +778,6 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    [AlertClassName.CertificateRevoked]: {
-      category: SmartAlertCategory.Security,
-      relatedMenuPath: ['credentials', 'certificates'],
-      actions: [{
-        label: T('Go to Certificates'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('certificate', 'mdi'),
-        route: ['/credentials', 'certificates'],
-        primary: true,
-      }],
-    },
-
     [AlertClassName.WebUiCertificateSetupFailed]: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'general'],
@@ -719,128 +791,106 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    WebUiBindAddressV2: {
-      category: SmartAlertCategory.System,
-      relatedMenuPath: ['system', 'general'],
-      actions: [{
-        label: T('Go to GUI Settings'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('desktop-classic', 'mdi'),
-        route: ['/system', 'general'],
-        fragment: 'gui-settings',
-        primary: true,
-      }],
-    },
-
     // Directory Services
-    [AlertClassName.ActiveDirectoryDomainBind]: {
+    [AlertClassName.DirectoryServiceBind]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['credentials', 'directory-services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/directoryservices/configadscale/',
-      actions: [{
-        label: T('Go To Directory Services'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('sitemap', 'mdi'),
-        route: ['/credentials', 'directory-services'],
-        primary: true,
-      }],
+      contextualHelp: T('The bind to the directory service is not healthy. Check the service account credentials and that the domain controllers are reachable.'),
+      actions: [
+        {
+          label: T('Go To Directory Services'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('account-group', 'mdi'),
+          route: ['/credentials', 'directory-services'],
+          primary: true,
+        },
+      ],
     },
 
-    [AlertClassName.ActiveDirectoryDomainHealth]: {
+    [AlertClassName.DirectoryServiceDnsUpdate]: {
       category: SmartAlertCategory.Services,
       relatedMenuPath: ['credentials', 'directory-services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/directoryservices/configadscale/',
-      actions: [{
-        label: T('Go To Directory Services'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('sitemap', 'mdi'),
-        route: ['/credentials', 'directory-services'],
-        primary: true,
-      }],
-    },
-
-    [AlertClassName.LdapBind]: {
-      category: SmartAlertCategory.Services,
-      relatedMenuPath: ['credentials', 'directory-services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/credentials/directoryservices/configldapscale/',
-      actions: [{
-        label: T('Go To Directory Services'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('sitemap', 'mdi'),
-        route: ['/credentials', 'directory-services'],
-        primary: true,
-      }],
+      contextualHelp: T('TrueNAS could not update its DNS records in the directory domain, so clients may fail to resolve this server by name.'),
+      actions: [
+        {
+          label: T('Go To Directory Services'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('account-group', 'mdi'),
+          route: ['/credentials', 'directory-services'],
+          primary: true,
+        },
+      ],
     },
 
     // Network
     [AlertClassName.NoCriticalFailoverInterfaceFound]: {
       category: SmartAlertCategory.Network,
-      relatedMenuPath: ['network'],
+      relatedMenuPath: ['system', 'network'],
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('lan', 'mdi'),
-        route: ['/network'],
+        route: ['/system', 'network'],
         primary: true,
       }],
     },
 
     [AlertClassName.NetworkCardsMismatchOnActiveNode]: {
       category: SmartAlertCategory.Network,
-      relatedMenuPath: ['network'],
+      relatedMenuPath: ['system', 'network'],
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('lan', 'mdi'),
-        route: ['/network'],
+        route: ['/system', 'network'],
         primary: true,
       }],
     },
 
     [AlertClassName.NetworkCardsMismatchOnStandbyNode]: {
       category: SmartAlertCategory.Network,
-      relatedMenuPath: ['network'],
+      relatedMenuPath: ['system', 'network'],
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('lan', 'mdi'),
-        route: ['/network'],
+        route: ['/system', 'network'],
         primary: true,
       }],
     },
 
     [AlertClassName.BondMissingPorts]: {
       category: SmartAlertCategory.Network,
-      relatedMenuPath: ['network'],
+      relatedMenuPath: ['system', 'network'],
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('lan', 'mdi'),
-        route: ['/network'],
+        route: ['/system', 'network'],
         primary: true,
       }],
     },
 
     [AlertClassName.BondInactivePorts]: {
       category: SmartAlertCategory.Network,
-      relatedMenuPath: ['network'],
+      relatedMenuPath: ['system', 'network'],
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('lan', 'mdi'),
-        route: ['/network'],
+        route: ['/system', 'network'],
         primary: true,
       }],
     },
 
     [AlertClassName.BondNoActivePorts]: {
       category: SmartAlertCategory.Network,
-      relatedMenuPath: ['network'],
+      relatedMenuPath: ['system', 'network'],
       actions: [{
         label: T('Go to Network Interfaces'),
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('lan', 'mdi'),
-        route: ['/network'],
+        route: ['/system', 'network'],
         primary: true,
       }],
     },
@@ -870,6 +920,183 @@ export const smartAlertRegistry: SmartAlertConfig = {
         fragment: 'failover-card',
         primary: true,
       }],
+    },
+
+    [AlertClassName.FailoverFailed]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'advanced'],
+      contextualHelp: T('A failover attempt did not complete. The pair may be left without a healthy active controller until this is resolved.'),
+      actions: [
+        {
+          label: T('Go to Failover Settings'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('sync', 'mdi'),
+          route: ['/system', 'advanced'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.FailoverStatusCheckFailed]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'advanced'],
+      contextualHelp: T('TrueNAS could not determine the failover state of the other controller. Check the heartbeat connection between the controllers.'),
+      actions: [
+        {
+          label: T('Go to Failover Settings'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('sync', 'mdi'),
+          route: ['/system', 'advanced'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.FailoverRemoteSystemInaccessible]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'advanced'],
+      contextualHelp: T('The other controller cannot be reached. Failover is not available while it stays inaccessible.'),
+      actions: [
+        {
+          label: T('Go to Failover Settings'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('sync', 'mdi'),
+          route: ['/system', 'advanced'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.FailoverReboot]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'advanced'],
+      contextualHelp: T('A failover event rebooted this controller. Review the failover configuration if this was not expected.'),
+      actions: [
+        {
+          label: T('Go to Failover Settings'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('sync', 'mdi'),
+          route: ['/system', 'advanced'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.FencedReboot]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'advanced'],
+      contextualHelp: T('Fenced rebooted this controller to protect the pool from being imported on both controllers at once.'),
+      actions: [
+        {
+          label: T('Go to Failover Settings'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('sync', 'mdi'),
+          route: ['/system', 'advanced'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.FailoverInterfaceNotFound]: {
+      category: SmartAlertCategory.Network,
+      relatedMenuPath: ['system', 'network'],
+      contextualHelp: T('The internal failover interface is missing. The controllers cannot exchange heartbeats without it.'),
+      actions: [
+        {
+          label: T('Go to Network Interfaces'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('network', 'mdi'),
+          route: ['/system', 'network'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.VrrpStatesDoNotAgree]: {
+      category: SmartAlertCategory.Network,
+      relatedMenuPath: ['system', 'network'],
+      contextualHelp: T('The controllers disagree about which one holds the VRRP master role. Check the network path between them.'),
+      actions: [
+        {
+          label: T('Go to Network Interfaces'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('network', 'mdi'),
+          route: ['/system', 'network'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.FailoverKmipKeysSyncFailed]: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'kmip'],
+      contextualHelp: T('KMIP keys could not be synced to the other controller, so it may not be able to unlock encrypted data after a failover.'),
+      actions: [
+        {
+          label: T('Go to KMIP'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('key-variant', 'mdi'),
+          route: ['/credentials', 'kmip'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.TrueNasVersionsMismatch]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'update'],
+      contextualHelp: T('The controllers are running different TrueNAS versions. Failover is not supported until both run the same version.'),
+      actions: [
+        {
+          label: T('View Updates'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('update', 'mdi'),
+          route: ['/system', 'update'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.DisksAreNotPresentOnActiveNode]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('Disks visible to the standby controller are missing on the active controller. Check cabling and expansion shelf connections.'),
+      actions: [
+        {
+          label: T('Go to Disks'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('harddisk', 'mdi'),
+          route: ['/storage', 'disks'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.DisksAreNotPresentOnStandbyNode]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('Disks visible to the active controller are missing on the standby controller, which would prevent it from importing the pool after a failover.'),
+      actions: [
+        {
+          label: T('Go to Disks'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('harddisk', 'mdi'),
+          route: ['/storage', 'disks'],
+          primary: true,
+        },
+      ],
     },
 
     // JBOF
@@ -934,9 +1161,12 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // Disks & SMART
-    [AlertClassName.Smart]: {
+    // The single SMART alert class was split into per-condition classes. Each one names a
+    // disk, so they all lead to the disk list.
+    [AlertClassName.SmartUncorrectedErrors]: {
       category: SmartAlertCategory.Hardware,
       relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('The disk reported errors it could not correct on its own. Check the disk in the list below and plan a replacement if the count keeps climbing.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
       actions: [{
         label: T('Go to Disks'),
@@ -947,16 +1177,407 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    [AlertClassName.Smartd]: {
-      category: SmartAlertCategory.Services,
-      relatedMenuPath: ['system', 'services'],
+    [AlertClassName.SmartFailedSelfTest]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('The disk failed its SMART self-test. Review the disk and replace it before it fails outright.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
       actions: [{
-        label: T('Go to Services'),
+        label: T('Go to Disks'),
         type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('cog', 'mdi'),
-        route: ['/system', 'services'],
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
         primary: true,
       }],
+    },
+
+    [AlertClassName.SmartSpareBlockCount]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('The disk has almost exhausted the spare blocks it uses to retire failing sectors. Replace it.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.SmartEraseCycleCount]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('The SSD is approaching the end of its rated write endurance. Plan a replacement.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.DiskTemperatureTooHot]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('The disk is running above its rated temperature. Check chassis airflow and fan operation.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.DifFormatted]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('The disk is formatted with the Data Integrity Feature (DIF) and cannot be used by ZFS. Reformat it without DIF before adding it to a pool.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.UsbStorage]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      contextualHelp: T('A USB storage device was connected. USB devices are not supported for pool data and can drop off the bus without warning.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('harddisk', 'mdi'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
+    // Enclosure, sensors and chassis hardware
+    [AlertClassName.EnclosureUnhealthy]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('An enclosure element is reporting a fault. Open the enclosure view to find the failed element.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.EnclosureHealthy]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('The enclosure recovered and all of its elements are reporting healthy again.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.PowerSupply]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('A power supply is not delivering power. Check that it is seated and that its power cord is connected.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.Sensor]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('A chassis sensor is reading outside its working range. Check fans, airflow and ambient temperature.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+      ],
+    },
+
+    // NVDIMM alerts previously relied on a regex fallback in patternCategories.
+    // They are mapped explicitly here so the routing no longer depends on the alert wording.
+    [AlertClassName.Nvdimm]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('An NVDIMM is reporting a fault. NVDIMM failures put write-cached data at risk, so raise a support case.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.NvdimmEsLifetimeCritical]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('The NVDIMM energy source is nearly exhausted and may no longer be able to flush cached writes on power loss. Replace it.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.NvdimmEsLifetimeWarning]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('The NVDIMM energy source is wearing out. Plan its replacement.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.NvdimmMemoryModLifetimeCritical]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('The NVDIMM memory module is nearly at the end of its rated life. Replace it.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.NvdimmMemoryModLifetimeWarning]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('The NVDIMM memory module is wearing out. Plan its replacement.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.NvdimmInvalidFirmwareVersion]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('The NVDIMM is running a firmware version that is not supported by this release. Contact support for a firmware update.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    [AlertClassName.NvdimmRecommendedFirmwareVersion]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('A newer NVDIMM firmware version is recommended for this release.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('server', 'mdi'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+        },
+      ],
+    },
+
+    // Boot media wear. SATA DOMs are the boot devices on this hardware.
+    [AlertClassName.SataDomWearCritical]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'boot'],
+      contextualHelp: T('The boot SATA DOM has nearly exhausted its write endurance. Replace it before it fails.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/boot/managebootenviron/',
+      actions: [{
+        label: T('Manage Boot Environments'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('layers', 'mdi'),
+        route: bootListElements.anchorRouterLink,
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.SataDomWearWarning]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'boot'],
+      contextualHelp: T('The boot SATA DOM is wearing out. Plan its replacement.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/boot/managebootenviron/',
+      actions: [{
+        label: T('Manage Boot Environments'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('layers', 'mdi'),
+        route: bootListElements.anchorRouterLink,
+        primary: true,
+      }],
+    },
+
+    // These conditions need physical attention and have no page to send the user to, so they
+    // are categorized and given a support link but deliberately badge no menu.
+    // NOTE: IPMISEL currently falls through to the /ipmi/ pattern rule and badges Network,
+    // which is wrong — webui has had no IPMI page since the Network rework.
+    [AlertClassName.IpmiSel]: {
+      category: SmartAlertCategory.Hardware,
+      contextualHelp: T('The IPMI system event log recorded a hardware event. Review the event log from the BMC web interface.'),
+      actions: [
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.IpmiSelSpaceLeft]: {
+      category: SmartAlertCategory.Hardware,
+      contextualHelp: T('The IPMI system event log is nearly full and will stop recording new events. Clear it from the BMC web interface.'),
+      actions: [
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.MemoryErrors]: {
+      category: SmartAlertCategory.Hardware,
+      contextualHelp: T('The system reported memory errors it could not correct. Faulty memory can corrupt data — raise a support case.'),
+      actions: [
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.MemorySizeMismatch]: {
+      category: SmartAlertCategory.Hardware,
+      contextualHelp: T('The controllers of this HA pair report different amounts of memory. They should be configured identically.'),
+      actions: [
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.OldBiosVersion]: {
+      category: SmartAlertCategory.Hardware,
+      contextualHelp: T('The system is running an outdated BIOS. Contact support for the recommended version and the update procedure.'),
+      actions: [
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('help-circle', 'mdi'),
+          externalUrl: 'https://support.ixsystems.com',
+          primary: true,
+        },
+      ],
     },
 
     // KMIP
@@ -1013,18 +1634,79 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     // NFS
-    [AlertClassName.NfsBindAddress]: {
+    [AlertClassName.NfsHostListExcessive]: {
       category: SmartAlertCategory.Services,
-      relatedMenuPath: ['system', 'services'],
-      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/services/nfsservicescale/',
-      actions: [{
-        label: T('Go to NFS Service'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('folder-network', 'mdi'),
-        route: ['/system', 'services'],
-        fragment: 'nfs',
-        primary: true,
-      }],
+      relatedMenuPath: ['sharing', 'nfs'],
+      contextualHelp: T('An NFS share lists so many hosts that the export cannot be written. Use networks instead of individual hosts to shorten the list.'),
+      actions: [
+        {
+          label: T('Go to NFS Shares'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('folder-network', 'mdi'),
+          route: ['/sharing', 'nfs'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.NfsNetworkListExcessive]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'nfs'],
+      contextualHelp: T('An NFS share lists so many networks that the export cannot be written. Consolidate the list into wider subnets.'),
+      actions: [
+        {
+          label: T('Go to NFS Shares'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('folder-network', 'mdi'),
+          route: ['/sharing', 'nfs'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.NfsBlockedByExportsDir]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'nfs'],
+      contextualHelp: T('Entries in /etc/exports.d are blocking the NFS server from starting. Remove them so TrueNAS can manage the exports.'),
+      actions: [
+        {
+          label: T('Go to NFS Shares'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('folder-network', 'mdi'),
+          route: ['/sharing', 'nfs'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.NfsExportMappingInvalidNames]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'nfs'],
+      contextualHelp: T('An NFS export was skipped because its user or group mapping refers to a name that does not resolve.'),
+      actions: [
+        {
+          label: T('Go to NFS Shares'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('folder-network', 'mdi'),
+          route: ['/sharing', 'nfs'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.NfsHostnameLookupFail]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'nfs'],
+      contextualHelp: T('Some NFS shares reference hostnames that could not be resolved, so those clients will be denied access.'),
+      actions: [
+        {
+          label: T('Go to NFS Shares'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('folder-network', 'mdi'),
+          route: ['/sharing', 'nfs'],
+          primary: true,
+        },
+      ],
     },
 
     // SMB
@@ -1052,6 +1734,202 @@ export const smartAlertRegistry: SmartAlertConfig = {
         route: ['/sharing', 'smb', 'status', 'sessions'],
         primary: true,
       }],
+    },
+
+    [AlertClassName.SmbAuditShareDisabled]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'smb'],
+      contextualHelp: T('SMB auditing is disabled on a share because its watch or ignore list refers to groups that no longer exist.'),
+      actions: [
+        {
+          label: T('Go to SMB shares'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('folder-network', 'mdi'),
+          route: ['/sharing', 'smb'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.SmbUserMissingHash]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['credentials', 'users'],
+      contextualHelp: T('An SMB user has no stored password hash and cannot authenticate. Reset the password to generate one.'),
+      actions: [
+        {
+          label: T('Manage Users'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('account-multiple', 'mdi'),
+          route: ['/credentials', 'users'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.SmbVeeamFastClone]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'smb'],
+      contextualHelp: T('A share used for Veeam Fast Clone has a record size that prevents block cloning. Set the dataset record size to 512K or larger.'),
+      actions: [
+        {
+          label: T('Go to SMB shares'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('folder-network', 'mdi'),
+          route: ['/sharing', 'smb'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.Ntlmv1Authentication]: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['sharing', 'smb'],
+      contextualHelp: T('A client authenticated with NTLMv1, which is obsolete and easily broken. Find the client in the session list and reconfigure it.'),
+      actions: [
+        {
+          label: T('Go to SMB sessions'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('folder-network', 'mdi'),
+          route: ['/sharing', 'smb', 'status', 'sessions'],
+          primary: true,
+        },
+      ],
+    },
+
+    // iSCSI and Fibre Channel
+    [AlertClassName.IscsiAuthSecretInvalidChar]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'iscsi'],
+      contextualHelp: T('An iSCSI authorized access secret contains a character that initiators cannot send. Re-enter the secret using printable ASCII only.'),
+      actions: [
+        {
+          label: T('Go to Authorized Access'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('shield-check', 'mdi'),
+          route: ['/sharing', 'iscsi', 'authorized-access'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.IscsiAuthSecretWhitespace]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'iscsi'],
+      contextualHelp: T('An iSCSI authorized access secret has leading or trailing whitespace, which initiators will not reproduce. Re-enter it.'),
+      actions: [
+        {
+          label: T('Go to Authorized Access'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('shield-check', 'mdi'),
+          route: ['/sharing', 'iscsi', 'authorized-access'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.IscsiDiscoveryAuthMixed]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'iscsi'],
+      contextualHelp: T('Portals disagree about discovery authentication. Discovery auth is global, so the strictest setting is applied to every portal.'),
+      actions: [
+        {
+          label: T('Go to Authorized Access'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('shield-check', 'mdi'),
+          route: ['/sharing', 'iscsi', 'authorized-access'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.IscsiDiscoveryAuthMultipleChap]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'iscsi'],
+      contextualHelp: T('Several CHAP entries are configured for discovery authentication. They have been merged, which may not be what you intended.'),
+      actions: [
+        {
+          label: T('Go to Authorized Access'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('shield-check', 'mdi'),
+          route: ['/sharing', 'iscsi', 'authorized-access'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.IscsiDiscoveryAuthMultipleMutualChap]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'iscsi'],
+      contextualHelp: T('Several mutual CHAP entries are configured for discovery authentication. Only one can apply, so the others are ignored.'),
+      actions: [
+        {
+          label: T('Go to Authorized Access'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('shield-check', 'mdi'),
+          route: ['/sharing', 'iscsi', 'authorized-access'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.IscsiPortalIp]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'iscsi'],
+      contextualHelp: T('An iSCSI portal is bound to an IP address that no longer exists on this system, so the portal will not listen.'),
+      actions: [
+        {
+          label: T('Go to Portals'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('network', 'mdi'),
+          route: ['/sharing', 'iscsi', 'portals'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.FcHardwareAdded]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'iscsi'],
+      contextualHelp: T('New Fibre Channel HBAs were detected. Assign their ports before initiators can use them.'),
+      actions: [
+        {
+          label: T('Go to Fibre Channel Ports'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('network', 'mdi'),
+          route: ['/sharing', 'iscsi', 'fibre-channel-ports'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.FcHardwareReplaced]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['sharing', 'iscsi'],
+      contextualHelp: T('A Fibre Channel HBA was replaced. Confirm that the port assignments carried over to the new hardware.'),
+      actions: [
+        {
+          label: T('Go to Fibre Channel Ports'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('network', 'mdi'),
+          route: ['/sharing', 'iscsi', 'fibre-channel-ports'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.DeprecatedService]: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['system', 'services'],
+      contextualHelp: T('A deprecated service is running. It will be removed in a future release, so plan a replacement.'),
+      actions: [
+        {
+          label: T('Go to Services'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('cog', 'mdi'),
+          route: ['/system', 'services'],
+          primary: true,
+        },
+      ],
     },
 
     // Datasets
@@ -1334,18 +2212,6 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
-    [AlertClassName.PoolUsbDisks]: {
-      category: SmartAlertCategory.Storage,
-      relatedMenuPath: ['storage'],
-      actions: [{
-        label: T('Go to Storage'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('dns', 'material'),
-        route: ['/storage'],
-        primary: true,
-      }],
-    },
-
     // Snapshots
     [AlertClassName.SnapshotTotalCount]: {
       category: SmartAlertCategory.Storage,
@@ -1369,6 +2235,112 @@ export const smartAlertRegistry: SmartAlertConfig = {
         route: ['/datasets', 'snapshots'],
         primary: true,
       }],
+    },
+
+    // Local accounts
+    [AlertClassName.AllAdminAccountsExpired]: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'users'],
+      contextualHelp: T('Every local full administrator account has expired. Renew one from the console or a session that is still authenticated, or you will be locked out.'),
+      actions: [
+        {
+          label: T('Manage Users'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('account-multiple', 'mdi'),
+          route: ['/credentials', 'users'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.LocalAccountExpired]: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'users'],
+      contextualHelp: T('One or more local accounts have expired and can no longer sign in. Renew or remove them.'),
+      actions: [
+        {
+          label: T('Manage Users'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('account-multiple', 'mdi'),
+          route: ['/credentials', 'users'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.LocalAccountExpiring]: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'users'],
+      contextualHelp: T('One or more local accounts must change their password soon or they will be locked out.'),
+      actions: [
+        {
+          label: T('Manage Users'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('account-multiple', 'mdi'),
+          route: ['/credentials', 'users'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.AdminSession]: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'users'],
+      contextualHelp: T('An administrator account signed in. Review the session if you did not expect this activity.'),
+      actions: [
+        {
+          label: T('Manage Users'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('account-multiple', 'mdi'),
+          route: ['/credentials', 'users'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.AdminUserIsOverridden]: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'users'],
+      contextualHelp: T('The built-in administrator account is overridden by a directory service account of the same name. Local sign-in for it will not work as expected.'),
+      actions: [
+        {
+          label: T('Manage Users'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('account-multiple', 'mdi'),
+          route: ['/credentials', 'users'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.SshLoginFailures]: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['system', 'services'],
+      contextualHelp: T('Repeated SSH sign-in failures were recorded. Check whether the SSH service should be reachable from where these attempts came from.'),
+      actions: [
+        {
+          label: T('Go to Services'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('cog', 'mdi'),
+          route: ['/system', 'services'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.FipsMisconfiguration]: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['system', 'advanced'],
+      contextualHelp: T('The FIPS settings on this system are inconsistent. Review the system security settings and apply a valid combination.'),
+      actions: [
+        {
+          label: T('System Security Settings'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('shield-check', 'mdi'),
+          route: ['/system', 'advanced'],
+          primary: true,
+        },
+      ],
     },
 
     // API Keys
@@ -1477,6 +2449,118 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
+    // System configuration
+    [AlertClassName.CurrentlyRunningVersionDoesNotMatchProfile]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'update'],
+      contextualHelp: T('The running version does not match the selected update profile. Update to bring the system back onto its profile.'),
+      actions: [
+        {
+          label: T('View Updates'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('update', 'mdi'),
+          route: ['/system', 'update'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.GmailConfigurationDiscarded]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'general'],
+      contextualHelp: T('The GMail OAuth configuration was discarded, so TrueNAS can no longer send mail. Re-authorize the mail account.'),
+      actions: [
+        {
+          label: T('Configure Email'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('email', 'mdi'),
+          route: ['/system', 'general'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.TimezoneNotAvailable]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'general'],
+      contextualHelp: T('The configured timezone is not available in this release. Pick a supported timezone so schedules run at the expected time.'),
+      actions: [
+        {
+          label: T('Go to General Settings'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('cog', 'mdi'),
+          route: ['/system', 'general'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.InvalidGpuPciIds]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'advanced'],
+      contextualHelp: T('The isolated GPU list refers to PCI IDs that no longer exist. Update the list and reboot to apply it.'),
+      actions: [
+        {
+          label: T('Go to Advanced Settings'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('cog', 'mdi'),
+          route: ['/system', 'advanced'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.KdumpNotReady]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'advanced'],
+      contextualHelp: T('Kdump is enabled but not ready, so no crash dump would be captured if the kernel panics.'),
+      actions: [
+        {
+          label: T('Go to Advanced Settings'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('cog', 'mdi'),
+          route: ['/system', 'advanced'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.NtpHealthCheck]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'advanced'],
+      contextualHelp: T('The system clock is not synchronized with its NTP servers. Time drift breaks scheduled tasks, certificates and directory authentication.'),
+      actions: [
+        {
+          label: T('Go to Advanced Settings'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('cog', 'mdi'),
+          route: ['/system', 'advanced'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.SyslogNg]: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'advanced'],
+      contextualHelp: T('syslog-ng is not running, so system logs are not being written or forwarded.'),
+      actions: [
+        {
+          label: T('Go to Advanced Settings'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('cog', 'mdi'),
+          route: ['/system', 'advanced'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.SystemTesting]: {
+      category: SmartAlertCategory.System,
+      contextualHelp: T('This system has mocking endpoints enabled. They are for testing only and must not be left on in production.'),
+      actions: [],
+    },
+
     // Data Protection - already have CloudBackupTaskFailed, CloudSyncTaskFailed, ReplicationFailed
     [AlertClassName.ReplicationSuccess]: {
       category: SmartAlertCategory.Tasks,
@@ -1486,18 +2570,6 @@ export const smartAlertRegistry: SmartAlertConfig = {
         type: SmartAlertActionType.Navigate,
         icon: tnIconMarker('security', 'material'),
         route: ['/data-protection'],
-        primary: true,
-      }],
-    },
-
-    [AlertClassName.ScrubFinished]: {
-      category: SmartAlertCategory.Storage,
-      relatedMenuPath: ['storage'],
-      actions: [{
-        label: T('View Storage'),
-        type: SmartAlertActionType.Navigate,
-        icon: tnIconMarker('dns', 'material'),
-        route: ['/storage'],
         primary: true,
       }],
     },
@@ -1512,6 +2584,51 @@ export const smartAlertRegistry: SmartAlertConfig = {
         route: ['/storage'],
         primary: true,
       }],
+    },
+
+    [AlertClassName.RsyncSuccess]: {
+      category: SmartAlertCategory.Tasks,
+      relatedMenuPath: ['data-protection', 'rsync'],
+      contextualHelp: T('The rsync task finished successfully.'),
+      actions: [
+        {
+          label: T('View Rsync Tasks'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('sync', 'mdi'),
+          route: ['/data-protection', 'rsync'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.ScrubStarted]: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['storage'],
+      contextualHelp: T('A scrub started. It reads every block in the pool, so expect reduced performance until it finishes.'),
+      actions: [
+        {
+          label: T('View Storage'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('dns', 'material'),
+          route: ['/storage'],
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.CloudProviderRemoved]: {
+      category: SmartAlertCategory.Tasks,
+      relatedMenuPath: ['credentials', 'backup-credentials'],
+      contextualHelp: T('A cloud provider was removed from TrueNAS. Tasks and credentials that used it will no longer run.'),
+      actions: [
+        {
+          label: T('Check Credentials'),
+          type: SmartAlertActionType.Navigate,
+          icon: tnIconMarker('key-variant', 'mdi'),
+          route: ['/credentials', 'backup-credentials'],
+          primary: true,
+        },
+      ],
     },
 
     // VMware Snapshots
@@ -1554,10 +2671,171 @@ export const smartAlertRegistry: SmartAlertConfig = {
       }],
     },
 
+    // TrueCommand and TrueNAS Connect are reached from the topbar, not a route, so these
+    // alerts badge no menu and link out to the service instead.
+    [AlertClassName.TruecommandConnectionPending]: {
+      category: SmartAlertCategory.System,
+      contextualHelp: T('The TrueCommand API key is waiting for confirmation in the iX Portal. Approve it there to finish connecting.'),
+      actions: [
+        {
+          label: T('Open TrueCommand'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('cloud-outline', 'mdi'),
+          externalUrl: 'https://portal.truenas.com',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.TruecommandConnectionDisabled]: {
+      category: SmartAlertCategory.System,
+      contextualHelp: T('The TrueCommand API key was disabled in the iX Portal, so this system is no longer being managed.'),
+      actions: [
+        {
+          label: T('Open TrueCommand'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('cloud-outline', 'mdi'),
+          externalUrl: 'https://portal.truenas.com',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.TruecommandConnectionHealth]: {
+      category: SmartAlertCategory.System,
+      contextualHelp: T('The TrueCommand service failed its scheduled health check.'),
+      actions: [
+        {
+          label: T('Open TrueCommand'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('cloud-outline', 'mdi'),
+          externalUrl: 'https://portal.truenas.com',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.TruecommandContainerHealth]: {
+      category: SmartAlertCategory.System,
+      contextualHelp: T('The TrueCommand container failed its scheduled health check.'),
+      actions: [
+        {
+          label: T('Open TrueCommand'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('cloud-outline', 'mdi'),
+          externalUrl: 'https://portal.truenas.com',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.TncDisabledAutoUnconfigured]: {
+      category: SmartAlertCategory.System,
+      contextualHelp: T('TrueNAS Connect was disabled because the service is no longer configured.'),
+      actions: [
+        {
+          label: T('Open TrueNAS Connect'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('cloud-outline', 'mdi'),
+          externalUrl: 'https://connect.truenas.com/',
+          primary: true,
+        },
+      ],
+    },
+
+    [AlertClassName.TncHeartbeatConnectionFailure]: {
+      category: SmartAlertCategory.System,
+      contextualHelp: T('This system cannot reach the TrueNAS Connect heartbeat service. Check outbound network access.'),
+      actions: [
+        {
+          label: T('Open TrueNAS Connect'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: tnIconMarker('cloud-outline', 'mdi'),
+          externalUrl: 'https://connect.truenas.com/',
+          primary: true,
+        },
+      ],
+    },
+
     // UPS
     UPSCommbad: {
       category: SmartAlertCategory.Hardware,
       relatedMenuPath: ['system', 'services'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/services/upsservicesscale/',
+      actions: [{
+        label: T('Go to UPS service'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('flash', 'mdi'),
+        route: ['/system', 'services'],
+        fragment: 'ups',
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.UpsBatteryLow]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'services'],
+      contextualHelp: T('The UPS battery is low. Shut down or restore mains power before it runs out.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/services/upsservicesscale/',
+      actions: [{
+        label: T('Go to UPS service'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('flash', 'mdi'),
+        route: ['/system', 'services'],
+        fragment: 'ups',
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.UpsReplaceBattery]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'services'],
+      contextualHelp: T('The UPS reports that its battery needs replacing. It may not carry the system through the next outage.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/services/upsservicesscale/',
+      actions: [{
+        label: T('Go to UPS service'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('flash', 'mdi'),
+        route: ['/system', 'services'],
+        fragment: 'ups',
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.UpsOnBattery]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'services'],
+      contextualHelp: T('Mains power was lost and the system is running on UPS battery.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/services/upsservicesscale/',
+      actions: [{
+        label: T('Go to UPS service'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('flash', 'mdi'),
+        route: ['/system', 'services'],
+        fragment: 'ups',
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.UpsOnline]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'services'],
+      contextualHelp: T('Mains power was restored and the UPS is back on line power.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/services/upsservicesscale/',
+      actions: [{
+        label: T('Go to UPS service'),
+        type: SmartAlertActionType.Navigate,
+        icon: tnIconMarker('flash', 'mdi'),
+        route: ['/system', 'services'],
+        fragment: 'ups',
+        primary: true,
+      }],
+    },
+
+    [AlertClassName.UpsCommunicationOk]: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'services'],
+      contextualHelp: T('Communication with the UPS was restored.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/systemsettings/services/upsservicesscale/',
       actions: [{
         label: T('Go to UPS service'),
