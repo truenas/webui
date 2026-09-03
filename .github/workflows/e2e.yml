@@ -179,6 +179,13 @@ jobs:
         # exec'd it, lives on the runner's own dataset, and is removed after.
         run: |
           set -euo pipefail
+          # TN_GREP is the one value here that comes from outside the pipeline,
+          # and the env file is parsed line by line: a newline in it would end
+          # the filter early and let the rest set arbitrary variables in the
+          # container. Refuse rather than truncate, so a bad dispatch is loud.
+          case "${TN_GREP:-}" in
+            *$'\n'*|*$'\r'*) echo "::error::The grep input must be a single line"; exit 1 ;;
+          esac
           envFile="$RUNNER_TEMP/suite.env"
           trap 'rm -f "$envFile"' EXIT
           printf '%s\n' \

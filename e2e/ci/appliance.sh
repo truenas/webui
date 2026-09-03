@@ -96,6 +96,7 @@ checkTools() {
   [ -x "$TN_GUEST_PYTHON" ] || die "TN_GUEST_PYTHON is not executable: $TN_GUEST_PYTHON"
   [ -f "$TN_GUEST" ] || die "TN_GUEST not found: $TN_GUEST"
   command -v jq > /dev/null || die "jq is required"
+  command -v openssl > /dev/null || die "openssl is required (it generates the appliance password)"
 }
 
 # Claim an appliance at a named baseline.

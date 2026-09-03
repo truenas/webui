@@ -73,8 +73,7 @@ a number. See `05-ci.md`.
 
    What is next for the pipeline, in order: rotate the nightly ISO
    automatically, publish traces (the per-claim credential the design required
-   now holds), enable the nightly schedule, and give the `main.yml` unit-test
-   job a label that does not match the lab runner.
+   now holds), and enable the nightly schedule.
 3. **Observability.** No WebSocket capture, no middleware log collection (the
    guest is behind `hostfwd`, so it needs an API route rather than SSH), no
    version recording in reports. These are what make a 3am failure diagnosable
