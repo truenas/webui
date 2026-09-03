@@ -116,6 +116,11 @@ jobs:
       TN_GUEST_HOST_USER: ${{ vars.E2E_TN_GUEST_HOST_USER || 'root' }}
       TN_GUEST_HOST_API_KEY: ${{ secrets.TN_GUEST_HOST_API_KEY }}
       TN_GUEST_HOST_PASSWORD: ${{ secrets.TN_GUEST_HOST_PASSWORD }}
+      # With the template password set, a claim clones the template that
+      # e2e-template.yml builds instead of installing from the ISO. See
+      # e2e/ci/appliance.sh.
+      TN_GUEST_TEMPLATE: ${{ vars.E2E_TN_GUEST_TEMPLATE || 'e2e-template' }}
+      TN_GUEST_TEMPLATE_PASSWORD: ${{ secrets.TN_GUEST_TEMPLATE_PASSWORD }}
       # Serves the built UI. Debian-based on purpose: docker/nginx.conf runs
       # as `www-data`, which the alpine image does not have.
       NGINX_IMAGE: nginx:1.27

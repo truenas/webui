@@ -371,6 +371,14 @@ away, and it is the same shape as the `<pool>/ci/golden` layout the
 api-ci-testbed setup notes already reserve for pre-installed images. It also
 answers **E2**'s "warm spare" cheaply: spares are clones.
 
+*Implemented for `fresh-install`:* `tn_guest.py create --template` builds
+the bare install, shuts it down and snapshots its deployment dataset;
+`tn_guest.py clone` uses middleware's `vm.clone`, which copies the VM record,
+its UEFI NVRAM state and every zvol from that snapshot, then rewrites the
+clone's ports and boots it. `e2e-template.yml` rebuilds the template weekly
+and `appliance.sh claim` clones it. Baselines beyond `fresh-install` are the
+same mechanism with a configuration step before the shutdown.
+
 **Baselines age with the nightly.** A baseline built from one ISO is that
 build. Rebuild them when the nightly moves — on a schedule, not per run — so
 the install cost is paid once per image rather than once per test. The

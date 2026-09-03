@@ -25,12 +25,22 @@
 #
 # Verbs used:
 #
-#   tn_guest.py create --host H --pool P (--api-key K | --password W)
-#                      --iso <path on host> --admin-pass <generated>
+#   tn_guest.py clone  --host H --pool P (--api-key K | --password W)
+#                      <template nickname> --admin-pass <template's>
+#                      --rotate-admin-pass <generated>
 #                      --nickname <name> --lifetime <duration>   -> JSON
+#   tn_guest.py create (...) --iso <path on host> --admin-pass <generated>
+#                      --nickname <name> --lifetime <duration>   -> JSON
+#   tn_guest.py create (...) --template --iso <path> --admin-pass <template's>
+#                      --nickname <template nickname>            -> JSON
 #   tn_guest.py delete --host H --pool P (...) <name or nickname>
 #
-# Snapshot and revert (E1, E5 in the design) have no equivalent here yet.
+# A claim clones the template when one exists (seconds, no ISO install) and
+# falls back to an ISO install when it does not. `build-template` makes the
+# template: a bare install, shut down and snapshotted, that `clone` copies
+# with middleware's vm.clone. This is E5 of the design in its first form:
+# baselines as snapshots, clones as provisioning. Revert between tests (E1)
+# is not here yet.
 #
 # Configuration, all environment variables:
 #
@@ -42,6 +52,11 @@
 #   TN_GUEST_HOST_USER  API user on the host (default: root)
 #   TN_GUEST_HOST_API_KEY or TN_GUEST_HOST_PASSWORD — credential for that user
 #   TN_GUEST_LIFETIME   VM lifetime, so a leaked one expires (default: 3h)
+#   TN_GUEST_TEMPLATE   nickname of the template to clone (default: e2e-template)
+#   TN_GUEST_TEMPLATE_PASSWORD
+#                       the template's admin password. Set: claims clone the
+#                       template and rotate the password per claim. Unset:
+#                       every claim installs from the ISO.
 #
 # Guest sizing, all with defaults below. The host is shared with the runner,
 # Docker and the browser, so memory and the OS disk are deliberately smaller
@@ -63,6 +78,7 @@ TN_GUEST_HOST="${TN_GUEST_HOST:-localhost}"
 TN_GUEST_POOL="${TN_GUEST_POOL:-tank}"
 TN_GUEST_HOST_USER="${TN_GUEST_HOST_USER:-root}"
 TN_GUEST_LIFETIME="${TN_GUEST_LIFETIME:-3h}"
+TN_GUEST_TEMPLATE="${TN_GUEST_TEMPLATE:-e2e-template}"
 TN_GUEST_MEMORY_MB="${TN_GUEST_MEMORY_MB:-6144}"
 TN_GUEST_VCPUS="${TN_GUEST_VCPUS:-4}"
 TN_GUEST_OS_DISK_GB="${TN_GUEST_OS_DISK_GB:-10}"
@@ -149,22 +165,36 @@ claim() {
     printf '%s\n' "$nickname" > "${RUNNER_TEMP}/${claimedNameFile}"
   fi
 
-  echo "appliance.sh: creating '$nickname' on $TN_GUEST_HOST from $TN_GUEST_ISO" >&2
   local json
   # tn_guest.py logs progress to stderr and prints the deployment JSON last on
   # stdout; the log noise is worth keeping in the job log.
-  json=$(tnGuest create \
-    --iso "$TN_GUEST_ISO" \
-    --admin-pass "$password" \
-    --nickname "$nickname" \
-    --lifetime "$TN_GUEST_LIFETIME" \
-    --memory-mb "$TN_GUEST_MEMORY_MB" \
-    --vcpus "$TN_GUEST_VCPUS" \
-    --os-disk-gb "$TN_GUEST_OS_DISK_GB" \
-    --data-disk-count "$TN_GUEST_DATA_DISK_COUNT" \
-    --data-disk-gb "$TN_GUEST_DATA_DISK_GB" \
-    --network hostfwd) \
-    || die "tn_guest.py create failed for '$nickname'"
+  if [ -n "${TN_GUEST_TEMPLATE_PASSWORD:-}" ] && templateExists; then
+    echo "appliance.sh: cloning template '$TN_GUEST_TEMPLATE' into '$nickname' on $TN_GUEST_HOST" >&2
+    json=$(tnGuest clone "$TN_GUEST_TEMPLATE" \
+      --admin-pass "$TN_GUEST_TEMPLATE_PASSWORD" \
+      --rotate-admin-pass "$password" \
+      --nickname "$nickname" \
+      --lifetime "$TN_GUEST_LIFETIME" \
+      --memory-mb "$TN_GUEST_MEMORY_MB" \
+      --vcpus "$TN_GUEST_VCPUS") \
+      || die "tn_guest.py clone failed for '$nickname'"
+  else
+    [ -n "${TN_GUEST_TEMPLATE_PASSWORD:-}" ] \
+      && echo "appliance.sh: no template named '$TN_GUEST_TEMPLATE' on the host, installing from the ISO instead" >&2
+    echo "appliance.sh: creating '$nickname' on $TN_GUEST_HOST from $TN_GUEST_ISO" >&2
+    json=$(tnGuest create \
+      --iso "$TN_GUEST_ISO" \
+      --admin-pass "$password" \
+      --nickname "$nickname" \
+      --lifetime "$TN_GUEST_LIFETIME" \
+      --memory-mb "$TN_GUEST_MEMORY_MB" \
+      --vcpus "$TN_GUEST_VCPUS" \
+      --os-disk-gb "$TN_GUEST_OS_DISK_GB" \
+      --data-disk-count "$TN_GUEST_DATA_DISK_COUNT" \
+      --data-disk-gb "$TN_GUEST_DATA_DISK_GB" \
+      --network hostfwd) \
+      || die "tn_guest.py create failed for '$nickname'"
+  fi
 
   local name adminUser apiHost httpPort httpsPort
   name=$(jq -re '.name' <<<"$json")                      || die "create output has no .name"
@@ -194,6 +224,55 @@ TN_BASELINE=$baseline
 EOF
 }
 
+# Whether a template with the configured nickname exists on the host.
+templateExists() {
+  tnGuest list --json 2>/dev/null \
+    | jq -e --arg n "$TN_GUEST_TEMPLATE" \
+        'map(select(.nickname == $n and .template == "true")) | length > 0' > /dev/null
+}
+
+# Build the template every claim clones: a bare install from the ISO, shut
+# down after its first boot and snapshotted. Replaces the previous template of
+# the same nickname, which is only possible when nothing is cloned from it —
+# the e2e-lab concurrency group guarantees that, since every run destroys its
+# clone before releasing the group.
+#
+# Emits nothing on stdout. The template's password is the one in
+# TN_GUEST_TEMPLATE_PASSWORD; clones rotate away from it, so it never reaches
+# a trace.
+build_template() {
+  [ "${1:-fresh-install}" = "fresh-install" ] \
+    || die "only the 'fresh-install' template is defined so far"
+  checkTools
+  [ -n "${TN_GUEST_ISO:-}" ] || die "TN_GUEST_ISO is required to build a template"
+  [ "$TN_GUEST_HOST" != "localhost" ] || [ -f "$TN_GUEST_ISO" ] \
+    || die "TN_GUEST_ISO does not exist on this host: $TN_GUEST_ISO"
+  [ -n "${TN_GUEST_TEMPLATE_PASSWORD:-}" ] || die "TN_GUEST_TEMPLATE_PASSWORD is required"
+  [ -n "${TN_GUEST_HOST_API_KEY:-}${TN_GUEST_HOST_PASSWORD:-}" ] \
+    || die "TN_GUEST_HOST_API_KEY or TN_GUEST_HOST_PASSWORD is required"
+
+  if templateExists; then
+    echo "appliance.sh: replacing template '$TN_GUEST_TEMPLATE'" >&2
+    tnGuest delete "$TN_GUEST_TEMPLATE" > /dev/null \
+      || die "could not delete the existing template '$TN_GUEST_TEMPLATE' — clones of it may still exist"
+  fi
+
+  echo "appliance.sh: building template '$TN_GUEST_TEMPLATE' from $TN_GUEST_ISO" >&2
+  local json
+  json=$(tnGuest create --template \
+    --iso "$TN_GUEST_ISO" \
+    --admin-pass "$TN_GUEST_TEMPLATE_PASSWORD" \
+    --nickname "$TN_GUEST_TEMPLATE" \
+    --memory-mb "$TN_GUEST_MEMORY_MB" \
+    --vcpus "$TN_GUEST_VCPUS" \
+    --os-disk-gb "$TN_GUEST_OS_DISK_GB" \
+    --data-disk-count "$TN_GUEST_DATA_DISK_COUNT" \
+    --data-disk-gb "$TN_GUEST_DATA_DISK_GB" \
+    --network hostfwd) \
+    || die "tn_guest.py create --template failed"
+  echo "appliance.sh: template '$TN_GUEST_TEMPLATE' is $(jq -r '.name' <<<"$json")" >&2
+}
+
 # Destroy an appliance. Safe to call twice, and safe to call when claim
 # failed — teardown runs unconditionally and must never mask the real failure
 # with one of its own.
@@ -220,11 +299,11 @@ release() {
   return 0
 }
 
-# Snapshot and revert (E1, E5). Not available: tn_guest.py has no such verbs,
-# and a VM behind hostfwd is reinstalled per run. Kept as named entry points so
-# the design's references still resolve to the place the work will go.
-snapshot() { die "snapshot is not available with tn_guest.py yet (E1, E5)"; }
-revert() { die "revert is not available with tn_guest.py yet (E1, E5)"; }
+# Revert between tests (E1) is not here yet: a claim is a fresh clone, and the
+# suite cleans up over the API. Kept as named entry points so the design's
+# references still resolve to the place the work will go.
+snapshot() { die "per-test snapshot is not available yet (E1); templates are built with build-template"; }
+revert() { die "revert is not available yet (E1)"; }
 
 # Middleware log collection (R7.2) has no implementation here. The appliance
 # is behind hostfwd with only 80 and 443 forwarded, so there is no SSH path;
@@ -232,9 +311,10 @@ revert() { die "revert is not available with tn_guest.py yet (E1, E5)"; }
 # nothing.
 
 case "${1:-}" in
-  claim)        shift; claim "$@" ;;
-  release)      shift; release "$@" ;;
-  snapshot)     shift; snapshot "$@" ;;
-  revert)       shift; revert "$@" ;;
-  *) die "usage: appliance.sh {claim|release|snapshot|revert} [args]" ;;
+  claim)          shift; claim "$@" ;;
+  release)        shift; release "$@" ;;
+  build-template) shift; build_template "$@" ;;
+  snapshot)       shift; snapshot "$@" ;;
+  revert)         shift; revert "$@" ;;
+  *) die "usage: appliance.sh {claim|release|build-template|snapshot|revert} [args]" ;;
 esac
