@@ -167,10 +167,9 @@ in the comment, where it cannot drift away from the code it explains.
 
 `docs/04-environment-architecture.md` covers the appliance side — where the box
 under test comes from, how state tainting is contained, and how external
-services and HA fit in. Its `E` numbers are cited the same way. Draft: read it
-before designing anything that provisions or reshapes an appliance, and read
-the status box at its top first, because building the pipeline overturned some
-of its premises.
+services and HA fit in. Its `E` numbers are cited the same way. Draft, but
+reconciled with the pipeline as built: read it before designing anything that
+provisions or reshapes an appliance.
 
 `docs/05-ci.md` is the pipeline as it actually runs: what the lab runner has
 to provide, the measured timings, and the failure behind every rule in

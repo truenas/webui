@@ -1,35 +1,15 @@
 # TrueNAS WebUI E2E — Environment Architecture
 
-**Status:** Draft for review, 2026-08-08; reality check 2026-09-02
-**Prerequisite:** [`status.md`](./status.md)
+**Status:** Draft 2026-08-08, rewritten 2026-09-02 against the pipeline as built
+**Prerequisite:** [`status.md`](./status.md); the pipeline itself is in [`05-ci.md`](./05-ci.md)
 
-> **What is actually running, 2026-09-02.** `.github/workflows/e2e.yml` is
-> green: one appliance per run, installed and destroyed, no sharding, no
-> snapshot restore. See [`05-ci.md`](./05-ci.md) for the pipeline as built.
->
-> Building it overturned three of this document's premises, and the sections
-> below have not been rewritten around that yet — read them with this in mind:
->
-> - **The provisioner is `tn_guest.py`, not `ixnode`.** `ixnode` is the legacy
->   tool for dedicated Debian KVM hosts (libvirt, `virt-install`, a `/data`
->   tree, root). The lab runner is a **TrueNAS box**, and `tn_guest.py` in the
->   same repository creates nested VMs on it through its middleware API. Every
->   "ask the `ixnode` team" below is moot: **E5**'s snapshot and revert are ours
->   to build against the host's own API, with no other team in the loop.
-> - **The substrate is TrueNAS's VM service, not raw libvirt.** Disks are zvols,
->   not qcow2. The VM API exposes no memory-state snapshot, so **E1**'s
->   fast row is not available; the primitive is a ZFS snapshot of the
->   deployment's zvols with the VM stopped, then rollback and boot — the
->   design's *disk-only* row, and **Q0b** has to be measured on that path.
-> - **The guest is 6GB, not the "confirmed" 4GB** (**Q6**); 8GB crashed the
->   host twice. The install measured at ~3.5 minutes from a nightly ISO to a
->   usable API, so the 210s figure (**Q0a**) is roughly right for the wrong
->   reason.
->
-> Also settled by the build: the runner sits on the host (**Q7**, yes); the
-> guest is behind `hostfwd` NAT with only 80 and 443 forwarded, so the SSH
-> capability in **E8** does not exist in this mode; and the appliance has ten
-> data disks, which closes the 8-vs-9 mismatch in **E5**.
+> **What is actually running.** `.github/workflows/e2e.yml` is green: one
+> appliance per run, installed from a nightly ISO and destroyed afterwards. No
+> sharding, no snapshot restore. Everything in this document beyond E6, E11 and
+> E12 is design for what comes next, argued from numbers that are now partly
+> measured and partly still guessed. The two that decide everything — the cost
+> of a restore (**Q0b**) and the length of a representative test (**Q1**) —
+> are still guesses.
 
 The suite's own decisions — how to drive a browser, how to talk to middleware —
 are settled and live in `status.md` and `e2e/CLAUDE.md`. Those decisions
@@ -75,35 +55,41 @@ two journeys shipped in the POC sit almost exactly at that ceiling.
 
 ### 0.2 What we know
 
-Established 2026-08-08 with grwilliam. These numbers drive the decisions below;
-if they are wrong, revisit.
+Established 2026-08-08 with grwilliam; corrected 2026-09-02 by building the
+pipeline. Where the two disagree, the build wins.
 
-- A middleware-test VM **installs and boots in ~3m30s**. That suite does no
-  snapshotting or rollback. *Confirmed 2026-09-02: the e2e appliance measures
-  the same from a nightly ISO to a usable API.*
-- Provisioning already exists: **`ixnode`**, a Jenkins-invoked script that
-  installs TrueNAS from an ISO. **The team that owns it is resistant to
-  changes**, which is a design input, not just an inconvenience — see **E5**.
-  *Superseded 2026-09-02: `ixnode` cannot run on the lab runner; the pipeline
-  uses `tn_guest.py` from the same repository, see the status box above.*
-- The hypervisor is **libvirt/KVM**, which supports domain-level snapshots with
-  optional memory state. This is what makes **E1** possible. Disks are
-  **qcow2 files**; guests need **4GB of RAM**, 8GB worst case. *Revised
-  2026-09-02: TrueNAS's VM service on zvols, no memory-state snapshot exposed,
-  guest 6GB.*
-- The `ixnode` team **will add snapshot and revert verbs** (**Q2**, answered
-  2026-08-10). **E1** is therefore buildable as written, not contingent.
-  *Moot 2026-09-02: no `ixnode`, so snapshot and revert are ours to build.*
-- **One VM per run is affordable.** More than one per run is unquantified
-  (**Q5**), and **E3** depends on the answer.
+- **The appliance is a nested VM on a TrueNAS host.** The lab runner *is* the
+  TrueNAS box. `tn_guest.py` (iXsystems/api-ci-testbed) creates the VM through
+  that box's own middleware API — `vm.create`, `vm.device.create`, zvols in a
+  dataset per deployment under `<pool>/test-vms/` — installs from an ISO via
+  the installer's API, sets the admin password, and returns connection details.
+  `ixnode`, which the first draft assumed, is that repository's *older* tool for
+  dedicated Debian KVM hosts (libvirt, `virt-install`, a `/data` tree, root),
+  and cannot run on a TrueNAS appliance.
+- **Install to a usable, credentialed API is ~3.5 minutes** from a v27 nightly
+  ISO (**Q0a**, measured 2026-09-02). ~10 minutes from a 25.10 release ISO,
+  which the suite cannot use anyway: it is typed against API v27.
+- **Disks are zvols; snapshots are ZFS snapshots.** The VM API exposes no
+  memory-state save, so a restore is stop, `zfs rollback`, start, boot. See
+  **E1**.
+- **The guest is 6GB, 4 vCPU, a 10GB OS disk and ten 10GB sparse data disks.**
+  8GB crashed the interim host twice. The 4GB the first draft treated as
+  confirmed (**Q6**) was never tried.
+- **Networking is `hostfwd` NAT by default.** Only guest ports 80 and 443 are
+  forwarded to the host, so the suite reaches `localhost:<port>` and nothing
+  reaches SSH. `tn_guest.py` also offers `--network bridge`, which gives the
+  guest a routable DHCP address. **E8** depends on that.
+- **The browser runs in Playwright's container on the host** with host
+  networking. The host has a read-only root and no apt, so nothing browser-
+  shaped is installed on it.
+- **One VM per run is affordable on the interim box.** More is unquantified
+  (**Q5**); the box that was assumed in **E13** is not the box that exists.
 - AD, LDAP, S3 and KMIP **exist in the lab and can be shared** (**Q3**,
   answered 2026-08-10) — which makes **E9**'s per-run identity work *required*
   rather than conditional.
-- A self-hosted runner **can sit on the libvirt host** in a restricted segment
-  (**Q7**), so snapshot and revert are local `virsh` calls.
 - **HA failover is in scope** — later, but definitely.
-- **CI should run in GitHub Actions**, not Jenkins, using **self-hosted
-  runners** for the VM work. See **E12**.
+- **CI is GitHub Actions on a self-hosted runner**, running. See **E12** and
+  `05-ci.md`.
 
 ### 0.3 The budget this all has to fit inside
 
@@ -111,40 +97,32 @@ if they are wrong, revisit.
 number every decision here is ultimately spending. It is worth stating plainly
 because the arithmetic is unforgiving:
 
-> At a 210-second provision and a ~90-second test, an appliance reprovisioned
-> per test completes **nine tests** in the entire budget, with **70% of
-> wall-clock spent in the installer**.
+> At the measured ~210-second install and a ~90-second test, an appliance
+> reinstalled per test completes **nine tests** in the entire budget, with
+> **70% of wall-clock spent in the installer**.
 
 Nine — and that is the shard's *whole* budget, before any Local or Contained
 test has run. It is the reason **E1** restores by snapshot rollback rather than
 by reinstalling, and the single number most likely to decide whether this suite
 scales.
 
-(The 90-second test is a placeholder. The only measured figures available are
-~20s per journey and ~32s for the whole suite today; Global tests will be
-slower, but by how much is **Q1**. The conclusion survives any plausible value,
-because the 210s dominates either way.)
+(The 90-second test is a placeholder. The measured figures are ~20s per journey
+and ~90s for the whole four-test suite today; Global tests will be slower, but
+by how much is **Q1**. The conclusion survives any plausible value, because the
+210s dominates either way.)
 
 ---
 
-## E1. Restore is a VM snapshot rollback
+## E1. Restore is a snapshot rollback of the deployment
 
-> *2026-09-02: on the TrueNAS host the pipeline actually runs on, the memory-
-> state rows below are not available — the VM API exposes no `virsh save`
-> equivalent. What is available is the disk-only row: `zfs snapshot` of the
-> deployment dataset (all zvols atomically, which preserves the "snapshot the
-> VM, never the volumes" rule), `vm.stop`, `zfs rollback`, `vm.start`, and a
-> boot. Q0b is that cycle's duration and is still unmeasured; the install it
-> replaces is ~3.5 minutes.*
-
-Roll the appliance back to a libvirt snapshot. Reinstall only to *build* a
-baseline, not to return to one.
+Roll the appliance back to a ZFS snapshot of its deployment dataset. Reinstall
+only to *build* a baseline, not to return to one.
 
 | Primitive | Cost | Restores | Used for |
 |---|---|---|---|
 | API cleanup — delete what you created | seconds | Objects the test created | Local, Contained |
-| `virsh snapshot-revert` to a baseline | RAM-dependent, see below (**Q0b**) | Everything: config DB, system dataset, pools, on-disk state | Global, Infrastructural |
-| Full ISO install via `ixnode` | ~210s (**Q0a**) | Everything, plus installer coverage | Building a baseline; periodic fidelity run |
+| `zfs rollback` of the deployment dataset, then boot | boot-dominated, unmeasured (**Q0b**) | Everything: config DB, system dataset, pools, on-disk state | Global, Infrastructural |
+| Full ISO install via `tn_guest.py` | ~210s (**Q0a**, measured) | Everything, plus installer coverage | Building a baseline; periodic fidelity run |
 
 **Why snapshots, having first rejected them.** This document's earlier drafts
 argued that a 3m30s install was cheap enough to make snapshot tooling not worth
@@ -165,13 +143,13 @@ Every partial mechanism covers one store and leaves the others:
   restores to a state you captured — but still covers only configuration, still
   needs a reboot, and needs `secretseed: true` or every encrypted field in the
   restored database becomes undecryptable on restore.
-- **ZFS rollback** is per-dataset. It cannot resurrect a destroyed dataset, so
-  any test touching dataset lifecycle defeats it, and it does not address the
-  configuration database at all.
+- **ZFS rollback *inside the guest*** is per-dataset. It cannot resurrect a
+  destroyed dataset, so any test touching dataset lifecycle defeats it, and it
+  does not address the configuration database at all.
 
-A VM snapshot has none of these problems precisely because it is *not*
-state-aware: it captures the disks and optionally the memory, so where TrueNAS
-keeps a given piece of state stops mattering.
+A snapshot *of the guest's disks, taken from the host*, has none of these
+problems precisely because it is *not* state-aware: it captures every block the
+guest has, so where TrueNAS keeps a given piece of state stops mattering.
 
 **Why the original rejection was wrong.** It compared a one-off saving against
 the fidelity of exercising the installer. But installer coverage is bought by
@@ -180,98 +158,88 @@ nothing — while the install cost repeats every time. Once restores are frequen
 the comparison inverts. The periodic fidelity run in row 3 preserves the
 coverage that mattered.
 
-### Mechanics on libvirt/KVM
+### Mechanics on a TrueNAS host
 
-**Atomicity across disks is free, and losing it would be silent.**
-`virsh snapshot-create-as` operates on the **domain**, so all disks — **R2.2**
-provisions 8 — are captured in one operation with the guest briefly paused.
-Snapshotting volumes individually instead would let a restore assemble a set of
-disks that never coexisted, which is an unimportable or subtly corrupt pool. The
-rule is *snapshot the VM, never the volumes*.
+**A deployment is one dataset, and that is what makes atomicity free.**
+`tn_guest.py` puts every zvol of a VM — the OS disk and all data disks — under
+`<pool>/test-vms/<name>`. A recursive `zfs snapshot` of that dataset captures
+all of them at one instant, with the VM stopped. Snapshotting volumes
+individually would let a restore assemble a set of disks that never coexisted,
+which is an unimportable or subtly corrupt pool. The rule is *snapshot the
+deployment, never the volumes*, and the dataset layout enforces it.
 
-**Memory state is worth having, and its cost scales with RAM.**
-`--memspec file=…,snapshot=external` captures RAM alongside the disks, and
-revert brings back a running machine rather than one that must boot. Revert
-re-reads the whole memory image, so the guest's RAM size sets the floor.
+**The restore cycle is stop, rollback, start, boot.** `vm.stop` (or
+`vm.poweroff`), `zfs rollback -r` to the baseline snapshot, `vm.start`, then
+wait for the middleware API to answer. Every step is either the host's own API
+or a `zfs` command on the host, and the runner is on the host, so there is no
+remote channel and no credential beyond the one the pipeline already holds.
 
-At the confirmed **4GB** (**Q6**) that image is small: expect single-digit
-seconds on NVMe, perhaps 15–20s on SATA SSD. The 8GB worst case roughly doubles
-it and is still well inside a boot. Two consequences survive knowing the number:
+**There is no memory-state row.** libvirt sits under TrueNAS's VM service and
+could `virsh save` a running guest, but driving `virsh` behind middleware's back
+is two owners for one domain — the same argument the first draft made against
+snapshotting `ixnode`'s domains, and it applies equally here. So the restore
+always includes a boot, and **Q0b** is the duration of that whole cycle. The
+first draft's single-digit-second revert is not on offer; its "disk-only
+fallback" is the primary.
 
-- **Guest RAM is a test-infrastructure parameter.** Every gigabyte is paid on
-  every restore, so 4GB is worth defending against future creep.
-- Keep memory images on the fastest storage available — and note that
-  **N simultaneous reverts share that throughput**, so per-revert cost degrades
-  as the shard count rises (**Q5**).
-
-**Disk-only is the fallback, not a failure.** An external disk snapshot plus a
-boot still removes the ISO install — roughly 2x better than reinstall against
-~10x for memory state — with no RAM image to move.
-
-**Backing store is qcow2** (**Q6**), which is the simple path: a single
-domain-level `virsh` snapshot covers all 8 disks, and both internal and external
-snapshots are available. External remains the safer default — easier to delete
-and less prone to growing the base image. The zvol alternative, which would have
-needed a recursive `zfs snapshot` paired with `virsh save`, does not arise.
+**Boot is the cost, so boot is what to measure and shave.** An install-to-API
+of ~210s is dominated by the installer, not the boot; a rollback-to-API has
+only the boot in it. Guest RAM, vCPU count and disk count all feed boot time,
+which is why they are infrastructure parameters rather than details.
 
 ### What a snapshot still does not fix
 
 **Restore invalidates the suite's session, and nothing re-mints it.** The
 `setup` project writes `e2e/.auth/storage-state.json` once per run and the
 `authenticated` project consumes it (`playwright.config.ts`); it holds a live
-middleware token. A reverted guest has stale in-guest TCP state, so the
-WebSocket is dead whether the restore booted the machine or resumed it. This is
-unchanged from every other restore mechanism considered, and it means the
-harness needs per-appliance re-authentication after restore — which pulls
-**E10**'s "the harness must be able to expect disconnection" out of the HA
-future and onto the critical path now.
+middleware token. A rebooted guest has no memory of that session, so the
+WebSocket is dead and the token is gone. The harness needs per-appliance
+re-authentication after restore — which pulls **E10**'s "the harness must be
+able to expect disconnection" out of the HA future and onto the critical path
+now.
 
-**Clock jump on resume.** A resumed guest's clock is stale by however long it
-sat. **Kerberos tolerates roughly five minutes of skew**, so AD-joined baselines
-can fail in a way that reads as a UI bug; TLS validity windows and scheduled
-tasks are affected too. Force an NTP resync as part of the restore rather than
-discovering this later.
+**Clock is fine, ports are not.** A guest that booted has a correct clock, so
+the resume-time skew the first draft worried about does not arise. What does
+arise under `hostfwd`: the forwarded port pair belongs to the deployment name,
+so a restored deployment keeps its address — but a *new* deployment on the same
+host gets a different one, and nothing in the suite may assume the address is
+stable across claims.
 
 **State outside the appliance is untouched** — a domain machine account, an S3
 bucket, a KMIP key (**E9**). No local snapshot reaches it.
 
 **Rejected: accepting reinstall as the restore primitive.** It is the honest
 fallback if the substrate disappoints, but at the measured ~20s test it demands
-12 appliances per shard (**E2**) where a memory-state revert demands 2. That is
-a lab-capacity difference, not a tuning difference.
+12 appliances per shard (**E2**) where a rollback-and-boot demands perhaps 5 or
+6. That is a lab-capacity difference, not a tuning difference.
+
+---
 
 ## E2. Size the appliance pool from the restore cost
 
 How many appliances a shard needs is a function of how long a restore takes
-relative to a test. Get the restore cheap enough and the question disappears.
+relative to a test. Get the restore cheap enough and the question shrinks.
 
-**Why this decision exists at all.** In earlier drafts, with reinstall as the
-restore primitive, this section was about pipelining — warming the next
-appliance while the current one ran tests, to hide a 210-second install. **E1**
-largely dissolves that problem rather than managing it: a memory-state revert is
-comparable to a test in duration, so there is little left to hide.
+**Why this decision exists at all.** With reinstall as the restore primitive,
+this section was about pipelining — warming the next appliance while the
+current one ran tests, to hide a 210-second install. A rollback-and-boot does
+not dissolve that problem the way a memory-state revert would have; it roughly
+halves it. Pipelining is still the shape.
 
 **The formula.** If restores are overlapped with tests, a shard's steady-state
 throughput is `max(restore, test)`, so reaching test-speed requires:
 
 > **appliances per shard = 1 + ⌈restore ÷ test⌉**
 
-Figures below use the **measured** ~20s journey duration
-(`status.md`) rather than a guess. Global tests will be slower — by
-how much is **Q1** — and slower tests need *fewer* appliances, so these are
-pessimistic, which is the right direction for a budget ask.
+Figures below use the **measured** ~20s journey duration (`status.md`) rather
+than a guess. Global tests will be slower — by how much is **Q1** — and slower
+tests need *fewer* appliances, so these are pessimistic, which is the right
+direction for a budget ask.
 
 | Restore primitive | Restore cost | Appliances per shard at a 20s test |
 |---|---|---|
-| Memory-state revert, 4GB guest on NVMe | <10s (**Q0b**) | **2** |
-| Memory-state revert, 4GB guest on SATA SSD | ~20s (**Q0b**) | **2** |
-| Memory-state revert, 8GB guest | ~30s (**Q0b**) | **3** |
-| Disk-only snapshot + boot | ~90s | **6** |
-| Full ISO reinstall | ~210s (**Q0a**) | **12** |
-
-With the confirmed 4GB guest (**Q6**) the expected row is the first or second,
-so **two appliances per shard** is the planning figure — not the optimistic
-case it looked like when the guest size was unknown.
+| Rollback + boot, 6GB guest | ~60–90s, **unmeasured (Q0b)** | **4–6** |
+| Full ISO reinstall | ~210s (**Q0a**, measured) | **12** |
 
 Derivation, so the numbers can be checked rather than trusted: an appliance's
 full cycle is `test + restore`, so N appliances deliver one test every
@@ -283,25 +251,21 @@ faster tests need *more* appliances, not fewer.** The ratio is
 restore-over-test, so speeding tests up raises the appliance count unless
 restore speeds up with them.
 
-**This is the argument for memory-state snapshots in one line:** the difference
-between the top and bottom rows is a lab capacity question — two VMs per shard
-or twelve — not a tuning preference. It is also why guest RAM sizing (**E1**)
-is an infrastructure decision rather than a detail.
-
-**Overlapping restores with tests only matters for the slow rows.** At ~10s
-against a ~20s test, a shard can simply restore in place between tests and stay
-close to test-speed with a single appliance; the pool exists for resilience and
-for the Infrastructural tier, not to hide latency.
+**The honest alternative is to not chase test-speed.** A single appliance that
+restores in place between Global tests runs them at `test + restore` each —
+about 100s per Global test at the guessed numbers, or ~25 of them in the whole
+budget with nothing else. That is a real option on the interim host, and it
+may be the right one until **Q1** says how many Global tests there are.
 
 **This is a ceiling for the Global tier alone.** R8.1's 2,700s covers the whole
 v1 suite; Local, Contained and Infrastructural tests draw on the same per-shard
 wall clock. "~30 per shard" assumes a shard containing nothing else, which no
 real shard will be.
 
-**Rejected: accepting restore on the critical path.** It caps the Global tier at
-single digits per shard while **E4** explicitly expects that tier to grow, and
-it spends most of the budget on an installer whose coverage value was already
-banked by the first run.
+**Rejected: accepting restore on the critical path as the permanent design.**
+It caps the Global tier at low double digits per shard while **E4** explicitly
+expects that tier to grow, and it spends most of the budget on a boot whose
+coverage value is nil.
 
 ---
 
@@ -316,11 +280,11 @@ interfere by construction (**R3.4**). That reasoning does not change; the unit
 of parallelism just has to be the appliance. This is **D2**
 (D2 in `status.md`), promoted from deferred to load-bearing.
 
-**Blocked on Q5.** §0.2 records one VM per run as affordable. **E2** needs
-`1 + ⌈restore ÷ test⌉` per shard — between 2 and 12 depending on the primitive
-and on numbers nobody has measured. Shard count is therefore a *derived*
-quantity, not the thing to ask for: the budget question is total concurrent
-appliances. Until that is answered, this is a shape, not a plan.
+**Blocked on Q5.** §0.2 records one VM per run as affordable on the interim
+host. **E2** needs `1 + ⌈restore ÷ test⌉` per shard — between 4 and 12
+depending on the primitive and on numbers nobody has measured. Shard count is
+therefore a *derived* quantity, not the thing to ask for: the budget question is
+total concurrent appliances. Until that is answered, this is a shape, not a plan.
 
 **Consequence, and it is a hard rule.** Shard assignment is by test file, and no
 test may depend on another's residue: **any test must produce the same result
@@ -338,7 +302,7 @@ Every test declares a tier. The tier determines which restore primitive
 |---|---|---|
 | **Local** | Forms, validation, navigation, rendering of state the test itself created | API cleanup; many tests share one appliance |
 | **Contained** | Creates and deletes a user, share, dataset, snapshot | API cleanup, fresh appliance at suite boundary |
-| **Global** | Pool topology, service enable/disable, network, encryption, anything reached over SSH | `virsh snapshot-revert` to the test's baseline |
+| **Global** | Pool topology, service enable/disable, network, encryption, anything reached over SSH | Rollback to the test's baseline |
 | **Infrastructural** | AD/LDAP join, KMIP, cloud credentials, HA failover | Dedicated environment with that capability |
 
 **Why tiers.** Uniform per-test appliances would be correct and unaffordable.
@@ -370,19 +334,11 @@ it earns one.
 
 ---
 
-## E5. Baselines are snapshots, and `ixnode` has to take them
-
-> *2026-09-02: the ownership question this section is about no longer exists.
-> There is no `ixnode` in the pipeline; the VMs are created through the TrueNAS
-> host's own API by `tn_guest.py`, and their disks are zvols in a dataset per
-> deployment. Snapshot and revert are therefore a ZFS snapshot and rollback of
-> that dataset around a `vm.stop`/`vm.start`, driven by us. The "three ways this
-> can land" below collapse to option 3, at a fraction of its stated cost,
-> because `tn_guest.py` already provides the unattended install.*
+## E5. Baselines are snapshots, and we take them
 
 A baseline is a named appliance condition — `fresh-install`, `single-pool`,
-`pool-and-ad-joined` — captured as a **VM snapshot**. A test names the baseline
-it needs; restoring is a revert (**E1**).
+`pool-and-ad-joined` — captured as a **ZFS snapshot of a deployment dataset**.
+A test names the baseline it needs; restoring is a rollback (**E1**).
 
 **Why snapshots rather than recipes.** A recipe has to be re-run; a snapshot is
 returned to. This is what makes the Global tier affordable, and it is the thing
@@ -390,45 +346,35 @@ returned to. This is what makes the Global tier affordable, and it is the thing
 configuration database, the system dataset and the pools together, so the
 distributed-state problem in **E1** never arises.
 
-**Where this has to live, given `ixnode` owns the VMs.** `ixnode` manages the
-domains through libvirt itself, so there is no clean way to bolt snapshotting on
-from outside: a second thing driving `virsh` against domains `ixnode` believes
-it owns is two owners for one resource, and it will break the first time
-`ixnode` reclaims or rebuilds one.
+**Ownership is not a question any more.** The first draft spent this section
+on how to ask the `ixnode` team for snapshot and revert verbs, because `ixnode`
+owned the libvirt domains and a second owner would break things. There is no
+`ixnode` in the pipeline. The deployment is a dataset the pipeline created
+through the host's API, and `zfs snapshot` and `zfs rollback` on it are ours to
+run. `tn_guest.py` already provides the one thing that was expensive to
+reimplement — the unattended install with the **R2.8** boot-state contract —
+so the "option 3" the first draft priced as a fallback is simply the plan, at
+a fraction of its stated cost.
 
-So the ask has to go to that team. Given they are resistant to change, **the
-ask should be made as small as it honestly is** — two additive verbs over
-machinery they already drive:
+**How a baseline is built.** `tn_guest.py create` produces a clean install.
+Our own script drives it to the baseline state over the API the suite already
+uses — create a pool, join a domain — then the VM is stopped and the deployment
+dataset snapshotted under the baseline's name. Baseline *content* is defined
+here, in this repository; nothing outside it needs to know what
+`pool-and-ad-joined` means, and adding a baseline is a script change.
 
-- **snapshot this domain** (with memory, if the substrate allows)
-- **revert this domain to that snapshot**
+**Clones make a baseline a template, not just a restore point.** A ZFS
+snapshot can be cloned, and a clone of the baseline's zvols attached to a new
+VM is a new appliance at that baseline without an install: seconds of `zfs
+clone` and a boot. This is how the per-run install in the current pipeline goes
+away, and it is the same shape as the `<pool>/ci/golden` layout the
+api-ci-testbed setup notes already reserve for pre-installed images. It also
+answers **E2**'s "warm spare" cheaply: spares are clones.
 
-That is deliberately *not* "teach `ixnode` about baselines". Baseline **content**
-stays ours: `ixnode` installs a clean box, our own script drives it to the
-baseline state over the API we already have, and then asks `ixnode` to snapshot
-it. `ixnode` never needs to know what `pool-and-ad-joined` means, and adding a
-baseline never needs a ticket in their queue. The interface is two verbs about
-domains, which is the smallest surface that can work.
-
-**Three ways this can land**, in preference order:
-
-1. **`ixnode` adds the two verbs.** Smallest ask, and it keeps the thing
-   `ixnode` genuinely provides.
-2. **`ixnode` cedes libvirt lifecycle for our domains** and we snapshot and
-   revert them ourselves. Technically straightforward, still needs the same
-   team's agreement — a different conversation, not a way to avoid one.
-3. **We own a separate pool of domains outright**, with no `ixnode` dependency.
-   Viable because **E12** puts a runner on the libvirt host anyway.
-
-Option 3 is a real fallback rather than a threat, but it is not free, and it is
-worth being precise about why. What `ixnode` provides is not `virt-install` — it
-is the **unattended TrueNAS install**: EULA, first-boot wizard, admin
-credentials, the whole **R2.8** boot-state contract. Reimplementing that is the
-actual cost of option 3.
-
-Its saving grace is that the cost is one-time and bounded: baselines are built
-rarely, only when the nightly image moves. If option 1 stalls, option 3 is a
-schedule we control rather than one we wait on.
+**Baselines age with the nightly.** A baseline built from one ISO is that
+build. Rebuild them when the nightly moves — on a schedule, not per run — so
+the install cost is paid once per image rather than once per test. The
+periodic reinstall is also **E1**'s installer-fidelity run.
 
 **Baselines must specify a disk profile.** The mismatch that motivated this —
 **R2.2** said 8 virtual disks while `fresh-install.e2e.ts` builds a 9-wide
@@ -436,6 +382,8 @@ RAIDZ2 and calls `requireUnusedDisks(api, 9)` — was met in CI exactly as
 predicted, as a fail-fast on a one-disk guest, and is closed: `appliance.sh`
 provisions ten identical 10GB data disks with distinct serials. The lesson
 stands: disk inventory is part of a baseline's definition, not an assumption.
+
+---
 
 ## E6. The environment contract
 
@@ -445,7 +393,7 @@ Orchestration hands the suite a **descriptor**. It states:
   (**E10**)
 - credentials
 - which **baseline** the appliance was built to
-- which **capabilities** are present — `ad`, `ldap`, `kmip`, `s3`, `ha`, …
+- which **capabilities** are present — `ad`, `ldap`, `kmip`, `s3`, `ha`, `ssh`, …
 - which capabilities the run **requires**
 
 Tests declare what they need. An undeclared missing capability **skips with a
@@ -472,7 +420,9 @@ proceed — not skip everything.
 
 **Where it goes.** `e2e/support/config.ts` already resolves and validates target
 configuration in one place and fails at load naming every missing variable at
-once. This extends something that exists and works.
+once. This extends something that exists and works. Today the pipeline hands
+over the pre-descriptor form of this: `TN_HOST`, credentials, `TN_BASELINE`
+and `TN_DOMAIN` as environment variables (`e2e/ci/appliance.sh`).
 
 ---
 
@@ -492,6 +442,10 @@ certification or contractual commitment to a named provider that a stand-in
 would fail to evidence. So there is no vendor credential in CI, no third-party
 uptime in our results, and no spend.
 
+**Where they run.** The host already runs Docker for the browser (**E12**), so
+these are further containers on the same host. Under `hostfwd` the guest can
+reach them only outbound, through NAT, which is the direction it needs.
+
 **Where the difference does show, for the record.** Samba AD DC is not Windows
 AD — DNS integration and functional levels differ — and cloud providers vary at
 the edges. If a commitment to a named vendor ever appears, the answer is a
@@ -507,7 +461,15 @@ Fault injection over SSH is necessary (§0.1). Expose it only through named
 helpers — `degradePool`, `fillDataset`, `stopServiceUncleanly` — never as
 arbitrary command strings at the call site.
 
-**Why.** Two independent reasons, either sufficient:
+**It is a capability, not a given.** The pipeline's default guest is behind
+`hostfwd` NAT with only 80 and 443 forwarded, so SSH does not exist there.
+Reaching it needs either `--network bridge` (a routable guest address, which
+`tn_guest.py` supports and which is also what HA needs, **E10**) or an extra
+forwarded port. Either way it is something the environment declares (**E6**,
+`ssh`), and a test that needs it skips or fails according to the manifest —
+this is exactly the case the capability model exists for.
+
+**Why named helpers.** Two independent reasons, either sufficient:
 
 - Unorthodox commands are the most version-fragile thing the suite will contain.
   When one breaks on a new release it should break in one file, under a name
@@ -541,7 +503,9 @@ misattribute to flakiness, and it erodes trust in the whole suite.
 **Either** give each run a unique identity — machine name, OU, bucket prefix,
 key name — **or** dedicated service instances. This is **R3.3**'s run-scoped
 naming applied outside the appliance. Settle it before the first AD test
-(**Q3**), because the answer decides whether sharing is viable at all.
+(**Q3**), because the answer decides whether sharing is viable at all. The
+pipeline already names each deployment after its run and attempt
+(`e2e-<run>-<attempt>`), which is the identity to derive the rest from.
 
 ---
 
@@ -558,10 +522,16 @@ dropped WebSocket or failed call as failure. In a failover test that *is* the
 subject: the UI should show a reconnecting state and recover against the
 surviving controller. Unless the harness can be told "disconnection is expected
 here", these tests cannot be written — and that is a harness capability, not
-something an individual test can arrange.
+something an individual test can arrange. **E1**'s restore needs the same
+capability, which is why it is on the critical path now.
 
 Failover is the extreme of Global: a controller pair per test, and a real
 failover to recover from.
+
+**The provisioner already knows the shape.** `tn_guest.py --ha` builds a
+controller pair with a private heartbeat bridge and iSCSI-shared data disks. It
+requires bridge networking, which is one more reason **E8**'s bridge mode is
+the eventual default rather than an exception.
 
 **Config restore is a whole-pair operation on a licensed HA system.**
 `_handle_failover` sends the database to the peer and reboots both controllers,
@@ -602,124 +572,111 @@ artifact does not exist yet and has to be built.
 
 ---
 
-## E12. CI: GitHub Actions on self-hosted runners
+## E12. CI: GitHub Actions on a self-hosted runner on the host
 
-> *2026-09-02: implemented, one shard, see `05-ci.md`. The runner is on the
-> TrueNAS host; the browser runs in Playwright's container on that host with
-> host networking. `upload-artifact` carries JUnit only so far, and **R7.2**'s
-> log collection has no path behind `hostfwd`.*
+Implemented; `05-ci.md` is the operational record. What this section keeps is
+the reasoning, and what the build settled.
+
+**The runner is the TrueNAS host.** Every provisioning call is then the host's
+own API over localhost or a `zfs` command, with no remote hypervisor channel,
+no credential plumbing, and no network hop on the restore path. The browser
+runs in Playwright's container on the same host with host networking, so it
+reaches the guest exactly as the host does. The host itself installs nothing
+browser-shaped — it has a read-only root — which is what makes this
+arrangement possible on an appliance at all.
 
 **Sharding is native.** Playwright accepts `--shard=i/n`, and a matrix job maps
 onto it directly: each leg claims one appliance, so **E2**'s appliance count
-*is* the matrix size. No bespoke orchestration.
+*is* the matrix size. No bespoke orchestration. Not yet used: one shard.
 
-**The concurrency guard stops being something we build.** §0.1's problem — two
-runs against one appliance destroying each other — is a `concurrency:` group,
-expressed declaratively. It is also how **Q5**'s appliance budget gets enforced:
-cap the matrix, cap the pool.
+**The concurrency guard is declarative.** §0.1's problem — two runs against one
+appliance destroying each other — is a `concurrency:` group. It is also how
+**Q5**'s appliance budget gets enforced: cap the matrix, cap the pool. One
+caveat the first draft missed: a group holds one running and one pending run,
+and a third supersedes the pending one, so under load some PR runs never
+happen. That is acceptable for an informational check and not for a gate
+(**D1**).
 
-**Artifacts.** `upload-artifact` covers traces, video and JUnit XML (**R7.1**)
-without a plugin. **R7.2**'s middleware log collection still has to run before
-the VM is reclaimed, which is a teardown step regardless of CI system.
-
-**Put the runner on the libvirt host.** Then snapshot and revert are local
-`virsh` calls: no remote hypervisor API, no credential plumbing, no network hop
-on the hot path. Anywhere else and every restore needs an authenticated remote
-channel to the hypervisor. This also makes **E5**'s option 3 viable.
+**Artifacts.** JUnit XML leaves the runner today. Traces, video and screenshots
+(**R7.1**) do not yet, for the reason given in the workflow: a trace records
+the appliance password as typed, and this is a public repository. The
+precondition for publishing them — a credential worthless once published — now
+holds, since the password is per claim and the appliance is destroyed at
+release. Turning the upload on is a deliberate step. **R7.2**'s middleware log
+collection has no path under `hostfwd`; it needs an API route or bridge mode.
 
 ### The public-repository constraint
 
 **`truenas/webui` is public, and self-hosted runners on public repositories are
-a known attack path.** If any workflow with access to these runners can be
+a known attack path.** If any workflow with access to this runner can be
 triggered by a pull request from a **fork**, then an arbitrary person on the
 internet can execute code on a machine that sits on the lab network and holds
-`virsh` access to every appliance. GitHub's own guidance is not to pair
+an API credential for the host. GitHub's own guidance is not to pair
 self-hosted runners with public repositories, precisely because of this.
 
-It is workable, but only with the gates set deliberately:
+The gates as set:
 
-- **Never** trigger e2e on `pull_request` from forks, and never use
-  `pull_request_target` with a checkout of PR code.
-- Restrict triggers to `push` on protected branches, `schedule`, and
-  `workflow_dispatch`.
-- For PR gating later (**D1**): same-repo branches only, plus a GitHub
-  **environment with required reviewers**, so a human approves before untrusted
-  code runs.
-- Put the runner in its own network segment with no route to anything but the
-  lab, and treat it as compromised-by-default.
-
-Decide this before the first nightly rather than after. "Add PR gating" is
-exactly the later change that opens the hole quietly.
+- The `pull_request` trigger is guarded by an `if:` requiring the head
+  repository to be this repository, so a fork PR queues nothing. Never use
+  `pull_request_target` with a checkout of PR code, which would defeat it.
+- The job runs in the `e2e-lab` environment, which holds the lab credential.
+  **Required reviewers on that environment are not yet configured**; they are
+  the second line, and the thing to add before **D1**.
+- Documentation-only changes under `e2e/docs` do not trigger a run.
+- The runner should be in its own network segment with no route to anything
+  but the lab, and treated as compromised-by-default. Whether the interim box
+  is segmented that way is not known from this repository.
 
 ---
 
-## E13. Host sizing, and the two hardware asks
+## E13. Host sizing, and the hardware asks
 
 Working assumption, 2026-08-10: a 64-thread AMD Epyc, 128GB RAM, 512GB SSD.
-**Hardware is not yet assigned**, so this section exists to influence the spec
-while that is still possible.
-
-> *2026-09-02: the pipeline is running on an interim box — a TrueNAS VM host
-> that crashed under an 8GB guest, so nothing like the assumed spec. The
-> arithmetic below is for the eventual box, and the guest is now 6GB rather
-> than the 4GB it assumes.*
+**Hardware is not yet assigned.** The pipeline runs on an interim TrueNAS VM
+host that crashed under an 8GB guest, so the eventual box is still the one
+to influence, and the arithmetic below is for it.
 
 ### What the assumed box supports
 
 | Resource | Capacity | Concurrent appliances |
 |---|---|---|
-| RAM | 128GB, less ~8GB host/libvirt, ~5GB per guest incl. qemu overhead | ~24 |
-| CPU | 64 threads, 2 vCPU per guest | ~32 before oversubscription — not the constraint |
-| Disk | 512GB, less ~80GB of baselines | **~12–20, depending on churn** |
+| RAM | 128GB, less ~10GB for the host, Docker and the browser; ~7GB per 6GB guest with qemu overhead | **~16** |
+| CPU | 64 threads, 4 vCPU per guest | ~16 before oversubscription; drop to 2 vCPU and it is not the constraint |
+| Disk | 512GB of zvols, thin | not the constraint at present sizes, see below |
 
-**Disk binds first.** Fixed cost is roughly 15GB per baseline base image plus a
-4GB memory image, so four baselines is ~80GB before a test runs. The remaining
-~430GB is per-VM overlay churn, which is what actually varies: at ~10GB per VM
-that is ~40 concurrent, at ~20GB it is ~21.
+**RAM binds first now, not disk.** The first draft's disk arithmetic was about
+qcow2 overlays and 4GB memory images. There are no memory images, and zvols are
+thin: a baseline snapshot costs what the install wrote (a few GB), a clone
+costs nothing until the guest writes, and a run's writes are modest. Sixteen
+6GB guests, on the other hand, is the whole of a 128GB box. Guest RAM is the
+sizing parameter, and 6GB is worth defending against creep for exactly that
+reason.
 
 **One hazard specific to this suite.** `fillDataset` (**E8**) deliberately fills
-a dataset, and on 8 thin-provisioned disks that grows the overlay by however
-much it writes. Several of those concurrently is how a 512GB device fills
-mid-run. **Cap the fill size inside the helper** rather than letting each test
-choose — the same argument as **E8**'s named-helper rule, applied to resource
-consumption.
+a dataset, and on thin-provisioned zvols that is real space on the host. Several
+of those concurrently is how a pool fills mid-run. **Cap the fill size inside
+the helper** rather than letting each test choose — the same argument as
+**E8**'s named-helper rule, applied to resource consumption.
 
-### Ask 1: NVMe, not SATA
+### Ask 1: RAM before anything else
 
-This matters more than anything else on the list, because **revert speed is the
-design**.
+Every concurrent appliance is ~7GB resident. The box's RAM divided by that is
+the shard ceiling, with nothing else to trade against it. 256GB doubles the
+ceiling; nothing else on the list does.
 
-A 4GB memory image reads back in roughly 1.5s on NVMe against ~8s on SATA SSD —
-already a difference of two rows in **E2**'s table. The decisive factor is
-contention: reverts do not happen one at a time, and a sharded run reverts many
-appliances at once against one device.
+### Ask 2: fast storage still matters, for boot
 
-| | 12 concurrent reverts, ~48GB moved |
-|---|---|
-| NVMe | a few seconds each |
-| SATA SSD | **~90 seconds aggregate** |
-
-The SATA case puts revert above the cost of a boot, which collapses the entire
-argument for memory snapshots and pushes the design back to disk-only or
-reinstall. Same budget, materially worse outcome.
-
-### Ask 2: more than 512GB
-
-Disk is the only real ceiling on that box, and it is the cheapest component to
-change. 2TB of NVMe is a rounding error beside a 64-thread Epyc with 128GB, and
-it removes concurrency as a constraint outright — no overlay pruning between
-runs, no cap on how many baselines are kept, no fill-test hazard.
-
-If 512GB is fixed it remains workable: keep to three or four baselines, prune
-overlays between runs, cap `fillDataset`. That is operational care spent for no
-particular reason.
+The first draft asked for NVMe because memory-image reads set the revert time.
+Without memory images, storage speed shows up in the boot that every restore
+now includes, and in N guests booting at once against one pool. It is worth
+having; it is no longer decisive. 512GB of it is adequate at present sizes.
 
 ### Sizing recommendation
 
-**Start at 8 shards** — 8 to 16 VMs depending on whether shards hold a warm
-spare (**E2**). Comfortably inside every limit on the assumed box, and already
-more parallelism than the Global tier needs at its present size. Grow when
-measurement justifies it, not before.
+**Start at 4 shards** — 4 to 8 VMs depending on whether shards hold a warm
+spare (**E2**) — once **Q0b** and **Q1** are measured and say sharding is
+needed at all. On the interim host, one appliance restoring in place is the
+plan. Grow when measurement justifies it, not before.
 
 ---
 
@@ -728,14 +685,14 @@ measurement justifies it, not before.
 | | Question | Blocks |
 |---|---|---|
 | ~~**Q0a**~~ | **Answered 2026-09-02: ~3.5 minutes** from `tn_guest.py create` to a usable, credentialed API on a v27 nightly ISO; ~10 minutes on a 25.10 release ISO. See `05-ci.md` | — |
-| **Q0b** | **Revert-to-usable**, for the guest RAM and backing store actually in use: `virsh snapshot-revert` + NTP resync + middleware ready + WebSocket reconnect + re-auth | **E1**, **E2**. The most load-bearing unmeasured number in this document — it sets the appliance count |
+| **Q0b** | **Rollback-to-usable**: `vm.stop` + `zfs rollback` + `vm.start` + middleware ready + re-auth, on a 6GB guest on the actual host | **E1**, **E2**. The most load-bearing unmeasured number in this document — it sets the appliance count |
 | **Q1** | How long does the Local tier take against one appliance, and how long is a representative Global test? | Whether tiering is needed *yet*; sets the appliance count in **E2** |
-| ~~**Q2**~~ | **Answered 2026-08-10: yes**, `ixnode` will add snapshot and revert. **E5** option 1 applies; options 2 and 3 are no longer needed | — |
+| ~~**Q2**~~ | ~~Will `ixnode` add snapshot and revert?~~ **Moot 2026-09-02:** no `ixnode`; snapshot and revert are ours (**E5**) | — |
 | ~~**Q3**~~ | **Answered 2026-08-10: shared.** So per-run identity is now required work, not a contingency — see **E9** | — |
 | ~~**Q4**~~ | **Answered 2026-08-10: no commitment, local stand-ins are fine.** MinIO, Samba AD DC, OpenLDAP and PyKMIP cover everything; no real-endpoint nightly needed | — |
-| **Q5** | **libvirt host capacity.** Working assumption 2026-08-10: 64-thread Epyc, 128GB RAM, 512GB SSD — *not yet assigned hardware*, so still influenceable. See **E13** | **E3**, **E2** |
-| ~~**Q6**~~ | **Answered 2026-08-10: qcow2, 4GB guests (8GB worst case).** Folded into **E1** and **E2**. **Revised 2026-09-02: zvols, 6GB guests** — 8GB crashed the host; **E1** and **E2**'s 4GB rows need redoing | — |
-| ~~**Q7**~~ | **Answered 2026-08-10: yes.** Snapshot and revert are local `virsh` calls. **2026-09-02:** the runner is on the host, but the calls are the host's own API and `zfs`, not `virsh` | — |
+| **Q5** | **Host capacity.** The interim box holds one guest safely. The assumed 64-thread/128GB box is *not yet assigned hardware*, so still influenceable. See **E13** | **E3**, **E2** |
+| ~~**Q6**~~ | ~~qcow2, 4GB guests.~~ **Revised 2026-09-02: zvols, 6GB guests.** 8GB crashed the interim host; 4GB was never tried | — |
+| ~~**Q7**~~ | **Answered: yes, the runner is on the host.** Snapshot and revert are the host's own API and `zfs`, not `virsh` | — |
 
 ---
 
@@ -744,31 +701,31 @@ measurement justifies it, not before.
 Front-loaded with measurement, because most of this document assumes a scaling
 problem that has not been demonstrated.
 
-1. ~~Open the `ixnode` conversation.~~ **Overtaken, 2026-09-02.** There is no
-   `ixnode` in the pipeline; snapshot and revert are ours to build against the
-   TrueNAS host's API (**E5** note). Nothing to agree with anyone.
-2. **Measure Q0b, then Q1.** A revert-to-usable time is what sets the appliance
-   count, and it is cheap to measure by hand on one box. If the Local tier also
-   runs 80 tests in 20 minutes on one appliance without tainting, tiering is
-   premature and the right move is simply to write tests — do not build the
-   architecture above on the strength of this document alone.
+1. ~~Open the `ixnode` conversation.~~ **Overtaken.** There is nobody to ask;
+   snapshot and revert are a script against the host's API (**E5**).
+2. **Measure Q0b, then Q1.** By hand on the interim host: install, snapshot the
+   deployment dataset, create a pool, roll back, boot, re-authenticate, and
+   time it. Half a day, and it decides whether **E2**'s pool is two appliances
+   or six. If the Local tier also runs 80 tests in 20 minutes on one appliance
+   without tainting, tiering is premature and the right move is simply to
+   write tests — do not build the architecture above on the strength of this
+   document alone.
 3. **Environment descriptor, capability manifest, hand-run default** (**E6**).
    Small, unblocking, and it stops the next environment type being a rewrite.
-   Make the descriptor topology-shaped while in there (**E10**).
-4. **Prove the revert cycle by hand** (**E1**): build a box to a baseline,
-   snapshot it with memory, run something destructive — create a pool, join a
-   domain — then revert and confirm the appliance is genuinely back, the suite
-   can re-authenticate, and the clock resynced. Half a day, and it answers Q0b.
-5. **Re-authentication after restore** (**E1**, **E10**). Nothing else works
-   until the harness survives an appliance disappearing.
+   Make the descriptor topology-shaped while in there (**E10**), and make
+   `ssh` a declared capability (**E8**).
+4. **Re-authentication after restore** (**E1**, **E10**). Nothing else works
+   until the harness survives an appliance rebooting under it.
+5. **Baselines as snapshots, and clones as provisioning** (**E5**). Build
+   `fresh-install` and `single-pool` once per nightly, clone per run. This is
+   what removes the 3.5-minute install from every run.
 6. **Settle shared-service identity** (**Q3**) before the first AD test — no
-   local snapshot restores a domain machine account.
-   ~~Decide runner placement and the fork-trigger policy at the same time
-   (**E12**, **Q7**).~~ **Done:** the runner is on the host, the
-   `pull_request` trigger is same-repo only, and the `e2e-lab` environment
-   exists. Required reviewers on that environment are still to be configured.
-7. **Agree baseline names and disk profiles** (**E5**), including the 8-vs-9
-   disk mismatch.
+   local snapshot restores a domain machine account. Derive it from the
+   deployment name the pipeline already assigns.
+7. ~~Decide runner placement and the fork-trigger policy.~~ **Done** (**E12**).
+   Still to do there: required reviewers on the `e2e-lab` environment, and
+   confirming the interim box's network segment.
+8. **Publish traces** (**E12**). The precondition holds; flip it.
 
 ---
 
@@ -777,21 +734,17 @@ problem that has not been demonstrated.
 - **The Local tier taints anyway.** Then the tier model is wrong and per-test
   restore is the honest answer for everything, with a much larger appliance
   budget as the price.
-- **Q2 comes back no**, on both the verbs and the fallback. Then reinstall is
-  the only restore available, the Global tier has to be held to single digits
-  per shard, and that constraint should drive test design explicitly rather than
-  being absorbed quietly.
-- **Q0b comes back close to Q0a.** If a revert is nearly as slow as an install,
-  the snapshot machinery is not earning its complexity — check guest RAM and the
-  backing store (**Q6**) before concluding it, since both dominate that number.
+- **Q0b comes back close to Q0a.** If a rollback-and-boot is nearly as slow as
+  an install, the snapshot machinery is not earning its complexity — check
+  guest RAM, vCPU and disk count before concluding it, since boot time is what
+  is being measured.
 - **Snapshots turn out not to be honest restores.** The premise of **E1** is
-  that a VM snapshot is state-agnostic. If reverted appliances misbehave in ways
-  a freshly installed one does not, that premise is wrong and the whole approach
-  needs revisiting.
+  that a host-side snapshot is state-agnostic. If rolled-back appliances
+  misbehave in ways a freshly installed one does not, that premise is wrong and
+  the whole approach needs revisiting.
 - **Skipped-for-capability counts stay high** run after run. Skipping is a
   pressure valve for a busy lab, not a permanent state hiding coverage we
   believe we have.
-- **Per-test restore makes R7.2 unaffordable.** `middlewared.log` must be
-  collected before a VM is reclaimed. At one reprovision per run that is a
-  teardown step; at one per test it is a per-test cost that has to be measured
-  and may constrain the tier model.
+- **The interim host keeps falling over.** Two crashes at 8GB were the reason
+  for 6GB. If 6GB is not stable either, the box cannot host this and the
+  hardware ask in **E13** stops being a request for later.

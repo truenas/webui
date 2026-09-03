@@ -66,9 +66,10 @@ a number. See `05-ci.md`.
    legacy KVM-host tool and cannot run on a TrueNAS appliance.
 
    Deliberately smaller than `04-environment-architecture.md`, which shards
-   across appliances and reverts a snapshot between tests. Neither exists yet,
-   and the design's provisioning assumptions need revisiting against what is
-   actually there — see the status box at the top of that document.
+   across appliances and rolls back a snapshot between tests. Neither exists
+   yet. That document was rewritten against the pipeline as built: the design
+   stands, the substrate is a TrueNAS host with zvol-backed VMs rather than
+   `ixnode` on libvirt, and its next step is measuring the rollback cycle.
 
    What is next for the pipeline, in order: rotate the nightly ISO
    automatically, publish traces (the per-claim credential the design required
