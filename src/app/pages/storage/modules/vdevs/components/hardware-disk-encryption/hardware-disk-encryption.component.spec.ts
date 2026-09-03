@@ -8,13 +8,15 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ManageDiskSedDialog,
 } from 'app/pages/storage/modules/vdevs/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { HardwareDiskEncryptionComponent } from './hardware-disk-encryption.component';
 
 describe('HardwareDiskEncryptionComponent', () => {
@@ -40,8 +42,14 @@ describe('HardwareDiskEncryptionComponent', () => {
       mockAuth(),
       provideMockStore({
         selectors: [{
-          selector: selectIsEnterprise,
-          value: false,
+          selector: selectEntitlements,
+          value: {
+            [EntitlementFeature.Sed]: {
+              entitled: false,
+              reason: EntitlementReason.NoLicense,
+              message: 'This system is not licensed to use the SED feature.',
+            },
+          },
         }],
       }),
     ],
@@ -60,7 +68,15 @@ describe('HardwareDiskEncryptionComponent', () => {
 
   describe('no SED support', () => {
     beforeEach(() => {
-      store$.overrideSelector(selectIsEnterprise, true);
+      // Non-enterprise with no per-disk and no global SED password => hasSedSupport() is false.
+      store$.overrideSelector(selectEntitlements, {
+        [EntitlementFeature.Sed]: {
+          entitled: false,
+          reason: EntitlementReason.NoLicense,
+          message: 'This system is not licensed to use the SED feature.',
+        },
+      });
+      store$.refreshState();
       store$.refreshState();
       spectator.detectChanges();
     });
@@ -72,7 +88,8 @@ describe('HardwareDiskEncryptionComponent', () => {
 
   describe('with SED support', () => {
     beforeEach(() => {
-      store$.overrideSelector(selectIsEnterprise, true);
+      store$.overrideSelector(selectEntitlements, {});
+      store$.refreshState();
       store$.refreshState();
       spectator.detectChanges();
     });

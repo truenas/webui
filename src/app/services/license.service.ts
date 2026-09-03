@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import {
   catchError, defer, of, shareReplay,
 } from 'rxjs';
-import { first, map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -13,7 +13,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectHasEnclosureSupport,
   selectHasLicenseFeature,
-  selectIsEnterprise,
 } from 'app/store/system-info/system-info.selectors';
 
 /**
@@ -45,31 +44,6 @@ export class LicenseService {
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
 
   readonly hasSed$ = this.store$.select(selectHasSedFeature);
-
-  /**
-   * Mirrors `showSedCard` in `AdvancedSettingsComponent` — the SED card is
-   * rendered when either the system is licensed as Enterprise (which always
-   * exposes SED config) or a global SED password has already been set.
-   *
-   * Short-circuits on Enterprise so we don't burn a backend call for the
-   * password-set check when the answer is already true. `catchError` falls
-   * back to `false` so a transient API failure hides SED entries rather than
-   * tearing down the search filter chain. `refCount: true` ensures the
-   * fallback isn't permanently cached: the next subscribe after the chain
-   * goes idle re-runs `defer` and gets a fresh answer once the backend is
-   * healthy again.
-   */
-  readonly hasSedFeature$ = defer(() => this.store$.select(selectIsEnterprise).pipe(
-    first(),
-    switchMap((isEnterprise) => (
-      isEnterprise
-        ? of(true)
-        : this.api.call('system.advanced.sed_global_password_is_set').pipe(map(Boolean))
-    )),
-  )).pipe(
-    catchError(() => of(false)),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
 
   /**
    * Not migrated to the `STIG` entitlement: `fips_available` reports firmware capability,

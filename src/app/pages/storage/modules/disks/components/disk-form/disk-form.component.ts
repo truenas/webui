@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, signal, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
@@ -24,8 +24,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { EntitlementsService } from 'app/services/entitlements.service';
 
 export type DiskFormResponse = (DiskUpdate & { identifier: string })[];
 
@@ -53,9 +52,9 @@ export type DiskFormResponse = (DiskUpdate & { identifier: string })[];
   ],
 })
 export class DiskFormComponent implements OnInit {
-  private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private fb = inject(NonNullableFormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private snackbarService = inject(SnackbarService);
@@ -80,9 +79,9 @@ export class DiskFormComponent implements OnInit {
   readonly isLoading = signal<boolean>(false);
   readonly existingDisk = signal<Disk | null>(null);
 
-  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  private readonly hasSedEntitlement = this.entitlements.entitled(EntitlementFeature.Sed);
   readonly showSedSection = computed(() => {
-    return this.isEnterprise() || (this.existingDisk()?.passwd && this.existingDisk()?.passwd !== '');
+    return Boolean(this.hasSedEntitlement());
   });
 
   constructor() {

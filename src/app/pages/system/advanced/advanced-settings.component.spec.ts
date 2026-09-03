@@ -39,6 +39,7 @@ import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-se
 import { TunableCardComponent } from 'app/pages/system/advanced/tunable/tunable-card/tunable-card.component';
 import { SaveDebugButtonComponent } from 'app/pages/system/general-settings/support/save-debug-button/save-debug-button.component';
 import { LicenseService } from 'app/services/license.service';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { selectProductType } from 'app/store/system-info/system-info.selectors';
 import { InitShutdownCardComponent } from './init-shutdown/init-shutdown-card/init-shutdown-card.component';
 
@@ -116,9 +117,10 @@ describe('AdvancedSettingsComponent', () => {
     expect(spectator.query(FailoverCardComponent)).toExist();
   });
 
-  it('enterprise: shows cards with advanced settings', () => {
+  it('shows the SED card when the system is entitled to SED', () => {
     const store$ = spectator.inject(MockStore);
-    store$.overrideSelector(selectProductType, ProductType.Enterprise);
+    // Loaded map with no gated keys, i.e. entitled to SED.
+    store$.overrideSelector(selectEntitlements, {});
     store$.refreshState();
 
     spectator.detectChanges();
