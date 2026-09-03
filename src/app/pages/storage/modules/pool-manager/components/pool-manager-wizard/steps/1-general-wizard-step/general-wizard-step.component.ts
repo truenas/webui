@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
@@ -13,6 +12,7 @@ import {
   combineLatest, map, Observable,
 } from 'rxjs';
 import { startWith, take } from 'rxjs/operators';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { translated } from 'app/helpers/translated.helper';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Option } from 'app/interfaces/option.interface';
@@ -27,8 +27,7 @@ import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/co
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { EntitlementsService } from 'app/services/entitlements.service';
 
 @Component({
   selector: 'ix-general-wizard-step',
@@ -52,11 +51,11 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 })
 export class GeneralWizardStepComponent implements OnInit, OnChanges {
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private formBuilder = inject(FormBuilder);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
   private store = inject(PoolManagerStore);
-  private store$ = inject<Store<AppState>>(Store);
   private cdr = inject(ChangeDetectorRef);
   private poolWizardNameValidationService = inject(PoolWizardNameValidationService);
   private destroyRef = inject(DestroyRef);
@@ -91,11 +90,11 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   private readonly oldNameForbiddenValidator = forbiddenAsyncValues(this.poolNames$);
 
   hasSedCapableDisks$ = this.store.hasSedCapableDisks$;
-  isEnterprise$ = this.store$.select(selectIsEnterprise);
+  hasSedEntitlement$ = this.entitlements.entitled$(EntitlementFeature.Sed);
   isSedPasswordSet$ = this.api.call('system.advanced.sed_global_password_is_set');
 
   private readonly hasSedCapableDisks = toSignal(this.hasSedCapableDisks$, { initialValue: false });
-  private readonly isEnterprise = toSignal(this.isEnterprise$, { initialValue: false });
+  private readonly hasSedEntitlement = toSignal(this.hasSedEntitlement$, { initialValue: false });
 
   // `translated`, not a plain `computed`: the labels are composed with `instant()` in
   // TypeScript rather than piped in the template, so they would otherwise freeze at whatever was
@@ -106,7 +105,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       { label: translate.instant(helptextPoolCreation.encryptionTypeSoftware), value: EncryptionType.Software },
     ];
 
-    if (this.hasSedCapableDisks() && this.isEnterprise()) {
+    if (this.hasSedCapableDisks() && this.hasSedEntitlement()) {
       options.push({
         label: translate.instant(helptextPoolCreation.encryptionTypeSed),
         value: EncryptionType.Sed,
@@ -150,13 +149,13 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
 
   /**
    * Returns an observable that emits the default encryption type based on
-   * available SED-capable disks and Enterprise license status.
+   * available SED-capable disks and the SED entitlement.
    */
   private getDefaultEncryptionType$(): Observable<EncryptionType> {
-    return combineLatest([this.hasSedCapableDisks$, this.isEnterprise$]).pipe(
+    return combineLatest([this.hasSedCapableDisks$, this.hasSedEntitlement$]).pipe(
       take(1),
-      map(([hasSedDisks, isEnterprise]) => {
-        return (hasSedDisks && isEnterprise) ? EncryptionType.Sed : EncryptionType.None;
+      map(([hasSedDisks, hasSedEntitlement]) => {
+        return (hasSedDisks && hasSedEntitlement) ? EncryptionType.Sed : EncryptionType.None;
       }),
     );
   }
