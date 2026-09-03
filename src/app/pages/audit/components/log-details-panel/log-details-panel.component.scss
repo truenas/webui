@@ -48,4 +48,20 @@
 
 .cards {
   @include details-cards();
+
+  // The shared mixin lays the cards out with CSS multi-column. With only two cards the
+  // browser kept both in the first column and grew the panel instead of balancing them,
+  // so half the details panel sat empty. A grid places them side by side as soon as
+  // there is room for a second column, and collapses to one column when there isn't.
+  .scroll-window {
+    align-items: start;
+    columns: unset;
+    display: grid;
+    gap: $gap;
+    grid-template-columns: repeat(auto-fill, minmax($card-width-slim, 1fr));
+
+    > *:not(:last-child) {
+      margin-bottom: 0;
+    }
+  }
 }

@@ -1,19 +1,6 @@
-:host {
-  display: flex;
-  font-size: 13px;
-  gap: 8px;
-}
-
-tn-icon {
-  margin-top: 9px;
-}
-
-.warning-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.enable-button {
-  align-self: flex-start;
+// tn-banner's own host carries no display, and the flex child of the form section
+// is this component's host — so the banner needs blockifying to stretch to the
+// form width instead of shrink-wrapping its content.
+tn-banner {
+  display: block;
 }

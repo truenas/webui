@@ -131,7 +131,6 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
 
     // Bridge fields
     bridge_members: [[] as string[]],
-    stp: [true],
     enable_learning: [true],
 
     // Lag fields

@@ -145,6 +145,9 @@ describe('ReplicationFormComponent', () => {
       ),
     ],
     providers: [
+      // The component renders `<ix-form>`; the bundle mocks the services it injects and zeroes the
+      // min submit-feedback hold so the `closed` assertions below stay synchronous.
+      ...ixFormTestingProviders(),
       mockAuth(),
       mockProvider(DatasetService, {
         getDatasetNodeProvider: jest.fn(() => localNodeProvider),
@@ -186,6 +189,13 @@ describe('ReplicationFormComponent', () => {
       tick();
     }));
 
+    // The section groups are module-level and shared by every test here, so anything a test
+    // dirties or invalidates has to be put back even when that test fails part way through.
+    afterEach(() => {
+      sourceForm.controls.name_regex.markAsPristine();
+      targetForm.controls.target_dataset.setErrors(null);
+    });
+
     it('shows form sections', () => {
       expect(spectator.query(GeneralSectionComponent)).toExist();
       expect(spectator.query(TransportSectionComponent)).toExist();
@@ -226,6 +236,21 @@ describe('ReplicationFormComponent', () => {
         sudo: false,
       }]);
       expect(closedSpy).toHaveBeenCalledWith(true);
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task created.');
+    });
+
+    it('rolls a dirty section up into the host unsaved-changes guard', () => {
+      expect(spectator.component.hasUnsavedChanges()).toBe(false);
+
+      sourceForm.controls.name_regex.markAsDirty();
+      expect(spectator.component.hasUnsavedChanges()).toBe(true);
+    });
+
+    it('rolls section validity up into the host Save gate', () => {
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      targetForm.controls.target_dataset.setErrors({ required: true });
+      expect(spectator.component.canSubmit()).toBe(false);
     });
 
     it('shows eligible snapshots message', fakeAsync(() => {
@@ -330,11 +355,6 @@ describe('ReplicationFormComponent', () => {
   describe('host-driven submit', () => {
     beforeEach(fakeAsync(() => {
       spectator = createComponent({
-        providers: [
-          // The `<ix-form>` this mode renders needs its own service mocks, and the bundle also
-          // zeroes the min submit-feedback hold so the close assertions below stay synchronous.
-          ...ixFormTestingProviders(),
-        ],
         props: {
           replicationToEdit: { id: 1 } as ReplicationTask,
         },

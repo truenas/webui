@@ -8,6 +8,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ReplicationRestoreDialog,
@@ -28,6 +29,7 @@ describe('ReplicationRestoreDialogComponent', () => {
         mockCall('replication.restore'),
       ]),
       mockProvider(DialogService),
+      mockProvider(SnackbarService),
       mockProvider(DialogRef),
       {
         provide: DIALOG_DATA,
@@ -40,6 +42,11 @@ describe('ReplicationRestoreDialogComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('keeps Restore disabled until the form is valid', async () => {
+    const restore = await loader.getHarness(TnButtonHarness.with({ label: 'Restore' }));
+    expect(await restore.isDisabled()).toBe(true);
   });
 
   it('restores a replication task when dialog form is submitted', async () => {
@@ -59,6 +66,7 @@ describe('ReplicationRestoreDialogComponent', () => {
         target_dataset: '/mnt/dataset',
       },
     ]);
-    expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task restored.');
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });

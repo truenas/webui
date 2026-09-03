@@ -9,15 +9,18 @@
 >
   <div class="fieldsets">
     <tn-form-section class="fieldset" [heading]="'Local' | translate">
-      <ix-explorer
-        formControlName="path"
+      <tn-form-field
         [label]="'Path' | translate"
         [tooltip]="helptext.rsyncPathTooltip | translate"
         [required]="true"
-        [nodeProvider]="treeNodeProvider"
       >
-        <ix-explorer-create-dataset></ix-explorer-create-dataset>
-      </ix-explorer>
+        <ix-explorer
+          formControlName="path"
+          [nodeProvider]="treeNodeProvider"
+        >
+          <ix-explorer-create-dataset></ix-explorer-create-dataset>
+        </ix-explorer>
+      </tn-form-field>
 
       <ix-user-combobox
         formControlName="user"
@@ -35,7 +38,7 @@
           name="direction"
           testId="direction"
           formControlName="direction"
-          [options]="(directions$ | async) ?? []"
+          [options]="directions"
         ></tn-select>
       </tn-form-field>
 
@@ -54,7 +57,7 @@
           name="mode"
           testId="mode"
           formControlName="mode"
-          [options]="(rsyncModes$ | async) ?? []"
+          [options]="rsyncModes"
         ></tn-select>
       </tn-form-field>
 
@@ -92,7 +95,7 @@
             name="sshconnectmode"
             testId="sshconnectmode"
             formControlName="sshconnectmode"
-            [options]="(sshConnectModes$ | async) ?? []"
+            [options]="sshConnectModes"
           ></tn-select>
         </tn-form-field>
 
@@ -110,11 +113,12 @@
             ></tn-input>
           </tn-form-field>
           @if (isRemoteHostSpecified) {
-            <ix-slide-toggle
-              formControlName="ssh_keyscan"
-              [label]="'SSH Keyscan' | translate"
-              [tooltip]="helptext.sshKeyscanTooltip | translate"
-            ></ix-slide-toggle>
+            <tn-form-field [tooltip]="helptext.sshKeyscanTooltip | translate">
+              <tn-slide-toggle
+                formControlName="ssh_keyscan"
+                [label]="'SSH Keyscan' | translate"
+              ></tn-slide-toggle>
+            </tn-form-field>
           }
           <tn-form-field
             [label]="'Remote SSH Port' | translate"

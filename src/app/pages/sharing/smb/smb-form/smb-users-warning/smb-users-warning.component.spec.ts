@@ -75,6 +75,26 @@ describe('SmbUsersWarningComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/credentials', 'directory-services']);
   });
 
+  it('activates a warning link with the keyboard', () => {
+    const smbValidationService = spectator.inject(SmbValidationService);
+    jest.spyOn(smbValidationService, 'checkForSmbUsersWarning').mockReturnValue(of(true));
+
+    component.ngOnInit();
+    spectator.detectChanges();
+
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate');
+
+    // role="button" promises both keys activate the link, not just Enter.
+    const link = spectator.queryAll('ul li')[0].querySelector('a');
+    spectator.dispatchKeyboardEvent(link, 'keydown', 'Enter');
+    expect(router.navigate).toHaveBeenCalledWith(['/credentials', 'users']);
+
+    (router.navigate as jest.Mock).mockClear();
+    spectator.dispatchKeyboardEvent(link, 'keydown', ' ');
+    expect(router.navigate).toHaveBeenCalledWith(['/credentials', 'users']);
+  });
+
   it('should hide warning when ignore option is clicked', () => {
     const smbValidationService = spectator.inject(SmbValidationService);
     jest.spyOn(smbValidationService, 'checkForSmbUsersWarning').mockReturnValue(of(true));
@@ -85,7 +105,7 @@ describe('SmbUsersWarningComponent', () => {
     let warning = spectator.query('.smb-users-warning');
     expect(warning).toBeTruthy();
 
-    const ignoreOption = spectator.queryAll('ul li')[2].querySelector('span');
+    const ignoreOption = spectator.queryAll('ul li')[2].querySelector('a');
     ignoreOption?.click();
     spectator.detectChanges();
 

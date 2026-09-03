@@ -7,8 +7,8 @@ built, and correcting them round after round cost more than they returned. Their
 content is in git history if the reasoning behind a decision is ever wanted.
 
 `e2e/CLAUDE.md` holds the conventions and the traps. `e2e/README.md` covers
-setup and running. **This file is only status and direction — keep it that way,
-and keep it short.**
+setup and running. `05-ci.md` is the CI pipeline as built. **This file is only
+status and direction — keep it that way, and keep it short.**
 
 ---
 
@@ -27,22 +27,19 @@ jobs restart services over the socket the event stream depends on.
 parameter is the one place the choice is made; unset, the client defaults to
 v25.10.0 and most of what the fixtures call looks unavailable.
 
-Three tests. Green against real appliances on the 1.x client — **the move to
-3.x has not been re-run against hardware.** Every middleware call in the
-fixtures was rewritten, job handling moved, and the API budgets changed; what
-backs it is typecheck, lint, test collection, and `ensurePoolAbsent` driven
-against a scripted middleware over nine cases. Treat a first real run as
-unproven until someone does it.
+Three tests. **Green on the 3.x client against a freshly installed v27 nightly,
+in CI, 2026-09-02** — the first real run after the client move, and it passed
+first time once the appliance was right. The move to 3.x is no longer unproven.
 
 The framework is done and the coverage is not. Two journeys against 19 top-level
 feature areas. What the work bought is that the next twenty tests are cheap: the
 target seam, auth, fixtures, unconditional teardown, selector discipline and
 failure legibility are all built and proven against three different appliances.
 
-**Total runtime is unmeasured.** Four cold sign-ins at ~15s plus pool creation in
-minutes puts it in the several-minute range, but nobody has timed it. Worth
-doing, because the runtime budget and the decision to defer parallelism are both
-argued from a number that does not exist.
+**Total runtime is measured:** the suite takes ~1.5 minutes on one worker
+against a nested VM, and the whole CI job ~6 minutes of which ~3.5 is the
+install. The runtime budget and the decision to defer parallelism now rest on
+a number. See `05-ci.md`.
 
 ## What the suite needs from an appliance
 
@@ -60,10 +57,25 @@ argued from a number that does not exist.
    stories worth taking next. Deleting things through the UI is blocked: no
    per-row test id on `tn-table`, so no list-driven journey can be automated
    compliantly. Fixing that once unblocks every future one.
-2. **CI.** Only `yarn e2e:typecheck` runs today, in the lint job. Running the
-   suite needs runners that can reach the appliance network and a provisioning
-   step — see `NAS-e2e-environment-architecture` for that design.
-3. **Observability.** No WebSocket capture, no middleware log collection, no
+2. **CI is running.** `.github/workflows/e2e.yml` installs a nested TrueNAS VM
+   on the lab runner (a TrueNAS box) with `tn_guest.py` from
+   iXsystems/api-ci-testbed, runs the suite against it from Playwright's
+   container, and destroys it. Green on same-repo pull requests touching the
+   suite. `05-ci.md` is the operational record: prerequisites, numbers, and
+   what each failed run taught. `ixnode`, which the design assumed, is the
+   legacy KVM-host tool and cannot run on a TrueNAS appliance.
+
+   Deliberately smaller than `04-environment-architecture.md`, which shards
+   across appliances and rolls back a snapshot between tests. Neither exists
+   yet. That document was rewritten against the pipeline as built: the design
+   stands, the substrate is a TrueNAS host with zvol-backed VMs rather than
+   `ixnode` on libvirt, and its next step is measuring the rollback cycle.
+
+   What is next for the pipeline, in order: rotate the nightly ISO
+   automatically, publish traces (the per-claim credential the design required
+   now holds), and enable the nightly schedule.
+3. **Observability.** No WebSocket capture, no middleware log collection (the
+   guest is behind `hostfwd`, so it needs an API route rather than SSH), no
    version recording in reports. These are what make a 3am failure diagnosable
    by someone who did not write the test.
 
@@ -100,6 +112,8 @@ comment instead.
 |---|---|
 | R1.2 | Stories are independent tests with API-provisioned preconditions, not one chain |
 | R2.2 | Disk inventory — see "What the suite needs" above |
+| R2.7 | Provisioning is the pipeline's job; the suite is handed a reachable host and asserts nothing about how it came to exist |
+| R2.8 | The appliance boots fully configured — credentials set, no first-boot wizard, no EULA |
 | R2.9 | The appliance's certificate is self-signed; tolerate it without hiding real failures |
 | R2.10 | Reading webui's own config is allowed in-tree, confined to one module, and opt-in |
 | R2.11 | Two target profiles differing in exactly one thing: the UI base URL |
@@ -123,7 +137,9 @@ comment instead.
 | R8.2 | At most one retry per test |
 | R8.3 | No fixed sleeps — wait on observable conditions |
 | R8.4 | Quarantine policy for persistently flaky tests |
+| R9.2 | One command runs the suite against a developer's own appliance |
 | T3 | Middleware client is `@truenas/api-client` (3.x; T3.1 covered the curated-subset problem that version removed) |
 | T5 | Authentication via a setup project plus `storageState` |
 | T10 | Configuration through target profiles, resolved in one module |
+| D1 | PR gating — deferred; needs a measured flake rate first. The `e2e` check runs on same-repo PRs touching the suite, but it is not a required check, so a red run informs and does not block |
 | D2 | Parallel execution by sharding across appliances — deferred |

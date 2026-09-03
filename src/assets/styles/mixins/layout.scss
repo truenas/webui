@@ -63,14 +63,11 @@ $scrollbar-offset: 20px;
       max-width: $singlecolumn-max-width;
     }
 
-    // Two Cards Columns
-    @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    // Two Cards Columns. This is as wide as the details panel ever gets: the cards hold
+    // short label/value rows, so past two slim columns they only get emptier. Every extra
+    // pixel goes to the master table instead.
+    @media (min-width: $breakpoint-dualcolumn-slim) {
       max-width: ($dualcolumn-slim-max-width + $scrollbar-offset);
-    }
-
-    // Two Cards Columns
-    @media (min-width: $breakpoint-dualcolumn) {
-      max-width: 70%;
     }
   }
 
@@ -142,7 +139,7 @@ $scrollbar-offset: 20px;
     color: var(--fg2);
     display: grid;
     grid-gap: 8px;
-    grid-template-columns: auto 125px 125px 125px 40px;
+    grid-template-columns: minmax(0, 1fr) 125px 125px 125px 40px;
     min-height: 40px;
     min-width: fit-content;
     min-width: 100%;
@@ -155,7 +152,7 @@ $scrollbar-offset: 20px;
     }
 
     @media (min-width: $breakpoint-singlecolumn) {
-      grid-template-columns: auto 125px 125px 125px;
+      grid-template-columns: minmax(0, 1fr) 125px 125px 125px;
     }
 
     > div {
@@ -213,6 +210,9 @@ $scrollbar-offset: 20px;
         align-items: stretch;
         font-weight: bold;
         margin: 0;
+        // Both let the name shrink to its grid track instead of pushing past it; the
+        // `minmax(0, 1fr)` track is what decides how wide a name may get.
+        min-width: 0;
         padding: 0;
 
         .icon-container {
@@ -223,7 +223,7 @@ $scrollbar-offset: 20px;
         .name {
           align-items: center;
           display: inline-flex;
-          max-width: calc(100vw - 80vw);
+          min-width: 0;
           overflow: hidden;
           padding-right: 15px;
           text-overflow: ellipsis;
@@ -267,26 +267,11 @@ $scrollbar-offset: 20px;
       min-width: calc($table-min-width + 0px);
     }
 
-    // Two Cards Slim Columns
-    @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+    // Two Cards Slim Columns. The details panel stops growing here, so the table takes
+    // the whole remainder no matter how wide the screen gets.
+    @media (min-width: $breakpoint-dualcolumn-slim) {
       max-width: calc(100% - $dualcolumn-slim-max-width - 16px - $scrollbar-offset);
       min-width: calc($table-min-width + 0px);
-    }
-
-    // Two Cards Columns
-    @media (min-width: $breakpoint-dualcolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-      min-width: calc(98% - 2 * ($card-width + $gap));
-    }
-
-    // Three Cards Columns
-    @media (min-width: $breakpoint-triplecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-      min-width: calc(98% - 3 * ($card-width + $gap));
-    }
-
-    // Cards spill to the right
-    @media (min-width: $breakpoint-flex) {
-      max-width: 1200px;
-      width: 50%;
     }
   }
 }

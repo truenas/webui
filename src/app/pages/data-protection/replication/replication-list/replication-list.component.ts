@@ -33,7 +33,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
+import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { column } from 'app/modules/tn-table/column-configs';
@@ -310,15 +310,13 @@ export class ReplicationListComponent implements OnInit {
       .subscribe(() => this.getReplicationTasks());
   }
 
-  // ReplicationFormComponent / ReplicationWizardComponent structurally provide the host surface
-  // (closed/canSubmit/submit/hasUnsavedChanges/requiredRoles) the panel reads; cast past the
-  // nominal base type.
-  private readonly replicationForm = ReplicationFormComponent as unknown as Type<SidePanelForm>;
-  private readonly replicationWizard = ReplicationWizardComponent as unknown as Type<SidePanelForm>;
+  // ReplicationWizardComponent is footerless and owns its stepper buttons, so it only provides
+  // `SidePanelHostCloseable` (closed + hasUnsavedChanges) rather than extending a panel base.
+  private readonly replicationWizard: Type<SidePanelHostCloseable> = ReplicationWizardComponent;
 
   protected openForm(row?: ReplicationTask): void {
     if (row) {
-      this.formPanel.open(this.replicationForm, {
+      this.formPanel.open(ReplicationFormComponent, {
         title: this.translate.instant('Edit Replication Task'),
         wide: true,
         inputs: { replicationToEdit: row },

@@ -84,3 +84,21 @@
     width: 100%;
   }
 }
+
+// The master list sizes to its content instead of stretching to the details column's
+// height. The details column is given an explicit viewport-based height (ixDetailsHeight),
+// and the row's default `align-items: stretch` made the master card match it — leaving a
+// large empty card below the last row whenever the list is short. Hugging the content
+// keeps the card ending at its last row; a list taller than the viewport still scrolls
+// with the page (same approach as the datasets tree, see dataset-management.component.scss).
+.table-container {
+  align-self: flex-start;
+}
+
+// Collapse the detail-header row when the page projects no title into it (Installed Apps
+// shows one only in mobile view). The empty h3 still reserved ~30px, which pushed the
+// details cards below the top of the master card; hiding it lines both columns up.
+// The mobile back button lives in the same row, so keep the row whenever it is rendered.
+.header-container:not(:has(ix-mobile-back-button)):has(.header:empty) {
+  display: none;
+}

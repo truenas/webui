@@ -1,21 +1,51 @@
 import { FormControl, ValidatorFn } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService } from '@ngx-translate/core';
 import { maxDatasetPath } from 'app/constants/dataset.constants';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 
-export function datasetNameTooLong(parentPath: string): ValidatorFn {
-  const maxLengthAllowed = maxDatasetPath;
-
+export function datasetNameTooLong(parentPath: string, translate: TranslateService): ValidatorFn {
   return function datasetNameTooLongValidate(control: FormControl<string>) {
     if (!control.value || !parentPath) {
       return null;
     }
 
-    if (parentPath.length + 1 + control.value.length >= maxLengthAllowed) {
+    // What the name may still spend of the `<parent>/<name>` budget: the parent path and
+    // the separator are already gone, and the whole thing has to stay under maxDatasetPath
+    // (the same `>=` boundary the two other path-length checks use).
+    //
+    // This number is quoted back to the user in the maxlength message, so it has to be the
+    // limit that is actually enforced. Reporting `maxDatasetPath - parentPath.length`
+    // promised two characters more than the check allowed: with a 198-character parent the
+    // field said "no more than 2" and then rejected a one-character name.
+    const maxNameLength = Math.max(0, maxDatasetPath - parentPath.length - 2);
+
+    if (control.value.length <= maxNameLength) {
+      return null;
+    }
+
+    if (maxNameLength === 0) {
+      // "no more than 0" is not a length anyone can aim for: the parent path has spent the
+      // whole budget, and nothing will fit under it. Say that instead — a custom `message`
+      // takes precedence over the generic maxlength wording in both error renderers.
+      //
+      // The limit quoted here is the longest path that passes, which is one less than
+      // `maxDatasetPath`: the check rejects at `>=`, so `<parent>/<name>` may reach 199
+      // characters, not 200. Don't claim the parent "fills" that limit either — this
+      // branch fires from 198 characters up, before the parent has reached it.
       return {
-        [DefaultValidationError.MaxLength]: { requiredLength: maxLengthAllowed - parentPath.length },
+        [DefaultValidationError.MaxLength]: {
+          requiredLength: 0,
+          message: translate.instant(
+            T('The parent path is too long to fit a dataset name under it: a dataset path can be at most {max} characters.'),
+            { max: maxDatasetPath - 1 },
+          ),
+        },
       };
     }
 
-    return null;
+    return {
+      [DefaultValidationError.MaxLength]: { requiredLength: maxNameLength },
+    };
   };
 }

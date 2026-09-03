@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnAutocompleteHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnAutocompleteHarness, TnFormListHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -12,7 +12,6 @@ import { Group } from 'app/interfaces/group.interface';
 import { SmbSharesec, SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User, User as TnUser } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UserService } from 'app/services/user.service';
@@ -21,7 +20,7 @@ import { SmbAclComponent } from './smb-acl.component';
 describe('SmbAclComponent', () => {
   let spectator: Spectator<SmbAclComponent>;
   let loader: HarnessLoader;
-  let entriesList: IxListHarness;
+  let entriesList: TnFormListHarness;
   const mockAcl = {
     id: 13,
     share_name: 'myshare',
@@ -130,12 +129,12 @@ describe('SmbAclComponent', () => {
     });
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    entriesList = await loader.getHarness(IxListHarness);
+    entriesList = await loader.getHarness(TnFormListHarness);
   });
 
   describe('user ace', () => {
     it('shows user combobox when Who is user', async () => {
-      await entriesList.pressAddButton();
+      await entriesList.add();
       const lastIndex = (await getSelects('ae_who')).length - 1;
       const whoSelect = await getSelect('ae_who', lastIndex);
       await whoSelect.selectOption('User');
@@ -166,7 +165,7 @@ describe('SmbAclComponent', () => {
 
   describe('group ace', () => {
     it('shows group combobox when Who is group', async () => {
-      await entriesList.pressAddButton();
+      await entriesList.add();
       const lastIndex = (await getSelects('ae_who')).length - 1;
       const whoSelect = await getSelect('ae_who', lastIndex);
       await whoSelect.selectOption('Group');
@@ -220,7 +219,7 @@ describe('SmbAclComponent', () => {
     // FormArray (entries); the payload here is built from form.value, so it's benign.
     jest.spyOn(console, 'warn').mockImplementation();
 
-    await entriesList.pressAddButton();
+    await entriesList.add();
     const lastIndex = (await getSelects('ae_who')).length - 1;
 
     await (await getSelect('ae_who', lastIndex)).selectOption('Group');

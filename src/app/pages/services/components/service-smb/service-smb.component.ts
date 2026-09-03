@@ -7,7 +7,8 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnAutocompleteComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent,
-  TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,
+  TnSelectComponent,
 } from '@truenas/ui-components';
 import {
   BehaviorSubject, catchError, debounceTime, distinctUntilChanged, of, shareReplay, switchMap, tap,
@@ -26,8 +27,6 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
@@ -104,8 +103,8 @@ type SmbFormValue = ReturnType<ReturnType<typeof createSmbForm>['getRawValue']>;
     TnSelectComponent,
     TnAutocompleteComponent,
     TnChipInputComponent,
-    IxListComponent,
-    IxListItemComponent,
+    TnFormListComponent,
+    TnFormListItemComponent,
     IxFormComponent,
     TranslateModule,
   ],

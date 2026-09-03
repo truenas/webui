@@ -6,8 +6,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import {
   TnButtonHarness, TnDialogHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AssociatedTargetFormComponent } from './associated-target-form.component';
@@ -27,8 +29,9 @@ describe('AssociatedTargetFormComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       mockAuth(),
+      provideTnFormFieldErrors(),
       mockApi([
-        mockCall('iscsi.targetextent.create'),
+        mockCall('iscsi.targetextent.create', { id: 7 } as IscsiTargetExtent),
       ]),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogRef),
@@ -50,7 +53,10 @@ describe('AssociatedTargetFormComponent', () => {
     expect(await dialog.getTitle()).toBe('Associate Target 1');
   });
 
-  it('submits form with correct values', async () => {
+  it('submits form with correct values and closes the dialog with the created association', async () => {
+    const dialogRef = spectator.inject(DialogRef);
+    const spyClose = jest.spyOn(dialogRef, 'close');
+
     const lunIdInput = await loader.getHarness(TnInputHarness);
     await lunIdInput.setValue('0');
 
@@ -63,6 +69,16 @@ describe('AssociatedTargetFormComponent', () => {
     expect(api.call).toHaveBeenCalledWith('iscsi.targetextent.create', [
       { lunid: 0, extent: 1, target: 1 },
     ]);
+    expect(spyClose).toHaveBeenCalledWith({ id: 7 });
+  });
+
+  it('keeps Associate disabled until the required Extent is picked', async () => {
+    const associateButton = await loader.getHarness(TnButtonHarness.with({ label: 'Associate' }));
+    expect(await associateButton.isDisabled()).toBe(true);
+
+    await (await loader.getHarness(TnSelectHarness)).selectOption(/Extent 1/);
+
+    expect(await associateButton.isDisabled()).toBe(false);
   });
 
   it('closes dialog on cancel', async () => {

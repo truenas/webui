@@ -1,10 +1,8 @@
 <ng-container [formGroup]="form()">
   @if (hasFibreChannel() && isNewTarget) {
-    <ix-radio-group
-      formControlName="mode"
-      [label]="'Mode' | translate"
-      [options]="modeOptions$"
-    ></ix-radio-group>
+    <tn-form-field [label]="'Mode' | translate">
+      <tn-radio-group formControlName="mode" [options]="modeOptions"></tn-radio-group>
+    </tn-form-field>
   }
   <tn-form-field
     [label]="helptextSharingIscsi.targetLabel | translate"

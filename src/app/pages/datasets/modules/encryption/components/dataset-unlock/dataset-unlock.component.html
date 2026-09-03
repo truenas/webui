@@ -1,20 +1,31 @@
-<tn-card class="form-card">
-  <form class="ix-form-container" [formGroup]="form" (submit)="onSave()">
+<tn-card class="card" [padContent]="false" [fillHeight]="false">
+  <ix-form
+    [formGroup]="form"
+    [requiredRoles]="requiredRoles"
+    [submitHandler]="handleSubmit"
+    [suppressSuccessSnackbar]="true"
+  >
+    <div class="fields">
       @if (!hideFileInput) {
-        <ix-radio-group
-          formControlName="use_file"
+        <tn-form-field
           [label]="helptext.keyFileLabel | translate"
           [tooltip]="helptext.keyFileTooltip | translate"
-          [options]="useFileOptions$"
-        ></ix-radio-group>
+        >
+          <tn-radio-group
+            formControlName="use_file"
+            [options]="useFileOptions"
+          ></tn-radio-group>
+        </tn-form-field>
       }
 
       @if (useFile) {
-        <ix-checkbox
-          formControlName="unlock_children"
-          [label]="helptext.unlockChildrenLabel | translate"
-          [tooltip]="helptext.unlockChildrenTooltip | translate"
-        ></ix-checkbox>
+        <tn-form-field [tooltip]="helptext.unlockChildrenTooltip | translate">
+          <tn-checkbox
+            formControlName="unlock_children"
+            [label]="helptext.unlockChildrenLabel | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+
         <ix-file-input
           formControlName="file"
           [label]="helptext.uploadKeyFileLabel | translate"
@@ -39,18 +50,25 @@
                 {{ dataset.value.name }}
               </div>
               @if (dataset.value.is_passphrase) {
-                <ix-input
-                  formControlName="passphrase"
-                  type="password"
+                <tn-form-field
                   [label]="helptext.datasetPassphraseLabel | translate"
                   [tooltip]="helptext.datasetPassphraseTooltip | translate"
-                ></ix-input>
+                >
+                  <tn-input
+                    formControlName="passphrase"
+                    [inputType]="InputType.Password"
+                  ></tn-input>
+                </tn-form-field>
               } @else {
-                <ix-textarea
-                  formControlName="key"
+                <tn-form-field
                   [label]="helptext.datasetKeyLabel | translate"
                   [tooltip]="helptext.datasetKeyLabel | translate"
-                ></ix-textarea>
+                >
+                  <tn-input
+                    formControlName="key"
+                    [multiline]="true"
+                  ></tn-input>
+                </tn-form-field>
                 <ix-file-input
                   formControlName="file"
                   [acceptedFiles]="'.json'"
@@ -61,26 +79,28 @@
         </ix-list>
       }
 
-      <ix-checkbox
-        formControlName="force"
-        [label]="'Force' | translate"
-        [tooltip]="helptext.datasetForceTooltip | translate"
-      ></ix-checkbox>
+      <tn-form-field [tooltip]="helptext.datasetForceTooltip | translate">
+        <tn-checkbox
+          formControlName="force"
+          [label]="'Force' | translate"
+        ></tn-checkbox>
+      </tn-form-field>
+    </div>
 
-      <div class="form-actions">
-        <tn-button
-          *ixRequiresRoles="requiredRoles"
-          type="submit"
-          color="primary"
-          [testId]="'unlock'"
-          [label]="'Unlock' | translate"
-          [disabled]="form.invalid || isFormLoading"
-        ></tn-button>
-        <tn-button
-          [testId]="'cancel'"
-          [label]="'Cancel' | translate"
-          (onClick)="goBack()"
-        ></tn-button>
-      </div>
-  </form>
+    <div class="form-actions">
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
+        type="submit"
+        color="primary"
+        [testId]="'unlock'"
+        [label]="'Unlock' | translate"
+        [disabled]="!canSubmit()"
+      ></tn-button>
+      <tn-button
+        [testId]="'cancel'"
+        [label]="'Cancel' | translate"
+        (onClick)="goBack()"
+      ></tn-button>
+    </div>
+  </ix-form>
 </tn-card>

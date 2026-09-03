@@ -1,4 +1,10 @@
-<form class="ix-form-container" (submit)="onSubmit(); $event.preventDefault();">
+<ix-form
+  [formGroup]="form"
+  [isEditMode]="!isNew"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <div class="fieldsets">
     <ix-replication-general-section
       [replication]="existingReplication"
@@ -36,4 +42,4 @@
       {{ eligibleSnapshotsMessage | translate }}
     </div>
   }
-</form>
+</ix-form>

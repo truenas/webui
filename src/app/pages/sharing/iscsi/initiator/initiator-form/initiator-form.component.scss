@@ -4,14 +4,11 @@
   margin-bottom: 50px;
 }
 
+// Refresh and the Description field are adjacent blocks in the card body, and neither tn-button
+// nor tn-form-field carries a vertical margin of its own — without this the field's label sits
+// flush under the button.
 .refresh-button {
-  margin-top: 15px;
-}
-
-.form-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
+  margin: 16px 0;
 }
 
 .header-container {

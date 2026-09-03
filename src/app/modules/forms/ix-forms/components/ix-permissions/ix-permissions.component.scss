@@ -16,7 +16,7 @@ td {
   &.disabled {
     opacity: var(--disabled-opacity);
 
-    mat-checkbox {
+    tn-checkbox {
       cursor: not-allowed;
     }
   }

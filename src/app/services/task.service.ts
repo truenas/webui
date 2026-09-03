@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
-import { Options as CronOptions } from 'cronstrue/dist/options';
 import { invalidDate } from 'app/constants/invalid-date';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { Option } from 'app/interfaces/option.interface';
@@ -113,11 +112,6 @@ export class TaskService {
     { label: '23:45:00', value: '23:45' },
     { label: '23:59:00', value: '23:59' },
   ] as Option[];
-
-  protected cronOptions: CronOptions = {
-    verbose: true,
-    locale: this.language.currentLanguage,
-  };
 
   getTimeOptions(): Option[] {
     return this.timeOptions;

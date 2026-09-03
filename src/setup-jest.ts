@@ -17,7 +17,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -48,6 +47,7 @@ import {
   Observable,
 } from 'rxjs';
 import { defaultLanguage } from 'app/constants/languages.constant';
+import { provideTnSelectLabels } from 'app/core/providers/tn-select-labels.provider';
 import { EmptyApiService } from 'app/core/testing/utils/empty-api.service';
 import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -169,7 +169,6 @@ defineGlobalsInjections({
     MatSelectModule,
     MatDialogModule,
     MatSortModule,
-    MatProgressBarModule,
     MatTooltipModule,
     MatCardModule,
     MatListModule,
@@ -241,6 +240,9 @@ defineGlobalsInjections({
       provide: TN_TEST_ATTR,
       useValue: 'data-test',
     },
+    // Also mirrored from main.ts: without it a spec reads the library's own English copy
+    // ('No options available') where the app renders webui's ('No options').
+    provideTnSelectLabels(),
     {
       // Mirror production (main.ts) again: the app names every unnamed spinner,
       // progress bar and modal surface through this token, which is also what stands
@@ -334,15 +336,18 @@ Range.prototype.getClientRects = () => ({
 // eslint-disable-next-line no-restricted-globals
 Object.defineProperty(window.URL, 'createObjectURL', { value: () => '' });
 
-// jsdom's own `performance` is replaced rather than extended, so anything this stub omits
-// is missing entirely: `@truenas/ui-components` reads `performance.now()` to time its
-// transition fallbacks, and without it every spec rendering a side panel or dialog throws.
+// jsdom's `performance` is replaced wholesale so the profiling calls some dependencies make are
+// no-ops. `now` has to survive that replacement: `@truenas/ui-components` times the focus capture
+// of an opening surface (side panel, dialog, drawer, menu) off `performance.now()`, so a stub
+// without it throws `performance.now is not a function` out of every spec that opens one.
+const performanceNow = global.performance?.now?.bind(global.performance) ?? (() => Date.now());
+
 Object.defineProperty(global, 'performance', {
   writable: true,
   value: {
     mark: () => {},
     measure: () => {},
-    now: () => Date.now(),
+    now: performanceNow,
   },
 });
 
