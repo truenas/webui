@@ -17,7 +17,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -170,7 +169,6 @@ defineGlobalsInjections({
     MatSelectModule,
     MatDialogModule,
     MatSortModule,
-    MatProgressBarModule,
     MatTooltipModule,
     MatCardModule,
     MatListModule,
