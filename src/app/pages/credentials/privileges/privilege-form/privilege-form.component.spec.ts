@@ -6,7 +6,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { lastValueFrom, of } from 'rxjs';
+import { Subject, lastValueFrom, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -746,6 +746,67 @@ describe('PrivilegeFormComponent', () => {
       spectator.detectChanges();
       const buttonsAfter = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Enable DS Authentication' }));
       expect(buttonsAfter).toHaveLength(0);
+    });
+
+    it('should show button when editing a privilege that already has DS groups', async () => {
+      spectator = createComponent({
+        detectChanges: false,
+        providers: [
+          provideMockStore({
+            selectors: [
+              {
+                selector: selectIsEnterprise,
+                value: true,
+              },
+              {
+                selector: selectGeneralConfig,
+                value: {
+                  ds_auth: false,
+                },
+              },
+            ],
+          }),
+          mockProvider(UserService, {
+            groupQueryDsCache: jest.fn(() => of([])),
+            getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+            getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
+          }),
+          mockAuth(),
+        ],
+      });
+
+      // `mockCall` answers synchronously, which hides this bug: the status would land
+      // during ngOnInit, before the chips control replays `ds_groups`. A real WebSocket
+      // round-trip resolves *after* the form has settled, so drive the status by hand.
+      const mockApiService = spectator.inject(MockApiService);
+      const status$ = new Subject<DirectoryServicesStatus>();
+      const passThrough = mockApiService.call.bind(mockApiService);
+      mockApiService.call = jest.fn((method: string, params: unknown) => {
+        return method === 'directoryservices.status'
+          ? status$.asObservable()
+          : passThrough(method, params);
+      }) as MockApiService['call'];
+
+      spectator.setInput('editPrivilege', {
+        ...fakeDataPrivilege,
+        ds_groups: [{ gid: 333, group: 'AD\\Domain Admins' }],
+      } as Privilege);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Status arrives late. The edit path patched `ds_groups` back in ngOnInit, so its only
+      // `valueChanges` emission is long gone — visibility has to be re-evaluated here, or the
+      // prompt stays hidden for exactly the privileges that already carry DS groups.
+      status$.next({
+        type: 'ACTIVEDIRECTORY',
+        status: DirectoryServiceStatus.Healthy,
+      } as DirectoryServicesStatus);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      const buttons = await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Enable DS Authentication' }));
+      expect(buttons).toHaveLength(1);
     });
   });
 });
