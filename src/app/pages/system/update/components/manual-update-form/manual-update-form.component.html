@@ -37,7 +37,7 @@
         </tn-form-field>
       }
 
-      @if (!isHaLicensed && isEnterprise()) {
+      @if (!isHaLicensed) {
         <tn-form-field [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate">
           <tn-checkbox
             formControlName="rebootAfterManualUpdate"

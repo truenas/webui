@@ -4,7 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { TnDialog, TnFileInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import {
+  TnCheckboxHarness, TnDialog, TnFileInputHarness, TnSelectHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -51,8 +53,8 @@ describe('ManualUpdateFormComponent', () => {
         })),
       }),
       mockWindow({
-        localStorage: {
-          getItem: () => ProductType.Enterprise,
+        sessionStorage: {
+          setItem: jest.fn(),
         },
       }),
       provideMockStore({
@@ -61,7 +63,7 @@ describe('ManualUpdateFormComponent', () => {
             systemInfo: {
               version: 'TrueNAS-SCALE-22.12',
             } as SystemInfo,
-            productType: ProductType.Enterprise,
+            productType: ProductType.CommunityEdition,
             isIxHardware: false,
             buildYear: 2024,
           },
@@ -114,9 +116,18 @@ describe('ManualUpdateFormComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
     const select = await loader.getHarnessOrNull(TnSelectHarness);
+    const rebootCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Restart After Update' }));
 
     expect(spectator.component.isHaLicensed).toBe(true);
     expect(select).toBeNull();
+    expect(rebootCheckbox).toBeNull();
+  });
+
+  it('shows the Restart After Update checkbox on any non-HA system, regardless of product type', async () => {
+    const rebootCheckbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Restart After Update' }));
+
+    expect(rebootCheckbox).not.toBeNull();
+    expect(await rebootCheckbox.isChecked()).toBe(false);
   });
 
   it('renders the update file input, empty until a file is chosen', async () => {
