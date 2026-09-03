@@ -44,7 +44,9 @@ import {
   DeviceDeleteModalComponent,
 } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
-import { ExportDiskDialogComponent } from 'app/pages/vm/devices/device-list/export-disk-dialog/export-disk-dialog.component';
+import {
+  ExportDiskDialogComponent, ExportDiskDialogResult,
+} from 'app/pages/vm/devices/device-list/export-disk-dialog/export-disk-dialog.component';
 
 @Component({
   selector: 'ix-device-list',
@@ -237,7 +239,7 @@ export class DeviceListComponent implements OnInit {
         filter((result) => !!result),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((result: { request: { source: string; destination: string }; destinationPath: string }) => {
+      .subscribe((result: ExportDiskDialogResult) => {
         const jobDialogRef = this.dialogService.jobDialog(
           this.api.job('vm.device.convert', [result.request]),
           {
