@@ -9,17 +9,17 @@
         [required]="true"
       ></ix-unused-disk-select>
 
-      <tn-form-field [tooltip]="expand.tooltip | translate">
+      <tn-form-field [tooltip]="helptextSystemBootenv.expandTooltip | translate">
         <tn-checkbox
           testId="expand"
-          [formControlName]="expand.fcName"
-          [label]="expand.label | translate"
+          formControlName="expand"
+          [label]="helptextSystemBootenv.expandLabel | translate"
         ></tn-checkbox>
       </tn-form-field>
     </tn-form-section>
   </form>
 
-  @if (isFormLoading) {
+  @if (isFormLoading()) {
     <ix-fake-progress-bar></ix-fake-progress-bar>
   }
 
@@ -36,7 +36,7 @@
       color="primary"
       testId="save"
       [label]="'Save' | translate"
-      [disabled]="form.invalid || isFormLoading"
+      [disabled]="form.invalid || isFormLoading()"
       (onClick)="onSubmit()"
     ></tn-button>
   </ix-form-actions>

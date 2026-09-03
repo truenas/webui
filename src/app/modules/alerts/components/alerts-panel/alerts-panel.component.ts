@@ -1,6 +1,6 @@
 import { Overlay, OverlayContainer } from '@angular/cdk/overlay';
 import { AsyncPipe } from '@angular/common';
-import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, Type, computed, OnInit, inject, signal } from '@angular/core';
+import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationExtras, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -32,7 +32,6 @@ import {
 } from 'app/modules/alerts/store/alert.selectors';
 import { consolidateAlerts, getAlertConsolidationKey } from 'app/modules/alerts/utils/alert-consolidation.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -287,7 +286,7 @@ export class AlertsPanelComponent implements OnInit {
 
   openEmailForm(): void {
     this.closePanel();
-    this.formPanel.open(this.emailForm, {
+    this.formPanel.open(EmailFormComponent, {
       title: this.translate.instant('Email Options'),
     });
   }
@@ -328,8 +327,6 @@ export class AlertsPanelComponent implements OnInit {
   getCategoryLabel(category: string): string {
     return this.categoryLabels[category as SmartAlertCategory] || category;
   }
-
-  private readonly emailForm = EmailFormComponent as unknown as Type<SidePanelForm>;
 
   private checkHaStatus(): void {
     if (!this.isEnterprise()) {

@@ -1,5 +1,5 @@
 import { DialogRef } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -43,12 +43,11 @@ export class BootPoolAttachDialog implements OnInit {
   protected dialogRef = inject<DialogRef<unknown, BootPoolAttachDialog>>(DialogRef);
   private translate = inject(TranslateService);
   protected api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(FormErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
-  isFormLoading = false;
+  protected isFormLoading = signal(false);
   protected helptextSystemBootenv = helptextSystemBootenv;
 
   form = this.fb.nonNullable.group({
@@ -57,12 +56,6 @@ export class BootPoolAttachDialog implements OnInit {
   });
 
   unusedDisks: DetailsDisk[] = [];
-
-  expand = {
-    fcName: 'expand',
-    label: this.translate.instant(helptextSystemBootenv.expandLabel),
-    tooltip: this.translate.instant(helptextSystemBootenv.expandTooltip),
-  };
 
   protected readonly Role = Role;
 
@@ -91,7 +84,7 @@ export class BootPoolAttachDialog implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
 
     const { dev, expand } = this.form.getRawValue();
     this.dialogService.jobDialog(
@@ -102,15 +95,13 @@ export class BootPoolAttachDialog implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
+          this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Device «{name}» was successfully attached.', { name: dev }));
           this.dialogRef.close(true);
         },
         error: (error: unknown) => {
-          this.isFormLoading = false;
+          this.isFormLoading.set(false);
           this.errorHandler.handleValidationErrors(error, this.form);
-          this.cdr.markForCheck();
         },
       });
   }

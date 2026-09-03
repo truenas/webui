@@ -1,5 +1,5 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -45,7 +45,7 @@ export class BootPoolReplaceDialog implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   unusedDisks: DetailsDisk[] = [];
-  protected isFormLoading = false;
+  protected isFormLoading = signal(false);
   protected helptextSystemBootenv = helptextSystemBootenv;
 
   form = this.fb.nonNullable.group({
@@ -82,7 +82,7 @@ export class BootPoolReplaceDialog implements OnInit {
     const oldDisk = this.pk;
     const { dev: newDisk } = this.form.getRawValue();
 
-    this.isFormLoading = true;
+    this.isFormLoading.set(true);
     this.dialogService.jobDialog(
       this.api.job('boot.replace', [oldDisk, newDisk]),
       { title: this.translate.instant('Replacing Boot Pool Disk') },
@@ -93,7 +93,7 @@ export class BootPoolReplaceDialog implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.isFormLoading = false;
+        this.isFormLoading.set(false);
         this.dialogRef.close(true);
         this.snackbar.success(this.translate.instant('Boot Pool Disk Replaced'));
       });

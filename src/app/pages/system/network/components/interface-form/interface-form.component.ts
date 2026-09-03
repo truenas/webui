@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, input, computed,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -9,8 +9,8 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
-  TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnRadioComponent, TnSelectComponent,
+  TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
+  TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { range } from 'lodash-es';
 import {
@@ -27,22 +27,22 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextInterfacesForm } from 'app/helptext/network/interfaces/interfaces-form';
+import { ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import {
   NetworkInterface,
   NetworkInterfaceCreate,
   NetworkInterfaceUpdate,
 } from 'app/interfaces/network-interface.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -70,30 +70,29 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   providers: [InterfaceNameValidatorService],
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnSelectComponent,
     TnInputComponent,
     TnCheckboxComponent,
     TnRadioComponent,
+    TnFormListComponent,
+    TnFormListItemComponent,
     OrderedListboxComponent,
-    IxListComponent,
-    IxListItemComponent,
     IxIpInputWithNetmaskComponent,
     IxErrorsComponent,
     TranslateModule,
     AsyncPipe,
   ],
 })
-export class InterfaceFormComponent extends SidePanelForm implements OnInit {
+export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private networkService = inject(NetworkService);
   private errorHandler = inject(ErrorHandlerService);
-  private formErrorHandler = inject(FormErrorHandlerService);
-  private snackbar = inject(SnackbarService);
   private validatorsService = inject(IxValidatorsService);
   private interfaceFormValidator = inject(InterfaceNameValidatorService);
   private tnDialog = inject(TnDialog);
@@ -113,7 +112,6 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
   readonly defaultMtu = 1500;
   protected readonly isHaEnabled$ = new BehaviorSubject(false);
 
-  protected isLoading = signal(false);
   protected isEnterprise = false;
   protected fecModeOptions$: Observable<{ label: string; value: string }[]> = of([]);
   protected showFecMode = signal(false);
@@ -159,10 +157,9 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
     aliases: this.formBuilder.array<NetworkInterfaceFormAlias>([]),
   });
 
-  private readonly baseCanSubmit = this.trackCanSubmit(this.isLoading);
-  private readonly isHaEnabled = toSignal(this.isHaEnabled$, { initialValue: false });
-  // Editing interfaces is disallowed while HA is enabled, so a side-panel host's Save must be gated on it too.
-  readonly canSubmit = computed(() => this.baseCanSubmit() && !this.isHaEnabled());
+  // Editing interfaces is disallowed while HA is enabled, so the host's Save must be gated on it
+  // too — bound as the `<ix-form>`'s `extraDisabled`.
+  protected readonly isHaEnabled = toSignal(this.isHaEnabled$, { initialValue: false });
 
   interfaceTypes$ = of([
     { label: this.translate.instant('Bridge'), value: NetworkInterfaceType.Bridge },
@@ -292,43 +289,37 @@ export class InterfaceFormComponent extends SidePanelForm implements OnInit {
     this.form.controls.aliases.removeAt(index);
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
+  protected handleSubmit = (
+    event: FormSubmitEvent,
+  ): SubmitResult<boolean, ApiCallResponse<'interface.network_config_to_be_removed'>> => {
     const params = this.prepareSubmitParams();
+    const existingInterface = this.existingInterface;
 
-    const request$ = this.existingInterface
-      ? this.api.call('interface.update', [this.existingInterface.id, params])
-      : this.api.call('interface.create', [params]);
-
-    const isNew = this.isNew;
-
-    request$.pipe(
+    const request$ = (existingInterface
+      ? this.api.call('interface.update', [existingInterface.id, params])
+      : this.api.call('interface.create', [params])
+    ).pipe(
       switchMap(() => {
         this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
         return this.api.call('interface.network_config_to_be_removed');
       }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (configToRemove) => {
+    );
+
+    return {
+      request$,
+      successMessage: event.isEdit
+        ? this.translate.instant('Network interface updated')
+        : this.translate.instant('Network interface created'),
+      onSuccess: (configToRemove) => {
         if (configToRemove && Object.keys(configToRemove).length > 0) {
           this.tnDialog.open(DefaultGatewayDialog, {
             width: '600px',
             data: configToRemove,
           });
         }
-
-        this.close(true);
-        this.isLoading.set(false);
-        this.snackbar.success(
-          this.translate.instant(isNew ? 'Network interface created' : 'Network interface updated'),
-        );
       },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    };
+  };
 
   private generateNextAvailableNameByType(type: NetworkInterfaceType): string | null {
     const interfaces = this.interfaceList;
