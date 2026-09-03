@@ -61,7 +61,6 @@ import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { LicenseService } from 'app/services/license.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -102,7 +101,6 @@ export class IscsiCardComponent implements OnInit {
   private store$ = inject<Store<ServicesState>>(Store);
   private tnDialog = inject(TnDialog);
   private iscsiService = inject(IscsiService);
-  private license = inject(LicenseService);
   private entitlements = inject(EntitlementsService);
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);

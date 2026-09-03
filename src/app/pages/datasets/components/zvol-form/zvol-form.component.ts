@@ -62,7 +62,6 @@ import {
 } from 'app/pages/datasets/utils/dataset.utils';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { LicenseService } from 'app/services/license.service';
 
 // volsize values round-trip through the file-size formatter, so a re-saved
 // edit can drift by a few bytes. Treat anything within 0.1% of the original
@@ -99,7 +98,6 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   private dialogService = inject(DialogService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
-  private licenseService = inject(LicenseService);
   private entitlements = inject(EntitlementsService);
 
   private destroyRef = inject(DestroyRef);

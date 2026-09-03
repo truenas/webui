@@ -43,7 +43,6 @@ import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/targ
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { LicenseService } from 'app/services/license.service';
 
 @Component({
   selector: 'ix-target-form',
@@ -76,7 +75,6 @@ export class TargetFormComponent extends IxFormHostForm implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
   private fcService = inject(FibreChannelService);
-  private license = inject(LicenseService);
   private entitlements = inject(EntitlementsService);
   private targetNameValidationService = inject(TargetNameValidationService);
   private destroyRef = inject(DestroyRef);

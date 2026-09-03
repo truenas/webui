@@ -17,7 +17,6 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { LicenseService } from 'app/services/license.service';
 
 @Component({
   selector: 'ix-target-wizard-step',
@@ -36,7 +35,6 @@ import { LicenseService } from 'app/services/license.service';
 export class TargetWizardStepComponent {
   private iscsiService = inject(IscsiService);
   private translate = inject(TranslateService);
-  private license = inject(LicenseService);
   private entitlements = inject(EntitlementsService);
   formatter = inject(IxFormatterService);
 

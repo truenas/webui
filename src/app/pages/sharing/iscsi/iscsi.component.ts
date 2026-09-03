@@ -17,7 +17,6 @@ import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi
 import { iscsiElements } from 'app/pages/sharing/iscsi/iscsi.elements';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { LicenseService } from 'app/services/license.service';
 
 @Component({
   selector: 'ix-iscsi',
@@ -39,7 +38,6 @@ export class IscsiComponent {
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private iscsiService = inject(IscsiService);
-  private license = inject(LicenseService);
   private entitlements = inject(EntitlementsService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
