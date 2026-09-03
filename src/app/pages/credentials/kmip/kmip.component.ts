@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
@@ -11,6 +10,7 @@ import {
 import { forkJoin } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
@@ -20,10 +20,9 @@ import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { kmipElements } from 'app/pages/credentials/kmip/kmip.elements';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-kmip',
@@ -49,13 +48,13 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 })
 export class KmipComponent implements OnInit {
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private systemGeneralService = inject(SystemGeneralService);
   private snackbar = inject(SnackbarService);
-  private store$ = inject<Store<AppState>>(Store);
   private destroyRef = inject(DestroyRef);
 
   protected isKmipEnabled = signal(false);
@@ -84,9 +83,8 @@ export class KmipComponent implements OnInit {
     { initialValue: [] as Option<number>[] },
   );
 
-  protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  protected readonly allowSedManage = computed(() => this.isEnterprise() || this.hasGlobalEncryption());
+  private readonly hasSedEntitlement = this.entitlements.entitled(EntitlementFeature.Sed);
+  protected readonly allowSedManage = computed(() => Boolean(this.hasSedEntitlement()));
 
   ngOnInit(): void {
     this.loadKmipConfig();

@@ -52,7 +52,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
           this.entitlements.entitled$(EntitlementFeature.Apps),
           this.entitlements.entitled$(EntitlementFeature.Kmip),
           this.entitlements.entitled$(EntitlementFeature.FibreChannel),
-          this.license.hasSedFeature$,
+          this.entitlements.entitled$(EntitlementFeature.Sed),
           this.license.hasSystemSecurity$,
         ]).pipe(
           first(),

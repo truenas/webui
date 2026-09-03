@@ -12,6 +12,8 @@ import {
   mockCall, mockJob, mockApi,
 } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
@@ -20,7 +22,7 @@ import {
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { KmipComponent } from './kmip.component';
 
 describe('KmipComponent', () => {
@@ -65,8 +67,9 @@ describe('KmipComponent', () => {
       mockAuth(),
       provideMockStore({
         selectors: [{
-          selector: selectIsEnterprise,
-          value: true,
+          // Loaded map with no gated keys, i.e. entitled to SED.
+          selector: selectEntitlements,
+          value: {},
         }],
       }),
     ],
@@ -187,7 +190,14 @@ describe('KmipComponent', () => {
 
   it('checks no "Manage SED Passwords" checkbox are present when community edition', async () => {
     const store$ = spectator.inject(MockStore);
-    store$.overrideSelector(selectIsEnterprise, false);
+    store$.overrideSelector(selectEntitlements, {
+      [EntitlementFeature.Sed]: {
+        entitled: false,
+        reason: EntitlementReason.NoLicense,
+        message: 'This system is not licensed to use the SED feature.',
+      },
+    });
+    store$.refreshState();
     store$.refreshState();
     spectator.detectChanges();
 

@@ -6,8 +6,7 @@ export enum GlobalSearchVisibleToken {
   FibreChannel = 'FIBRECHANNEL',
   Dedup = 'DEDUP',
   Kmip = 'KMIP',
-  // Sed visibility: gated by `LicenseService.hasSedFeature$` — i.e. the system
-  // is Enterprise OR a global SED password is already set.
+  // Sed visibility: gated on the `SED` entitlement.
   Sed = 'SED',
   // SystemSecurity visibility: gated by `LicenseService.hasSystemSecurity$`,
   // which reflects the backend-reported FIPS-hardware capability — the same

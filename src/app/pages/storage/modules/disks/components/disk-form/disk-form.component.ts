@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, OnInit, inject, input } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
@@ -9,6 +8,7 @@ import {
 } from '@truenas/ui-components';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
@@ -20,8 +20,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { EntitlementsService } from 'app/services/entitlements.service';
 
 export type DiskFormResponse = (DiskUpdate & { identifier: string })[];
 
@@ -59,9 +58,9 @@ interface DiskFormValues {
   ],
 })
 export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implements OnInit {
-  private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
+  private entitlements = inject(EntitlementsService);
   private fb = inject(NonNullableFormBuilder);
   private destroyRef = inject(DestroyRef);
 
@@ -106,11 +105,8 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implemen
   protected isHddStandbyRequired = false;
   protected isAdvPowerManagementRequired = false;
 
-  // `requireSync`, like the disk list's `hasSed`: this is a store selector, so it resolves at
-  // field init — and `showSedSection()` is read in `ngOnInit`, where an async signal would still
-  // be `undefined` and quietly skip the SED wiring.
-  private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise), { requireSync: true });
-  protected readonly showSedSection = computed(() => this.isEnterprise() || !!this.diskToEdit()?.passwd);
+  private readonly hasSedEntitlement = this.entitlements.entitled(EntitlementFeature.Sed);
+  protected readonly showSedSection = computed(() => Boolean(this.hasSedEntitlement()));
 
   ngOnInit(): void {
     const disk = this.diskToEdit();
@@ -130,9 +126,9 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implemen
       this.form.controls.advpowermgmt.updateValueAndValidity({ emitEvent: false });
     }
 
-    if (this.showSedSection()) {
-      this.clearPasswordField();
-    }
+    // Wired unconditionally: the entitlement resolves asynchronously, and the subscription is
+    // inert while the SED section is hidden, so there is nothing to gate here.
+    this.clearPasswordField();
   }
 
   protected readonly handleSubmit = (event: FormSubmitEvent<DiskFormValues>): SubmitResult<DiskFormResponse> => {
