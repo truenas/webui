@@ -31,8 +31,6 @@ type Controls<T> = {
   [K in keyof T]: FormControl<T[K]>;
 };
 
-interface IdmapBackendDomain { idmap_backend: IdmapBackend }
-
 interface AllTrustedDomainsIdmapFieldsInterface {
   name: string | null;
   range_low: number;
@@ -287,10 +285,6 @@ export class TrustedDomainsConfigComponent implements OnInit {
 
   protected removeTrustedDomain(index: number): void {
     this.form.controls.trustedDomains.removeAt(index);
-  }
-
-  protected getDomains(): FormGroup<Controls<IdmapBackendDomain>>[] {
-    return this.form.controls.trustedDomains.controls;
   }
 
   protected getIdmapTypeForItem(index: number): IdmapBackend {

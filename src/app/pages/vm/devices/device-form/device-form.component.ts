@@ -40,9 +40,7 @@ import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-co
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
 import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
@@ -83,7 +81,6 @@ export interface DeviceFormData {
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     IxComboboxComponent,
-    IxInputComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     IxErrorsComponent,
@@ -117,7 +114,6 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
   readonly closed = output<boolean>();
 
   readonly requiredRoles = [Role.VmDeviceWrite];
-  protected formatter = inject(IxFormatterService);
   protected readonly InputType = InputType;
 
   private readonly isLoading = signal(false);
@@ -265,9 +261,9 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
     path: ['', [Validators.required, this.fileValidator.fileIsSelectedInExplorer(this.rawFileExplorer)]],
     sectorsize: [0],
     type: [null as VmDiskMode | null],
-    // formatter causes size to become a string sometimes, but we do convert it to a number
-    // before submitting.
-    size: [null as number | string | null],
+    // `tn-input` in `InputType.Size` mode emits the parsed byte count (or null for empty /
+    // unparseable text), so this is a plain number the API can take as-is.
+    size: [null as number | null],
     exists: [false as boolean | null],
   });
 
@@ -790,19 +786,6 @@ export class DeviceFormComponent implements OnInit, SidePanelHostForm {
       ...this.typeSpecificForm.value,
       dtype: this.typeControl.value,
     };
-
-    // the formatter and parser we have attached to the size control actually ends up
-    // turning `null` into the empty string. (which breaks the type specified in the form)
-    // in order to enforce the `number | null` type for the size property, we transform
-    // empty strings into null.
-    if ('size' in values) {
-      const size = values.size;
-      if (typeof size === 'string' && size.trim() === '') {
-        // case: size is an empty string (excluding whitespace)
-        values.size = null;
-      }
-      // all other cases are valid to pass to the API
-    }
 
     if ('device' in values && values.device === specifyCustom) {
       values.device = null;

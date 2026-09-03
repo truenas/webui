@@ -1,4 +1,13 @@
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+<ix-form
+  [formGroup]="form"
+  [editData]="editCronjob()"
+  [transformEditData]="transformEditCronjob"
+  [addTitle]="'Add Cron Job' | translate"
+  [editTitle]="'Edit Cron Job' | translate"
+  [requiredRoles]="requiredRoles"
+  [submitHandler]="handleSubmit"
+  (closed)="closed.emit($event)"
+>
   <tn-form-section>
     <tn-form-field [label]="'Description' | translate">
       <tn-input formControlName="description"></tn-input>
@@ -50,4 +59,4 @@
       ></tn-checkbox>
     </tn-form-field>
   </tn-form-section>
-</form>
+</ix-form>

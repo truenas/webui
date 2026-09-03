@@ -79,6 +79,7 @@ export const helptextVmWizard = {
   memory_warning: T('Caution: Allocating too much memory can slow the system or prevent VMs from running.'),
   min_memory_tooltip: T('When not specified, guest system is given fixed amount of memory specified above.\n'
     + 'When minimum memory is specified, guest system is given memory within range between minimum and fixed as needed.'),
+  min_memory_size_err: T('Allocate at least 20 MiB.'),
 
   disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
  zvol on an existing dataset. This is used as a\

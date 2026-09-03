@@ -4,7 +4,7 @@ import {
   OnChanges,
   OnDestroy, signal,
 } from '@angular/core';
-import { MatProgressBar } from '@angular/material/progress-bar';
+import { TnProgressBarComponent } from '@truenas/ui-components';
 import { interval, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { AnimateOutDirective } from 'app/directives/animate-out/animate-out.directive';
@@ -19,7 +19,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
   templateUrl: './fake-progress-bar.component.html',
   styleUrls: ['./fake-progress-bar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatProgressBar, AnimateOutDirective],
+  imports: [TnProgressBarComponent, AnimateOutDirective],
 })
 export class FakeProgressBarComponent implements OnChanges, OnDestroy {
   readonly loading = input<boolean>();

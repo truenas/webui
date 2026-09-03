@@ -1,24 +1,24 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, signal,
+  ChangeDetectionStrategy, Component, inject, input,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
-import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextCron } from 'app/helptext/system/cron-form';
-import { Cronjob } from 'app/interfaces/cronjob.interface';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  FormSubmitEvent, IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import {
+  IxUserComboboxComponent,
+} from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 
@@ -28,6 +28,7 @@ import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -37,25 +38,12 @@ import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row
     TranslateModule,
   ],
 })
-export class CronFormComponent extends SidePanelForm implements OnInit {
+export class CronFormComponent extends IxFormHostForm {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
-  private errorHandler = inject(FormErrorHandlerService);
-  private snackbar = inject(SnackbarService);
-  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SystemCronWrite];
-
-  get isNew(): boolean {
-    return !this.editingCron;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add Cron Job')
-      : this.translate.instant('Edit Cron Job');
-  }
 
   form = this.fb.nonNullable.group({
     description: [''],
@@ -67,10 +55,6 @@ export class CronFormComponent extends SidePanelForm implements OnInit {
     enabled: [true],
   });
 
-  protected isLoading = signal(false);
-
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
-
   readonly tooltips = {
     command: helptextCron.commandTooltip,
     user: helptextCron.userTooltip,
@@ -79,52 +63,30 @@ export class CronFormComponent extends SidePanelForm implements OnInit {
     stderr: helptextCron.stderrTooltip,
   };
 
-  private editingCron: Cronjob | undefined;
-
   /** Row to edit, supplied by the `<tn-side-panel>` host. Absent for Add. */
   readonly editCronjob = input<CronjobRow | undefined>(undefined);
 
-  ngOnInit(): void {
-    this.editingCron = this.editCronjob();
-    if (this.editingCron) {
-      this.form.patchValue({
-        ...this.editingCron,
-        schedule: scheduleToCrontab(this.editingCron.schedule),
-      });
-    }
-  }
+  /** The row carries `schedule` as a crontab object; the form edits it as a crontab string. */
+  protected transformEditCronjob = (data: unknown): Record<string, unknown> => {
+    const cronjob = data as CronjobRow;
+    return { ...cronjob, schedule: scheduleToCrontab(cronjob.schedule) };
+  };
 
-  protected onSubmit(): void {
+  protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
+    const rawValues = this.form.getRawValue();
     const values = {
-      ...this.form.getRawValue(),
-      schedule: crontabToSchedule(this.form.getRawValue().schedule),
+      ...rawValues,
+      schedule: crontabToSchedule(rawValues.schedule),
     };
+    const editingCron = this.editCronjob();
 
-    this.isLoading.set(true);
-    let request$: Observable<unknown>;
-    if (this.editingCron) {
-      request$ = this.api.call('cronjob.update', [
-        this.editingCron.id,
-        values,
-      ]);
-    } else {
-      request$ = this.api.call('cronjob.create', [values]);
-    }
-
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        if (this.isNew) {
-          this.snackbar.success(this.translate.instant('Cron job created'));
-        } else {
-          this.snackbar.success(this.translate.instant('Cron job updated'));
-        }
-        this.isLoading.set(false);
-        this.close(true);
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        this.errorHandler.handleValidationErrors(error, this.form);
-      },
-    });
-  }
+    return {
+      request$: editingCron
+        ? this.api.call('cronjob.update', [editingCron.id, values])
+        : this.api.call('cronjob.create', [values]),
+      successMessage: event.isEdit
+        ? this.translate.instant('Cron job updated')
+        : this.translate.instant('Cron job created'),
+    };
+  };
 }

@@ -1,14 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-/**
- * @deprecated
- */
-export enum EnclosureSlotStatus {
-  Clear = 'CLEAR',
-  Fault = 'FAULT',
-  Identify = 'IDENTIFY',
-}
-
 export enum DriveBayLightStatus {
   On = 'ON',
   Off = 'OFF',

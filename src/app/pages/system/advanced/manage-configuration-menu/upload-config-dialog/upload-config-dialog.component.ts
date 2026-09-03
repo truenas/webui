@@ -6,13 +6,14 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnDialogShellComponent, TnFileInputComponent, TnFormFieldComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
 
@@ -24,7 +25,9 @@ import { UploadService } from 'app/services/upload.service';
   imports: [
     TnDialogShellComponent,
     ReactiveFormsModule,
-    IxFileInputComponent,
+    TnFormFieldComponent,
+    TnFileInputComponent,
+    TnTestIdDirective,
     FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,
@@ -44,7 +47,7 @@ export class UploadConfigDialog {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   form = this.formBuilder.group({
-    config: [null as File[] | null, Validators.required],
+    config: [null as File | null, Validators.required],
   });
 
   readonly helptext = helptext;
@@ -53,7 +56,7 @@ export class UploadConfigDialog {
     this.dialogService
       .jobDialog(
         this.upload.uploadAsJob({
-          file: this.form.value.config[0],
+          file: this.form.value.config,
           method: 'config.upload',
         }),
         { title: this.translate.instant('Uploading and Applying Config') },

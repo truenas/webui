@@ -241,8 +241,8 @@ export class VmWizardComponent implements OnInit, SidePanelHostCloseable {
       ]),
       cpu_model: this.cpuAndMemoryForm.cpu_model || null,
       // Middleware expects values in MiBs
-      memory: this.cpuAndMemoryForm.memory / MiB,
-      min_memory: this.cpuAndMemoryForm.min_memory ? this.cpuAndMemoryForm.min_memory / MiB : null,
+      memory: Math.round(this.cpuAndMemoryForm.memory / MiB),
+      min_memory: this.cpuAndMemoryForm.min_memory ? Math.round(this.cpuAndMemoryForm.min_memory / MiB) : null,
       ...pick(this.gpuForm, [
         'ensure_display_device', 'hide_from_msr',
       ]),
