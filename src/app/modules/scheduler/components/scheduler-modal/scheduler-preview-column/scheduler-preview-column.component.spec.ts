@@ -95,11 +95,32 @@ describe('SchedulerPreviewColumnComponent', () => {
     expect(await getHighlightedCalendarDays()).toEqual(['7', '14', '21', '24', '25', '28']);
   });
 
+  // NAS-142970. The same clock split as above, on a schedule that runs every day: none of
+  // the month on screen has happened yet in the system time zone, so all of it is still to
+  // come — including the 1st, whose run is hours away in Los Angeles. Counting from the
+  // system clock instead of the month it is about to enter blanked the month entirely.
+  it('marks the whole month on screen when the system timezone has not reached it yet', async () => {
+    setup({
+      crontab: '0 4 * * *',
+      timezone: 'America/Los_Angeles',
+      now: '2026-09-01 05:00:00',
+    });
+
+    const calendar = await loader.getHarness(TnCalendarHarness);
+
+    expect(await calendar.getCurrentViewLabel()).toBe('SEP 2026');
+    expect(await getHighlightedCalendarDays()).toHaveLength(30);
+
+    const examplesComponent = spectator.query(SchedulerDateExamplesComponent)!;
+    expect(examplesComponent.startDate).toEqual(parse('2026-09-01 00:00:00', 'yyyy-MM-dd HH:mm:ss', new Date()));
+  });
+
   // The mirror of the case above, with the clocks the other way round: Kiritimati has
   // already rolled over to March while the browser is still on the last evening of
-  // February. February is the month on screen, so the preview counts from now — rewinding
-  // to the 1st instead would mark every day of a month that is all but over.
-  it('marks only days still to come when the system timezone is a month ahead', async () => {
+  // February. The 23:30 run the browser still has ahead of it went off hours ago in
+  // Kiritimati, so February holds nothing left to preview — the examples are in the system
+  // time zone, and listing that run would be listing one that has already happened.
+  it('shows nothing for a month the system timezone has already left', async () => {
     setup({
       crontab: '30 23 * * *',
       timezone: 'Pacific/Kiritimati',
@@ -109,7 +130,8 @@ describe('SchedulerPreviewColumnComponent', () => {
     const calendar = await loader.getHarness(TnCalendarHarness);
 
     expect(await calendar.getCurrentViewLabel()).toBe('FEB 2022');
-    expect(await getHighlightedCalendarDays()).toEqual(['28']);
+    expect(await getHighlightedCalendarDays()).toHaveLength(0);
+    expect(spectator.query(SchedulerDateExamplesComponent)).not.toExist();
   });
 
   it('asks to be closed when the close button is clicked', async () => {
