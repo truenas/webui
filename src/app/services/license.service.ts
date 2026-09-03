@@ -17,10 +17,11 @@ import {
 } from 'app/store/system-info/system-info.selectors';
 
 /**
- * SED is held back from the entitlement engine pending a continuity carve-out: a system
- * already running SED must keep unlocking its disks after an upgrade even when the licence
- * does not entitle SED, or its pools stay locked. Until middleware settles that, SED keeps
- * its pre-existing gating.
+ * These two SED observables stay on the licence-feature check for now. New-pool SED
+ * provisioning already gates on the `SED` entitlement; the remaining SED surfaces (status
+ * column, advanced-settings card, search) move together once the 25.x → 26 upgrade path
+ * for existing SED pools is settled on the middleware side. That is a question about the
+ * gate NAS-138051 introduced, not about the entitlement engine.
  *
  * `hasSed$` must also stay synchronous. `DiskListComponent` reads it at field init under
  * `requireSync`, and builds its column array once without ever recomputing it, so an
