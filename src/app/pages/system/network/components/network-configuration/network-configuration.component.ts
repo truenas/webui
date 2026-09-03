@@ -266,7 +266,7 @@ export class NetworkConfigurationComponent implements OnInit {
       },
     );
 
-    // `failover.licensed` alone decides these. Product type used to wrap this check, which
+    // The `HA` entitlement alone decides these. Product type used to wrap this check, which
     // is redundant — an HA licence implies HA — and wrong now that product type follows
     // hardware: an HA pair on non-appliance hardware would never reach the inner check.
     this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {

@@ -3,12 +3,13 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY } from 'rxjs';
 import {
-  filter, map, mergeMap, switchMap, withLatestFrom,
+  filter, map, switchMap, withLatestFrom,
 } from 'rxjs/operators';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
-import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { entitlementsLoaded } from 'app/store/entitlements/entitlements.actions';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 import {
   failoverLicensedStatusLoaded,
@@ -24,17 +25,18 @@ export class HaInfoEffects {
   private window = inject<Window>(WINDOW);
   private store$ = inject<Store<AppState>>(Store);
 
-  loadFailoverLicensedStatus = createEffect(() => this.actions$.pipe(
-    ofType(adminUiInitialized),
+  /**
+   * The `HA` entitlement is the source of truth once signed in. Sign-in seeds the state from
+   * `failover.licensed` (the same check server-side, callable without a role); this only
+   * overrides it when the engine actually reports the key, so engine-less boxes keep that seed.
+   */
+  syncHaLicenseFromEntitlements = createEffect(() => this.actions$.pipe(
+    ofType(entitlementsLoaded),
+    map(({ entitlements }) => entitlements[EntitlementFeature.Ha]?.entitled),
+    filter((isHaLicensed): isHaLicensed is boolean => isHaLicensed !== undefined),
     withLatestFrom(this.store$.select(selectHaInfoState)),
-    filter(([, haInfoState]) => haInfoState.isHaLicensed === null),
-    mergeMap(() => {
-      return this.api.call('failover.licensed').pipe(
-        map((isHaLicensed) => {
-          return failoverLicensedStatusLoaded({ isHaLicensed });
-        }),
-      );
-    }),
+    filter(([isHaLicensed, haInfoState]) => haInfoState.isHaLicensed !== isHaLicensed),
+    map(([isHaLicensed]) => failoverLicensedStatusLoaded({ isHaLicensed })),
   ));
 
   loadHaStatus = createEffect(() => this.actions$.pipe(
