@@ -92,16 +92,15 @@ $stat-column-min: 150px;
 
   // No `nowrap` here: it made an over-wide value overflow its column and paint
   // on top of the next one (NAS-142255). The value wraps between its parts
-  // instead, and `anywhere` is the last resort for a single token - an item
-  // count with no break opportunity in it - that still cannot fit.
+  // instead.
   .stat-value {
     font-size: 16px;
     font-weight: 500;
-    overflow-wrap: anywhere;
   }
 
   // Each half of an "x / y" pair stays intact, so a wrap can only happen at the
-  // slash and never between a number and its unit.
+  // `&ngsp;` separator the template keeps between the parts, never between a
+  // number and its unit.
   .stat-part {
     display: inline-block;
     white-space: nowrap;
