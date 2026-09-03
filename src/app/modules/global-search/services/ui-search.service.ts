@@ -52,11 +52,12 @@ export class UiSearchProvider implements GlobalSearchProvider {
           this.entitlements.entitled$(EntitlementFeature.Apps),
           this.entitlements.entitled$(EntitlementFeature.Kmip),
           this.entitlements.entitled$(EntitlementFeature.FibreChannel),
+          this.entitlements.entitled$(EntitlementFeature.Sed),
         ]).pipe(
           first(),
           filter(([
             hasRole, hasFailover, hasEnclosure,
-            hasVms, hasApps, hasKmip, hasFibreChannel,
+            hasVms, hasApps, hasKmip, hasFibreChannel, hasSed,
           ]) => {
             switch (true) {
               case !hasRole:
@@ -66,6 +67,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
               case item.visibleTokens?.includes(GlobalSearchVisibleToken.Apps) && !hasApps:
               case item.visibleTokens?.includes(GlobalSearchVisibleToken.FibreChannel) && !hasFibreChannel:
               case item.visibleTokens?.includes(GlobalSearchVisibleToken.Kmip) && !hasKmip:
+              case item.visibleTokens?.includes(GlobalSearchVisibleToken.Sed) && !hasSed:
                 return false;
               default:
                 return true;
