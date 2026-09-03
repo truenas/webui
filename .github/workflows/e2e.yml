@@ -185,8 +185,17 @@ jobs:
       # plus the syslog targets, which a container has no socket for. The
       # upstream is the appliance's forwarded port 80, reached from the
       # container's bridge network through Docker's host gateway. It cannot
-      # share the host network: nginx binds port 80, which is the TrueNAS
-      # host's own UI.
+      # share the host network: nginx binds the ports the TrueNAS host's own
+      # UI is on.
+      #
+      # Served over TLS with a throwaway self-signed certificate, and it has
+      # to be: a production build ignores the login token on a plain-HTTP
+      # origin (`AuthService.setQueryToken`), so over http the suite's setup
+      # project would wait on a sign-in page that never moves. The suite then
+      # runs as the `shipped` profile with `TN_UI_BASE_URL` overriding the
+      # address, which is what makes it tolerate a self-signed certificate —
+      # and is accurate: this is the production build at /ui/ over https,
+      # served the way the appliance serves it, just from a different box.
       #
       # Published on an ephemeral loopback port so a leftover container from a
       # crashed run cannot hold the address, and named after the run so the
@@ -197,21 +206,28 @@ jobs:
           set -euo pipefail
           name="e2e-ui-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           conf="$RUNNER_TEMP/nginx.conf"
+          openssl req -x509 -newkey rsa:2048 -nodes -days 2 -subj /CN=localhost \
+            -keyout "$RUNNER_TEMP/e2e-ui.key" -out "$RUNNER_TEMP/e2e-ui.crt" > /dev/null 2>&1
           sed \
             -e "s|%%HOSTNAME%%|host.docker.internal:${TN_HOST_HTTP#*:}|g" \
             -e "s|%%VERTAG%%|$(date +%s)|g" \
-            -e "s|^\(\s*error_log\) .*|\1 /dev/stderr;|" \
-            -e "s|^\(\s*access_log\) .*|\1 off;|" \
+            -e "s|^\([[:space:]]*error_log\) .*|\1 /dev/stderr;|" \
+            -e "s|^\([[:space:]]*access_log\) .*|\1 off;|" \
+            -e "s|^\([[:space:]]*\)listen[[:space:]]*0\.0\.0\.0:80;|\1listen 0.0.0.0:443 ssl; ssl_certificate /etc/nginx/e2e-ui.crt; ssl_certificate_key /etc/nginx/e2e-ui.key;|" \
+            -e "/listen[[:space:]]*\[::\]:80;/d" \
             docker/nginx.conf > "$conf"
+          grep -q "listen 0.0.0.0:443 ssl" "$conf" || { echo "::error::docker/nginx.conf no longer has the listen line this step rewrites"; exit 1; }
           $DOCKER run -d --rm --name "$name" \
             --add-host host.docker.internal:host-gateway \
-            -p 127.0.0.1::80 \
+            -p 127.0.0.1::443 \
             -v "$UI_DIST:/var/www/webui:ro" \
             -v "$conf:/etc/nginx/tn-nginx.conf:ro" \
+            -v "$RUNNER_TEMP/e2e-ui.crt:/etc/nginx/e2e-ui.crt:ro" \
+            -v "$RUNNER_TEMP/e2e-ui.key:/etc/nginx/e2e-ui.key:ro" \
             "$NGINX_IMAGE" nginx -c /etc/nginx/tn-nginx.conf > /dev/null
-          port=$($DOCKER port "$name" 80/tcp | head -1 | sed 's/.*://')
+          port=$($DOCKER port "$name" 443/tcp | head -1 | sed 's/.*://')
           [ -n "$port" ] || { echo "::error::The UI container published no port"; exit 1; }
-          url="http://localhost:${port}/ui/"
+          url="https://localhost:${port}/ui/"
           # Fail here, not four steps later inside a test, if the UI or its
           # proxy to the appliance is not answering. The proxy check asks for
           # the WebSocket endpoint over plain GET: any answer that is not a
@@ -219,8 +235,8 @@ jobs:
           # not reach it.
           ready=
           for i in $(seq 1 30); do
-            ui=$(curl -s -o /dev/null -w '%{http_code}' "$url" || true)
-            proxy=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:${port}/api/current" || true)
+            ui=$(curl -sk -o /dev/null -w '%{http_code}' "$url" || true)
+            proxy=$(curl -sk -o /dev/null -w '%{http_code}' "https://localhost:${port}/api/current" || true)
             case "$ui/$proxy" in
               200/[1234]*) ready=1; break ;;
             esac
@@ -233,7 +249,6 @@ jobs:
           fi
           echo "UI_CONTAINER=$name" >> "$GITHUB_ENV"
           echo "TN_UI_BASE_URL=$url" >> "$GITHUB_ENV"
-          echo "TN_PROFILE=branch" >> "$GITHUB_ENV"
           echo "Serving the built UI at $url, proxying to the appliance at $TN_HOST_HTTP"
 
       - name: Run the suite

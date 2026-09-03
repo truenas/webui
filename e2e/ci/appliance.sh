@@ -177,9 +177,9 @@ claim() {
   # e2e/support/config.ts. The host is `host:port` because both the shipped
   # UI (https) and the middleware socket (wss) go through the forwarded 443.
   #
-  # TN_HOST_HTTP is the same appliance over the forwarded 80, for a UI served
-  # from a container whose nginx proxies to the appliance over plain HTTP —
-  # the pipeline's `branch` profile. Not part of the suite's contract.
+  # TN_HOST_HTTP is the same appliance over the forwarded 80, for the UI the
+  # pipeline builds and serves from a container whose nginx proxies to the
+  # appliance over plain HTTP. Not part of the suite's contract.
   #
   # TN_DOMAIN is the deployment name, kept under the name the design uses for
   # the thing to release. TN_BASELINE is which baseline it is running against.
