@@ -4,7 +4,6 @@ import {
   catchError, defer, of, shareReplay,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -12,21 +11,7 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectHasEnclosureSupport,
-  selectHasLicenseFeature,
 } from 'app/store/system-info/system-info.selectors';
-
-/**
- * These two SED observables stay on the licence-feature check for now. New-pool SED
- * provisioning already gates on the `SED` entitlement; the remaining SED surfaces (status
- * column, advanced-settings card, search) move together once the 25.x → 26 upgrade path
- * for existing SED pools is settled on the middleware side. That is a question about the
- * gate NAS-138051 introduced, not about the entitlement engine.
- *
- * `hasSed$` must also stay synchronous. `DiskListComponent` reads it at field init under
- * `requireSync`, and builds its column array once without ever recomputing it, so an
- * observable that defers until entitlements load would throw there.
- */
-const selectHasSedFeature = selectHasLicenseFeature(LicenseFeature.Sed);
 
 @Injectable({
   providedIn: 'root',
@@ -42,8 +27,6 @@ export class LicenseService {
 
   /** Not an entitlement — iX hardware detection. */
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
-
-  readonly hasSed$ = this.store$.select(selectHasSedFeature);
 
   /**
    * Not migrated to the `STIG` entitlement: `fips_available` reports firmware capability,
