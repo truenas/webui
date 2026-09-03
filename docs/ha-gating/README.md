@@ -31,46 +31,46 @@ Roughly thirty places in the UI change behaviour on HA. Grouped by what the user
 
 ## 2. How it is gated
 
-### 2.1 One call decides almost everything: `failover.licensed`
+### 2.1 Two calls, one answer: `failover.licensed` at sign-in, the `HA` entitlement after
 
-At UI start-up:
+`failover.licensed` and `truenas.entitlements.info[HA]` are the same decision server-side (`is_licensed_for_ha()` returns `get_entitlement(HA).entitled`). The UI reads both, at different moments:
 
 ```
-failover.licensed                      → boolean, fetched once
-  └─ if true:
-       failover.disabled.reasons        → list of reason codes, fetched once…
-       subscribe failover.disabled.reasons   …and kept live
+sign-in (session exists, admin UI not yet started)
+  failover.licensed                    → seeds "HA licensed"; callable without any role
+    └─ if true: failover.status         → refuses login if HA is inconsistent
+
+admin UI start-up, and again on every license change
+  truenas.entitlements.info            → HA.entitled overrides the seed when the key is present
+    └─ if HA licensed:
+         failover.disabled.reasons      → fetched once…
+         subscribe failover.disabled.reasons   …and kept live
 ```
 
-From those two values the UI derives four conditions, and every HA surface uses one of them:
+The sign-in step stays on `failover.licensed` for one reason: `truenas.entitlements.*` require `SYSTEM_PRODUCT_READ`, and a custom privilege without that role must still be able to log in. Every built-in preset can call the entitlement API (`READONLY_ADMIN` folds in every `*_READ` role).
+
+From those values the UI derives four conditions, and every HA surface uses one of them:
 
 | condition | derived from |
 |---|---|
-| **HA licensed** | `failover.licensed === true` — **the gate nearly everything uses** |
+| **HA licensed** | `HA.entitled` once loaded, else the `failover.licensed` seed — **the gate nearly everything uses** |
 | **HA healthy** | `failover.disabled.reasons` is empty |
 | **HA status** | the reasons list itself, shown in the topbar popover |
 | **safe to fail over** | reasons empty, **or** every reason is one of `MISMATCH_VERSIONS`, `LOC_FIPS_REBOOT_REQ`, `REM_FIPS_REBOOT_REQ`, `LOC_GPOSSTIG_REBOOT_REQ`, `REM_GPOSSTIG_REBOOT_REQ` |
 
 Controller identity comes from `failover.node` (`A` / `B`) and is used only for labelling.
 
-### 2.2 The four surfaces still pre-gated on product type
+### 2.2 Product type is out of every HA gate
 
-Four surfaces only evaluate `failover.licensed` after first checking `system.product_type === 'ENTERPRISE'`. The ticket's `HA` bullet says not to:
+Six surfaces used to evaluate HA only after `system.product_type === 'ENTERPRISE'` (topbar restart handling, alert controller labels, IPMI per-controller options, manual update form, Global Configuration hostnames, interface form). All six now read the HA condition alone, per the ticket:
 
 > `failover.licensed` remains valid and reflects the same thing; **do not pre-gate HA UI on product type.**
 
-| surface | today | consequence now that product type is hardware-only |
-|---|---|---|
-| Topbar restart handling | `product_type === ENTERPRISE` → then `failover.licensed` | an HA-licensed non-appliance never learns it is HA |
-| Alert controller labels | same | labels never shown |
-| IPMI per-controller options | same → then `failover.node` | options never loaded |
-| Manual update form | same; one field additionally requires `product_type === ENTERPRISE && !failover.licensed` — that one reads as a *hardware* condition (single-controller appliance), not a licence one |
+The manual update form's *Restart After Update* checkbox, which additionally required `product_type === 'ENTERPRISE'`, is now offered on every non-HA system.
 
-Two more of the same shape were already fixed on this branch (Global Configuration hostnames, interface form) by evaluating `failover.licensed` alone.
+### 2.3 Edge behaviour
 
-### 2.3 Where the `HA` entitlement fits
-
-In the entitlement engine, `HA` is decided on licence type alone: entitled iff the licence is `ENTERPRISE_HA`. The ticket says `failover.licensed` "reflects the same thing". **The UI does not read `truenas.entitlements.info[HA]` anywhere today** — every HA surface goes through `failover.licensed`. Whether it should is the open question.
+If the engine reports no `HA` key at all (a middleware without the entitlement engine), the sign-in seed stands and nothing is overridden. A denied `HA` entitlement after sign-in wins over a `true` seed, so a license change takes effect without re-login. No HA surface reads the entitlement directly; all of them read the one store value described above, so a missing key can never fail open into HA.
 
 ---
 

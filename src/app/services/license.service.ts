@@ -21,8 +21,7 @@ export class LicenseService {
   private api = inject(ApiService);
   private truenasConnectService = inject(TruenasConnectService);
 
-  /** `failover.licensed` is the runtime truth here; the `HA` entitlement is the narrower
-   * license-type question. Left as-is until the two are reconciled. */
+  /** Seeded by `failover.licensed` at sign-in, then kept in step with the `HA` entitlement. */
   hasFailover$ = this.store$.select(selectIsHaLicensed);
 
   /** Not an entitlement — iX hardware detection. */

@@ -347,7 +347,7 @@ export class IpmiFormComponent extends SidePanelForm implements OnInit {
     );
   }
 
-  /** `failover.licensed` alone decides HA; product type must not pre-gate it. */
+  /** The `HA` entitlement alone decides HA; product type must not pre-gate it. */
   private loadFailoverData(): Observable<unknown> {
     return this.store$.select(selectIsHaLicensed).pipe(
       switchMap((isHaLicensed) => {

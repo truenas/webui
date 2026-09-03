@@ -43,6 +43,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { entitlementsLoaded } from 'app/store/entitlements/entitlements.actions';
 import { entitlementsReducer } from 'app/store/entitlements/entitlements.reducer';
 import { entitlementsStateKey } from 'app/store/entitlements/entitlements.selectors';
+import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -120,7 +121,7 @@ describe('InterfaceFormComponent', () => {
               hasHa: true,
               reasons: [],
             },
-            isHaLicensed: true,
+            isHaLicensed: false,
           },
           [systemInfoStateKey]: {
             systemInfo: null,
@@ -153,7 +154,6 @@ describe('InterfaceFormComponent', () => {
         } as NetworkSummary),
         mockCall('interface.network_config_to_be_removed', { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' }),
         mockCall('interface.available_fec_modes', []),
-        mockCall('failover.licensed', false),
         mockCall('failover.node', 'A'),
         mockCall('failover.config', {
           disabled: true,
@@ -517,12 +517,9 @@ describe('InterfaceFormComponent', () => {
         detectChanges: false,
       });
 
-      // Dispatch action to set Enterprise product type
       const store$ = spectator.inject(Store);
       store$.dispatch(entitlementsLoaded({ entitlements: {} }));
-
-      const websocketMock = spectator.inject(MockApiService);
-      websocketMock.mockCall('failover.licensed', true);
+      store$.dispatch(failoverLicensedStatusLoaded({ isHaLicensed: true }));
 
       // Trigger ngOnInit which will call loadFailoverStatus
       spectator.component.ngOnInit();
