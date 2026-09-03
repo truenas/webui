@@ -33,10 +33,29 @@
 name: E2E
 
 on:
-  # Nightly, once this is trusted. Commented out while the pipeline is being
-  # brought up, so the only runs are ones somebody asked for.
-  # schedule:
-  #   - cron: '0 3 * * *'
+  # Nightly, against whatever master is that morning. This and the master
+  # push below are the runs that test merged UI code; the suite drives the
+  # UI built from the checkout, so a run on master is a run on master's code.
+  schedule:
+    - cron: '0 3 * * *'
+  # Every merged change to the UI or the suite. Not every pull request: one
+  # runner, one appliance, ~8 minutes a run, and a concurrency group that
+  # keeps one pending run at most, so under normal PR volume most pushes
+  # would never get a run and nobody could tell which. A PR that wants a run
+  # asks for one with `workflow_dispatch` on its branch.
+  push:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'e2e/**'
+      - '!e2e/docs/**'
+      - '!e2e/CLAUDE.md'
+      - '!e2e/README.md'
+      - 'playwright.config.ts'
+      - 'package.json'
+      - 'yarn.lock'
+      - '.github/workflows/e2e.yml'
+  # Pull requests that change the suite or the pipeline itself.
   pull_request:
     paths:
       - 'e2e/**'
@@ -48,6 +67,7 @@ on:
       - '!e2e/README.md'
       - 'playwright.config.ts'
       - '.github/workflows/e2e.yml'
+  # The opt-in for any other branch: `gh workflow run e2e.yml --ref <branch>`.
   workflow_dispatch:
     inputs:
       grep:
@@ -320,16 +340,6 @@ jobs:
       # with only 80 and 443 forwarded, so there is no SSH to collect over. It
       # needs an API route; until then the job log is what there is.
       #
-      # Safe to publish: test names and failure messages, no attachments.
-      #
-      # Traces, videos and screenshots are NOT uploaded yet. Artifacts on a
-      # public repository are downloadable by anyone, and a Playwright trace
-      # records action parameters verbatim — including the appliance password
-      # `signIn` types. The precondition for publishing them now holds: the
-      # password is generated per claim and the appliance is destroyed at
-      # release, so a published trace carries a credential to nothing. Turning
-      # that upload on is a deliberate next step, not a side effect.
-      #
       # Runs whenever the suite ran, pass or fail, and then insists on the
       # file: JUnit is the run history R7.4 and R8.4 are built on, so a run
       # that produced none must not report green. The only honest no-file
@@ -341,6 +351,34 @@ jobs:
           name: e2e-junit
           path: test-results/junit.xml
           if-no-files-found: error
+          retention-days: 14
+
+      # Traces, screenshots and video for the tests that failed (R7.1). These
+      # are what make a failure triageable without a local reproduction
+      # (R6.2): the trace holds a DOM snapshot per step, the network, and the
+      # console.
+      #
+      # Artifacts on a public repository are downloadable by anyone, and a
+      # trace records action parameters verbatim — including the appliance
+      # password `signIn` types and the login token in the setup project's
+      # URL. Publishing them is safe because both are worthless by the time
+      # anyone can download this: the password is generated per claim, the
+      # token expires, and the appliance they belonged to is destroyed by the
+      # release step below. Do not upload these from a pipeline that reuses an
+      # appliance or a credential.
+      #
+      # Only on failure: Playwright keeps a trace on the first retry and a
+      # screenshot only for failures (playwright.config.ts), so a green run
+      # has nothing here, and `ignore` is the truthful setting for that.
+      - name: Upload failure traces
+        if: always() && steps.suite.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-failure-traces
+          path: |
+            test-results/**
+            !test-results/junit.xml
+          if-no-files-found: ignore
           retention-days: 14
 
       # A leftover UI container would go on proxying to a destroyed appliance
