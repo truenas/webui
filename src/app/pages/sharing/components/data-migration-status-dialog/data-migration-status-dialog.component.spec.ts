@@ -75,6 +75,12 @@ describe('DataMigrationStatusDialogComponent', () => {
       const parts = spectator.queryAll('.stat-value .stat-part').map((part) => part.textContent.trim());
 
       expect(parts).toEqual(['4.77 MiB /', '9.54 MiB', '5 /', '10', '0']);
+
+      // The separator between the parts must survive Angular's whitespace
+      // removal, or the pair renders as "4.77 MiB /9.54 MiB".
+      const values = spectator.queryAll('.stat-value').map((value) => value.textContent.trim());
+
+      expect(values).toEqual(['4.77 MiB / 9.54 MiB', '5 / 10', '0']);
     });
   });
 
