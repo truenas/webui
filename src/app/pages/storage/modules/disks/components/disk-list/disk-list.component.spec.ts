@@ -9,6 +9,8 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -37,7 +39,6 @@ import {
 import {
   DiskWipeDialog,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
-import { LicenseService } from 'app/services/license.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('DiskListComponent', () => {
@@ -127,9 +128,7 @@ describe('DiskListComponent', () => {
           afterClosed: jest.fn(() => of(true)),
         })),
       }),
-      mockProvider(LicenseService, {
-        hasSed$: of(true),
-      }),
+      mockEntitlements(),
       provideMockStore({
         selectors: [
           {
@@ -284,7 +283,7 @@ describe('DiskListComponent', () => {
   });
 });
 
-describe('DiskListComponent - without SED license', () => {
+describe('DiskListComponent - not entitled to SED', () => {
   let spectator: Spectator<DiskListComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
@@ -315,9 +314,7 @@ describe('DiskListComponent - without SED license', () => {
         open: jest.fn(() => of()),
       }),
       mockProvider(MatDialog),
-      mockProvider(LicenseService, {
-        hasSed$: of(false),
-      }),
+      mockEntitlements([EntitlementFeature.Sed]),
       provideMockStore({
         selectors: [
           {
