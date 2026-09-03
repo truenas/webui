@@ -36,7 +36,6 @@ import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-alerts-panel',
@@ -76,7 +75,6 @@ export class AlertsPanelComponent implements OnInit {
   error$ = this.store$.select(selectAlertState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectAlertState).pipe(map((state) => state.isLoading));
 
-  private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = false;
 
   // Static icons
@@ -335,10 +333,7 @@ export class AlertsPanelComponent implements OnInit {
   private readonly emailForm = EmailFormComponent as unknown as Type<SidePanelForm>;
 
   private checkHaStatus(): void {
-    if (!this.isEnterprise()) {
-      return;
-    }
-
+    // `failover.licensed` alone decides HA; product type must not pre-gate it.
     this.store$.select(selectIsHaLicensed)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isHaLicensed) => {
