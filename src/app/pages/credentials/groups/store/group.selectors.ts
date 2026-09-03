@@ -4,10 +4,6 @@ import { adapter, GroupsState } from 'app/pages/credentials/groups/store/group.r
 export const groupStateKey = 'groups';
 export const selectGroupState = createFeatureSelector<GroupsState>(groupStateKey);
 
-export interface GroupSlice {
-  [groupStateKey]: GroupsState;
-}
-
 const { selectAll, selectTotal } = adapter.getSelectors();
 
 export const selectGroups = createSelector(

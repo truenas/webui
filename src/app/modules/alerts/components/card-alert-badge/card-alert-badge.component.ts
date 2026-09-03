@@ -31,10 +31,6 @@ export class CardAlertBadgeComponent {
     return this.alertNavBadgeService.getBadgeCountForPath(this.menuPath(), this.badgeCounts());
   });
 
-  protected readonly hasCritical = computed(() => {
-    return this.alertNavBadgeService.hasCriticalAlerts(this.menuPath(), this.badgeCounts());
-  });
-
   protected readonly badgeType = computed((): AlertBadgeType => {
     return this.alertNavBadgeService.getBadgeTypeForPath(this.menuPath(), this.badgeCounts());
   });

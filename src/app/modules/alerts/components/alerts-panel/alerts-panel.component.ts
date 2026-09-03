@@ -78,9 +78,6 @@ export class AlertsPanelComponent implements OnInit {
 
   private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = false;
-
-  // Static icons
-  protected readonly cancelIcon = tnIconMarker('close-circle', 'mdi');
   protected readonly bellIcon = tnIconMarker('bell-outline', 'mdi');
 
   // The button-label computeds below cache translated strings, so they have to re-run

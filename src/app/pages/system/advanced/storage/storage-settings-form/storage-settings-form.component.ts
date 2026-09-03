@@ -16,7 +16,6 @@ import { Weekday, weekdayLabels } from 'app/enums/weekday.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -27,11 +26,6 @@ import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
-
-export interface StorageSettingsData {
-  systemDatasetPool: string;
-  priorityResilver: ResilverConfig;
-}
 
 @Component({
   selector: 'ix-storage-settings-form',
@@ -62,8 +56,6 @@ export class StorageSettingsFormComponent extends SidePanelForm implements OnIni
 
   protected readonly rolesToEditPool = [Role.DatasetWrite];
   protected readonly rolesToEditPriorityResilver = [Role.PoolWrite];
-
-  protected readonly anyRoles = [...this.rolesToEditPool, ...this.rolesToEditPriorityResilver];
 
   protected isLoading = signal(false);
 

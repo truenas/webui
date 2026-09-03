@@ -6,10 +6,6 @@ export enum ContainerType {
   Container = 'CONTAINER',
 }
 
-export const containerTypeLabels = new Map<ContainerType, string>([
-  [ContainerType.Container, T('Container')],
-]);
-
 export enum ContainerStatus {
   Running = 'RUNNING',
   Stopped = 'STOPPED',
@@ -40,17 +36,6 @@ export const containerGpuType = {
   Intel: 'INTEL',
   Nvidia: 'NVIDIA',
 } as const;
-
-export const containerDeviceTypeLabels = new Map<ContainerDeviceType, string>([
-  [ContainerDeviceType.Usb, 'USB'],
-  [ContainerDeviceType.Nic, T('NIC')],
-  [ContainerDeviceType.Filesystem, T('Filesystem Device')],
-  [ContainerDeviceType.Gpu, 'GPU'],
-]);
-
-export enum ContainerNetworkType {
-  Bridge = 'BRIDGE',
-}
 
 export enum ContainerNicDeviceType {
   E1000 = 'E1000',

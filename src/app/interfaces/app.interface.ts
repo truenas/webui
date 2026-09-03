@@ -187,11 +187,6 @@ export type AppUpgradeParams = [
   params?: AppUpgrade,
 ];
 
-export interface ChartContainerImage {
-  id: string;
-  update_available: boolean;
-}
-
 export interface ChartSchemaEnum {
   value: string;
   description: string;

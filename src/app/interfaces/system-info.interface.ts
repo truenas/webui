@@ -66,7 +66,6 @@ export interface License {
  * generically so middleware can add or remove fields without coupled UI work.
  */
 export type LicenseFingerprintValue = string | number | boolean | null | (string | number | boolean | null)[];
-export type LicenseFingerprint = Record<string, LicenseFingerprintValue>;
 
 export enum ContractType {
   Gold = 'GOLD',

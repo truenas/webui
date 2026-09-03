@@ -15,19 +15,6 @@ export interface NetworkConfiguration extends NetworkConfigurationState {
   state: NetworkConfigurationState;
 }
 
-export interface NetworkConfigurationConfig extends NetworkConfigurationState, NetworkServiceAnnouncement {
-  inherit_dhcp: boolean;
-  domain: string;
-  domains: string[];
-  hostname: string;
-  hostname_b: string;
-  hostname_virtual: string;
-  hosts: string[];
-  httpproxy: string;
-  outbound_network_activity: NetworkActivityType;
-  outbound_network_value: string[];
-}
-
 export interface NetworkConfigurationState {
   ipv4gateway: string;
   ipv6gateway: string;
