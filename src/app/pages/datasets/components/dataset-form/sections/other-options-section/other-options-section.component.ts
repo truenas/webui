@@ -49,7 +49,6 @@ import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
-import { LicenseService } from 'app/services/license.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @Component({
@@ -69,7 +68,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private licenseService = inject(LicenseService);
   private entitlements = inject(EntitlementsService);
   private cdr = inject(ChangeDetectorRef);
   private systemGeneralService = inject(SystemGeneralService);

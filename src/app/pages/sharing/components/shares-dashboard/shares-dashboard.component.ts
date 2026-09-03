@@ -15,7 +15,6 @@ import { sharesDashboardElements } from 'app/pages/sharing/components/shares-das
 import { WebShareCardComponent } from 'app/pages/sharing/components/shares-dashboard/webshare-card/webshare-card.component';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
-import { LicenseService } from 'app/services/license.service';
 import { IscsiCardComponent } from './iscsi-card/iscsi-card.component';
 import { NfsCardComponent } from './nfs-card/nfs-card.component';
 import { SmbCardComponent } from './smb-card/smb-card.component';
@@ -41,7 +40,6 @@ export class SharesDashboardComponent {
   private poolStoreService = inject(poolStore);
   private translate = inject(TranslateService);
   private router = inject(Router);
-  private license = inject(LicenseService);
   private entitlements = inject(EntitlementsService);
 
   protected readonly searchableElements = sharesDashboardElements;

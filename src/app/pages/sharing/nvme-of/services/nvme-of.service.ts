@@ -10,14 +10,12 @@ import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
-import { LicenseService } from 'app/services/license.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NvmeOfService {
   private api = inject(ApiService);
-  private license = inject(LicenseService);
   private entitlements = inject(EntitlementsService);
 
   private maxConcurrentRequests = 15;
