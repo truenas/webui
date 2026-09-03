@@ -215,6 +215,7 @@ jobs:
             -e "s|^\([[:space:]]*access_log\) .*|\1 off;|" \
             -e "s|^\([[:space:]]*\)listen[[:space:]]*0\.0\.0\.0:80;|\1listen 0.0.0.0:443 ssl; ssl_certificate /etc/nginx/e2e-ui.crt; ssl_certificate_key /etc/nginx/e2e-ui.key;|" \
             -e "/listen[[:space:]]*\[::\]:80;/d" \
+            -e "/error_page[[:space:]]*500 502 503 504/d" \
             docker/nginx.conf > "$conf"
           grep -q "listen 0.0.0.0:443 ssl" "$conf" || { echo "::error::docker/nginx.conf no longer has the listen line this step rewrites"; exit 1; }
           $DOCKER run -d --rm --name "$name" \
@@ -230,16 +231,20 @@ jobs:
           url="https://localhost:${port}/ui/"
           # Fail here, not four steps later inside a test, if the UI or its
           # proxy to the appliance is not answering. The proxy check asks for
-          # the WebSocket endpoint over plain GET: any answer that is not a
-          # 5xx came from the appliance, while 502 is nginx saying it could
-          # not reach it.
+          # the WebSocket endpoint over plain GET. A 5xx is nginx unable to
+          # reach the appliance — the sed above removes the inherited
+          # `error_page` handler, whose 50x page does not exist in this image
+          # and would otherwise turn that 502 into a 404. A 404 is excluded
+          # too, since nginx can produce one on its own; anything else in
+          # 1xx–4xx had to come from the appliance.
           ready=
           for i in $(seq 1 30); do
             ui=$(curl -sk -o /dev/null -w '%{http_code}' "$url" || true)
             proxy=$(curl -sk -o /dev/null -w '%{http_code}' "https://localhost:${port}/api/current" || true)
-            case "$ui/$proxy" in
-              200/[1234]*) ready=1; break ;;
-            esac
+            if [ "$ui" = 200 ] && [[ "$proxy" =~ ^[1-4] ]] && [ "$proxy" != 404 ]; then
+              ready=1
+              break
+            fi
             sleep 2
           done
           if [ -z "$ready" ]; then
@@ -247,9 +252,8 @@ jobs:
             $DOCKER logs "$name" || true
             exit 1
           fi
-          echo "UI_CONTAINER=$name" >> "$GITHUB_ENV"
           echo "TN_UI_BASE_URL=$url" >> "$GITHUB_ENV"
-          echo "Serving the built UI at $url, proxying to the appliance at $TN_HOST_HTTP"
+          echo "Serving the built UI at $url (proxy check answered $proxy), proxying to the appliance at $TN_HOST_HTTP"
 
       - name: Run the suite
         id: suite
@@ -341,10 +345,12 @@ jobs:
 
       # A leftover UI container would go on proxying to a destroyed appliance
       # and sit on the daemon forever. `--rm` covers a clean exit; this covers
-      # the rest.
+      # the rest, including a container that started but never passed the
+      # readiness gate. Stateless on purpose: the name is derived, not read
+      # from something the serve step may have died before writing.
       - name: Stop the UI
-        if: always() && env.UI_CONTAINER != ''
-        run: $DOCKER rm -f "$UI_CONTAINER" > /dev/null || true
+        if: always() && env.DOCKER != ''
+        run: $DOCKER rm -f "e2e-ui-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" > /dev/null 2>&1 || true
 
       # Unconditional: an appliance left claimed is one the next run cannot use.
       # Reads the domain from the file `claim` wrote, so a failure between the
