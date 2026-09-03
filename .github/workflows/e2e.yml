@@ -54,6 +54,13 @@ on:
         description: Optional Playwright --grep filter
         type: string
         default: ''
+      ui:
+        description: >-
+          Which UI to test. `built` builds this checkout and serves it beside
+          the appliance; `shipped` uses the UI baked into the appliance's ISO.
+        type: choice
+        default: built
+        options: [built, shipped]
 
 # Reads code, uploads artifacts. No reason to write to the repository.
 permissions:
@@ -89,6 +96,9 @@ jobs:
       TN_GUEST_HOST_USER: ${{ vars.E2E_TN_GUEST_HOST_USER || 'root' }}
       TN_GUEST_HOST_API_KEY: ${{ secrets.TN_GUEST_HOST_API_KEY }}
       TN_GUEST_HOST_PASSWORD: ${{ secrets.TN_GUEST_HOST_PASSWORD }}
+      # Serves the built UI. Debian-based on purpose: docker/nginx.conf runs
+      # as `www-data`, which the alpine image does not have.
+      NGINX_IMAGE: nginx:1.27
 
     steps:
       - uses: actions/checkout@v4
@@ -139,6 +149,24 @@ jobs:
           $docker pull --quiet "$image"
           echo "PLAYWRIGHT_IMAGE=$image" >> "$GITHUB_ENV"
 
+      # The UI under test is the one in this checkout, not the one baked into
+      # the appliance's ISO. Same production build as main.yml's Build job —
+      # `--base-href /ui/`, so it is served where the appliance's nginx would
+      # serve it. Built before the claim so the lab is not held during the
+      # build, and so the build's memory is back before a 6GB guest starts.
+      #
+      # The web server is a stock nginx image with the repository's own
+      # `docker/nginx.conf`, the file the shipped UI is served through. Pulled
+      # here for the same fail-early reason as the Playwright image.
+      - name: Build the UI
+        if: (inputs.ui || 'built') == 'built'
+        run: |
+          set -euo pipefail
+          yarn build:prod
+          [ -f dist/index.html ] || { echo "::error::yarn build:prod produced no dist/index.html"; exit 1; }
+          $DOCKER pull --quiet "$NGINX_IMAGE"
+          echo "UI_DIST=$GITHUB_WORKSPACE/dist" >> "$GITHUB_ENV"
+
       - name: Claim an appliance
         run: |
           set -euo pipefail
@@ -149,6 +177,64 @@ jobs:
           echo "::add-mask::$(sed -n 's/^TN_PASSWORD=//p' "$RUNNER_TEMP/appliance.env")"
           cat "$RUNNER_TEMP/appliance.env" >> "$GITHUB_ENV"
           rm -f "$RUNNER_TEMP/appliance.env"
+
+      # nginx serves the build at /ui/ and proxies /api, /_upload, /_download
+      # and the WebSocket to the appliance over plain HTTP, exactly as
+      # `docker/nginx.conf` does on the appliance itself and in the Dockerfile.
+      # The two placeholders are filled the way `docker/start.sh` fills them,
+      # plus the syslog targets, which a container has no socket for. The
+      # upstream is the appliance's forwarded port 80, reached from the
+      # container's bridge network through Docker's host gateway. It cannot
+      # share the host network: nginx binds port 80, which is the TrueNAS
+      # host's own UI.
+      #
+      # Published on an ephemeral loopback port so a leftover container from a
+      # crashed run cannot hold the address, and named after the run so the
+      # teardown step can find it without state.
+      - name: Serve the UI
+        if: env.UI_DIST != ''
+        run: |
+          set -euo pipefail
+          name="e2e-ui-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          conf="$RUNNER_TEMP/nginx.conf"
+          sed \
+            -e "s|%%HOSTNAME%%|host.docker.internal:${TN_HOST_HTTP#*:}|g" \
+            -e "s|%%VERTAG%%|$(date +%s)|g" \
+            -e "s|^\(\s*error_log\) .*|\1 /dev/stderr;|" \
+            -e "s|^\(\s*access_log\) .*|\1 off;|" \
+            docker/nginx.conf > "$conf"
+          $DOCKER run -d --rm --name "$name" \
+            --add-host host.docker.internal:host-gateway \
+            -p 127.0.0.1::80 \
+            -v "$UI_DIST:/var/www/webui:ro" \
+            -v "$conf:/etc/nginx/tn-nginx.conf:ro" \
+            "$NGINX_IMAGE" nginx -c /etc/nginx/tn-nginx.conf > /dev/null
+          port=$($DOCKER port "$name" 80/tcp | head -1 | sed 's/.*://')
+          [ -n "$port" ] || { echo "::error::The UI container published no port"; exit 1; }
+          url="http://localhost:${port}/ui/"
+          # Fail here, not four steps later inside a test, if the UI or its
+          # proxy to the appliance is not answering. The proxy check asks for
+          # the WebSocket endpoint over plain GET: any answer that is not a
+          # 5xx came from the appliance, while 502 is nginx saying it could
+          # not reach it.
+          ready=
+          for i in $(seq 1 30); do
+            ui=$(curl -s -o /dev/null -w '%{http_code}' "$url" || true)
+            proxy=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:${port}/api/current" || true)
+            case "$ui/$proxy" in
+              200/[1234]*) ready=1; break ;;
+            esac
+            sleep 2
+          done
+          if [ -z "$ready" ]; then
+            echo "::error::UI container is not serving at ${url} (ui=${ui:-none}, proxy=${proxy:-none})"
+            $DOCKER logs "$name" || true
+            exit 1
+          fi
+          echo "UI_CONTAINER=$name" >> "$GITHUB_ENV"
+          echo "TN_UI_BASE_URL=$url" >> "$GITHUB_ENV"
+          echo "TN_PROFILE=branch" >> "$GITHUB_ENV"
+          echo "Serving the built UI at $url, proxying to the appliance at $TN_HOST_HTTP"
 
       - name: Run the suite
         id: suite
@@ -193,6 +279,7 @@ jobs:
             "CI=$CI" \
             "TN_GREP=${TN_GREP:-}" \
             "TN_PROFILE=$TN_PROFILE" \
+            "TN_UI_BASE_URL=${TN_UI_BASE_URL:-}" \
             "TN_HOST=$TN_HOST" \
             "TN_USERNAME=$TN_USERNAME" \
             "TN_PASSWORD=$TN_PASSWORD" \
@@ -236,6 +323,13 @@ jobs:
           path: test-results/junit.xml
           if-no-files-found: error
           retention-days: 14
+
+      # A leftover UI container would go on proxying to a destroyed appliance
+      # and sit on the daemon forever. `--rm` covers a clean exit; this covers
+      # the rest.
+      - name: Stop the UI
+        if: always() && env.UI_CONTAINER != ''
+        run: $DOCKER rm -f "$UI_CONTAINER" > /dev/null || true
 
       # Unconditional: an appliance left claimed is one the next run cannot use.
       # Reads the domain from the file `claim` wrote, so a failure between the

@@ -194,8 +194,10 @@ silently miss.
 ## CI
 
 The suite runs in GitHub Actions on a self-hosted TrueNAS runner, against a
-nested VM installed fresh for every run. `docs/05-ci.md` describes the
-pipeline, what the lab box has to provide, and what each early failure taught.
+nested VM installed fresh for every run, driving the UI built from the change
+under test rather than the one in the appliance's ISO. `docs/05-ci.md`
+describes the pipeline, what the lab box has to provide, and what each early
+failure taught.
 It runs on same-repo pull requests that touch the suite. A pull request that
 only touches documentation does not trigger it; note that GitHub evaluates the
 path filter against everything the pull request changes, so within a PR that

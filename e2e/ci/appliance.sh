@@ -166,21 +166,27 @@ claim() {
     --network hostfwd) \
     || die "tn_guest.py create failed for '$nickname'"
 
-  local name adminUser apiHost httpsPort
+  local name adminUser apiHost httpPort httpsPort
   name=$(jq -re '.name' <<<"$json")                      || die "create output has no .name"
   adminUser=$(jq -re '.admin_user' <<<"$json")           || die "create output has no .admin_user"
   apiHost=$(jq -re '.nodes[0].api_host' <<<"$json")      || die "create output has no .nodes[0].api_host"
+  httpPort=$(jq -re '.nodes[0].api_port_http' <<<"$json")   || die "create output has no .nodes[0].api_port_http"
   httpsPort=$(jq -re '.nodes[0].api_port_https' <<<"$json") || die "create output has no .nodes[0].api_port_https"
 
   # TN_* are the suite's existing contract — see .env.example and
-  # e2e/support/config.ts. The host is `host:port` because both the UI (https)
-  # and the middleware socket (wss) go through the forwarded 443.
+  # e2e/support/config.ts. The host is `host:port` because both the shipped
+  # UI (https) and the middleware socket (wss) go through the forwarded 443.
+  #
+  # TN_HOST_HTTP is the same appliance over the forwarded 80, for a UI served
+  # from a container whose nginx proxies to the appliance over plain HTTP —
+  # the pipeline's `branch` profile. Not part of the suite's contract.
   #
   # TN_DOMAIN is the deployment name, kept under the name the design uses for
   # the thing to release. TN_BASELINE is which baseline it is running against.
   cat <<EOF
 TN_PROFILE=shipped
 TN_HOST=${apiHost}:${httpsPort}
+TN_HOST_HTTP=${apiHost}:${httpPort}
 TN_USERNAME=$adminUser
 TN_PASSWORD=$password
 TN_DOMAIN=$name
