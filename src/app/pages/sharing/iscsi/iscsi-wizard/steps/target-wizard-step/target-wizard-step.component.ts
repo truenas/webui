@@ -49,6 +49,7 @@ export class TargetWizardStepComponent {
     { label: this.translate.instant('Fibre Channel'), value: IscsiTargetMode.Fc },
   ]);
 
+  // Entitlement alone by design (NAS-143012): `fc.capable` is not consulted here.
   readonly hasFibreChannel = toSignal(this.entitlements.entitled$(EntitlementFeature.FibreChannel));
 
   get isNewTarget(): boolean {

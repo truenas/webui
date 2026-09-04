@@ -9,7 +9,6 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
-import { LicenseFeature } from 'app/enums/license-feature.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
 } from 'app/interfaces/iscsi.interface';
@@ -79,9 +78,6 @@ describe('TargetFormComponent', () => {
             selector: selectSystemInfo,
             value: {
               version: 'TrueNAS-SCALE-22.12',
-              license: {
-                features: [{ name: LicenseFeature.FibreChannel, start_date: null, expires_at: null }],
-              },
             } as SystemInfo,
           },
         ],

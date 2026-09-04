@@ -114,6 +114,7 @@ export class TargetFormComponent implements OnInit {
       : this.translate.instant('Edit ISCSI Target');
   }
 
+  // Entitlement alone by design (NAS-143012): `fc.capable` is not consulted here.
   hasFibreChannel = toSignal(this.entitlements.entitled$(EntitlementFeature.FibreChannel));
 
   readonly helptext = helptextIscsi;

@@ -260,6 +260,10 @@ export class VmListComponent implements OnInit {
       });
   }
 
+  // No bootloader-based restriction: the CORE-era rule that hid UEFI-CSM display ports on
+
+  // Enterprise came from bhyve and never applied to SCALE (NAS-143012).
+
   getDisplayPort(vm: VirtualMachine): boolean | number | string {
     if (!vm.display_available) {
       return this.translate.instant('N/A');

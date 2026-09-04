@@ -98,6 +98,7 @@ export class IscsiCardComponent implements OnInit {
 
   targets = signal<IscsiTarget[] | null>(null);
 
+  // Entitlement alone by design (NAS-143012): `fc.capable` is not consulted here.
   protected readonly hasFibreChannel = toSignal(this.entitlements.entitled$(EntitlementFeature.FibreChannel));
 
   protected readonly searchableElements = iscsiCardElements;

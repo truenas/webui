@@ -48,6 +48,7 @@ export class IscsiComponent {
   protected readonly searchableElements = iscsiElements;
   protected readonly requiredRoles = [Role.SharingIscsiWrite];
 
+  // Entitlement alone by design (NAS-143012): `fc.capable` is not consulted here.
   protected readonly hasFibreChannel = toSignal(this.entitlements.entitled$(EntitlementFeature.FibreChannel));
 
   protected readonly navLinks = computed(() => {
