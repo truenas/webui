@@ -367,11 +367,14 @@ jobs:
       # release step below. Do not upload these from a pipeline that reuses an
       # appliance or a credential.
       #
-      # Only on failure: Playwright keeps a trace on the first retry and a
-      # screenshot only for failures (playwright.config.ts), so a green run
-      # has nothing here, and `ignore` is the truthful setting for that.
+      # Whenever the suite ran, not only when it failed. Playwright keeps a
+      # trace on the first retry (playwright.config.ts), and a test that fails
+      # once and passes on the retry — the flake R8.4's quarantine policy is
+      # built on triaging — leaves the step green with exactly that trace on
+      # disk. A clean run has nothing here, and `ignore` is the truthful
+      # setting for that.
       - name: Upload failure traces
-        if: always() && steps.suite.outcome == 'failure'
+        if: always() && steps.suite.outcome != 'skipped'
         uses: actions/upload-artifact@v4
         with:
           name: e2e-failure-traces
