@@ -46,6 +46,7 @@ export class HardwareDiskEncryptionComponent {
   private readonly hasSedEntitlement = this.entitlements.entitled(EntitlementFeature.Sed);
   protected readonly requiredRoles = [Role.DiskWrite];
 
+  // Entitlement alone by design (NAS-143012): existing per-disk or global SED passwords are not a bypass.
   hasSedSupport = computed(() => {
     return Boolean(this.hasSedEntitlement());
   });

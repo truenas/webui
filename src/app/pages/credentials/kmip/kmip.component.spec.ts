@@ -187,7 +187,6 @@ describe('KmipComponent', () => {
       },
     });
     store$.refreshState();
-    store$.refreshState();
 
     const checkboxes = await loader.getAllHarnesses(IxCheckboxHarness);
     const checkLabels = await parallel(() => checkboxes.map((control) => control.getLabelText()));

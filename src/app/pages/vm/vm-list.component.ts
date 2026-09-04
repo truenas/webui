@@ -294,7 +294,7 @@ export class VmListComponent implements OnInit {
 
     const displayDevices = devices.filter((device) => device.attributes.dtype === VmDeviceType.Display);
     if (displayDevices.length === 0) {
-      return Number.MAX_SAFE_INTEGER - 3; // No display devices should sort near the end
+      return Number.MAX_SAFE_INTEGER - 2; // No display devices should sort near the end
     }
 
     // Sort by the lowest port number if multiple display devices exist

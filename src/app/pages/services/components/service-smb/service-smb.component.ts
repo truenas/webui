@@ -91,6 +91,8 @@ export class ServiceSmbComponent implements OnInit {
 
   private readonly hasTrueSearch = this.entitlements.entitled(EntitlementFeature.TrueSearch);
 
+  // Entitlement alone by design (NAS-143012): unlike the WebShare toggle, Spotlight does not also
+  // require TrueNAS Connect.
   protected isSpotlightEnabled = computed(() => Boolean(this.hasTrueSearch()));
 
   /** `=== false` so the licensing notice is not shown while entitlements are still loading. */
