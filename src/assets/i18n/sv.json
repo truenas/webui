@@ -122,7 +122,7 @@
   "{n, plural, one {# boot environment} other {# boot environments}} has been deleted.": "{n, plural, one {# startmiljö} other {# startmiljöer}} har tagits bort.",
   "{n, plural, one {# character} other {# characters} }": "",
   "{n, plural, one {# core} other {# cores}}": "{n, plural, one {# kärna} other {# kärnor}}",
-  "{n, plural, one {# CPU} other {# CPU:er}}",
+  "{n, plural, one {# CPU} other {# CPUs}}": "{n, plural, one {# CPU} other {# CPU:er}}",
   "{n, plural, one {# day} other {# days} }": "{n, plural, one {# dag} other {# dagar} }",
   "{n, plural, one {# disk selected} other {# disks selected}}": "",
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "{n, plural, one {# Docker-avbildning} other {# Docker-avbildningar}} har tagits bort.",
