@@ -4,7 +4,7 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnSpriteLoaderService } from '@truenas/ui-components';
+import { TnBannerHarness, TnSpriteLoaderService } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -270,6 +270,10 @@ describe('CloudBackupFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('does not show the getting started banner when editing', async () => {
+      expect(await loader.getAllHarnesses(TnBannerHarness)).toHaveLength(0);
     });
 
     it('shows values for an existing cloud backup task when it is open for edit', async () => {
