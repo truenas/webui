@@ -2,13 +2,13 @@ import { DialogRef } from '@angular/cdk/dialog';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, forwardRef, input, output, inject, viewChild, TemplateRef,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent } from '@truenas/ui-components';
 import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
@@ -20,9 +20,8 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 export const maxRatingValue = 5;
 export const maxFileSizeBytes = 5 * MiB;
@@ -51,7 +50,7 @@ export class FileReviewComponent implements FeedbackForm {
   private errorHandler = inject(ErrorHandlerService);
   private imageValidator = inject(ImageValidatorService);
   private feedbackService = inject(FeedbackService);
-  private store$ = inject<Store<AppState>>(Store);
+  private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
@@ -62,7 +61,7 @@ export class FileReviewComponent implements FeedbackForm {
 
   readonly dialogActions = viewChild('dialogActions', { read: TemplateRef });
 
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly hasSupport = this.entitlements.entitled(EntitlementFeature.Support);
 
   protected form = this.formBuilder.group({
     rating: [undefined as number | undefined, [Validators.required, rangeValidator(1, maxRatingValue)]],
