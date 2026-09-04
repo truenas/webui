@@ -2,6 +2,7 @@ import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import ipRegex from 'ip-regex';
 import {
   BehaviorSubject, catchError, filter, Observable, of, repeat, Subject, switchMap, take,
 } from 'rxjs';
@@ -25,6 +26,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { StopVmDialogComponent, StopVmDialogData } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+
+const wildcardBindAddresses = ['0.0.0.0', '::'];
 
 @Injectable({ providedIn: 'root' })
 export class VmService {
@@ -151,7 +154,9 @@ export class VmService {
           if (spiceDevice?.attributes.web) {
             this.openDisplayWebUri(vm.id);
           } else if (vncDevices.length > 0) {
-            const vncConnections = vncDevices.map((device) => `${device.attributes.bind}:${device.attributes.port}`).join(', ');
+            const vncConnections = vncDevices
+              .map((device) => `${this.getReachableAddress(device.attributes.bind)}:${device.attributes.port}`)
+              .join(', ');
             this.dialogService.info(
               this.translate.instant('VNC Display Available'),
               this.translate.instant('Connect using a VNC client to: {connections}', { connections: vncConnections }),
@@ -162,7 +167,9 @@ export class VmService {
               this.translate.instant('SPICE Display Available'),
               this.translate.instant(
                 'Web access is disabled. Connect using a SPICE client to: {connection}',
-                { connection: `${spiceDevice.attributes.bind}:${spiceDevice.attributes.port}` },
+                {
+                  connection: `${this.getReachableAddress(spiceDevice.attributes.bind)}:${spiceDevice.attributes.port}`,
+                },
               ),
               true,
             );
@@ -214,6 +221,19 @@ export class VmService {
           this.errorHandler.showErrorModal(error);
         },
       });
+  }
+
+  /**
+   * Display devices are normally bound to a wildcard address, which is useless to show to a user:
+   * they cannot point a VNC or SPICE client at 0.0.0.0. Fall back to the host the UI is being
+   * served from, which is reachable by definition.
+   */
+  private getReachableAddress(bind: string): string {
+    const hostname = this.window.location.hostname?.replace(/^\[|\]$/g, '');
+    const isWildcard = !bind || wildcardBindAddresses.includes(bind);
+    const address = isWildcard && hostname ? hostname : bind;
+
+    return ipRegex.v6({ exact: true }).test(address) ? `[${address}]` : address;
   }
 
   private openDisplayWebUri(vmId: number): void {

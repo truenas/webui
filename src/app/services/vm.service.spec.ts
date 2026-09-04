@@ -6,10 +6,11 @@ import { firstValueFrom, of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
-import { VmState } from 'app/enums/vm.enum';
+import { VmDisplayType, VmState } from 'app/enums/vm.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -41,6 +42,7 @@ describe('VmService', () => {
         mockCall('vm.get_available_memory', 4096),
         mockJob('vm.stop', fakeSuccessfulJob()),
         mockJob('vm.restart', fakeSuccessfulJob()),
+        mockCall('vm.get_display_devices', []),
       ]),
       mockProvider(DialogService),
       mockProvider(MatDialog, {
@@ -52,7 +54,9 @@ describe('VmService', () => {
         withLoader: () => <T>(source$: T) => source$,
       }),
       mockProvider(TranslateService, {
-        instant: jest.fn((key: string) => key),
+        instant: jest.fn((key: string, params?: Record<string, unknown>) => {
+          return params ? key.replace(/{(\w+)}/g, (_, name: string) => String(params[name])) : key;
+        }),
       }),
       mockProvider(ErrorHandlerService, {
         showErrorModal: jest.fn(),
@@ -67,6 +71,7 @@ describe('VmService', () => {
           open: jest.fn(),
           location: {
             href: '',
+            hostname: 'truenas.local',
           },
         },
       },
@@ -177,5 +182,67 @@ describe('VmService', () => {
     await firstValueFrom(spectator.service.doStartResume(vm));
     expect(apiService.call).toHaveBeenLastCalledWith('vm.start', [1, { overcommit: true }]);
     expect(dialogService.confirm).toHaveBeenCalled();
+  });
+
+  describe('openDisplay', () => {
+    function mockDisplayDevices(devices: VmDisplayDevice[]): void {
+      const apiService = spectator.inject(ApiService);
+      const callSpy = jest.spyOn(apiService, 'call');
+      const mockImpl = callSpy.getMockImplementation();
+
+      callSpy.mockImplementation((method, params) => {
+        if (method === 'vm.get_display_devices') {
+          return of(devices);
+        }
+
+        return mockImpl(method, params);
+      });
+    }
+
+    it('shows the address of the UI host when a VNC device is bound to a wildcard address', () => {
+      mockDisplayDevices([
+        { attributes: { type: VmDisplayType.Vnc, bind: '0.0.0.0', port: 5902 } } as VmDisplayDevice,
+      ]);
+
+      spectator.service.openDisplay(mockVm(VmState.Running));
+
+      expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
+        'VNC Display Available',
+        'Connect using a VNC client to: truenas.local:5902',
+        true,
+      );
+    });
+
+    it('keeps the address of a VNC device that is bound to a specific address', () => {
+      mockDisplayDevices([
+        { attributes: { type: VmDisplayType.Vnc, bind: '10.10.16.82', port: 5902 } } as VmDisplayDevice,
+      ]);
+
+      spectator.service.openDisplay(mockVm(VmState.Running));
+
+      expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
+        'VNC Display Available',
+        'Connect using a VNC client to: 10.10.16.82:5902',
+        true,
+      );
+    });
+
+    it('shows the address of the UI host when a SPICE device without web access is bound to a wildcard address', () => {
+      mockDisplayDevices([
+        {
+          attributes: {
+            type: VmDisplayType.Spice, bind: '::', port: 5900, web: false,
+          },
+        } as VmDisplayDevice,
+      ]);
+
+      spectator.service.openDisplay(mockVm(VmState.Running));
+
+      expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
+        'SPICE Display Available',
+        'Web access is disabled. Connect using a SPICE client to: truenas.local:5900',
+        true,
+      );
+    });
   });
 });
