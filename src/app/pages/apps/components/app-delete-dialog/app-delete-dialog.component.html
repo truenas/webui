@@ -12,13 +12,6 @@
       formControlName="removeVolumes"
       [label]="'Remove iXVolumes' | translate"
     ></ix-checkbox>
-
-    @if (data.showRemoveVolumes && form.value.removeVolumes) {
-      <ix-checkbox
-        formControlName="forceRemoveVolumes"
-        [label]="'Force-remove iXVolumes' | translate"
-      ></ix-checkbox>
-    }
   }
 
   <ix-checkbox
