@@ -114,8 +114,8 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
    *
    * They reach the display two ways, because the directory's first page is not
    * fetched until the field is focused: pinned ahead of that page once it is,
-   * and handed to the chips fields as known labels straight away, so a chip on
-   * an edit form reads its name without anyone touching the field.
+   * and handed to the inner control as `[options]` straight away, so a field on
+   * an edit form reads its name without anyone touching it.
    */
   readonly extraOptions = input<PrincipalOption[]>([]);
 

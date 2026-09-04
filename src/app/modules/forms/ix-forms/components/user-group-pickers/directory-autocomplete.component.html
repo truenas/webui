@@ -1,8 +1,15 @@
 <!-- Shared by ix-user-combobox and ix-group-combobox: they differ only in which
      side of the directory `optionsSource` reads, and in whether a create row is
-     offered at all. -->
+     offered at all.
+
+     `[options]` alongside `[dataSource]`, as in the chips template: the source
+     pins the extra options ahead of page 0, but that page is not fetched until
+     the field is focused — as `[options]` they name a value on a form that has
+     only been loaded. Without it an id-valued field shows the raw number until
+     the user clicks it. -->
 <tn-autocomplete
   [dataSource]="optionsSource"
+  [options]="extraOptions()"
   [dataSourceDebounce]="debounce()"
   [pageSize]="pageSize()"
   [placeholder]="resolvedPlaceholder()"

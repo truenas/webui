@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject, Signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject, signal, Signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
@@ -41,13 +41,14 @@ import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { defaultHomePath, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 import { SudoCommandsValidatorService } from 'app/pages/credentials/users/user-form/validators/sudo-commands-validator.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
-import { DirectoryQueryOptions } from 'app/services/user-directory.service';
+import { DirectoryQueryOptions, PrincipalOption } from 'app/services/user-directory.service';
 
 @Component({
   selector: 'ix-additional-details-section',
@@ -124,6 +125,15 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     }),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
+
+  /**
+   * The group the user already has, so the field names it on load.
+   *
+   * The value is a group id and the directory is not queried until the field is
+   * focused, so without this an edit form opens showing the raw number. The
+   * loaded user carries the name alongside the id, which is all it takes.
+   */
+  protected readonly primaryGroupExtraOptions = signal<PrincipalOption[]>([]);
 
   /**
    * The primary group is stored by id, and only a local, editable group can be
@@ -394,6 +404,14 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   private setupEditUserForm(user: User): void {
     const auxGroups = user.groups.filter((id) => id !== user.group?.id);
+    // Only with a name to pin: an id paired with nothing to call it is what the
+    // field would have shown anyway.
+    if (user.group?.bsdgrp_group) {
+      this.primaryGroupExtraOptions.set([{
+        label: ignoreTranslation(user.group.bsdgrp_group),
+        value: user.group.id,
+      }]);
+    }
     const allSudoCommands = user.sudo_commands.includes(allCommands);
     const allSudoCommandsNoPasswd = user.sudo_commands_nopasswd.includes(allCommands);
 

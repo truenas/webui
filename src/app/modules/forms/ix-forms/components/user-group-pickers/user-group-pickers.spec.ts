@@ -280,24 +280,31 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
       expect(await owner.getOptions()).toEqual(['archived-user', 'root', 'operator', 'admin']);
     });
 
-    it('upgrades a written id to its pinned name, and does not commit the id back as text', async () => {
-      // The whole point of the input: a record holding an id renders it as a
-      // name. The display starts as the raw id — nothing can resolve it before
-      // the first page is fetched — and the first page only ever lands with the
-      // panel OPEN, which is exactly when the field leaves its text alone. Left
-      // un-upgraded, `allowCustomValue` then committed that text on blur and
-      // the numeric id became the string "4242".
+    it('names a written id before the field has been touched', async () => {
+      // The whole point of the input: a record holding an id renders as a name
+      // on an edit form nobody has clicked into. Nothing can resolve it from
+      // the directory — the first page is not fetched until focus — so it is
+      // the pinned options the inner control reads it from.
       host.extraOptions.set([{ label: ignoreTranslation('archived-user'), value: 4242 }]);
       host.owner.setValue(4242 as unknown as string);
       fixture.detectChanges();
 
       const owner = await loader.getHarness(IxUserComboboxHarness);
-      expect(await owner.getInputValue()).toBe('4242');
 
+      expect(await owner.getInputValue()).toBe('archived-user');
+    });
+
+    it('does not commit a pinned name back over the id it stands for', async () => {
+      // The display is a label, not the value. Left un-upgraded, the field
+      // showed the raw id and `allowCustomValue` then committed that TEXT on
+      // blur — the numeric 4242 became the string "4242".
+      host.extraOptions.set([{ label: ignoreTranslation('archived-user'), value: 4242 }]);
+      host.owner.setValue(4242 as unknown as string);
+      fixture.detectChanges();
+
+      const owner = await loader.getHarness(IxUserComboboxHarness);
       await owner.focus();
       await settle();
-      expect(await owner.getInputValue()).toBe('archived-user');
-
       await owner.blur();
       await settle();
 
