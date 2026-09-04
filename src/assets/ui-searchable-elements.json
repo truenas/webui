@@ -1286,7 +1286,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "SED"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -1309,7 +1311,9 @@
     "requiredRoles": [
       "SYSTEM_ADVANCED_WRITE"
     ],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "SED"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -1328,7 +1332,9 @@
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "visibleTokens": [],
+    "visibleTokens": [
+      "SED"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
