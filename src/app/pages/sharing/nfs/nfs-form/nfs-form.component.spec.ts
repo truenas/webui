@@ -5,9 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import {
-  TnAutocompleteHarness, TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness,
-} from '@truenas/ui-components';
+import { TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -26,6 +24,10 @@ import {
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import {
+  IxGroupComboboxHarness,
+  IxUserComboboxHarness,
+} from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -79,11 +81,17 @@ describe('NfsFormComponent', () => {
   // than by DOM order, so reordering the Access fieldset can't silently swap them.
   const getAutocomplete = (
     field: 'maproot_user' | 'maproot_group' | 'mapall_user' | 'mapall_group',
-  ): Promise<TnAutocompleteHarness> => loader.getHarness(
-    TnAutocompleteHarness.with({ selector: `[formControlName="${field}"]` }),
-  );
+  ): Promise<IxUserComboboxHarness | IxGroupComboboxHarness> => {
+    const selector = `[formControlName="${field}"]`;
+    return field.endsWith('_user')
+      ? loader.getHarness(IxUserComboboxHarness.with({ selector }))
+      : loader.getHarness(IxGroupComboboxHarness.with({ selector }));
+  };
 
-  const typeCustomValue = async (harness: TnAutocompleteHarness, value: string): Promise<void> => {
+  const typeCustomValue = async (
+    harness: IxUserComboboxHarness | IxGroupComboboxHarness,
+    value: string,
+  ): Promise<void> => {
     await harness.setInputValue(value);
     await harness.blur();
   };
@@ -172,7 +180,8 @@ describe('NfsFormComponent', () => {
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Maproot Group' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Mapall User' }))).toBe(true);
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Mapall Group' }))).toBe(true);
-      expect(await loader.getAllHarnesses(TnAutocompleteHarness)).toHaveLength(4);
+      expect(await loader.getAllHarnesses(IxUserComboboxHarness)).toHaveLength(2);
+      expect(await loader.getAllHarnesses(IxGroupComboboxHarness)).toHaveLength(2);
       expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Read Only' }))).toBe(true);
     });
 

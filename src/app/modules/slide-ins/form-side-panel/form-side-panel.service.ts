@@ -75,7 +75,7 @@ export class FormSidePanelService {
 
   /**
    * Live panels, oldest first. Usually holds a single panel — a config side panel is modal — but a
-   * form may open another from within itself (e.g. an `ix-user-picker`'s "Add New" inside a hosted
+   * form may open another from within itself (e.g. a username picker's "Add New" inside a hosted
    * form), so panels stack: each new one mounts its own host later in `document.body`, so at
    * tn-side-panel's shared `z-index` it paints on top, its backdrop dimming the panel beneath, and
    * pops to reveal it on close. A re-entrant open of the component already on top (e.g. a

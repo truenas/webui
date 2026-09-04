@@ -21,12 +21,15 @@
       <tn-input formControlName="command"></tn-input>
     </tn-form-field>
 
-    <ix-user-combobox
-      formControlName="user"
+    <tn-form-field
       [label]="'Run As User' | translate"
       [required]="true"
       [tooltip]="tooltips.user | translate"
-    ></ix-user-combobox>
+    >
+      <ix-user-combobox
+        formControlName="user"
+      ></ix-user-combobox>
+    </tn-form-field>
 
     <ix-scheduler
       formControlName="schedule"

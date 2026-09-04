@@ -17,8 +17,8 @@ import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enu
 import { NfsAcl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import {
@@ -89,10 +89,13 @@ describe('DatasetAclEditorComponent', () => {
     imports: [
       CastPipe,
       ReactiveFormsModule,
-      IxUserComboboxComponent,
-      IxGroupComboboxComponent,
     ],
     declarations: [
+      // Mocked, as the ix-* wrappers they replaced were: this suite is about the ACL
+      // editor, and rendering real directory-backed pickers only adds their own
+      // dependencies to it.
+      MockComponent(IxUserComboboxComponent),
+      MockComponent(IxGroupComboboxComponent),
       MockComponent(EditPosixAceComponent),
       MockComponent(EditNfsAceComponent),
       MockComponent(AclEditorSaveControlsComponent),

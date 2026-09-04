@@ -25,8 +25,8 @@ import {
   BasicNfsPermissions,
   NfsAclItem,
 } from 'app/interfaces/acl.interface';
-import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { newNfsAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
 import {

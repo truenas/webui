@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, inject, input, signal,
 } from '@angular/core';
@@ -8,12 +7,10 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnAutocompleteComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent,
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  BehaviorSubject, Observable, catchError, debounceTime, distinctUntilChanged, filter, map, of, shareReplay,
-  switchMap, tap,
+  Observable, catchError, filter, map, of, switchMap,
 } from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
@@ -32,10 +29,10 @@ import {
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import {
   advancedModeFooterAction, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
@@ -45,7 +42,6 @@ import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -68,14 +64,14 @@ export interface NfsFormData {
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,
-    TnAutocompleteComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     IxListComponent,
     IxListItemComponent,
     IxIpInputWithNetmaskComponent,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class NfsFormComponent extends IxFormHostForm implements OnInit {
@@ -84,8 +80,6 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
   private datasetService = inject(DatasetService);
-  private userService = inject(UserService);
-  private existenceValidation = inject(UserGroupExistenceValidationService);
   private errorHandler = inject(ErrorHandlerService);
   private store$ = inject<Store<ServicesState>>(Store);
 
@@ -153,46 +147,6 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
     { label: 'KRB5P', value: NfsSecurityProvider.Krb5p },
   ]);
 
-  // Server-searched option streams for the user/group autocompletes. Both user fields
-  // (maproot/mapall) share one stream — options only matter while that dropdown is open —
-  // and shareReplay collapses their two `async` subscribers into a single query per search
-  // (directory-service queries can be slow; never duplicate them). switchMap cancels
-  // in-flight queries on new input; catchError keeps one failed DS query from killing the
-  // stream for the rest of the form's life.
-  protected readonly usersLoading = signal(false);
-  protected readonly userSearch$ = new BehaviorSubject('');
-  protected readonly userOptions$ = this.userSearch$.pipe(
-    debounceTime(defaultDebounceTimeMs),
-    distinctUntilChanged(),
-    tap(() => this.usersLoading.set(true)),
-    switchMap((query) => this.userService.userQueryDsCache(query).pipe(
-      catchError((error: unknown) => {
-        this.errorHandler.handleError(error);
-        return of([]);
-      }),
-    )),
-    map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
-    tap(() => this.usersLoading.set(false)),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
-
-  protected readonly groupsLoading = signal(false);
-  protected readonly groupSearch$ = new BehaviorSubject('');
-  protected readonly groupOptions$ = this.groupSearch$.pipe(
-    debounceTime(defaultDebounceTimeMs),
-    distinctUntilChanged(),
-    tap(() => this.groupsLoading.set(true)),
-    switchMap((query) => this.userService.groupQueryDsCache(query).pipe(
-      catchError((error: unknown) => {
-        this.errorHandler.handleError(error);
-        return of([]);
-      }),
-    )),
-    map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
-    tap(() => this.groupsLoading.set(false)),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
-
   private setNfsShareForEdit(share: NfsShare): void {
     share.networks.forEach(() => this.addNetworkControl());
     share.hosts.forEach(() => this.addHostControl());
@@ -209,13 +163,6 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
       getRootDatasetsValidator(this.existingNfsShare ? [this.existingNfsShare.path] : []),
       this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
     ));
-
-    // Parity with the former ix-user/group-combobox controls: custom-typed values
-    // must exist on the system (empty values pass).
-    this.form.controls.maproot_user.addAsyncValidators(this.existenceValidation.validateUserExists());
-    this.form.controls.mapall_user.addAsyncValidators(this.existenceValidation.validateUserExists());
-    this.form.controls.maproot_group.addAsyncValidators(this.existenceValidation.validateGroupExists());
-    this.form.controls.mapall_group.addAsyncValidators(this.existenceValidation.validateGroupExists());
 
     if (this.defaultNfsShare) {
       this.form.patchValue(this.defaultNfsShare);

@@ -3,9 +3,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnDateInputComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnCheckboxComponent, TnDateInputComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
+  TnInputComponent,
 } from '@truenas/ui-components';
 import { filter, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
@@ -14,16 +15,15 @@ import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { UserPickerProvider } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker-provider';
-import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { LoaderService } from 'app/modules/loader/loader.service';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
+import { DirectoryQueryOptions } from 'app/services/user-directory.service';
 
 @Component({
   selector: 'ix-api-key-form',
@@ -31,23 +31,23 @@ import {
   styleUrls: ['./api-key-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
+    IxUserComboboxComponent,
     TnCheckboxComponent,
     TnDateInputComponent,
     ReactiveFormsModule,
     TranslateModule,
-    IxUserPickerComponent,
   ],
 })
-export class ApiKeyFormComponent extends SidePanelForm implements OnInit {
+export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private tnDialog = inject(TnDialog);
   private api = inject(ApiService);
-  private loader = inject(LoaderService);
-  private errorHandler = inject(FormErrorHandlerService);
   private authService = inject(AuthService);
+  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
   /** API key being edited; absent when adding. Supplied by the `<tn-side-panel>` host. */
@@ -58,7 +58,6 @@ export class ApiKeyFormComponent extends SidePanelForm implements OnInit {
   protected readonly minDateToday = new Date();
   protected readonly editingRow = signal<ApiKey | undefined>(undefined);
   protected readonly isNew = computed(() => !this.editingRow());
-  protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.ApiKeyWrite, Role.SharingAdmin, Role.ReadonlyAdmin];
   protected readonly isFullAdmin = toSignal(this.authService.hasRole([Role.FullAdmin]));
   protected readonly isAllowedToReset = computed(
@@ -89,16 +88,18 @@ export class ApiKeyFormComponent extends SidePanelForm implements OnInit {
     .setOptions({ select: ['username', 'id', 'uid'], order_by: ['username'] })
     .getParams();
 
-  protected readonly userPickerProvider = new UserPickerProvider({
+  /**
+   * Narrows the field to users that have a role, and is also what its "Add New"
+   * row creates against. The field is only rendered for a full admin, so no
+   * query can be issued for a user who could never see the result.
+   */
+  protected readonly userDirectoryOptions: DirectoryQueryOptions = {
     queryParams: this.userQueryParams,
-  });
+  };
 
   protected readonly forbiddenNames$ = this.api.call('api_key.query', [
     [], { select: ['name'], order_by: ['name'] },
   ]).pipe(map((keys) => keys.map((key) => key.name)));
-
-  /** Drives the host-owned Save action (`<tn-side-panel>` footer). */
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
 
   ngOnInit(): void {
     const editingKey = this.editingKey();
@@ -126,8 +127,7 @@ export class ApiKeyFormComponent extends SidePanelForm implements OnInit {
     this.handleNonExpiringChanges();
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
+  protected handleSubmit = (): SubmitResult<boolean, ApiKey> => {
     const {
       name, username, reset, nonExpiring,
     } = this.form.getRawValue();
@@ -142,24 +142,18 @@ export class ApiKeyFormComponent extends SidePanelForm implements OnInit {
       ? this.api.call('api_key.update', [editingRow.id, { name, reset, expires_at: expiresAt }])
       : this.api.call('api_key.create', [{ name, username, expires_at: expiresAt }]);
 
-    request$
-      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: ({ key }) => {
-          this.isLoading.set(false);
-          this.close(true);
-
-          if (key) {
-            this.tnDialog.open(KeyCreatedDialog, { data: key });
-          }
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.errorHandler.handleValidationErrors(error, this.form);
-          this.loader.close();
-        },
-      });
-  }
+    return {
+      request$,
+      // A freshly generated key is reported by the dialog below, which is a stronger
+      // confirmation than a snackbar — only a save that produced no key needs one.
+      successMessage: (result) => (result.key ? null : this.translate.instant('API Key Updated')),
+      onSuccess: (result) => {
+        if (result.key) {
+          this.tnDialog.open(KeyCreatedDialog, { data: result.key });
+        }
+      },
+    };
+  };
 
   private setCurrentUsername(): void {
     const username = this.username();

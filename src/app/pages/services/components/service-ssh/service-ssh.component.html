@@ -16,13 +16,11 @@
       [label]="'Password Login Groups' | translate"
       [tooltip]="tooltips.password_login_groups | translate"
     >
-      <tn-chip-input
+      <ix-group-chips
         formControlName="password_login_groups"
         testId="password-login-groups"
         [allowCustomValue]="true"
-        [options]="(groupOptions$ | async) ?? []"
-        (searchChange)="groupSearch$.next($event)"
-      ></tn-chip-input>
+      ></ix-group-chips>
     </tn-form-field>
 
     <tn-form-field [tooltip]="tooltips.passwordauth | translate">

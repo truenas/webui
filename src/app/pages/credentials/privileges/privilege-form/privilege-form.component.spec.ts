@@ -6,7 +6,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { lastValueFrom, of } from 'rxjs';
+import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,6 +15,8 @@ import { Role } from 'app/enums/role.enum';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
+import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { IxGroupChipsHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
 import { UserService } from 'app/services/user.service';
@@ -72,6 +74,7 @@ describe('PrivilegeFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      ...ixFormTestingProviders(),
       mockApi([
         mockCall('group.query', (params) => {
           // Handle all group.query calls - return groups based on filters
@@ -354,110 +357,31 @@ describe('PrivilegeFormComponent', () => {
     });
   });
 
-  describe('group providers', () => {
+  // The query shaping these used to assert — the server-side filter, the limit, the
+  // ordering — moved into UserDirectoryService, which is where it is now covered
+  // (user-directory.service.spec.ts). What is left here is the part this form
+  // still owns: how it narrows the list.
+  describe('local groups field', () => {
     beforeEach(() => {
       spectator = createComponent();
       api = spectator.inject(ApiService);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('should call API with server-side prefix filter for local groups', async () => {
-      const provider = spectator.component.localGroupsProvider;
-
-      await lastValueFrom(provider('test'));
-
-      expect(api.call).toHaveBeenCalledWith('group.query', [
-        [['local', '=', true], ['group', '^', 'test']],
-        { limit: 50, order_by: ['group'] },
-      ]);
-    });
-
-    it('should preserve query case for the server-side prefix filter', async () => {
-      const provider = spectator.component.localGroupsProvider;
-
-      (api.call as jest.Mock).mockReturnValue(of([{ group: 'Backups' } as Group]));
-
-      const result = await lastValueFrom(provider('Back'));
-
-      // Query passed verbatim so the case-sensitive `^` filter can match uppercase names...
-      expect(api.call).toHaveBeenCalledWith('group.query', [
-        [['local', '=', true], ['group', '^', 'Back']],
-        { limit: 50, order_by: ['group'] },
-      ]);
-      // ...while the client-side contains-match stays case-insensitive.
-      expect(result).toEqual(['Backups']);
-    });
-
-    it('should apply client-side contains filtering for local groups', async () => {
-      const provider = spectator.component.localGroupsProvider;
-
-      // Mock API returns groups that start with 'gr' (server-side filter)
-      (api.call as jest.Mock).mockReturnValue(of([
-        { group: 'group-test' } as Group,
-        { group: 'grtest' } as Group,
-        { group: 'other-group' } as Group,
-      ]));
-
-      const result = await lastValueFrom(provider('test'));
-
-      // Client-side filter keeps only groups that contain 'test'
-      expect(result).toEqual(['group-test', 'grtest']);
-    });
-
-    it('should limit local group results to 50', async () => {
-      const provider = spectator.component.localGroupsProvider;
-
-      await lastValueFrom(provider(''));
-
-      expect(api.call).toHaveBeenCalledWith('group.query', [
-        [['local', '=', true]],
-        { limit: 50, order_by: ['group'] },
-      ]);
-    });
-
-    it('should order local groups by name', async () => {
-      const provider = spectator.component.localGroupsProvider;
-
-      await lastValueFrom(provider('test'));
-
-      const callArgs = (api.call as jest.Mock).mock.calls.find(
-        (call) => call[0] === 'group.query',
+    it('asks the directory for local groups, built-ins included', async () => {
+      const localGroups = await loader.getHarness(
+        IxGroupChipsHarness.with({ selector: '[formControlName="local_groups"]' }),
       );
-      expect(callArgs[1][1]).toEqual({ limit: 50, order_by: ['group'] });
-    });
+      await localGroups.typeText('test');
 
-    it('should handle empty query for local groups', async () => {
-      const provider = spectator.component.localGroupsProvider;
-
-      (api.call as jest.Mock).mockReturnValue(of([
-        { group: 'group1' } as Group,
-        { group: 'group2' } as Group,
-      ]));
-
-      const result = await lastValueFrom(provider(''));
-
-      // Empty query returns all groups up to limit
-      expect(result).toEqual(['group1', 'group2']);
-      expect(api.call).toHaveBeenCalledWith('group.query', [
+      // A privilege can legitimately be granted to a built-in local group, so the
+      // field asks for `local` without also asking for `immutable = false`.
+      expect(spectator.inject(UserService).groupQueryDsCache).toHaveBeenCalledWith(
+        expect.any(String),
+        false,
+        0,
         [['local', '=', true]],
-        { limit: 50, order_by: ['group'] },
-      ]);
-    });
-
-    it('should handle whitespace-only query', async () => {
-      const provider = spectator.component.localGroupsProvider;
-
-      (api.call as jest.Mock).mockReturnValue(of([
-        { group: 'group1' } as Group,
-      ]));
-
-      const result = await lastValueFrom(provider('   '));
-
-      // Whitespace-only query is treated as empty
-      expect(result).toEqual(['group1']);
-      expect(api.call).toHaveBeenCalledWith('group.query', [
-        [['local', '=', true]],
-        { limit: 50, order_by: ['group'] },
-      ]);
+      );
     });
   });
 
@@ -465,6 +389,7 @@ describe('PrivilegeFormComponent', () => {
     it('should call directoryservices.status when DS groups are added and DS is enabled', async () => {
       spectator = createComponent({
         providers: [
+          ...ixFormTestingProviders(),
           mockApi([
             mockCall('group.query', testGroups),
             mockCall('privilege.roles', [
@@ -520,6 +445,7 @@ describe('PrivilegeFormComponent', () => {
     it('should NOT show button when DS groups are added but Directory Services are disabled', async () => {
       spectator = createComponent({
         providers: [
+          ...ixFormTestingProviders(),
           mockApi([
             mockCall('group.query', testGroups),
             mockCall('privilege.roles', [
@@ -574,6 +500,7 @@ describe('PrivilegeFormComponent', () => {
     it('should NOT show button when ds_auth is already enabled', async () => {
       spectator = createComponent({
         providers: [
+          ...ixFormTestingProviders(),
           mockApi([
             mockCall('group.query', testGroups),
             mockCall('privilege.roles', [
@@ -631,6 +558,7 @@ describe('PrivilegeFormComponent', () => {
     it('should NOT show button in non-enterprise mode', async () => {
       spectator = createComponent({
         providers: [
+          ...ixFormTestingProviders(),
           mockApi([
             mockCall('group.query', testGroups),
             mockCall('privilege.roles', [

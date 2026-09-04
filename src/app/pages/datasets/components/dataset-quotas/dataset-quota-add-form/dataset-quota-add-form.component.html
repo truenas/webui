@@ -28,22 +28,28 @@
 
   @if (quotaType() === DatasetQuotaType.User) {
     <tn-form-section [heading]="'Apply Quotas to Selected Users' | translate">
-      <ix-user-chips
-        formControlName="users"
+      <tn-form-field
         [label]="'Apply To Users' | translate"
         [tooltip]="tooltips.users | translate"
-      ></ix-user-chips>
+      >
+        <ix-user-chips
+          formControlName="users"
+        ></ix-user-chips>
+      </tn-form-field>
     </tn-form-section>
   }
 
   @if (quotaType() === DatasetQuotaType.Group) {
     <tn-form-section [heading]="'Apply Quotas to Selected Groups' | translate">
-      <ix-group-chips
-        formControlName="groups"
+      <tn-form-field
         [label]="'Apply To Groups' | translate"
         [tooltip]="tooltips.groups | translate"
         [required]="true"
-      ></ix-group-chips>
+      >
+        <ix-group-chips
+          formControlName="groups"
+        ></ix-group-chips>
+      </tn-form-field>
     </tn-form-section>
   }
 </ix-form>

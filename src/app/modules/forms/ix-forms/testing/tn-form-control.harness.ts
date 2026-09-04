@@ -1,11 +1,16 @@
 import { HarnessPredicate } from '@angular/cdk/testing';
 import {
-  FormFieldHarnessFilters,
-  TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  FormFieldHarnessFilters, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import {
   IxFormControlHarness, unreadableControl,
 } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
+import {
+  IxGroupChipsHarness,
+  IxGroupComboboxHarness,
+  IxUserChipsHarness,
+  IxUserComboboxHarness,
+} from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 
 /**
  * Adapter that lets a `tn-form-field`-wrapped tn-* control be driven through the same
@@ -17,8 +22,9 @@ import {
  * `tn-form-field` host, and `locatorFor` only searches descendants — so inheriting is
  * the only way to reuse the library's own `getLabel()` instead of re-deriving it.
  *
- * **Supported controls: `tn-input`, `tn-select`, `tn-checkbox`, `tn-radio`.** A field wrapping
- * anything else (`tn-autocomplete`, `tn-chip-input`, `tn-file-input`, …) still indexes by label,
+ * **Supported controls: `tn-input`, `tn-select`, `tn-checkbox`, `tn-radio`, and the
+ * `ix-user-*` / `ix-group-*` pickers.** A field wrapping anything else (a bare
+ * `tn-autocomplete`, `tn-chip-input`, `tn-file-input`, …) still indexes by label,
  * but {@link getValue} and {@link isDisabled} return {@link unreadableControl} — whole-form
  * readers like `getControlValues`/`getDisabledStates` walk every control at once, so a throw there
  * would take the rest of the form down with it, while returning `''`/`false` would let an
@@ -38,6 +44,16 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
   private select = this.locatorForOptional(TnSelectHarness);
   private checkbox = this.locatorForOptional(TnCheckboxHarness);
   private radios = this.locatorForAll(TnRadioHarness);
+  /**
+   * The user/group fields. They are `ControlValueAccessor`s in their own right —
+   * the control name sits on the wrapper, not on the `tn-autocomplete` /
+   * `tn-chip-input` inside — so they need their own branches rather than being
+   * reachable through the plain autocomplete/chip harnesses.
+   */
+  private userAutocomplete = this.locatorForOptional(IxUserComboboxHarness);
+  private groupAutocomplete = this.locatorForOptional(IxGroupComboboxHarness);
+  private userChips = this.locatorForOptional(IxUserChipsHarness);
+  private groupChips = this.locatorForOptional(IxGroupChipsHarness);
   /**
    * White-box: present only while the select shows its placeholder, i.e. nothing is selected.
    * `TnSelectHarness.getDisplayText()` returns the placeholder string rather than '', and the
@@ -121,7 +137,25 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
       // A group with nothing picked, which is a real value — not an unreadable control.
       return '';
     }
+    const principal = await this.principalAutocomplete();
+    if (principal) {
+      return principal.getInputValue();
+    }
+    const principalChips = await this.principalChips();
+    if (principalChips) {
+      return principalChips.getChips();
+    }
     return unreadableControl;
+  }
+
+  /** The single-valued user/group field in this form field, if it holds one. */
+  private async principalAutocomplete(): Promise<IxUserComboboxHarness | IxGroupComboboxHarness | null> {
+    return (await this.userAutocomplete()) ?? (await this.groupAutocomplete());
+  }
+
+  /** The list-valued user/group field in this form field, if it holds one. */
+  private async principalChips(): Promise<IxUserChipsHarness | IxGroupChipsHarness | null> {
+    return (await this.userChips()) ?? (await this.groupChips());
   }
 
   async setValue(value: unknown): Promise<void> {
@@ -173,9 +207,27 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
       }
       throw new Error(`No radio option labelled "${String(value)}" in tn-form-field "${await this.getLabelText()}".`);
     }
+    const principal = await this.principalAutocomplete();
+    if (principal) {
+      // Typed and committed on blur rather than picked from the dropdown: a spec
+      // filling a form by label is naming the value it wants, not asserting that
+      // the directory happens to offer it.
+      await principal.setInputValue(value == null ? '' : String(value));
+      await principal.blur();
+      return;
+    }
+    const principalChips = await this.principalChips();
+    if (principalChips) {
+      const names = Array.isArray(value) ? value : [value];
+      for (const name of names) {
+        await principalChips.addChip(String(name));
+      }
+      return;
+    }
     throw new Error(
       `tn-form-field "${await this.getLabelText()}" holds no control TnFormControlHarness can set `
-      + '(supported: tn-input, tn-select, tn-checkbox, tn-radio) — drive it through its own tn-* harness.',
+      + '(supported: tn-input, tn-select, tn-checkbox, tn-radio, ix-user-*/ix-group-*) '
+      + '— drive it through its own tn-* harness.',
     );
   }
 

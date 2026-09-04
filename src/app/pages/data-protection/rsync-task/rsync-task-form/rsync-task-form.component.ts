@@ -22,7 +22,7 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';

@@ -3,14 +3,18 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
+import {
+  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+} from '@truenas/ui-components';
 import { Role } from 'app/enums/role.enum';
 import { helptextCron } from 'app/helptext/system/cron-form';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
+import {
+  IxUserComboboxComponent,
+} from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';

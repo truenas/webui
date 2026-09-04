@@ -26,10 +26,12 @@
       <div class="ownership-row" [formGroup]="ownerFormGroup">
         <div class="control">
           <label class="header-label">{{ 'Owner' | translate }}:</label>
-          <ix-user-combobox
-            class="owner-combobox"
-            formControlName="owner"
-          ></ix-user-combobox>
+          <tn-form-field>
+            <ix-user-combobox
+              class="owner-combobox"
+              formControlName="owner"
+            ></ix-user-combobox>
+          </tn-form-field>
           <tn-form-field [tooltip]="helptext.applyTooltip | translate">
             <tn-checkbox
               formControlName="applyOwner"
@@ -40,10 +42,12 @@
 
         <div class="control">
           <label class="header-label">{{ 'Owner Group' | translate }}:</label>
-          <ix-group-combobox
-            class="owner-combobox"
-            formControlName="ownerGroup"
-          ></ix-group-combobox>
+          <tn-form-field>
+            <ix-group-combobox
+              class="owner-combobox"
+              formControlName="ownerGroup"
+            ></ix-group-combobox>
+          </tn-form-field>
           <tn-form-field [tooltip]="helptext.applyGroupTooltip | translate">
             <tn-checkbox
               formControlName="applyGroup"
