@@ -4,7 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { lastValueFrom, of, throwError } from 'rxjs';
+import {
+  Subject, lastValueFrom, of, throwError,
+} from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
@@ -716,6 +719,69 @@ describe('PrivilegeFormComponent', () => {
       spectator.detectChanges();
       const buttonAfter = spectator.query('button[ixTest="enable-ds-auth"]');
       expect(buttonAfter).toBeFalsy();
+    });
+
+    it('should show button when editing a privilege that already has DS groups', async () => {
+      spectator = createComponent({
+        detectChanges: false,
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              ...fakeDataPrivilege,
+              ds_groups: [{ gid: 333, group: 'AD\\Domain Admins' }],
+            } as Privilege),
+          }),
+          provideMockStore({
+            selectors: [
+              {
+                selector: selectEntitlements,
+                value: {},
+              },
+              {
+                selector: selectGeneralConfig,
+                value: {
+                  ds_auth: false,
+                },
+              },
+            ],
+          }),
+          mockProvider(UserService, {
+            groupQueryDsCache: jest.fn(() => of([])),
+            getGroupByName: jest.fn(() => of({ gr_gid: 1000, gr_mem: [], gr_name: 'test' })),
+            getGroupByNameCached: jest.fn((groupName: string) => of({ gr_gid: 1000, gr_mem: [], gr_name: groupName })),
+          }),
+          mockAuth(),
+        ],
+      });
+
+      // `mockCall` answers synchronously, which hides this bug: the status would land
+      // during ngOnInit, before the chips control replays `ds_groups`. A real WebSocket
+      // round-trip resolves *after* the form has settled, so drive the status by hand.
+      const mockApiService = spectator.inject(MockApiService);
+      const status$ = new Subject<DirectoryServicesStatus>();
+      const passThrough = mockApiService.call.getMockImplementation();
+      mockApiService.call.mockImplementation((method: string, params: unknown) => {
+        return method === 'directoryservices.status'
+          ? status$.asObservable()
+          : passThrough?.(method, params);
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Status arrives late. The edit path patched `ds_groups` back in ngOnInit, so its only
+      // `valueChanges` emission is long gone — visibility has to be re-evaluated here, or the
+      // prompt stays hidden for exactly the privileges that already carry DS groups.
+      status$.next({
+        type: 'ACTIVEDIRECTORY',
+        status: DirectoryServiceStatus.Healthy,
+      } as DirectoryServicesStatus);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const button = spectator.query('button[ixTest="enable-ds-auth"]');
+      expect(button).toBeTruthy();
     });
   });
 });
