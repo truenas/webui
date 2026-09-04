@@ -1,8 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import {
-  catchError, defer, of, shareReplay,
-} from 'rxjs';
+import { shareReplay } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -27,24 +25,7 @@ export class LicenseService {
   /** Not an entitlement — iX hardware detection. */
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
 
-  /**
-   * Not migrated to the `STIG` entitlement: `fips_available` reports firmware capability,
-   * a different question from whether the licence permits STIG. The card likely needs both.
-   *
-   * True when the backend reports FIPS hardware support — that's
-   * the same condition `AdvancedSettingsComponent.isSystemLicensed` uses to
-   * render the card. `catchError` falls back to `false` so a transient
-   * `fips_available` failure hides the System Security entries rather than
-   * crashing the search filter chain. `refCount: true` ensures the fallback
-   * isn't permanently cached.
-   */
-  readonly hasSystemSecurity$ = defer(() => this.api.call('system.security.info.fips_available')).pipe(
-    map(Boolean),
-    catchError(() => of(false)),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
 
-  /** Previously borrowed the APPS feature. Same decision today, but keyed on what it means. */
   /**
    * Check if the system is configured with TrueNAS Connect.
    * This is used to determine if WebShare and other TrueNAS Connect features are available.

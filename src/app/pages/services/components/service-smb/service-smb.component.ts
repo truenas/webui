@@ -116,6 +116,7 @@ export class ServiceSmbComponent implements OnInit {
       if (isEnabled) {
         this.form.controls.spotlight_search.enable();
       } else {
+        this.form.controls.spotlight_search.setValue(false, { emitEvent: false });
         this.form.controls.spotlight_search.disable();
       }
     });
@@ -225,7 +226,9 @@ export class ServiceSmbComponent implements OnInit {
         config.bindip.forEach(() => this.addBindIp());
         this.form.patchValue({
           ...config,
-          spotlight_search: searchProtocolEnabled,
+          // `smb.config` is async, so gate the loaded value too: a stale `true` must not be
+          // restored (and later submitted) on a system that is not entitled to TrueSearch.
+          spotlight_search: searchProtocolEnabled && this.isSpotlightEnabled(),
           bindip: config.bindip.map((ip) => ({ bindIp: ip })),
         });
         this.isSmb1Enabled.set(config.minimum_protocol === SmbMinProtocol.Smb1);

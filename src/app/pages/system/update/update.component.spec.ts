@@ -218,8 +218,7 @@ describe('UpdateComponent', () => {
     });
 
     it('exposes hardware, HA, license and support flags to release-notes markdown', () => {
-      const component = spectator.component as unknown as { releaseNotesContext: () => Record<string, boolean> };
-      expect(component.releaseNotesContext()).toEqual({
+      expect(spectator.component.releaseNotesContext()).toEqual({
         isHaLicensed: false,
         isEnterprise: false,
         hasLicense: false,

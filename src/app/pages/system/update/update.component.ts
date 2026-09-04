@@ -165,7 +165,7 @@ export class UpdateComponent implements OnInit {
   });
 
   /** Variables release-notes markdown may test with `@if`: hardware, HA, license presence, support. */
-  protected readonly releaseNotesContext = computed(() => ({
+  readonly releaseNotesContext = computed(() => ({
     isHaLicensed: this.isHaLicensed(),
     isEnterprise: this.isEnterprise(),
     hasLicense: Boolean(this.hasLicense()),
