@@ -4,7 +4,6 @@ import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angula
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   combineLatest, finalize, forkJoin, Observable, of, tap,
@@ -37,7 +36,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { AppState } from 'app/store';
 
 @Component({
   selector: 'ix-service-nfs',
@@ -67,7 +65,6 @@ export class ServiceNfsComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private fb = inject(NonNullableFormBuilder);
-  private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
