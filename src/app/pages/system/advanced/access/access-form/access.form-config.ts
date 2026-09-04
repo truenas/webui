@@ -33,7 +33,10 @@ export function getAccessFormConfig(
         ? [{
             name: 'ds_auth' as const,
             type: 'checkbox' as const,
-            label: T('Allow Directory Service users to access WebUI'),
+            label: T('Allow Directory Service users UI / API access'),
+            tooltip: T('When enabled, users provided by the configured directory service can sign in to the\
+ web interface and authenticate against the API, including with API keys. Access is still granted through the\
+ privileges assigned to their directory service groups.'),
           }]
         : []),
       {

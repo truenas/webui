@@ -7,7 +7,7 @@
   <div class="details">
     @if (isEnterprise()) {
       <div class="details-item">
-        <span class="label">{{ 'Allow Directory Service users to access WebUI' | translate }}:</span>
+        <span class="label">{{ 'Allow Directory Service users UI / API access' | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig | yesNo }}
         </span>
