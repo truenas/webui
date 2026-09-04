@@ -6,16 +6,15 @@ import { MatDialogRef } from '@angular/material/dialog';
 import {
   createComponentFactory, createSpyObject, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { ProductType } from 'app/enums/product-type.enum';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { EntitlementsService } from 'app/services/entitlements.service';
 
 describe('FileReviewComponent', () => {
   let spectator: Spectator<FileReviewComponent>;
@@ -24,6 +23,7 @@ describe('FileReviewComponent', () => {
   let submitButton: MatButtonHarness;
   let feedbackService: FeedbackService;
   const dialogRef = createSpyObject(MatDialogRef);
+  let deniedFeatures: EntitlementFeature[] = [EntitlementFeature.Support];
 
   const createComponent = createComponentFactory({
     component: FileReviewComponent,
@@ -32,21 +32,19 @@ describe('FileReviewComponent', () => {
       IxStarRatingComponent,
     ],
     providers: [
-      mockApi([
-        mockCall('system.product_type'),
-      ]),
+      mockApi(),
       mockProvider(FeedbackService, {
         createReview: jest.fn(() => of()),
       }),
-      provideMockStore({
-        initialState: {
-          systemInfo: {
-            productType: ProductType.CommunityEdition,
-          } as unknown as SystemInfo,
-        },
+      mockProvider(EntitlementsService, {
+        entitled: (feature: EntitlementFeature) => () => !deniedFeatures.includes(feature),
       }),
     ],
   });
+
+  function hasVoteLink(): boolean {
+    return spectator.queryAll('p').some((paragraph) => (paragraph.textContent ?? '').includes('vote for new features'));
+  }
 
   beforeEach(async () => {
     spectator = createComponent({
@@ -81,6 +79,24 @@ describe('FileReviewComponent', () => {
       message: 'Git gud',
       rating: 1,
       take_screenshot: true,
+    });
+  });
+
+  it('shows the forum feature-vote link without a support entitlement', () => {
+    expect(hasVoteLink()).toBe(true);
+  });
+
+  describe('with a support entitlement', () => {
+    beforeAll(() => {
+      deniedFeatures = [];
+    });
+
+    afterAll(() => {
+      deniedFeatures = [EntitlementFeature.Support];
+    });
+
+    it('hides the forum feature-vote link', () => {
+      expect(hasVoteLink()).toBe(false);
     });
   });
 });
