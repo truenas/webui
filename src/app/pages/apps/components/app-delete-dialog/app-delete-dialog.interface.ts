@@ -6,5 +6,4 @@ export interface AppDeleteDialogInputData {
 export interface AppDeleteDialogOutputData {
   removeVolumes: boolean;
   removeImages: boolean;
-  forceRemoveVolumes: boolean;
 }
