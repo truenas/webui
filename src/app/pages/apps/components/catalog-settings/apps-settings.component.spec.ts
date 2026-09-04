@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness } from '@truenas/ui-components';
+import { TnCheckboxGroupHarness, TnCheckboxHarness, TnFormListHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -11,14 +11,15 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DockerConfig } from 'app/interfaces/docker-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
+import {
+  IxIpInputWithNetmaskHarness,
+} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -114,28 +115,20 @@ describe('AppsSettingsComponent', () => {
   it('loads list of available trains and shows them', async () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('catalog.trains');
 
-    const checkboxList = await loader.getHarness(IxCheckboxListHarness);
-    const checkboxes = await checkboxList.getCheckboxes();
-    expect(checkboxes).toHaveLength(3);
-    expect(await checkboxes[0].getLabelText()).toBe('stable');
-    expect(await checkboxes[1].getLabelText()).toBe('community');
-    expect(await checkboxes[2].getLabelText()).toBe('test');
+    const trains = await loader.getHarness(TnCheckboxGroupHarness);
+    expect(await trains.getOptionLabels()).toEqual(['stable', 'community', 'test']);
   });
 
   it('shows preferred trains when catalog is open for editing', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
-
-    expect(values).toMatchObject({
-      'Preferred Trains': ['test'],
-    });
+    // `IxFormHarness` indexes ix-* controls only, so the migrated tn-checkbox-group is read
+    // through the tn-form-field adapter instead.
+    const trains = await loader.getHarness(TnFormControlHarness.with({ label: 'Preferred Trains' }));
+    expect(await trains.getValue()).toEqual(['test']);
   });
 
   it('saves catalog updates and reloads catalog apps when form is saved', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Preferred Trains': ['stable', 'community'],
-    });
+    const trains = await loader.getHarness(TnFormControlHarness.with({ label: 'Preferred Trains' }));
+    await trains.setValue(['stable', 'community']);
 
     spectator.component.submit();
 
@@ -144,42 +137,36 @@ describe('AppsSettingsComponent', () => {
     ]);
   });
 
+  // The list entries repeat their labels, so each control is addressed by DOM position within
+  // its kind rather than through a by-label index that would collapse the three mirrors into one.
   it('shows current docker settings', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
+    // Base's label row belongs to its wrapping `tn-form-field`, so the control itself renders no
+    // ix-label for `IxFormHarness` to index it under — read it through its own harness.
+    const bases = await loader.getAllHarnesses(IxIpInputWithNetmaskHarness);
+    expect(await bases[0].getValue()).toBe('172.17.0.0/12');
 
-    expect(values).toMatchObject({
-      Base: '172.17.0.0/12',
-      Size: '12',
-    });
+    const sizes = await loader.getAllHarnesses(TnFormControlHarness.with({ label: 'Size' }));
+    expect(await sizes[0].getValue()).toBe('12');
 
     const imageUpdatesCheckbox = await loader.getHarness(
       TnCheckboxHarness.with({ label: 'Check for docker image updates' }),
     );
     expect(await imageUpdatesCheckbox.isChecked()).toBe(false);
 
-    const mirrorList = await loader.getHarness(IxListHarness.with({ label: 'Registry Mirrors' }));
-    const mirrorItems = await mirrorList.getListItems();
+    const mirrorList = await loader.getHarness(TnFormListHarness.with({ label: 'Registry Mirrors' }));
+    expect(await mirrorList.getItemCount()).toBe(3);
 
-    expect(mirrorItems).toHaveLength(3);
+    const mirrorUrls = await loader.getAllHarnesses(TnFormControlHarness.with({ label: 'Mirror URL' }));
+    const insecure = await loader.getAllHarnesses(TnCheckboxHarness.with({ label: 'Insecure' }));
 
-    const firstMirrorValues = await mirrorItems[0].getFormValues();
-    expect(firstMirrorValues).toMatchObject({
-      'Mirror URL': 'https://registry1.example.com',
-      Insecure: false,
-    });
+    expect(await mirrorUrls[0].getValue()).toBe('https://registry1.example.com');
+    expect(await insecure[0].isChecked()).toBe(false);
 
-    const secondMirrorValues = await mirrorItems[1].getFormValues();
-    expect(secondMirrorValues).toMatchObject({
-      'Mirror URL': 'https://registry2.example.com',
-      Insecure: false,
-    });
+    expect(await mirrorUrls[1].getValue()).toBe('https://registry2.example.com');
+    expect(await insecure[1].isChecked()).toBe(false);
 
-    const thirdMirrorValues = await mirrorItems[2].getFormValues();
-    expect(thirdMirrorValues).toMatchObject({
-      'Mirror URL': 'http://insecure.example.com',
-      Insecure: true,
-    });
+    expect(await mirrorUrls[2].getValue()).toBe('http://insecure.example.com');
+    expect(await insecure[2].isChecked()).toBe(true);
   });
 
   it('shows nvidia checkbox when nvidia GPU is present', async () => {
@@ -193,28 +180,22 @@ describe('AppsSettingsComponent', () => {
     );
     await imageUpdatesCheckbox.check();
 
-    const addressPoolList = await loader.getHarness(IxListHarness.with({ label: 'Address Pools' }));
+    const addressPoolList = await loader.getHarness(TnFormListHarness.with({ label: 'Address Pools' }));
+    await addressPoolList.add();
 
-    await addressPoolList.pressAddButton();
+    const bases = await loader.getAllHarnesses(IxIpInputWithNetmaskHarness);
+    const sizes = await loader.getAllHarnesses(TnFormControlHarness.with({ label: 'Size' }));
+    await bases[bases.length - 1].setValue('173.17.0.0/12');
+    await sizes[sizes.length - 1].setValue(12);
 
-    const newAddressPool = await addressPoolList.getLastListItem();
-    await newAddressPool.fillForm({
-      Base: '173.17.0.0/12',
-      Size: 12,
-    });
+    const mirrorUrls = await loader.getAllHarnesses(TnFormControlHarness.with({ label: 'Mirror URL' }));
+    const insecure = await loader.getAllHarnesses(TnCheckboxHarness.with({ label: 'Insecure' }));
 
-    const mirrorList = await loader.getHarness(IxListHarness.with({ label: 'Registry Mirrors' }));
+    await mirrorUrls[0].setValue('https://new-secure.example.com');
+    await insecure[0].uncheck();
 
-    const existingMirrors = await mirrorList.getListItems();
-    await existingMirrors[0].fillForm({
-      'Mirror URL': 'https://new-secure.example.com',
-      Insecure: false,
-    });
-
-    await existingMirrors[1].fillForm({
-      'Mirror URL': 'http://new-insecure.example.com',
-      Insecure: true,
-    });
+    await mirrorUrls[1].setValue('http://new-insecure.example.com');
+    await insecure[1].check();
 
     spectator.component.submit();
 

@@ -16,8 +16,11 @@ import {
   TnBannerComponent,
   TnButtonComponent,
   TnCheckboxComponent,
+  TnCheckboxGroupComponent,
   TnDialog,
   TnFormFieldComponent,
+  TnFormListComponent,
+  TnFormListItemComponent,
   TnFormSectionComponent,
   TnInputComponent,
   TnSelectComponent,
@@ -50,10 +53,12 @@ import {
   UpdateContainer,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
-import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import {
+  IxFormHostForm,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
+import {
+  IxFormComponent, SubmitResult,
+} from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
   forbiddenAsyncValues,
@@ -61,8 +66,6 @@ import {
 import {
   advancedModeFooterAction, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectImageDialog,
@@ -80,14 +83,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AsyncPipe,
-    IxCheckboxListComponent,
-    IxListComponent,
-    IxListItemComponent,
+    IxFormComponent,
     ReactiveFormsModule,
     TnBannerComponent,
     TnButtonComponent,
     TnCheckboxComponent,
+    TnCheckboxGroupComponent,
     TnFormFieldComponent,
+    TnFormListComponent,
+    TnFormListItemComponent,
     TnFormSectionComponent,
     TnInputComponent,
     TnSelectComponent,
@@ -98,13 +102,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     '(window:beforeunload)': 'onBeforeUnload($event)',
   },
 })
-export class ContainerFormComponent extends SidePanelForm implements OnInit {
+export class ContainerFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private tnDialog = inject(TnDialog);
-  private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
-  private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
   protected formatter = inject(IxFormatterService);
   private errorHandler = inject(ErrorHandlerService);
@@ -114,7 +116,6 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   protected readonly InputType = InputType;
-  protected readonly isLoading = signal<boolean>(false);
   /** Public because the `<tn-side-panel>` host reads it to gate its footer Save. */
   readonly requiredRoles = [Role.ContainerWrite];
 
@@ -228,8 +229,6 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
     usb_devices: [[] as string[]],
   });
 
-  readonly canSubmit = this.trackCanSubmit(this.isLoading);
-
   private hasSetupValidators = false;
 
   onBeforeUnload(event: BeforeUnloadEvent): void {
@@ -252,9 +251,7 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
       this.setupValidatorsForCreation();
     });
 
-    if (this.editingContainer) {
-      this.loadContainerForEditing(this.editingContainer.id);
-    } else {
+    if (!this.editingContainer) {
       this.setupForCreation();
     }
 
@@ -286,6 +283,12 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
       }
       this.form.controls.idmap_slice.updateValueAndValidity();
     });
+
+    // Loaded last: `loadFormConfig`'s patch replays on retry, so every subscription and validator
+    // above has to be wired exactly once, outside it.
+    if (this.editingContainer) {
+      this.loadContainerForEditing(this.editingContainer.id);
+    }
   }
 
   private setupForCreation(): void {
@@ -327,20 +330,9 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
     this.form.controls.image.clearValidators();
     this.form.controls.image.updateValueAndValidity();
 
-    this.isLoading.set(true);
-    this.api.call('container.get_instance', [containerId]).pipe(
-      this.errorHandler.withErrorHandler(),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (container: Container) => {
-        this.editingContainer = container;
-        this.populateFormForEdit(container);
-        this.isLoading.set(false);
-      },
-      error: () => {
-        this.isLoading.set(false);
-        this.close(false);
-      },
+    this.loadFormConfig(this.api.call('container.get_instance', [containerId]), (container: Container) => {
+      this.editingContainer = container;
+      this.populateFormForEdit(container);
     });
   }
 
@@ -371,6 +363,10 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
       capabilities_policy: container.capabilities_policy,
     });
 
+    // `loadFormConfig` replays its patch on retry, so drop the rows a previous attempt pushed
+    // before adding them again.
+    this.form.controls.environment_variables.clear();
+
     if (container.initenv && Object.keys(container.initenv).length > 0) {
       for (const [name, value] of Object.entries(container.initenv)) {
         this.addEnvironmentVariableWithValue(name, String(value));
@@ -394,44 +390,32 @@ export class ContainerFormComponent extends SidePanelForm implements OnInit {
       });
   }
 
-  protected onSubmit(): void {
-    this.isLoading.set(true);
-
+  protected handleSubmit = (): SubmitResult<boolean, Container> => {
     if (this.isEditMode()) {
-      this.updateContainer().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-        next: (updatedInstance) => {
-          this.isLoading.set(false);
+      return {
+        request$: this.updateContainer(),
+        successMessage: this.translate.instant('Container updated'),
+        onSuccess: (updatedInstance) => {
           this.form.markAsPristine();
-          this.snackbar.success(this.translate.instant('Container updated'));
-          this.close(true);
           if (this.containersStore && updatedInstance) {
             this.containersStore.containerUpdated(updatedInstance);
           }
         },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
-    } else {
-      this.createContainer().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-        next: (container) => {
-          this.isLoading.set(false);
-          this.form.markAsPristine();
-          this.snackbar.success(this.translate.instant('Container created'));
-          this.close(true);
-          this.containersStore?.reload();
-          if (container?.id) {
-            this.router.navigate(['/containers', 'view', container.id]);
-          }
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
+      };
     }
-  }
+
+    return {
+      request$: this.createContainer(),
+      successMessage: this.translate.instant('Container created'),
+      onSuccess: (container) => {
+        this.form.markAsPristine();
+        this.containersStore?.reload();
+        if (container?.id) {
+          this.router.navigate(['/containers', 'view', container.id]);
+        }
+      },
+    };
+  };
 
   protected addEnvironmentVariable(): void {
     const control = this.formBuilder.group({

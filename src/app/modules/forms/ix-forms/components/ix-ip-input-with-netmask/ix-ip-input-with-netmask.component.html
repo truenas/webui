@@ -17,6 +17,9 @@
     [disabled]="isDisabled"
     [value]="address"
     [attr.aria-label]="label()"
+    [attr.aria-labelledby]="fieldAria.labelledby()"
+    [attr.aria-describedby]="fieldAria.describedby()"
+    [attr.aria-invalid]="fieldAria.invalid()"
     (input)="onAddressInput(addressInput)"
     (blur)="onTouched()"
   />
@@ -24,6 +27,7 @@
   <tn-select
     class="select"
     testId="netmasks"
+    [disabled]="isDisabled"
     [options]="netmaskOptions"
     [ngModel]="netmask"
     [ngModelOptions]="{ standalone: true }"

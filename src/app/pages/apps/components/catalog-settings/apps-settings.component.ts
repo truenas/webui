@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, inject, OnInit, signal,
 } from '@angular/core';
@@ -7,7 +8,9 @@ import {
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
+  InputType,
+  TnCheckboxComponent, TnCheckboxGroupComponent, TnFormFieldComponent, TnFormListComponent,
+  TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import {
   combineLatest,
@@ -18,16 +21,11 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
-import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -62,17 +60,17 @@ type AppsSettingsFormValue = ReturnType<ReturnType<typeof createAppsSettingsForm
   styleUrls: ['./apps-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    AsyncPipe,
     IxFormComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
-    IxCheckboxListComponent,
-    IxListItemComponent,
-    IxListComponent,
     IxIpInputWithNetmaskComponent,
-    IxInputComponent,
-    IxCheckboxComponent,
     TnCheckboxComponent,
+    TnCheckboxGroupComponent,
     TnFormFieldComponent,
+    TnFormListComponent,
+    TnFormListItemComponent,
+    TnInputComponent,
     TranslateModule,
   ],
   providers: [
@@ -87,6 +85,7 @@ export class AppsSettingsComponent extends IxFormHostForm<boolean, AppsSettingsF
   private translate = inject(TranslateService);
   private urlValidationService = inject(UrlValidationService);
 
+  protected readonly InputType = InputType;
   protected showNvidiaCheckbox = signal(false);
   readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 

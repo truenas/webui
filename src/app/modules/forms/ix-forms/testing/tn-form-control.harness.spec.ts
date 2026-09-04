@@ -1,13 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnInputComponent,
-  TnRadioGroupComponent, TnSelectComponent,
+  TnCheckboxComponent, TnCheckboxGroupComponent, TnChipInputComponent, TnFormFieldComponent,
+  TnInputComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { Option } from 'app/interfaces/option.interface';
+import {
+  IxInputComponent,
+} from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import {
+  IxIpInputWithNetmaskComponent,
+} from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import {
   IxFormControlHarness, unreadableControl,
 } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
@@ -15,6 +21,7 @@ import {
   fillControlValues, getControlValues, getDisabledStates, indexControlsByLabel,
 } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
+import { NetworkService } from 'app/services/network.service';
 
 @Component({
   // An explicit selector keeps Angular from deriving the same component id as another
@@ -28,8 +35,11 @@ import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
+    TnCheckboxGroupComponent,
     TnChipInputComponent,
     TnRadioGroupComponent,
+    IxIpInputWithNetmaskComponent,
+    IxInputComponent,
   ],
 })
 class HostComponent {
@@ -37,7 +47,17 @@ class HostComponent {
   readonly letter = new FormControl<string | null>(null);
   readonly enabled = new FormControl(false);
   readonly choice = new FormControl<string | null>(null);
+  readonly letters = new FormControl<string[]>([]);
   readonly tags = new FormControl<string[]>([]);
+  /**
+   * Named controls, not the bare `[formControl]`s above: an ix-* control only registers itself —
+   * and only then carries the `ix-label` marker `TnFormControlHarness` recognises it by — once it
+   * has a name, which is how forms bind them in practice.
+   */
+  readonly projected = new FormGroup({
+    base: new FormControl(''),
+    path: new FormControl(''),
+  });
 
   readonly options: Option<string>[] = [
     { label: 'Alpha', value: 'a' },
@@ -57,6 +77,7 @@ describe('TnFormControlHarness', () => {
       TnInputComponent,
       TnSelectComponent,
       TnCheckboxComponent,
+      TnCheckboxGroupComponent,
       TnChipInputComponent,
       TnRadioGroupComponent,
     ],
@@ -83,6 +104,10 @@ describe('TnFormControlHarness', () => {
         <tn-radio-group [formControl]="choice" [options]="options"></tn-radio-group>
       </tn-form-field>
 
+      <tn-form-field [label]="'Letters'">
+        <tn-checkbox-group [formControl]="letters" [options]="options"></tn-checkbox-group>
+      </tn-form-field>
+
       <tn-form-field [label]="'Tags'">
         <tn-chip-input [formControl]="tags"></tn-chip-input>
       </tn-form-field>
@@ -97,7 +122,7 @@ describe('TnFormControlHarness', () => {
   it('indexes every field by its label, falling back to a checkbox\'s own label', async () => {
     const labels = Object.keys(await getControls()).sort((a, b) => a.localeCompare(b));
 
-    expect(labels).toEqual(['Choice', 'Enabled', 'Letter', 'Name', 'Tags']);
+    expect(labels).toEqual(['Choice', 'Enabled', 'Letter', 'Letters', 'Name', 'Tags']);
   });
 
   it('finds a self-naming control under the label the index files it under', async () => {
@@ -184,6 +209,41 @@ describe('TnFormControlHarness', () => {
       spectator.detectChanges();
 
       expect(await (await getControls()).Enabled.isDisabled()).toBe(true);
+    });
+  });
+
+  // The group renders `tn-checkbox`es of its own, so every branch has to reach it before the
+  // lone-checkbox one — otherwise the field reports its first option's boolean as the value.
+  describe('tn-checkbox-group', () => {
+    it('reads the checked option labels, and empty when nothing is picked', async () => {
+      const control = (await getControls()).Letters;
+      expect(await control.getValue()).toEqual([]);
+
+      await control.setValue(['Beta']);
+
+      expect(spectator.hostComponent.letters.value).toEqual(['b']);
+      expect(await (await getControls()).Letters.getValue()).toEqual(['Beta']);
+    });
+
+    it('replaces the whole checked set rather than adding to it', async () => {
+      const control = (await getControls()).Letters;
+      await control.setValue(['Alpha', 'Beta']);
+      expect(spectator.hostComponent.letters.value).toEqual(['a', 'b']);
+
+      await control.setValue(['Alpha']);
+      expect(spectator.hostComponent.letters.value).toEqual(['a']);
+
+      await control.setValue([]);
+      expect(spectator.hostComponent.letters.value).toEqual([]);
+    });
+
+    it('reports disabled only when every option is disabled', async () => {
+      expect(await (await getControls()).Letters.isDisabled()).toBe(false);
+
+      spectator.hostComponent.letters.disable();
+      spectator.detectChanges();
+
+      expect(await (await getControls()).Letters.isDisabled()).toBe(true);
     });
   });
 
@@ -313,5 +373,94 @@ describe('TnFormControlHarness, label-less fields', () => {
     await expect(fillControlValues(controls, { '': 'anything' })).rejects.toThrow(
       'No control is indexed under an empty label',
     );
+  });
+});
+
+
+// A third suite for the same reason the second one exists: one TestBed per host template.
+describe('TnFormControlHarness, projected ix-* controls', () => {
+  let spectator: SpectatorHost<TnFormFieldComponent, HostComponent>;
+  let loader: HarnessLoader;
+
+  const createHost = createHostFactory({
+    component: TnFormFieldComponent,
+    host: HostComponent,
+    imports: [
+      ReactiveFormsModule,
+      IxIpInputWithNetmaskComponent,
+      IxInputComponent,
+    ],
+    providers: [
+      mockProvider(NetworkService, {
+        getV4Netmasks: () => [{ label: '12', value: '12' }, { label: '24', value: '24' }],
+        getV6PrefixLength: () => [{ label: '64', value: '64' }],
+      }),
+    ],
+  });
+
+  // Both fields own the label row, which is the whole point of the shape: the ix-* control hands
+  // it over so it lines up with the `tn-input`s beside it.
+  beforeEach(() => {
+    spectator = createHost(`
+      <div [formGroup]="projected">
+        <tn-form-field [label]="'Base'">
+          <ix-ip-input-with-netmask formControlName="base"></ix-ip-input-with-netmask>
+        </tn-form-field>
+
+        <tn-form-field [label]="'Path'">
+          <ix-input formControlName="path"></ix-input>
+        </tn-form-field>
+      </div>
+    `);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  async function getControls(): Promise<Record<string, IxFormControlHarness>> {
+    return indexControlsByLabel(await loader.getAllHarnesses(TnFormControlHarness));
+  }
+
+  describe('ix-ip-input-with-netmask', () => {
+    it('reads the whole address, not the netmask select the tn-select locator would reach', async () => {
+      spectator.hostComponent.projected.controls.base.setValue('172.17.0.0/12');
+      spectator.detectChanges();
+
+      expect(await (await getControls()).Base.getValue()).toBe('172.17.0.0/12');
+    });
+
+    it('writes both halves of the value', async () => {
+      await (await getControls()).Base.setValue('173.17.0.0/24');
+
+      expect(spectator.hostComponent.projected.controls.base.value).toBe('173.17.0.0/24');
+    });
+
+    it('reports the disabled state of the control rather than of its netmask picker', async () => {
+      expect(await (await getControls()).Base.isDisabled()).toBe(false);
+
+      spectator.hostComponent.projected.controls.base.disable();
+      spectator.detectChanges();
+
+      expect(await (await getControls()).Base.isDisabled()).toBe(true);
+    });
+  });
+
+  describe('an ix-* control with no branch here', () => {
+    it('reads back as the unreadable sentinel rather than as one of its internals', async () => {
+      expect(await (await getControls()).Path.getValue()).toBe(unreadableControl);
+      expect(await (await getControls()).Path.isDisabled()).toBe(unreadableControl);
+    });
+
+    it('throws on setValue, saying it is the ix-* control that cannot be driven', async () => {
+      await expect((await getControls()).Path.setValue('/mnt/tank')).rejects.toThrow(
+        'tn-form-field "Path" wraps an ix-* control TnFormControlHarness cannot drive',
+      );
+    });
+
+    it('throws on getSelectOptions rather than offering an internal select\'s options', async () => {
+      const field = await loader.getHarness(TnFormControlHarness.with({ label: 'Path' }));
+
+      await expect(field.getSelectOptions()).rejects.toThrow(
+        'tn-form-field "Path" wraps an ix-* control, whose internal tn-select is not the field\'s own',
+      );
+    });
   });
 });
