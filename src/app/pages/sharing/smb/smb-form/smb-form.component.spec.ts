@@ -11,11 +11,13 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import {
   provideTnFormFieldDismissibleErrors,
   provideTnFormFieldErrors,
 } from 'app/core/providers/tn-form-field-errors.provider';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -1288,9 +1290,9 @@ describe('SmbFormComponent', () => {
     });
 
     it('should show error when non-existent group is entered in watch list', async () => {
-      // Mock API to return error for non-existent group
-      const userService = spectator.inject(UserService);
-      jest.spyOn(userService, 'getGroupByNameCached').mockReturnValue(throwError(() => new Error('Group not found')));
+      // An EMPTY result is what the directory reads as "no such group"; a lookup
+      // that ERRORS is a transport failure and leaves the name unflagged.
+      spectator.inject(MockApiService).mockCall('group.query', []);
 
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
@@ -1324,9 +1326,9 @@ describe('SmbFormComponent', () => {
     });
 
     it('should show error when non-existent group is entered in ignore list', async () => {
-      // Mock API to return error for non-existent group
-      const userService = spectator.inject(UserService);
-      jest.spyOn(userService, 'getGroupByNameCached').mockReturnValue(throwError(() => new Error('Group not found')));
+      // An EMPTY result is what the directory reads as "no such group"; a lookup
+      // that ERRORS is a transport failure and leaves the name unflagged.
+      spectator.inject(MockApiService).mockCall('group.query', []);
 
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
@@ -1401,16 +1403,14 @@ describe('SmbFormComponent', () => {
     });
 
     it('should disable save button during async validation', async () => {
-      // Mock API with a delayed response to catch the PENDING state
+      // A delayed response, to catch the PENDING state.
       const userService = spectator.inject(UserService) as {
-        getGroupByNameCached: jest.Mock;
         isGroupInAutocompleteCache: jest.Mock;
         isGroupCachedAsNonExistent: jest.Mock;
       };
-      const delayedObservable$ = new Subject<Group>();
-
-      // Override mock methods to ensure delayed observable is used
-      userService.getGroupByNameCached = jest.fn(() => delayedObservable$.asObservable());
+      const delayedObservable$ = new Subject<Group[]>();
+      jest.spyOn(spectator.inject(ApiService), 'call')
+        .mockReturnValue(delayedObservable$.asObservable() as Observable<never>);
       userService.isGroupInAutocompleteCache = jest.fn(() => false);
       userService.isGroupCachedAsNonExistent = jest.fn(() => false);
 
@@ -1440,13 +1440,13 @@ describe('SmbFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(false);
 
       // Complete the async validation
-      delayedObservable$.next({
+      delayedObservable$.next([{
         id: 1,
         gid: 1000,
         name: 'test',
         group: 'test',
         builtin: false,
-      } as Group);
+      } as Group]);
       delayedObservable$.complete();
 
       spectator.detectChanges();

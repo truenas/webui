@@ -1,5 +1,6 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom, of, throwError } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -26,7 +27,10 @@ describe('UserDirectoryService', () => {
   const createService = createServiceFactory({
     service: UserDirectoryService,
     providers: [
-      mockApi([mockCall('user.query', [])]),
+      mockApi([
+        mockCall('user.query', []),
+        mockCall('group.query', []),
+      ]),
       mockProvider(FormSidePanelService),
       mockProvider(UserService, {
         userQueryDsCache: jest.fn(() => of([{ username: 'root', uid: 0, id: 1 }] as User[])),
@@ -165,34 +169,61 @@ describe('UserDirectoryService', () => {
   describe('userExists', () => {
     it('answers from the autocomplete cache without a lookup', async () => {
       jest.spyOn(userService, 'isUserInAutocompleteCache').mockReturnValue(true);
+      const api = jest.spyOn(spectator.inject(ApiService), 'call');
 
       expect(await lastValueFrom(directory.userExists('root'))).toBe(true);
-      expect(userService.getUserByNameCached).not.toHaveBeenCalled();
+      expect(api).not.toHaveBeenCalled();
     });
 
     it('answers from the negative cache without a lookup', async () => {
       jest.spyOn(userService, 'isUserCachedAsNonExistent').mockReturnValue(true);
+      const api = jest.spyOn(spectator.inject(ApiService), 'call');
 
       expect(await lastValueFrom(directory.userExists('ghost'))).toBe(false);
-      expect(userService.getUserByNameCached).not.toHaveBeenCalled();
+      expect(api).not.toHaveBeenCalled();
     });
 
-    it('records a failed lookup so the same name is not queried again', async () => {
-      jest.spyOn(userService, 'getUserByNameCached')
-        .mockReturnValue(throwError(() => new Error('not found')));
+    it('reports a name the directory returns', async () => {
+      spectator.inject(MockApiService).mockCall('user.query', [{ username: 'root' } as User]);
+
+      expect(await lastValueFrom(directory.userExists('root'))).toBe(true);
+      expect(userService.recordUserAsNonExistent).not.toHaveBeenCalled();
+    });
+
+    it('records an empty result so the same name is not queried again', async () => {
+      spectator.inject(MockApiService).mockCall('user.query', []);
 
       expect(await lastValueFrom(directory.userExists('ghost'))).toBe(false);
       expect(userService.recordUserAsNonExistent).toHaveBeenCalledWith('ghost');
     });
+
+    it('lets a transport error through instead of reading it as "no such user"', async () => {
+      // The fields fail open on an error and flag only an emitted `false`, so
+      // swallowing this returned the wrong verdict — and cached it. The lookup
+      // used to ask with `{ get: true }`, which errors for a missing name just
+      // as a dropped websocket does, making the two indistinguishable.
+      jest.spyOn(spectator.inject(ApiService), 'call')
+        .mockReturnValue(throwError(() => new Error('connection reset')));
+
+      await expect(lastValueFrom(directory.userExists('root'))).rejects.toThrow('connection reset');
+      expect(userService.recordUserAsNonExistent).not.toHaveBeenCalled();
+    });
   });
 
   describe('groupExists', () => {
-    it('records a failed lookup so the same name is not queried again', async () => {
-      jest.spyOn(userService, 'getGroupByNameCached')
-        .mockReturnValue(throwError(() => new Error('not found')));
+    it('records an empty result so the same name is not queried again', async () => {
+      spectator.inject(MockApiService).mockCall('group.query', []);
 
       expect(await lastValueFrom(directory.groupExists('ghost'))).toBe(false);
       expect(userService.recordGroupAsNonExistent).toHaveBeenCalledWith('ghost');
+    });
+
+    it('lets a transport error through instead of reading it as "no such group"', async () => {
+      jest.spyOn(spectator.inject(ApiService), 'call')
+        .mockReturnValue(throwError(() => new Error('connection reset')));
+
+      await expect(lastValueFrom(directory.groupExists('wheel'))).rejects.toThrow('connection reset');
+      expect(userService.recordGroupAsNonExistent).not.toHaveBeenCalled();
     });
   });
 });

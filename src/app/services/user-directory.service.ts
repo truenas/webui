@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TnSelectOption } from '@truenas/ui-components';
 import { Observable, from, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { QueryFilter, QueryFilters, QueryParams } from 'app/interfaces/query-api.interface';
@@ -161,9 +161,22 @@ export class UserDirectoryService {
    * call this on every validation pass, and a directory-service lookup is slow
    * enough that repeating it per keystroke is felt.
    *
-   * The fields fail open on a transport error — a lookup that errors, or
+   * The fields fail open on a transport error: a lookup that errors, or
    * completes without emitting, is read as "cannot say" and the name is left
    * unflagged. Only an emitted `false` marks a name as missing.
+   *
+   * That contract is why this queries rather than calling
+   * `UserService.getUserByNameCached`, which asks with `{ get: true }` and so
+   * ERRORS for a name that does not exist — indistinguishably from a dropped
+   * websocket. Both used to become `false`, and worse, both were remembered as
+   * non-existent: one connection blip while someone typed into Run As User
+   * left the field reading `User "root" does not exist`, Save disabled, and the
+   * wrong verdict cached for the rest of the session. An empty result set says
+   * "no such user" and nothing else does.
+   *
+   * The cost is that a name confirmed here is not added to the middleware's
+   * directory-services cache the way `getUserByNameCached` would. It is a
+   * debounced check behind two caches, so that is one query per name per form.
    */
   userExists(username: string): Observable<boolean> {
     if (this.userService.isUserInAutocompleteCache(username)) {
@@ -173,18 +186,25 @@ export class UserDirectoryService {
       return of(false);
     }
 
-    return this.userService.getUserByNameCached(username).pipe(
-      map(() => true),
-      catchError(() => {
+    return this.api.call('user.query', [[['username', '=', username]]]).pipe(
+      map((users) => {
+        if (users.length > 0) {
+          return true;
+        }
         // Remembered, so a name already known to be wrong is not re-queried on
-        // every later keystroke.
+        // every later keystroke. Only ever reached for a real empty result.
         this.userService.recordUserAsNonExistent(username);
-        return of(false);
+        return false;
       }),
     );
   }
 
-  /** Whether a group name resolves, on the same terms as {@link userExists}. */
+  /**
+   * Whether a group name resolves, on the same terms as {@link userExists}.
+   *
+   * Filtered on `name` rather than `group`, which is what
+   * `UserService.getGroupByNameCached` matched on.
+   */
   groupExists(groupName: string): Observable<boolean> {
     if (this.userService.isGroupInAutocompleteCache(groupName)) {
       return of(true);
@@ -193,11 +213,13 @@ export class UserDirectoryService {
       return of(false);
     }
 
-    return this.userService.getGroupByNameCached(groupName).pipe(
-      map(() => true),
-      catchError(() => {
+    return this.api.call('group.query', [[['name', '=', groupName]]]).pipe(
+      map((groups) => {
+        if (groups.length > 0) {
+          return true;
+        }
         this.userService.recordGroupAsNonExistent(groupName);
-        return of(false);
+        return false;
       }),
     );
   }

@@ -4,7 +4,8 @@ import { TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { failApiCall, mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
@@ -158,13 +159,12 @@ describe('ServiceSshComponent', () => {
 
   // The existence check now lives in `ix-group-chips`, which reaches the system through
   // UserDirectoryService. It needs a case where it actually fails: the suite-wide
-  // `getGroupByNameCached` mock answers `of(null)` for an unknown group, which the directory
-  // reads as "exists", so every other test would pass with the validation not wired at all.
+  // `group.query` mock answers every lookup with the full list, so every other test would
+  // pass with the validation not wired at all.
   it('blocks Save while a typed group does not exist on the system', async () => {
-    // `Once`, so the erroring lookup cannot leak into the submit tests below: the field
-    // makes exactly one call per group, and this control holds exactly one.
-    const lookup = jest.spyOn(spectator.inject(UserService), 'getGroupByNameCached')
-      .mockImplementationOnce(() => throwError(() => new Error('Group not found')));
+    // An EMPTY result is what the directory reads as "no such group" — a lookup that
+    // ERRORS is a transport failure and deliberately leaves the name unflagged.
+    spectator.inject(MockApiService).mockCall('group.query', []);
 
     const groups = spectator.component.form.controls.password_login_groups;
     groups.setValue(['ghost-group']);
@@ -175,7 +175,7 @@ describe('ServiceSshComponent', () => {
     });
     spectator.detectChanges();
 
-    expect(lookup).toHaveBeenCalledWith('ghost-group');
+    expect(api.call).toHaveBeenCalledWith('group.query', [[['name', '=', 'ghost-group']]]);
     expect(groups.hasError('groupsDoNotExist')).toBe(true);
     expect(spectator.component.canSubmit()).toBe(false);
   });
