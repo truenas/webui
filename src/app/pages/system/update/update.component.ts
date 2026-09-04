@@ -13,6 +13,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ApiErrorName } from 'app/enums/api.enum';
+import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { UpdateCode } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -35,6 +36,7 @@ import {
   UpdateProfileCard,
 } from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
 import { systemUpdateElements } from 'app/pages/system/update/update.elements';
+import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -71,6 +73,7 @@ export class UpdateComponent implements OnInit {
   private dialogService = inject(DialogService);
   private sysGenService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
+  private entitlements = inject(EntitlementsService);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
@@ -89,6 +92,7 @@ export class UpdateComponent implements OnInit {
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  private readonly hasSupport = this.entitlements.entitled(EntitlementFeature.Support);
 
   protected isLoading = signal(true);
   protected profileChoices = signal<UpdateProfileChoices | null>(null);
@@ -141,6 +145,8 @@ export class UpdateComponent implements OnInit {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
+  private readonly hasLicense = toSignal(this.systemInfo$.pipe(map((info) => info?.license != null)));
+
   protected readonly systemVersion = toSignal(this.systemInfo$.pipe(
     map((info) => info.version),
   ));
@@ -153,9 +159,12 @@ export class UpdateComponent implements OnInit {
     return this.newVersion()?.manifest?.changelog.replace(/\n/g, '<br>');
   });
 
+  /** Variables release-notes markdown may test with `@if`: hardware, HA, license presence, support. */
   protected readonly releaseNotesContext = computed(() => ({
     isHaLicensed: this.isHaLicensed(),
     isEnterprise: this.isEnterprise(),
+    hasLicense: Boolean(this.hasLicense()),
+    hasSupport: Boolean(this.hasSupport()),
   }));
 
   protected readonly standbySystemVersion = toSignal(this.systemInfo$.pipe(
