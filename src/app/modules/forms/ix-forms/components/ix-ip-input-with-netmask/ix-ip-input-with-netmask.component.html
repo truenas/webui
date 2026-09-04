@@ -27,6 +27,7 @@
   <tn-select
     class="select"
     testId="netmasks"
+    [disabled]="isDisabled"
     [options]="netmaskOptions"
     [ngModel]="netmask"
     [ngModelOptions]="{ standalone: true }"
