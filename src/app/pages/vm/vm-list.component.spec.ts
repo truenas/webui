@@ -305,6 +305,16 @@ describe('VmListComponent', () => {
       expect(await table.getCellText(0, 'display_port')).toBe('VNC:5900, SPICE:5901');
     });
 
+    it('shows the port for a legacy-BIOS (UEFI-CSM) VM like any other', async () => {
+      emitVmEvent({
+        msg: CollectionChangeType.Changed,
+        id: virtualMachines[0].id,
+        fields: { bootloader: VmBootloader.UefiCsm } as VirtualMachine,
+      });
+
+      expect(await table.getCellText(0, 'display_port')).toBe('VNC:5900');
+    });
+
     // Covers `sortAccessors`: the cells are derived text, so sorting them as rendered would
     // order 'N/A' < 'SPICE:5901' < 'VNC:5900'. The accessor sorts by the lowest port instead,
     // with the VMs that have no port pushed to the end.
