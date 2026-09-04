@@ -122,8 +122,6 @@
           formControlName="admin_group"
           [testId]="'admin-group'"
           [placeholder]="'Administrators Group' | translate"
-          [noResultsText]="(groupsFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
-          (directoryError)="groupsFetchFailed.set(true)"
         ></ix-group-combobox>
       </tn-form-field>
 
@@ -135,8 +133,6 @@
           formControlName="guest"
           [testId]="'guest'"
           [placeholder]="'Guest Account' | translate"
-          [noResultsText]="(usersFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
-          (directoryError)="usersFetchFailed.set(true)"
         ></ix-user-combobox>
       </tn-form-field>
 

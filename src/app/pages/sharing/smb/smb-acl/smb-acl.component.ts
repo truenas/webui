@@ -119,13 +119,6 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
 
-  // Options seeded from the loaded ACL so existing uid/gid values display as
-  // names (the search query below only covers what the user has typed).
-
-  // Server-searched option streams for the per-entry user/group autocompletes.
-  // All entries share one stream per kind — options only matter while that
-  // dropdown is open — and shareReplay collapses the `async` subscribers into a
-  // single SMB directory query per search. Option values are uid/gid numbers;
   /**
    * Names for the ids already on the ACL, resolved once when it loads. The
    * search cannot produce them — an entry holds a uid/gid, not a name — so they
@@ -134,14 +127,6 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
    */
   protected readonly initialUserOptions = signal<PrincipalOption[]>([]);
   protected readonly initialGroupOptions = signal<PrincipalOption[]>([]);
-
-  /**
-   * Set from `(directoryError)` so the dropdown says "Options cannot be loaded"
-   * rather than "No results found" — a failed lookup is not an empty directory.
-   * A modal per failed keystroke would be far noisier than this panel notice.
-   */
-  protected readonly usersFetchFailed = signal(false);
-  protected readonly groupsFetchFailed = signal(false);
 
   /** SMB ACL entries hold uids/gids, and only SMB-capable principals qualify. */
   protected readonly smbUserOptions: DirectoryQueryOptions = {

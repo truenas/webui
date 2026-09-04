@@ -15,7 +15,8 @@ import {
   controlTestId, type TnAsyncOptionsHost, type TnOptionsFetchFn, type TnTestIdValue,
 } from '@truenas/ui-components';
 import { Observable, forkJoin, of, timer } from 'rxjs';
-import { catchError, first, map, switchMap } from 'rxjs/operators';
+import { catchError, first, map, switchMap, tap } from 'rxjs/operators';
+import { defaultDebounceTimeMs } from 'app/modules/forms/ix-forms/ix-forms.constants';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import {
   DirectoryQueryOptions, PrincipalOption, PrincipalValue, UserDirectoryService,
@@ -101,7 +102,7 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
   readonly validateExistence = input<boolean>(true);
 
   /** Debounce before a lookup goes out, both for search and for validation. */
-  readonly debounce = input<number>(250);
+  readonly debounce = input<number>(defaultDebounceTimeMs);
 
   /**
    * Options merged ahead of whatever the directory returns, deduplicated by
@@ -154,13 +155,20 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
    * than the next keystroke. The effect in the constructor, keyed on
    * {@link directoryQueryKey}, is the other half.
    */
-  protected readonly optionsSource: TnOptionsFetchFn<PrincipalOption> = (search, page) => {
+  protected readonly optionsSource: TnOptionsFetchFn<PrincipalOption> = (search: string, page: number) => {
     const options = this.directoryOptions();
     const rows$ = this.kind === 'user'
       ? this.directory.queryUsers(search, page, options)
       : this.directory.queryGroups(search, page, options);
 
-    return rows$.pipe(map((rows) => {
+    return rows$.pipe(tap({
+      // Both directions: a page that lands clears a previous failure, so the
+      // panel stops claiming the directory is unreachable the moment it is
+      // reachable again. Without the success half the flag latches for the
+      // life of the field and every later empty result is mislabelled.
+      next: () => this.lookupFailed.set(false),
+      error: () => this.lookupFailed.set(true),
+    }), map((rows) => {
       // Only ahead of the FIRST page: later pages append, and re-inserting
       // these each time would push duplicates through the paging dedupe.
       //
@@ -178,6 +186,13 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
       return [...extra, ...rows.filter((row) => !pinned.has(row.value))];
     }));
   };
+
+  /**
+   * Whether the LAST directory lookup failed — not whether one ever has.
+   * Cleared by the next page that lands, which is what keeps the panel's
+   * wording honest after a transient failure.
+   */
+  protected readonly lookupFailed = signal(false);
 
   /**
    * The {@link directoryQueryKey} the inner control's current pages were
@@ -510,10 +525,23 @@ export abstract class DirectoryComboboxBase extends DirectoryFieldBase implement
   readonly requireSelection = input<boolean>(false);
 
   /**
-   * Text shown when nothing matched. Worth overriding from `(directoryError)`,
-   * so a lookup that failed does not read as "this user does not exist".
+   * Text shown when nothing matched. Left unset, the inner control's own
+   * default applies — except after a failed lookup, which the field words for
+   * itself. See {@link resolvedNoResultsText}.
    */
   readonly noResultsText = input<TranslatedString | undefined>(undefined);
+
+  /**
+   * What an empty panel says.
+   *
+   * A lookup that FAILED is not an empty directory, and saying "No results
+   * found" reads as "no such user". The field knows which of the two it is —
+   * it owns the fetch — so no consumer has to track it, and none can leave the
+   * message stuck on the failure wording after the directory comes back.
+   */
+  protected readonly resolvedNoResultsText = computed<TranslatedString | undefined>(() => (this.lookupFailed()
+    ? this.translate.instant('Options cannot be loaded')
+    : this.noResultsText()));
 
   /** Offer a row above the results that opens the create-user side panel. */
   readonly allowCreate = input<boolean>(false);
@@ -521,7 +549,14 @@ export abstract class DirectoryComboboxBase extends DirectoryFieldBase implement
   /** Emits the newly created principal after it has been selected. */
   readonly created = output<PrincipalOption>();
 
-  /** Emits a failed directory lookup; the field recovers on its own. */
+  /**
+   * Emits a failed directory lookup, for a host that wants to log or report it.
+   *
+   * Not needed to keep the panel honest — the field already words that for
+   * itself, and a host that latches this into `[noResultsText]` gets it wrong,
+   * because nothing tells it the directory came back. See
+   * {@link resolvedNoResultsText}.
+   */
   readonly directoryError = output<unknown>();
 
   ngOnInit(): void {

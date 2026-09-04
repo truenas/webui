@@ -164,9 +164,6 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
       this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
     ));
 
-    // Parity with the former ix-user/group-combobox controls: custom-typed values
-    // must exist on the system (empty values pass).
-
     if (this.defaultNfsShare) {
       this.form.patchValue(this.defaultNfsShare);
     }

@@ -48,7 +48,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 import { DirectoryQueryOptions } from 'app/services/user-directory.service';
-import { UserService } from 'app/services/user.service';
 
 @Component({
   selector: 'ix-additional-details-section',
@@ -87,7 +86,6 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private sudoCommandsValidator = inject(SudoCommandsValidatorService);
-  private userService = inject(UserService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 

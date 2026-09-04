@@ -68,7 +68,6 @@ import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
@@ -116,7 +115,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
   private validatorsService = inject(IxValidatorsService);
   private store$ = inject<Store<ServicesState>>(Store);
   private smbValidationService = inject(SmbValidationService);
-  private userService = inject(UserService);
 
   private destroyRef = inject(DestroyRef);
 

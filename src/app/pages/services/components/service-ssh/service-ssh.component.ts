@@ -22,7 +22,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
-import { UserService } from 'app/services/user.service';
 
 // Built here rather than inline in the component, and left with an inferred return type — see
 // the `V` type parameter on IxFormHostForm for why.
@@ -71,7 +70,6 @@ export class ServiceSshComponent extends IxFormHostForm<boolean, SshFormValue> i
   private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private userService = inject(UserService);
 
   readonly requiredRoles = [Role.SshWrite];
   protected readonly InputType = InputType;

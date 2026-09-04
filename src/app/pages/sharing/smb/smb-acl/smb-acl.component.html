@@ -45,8 +45,6 @@
                   [placeholder]="'User' | translate"
                   [directoryOptions]="smbUserOptions"
                   [extraOptions]="initialUserOptions()"
-                  [noResultsText]="(usersFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
-                  (directoryError)="usersFetchFailed.set(true)"
                 ></ix-user-combobox>
               </tn-form-field>
             }
@@ -59,8 +57,6 @@
                   [placeholder]="'Group' | translate"
                   [directoryOptions]="smbGroupOptions"
                   [extraOptions]="initialGroupOptions()"
-                  [noResultsText]="(groupsFetchFailed() ? 'Options cannot be loaded' : 'No results found') | translate"
-                  (directoryError)="groupsFetchFailed.set(true)"
                 ></ix-group-combobox>
               </tn-form-field>
             }

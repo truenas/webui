@@ -21,6 +21,14 @@ export type PrincipalValue = string | number;
 /** An option in a user or group field: the name is displayed, the value committed. */
 export type PrincipalOption = TnSelectOption<PrincipalValue>;
 
+/** Fields of a `User` a picker may commit as its value. */
+const userValueFields = ['username', 'uid', 'id'] as const;
+export type UserValueField = typeof userValueFields[number];
+
+/** Fields of a `Group` a picker may commit as its value. */
+const groupValueFields = ['group', 'gid', 'id'] as const;
+export type GroupValueField = typeof groupValueFields[number];
+
 /**
  * How an `ix-user-*` / `ix-group-*` field narrows the list. Bound with
  * `[directoryOptions]`, and interpreted only here.
@@ -36,8 +44,13 @@ export interface DirectoryQueryOptions {
   /**
    * Which field of the record becomes the control's value. Defaults to the
    * name (`username` / `group`), which is what the API takes nearly everywhere.
+   *
+   * The two halves of the union cannot be told apart by the type system here —
+   * one bag serves both kinds of field — so a group field's `gid` on a user
+   * field type-checks. {@link resolveValueField} catches that at runtime and
+   * falls back to the name, rather than committing `undefined` as the value.
    */
-  valueField?: keyof Pick<User, 'username' | 'uid' | 'id'> | keyof Pick<Group, 'group' | 'gid' | 'id'>;
+  valueField?: UserValueField | GroupValueField;
   /** `Smb` restricts the list to SMB-capable users or groups. */
   queryType?: ComboboxQueryType;
   /** Groups only: restrict to local groups — directory-service ones excluded. */
@@ -89,7 +102,8 @@ export class UserDirectoryService {
    * shorter than {@link pageSize} ends pagination.
    */
   queryUsers(search: string, page: number, options: DirectoryQueryOptions): Observable<PrincipalOption[]> {
-    const { valueField = 'username', queryType, queryParams } = options;
+    const valueField = resolveValueField(options.valueField, userValueFields, 'username');
+    const { queryType, queryParams } = options;
     const offset = page * directoryPageSize;
 
     // A field with its own filters cannot go through UserService, whose
@@ -104,14 +118,15 @@ export class UserDirectoryService {
     }
 
     return users$.pipe(
-      map((users) => users.map((user) => toOption(user.username, user[valueField as keyof User]))),
+      map((users) => users.map((user) => toOption(user.username, user[valueField]))),
     );
   }
 
   /** One page of groups matching `search`, on the same terms as {@link queryUsers}. */
   queryGroups(search: string, page: number, options: DirectoryQueryOptions): Observable<PrincipalOption[]> {
+    const valueField = resolveValueField(options.valueField, groupValueFields, 'group');
     const {
-      valueField = 'group', queryType, localOnly, mutableOnly, excludedIds = [],
+      queryType, localOnly, mutableOnly, excludedIds = [],
     } = options;
     const offset = page * directoryPageSize;
 
@@ -137,7 +152,7 @@ export class UserDirectoryService {
       map((groups) => (excludedIds.length
         ? groups.filter((group) => !excludedIds.includes(group.id))
         : groups)),
-      map((groups) => groups.map((group) => toOption(group.group, group[valueField as keyof Group]))),
+      map((groups) => groups.map((group) => toOption(group.group, group[valueField]))),
     );
   }
 
@@ -196,7 +211,7 @@ export class UserDirectoryService {
    * initial bundle for every screen that never opens a user picker.
    */
   createUser(options: DirectoryQueryOptions): Observable<PrincipalOption | null> {
-    const { valueField = 'username' } = options;
+    const valueField = resolveValueField(options.valueField, userValueFields, 'username');
 
     return from(import('app/pages/credentials/users/user-form/user-form.component')).pipe(
       switchMap((module) => this.formPanel.open(module.UserFormComponent, {
@@ -204,7 +219,7 @@ export class UserDirectoryService {
         title: this.translate.instant('Add User'),
       })),
       map(({ response }) => (response
-        ? toOption(response.username, response[valueField as keyof User] as PrincipalValue)
+        ? toOption(response.username, response[valueField])
         : null)),
     );
   }
@@ -237,6 +252,22 @@ export class UserDirectoryService {
  * Usernames and group names are data, not copy — `ignoreTranslation` keeps them
  * out of the extracted string catalogue while satisfying `TranslatedString`.
  */
-function toOption(label: string, value: unknown): PrincipalOption {
-  return { label: ignoreTranslation(label), value: value as PrincipalValue };
+function toOption(label: string, value: PrincipalValue): PrincipalOption {
+  return { label: ignoreTranslation(label), value };
+}
+
+/**
+ * The requested value field, when it is one this kind of record actually has.
+ *
+ * `valueField` is one input shared by user and group fields, so nothing stops a
+ * user picker asking for `gid`. Reading it off a `User` would give `undefined`
+ * and commit that as the value; falling back to the name at least commits
+ * something the API accepts.
+ */
+function resolveValueField<T extends string>(
+  requested: string | undefined,
+  allowed: readonly T[],
+  fallback: T,
+): T {
+  return allowed.find((field) => field === requested) ?? fallback;
 }

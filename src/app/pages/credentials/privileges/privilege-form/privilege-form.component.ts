@@ -25,9 +25,7 @@ import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/compon
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-chips.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { DirectoryQueryOptions } from 'app/services/user-directory.service';
-import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -57,20 +55,12 @@ export class PrivilegeFormComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
-  private globalErrorHandler = inject(ErrorHandlerService);
-  private userService = inject(UserService);
   private store$ = inject<Store<AppState>>(Store);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
 
   /** Row to edit, passed in by `FormSidePanelService.open`. Absent for Add. */
   readonly editPrivilege = input<Privilege | undefined>(undefined);
-
-  /**
-   * Maximum number of groups to return in autocomplete queries.
-   * Limits API response size for better performance.
-   */
-  private readonly GROUP_QUERY_LIMIT = 50;
 
   protected showDsAuthButton = signal(false);
   protected isEnablingDsAuth = signal(false);

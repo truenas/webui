@@ -375,6 +375,42 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
     });
   });
 
+  describe('a failed lookup', () => {
+    /** Text of the empty-panel notice, or null when the panel has rows. */
+    function noResultsText(): string | null {
+      return TestBed.inject(OverlayContainer).getContainerElement()
+        .querySelector('.tn-autocomplete__no-results')?.textContent?.trim() ?? null;
+    }
+
+    it('says the options could not be loaded, rather than that nothing matched', async () => {
+      directory.queryUsersImpl = () => throwError(() => new Error('directory unreachable'));
+
+      const owner = await loader.getHarness(IxUserComboboxHarness);
+      await owner.focus();
+      await settle();
+
+      expect(noResultsText()).toBe('Options cannot be loaded');
+    });
+
+    it('stops saying so once the directory answers again', async () => {
+      // The flag used to latch: one failed lookup and every later empty result
+      // read as "cannot be loaded" for the rest of the panel's life, including
+      // searches that legitimately matched nothing.
+      directory.queryUsersImpl = () => throwError(() => new Error('directory unreachable'));
+
+      const owner = await loader.getHarness(IxUserComboboxHarness);
+      await owner.focus();
+      await settle();
+      expect(noResultsText()).toBe('Options cannot be loaded');
+
+      directory.queryUsersImpl = () => of([]);
+      await owner.setInputValue('nobody');
+      await settle();
+
+      expect(noResultsText()).not.toBe('Options cannot be loaded');
+    });
+  });
+
   describe('existence validation', () => {
     it('does not flag a value the form was opened with', async () => {
       // Attaching the validator must not RUN it. A parent patches its form in

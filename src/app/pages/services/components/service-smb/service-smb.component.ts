@@ -35,7 +35,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
-import { UserService } from 'app/services/user.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -113,7 +112,6 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
   private translate = inject(TranslateService);
   private validatorsService = inject(IxValidatorsService);
   private truenasConnectService = inject(TruenasConnectService);
-  private userService = inject(UserService);
   private store$ = inject(Store);
   private destroyRef = inject(DestroyRef);
 
@@ -240,19 +238,6 @@ export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> i
   });
 
   readonly encryptionOptions = mapToOptions(smbEncryptionLabels, this.translate);
-
-  // Server-searched option streams for the Guest Account / Administrators Group
-  // autocompletes. switchMap cancels in-flight queries on new input; catchError
-  // keeps one failed DS query from killing the stream for the rest of the form's
-  // life — the dropdown shows "Options cannot be loaded" via [noResultsText],
-  // the same in-panel signal the old ix-combobox rendered.
-  /**
-   * Set from `(directoryError)` so the dropdown can say "Options cannot be loaded"
-   * instead of "No results found" — a failed lookup is not an empty directory.
-   * The field recovers on its own; this only changes what it says while empty.
-   */
-  protected readonly usersFetchFailed = signal(false);
-  protected readonly groupsFetchFailed = signal(false);
 
   ngOnInit(): void {
     this.form.controls.minimum_protocol.valueChanges

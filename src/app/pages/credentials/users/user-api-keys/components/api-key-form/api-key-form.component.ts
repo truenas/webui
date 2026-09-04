@@ -23,7 +23,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { DirectoryQueryOptions } from 'app/services/user-directory.service';
 
 @Component({
@@ -49,7 +48,6 @@ export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
   private api = inject(ApiService);
   private authService = inject(AuthService);
   private translate = inject(TranslateService);
-  private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
   /** API key being edited; absent when adding. Supplied by the `<tn-side-panel>` host. */
